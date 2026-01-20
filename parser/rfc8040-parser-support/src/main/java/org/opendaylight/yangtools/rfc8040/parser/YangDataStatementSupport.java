@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatements;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -40,13 +37,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
 public final class YangDataStatementSupport
         extends AbstractStatementSupport<YangDataName, YangDataStatement, YangDataEffectiveStatement> {
-    private static final @NonNull ParserNamespace<YangDataName,
+    private static final ParserNamespace<YangDataName,
         StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> NAMESPACE =
         new ParserNamespace<>("yang-data");
-    public static final @NonNull NamespaceBehaviour<YangDataName,
+    public static final NamespaceBehaviour<YangDataName,
         StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> BEHAVIOUR =
         NamespaceBehaviour.global(NAMESPACE);
 
@@ -68,7 +64,7 @@ public final class YangDataStatementSupport
     //
     // The cardinality is not exactly constrained, but the entirety of substatements are required to resolve to a single
     // XML document (page 80). This is enforced when we arrive at full declaration.
-    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatements.YANG_DATA)
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
@@ -83,7 +79,7 @@ public final class YangDataStatementSupport
     static final YangDataName YANG_API = new YangDataName(YangDataConstants.RFC8040_MODULE, "yang-api");
 
     public YangDataStatementSupport(final YangParserConfiguration config) {
-        super(YangDataStatements.YANG_DATA, StatementPolicy.reject(), config, VALIDATOR);
+        super(YangDataStatement.DEFINITION, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override

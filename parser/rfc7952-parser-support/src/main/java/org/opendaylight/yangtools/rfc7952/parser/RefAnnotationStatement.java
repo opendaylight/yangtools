@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefAnnotationStatement extends AbstractRefStatement<AnnotationName, AnnotationStatement>
         implements AnnotationStatement {
     RefAnnotationStatement(final AnnotationStatement delegate, final DeclarationReference ref) {

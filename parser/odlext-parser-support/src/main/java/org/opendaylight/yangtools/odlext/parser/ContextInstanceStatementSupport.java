@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceStatement;
-import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -25,10 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ContextInstanceStatementSupport
         extends AbstractIdentityAwareStatementSupport<ContextInstanceStatement, ContextInstanceEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE).build();
+        SubstatementValidator.builder(ContextInstanceStatement.DEFINITION).build();
 
     public ContextInstanceStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE, config, VALIDATOR);
+        super(ContextInstanceStatement.DEFINITION, config, VALIDATOR);
     }
 
     @Override

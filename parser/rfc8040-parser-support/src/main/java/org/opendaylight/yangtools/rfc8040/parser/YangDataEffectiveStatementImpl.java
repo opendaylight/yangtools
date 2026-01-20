@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.rfc8040.parser;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
@@ -30,16 +30,16 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSc
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-@Beta
+@NonNullByDefault
 final class YangDataEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<YangDataName, YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode,
                    DataNodeContainerMixin<YangDataName, YangDataStatement> {
-    private final @NonNull DataSchemaNode child;
+    private final DataSchemaNode child;
 
     YangDataEffectiveStatementImpl(final Current<YangDataName, YangDataStatement> stmt,
              final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final DataSchemaNode child) {
-        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
         this.child = requireNonNull(child);
     }
 
@@ -54,8 +54,9 @@ final class YangDataEffectiveStatementImpl
     }
 
     @Override
-    public DataSchemaNode dataChildByName(final QName name) {
-        return name.equals(child.getQName()) ? child : null;
+    public @Nullable DataSchemaNode dataChildByName(final @Nullable QName name) {
+        // FIXME: dataChildByName() should be fixed
+        return requireNonNull(name).equals(child.getQName()) ? child : null;
     }
 
     @Override
@@ -67,24 +68,24 @@ final class YangDataEffectiveStatementImpl
     public Optional<DataTreeEffectiveStatement<?>> findDataTreeNode(final QName qname) {
         if (child instanceof DataTreeEffectiveStatement<?> dataChild && dataChild.argument().equals(qname)) {
             return Optional.of(dataChild);
-        } else if (child instanceof DataTreeAwareEffectiveStatement<?, ?> aware) {
+        }
+        if (child instanceof DataTreeAwareEffectiveStatement<?, ?> aware) {
             // A schema tree statement which *has to* know about data tree -- just forward it
             return aware.findDataTreeNode(qname);
-        } else {
-            throw new VerifyException("Unexpected child " + child);
         }
+        throw new VerifyException("Unexpected child " + child);
     }
 
     @Override
     public Collection<DataTreeEffectiveStatement<?>> dataTreeNodes() {
         if (child instanceof DataTreeEffectiveStatement<?> dataChild) {
             return List.of(dataChild);
-        } else if (child instanceof DataTreeAwareEffectiveStatement<?, ?> aware) {
+        }
+        if (child instanceof DataTreeAwareEffectiveStatement<?, ?> aware) {
             // A schema tree statement which *has to* know about data tree -- just forward it
             return aware.dataTreeNodes();
-        } else {
-            throw new VerifyException("Unexpected child " + child);
         }
+        throw new VerifyException("Unexpected child " + child);
     }
 
     @Override

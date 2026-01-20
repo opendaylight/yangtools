@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 
 /**
  * Definition / model of YANG {@link DeclaredStatement} and {@link EffectiveStatement}.
@@ -22,7 +24,31 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  * <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3">RFC6020, section 6.3</a>
  */
+// FIXME: sealed with a hidden record implementation
 public interface StatementDefinition extends Immutable {
+    @NonNullByDefault
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition noArg(
+            final QNameModule module, final String statementName, final Class<D> declaredTyoe,
+            final Class<E> effectiveTyoe) {
+        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredTyoe, effectiveTyoe);
+    }
+
+    @NonNullByDefault
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition attributeArg(
+            final QNameModule module, final String statementName, final String argumentName,
+            final Class<D> declaredTyoe, final Class<E> effectiveTyoe) {
+        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredTyoe, effectiveTyoe,
+            QName.create(module, argumentName).intern(), false);
+    }
+
+    @NonNullByDefault
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition elementArg(
+            final QNameModule module, final String statementName, final String argumentName,
+            final Class<D> declaredTyoe, final Class<E> effectiveTyoe) {
+        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredTyoe, effectiveTyoe,
+            QName.create(module, argumentName).intern(), true);
+    }
+
     /**
      * {@return name of the statement}
      */
@@ -70,6 +96,7 @@ public interface StatementDefinition extends Immutable {
      *
      * @return class which represents declared version of statement associated with this definition.
      */
+    // FIXME: declaredRepresentation()
     @NonNull Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass();
 
     /**
@@ -78,5 +105,6 @@ public interface StatementDefinition extends Immutable {
      *
      * @return class which represents effective version of statement associated with this definition
      */
+    // FIXME: effectiveRepresentation()
     @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass();
 }

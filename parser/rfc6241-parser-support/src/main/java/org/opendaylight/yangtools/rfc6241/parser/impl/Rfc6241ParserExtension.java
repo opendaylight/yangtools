@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc6241.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
+import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
@@ -30,7 +30,7 @@ public final class Rfc6241ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc6241ParserExtension() {
-        super(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES);
+        super(GetFilterElementAttributesStatement.DEFINITION);
     }
 
     @Override

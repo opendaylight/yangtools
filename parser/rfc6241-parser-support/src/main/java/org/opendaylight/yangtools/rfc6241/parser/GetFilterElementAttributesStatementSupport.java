@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc6241.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
-import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -34,10 +33,10 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
         GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES).build();
+        SubstatementValidator.builder(GetFilterElementAttributesStatement.DEFINITION).build();
 
     public GetFilterElementAttributesStatementSupport(final YangParserConfiguration config) {
-        super(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES, StatementPolicy.reject(), config, VALIDATOR);
+        super(GetFilterElementAttributesStatement.DEFINITION, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override

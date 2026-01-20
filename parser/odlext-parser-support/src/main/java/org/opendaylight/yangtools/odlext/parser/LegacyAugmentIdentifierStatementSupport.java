@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierStatement;
-import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -27,11 +26,10 @@ public final class LegacyAugmentIdentifierStatementSupport
         extends AbstractUnqualifiedStatementSupport<LegacyAugmentIdentifierStatement,
             LegacyAugmentIdentifierEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER).build();
+        SubstatementValidator.builder(LegacyAugmentIdentifierStatement.DEFINITION).build();
 
     public LegacyAugmentIdentifierStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER, StatementPolicy.contextIndependent(), config,
-            VALIDATOR);
+        super(LegacyAugmentIdentifierStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

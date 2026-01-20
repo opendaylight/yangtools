@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.rfc8791.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.DefaultStatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -25,12 +23,8 @@ public interface AugmentStructureStatement
     /**
      * The definition of {@code sx:augment-structure} statement.
      */
-    StatementDefinition DEFINITION = DefaultStatementDefinition.of(
-        QName.create(YangDataStructureConstants.RFC8791_MODULE, "augment-structure").intern(),
-        StructureStatement.class,
-        StructureEffectiveStatement.class,
-        QName.create(YangDataStructureConstants.RFC8791_MODULE, "path").intern(),
-        true);
+    StatementDefinition DEFINITION = StatementDefinition.elementArg(YangDataStructureConstants.RFC8791_MODULE,
+        "augment-structure", "path", StructureStatement.class, StructureEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {
