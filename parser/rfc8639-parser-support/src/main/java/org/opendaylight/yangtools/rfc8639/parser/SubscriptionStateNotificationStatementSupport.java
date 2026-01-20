@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc8639.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.rfc8639.model.api.SubscribedNotificationsStatements;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationEffectiveStatement;
 import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -28,11 +27,10 @@ public final class SubscriptionStateNotificationStatementSupport
         extends AbstractEmptyStatementSupport<SubscriptionStateNotificationStatement,
             SubscriptionStateNotificationEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(SubscribedNotificationsStatements.SUBSCRIPTION_STATE_NOTIFICATION).build();
+        SubstatementValidator.builder(SubscriptionStateNotificationStatement.DEFINITION).build();
 
     public SubscriptionStateNotificationStatementSupport(final YangParserConfiguration config) {
-        super(SubscribedNotificationsStatements.SUBSCRIPTION_STATE_NOTIFICATION, StatementPolicy.exactReplica(),
-            config, VALIDATOR);
+        super(SubscriptionStateNotificationStatement.DEFINITION, StatementPolicy.exactReplica(), config, VALIDATOR);
     }
 
     @Override
