@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 
 /**
@@ -47,6 +48,13 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
             final Class<D> declaredType, final Class<E> effectiveType) {
         return of(QName.create(module, statementName).intern(), declaredType, effectiveType,
             ArgumentDefinition.of(QName.create(module, argumentName).intern(), yinElement));
+    }
+
+    @NonNullByDefault
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition ofYang(
+            final String statementName, final String argumentName, final Class<D> declaredType,
+            final Class<E> effectiveType) {
+        return of(YangConstants.RFC6020_YIN_MODULE, statementName, argumentName, false, declaredType, effectiveType);
     }
 
     /**

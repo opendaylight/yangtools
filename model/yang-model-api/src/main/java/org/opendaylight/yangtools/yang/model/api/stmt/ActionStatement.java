@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -17,9 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * takes one argument, which is an identifier, followed by a block of substatements that holds detailed action
  * information. The argument is the name of the action.
  */
+@NonNullByDefault
 public non-sealed interface ActionStatement extends OperationDeclaredStatement {
+    /**
+     * The definition of {@code nc:get-filter-element-attributes} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.ofYang("action", "name", ActionStatement.class,
+        ActionEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ACTION;
+        return DEFINITION;
     }
 }
