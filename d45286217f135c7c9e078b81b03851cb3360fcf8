@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d064cfd5_442c851d",
+        "filename": "parser/rfc8040-parser-support/src/test/java/org/opendaylight/yangtools/rfc8040/parser/YT1746Test.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-20T16:39:23Z",
+      "side": 1,
+      "message": "assertThrows",
+      "range": {
+        "startLine": 108,
+        "startChar": 12,
+        "endLine": 108,
+        "endChar": 29
+      },
+      "revId": "d45286217f135c7c9e078b81b03851cb3360fcf8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
