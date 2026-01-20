@@ -18,8 +18,8 @@ public interface DefValStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "defval", "value", ImpliedStatement.class, ImpliedEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(IetfYangSmiv2Constants.RFC6643_MODULE, "defval", "value",
+        false, ImpliedStatement.class, ImpliedEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

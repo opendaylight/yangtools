@@ -18,8 +18,8 @@ public interface ImpliedStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "implied", "index", ImpliedStatement.class, ImpliedEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(IetfYangSmiv2Constants.RFC6643_MODULE, "implied", "index",
+        false, ImpliedStatement.class, ImpliedEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

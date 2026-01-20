@@ -23,8 +23,8 @@ public interface YangDataStatement extends UnknownStatement<YangDataName> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(YangDataConstants.RFC8040_MODULE,
-        "yang-data", "name", YangDataStatement.class, YangDataEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(YangDataConstants.RFC8040_MODULE, "yang-data", "name",
+        false, YangDataStatement.class, YangDataEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

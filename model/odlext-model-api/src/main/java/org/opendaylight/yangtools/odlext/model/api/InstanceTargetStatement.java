@@ -18,8 +18,8 @@ public interface InstanceTargetStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "instance-target", "path", InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
+        "instance-target", "path", false, InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

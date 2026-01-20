@@ -18,8 +18,8 @@ public interface DisplayHintStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
-        "display-hint", "format", DisplayHintStatement.class, DisplayHintEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(IetfYangSmiv2Constants.RFC6643_MODULE, "display-hint",
+        "format", false, DisplayHintStatement.class, DisplayHintEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

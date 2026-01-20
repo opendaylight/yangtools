@@ -19,8 +19,9 @@ public interface ContextInstanceStatement extends UnknownStatement<QName> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
-        "context-instance", "context-type", ContextInstanceStatement.class, ContextInstanceEffectiveStatement.class);
+    StatementDefinition DEFINITION = StatementDefinition.of(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
+        "context-instance", "context-type", false, ContextInstanceStatement.class,
+        ContextInstanceEffectiveStatement.class);
 
     @Override
     default StatementDefinition statementDefinition() {

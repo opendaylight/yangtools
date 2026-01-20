@@ -23,9 +23,9 @@ public interface ThirdPartyExtensionStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.attributeArg(
+    StatementDefinition DEFINITION = StatementDefinition.of(
         QNameModule.of("urn:opendaylight:yang:extension:third-party", "2016-06-09"),
-        "third-party-extension", "argument-name", ThirdPartyExtensionStatement.class,
+        "third-party-extension", "argument-name", false, ThirdPartyExtensionStatement.class,
         ThirdPartyExtensionEffectiveStatement.class);
 
     @Override

@@ -23,7 +23,7 @@ public interface DefaultDenyWriteStatement extends UnknownStatement<Empty> {
      *
      * @since 15.0.0
      */
-    StatementDefinition DEFINITION = StatementDefinition.noArg(NACMConstants.RFC6536_MODULE, "default-deny-write",
+    StatementDefinition DEFINITION = StatementDefinition.of(NACMConstants.RFC6536_MODULE, "default-deny-write",
         DefaultDenyWriteStatement.class, DefaultDenyWriteEffectiveStatement.class);
 
     @Override

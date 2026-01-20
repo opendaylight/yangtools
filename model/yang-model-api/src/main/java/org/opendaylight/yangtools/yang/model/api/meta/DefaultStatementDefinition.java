@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,75 +18,48 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Default implementation of the {@link StatementDefinition} contract. Instances of this class should be used as
  * well-known singletons.
  *
- * @author Robert Varga
- *
  * @param <A> Argument type
  * @param <D> Declared statement representation
  * @param <E> Effective statement representation
  */
-@Beta
 @NonNullByDefault
-public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends AbstractStatementDefinition {
-    private final Class<E> effectiveRepresentation;
-    private final Class<D> declaredRepresentation;
-
-    DefaultStatementDefinition(final QName statementName, final Class<D> declaredRepresentation,
-            final Class<E> effectiveRepresentation, final boolean argumentYinElement,
-            final @Nullable QName argumentName) {
-        super(statementName, argumentYinElement, argumentName);
-        this.declaredRepresentation = requireNonNull(declaredRepresentation);
-        this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
-
-        checkArgument(declaredRepresentation.isInterface(), "Declared representation %s is not an interface",
-            declaredRepresentation);
-        checkArgument(effectiveRepresentation.isInterface(), "Effective representation %s is not an interface",
-            effectiveRepresentation);
-    }
-
-    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-            DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
-                    final Class<E> effectiveRepresentation) {
-        return new DefaultStatementDefinition<>(statementName, declaredRepresentation, effectiveRepresentation, false,
-                null);
-    }
-
-    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-            DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
-                    final Class<E> effectiveRepresentation, final QName argumentName) {
-        return of(statementName, declaredRepresentation, effectiveRepresentation, argumentName, false);
-    }
-
-    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-            DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
-                    final Class<E> effectiveRepresentation, final QName argumentName,
-                    final boolean argumentYinElement) {
-        return new DefaultStatementDefinition<>(statementName, declaredRepresentation, effectiveRepresentation,
-                argumentYinElement, requireNonNull(argumentName));
-    }
-
-    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-            DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
-                final Class<E> effectiveRepresentation, final @Nullable ArgumentDefinition arg) {
-        return arg == null ? of(statementName, declaredRepresentation, effectiveRepresentation)
-            : of(statementName, declaredRepresentation, effectiveRepresentation, arg.argumentName(),
-                    arg.isYinElement());
+record DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>(
+        QName statementName,
+        Class<D> getDeclaredRepresentationClass,
+        Class<E> getEffectiveRepresentationClass,
+        @Nullable ArgumentDefinition argumentDefinition) implements StatementDefinition {
+    DefaultStatementDefinition {
+        requireNonNull(statementName);
+        if (!getDeclaredRepresentationClass.isInterface()) {
+            throw new IllegalArgumentException(
+                "Declared representation " + getDeclaredRepresentationClass + " is not an interface");
+        }
+        if (!getEffectiveRepresentationClass.isInterface()) {
+            throw new IllegalArgumentException(
+                "Effective representation " + getEffectiveRepresentationClass + " is not an interface");
+        }
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return declaredRepresentation;
+    public int hashCode() {
+        return System.identityHashCode(this);
     }
 
     @Override
-    public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-        return effectiveRepresentation;
+    public boolean equals(final @Nullable Object obj) {
+        return this == obj;
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper)
-                .add("declared", declaredRepresentation)
-                .add("effective", effectiveRepresentation);
+    public String toString() {
+        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", statementName);
+        final var argDef = argumentDefinition;
+        if (argDef != null) {
+            helper.add("argument", argDef.argumentName()).add("yin-element", argDef.isYinElement());
+        }
+        return helper
+            .add("declared", getDeclaredRepresentationClass.getName())
+            .add("effective", getEffectiveRepresentationClass.getName())
+            .toString();
     }
 }
