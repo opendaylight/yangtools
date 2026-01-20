@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * use this class or {@link DefaultStatementDefinition}.
  */
 @NonNullByDefault
-abstract class AbstractStatementDefinition implements StatementDefinition {
+abstract sealed class AbstractStatementDefinition implements StatementDefinition permits DefaultStatementDefinition {
     private final QName statementName;
     private final @Nullable QName argumentName;
     private final boolean yinElement;
