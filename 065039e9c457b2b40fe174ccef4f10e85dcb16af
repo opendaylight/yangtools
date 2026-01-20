@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a85381e_cfe70d0b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "It\u0027s certainly going to be broken-up before it moves from WIP to Review.",
+      "parentUuid": "24c87b12_3436d896",
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c7513553_8d215782",
@@ -31,6 +49,30 @@
       "writtenOn": "2025-10-29T23:20:55Z",
       "side": 1,
       "message": "missing documentation\n\nalso, this is kind of BS: yang-version is, by RFC6020 definition, 1.0 unless overridden.\n\nWhy are we tying that to StatementSourceReference at all?",
+      "range": {
+        "startLine": 84,
+        "startChar": 4,
+        "endLine": 84,
+        "endChar": 71
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab64e446_9b977f50",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/source/SourceDependency.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "These TODOs are just notes for myself. Not meant for anyone else.\nThe StatementSourceReference is needed to construct the StatementContexts of the yang statements. At least at the current stage. It\u0027s still WIP - hence things might (and probably will) change.",
+      "parentUuid": "c7513553_8d215782",
       "range": {
         "startLine": 84,
         "startChar": 4,
@@ -64,6 +106,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ee995e5_45aafc79",
+        "filename": "model/yang-model-spi/src/main/java/module-info.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "Certainly.. just some missclick in IDE",
+      "parentUuid": "1cef9035_ac3de4a5",
+      "range": {
+        "startLine": 27,
+        "startChar": 4,
+        "endLine": 27,
+        "endChar": 22
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a472f286_3ecc9a07",
@@ -77,6 +143,30 @@
       "writtenOn": "2025-10-29T23:13:29Z",
       "side": 1,
       "message": "Map.of()",
+      "range": {
+        "startLine": 112,
+        "startChar": 19,
+        "endLine": 112,
+        "endChar": 39
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae46a170_3fc8ab54",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "Will be part of overall cleanup before moving from WIP to Review. But thanks for pointing it out.",
+      "parentUuid": "a472f286_3ecc9a07",
       "range": {
         "startLine": 112,
         "startChar": 19,
@@ -110,6 +200,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e79ac6d1_ddab418a",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "Will be part of overall cleanup before moving from WIP to Review. But thanks for pointing it out.",
+      "parentUuid": "e3f3ff51_1f787ce5",
+      "range": {
+        "startLine": 211,
+        "startChar": 15,
+        "endLine": 211,
+        "endChar": 36
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3b729f96_15897816",
@@ -123,6 +237,30 @@
       "writtenOn": "2025-10-29T18:28:34Z",
       "side": 1,
       "message": "nope",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 22
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a7183fc_365a5fe9",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/module-info.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "same here",
+      "parentUuid": "3b729f96_15897816",
       "range": {
         "startLine": 38,
         "startChar": 4,
@@ -156,6 +294,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "282608cc_57c0e065",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/YangIRSourceInfoExtractor.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "These TODOs are just notes for myself. Not meant for anyone else.",
+      "parentUuid": "988d5ec7_4c27cc1b",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 108
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "51812226_66d47d21",
@@ -179,6 +341,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1356b94_e9170d14",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/YinSourceInfoExtractor.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "Of course it will be refactored and split-out into to a separate patch. It\u0027s WIP.",
+      "parentUuid": "51812226_66d47d21",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 41
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3d24a903_7f47d097",
@@ -192,6 +378,30 @@
       "writtenOn": "2025-10-29T23:20:55Z",
       "side": 1,
       "message": "I don\u0027t see a single reason why these would be referenced here. What does CONTACT have to do with SourceInfo?!",
+      "range": {
+        "startLine": 44,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 104
+      },
+      "revId": "065039e9c457b2b40fe174ccef4f10e85dcb16af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8978dd2f_bf8a2707",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/YinSourceInfoExtractor.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-20T11:24:03Z",
+      "side": 1,
+      "message": "It\u0027s WIP.",
+      "parentUuid": "3d24a903_7f47d097",
       "range": {
         "startLine": 44,
         "startChar": 4,
