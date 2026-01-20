@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -16,17 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code key} statement.
  */
-public interface KeyStatement extends DeclaredStatement<Set<QName>> {
+@NonNullByDefault
+public interface KeyStatement extends DeclaredStatement<KeyArgument> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.KEY;
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Iteration order of the returned set is required to match the order in which key components were declared.
-     */
-    @Override
-    Set<QName> argument();
 }

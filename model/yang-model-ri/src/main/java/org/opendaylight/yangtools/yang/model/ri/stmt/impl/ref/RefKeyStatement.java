@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefKeyStatement extends AbstractRefStatement<Set<QName>, KeyStatement> implements KeyStatement {
+public final class RefKeyStatement extends AbstractRefStatement<KeyArgument, KeyStatement> implements KeyStatement {
     public RefKeyStatement(final KeyStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }
