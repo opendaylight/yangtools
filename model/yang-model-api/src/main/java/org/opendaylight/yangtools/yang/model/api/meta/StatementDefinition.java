@@ -28,25 +28,32 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 // FIXME: a hidden record implementation
 public sealed interface StatementDefinition extends Immutable permits AbstractStatementDefinition, YangStmtMapping {
     @NonNullByDefault
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
+            final QName statementName, final Class<D> declaredType, final Class<E> effectiveType,
+            final @Nullable ArgumentDefinition argument) {
+        return DefaultStatementDefinition.of(statementName, declaredType, effectiveType, argument);
+    }
+
+    @NonNullByDefault
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition noArg(
-            final QNameModule module, final String statementName, final Class<D> declaredTyoe,
-            final Class<E> effectiveTyoe) {
-        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredTyoe, effectiveTyoe);
+            final QNameModule module, final String statementName, final Class<D> declaredType,
+            final Class<E> effectiveType) {
+        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredType, effectiveType);
     }
 
     @NonNullByDefault
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition attributeArg(
             final QNameModule module, final String statementName, final String argumentName,
-            final Class<D> declaredTyoe, final Class<E> effectiveTyoe) {
-        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredTyoe, effectiveTyoe,
+            final Class<D> declaredType, final Class<E> effectiveType) {
+        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredType, effectiveType,
             QName.create(module, argumentName).intern(), false);
     }
 
     @NonNullByDefault
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition elementArg(
             final QNameModule module, final String statementName, final String argumentName,
-            final Class<D> declaredTyoe, final Class<E> effectiveTyoe) {
-        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredTyoe, effectiveTyoe,
+            final Class<D> declaredType, final Class<E> effectiveType) {
+        return DefaultStatementDefinition.of(QName.create(module, statementName).intern(), declaredType, effectiveType,
             QName.create(module, argumentName).intern(), true);
     }
 
