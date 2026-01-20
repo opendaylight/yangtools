@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Ordering;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 
 /**
  * An {@link EffectiveStatement} which can contain an {@link OrderedByEffectiveStatement}, controlling ordering of
@@ -21,11 +22,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-public interface OrderedByAwareEffectiveStatement<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
+public sealed interface ElementAwareEffectiveStatement<D extends ElementDefinitionStatement>
+        extends DataTreeEffectiveStatement<D> permits LeafListEffectiveStatement, ListEffectiveStatement {
     /**
-     * Return the effective {@link Ordering} of this statement.
-     *
-     * @return Effective ordering
+     * {@return the {@code ElementCountMatcher}, or {@code null}}
+     */
+    @Nullable ElementCountMatcher elementCountMatcher();
+
+    /**
+     * {@return the effective {@link Ordering} of this statement}
      */
     default @NonNull Ordering ordering() {
         return findFirstEffectiveSubstatementArgument(OrderedByEffectiveStatement.class).orElse(Ordering.SYSTEM);

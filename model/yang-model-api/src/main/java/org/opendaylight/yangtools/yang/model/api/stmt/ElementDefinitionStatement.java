@@ -10,9 +10,19 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 
+/**
+ * A statement constraned by {@link MinElementsStatement} and {@link MaxElementsStatement}: either a
+ * {@link LeafListStatement} or a {@link ListStatement}.
+ */
 @Beta
-public interface MultipleElementsDeclaredStatement extends DataDefinitionStatement {
+public sealed interface ElementDefinitionStatement
+        extends DataDefinitionStatement,
+                ConfigStatementAwareDeclaredStatement<QName>,
+                MustStatementAwareDeclaredStatement<QName>
+        permits LeafListStatement, ListStatement {
+
     default @NonNull Optional<MinElementsStatement> getMinElements() {
         return findFirstDeclaredSubstatement(MinElementsStatement.class);
     }
