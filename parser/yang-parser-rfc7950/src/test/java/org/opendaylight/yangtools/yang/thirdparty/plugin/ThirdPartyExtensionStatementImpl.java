@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
  * Private implementation of {@link ThirdPartyExtensionStatement}. This class can rely on parser internals and should
  * never be exposed to the world.
  */
+@NonNullByDefault
 final class ThirdPartyExtensionStatementImpl extends WithSubstatements implements ThirdPartyExtensionStatement {
     ThirdPartyExtensionStatementImpl(final String rawArgument,
             final ImmutableList<DeclaredStatement<?>> substatements) {

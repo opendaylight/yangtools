@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Public interface exposed to the effective world.
- *
- * @author Robert Varga
  */
+@NonNullByDefault
 public interface ThirdPartyExtensionEffectiveStatement
         extends UnknownEffectiveStatement<String, ThirdPartyExtensionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION;
+        return ThirdPartyExtensionStatement.DEFINITION;
     }
 
     String getValueFromNamespace();
