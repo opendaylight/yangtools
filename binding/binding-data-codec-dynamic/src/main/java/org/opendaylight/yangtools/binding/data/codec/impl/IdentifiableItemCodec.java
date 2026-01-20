@@ -10,15 +10,14 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
@@ -66,7 +65,7 @@ abstract sealed class IdentifiableItemCodec {
     private static final class MultiKey extends IdentifiableItemCodec {
         private final ImmutableOffsetMapTemplate<QName> predicateTemplate;
         private final ImmutableOffsetMap<QName, ValueContext> keyValueContexts;
-        private final ImmutableList<QName> keysInBindingOrder;
+        private final List<QName> keysInBindingOrder;
         private final MethodHandle ctor;
 
         MultiKey(final ListEffectiveStatement schema, final Class<? extends Key<?>> keyClass,
@@ -82,7 +81,8 @@ abstract sealed class IdentifiableItemCodec {
              * also need to instantiate values in the same order.
              */
             final var keyDef = schema.findFirstEffectiveSubstatementArgument(KeyEffectiveStatement.class).orElseThrow();
-            predicateTemplate = ImmutableOffsetMapTemplate.ordered(keyDef);
+            final var keys = keyDef.asList();
+            predicateTemplate = ImmutableOffsetMapTemplate.ordered(keys);
             this.keyValueContexts = predicateTemplate.instantiateTransformed(keyValueContexts, (key, value) -> value);
 
             /*
@@ -91,10 +91,11 @@ abstract sealed class IdentifiableItemCodec {
              *
              * BUG-2755: remove this if order is made declaration-order-dependent
              */
-            final var tmp = new ArrayList<>(keyDef);
-            // This is not terribly efficient but gets the job done
-            tmp.sort(Comparator.comparing(leaf -> Naming.getPropertyName(leaf.getLocalName())));
-            keysInBindingOrder = ImmutableList.copyOf(tmp.equals(List.copyOf(keyDef)) ? keyDef : tmp);
+            final var tmp = keys.stream()
+                // This is not terribly efficient but gets the job done
+                .sorted(Comparator.comparing(leaf -> Naming.getPropertyName(leaf.getLocalName())))
+                .collect(Collectors.toUnmodifiableList());
+            keysInBindingOrder = tmp.equals(keys) ? keys : tmp;
         }
 
         @Override

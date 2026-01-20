@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class KeyStatementSupport
-        extends AbstractStatementSupport<Set<QName>, KeyStatement, KeyEffectiveStatement> {
+        extends AbstractStatementSupport<KeyArgument, KeyStatement, KeyEffectiveStatement> {
     /**
      * This is equivalent to {@link YangStatementLexer#SEP}'s definition. Currently equivalent to the non-repeating
      * part of:
@@ -54,52 +54,49 @@ public final class KeyStatementSupport
     private static final Splitter KEY_ARG_SPLITTER = Splitter.on(SEP).omitEmptyStrings();
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.KEY).build();
+        SubstatementValidator.builder(KeyStatement.DEFINITION).build();
 
     public KeyStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.KEY, StatementPolicy.copyDeclared(
+        super(KeyStatement.DEFINITION, StatementPolicy.copyDeclared(
             // Identity comparison is sufficient because adaptArgumentValue() is careful about reuse.
             (copy, current, substatements) -> copy.getArgument() == current.getArgument()),
             config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
-    public ImmutableSet<QName> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final var builder = ImmutableSet.<QName>builder();
+    public KeyArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        final var nodeIdentifiers = new LinkedHashSet<QName>();
         final var binding = ctx.identifierBinding();
-        int tokens = 0;
         for (var keyToken : KEY_ARG_SPLITTER.split(value)) {
-            builder.add(binding.parseNodeIdentifierArg(ctx, keyToken));
-            tokens++;
+            if (!nodeIdentifiers.add(binding.parseNodeIdentifierArg(ctx, keyToken))) {
+                throw new SourceException(ctx, "Key argument '%s' contains duplicates", value);
+            }
         }
-
-        // Throws NPE on nulls, retains first inserted value, cannot be modified
-        final var ret = builder.build();
-        SourceException.throwIf(ret.size() != tokens, ctx, "Key argument '%s' contains duplicates", value);
-        return ret;
+        return KeyArgument.of(List.copyOf(nodeIdentifiers));
     }
 
     @Override
-    public Set<QName> adaptArgumentValue(final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx,
+    public KeyArgument adaptArgumentValue(final StmtContext<KeyArgument, KeyStatement, KeyEffectiveStatement> ctx,
             final QNameModule targetModule) {
-        final Builder<QName> builder = ImmutableSet.builder();
-        boolean replaced = false;
-        for (final QName qname : ctx.getArgument()) {
+        final var original = ctx.getArgument();
+        final var adapted = new ArrayList<QName>(original.size());
+        boolean canReuse = true;
+        for (var qname : original) {
             if (!targetModule.equals(qname.getModule())) {
-                final QName newQname = qname.bindTo(targetModule).intern();
-                builder.add(newQname);
-                replaced = true;
+                final var newQname = qname.bindTo(targetModule).intern();
+                adapted.add(newQname);
+                canReuse = false;
             } else {
-                builder.add(qname);
+                adapted.add(qname);
             }
         }
 
         // This makes sure we reuse the collection when a grouping is instantiated in the same module.
-        return replaced ? builder.build() : ctx.argument();
+        return canReuse ? original : KeyArgument.of(adapted);
     }
 
     @Override
-    protected KeyStatement createDeclared(final BoundStmtCtx<Set<QName>> ctx,
+    protected KeyStatement createDeclared(final BoundStmtCtx<KeyArgument> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createKey(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
@@ -110,7 +107,7 @@ public final class KeyStatementSupport
     }
 
     @Override
-    protected KeyEffectiveStatement createEffective(final Current<Set<QName>, KeyStatement> stmt,
+    protected KeyEffectiveStatement createEffective(final Current<KeyArgument, KeyStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createKey(stmt.declared(), stmt.getArgument(), substatements);
     }

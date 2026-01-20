@@ -66,8 +66,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
@@ -167,7 +165,6 @@ public enum YangStmtMapping implements StatementDefinition {
     IF_FEATURE(IfFeatureStatement.class, IfFeatureEffectiveStatement.class, "if-feature", "name"),
     IMPORT(ImportStatement.class, ImportEffectiveStatement.class, "import", "module"),
     INCLUDE(IncludeStatement.class, IncludeEffectiveStatement.class, "include", "module"),
-    KEY(KeyStatement.class, KeyEffectiveStatement.class, "key", "value"),
     LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
     LENGTH(LengthStatement.class, LengthEffectiveStatement.class, "length", "value"),
