@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 class YT1443Test extends AbstractYangDataTest {
     @Test
     void buildEffectiveModelTest() throws Exception {
-        final var module = REACTOR.newBuild()
-            .addSources(IETF_RESTCONF_MODULE, sourceForYangText("""
+        assertNotNull(newBuild()
+            .addSource(sourceForYangText("""
                 module yt1443 {
                   yang-version 1.1;
                   namespace "yt1443";
@@ -30,7 +30,6 @@ class YT1443Test extends AbstractYangDataTest {
                 }"""))
             .buildEffective()
             .findModuleStatement(QName.create("yt1443", "yt1443"))
-            .orElseThrow();
-        assertNotNull(module);
+            .orElseThrow());
     }
 }
