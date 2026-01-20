@@ -10,15 +10,20 @@ package org.opendaylight.yangtools.odlext.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
+import org.opendaylight.yangtools.rfc8791.model.api.AugmentStructureStatement;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class AugmentIdentifierStatementSupport
         extends AbstractUnqualifiedStatementSupport<AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> {
@@ -26,7 +31,21 @@ final class AugmentIdentifierStatementSupport
         SubstatementValidator.builder(AugmentIdentifierStatement.DEF).build();
 
     AugmentIdentifierStatementSupport(final YangParserConfiguration config) {
-        super(AugmentIdentifierStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(AugmentIdentifierStatement.DEF, StatementPolicy.ignore(), config, VALIDATOR);
+    }
+
+    @Override
+    public void onStatementAdded(
+            final Mutable<Unqualified, AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> stmt) {
+        final var parent = stmt.coerceParentContext();
+        if (!parent.producesAnyOf(AugmentStatement.DEF, AugmentStructureStatement.DEF)) {
+            throw new SourceException(stmt, "%s cannot be used in %s", AugmentIdentifierStatement.DEF.humanName(),
+                parent.publicDefinition().humanName());
+        }
+
+        parent.putToNs(AugmentIdentifierNamespace.INSTANCE, Empty.value(), stmt,
+            (prev, next) -> new SourceException(next, "%s can be used at most once, already declared at %s",
+                AugmentIdentifierStatement.DEF.humanName(), prev.sourceReference()));
     }
 
     @Override

@@ -506,9 +506,24 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
      * <p>In this scenario, it is the reactor's job to figure out what to do (like talking to substatements).
      *
      * @return This statement's copy policy
+     * @see #ignoreCopyFrom(CommonStmtCtx)
      */
     public final @NonNull CopyPolicy copyPolicy() {
         return copyPolicy;
+    }
+
+    /**
+     * {@return {@code true} if this statement should not be copied from specified the {@code parent} statement}
+     *
+     * @param parent parent statement
+     * @see #copyPolicy()
+     * @see StmtContext#ignoreCopyFrom(StmtContext)
+     * @since 16.2.0
+     */
+    @NonNullByDefault
+    public boolean ignoreCopyFrom(final CommonStmtCtx parent) {
+        requireNonNull(parent);
+        return copyPolicy == CopyPolicy.IGNORE;
     }
 
     /**

@@ -50,6 +50,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.ConfigHa
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Normal;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Structure;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Template;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -414,6 +415,11 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public abstract ReactorStmtCtx<A, D, E> previousCopyCtx();
+
+    @Override
+    public final boolean ignoreCopyFrom(final StmtContext<?, ?, ?> parent) {
+        return definition().support().ignoreCopyFrom(parent);
+    }
 
     @Override
     public final ReplicaStatementContext<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {

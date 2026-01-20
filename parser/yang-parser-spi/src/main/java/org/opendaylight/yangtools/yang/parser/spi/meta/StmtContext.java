@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -165,6 +166,16 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
      * @return Context of the previous copy of this statement, if this statement has been copied.
      */
     @Nullable StmtContext<A, D, E> previousCopyCtx();
+
+    /**
+     * {@return {@code true} if this statement should not be copied from the specified parent}
+     *
+     * @param parent the parent statement
+     * @see StatementSupport#ignoreCopyFrom(CommonStmtCtx)
+     * @since 16.2.0
+     */
+    @NonNullByDefault
+    boolean ignoreCopyFrom(StmtContext<?, ?, ?> parent);
 
     /**
      * Create a replica of this statement as a substatement of specified {@code parent}. The replica must not be

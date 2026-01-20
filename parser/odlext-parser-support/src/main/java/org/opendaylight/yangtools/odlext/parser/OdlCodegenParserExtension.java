@@ -34,6 +34,9 @@ public final class OdlCodegenParserExtension extends AbstractParserExtension {
 
     @Override
     public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
-        return StatementSupportBundle.builder().addSupport(new AugmentIdentifierStatementSupport(config)).build();
+        return StatementSupportBundle.builder()
+            .addSupport(AugmentIdentifierNamespace.BEHAVIOUR)
+            .addSupport(new AugmentIdentifierStatementSupport(config))
+            .build();
     }
 }
