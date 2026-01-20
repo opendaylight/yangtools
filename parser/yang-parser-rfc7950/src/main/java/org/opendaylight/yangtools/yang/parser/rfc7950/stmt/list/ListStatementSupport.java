@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
@@ -80,7 +81,7 @@ public final class ListStatementSupport
         .addOptional(YangStmtMapping.WHEN)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
-        .addAny(YangStmtMapping.ACTION)
+        .addAny(ActionStatement.DEFINITION)
         .addAny(YangStmtMapping.ANYDATA)
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.CHOICE)

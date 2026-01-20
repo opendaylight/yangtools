@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -44,7 +45,7 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .build();
 
     private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS =
-        ImmutableSet.of(YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
+        ImmutableSet.of(YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, ActionStatement.DEFINITION);
 
     public NotificationStatementRFC7950Support(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);
