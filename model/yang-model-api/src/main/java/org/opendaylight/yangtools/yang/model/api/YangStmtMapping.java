@@ -159,6 +159,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 /**
  * Mapping for both RFC6020 and RFC7950 statements.
  */
+// FIXME: eliminate this class
 @Beta
 public enum YangStmtMapping implements StatementDefinition {
     ACTION(ActionStatement.class, ActionEffectiveStatement.class, "action", "name"),

@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 
 /**
  * Definition / model of YANG {@link DeclaredStatement} and {@link EffectiveStatement}.
@@ -24,8 +25,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
  *
  * <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3">RFC6020, section 6.3</a>
  */
-// FIXME: sealed with a hidden record implementation
-public interface StatementDefinition extends Immutable {
+// FIXME: a hidden record implementation
+public sealed interface StatementDefinition extends Immutable permits AbstractStatementDefinition, YangStmtMapping {
     @NonNullByDefault
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition noArg(
             final QNameModule module, final String statementName, final Class<D> declaredTyoe,

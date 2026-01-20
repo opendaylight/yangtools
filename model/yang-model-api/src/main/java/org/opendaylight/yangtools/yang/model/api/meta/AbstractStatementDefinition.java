@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 @Beta
 @NonNullByDefault
-public abstract class AbstractStatementDefinition implements StatementDefinition {
+public abstract non-sealed class AbstractStatementDefinition implements StatementDefinition {
     private final QName statementName;
     private final @Nullable QName argumentName;
     private final boolean yinElement;
