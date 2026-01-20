@@ -67,6 +67,13 @@ public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>,
                 argumentYinElement, requireNonNull(argumentName));
     }
 
+    public static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+            DefaultStatementDefinition<A, D, E> of(final QName statementName, final Class<D> declaredRepresentation,
+                final Class<E> effectiveRepresentation, final @Nullable ArgumentDefinition arg) {
+        return arg == null ? of(statementName, declaredRepresentation, effectiveRepresentation)
+            : of(statementName, declaredRepresentation, effectiveRepresentation, arg.argumentName(), arg.isYinElement());
+    }
+
     @Override
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return declaredRepresentation;
