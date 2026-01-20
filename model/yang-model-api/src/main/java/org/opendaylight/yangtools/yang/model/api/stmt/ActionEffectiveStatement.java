@@ -10,19 +10,18 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code action} statement. The effective view always defines an {@code input} and an
  * {@code output} substatement, both of which are available through {@link #input()} and {@link #output()} methods.
  */
-public interface ActionEffectiveStatement extends SchemaTreeEffectiveStatement<ActionStatement>,
-        DataTreeAwareEffectiveStatement<QName, ActionStatement>,
-        TypedefAwareEffectiveStatement<QName, ActionStatement> {
+public interface ActionEffectiveStatement extends SchemaTreeEffectiveStatement<@NonNull ActionStatement>,
+        DataTreeAwareEffectiveStatement<QName, @NonNull ActionStatement>,
+        TypedefAwareEffectiveStatement<QName, @NonNull ActionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ACTION;
+        return ActionStatement.DEFINITION;
     }
 
     /**

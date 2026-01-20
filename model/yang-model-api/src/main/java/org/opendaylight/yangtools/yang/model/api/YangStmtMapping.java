@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
@@ -161,7 +159,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 // FIXME: eliminate this class
 @Beta
 public enum YangStmtMapping implements StatementDefinition {
-    ACTION(ActionStatement.class, ActionEffectiveStatement.class, "action", "name"),
     ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
     ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
     ARGUMENT(ArgumentStatement.class, ArgumentEffectiveStatement.class, "argument", "name"),

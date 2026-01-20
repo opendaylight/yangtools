@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.impl.dagger.DaggerYangParserComponent;
@@ -66,7 +67,7 @@ class YT1193Test {
         assertReference(foo, YangStmtMapping.CONTAINER, 13, 3);
 
         final var it = foo.declaredSubstatements().iterator();
-        assertReference(it.next(), YangStmtMapping.ACTION, 14, 5);
+        assertReference(it.next(), ActionStatement.DEFINITION, 14, 5);
         assertReference(it.next(), YangStmtMapping.PRESENCE, 22, 5);
         assertFalse(it.hasNext());
     }
