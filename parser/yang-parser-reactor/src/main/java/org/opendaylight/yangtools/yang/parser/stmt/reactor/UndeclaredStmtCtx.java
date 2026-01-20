@@ -162,7 +162,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     }
 
     @Override
-    public EffectiveConfig effectiveConfig() {
+    public Boolean effectiveConfig() {
         return effectiveConfig(parent);
     }
 
