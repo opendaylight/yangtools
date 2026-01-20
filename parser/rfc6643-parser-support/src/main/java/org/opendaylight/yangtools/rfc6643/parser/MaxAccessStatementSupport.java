@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
@@ -28,10 +27,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class MaxAccessStatementSupport
         extends AbstractStatementSupport<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS).build();
+            SubstatementValidator.builder(MaxAccessStatement.DEFINITION).build();
 
     public MaxAccessStatementSupport(final YangParserConfiguration config) {
-        super(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(MaxAccessStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

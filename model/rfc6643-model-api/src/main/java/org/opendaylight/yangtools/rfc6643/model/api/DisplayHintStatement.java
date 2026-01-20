@@ -7,14 +7,22 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@Beta
+@NonNullByDefault
 public interface DisplayHintStatement extends UnknownStatement<String> {
+    /**
+     * The definition of {@code smiv2:max-access} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
+        "display-hint", "format", DisplayHintStatement.class, DisplayHintEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT;
+        return DEFINITION;
     }
 }

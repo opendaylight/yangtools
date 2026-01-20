@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefDisplayHintStatement extends AbstractRefStatement<String, DisplayHintStatement>
         implements DisplayHintStatement {
     RefDisplayHintStatement(final DisplayHintStatement delegate, final DeclarationReference ref) {

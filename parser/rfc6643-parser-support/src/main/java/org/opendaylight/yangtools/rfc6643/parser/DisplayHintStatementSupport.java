@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
-import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,14 +20,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
+@NonNullByDefault
 public final class DisplayHintStatementSupport
         extends AbstractStringStatementSupport<DisplayHintStatement, DisplayHintEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT).build();
+            SubstatementValidator.builder(DisplayHintStatement.DEFINITION).build();
 
     public DisplayHintStatementSupport(final YangParserConfiguration config) {
-        super(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(DisplayHintStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

@@ -11,13 +11,15 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
+@NonNullByDefault
 final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> implements MaxAccessStatement {
-    private final @NonNull Object substatements;
+    private final Object substatements;
     private final MaxAccess argument;
 
     MaxAccessStatementImpl(final MaxAccess argument,
@@ -32,7 +34,7 @@ final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> 
     }
 
     @Override
-    public String rawArgument() {
+    public @NonNull String rawArgument() {
         return argument.stringLiteral();
     }
 

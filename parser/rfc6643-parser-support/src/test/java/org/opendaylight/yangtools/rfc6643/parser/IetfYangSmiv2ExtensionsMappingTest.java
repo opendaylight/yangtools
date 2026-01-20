@@ -12,17 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasEffectiveStatement;
-import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
+import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 
 class IetfYangSmiv2ExtensionsMappingTest {
     @Test
     void testGetEffectiveRepresentationClass() {
         assertEquals(AliasEffectiveStatement.class,
-            IetfYangSmiv2ExtensionsMapping.ALIAS.getEffectiveRepresentationClass());
+            AliasStatement.DEFINITION.getEffectiveRepresentationClass());
     }
 
     @Test
     void testIsArgumentYinElement() {
-        assertFalse(IetfYangSmiv2ExtensionsMapping.ALIAS.getArgumentDefinition().isYinElement());
+        assertFalse(AliasStatement.DEFINITION.getArgumentDefinition().isYinElement());
     }
 }

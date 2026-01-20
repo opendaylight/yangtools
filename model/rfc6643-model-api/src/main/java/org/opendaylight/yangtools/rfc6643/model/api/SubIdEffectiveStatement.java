@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@Beta
+@NonNullByDefault
 public interface SubIdEffectiveStatement extends UnknownEffectiveStatement<Uint32, SubIdStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return IetfYangSmiv2ExtensionsMapping.SUB_ID;
+        return SubIdStatement.DEFINITION;
     }
 }

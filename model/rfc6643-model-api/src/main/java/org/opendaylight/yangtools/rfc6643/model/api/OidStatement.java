@@ -7,21 +7,27 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@Beta
+@NonNullByDefault
 public interface OidStatement extends UnknownStatement<ObjectIdentifier> {
+    /**
+     * The definition of {@code smiv2:oid} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.attributeArg(IetfYangSmiv2Constants.RFC6643_MODULE,
+        "oid", "value", OidStatement.class, OidEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return IetfYangSmiv2ExtensionsMapping.OBJECT_ID;
+        return DEFINITION;
     }
 
     default ObjectIdentifier getOid() {
-        return verifyNotNull(argument());
+        return argument();
     }
 }
 

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
@@ -16,11 +17,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
+@NonNullByDefault
 final class DisplayHintEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<String, DisplayHintStatement>
         implements DisplayHintEffectiveStatement, DisplayHintSchemaNode {
     DisplayHintEffectiveStatementImpl(final Current<String, DisplayHintStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
     }
 
     @Override

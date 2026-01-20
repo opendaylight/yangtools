@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
+@NonNullByDefault
 final class OidStatementImpl extends WithSubstatements<ObjectIdentifier> implements OidStatement {
     OidStatementImpl(final ObjectIdentifier argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {

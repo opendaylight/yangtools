@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefDefValStatement extends AbstractRefStatement<String, DefValStatement> implements DefValStatement {
     RefDefValStatement(final DefValStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

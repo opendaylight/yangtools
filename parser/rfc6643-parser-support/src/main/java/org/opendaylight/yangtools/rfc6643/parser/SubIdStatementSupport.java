@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -27,10 +26,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class SubIdStatementSupport
         extends AbstractStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.SUB_ID).build();
+            SubstatementValidator.builder(SubIdStatement.DEFINITION).build();
 
     public SubIdStatementSupport(final YangParserConfiguration config) {
-        super(IetfYangSmiv2ExtensionsMapping.SUB_ID, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(SubIdStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

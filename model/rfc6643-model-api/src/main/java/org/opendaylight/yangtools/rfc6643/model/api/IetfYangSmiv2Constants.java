@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc6643.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
-@Beta
+@NonNullByDefault
 public final class IetfYangSmiv2Constants {
     public static final Unqualified MODULE_NAME = Unqualified.of("ietf-yang-smiv2").intern();
     public static final XMLNamespace MODULE_NAMESPACE =

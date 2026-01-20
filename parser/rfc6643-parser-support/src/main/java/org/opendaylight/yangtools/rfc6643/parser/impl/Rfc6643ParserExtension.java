@@ -9,7 +9,13 @@ package org.opendaylight.yangtools.rfc6643.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
+import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
+import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
+import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
+import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
+import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
+import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
+import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.rfc6643.parser.AliasStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.DefValStatementSupport;
 import org.opendaylight.yangtools.rfc6643.parser.DisplayHintStatementSupport;
@@ -36,7 +42,14 @@ public final class Rfc6643ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc6643ParserExtension() {
-        super(IetfYangSmiv2ExtensionsMapping.values());
+        super(
+            AliasStatement.DEFINITION,
+            DefValStatement.DEFINITION,
+            DisplayHintStatement.DEFINITION,
+            ImpliedStatement.DEFINITION,
+            MaxAccessStatement.DEFINITION,
+            OidStatement.DEFINITION,
+            SubIdStatement.DEFINITION);
     }
 
     @Override

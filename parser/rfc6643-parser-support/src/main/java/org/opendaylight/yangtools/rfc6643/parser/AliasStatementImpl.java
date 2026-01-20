@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
+@NonNullByDefault
 final class AliasStatementImpl extends WithSubstatements implements AliasStatement {
     AliasStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, substatements);
