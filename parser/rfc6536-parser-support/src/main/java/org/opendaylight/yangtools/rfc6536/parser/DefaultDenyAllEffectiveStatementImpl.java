@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6536.parser;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
@@ -17,12 +18,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
+@NonNullByDefault
 final class DefaultDenyAllEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<Empty, DefaultDenyAllStatement>
         implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
     DefaultDenyAllEffectiveStatementImpl(final Current<Empty, DefaultDenyAllStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
     }
 
     @Override

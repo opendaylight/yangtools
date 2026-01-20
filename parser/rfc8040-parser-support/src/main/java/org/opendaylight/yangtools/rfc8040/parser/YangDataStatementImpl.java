@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc8040.parser;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.
  * Declared statement representation of 'yang-data' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>.
  */
+@NonNullByDefault
 final class YangDataStatementImpl extends WithSubstatements<YangDataName> implements YangDataStatement {
     YangDataStatementImpl(final YangDataName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {

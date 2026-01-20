@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc7952.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc7952.model.api.MetadataStatements;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
@@ -30,7 +30,7 @@ public final class Rfc7952ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc7952ParserExtension() {
-        super(MetadataStatements.ANNOTATION);
+        super(AnnotationStatement.DEFINITION);
     }
 
     @Override

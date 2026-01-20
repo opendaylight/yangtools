@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective statement corresponding to config's "openconfig-hashed-value" (new name) or "openconfig-encrypted-value"
  * (old name).
- *
- * @author Robert Varga
  */
+@NonNullByDefault
 public interface OpenConfigHashedValueEffectiveStatement
-    extends UnknownEffectiveStatement<Empty, OpenConfigHashedValueStatement> {
-
+        extends UnknownEffectiveStatement<Empty, OpenConfigHashedValueStatement> {
+    // Nothing else
 }

@@ -9,7 +9,12 @@ package org.opendaylight.yangtools.odlext.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
+import org.opendaylight.yangtools.odlext.model.api.ContextInstanceStatement;
+import org.opendaylight.yangtools.odlext.model.api.ContextReferenceStatement;
+import org.opendaylight.yangtools.odlext.model.api.InstanceTargetStatement;
+import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierStatement;
+import org.opendaylight.yangtools.odlext.model.api.MountStatement;
+import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceStatement;
 import org.opendaylight.yangtools.odlext.parser.ContextInstanceStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.ContextReferenceStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
@@ -35,7 +40,13 @@ public final class YangExtParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public YangExtParserExtension() {
-        super(OpenDaylightExtensionsStatements.values());
+        super(
+            ContextInstanceStatement.DEFINITION,
+            ContextReferenceStatement.DEFINITION,
+            InstanceTargetStatement.DEFINITION,
+            LegacyAugmentIdentifierStatement.DEFINITION,
+            MountStatement.DEFINITION,
+            RpcContextReferenceStatement.DEFINITION);
     }
 
     @Override

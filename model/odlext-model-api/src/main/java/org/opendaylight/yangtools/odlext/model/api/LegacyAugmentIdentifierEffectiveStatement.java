@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-@Beta
+@NonNullByDefault
 public interface LegacyAugmentIdentifierEffectiveStatement
         extends UnknownEffectiveStatement<Unqualified, LegacyAugmentIdentifierStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER;
+        return LegacyAugmentIdentifierStatement.DEFINITION;
     }
 }

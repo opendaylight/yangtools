@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc8040.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatements;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
@@ -30,7 +30,7 @@ public final class Rfc8040ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc8040ParserExtension() {
-        super(YangDataStatements.YANG_DATA);
+        super(YangDataStatement.DEFINITION);
     }
 
     @Override

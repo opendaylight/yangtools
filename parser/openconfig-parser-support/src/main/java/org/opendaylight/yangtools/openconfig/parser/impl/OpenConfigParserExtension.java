@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.openconfig.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.OpenConfigVersionSupport;
@@ -32,8 +33,10 @@ public final class OpenConfigParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public OpenConfigParserExtension() {
-        super(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE, OpenConfigStatements.OPENCONFIG_HASHED_VALUE,
-            OpenConfigStatements.OPENCONFIG_VERSION);
+        super(
+            OpenConfigHashedValueStatement.ENCRYPTED_DEFINITION,
+            OpenConfigHashedValueStatement.HASHED_DEFINITION,
+            OpenConfigVersionStatement.DEFINITION);
     }
 
     @Override

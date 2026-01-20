@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.InstanceTargetEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.InstanceTargetStatement;
-import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -25,11 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class InstanceTargetStatementSupport
         extends AbstractStringStatementSupport<InstanceTargetStatement, InstanceTargetEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenDaylightExtensionsStatements.INSTANCE_TARGET).build();
+        SubstatementValidator.builder(InstanceTargetStatement.DEFINITION).build();
 
     public InstanceTargetStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.INSTANCE_TARGET, StatementPolicy.contextIndependent(), config,
-            VALIDATOR);
+        super(InstanceTargetStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

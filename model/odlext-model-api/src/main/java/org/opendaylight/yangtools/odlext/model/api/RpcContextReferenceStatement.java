@@ -7,14 +7,23 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-@Beta
+@NonNullByDefault
 public interface RpcContextReferenceStatement extends UnknownStatement<String> {
+    /**
+     * The definition of {@code yang-ext:rpc-context-reference} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.attributeArg(OpenDaylightExtensionsConstants.ORIGINAL_MODULE,
+        "rpc-context-reference", "context-type", RpcContextReferenceStatement.class,
+        RpcContextReferenceEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE;
+        return DEFINITION;
     }
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.odlext.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 /**
  * Constants associated with OpenDaylight extension in yang-ext.yang.
  */
+@NonNullByDefault
 public final class OpenDaylightExtensionsConstants {
     public static final Unqualified MODULE_NAME = Unqualified.of("yang-ext").intern();
     public static final XMLNamespace MODULE_NAMESPACE =

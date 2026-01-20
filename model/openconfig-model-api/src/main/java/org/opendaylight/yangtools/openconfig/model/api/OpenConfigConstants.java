@@ -53,7 +53,7 @@ public final class OpenConfigConstants {
             .intern();
 
     /**
-     * Runtime identity of model which exposed encrypted-value.
+     * Runtime identity of model which exposed hashed-value.
      */
     public static final QNameModule HASHED_VALUE_MODULE = QNameModule.of(MODULE_NAMESPACE, HASHED_VALUE_REVISION)
             .intern();
