@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -18,8 +19,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * information. The argument is the name of the action.
  */
 public non-sealed interface ActionStatement extends OperationDeclaredStatement {
+    /**
+     * The definition of {@code action} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ActionStatement.class, ActionEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "action", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ACTION;
+        return DEFINITION;
     }
 }
