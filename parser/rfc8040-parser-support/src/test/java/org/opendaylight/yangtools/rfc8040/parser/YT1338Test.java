@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 class YT1338Test extends AbstractYangDataTest {
     @Test
     void testAddedLeaves() throws Exception {
-        final var restconf = assertInstanceOf(ContainerEffectiveStatement.class, REACTOR.newBuild()
-            .addSources(IETF_RESTCONF_MODULE, sourceForYangText("""
+        final var restconf = assertInstanceOf(ContainerEffectiveStatement.class, newBuild()
+            .addSource(sourceForYangText("""
                 module yt1338 {
                   namespace yt1338;
                   prefix yt1338;
