@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -20,18 +19,17 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Abstract utility class to handle StatementArgumentDefinition aspect of {@link StatementDefinition}. Most users should
  * use this class or {@link DefaultStatementDefinition}.
  */
-@Beta
 @NonNullByDefault
-public abstract class AbstractStatementDefinition implements StatementDefinition {
+abstract class AbstractStatementDefinition implements StatementDefinition {
     private final QName statementName;
     private final @Nullable QName argumentName;
     private final boolean yinElement;
 
-    protected AbstractStatementDefinition(final QName statementName) {
+    AbstractStatementDefinition(final QName statementName) {
         this(statementName, false, null);
     }
 
-    protected AbstractStatementDefinition(final QName statementName, final boolean yinElement,
+    AbstractStatementDefinition(final QName statementName, final boolean yinElement,
         final @Nullable QName argumentName) {
         this.statementName = requireNonNull(statementName);
         this.yinElement = yinElement;

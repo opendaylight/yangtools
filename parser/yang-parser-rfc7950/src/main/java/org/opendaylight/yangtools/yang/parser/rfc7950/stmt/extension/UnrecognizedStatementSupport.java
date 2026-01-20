@@ -51,16 +51,9 @@ final class UnrecognizedStatementSupport
          * statements.
          */
         // FIXME: remove this bit?
-        final QName statementName = QName.create(statementName(), childDef.statementName().getLocalName());
-
-        final StatementDefinition def;
-        final var argDef = childDef.argumentDefinition();
-        if (argDef != null) {
-            def = new ModelDefinedStatementDefinition(statementName, argDef.argumentName(), argDef.isYinElement());
-        } else {
-            def = new ModelDefinedStatementDefinition(statementName);
-        }
-        return new UnrecognizedStatementSupport(def, config);
+        final var statementName = QName.create(statementName(), childDef.statementName().getLocalName());
+        return new UnrecognizedStatementSupport(StatementDefinition.of(statementName, UnrecognizedStatement.class,
+            UnrecognizedEffectiveStatement.class, childDef.argumentDefinition()), config);
     }
 
     @Override
