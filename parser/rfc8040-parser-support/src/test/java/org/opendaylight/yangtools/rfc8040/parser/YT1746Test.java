@@ -23,7 +23,7 @@ class YT1746Test extends AbstractYangDataTest {
     @Test
     void featureIndependent() throws Exception {
         final var module = QNameModule.of("yt1746");
-        final var bar = REACTOR.newBuild().addSources(IETF_RESTCONF_MODULE, sourceForYangText("""
+        final var bar = newBuild().addSource(sourceForYangText("""
             module yt1746 {
               namespace yt1746;
               prefix yt1746;
