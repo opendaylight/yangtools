@@ -7,23 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import com.google.common.collect.ImmutableSet;
-import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawArgument;
 
-abstract class AbstractKeyStatement extends WithRawArgument<Set<QName>> implements KeyStatement {
-    final @NonNull Object argument;
+@NonNullByDefault
+abstract class AbstractKeyStatement extends WithRawArgument<KeyArgument> implements KeyStatement {
+    private final Object argument;
 
-    AbstractKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument) {
+    AbstractKeyStatement(final String rawArgument, final KeyArgument argument) {
         super(rawArgument);
-        this.argument = maskSet(ImmutableSet.copyOf(argument));
+        this.argument = EmptyKeyStatement.maskArgument(argument);
     }
 
     @Override
-    public final Set<QName> argument() {
-        return unmaskSet(argument, QName.class);
+    public final KeyArgument argument() {
+        return EmptyKeyStatement.unmaskArgument(argument);
     }
 }
