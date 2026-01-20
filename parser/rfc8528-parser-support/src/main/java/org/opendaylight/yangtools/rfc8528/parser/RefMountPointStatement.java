@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc8528.parser;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
+@NonNullByDefault
 final class RefMountPointStatement extends AbstractRefStatement<MountPointLabel, MountPointStatement>
         implements MountPointStatement {
     RefMountPointStatement(final MountPointStatement delegate, final DeclarationReference ref) {

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8528.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
@@ -16,10 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * Effective statement representation of 'mount-point' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8528">RFC8528</a>.
  */
-@Beta
+@NonNullByDefault
 public interface MountPointEffectiveStatement extends UnknownEffectiveStatement<MountPointLabel, MountPointStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return SchemaMountStatements.MOUNT_POINT;
+        return MountPointStatement.DEFINITION;
     }
 }

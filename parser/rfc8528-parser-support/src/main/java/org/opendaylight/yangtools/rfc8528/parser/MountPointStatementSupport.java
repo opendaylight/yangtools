@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc8528.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
-import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class MountPointStatementSupport
         extends AbstractStatementSupport<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(SchemaMountStatements.MOUNT_POINT)
+        SubstatementValidator.builder(MountPointStatement.DEFINITION)
             .addOptional(YangStmtMapping.CONFIG)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
@@ -37,7 +36,7 @@ public final class MountPointStatementSupport
             .build();
 
     public MountPointStatementSupport(final YangParserConfiguration config) {
-        super(SchemaMountStatements.MOUNT_POINT, StatementPolicy.copyDeclared((copy, current, substatements) ->
+        super(MountPointStatement.DEFINITION, StatementPolicy.copyDeclared((copy, current, substatements) ->
             copy.getArgument().equals(current.getArgument())
             // Implied by UnknownSchemaNode
             && copy.history().isAugmenting() == current.history().isAugmenting()

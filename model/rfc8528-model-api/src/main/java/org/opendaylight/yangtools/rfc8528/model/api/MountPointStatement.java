@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc8528.model.api;
 
-import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatementAwareDeclaredStatement;
@@ -18,16 +19,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * Declared statement representation of 'mount-point' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8528">RFC8528</a>.
  */
-@Beta
+@NonNullByDefault
 public interface MountPointStatement extends UnknownStatement<MountPointLabel>, WithStatus<MountPointLabel>,
         ConfigStatementAwareDeclaredStatement<MountPointLabel> {
+    /**
+     * The definition of {@code nc:get-filter-element-attributes} statement.
+     *
+     * @since 15.0.0
+     */
+    StatementDefinition DEFINITION = StatementDefinition.attributeArg(SchemaMountConstants.RFC8528_MODULE,
+        "mount-point", "label", MountPointStatement.class, MountPointEffectiveStatement.class);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return SchemaMountStatements.MOUNT_POINT;
+        return DEFINITION;
     }
 
     @Override
-    default String rawArgument() {
+    default @NonNull String rawArgument() {
         return argument().qname().getLocalName();
     }
 }

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc8528.parser.impl;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
@@ -30,7 +30,7 @@ public final class Rfc8528ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc8528ParserExtension() {
-        super(SchemaMountStatements.MOUNT_POINT);
+        super(MountPointStatement.DEFINITION);
     }
 
     @Override
