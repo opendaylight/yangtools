@@ -23,7 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @param <D> Declared statement type
  */
-public interface DataTreeEffectiveStatement<D extends DeclaredStatement<QName>>
-    extends SchemaTreeEffectiveStatement<D> {
-
+// FIXME: rename to EffectiveSchemaTreeStatement to prevent confusion with a hypothetical 'data-tree' extension
+public sealed interface DataTreeEffectiveStatement<D extends DeclaredStatement<QName>>
+    extends SchemaTreeEffectiveStatement<D>
+    permits EffectiveOperationBodyStatement, AnydataEffectiveStatement, AnyxmlEffectiveStatement,
+            ContainerEffectiveStatement, LeafEffectiveStatement, LeafListEffectiveStatement, ListEffectiveStatement {
+    // Nothing else
 }
