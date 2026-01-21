@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1e919289_01016a0c",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/YangParserNegativeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-21T20:48:25Z",
+      "side": 1,
+      "message": "superfluous",
+      "range": {
+        "startLine": 102,
+        "startChar": 89,
+        "endLine": 102,
+        "endChar": 91
+      },
+      "revId": "bf8452f981248f1d5bdd8786d88a5e073e47b2ad",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
