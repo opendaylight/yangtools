@@ -20,9 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -48,11 +50,11 @@ public final class LeafStatementSupport
         SubstatementValidator.builder(YangStmtMapping.LEAF)
             .addOptional(YangStmtMapping.CONFIG)
             .addOptional(YangStmtMapping.DEFAULT)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(YangStmtMapping.MANDATORY)
             .addAny(YangStmtMapping.MUST)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.UNITS)

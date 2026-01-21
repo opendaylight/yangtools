@@ -7,16 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code reference} statement.
  */
-public interface ReferenceStatement extends DeclaredStatement<String> {
+public interface ReferenceStatement extends DeclaredHumanTextStatement {
+    /**
+     * The definition of {@code reference} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ReferenceStatement.class, ReferenceEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "reference", "text", true);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.REFERENCE;
+        return DEFINITION;
     }
 }

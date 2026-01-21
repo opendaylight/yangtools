@@ -28,10 +28,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
@@ -53,9 +57,9 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.AUGMENT)
         .addAny(YangStmtMapping.CHOICE)
-        .addOptional(YangStmtMapping.CONTACT)
+        .addOptional(ContactStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.DEVIATION)
         .addAny(YangStmtMapping.EXTENSION)
         .addAny(YangStmtMapping.FEATURE)
@@ -68,9 +72,9 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.LIST)
         .addMandatory(YangStmtMapping.NAMESPACE)
         .addAny(YangStmtMapping.NOTIFICATION)
-        .addOptional(YangStmtMapping.ORGANIZATION)
+        .addOptional(OrganizationStatement.DEFINITION)
         .addMandatory(YangStmtMapping.PREFIX)
-        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(ReferenceStatement.DEFINITION)
         .addAny(YangStmtMapping.REVISION)
         .addAny(YangStmtMapping.RPC)
         .addAny(YangStmtMapping.TYPEDEF)
@@ -82,9 +86,9 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.AUGMENT)
         .addAny(YangStmtMapping.CHOICE)
-        .addOptional(YangStmtMapping.CONTACT)
+        .addOptional(ContactStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.DEVIATION)
         .addAny(YangStmtMapping.EXTENSION)
         .addAny(YangStmtMapping.FEATURE)
@@ -97,9 +101,9 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.LIST)
         .addMandatory(YangStmtMapping.NAMESPACE)
         .addAny(YangStmtMapping.NOTIFICATION)
-        .addOptional(YangStmtMapping.ORGANIZATION)
+        .addOptional(OrganizationStatement.DEFINITION)
         .addMandatory(YangStmtMapping.PREFIX)
-        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(ReferenceStatement.DEFINITION)
         .addAny(YangStmtMapping.REVISION)
         .addAny(YangStmtMapping.RPC)
         .addAny(YangStmtMapping.TYPEDEF)

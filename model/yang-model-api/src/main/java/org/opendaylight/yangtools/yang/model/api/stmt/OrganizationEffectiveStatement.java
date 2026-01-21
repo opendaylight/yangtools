@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code organization} statement.
  */
-public interface OrganizationEffectiveStatement extends EffectiveStatement<String, OrganizationStatement> {
+public interface OrganizationEffectiveStatement extends EffectiveHumanTextStatement<@NonNull OrganizationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ORGANIZATION;
+        return OrganizationStatement.DEFINITION;
     }
 }

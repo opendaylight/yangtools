@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code contact} statement.
  */
-public interface ContactEffectiveStatement extends EffectiveStatement<String, ContactStatement> {
+public interface ContactEffectiveStatement extends EffectiveHumanTextStatement<@NonNull ContactStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.CONTACT;
+    default StatementDefinition statementDefinition() {
+        return ContactStatement.DEFINITION;
     }
 }

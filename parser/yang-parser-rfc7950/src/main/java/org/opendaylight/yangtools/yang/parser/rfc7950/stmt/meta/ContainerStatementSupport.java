@@ -21,7 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -46,7 +48,7 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addAny(YangStmtMapping.LEAF)
@@ -54,7 +56,7 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.PRESENCE)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
@@ -69,7 +71,7 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addAny(YangStmtMapping.LEAF)
@@ -78,7 +80,7 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(YangStmtMapping.PRESENCE)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
