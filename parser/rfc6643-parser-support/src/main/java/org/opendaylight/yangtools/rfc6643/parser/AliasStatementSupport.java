@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -25,13 +27,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 @Beta
 public final class AliasStatementSupport
         extends AbstractStringStatementSupport<AliasStatement, AliasEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(AliasStatement.DEFINITION)
-                .add(YangStmtMapping.DESCRIPTION, 0, 1)
-                .add(YangStmtMapping.REFERENCE, 0, 1)
-                .add(YangStmtMapping.STATUS, 0, 1)
-                .add(OidStatement.DEFINITION, 0, 1)
-                .build();
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AliasStatement.DEFINITION)
+        .addOptional(DescriptionStatement.DEFINITION)
+        .addOptional(ReferenceStatement.DEFINITION)
+        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(OidStatement.DEFINITION)
+        .build();
 
     public AliasStatementSupport(final YangParserConfiguration config) {
         super(AliasStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);

@@ -28,7 +28,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -57,13 +59,13 @@ public final class ChoiceStatementSupport
         .addOptional(YangStmtMapping.CONFIG)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(YangStmtMapping.DEFAULT)
-        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.IF_FEATURE)
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
         .addOptional(YangStmtMapping.MANDATORY)
-        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
@@ -78,13 +80,13 @@ public final class ChoiceStatementSupport
         .addOptional(YangStmtMapping.CONFIG)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(YangStmtMapping.DEFAULT)
-        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.IF_FEATURE)
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
         .addOptional(YangStmtMapping.MANDATORY)
-        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
