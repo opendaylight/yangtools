@@ -282,4 +282,9 @@ public enum YangStmtMapping implements StatementDefinition {
     public Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation() {
         return effectiveRepresentation;
     }
+
+    @Override
+    public String toString() {
+        return StatementDefinition.toString(this);
+    }
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -37,11 +38,9 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testInvalidRefine() {
-        assertSourceException(
-            containsString("Error in module 'test4' in the refine of uses "
-            + "'Descendant{qnames=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
-            + " the target 'LEAF_LIST'."),
-            "/negative-scenario/testfile4.yang");
+        assertThat(assertInferenceException("/negative-scenario/testfile4.yang").getMessage()).contains("""
+            unsupported statement presence in target leaf-list while refining uses \
+            Descendant{qnames=[(urn:simple.container.demo)node]} [at """);
     }
 
     @Test
@@ -58,25 +57,25 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testDuplicateContainer() {
-        assertSourceException(startsWith("Error in module 'container': cannot add "
-            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
-            + "declared"),
+        assertSourceException(startsWith("""
+            Error in module 'container': cannot add '(urn:simple.container.demo)foo'. Node name collision: \
+            '(urn:simple.container.demo)foo' already declared"""),
             "/negative-scenario/duplicity/container.yang");
     }
 
     @Test
     void testDuplicateContainerList() {
-        assertSourceException(startsWith("Error in module 'container-list': cannot add "
-            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
-            + "declared"),
+        assertSourceException(startsWith("""
+            Error in module 'container-list': cannot add '(urn:simple.container.demo)foo'. Node name collision: \
+            '(urn:simple.container.demo)foo' already declared"""),
             "/negative-scenario/duplicity/container-list.yang");
     }
 
     @Test
     void testDuplicateContainerLeaf() {
-        assertSourceException(startsWith("Error in module 'container-leaf': cannot add "
-            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
-            + "declared"),
+        assertSourceException(startsWith("""
+            Error in module 'container-leaf': cannot add '(urn:simple.container.demo)foo'. Node name collision: \
+            '(urn:simple.container.demo)foo' already declared"""),
             "/negative-scenario/duplicity/container-leaf.yang");
     }
 
@@ -97,9 +96,10 @@ class YangParserNegativeTest extends AbstractYangTest {
     @Test
     void testDuplicityInAugmentTarget2() {
         assertSourceException(allOf(
-            startsWith("Error in module 'augment0': cannot add "
-                + "'(urn:simple.augment2.demo?revision=2014-06-02)delta'. Node name collision: "
-                + "'(urn:simple.augment2.demo?revision=2014-06-02)delta' already declared at "),
+            startsWith("""
+                Error in module 'augment0': cannot add \
+                '(urn:simple.augment2.demo?revision=2014-06-02)delta'. Node name collision: \
+                '(urn:simple.augment2.demo?revision=2014-06-02)delta' already declared at\s"""),
             endsWith("duplicity/augment2.yang:17:9]")),
             "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang");
     }
