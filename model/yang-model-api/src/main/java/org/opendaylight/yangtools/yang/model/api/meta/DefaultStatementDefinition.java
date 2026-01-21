@@ -23,12 +23,12 @@ import org.opendaylight.yangtools.yang.common.QName;
  * @param <E> Effective statement representation
  */
 record DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>(
-        @NonNull QName statementName,
+        @NonNull QName qualifiedName,
         @NonNull Class<D> declaredRepresentation,
         @NonNull Class<E> effectiveRepresentation,
         @Nullable ArgumentDefinition argumentDefinition) implements StatementDefinition {
     DefaultStatementDefinition {
-        requireNonNull(statementName);
+        requireNonNull(qualifiedName);
         if (!declaredRepresentation.isInterface()) {
             throw new IllegalArgumentException(
                 "Declared representation " + declaredRepresentation + " is not an interface");
@@ -51,7 +51,7 @@ record DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends E
 
     @Override
     public String toString() {
-        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", statementName);
+        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", qualifiedName);
         final var argDef = argumentDefinition;
         if (argDef != null) {
             helper.add("argument", argDef.argumentName()).add("yin-element", argDef.isYinElement());

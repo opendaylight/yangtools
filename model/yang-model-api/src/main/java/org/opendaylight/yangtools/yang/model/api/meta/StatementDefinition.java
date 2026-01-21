@@ -111,10 +111,20 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
             ArgumentDefinition.of(QName.create(module, argumentName).intern(), yinElement));
     }
 
+    default @NonNull String simpleName() {
+        return statementName().getLocalName();
+    }
+
+    // FIXME: define proper semantics
+    @NonNull QName qualifiedName();
+
     /**
      * {@return name of the statement}
      */
-    @NonNull QName statementName();
+    // FIXME: deprecate?
+    default @NonNull QName statementName() {
+        return qualifiedName();
+    }
 
     /**
      * Returns name of the statement.

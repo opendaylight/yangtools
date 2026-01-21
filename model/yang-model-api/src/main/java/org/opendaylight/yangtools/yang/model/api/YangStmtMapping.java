@@ -269,7 +269,7 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
-    public QName statementName() {
+    public QName qualifiedName() {
         return name;
     }
 
