@@ -28,8 +28,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
@@ -56,12 +58,12 @@ public final class ModuleStatementSupport
         extends AbstractUnqualifiedStatementSupport<ModuleStatement, ModuleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
         .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.AUGMENT)
+        .addAny(AugmentStatement.DEFINITION)
         .addAny(YangStmtMapping.CHOICE)
         .addOptional(ContactStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(YangStmtMapping.DEVIATION)
+        .addAny(DeviationStatement.DEFINITION)
         .addAny(YangStmtMapping.EXTENSION)
         .addAny(YangStmtMapping.FEATURE)
         .addAny(YangStmtMapping.GROUPING)
@@ -85,12 +87,12 @@ public final class ModuleStatementSupport
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
         .addAny(YangStmtMapping.ANYDATA)
         .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.AUGMENT)
+        .addAny(AugmentStatement.DEFINITION)
         .addAny(YangStmtMapping.CHOICE)
         .addOptional(ContactStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(YangStmtMapping.DEVIATION)
+        .addAny(DeviationStatement.DEFINITION)
         .addAny(YangStmtMapping.EXTENSION)
         .addAny(YangStmtMapping.FEATURE)
         .addAny(YangStmtMapping.GROUPING)

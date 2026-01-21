@@ -18,8 +18,8 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -54,11 +54,11 @@ class DeviationStmtTest {
                 case "test-leaf" -> {
                     assertEquals(Optional.of("test-leaf is not supported"), deviation.getDescription());
                     assertEquals(1, deviates.size());
-                    assertEquals(DeviateKind.NOT_SUPPORTED, deviates.iterator().next().getDeviateType());
+                    assertEquals(DeviateArgument.NOT_SUPPORTED, deviates.iterator().next().getDeviateType());
                 }
                 case "test-leaf-2" -> {
                     assertEquals(1, deviates.size());
-                    assertEquals(DeviateKind.ADD, deviates.iterator().next().getDeviateType());
+                    assertEquals(DeviateArgument.ADD, deviates.iterator().next().getDeviateType());
                     assertEquals("added-def-val", deviates.iterator().next().getDeviatedDefault());
                     assertFalse(deviates.iterator().next().getDeviatedConfig());
                     assertTrue(deviates.iterator().next().getDeviatedMandatory());
@@ -83,7 +83,7 @@ class DeviationStmtTest {
                 }
                 default -> {
                     assertEquals(1, deviation.getDeviates().size());
-                    assertEquals(DeviateKind.DELETE, deviates.iterator().next().getDeviateType());
+                    assertEquals(DeviateArgument.DELETE, deviates.iterator().next().getDeviateType());
                     assertEquals(2, deviates.iterator().next().getDeviatedUniques().size());
                 }
             }
@@ -112,10 +112,10 @@ class DeviationStmtTest {
             }
 
             if ("bar-container-2".equals(targetLocalName)) {
-                DeviateKind deviateKind = deviates.iterator().next().getDeviateType();
-                if (deviateKind.equals(DeviateKind.DELETE)) {
+                DeviateArgument deviateKind = deviates.iterator().next().getDeviateType();
+                if (deviateKind.equals(DeviateArgument.DELETE)) {
                     deviation2 = deviation;
-                } else if (deviateKind.equals(DeviateKind.ADD)) {
+                } else if (deviateKind.equals(DeviateArgument.ADD)) {
                     deviation3 = deviation;
                 }
             }

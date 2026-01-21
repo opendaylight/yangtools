@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -19,8 +20,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
  * Class providing necessary support for processing YANG 1.1 Augment statement.
  */
 public final class AugmentStatementRFC7950Support extends AbstractAugmentStatementSupport {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
-            .builder(YangStmtMapping.AUGMENT)
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(AugmentStatement.DEFINITION)
             .addAny(ActionStatement.DEFINITION)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
@@ -45,6 +46,6 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
 
     @Override
     boolean allowsMandatory(final StmtContext<?, ?, ?> ctx) {
-        return ctx.publicDefinition() == YangStmtMapping.AUGMENT && hasWhenSubstatement(ctx);
+        return ctx.producesDeclared(AugmentStatement.class) && hasWhenSubstatement(ctx);
     }
 }

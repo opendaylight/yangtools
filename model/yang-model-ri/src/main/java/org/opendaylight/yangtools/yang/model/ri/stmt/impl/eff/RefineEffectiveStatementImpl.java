@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
@@ -15,9 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-public final class RefineEffectiveStatementImpl extends WithSubstatements<Descendant, RefineStatement>
-        implements RefineEffectiveStatement, DocumentedNodeMixin<Descendant, RefineStatement> {
-    public RefineEffectiveStatementImpl(final RefineStatement declared,
+public final class RefineEffectiveStatementImpl extends WithSubstatements<Descendant, @NonNull RefineStatement>
+        implements RefineEffectiveStatement, DocumentedNodeMixin<Descendant, @NonNull RefineStatement> {
+    public RefineEffectiveStatementImpl(final @NonNull RefineStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }
