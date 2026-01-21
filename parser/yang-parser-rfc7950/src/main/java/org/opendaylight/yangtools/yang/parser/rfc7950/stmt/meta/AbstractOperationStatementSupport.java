@@ -14,10 +14,10 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeclaredOperationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EffectiveOperationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OperationDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
@@ -33,8 +33,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-abstract sealed class AbstractOperationStatementSupport<D extends OperationDeclaredStatement,
-        E extends SchemaTreeEffectiveStatement<D>>
+abstract sealed class AbstractOperationStatementSupport<
+        D extends DeclaredOperationStatement, E extends EffectiveOperationStatement<D>>
         extends AbstractSchemaTreeStatementSupport<D, E>
         permits ActionStatementSupport, RpcStatementSupport {
     AbstractOperationStatementSupport(final StatementDefinition publicDefinition,

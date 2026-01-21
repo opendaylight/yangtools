@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * Common interface for action and rpc statements.
+ * Common capture of declared traits shared by {@code action} and {@code rpc} statements.
  */
-@Beta
-public sealed interface OperationDeclaredStatement
-        extends DocumentedDeclaredStatement.WithStatus<QName>, IfFeatureAwareDeclaredStatement<QName>
-        permits ActionStatement, RpcStatement {
+public sealed interface DeclaredOperationStatement
+    extends DocumentedDeclaredStatement.WithStatus<QName>, IfFeatureAwareDeclaredStatement<QName>
+    permits ActionStatement, RpcStatement {
+
     default @NonNull Optional<InputStatement> getInput() {
         return findFirstDeclaredSubstatement(InputStatement.class);
     }

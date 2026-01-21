@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class RpcStatementSupport extends AbstractOperationStatementSupport<RpcStatement, RpcEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.RPC)
+        SubstatementValidator.builder(RpcStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
@@ -44,7 +44,7 @@ public final class RpcStatementSupport extends AbstractOperationStatementSupport
             .build();
 
     public RpcStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.RPC, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(RpcStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
