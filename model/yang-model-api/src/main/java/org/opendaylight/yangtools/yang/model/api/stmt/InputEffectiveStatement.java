@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code input} statement.
  */
-public interface InputEffectiveStatement extends DataTreeEffectiveStatement<@NonNull InputStatement>,
-        DataTreeAwareEffectiveStatement<QName, @NonNull InputStatement>,
-        TypedefAwareEffectiveStatement<QName, @NonNull InputStatement> {
+public non-sealed interface InputEffectiveStatement extends EffectiveOperationBodyStatement<@NonNull InputStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return InputStatement.DEFINITION;

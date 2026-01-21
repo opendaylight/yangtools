@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.impl.dagger.DaggerYangParserComponent;
@@ -60,7 +61,7 @@ class YT1193Test {
         assertReference(it.next(), ReferenceStatement.DEFINITION, 10, 3);
         assertReference(it.next(), ContactStatement.DEFINITION, 11, 3);
         assertFooContainerReferences(it.next());
-        assertReference(it.next(), YangStmtMapping.RPC, 25, 3);
+        assertReference(it.next(), RpcStatement.DEFINITION, 25, 3);
         assertReference(it.next(), YangStmtMapping.NOTIFICATION, 26, 3);
         assertDeprLeafListReferences(it.next());
         assertObsoTypedefReferences(it.next());

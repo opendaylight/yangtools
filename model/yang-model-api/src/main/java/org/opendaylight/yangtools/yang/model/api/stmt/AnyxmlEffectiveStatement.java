@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code anyxml} statement.
  */
-public interface AnyxmlEffectiveStatement extends DataTreeEffectiveStatement<AnyxmlStatement> {
+public non-sealed interface AnyxmlEffectiveStatement extends DataTreeEffectiveStatement<AnyxmlStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ANYXML;
