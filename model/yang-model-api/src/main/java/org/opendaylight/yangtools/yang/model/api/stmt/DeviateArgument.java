@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api;
+package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * the server implementation of the target node deviates from its original definition.
  */
 @NonNullByDefault
-public enum DeviateKind {
+public enum DeviateArgument {
     /**
      * Target node is not implemented by the server.
      */
@@ -38,7 +38,7 @@ public enum DeviateKind {
 
     private final String argument;
 
-    DeviateKind(final String argument) {
+    DeviateArgument(final String argument) {
         this.argument = requireNonNull(argument);
     }
 
@@ -52,7 +52,7 @@ public enum DeviateKind {
     }
 
     /**
-     * Return a {@link DeviateKind} for specified {@code deviate} statement argument. This methods returns a
+     * Return a {@link DeviateArgument} for specified {@code deviate} statement argument. This methods returns a
      * {@code null} for illegal values. See {@link #ofArgument(String)} for a version which returns non-null and throws
      * an exception for illegal values.
      *
@@ -60,7 +60,7 @@ public enum DeviateKind {
      * @return An enumeration value, or {@code null} if specified argument is not valid
      * @throws NullPointerException if {@code argument} is {@code null}
      */
-    public static @Nullable DeviateKind forArgument(final String argument) {
+    public static @Nullable DeviateArgument forArgument(final String argument) {
         return switch (argument) {
             case "not-supported" -> NOT_SUPPORTED;
             case "add" -> ADD;
@@ -71,7 +71,7 @@ public enum DeviateKind {
     }
 
     /**
-     * Return a {@link DeviateKind} for specified {@code deviate} statement argument. This methods throws an exception
+     * Return a {@link DeviateArgument} for specified {@code deviate} statement argument. This methods throws an exception
      * for illegal values. See {@link #forArgument(String)} for a version which returns a {@code null} instead for
      * illegal values.
      *
@@ -80,7 +80,7 @@ public enum DeviateKind {
      * @throws NullPointerException if {@code argument} is {@code null}
      * @throws IllegalArgumentException if {@code argument} is not a valid {@code deviate} statement argument
      */
-    public static DeviateKind ofArgument(final String argument) {
+    public static DeviateArgument ofArgument(final String argument) {
         final var ret = forArgument(argument);
         if (ret == null) {
             throw new IllegalArgumentException("\"" + argument + "\" is not a valid deviate statement argument");

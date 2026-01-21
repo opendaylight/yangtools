@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractAugmentStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
     AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
+        super(AugmentStatement.DEFINITION, StatementPolicy.copyDeclared(
             (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
             SubtreePolicy.template(), config, validator);
     }
