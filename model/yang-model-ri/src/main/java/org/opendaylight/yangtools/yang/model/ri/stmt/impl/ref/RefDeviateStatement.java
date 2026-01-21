@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefDeviateStatement extends AbstractRefStatement<DeviateKind, DeviateStatement>
+public final class RefDeviateStatement extends AbstractRefStatement<DeviateArgument, DeviateStatement>
         implements DeviateStatement {
     public RefDeviateStatement(final DeviateStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

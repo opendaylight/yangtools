@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -273,9 +272,9 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
-        StmtContext<?, ?, ?> parent = verifyNotNull(child.getParentContext(), "Child %s has not parent", child);
-        while (parent.publicDefinition() != YangStmtMapping.AUGMENT) {
-            parent = verifyNotNull(parent.getParentContext(), "Failed to find augmentation parent of %s", child);
+        var parent = child.coerceParentContext();
+        while (parent.producesDeclared(AugmentStatement.class)) {
+            parent = parent.coerceParentContext();
         }
         return parent;
     }
@@ -289,8 +288,8 @@ final class AugmentInferenceAction implements InferenceAction {
          * the same QName. We must find the Container and the Grouping must be
          * ignored as disallowed augment target.
          */
-        final Collection<?> allowedAugmentTargets = substatementCtx.namespaceItem(
-            ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
+        final var allowedAugmentTargets = substatementCtx.namespaceItem(ValidationBundles.NAMESPACE,
+            ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
 
         // if no allowed target is returned we consider all targets allowed
         return allowedAugmentTargets == null || allowedAugmentTargets.isEmpty()
