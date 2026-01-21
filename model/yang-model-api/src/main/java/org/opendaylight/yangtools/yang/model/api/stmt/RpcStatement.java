@@ -7,15 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code rpc} statement.
  */
-public non-sealed interface RpcStatement extends OperationDeclaredStatement {
+public non-sealed interface RpcStatement extends DeclaredOperationStatement {
+    /**
+     * The definition of {@code rpc} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(RpcStatement.class, RpcEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "rpc", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.RPC;
+        return DEFINITION;
     }
 }
