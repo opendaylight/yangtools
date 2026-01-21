@@ -15,8 +15,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
@@ -42,29 +40,28 @@ class Bug6874Test extends AbstractYangTest {
         final var schemaContext = assertEffectiveModelDir("/rfc7950/include-import-stmt-test/valid-11");
 
         // Test for valid include statement
-        final Module testModule = schemaContext.findModules("root-module").iterator().next();
+        final var testModule = schemaContext.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
         // Test for valid import statement
-        ModuleImport importStmt = testModule.getImports().iterator().next();
+        var importStmt = testModule.getImports().iterator().next();
         assertEquals(Optional.of("Yang 1.1: Allow description and reference in include and import."),
             importStmt.getDescription());
-        assertEquals(Optional.of("https://tools.ietf.org/html/rfc7950 section-7.1.5/6"),
-            importStmt.getReference());
+        assertEquals(Optional.of("https://tools.ietf.org/html/rfc7950 section-7.1.5/6"), importStmt.getReference());
     }
 
     @Test
     void invalid10IncludeStmtTest() {
         assertInvalidSubstatementExceptionDir("/rfc7950/include-import-stmt-test/invalid-include-10", anyOf(
-            startsWith("DESCRIPTION is not valid for INCLUDE"),
-            startsWith("REFERENCE is not valid for INCLUDE")));
+            startsWith("statement include does not allow description substatements: 1 present [at "),
+            startsWith("statement include does not allow reference substatements: 1 present [at ")));
     }
 
     @Test
     void invalid10ImportStmtTest() {
         assertInvalidSubstatementExceptionDir("/rfc7950/include-import-stmt-test/invalid-import-10", anyOf(
-            startsWith("DESCRIPTION is not valid for IMPORT"),
-            startsWith("REFERENCE is not valid for IMPORT")));
+            startsWith("statement import does not allow description substatements: 1 present [at "),
+            startsWith("statement import does not allow reference substatements: 1 present [at ")));
     }
 
     @Test
@@ -73,9 +70,9 @@ class Bug6874Test extends AbstractYangTest {
             .addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE)
             .build()
             .getRootStatements()
-            .forEach(declaredStmt -> {
-                if (declaredStmt instanceof ModuleStatement) {
-                    declaredStmt.declaredSubstatements().forEach(subStmt -> {
+            .forEach(stmt -> {
+                if (stmt instanceof ModuleStatement module) {
+                    module.declaredSubstatements().forEach(subStmt -> {
                         if (subStmt instanceof IncludeStatement && "child-module".equals(subStmt.rawArgument())) {
                             subStmt.declaredSubstatements().forEach(Bug6874Test::verifyDescAndRef);
                         }
@@ -85,12 +82,11 @@ class Bug6874Test extends AbstractYangTest {
     }
 
     private static void verifyDescAndRef(final DeclaredStatement<?> stmt) {
-        if (stmt instanceof DescriptionStatement) {
-            assertEquals("Yang 1.1: Allow description and reference in include and import.",
-                ((DescriptionStatement) stmt).argument());
+        if (stmt instanceof DescriptionStatement description) {
+            assertEquals("Yang 1.1: Allow description and reference in include and import.", description.argument());
         }
-        if (stmt instanceof ReferenceStatement) {
-            assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6", ((ReferenceStatement) stmt).argument());
+        if (stmt instanceof ReferenceStatement reference) {
+            assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6", reference.argument());
         }
     }
 }
