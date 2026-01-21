@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -233,58 +232,54 @@ public enum YangStmtMapping implements StatementDefinition {
     YANG_VERSION(YangVersionStatement.class, YangVersionEffectiveStatement.class, "yang-version", "value"),
     YIN_ELEMENT(YinElementStatement.class, YinElementEffectiveStatement.class, "yin-element", "value");
 
-    private final @NonNull Class<? extends DeclaredStatement<?>> declaredType;
-    private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveType;
-    private final @NonNull QName name;
-    private final @Nullable QName argument;
-    private final boolean yinElement;
+    private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
+    private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
+    private final @NonNull QName statementName;
+    private final @Nullable ArgumentDefinition argumentDefinition;
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
-            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
-        declaredType = requireNonNull(declared);
-        effectiveType = requireNonNull(effective);
-        name = yinQName(nameStr);
-        argument = null;
-        yinElement = false;
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String name) {
+        declaredRepresentation = requireNonNull(declared);
+        effectiveRepresentation = requireNonNull(effective);
+        statementName = qualifyName(name);
+        argumentDefinition = null;
     }
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
-            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr) {
-        this(declared, effective, nameStr, argumentStr, false);
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String name, final String argName) {
+        this(declared, effective, name, argName, false);
     }
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
-            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String name, final String argName,
             final boolean yinElement) {
-        declaredType = requireNonNull(declared);
-        effectiveType = requireNonNull(effective);
-        name = yinQName(nameStr);
-        argument = yinQName(argumentStr);
-        this.yinElement = yinElement;
+        declaredRepresentation = requireNonNull(declared);
+        effectiveRepresentation = requireNonNull(effective);
+        statementName = qualifyName(name);
+        argumentDefinition = ArgumentDefinition.of(qualifyName(argName), yinElement);
     }
 
-    @NonNullByDefault
-    private static QName yinQName(final String nameStr) {
-        return QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr).intern();
+    private static @NonNull QName qualifyName(final String name) {
+        return QName.create(YangConstants.RFC6020_YIN_MODULE, name).intern();
     }
 
     @Override
     public QName getStatementName() {
-        return name;
+        return statementName;
     }
 
     @Override
     public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return ArgumentDefinition.ofNullable(argument, yinElement);
+        return Optional.ofNullable(argumentDefinition);
     }
 
     @Override
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return declaredType;
+        return declaredRepresentation;
     }
 
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-        return effectiveType;
+        return effectiveRepresentation;
     }
 }
