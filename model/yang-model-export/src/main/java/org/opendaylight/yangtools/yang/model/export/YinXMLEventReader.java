@@ -191,7 +191,7 @@ final class YinXMLEventReader implements XMLEventReader {
         final var argDef = def.argumentDefinition();
         if (argDef != null) {
             final var argName = argDef.argumentName();
-            if (argDef.isYinElement()) {
+            if (argDef.yinElement()) {
                 events.addAll(Arrays.asList(startElement(name), startElement(argName),
                     eventFactory.createCharacters(statement.rawArgument()), endElement(argName)));
             } else {

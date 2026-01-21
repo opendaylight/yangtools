@@ -23,6 +23,6 @@ class IetfYangSmiv2ExtensionsMappingTest {
 
     @Test
     void testIsArgumentYinElement() {
-        assertFalse(AliasStatement.DEFINITION.getArgumentDefinition().isYinElement());
+        assertFalse(AliasStatement.DEFINITION.getArgumentDefinition().yinElement());
     }
 }
