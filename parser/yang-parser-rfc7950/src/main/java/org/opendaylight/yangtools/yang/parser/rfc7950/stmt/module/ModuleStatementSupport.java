@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
@@ -76,7 +77,7 @@ public final class ModuleStatementSupport
         .addMandatory(YangStmtMapping.PREFIX)
         .addOptional(ReferenceStatement.DEFINITION)
         .addAny(YangStmtMapping.REVISION)
-        .addAny(YangStmtMapping.RPC)
+        .addAny(RpcStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.YANG_VERSION)
@@ -105,7 +106,7 @@ public final class ModuleStatementSupport
         .addMandatory(YangStmtMapping.PREFIX)
         .addOptional(ReferenceStatement.DEFINITION)
         .addAny(YangStmtMapping.REVISION)
-        .addAny(YangStmtMapping.RPC)
+        .addAny(RpcStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .addMandatory(YangStmtMapping.YANG_VERSION)

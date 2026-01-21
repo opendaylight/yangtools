@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code leaf} statement.
  */
-public interface LeafEffectiveStatement extends DataTreeEffectiveStatement<LeafStatement> {
+public non-sealed interface LeafEffectiveStatement extends DataTreeEffectiveStatement<LeafStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
         return YangStmtMapping.LEAF;
