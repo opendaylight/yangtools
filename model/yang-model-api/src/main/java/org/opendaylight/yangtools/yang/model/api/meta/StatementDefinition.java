@@ -111,7 +111,7 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
             final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
             final QNameModule module, final String statementName, final String argumentName, final boolean yinElement) {
         return of(declaredRepresentation, effectiveRepresentation, QName.create(module, statementName).intern(),
-            ArgumentDefinition.of(QName.create(module, argumentName).intern(), yinElement));
+            new ArgumentDefinition(QName.create(module, argumentName).intern(), yinElement));
     }
 
     /**
@@ -206,7 +206,7 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
         final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", self.statementName());
         final var argDef = self.argumentDefinition();
         if (argDef != null) {
-            helper.add("argument", argDef.argumentName()).add("yin-element", argDef.isYinElement());
+            helper.add("argument", argDef.argumentName()).add("yin-element", argDef.yinElement());
         }
         return helper
             .add("declared", self.declaredRepresentation().getName())
