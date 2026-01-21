@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,7 +51,7 @@ class LeafrefStatementTest extends AbstractYangTest {
 
     @Test
     void testInvalidYang10() {
-        assertInvalidSubstatementException(startsWith("REQUIRE_INSTANCE is not valid for TYPE"),
-            "/rfc7950/leafref-stmt/foo10.yang");
+        assertThat(assertInvalidSubstatementException("/rfc7950/leafref-stmt/foo10.yang").getMessage())
+            .startsWith("statement type does not allow require-instance substatements: 1 present [at ");
     }
 }

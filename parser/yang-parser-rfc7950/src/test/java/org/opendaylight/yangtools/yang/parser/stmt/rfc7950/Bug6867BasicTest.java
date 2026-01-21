@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 import org.junit.jupiter.api.Test;
@@ -26,14 +27,14 @@ class Bug6867BasicTest extends AbstractYangTest {
 
     @Test
     void invalid10Test() {
-        assertException(InvalidSubstatementException.class, startsWith("NOTIFICATION is not valid for CONTAINER"),
-            "/rfc7950/basic-test/invalid-10.yang");
+        assertThat(assertException(InvalidSubstatementException.class, "/rfc7950/basic-test/invalid-10.yang")
+            .getMessage()).startsWith("statement container does not allow notification substatements: 1 present [at ");
     }
 
     @Test
     void invalid11Test() {
-        assertException(InvalidSubstatementException.class, startsWith("RPC is not valid for CONTAINER"),
-            "/rfc7950/basic-test/invalid-11.yang");
+        assertThat(assertException(InvalidSubstatementException.class, "/rfc7950/basic-test/invalid-11.yang")
+            .getMessage()).startsWith("statement container does not allow rpc substatements: 1 present [at ");
     }
 
     @Test

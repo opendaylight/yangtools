@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -34,14 +33,13 @@ class IdentityrefStatementTest extends AbstractYangTest {
             foo.getDataChildByName(QName.create(foo.getQNameModule(), "idref-leaf")));
         final var idrefType = assertInstanceOf(IdentityrefTypeDefinition.class, idrefLeaf.getType());
         final var referencedIdentities = idrefType.getIdentities();
-        assertEquals(3, referencedIdentities.size());
-        assertThat(referencedIdentities, containsInAnyOrder(identities.toArray()));
+        assertEquals(Set.copyOf(identities), referencedIdentities);
         assertEquals("id-a", idrefType.getIdentities().iterator().next().getQName().getLocalName());
     }
 
     @Test
     void testInvalidYang10() {
-        assertInvalidSubstatementException(startsWith("Maximal count of BASE for TYPE is 1, detected 3."),
-            "/rfc7950/identityref-stmt/foo10.yang");
+        assertThat(assertInvalidSubstatementException("/rfc7950/identityref-stmt/foo10.yang").getMessage())
+            .startsWith("statement type allows at most 1 base substatement: 3 present [at ");
     }
 }
