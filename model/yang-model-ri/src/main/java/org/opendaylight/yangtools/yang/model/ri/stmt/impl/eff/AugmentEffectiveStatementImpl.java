@@ -26,18 +26,19 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.N
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
 public final class AugmentEffectiveStatementImpl
-        extends DefaultWithSchemaTree<SchemaNodeIdentifier, AugmentStatement>
+        extends DefaultWithSchemaTree<SchemaNodeIdentifier, @NonNull AugmentStatement>
         implements AugmentEffectiveStatement, AugmentationSchemaNode,
-            DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, AugmentStatement>,
-            DataNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
-            ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
-            NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
-            WhenConditionMixin<SchemaNodeIdentifier, AugmentStatement> {
+            DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, @NonNull AugmentStatement>,
+            DataNodeContainerMixin<SchemaNodeIdentifier, @NonNull AugmentStatement>,
+            ActionNodeContainerMixin<SchemaNodeIdentifier, @NonNull AugmentStatement>,
+            NotificationNodeContainerMixin<SchemaNodeIdentifier, @NonNull AugmentStatement>,
+            WhenConditionMixin<SchemaNodeIdentifier, @NonNull AugmentStatement> {
     private final @NonNull SchemaNodeIdentifier argument;
     private final int flags;
 
-    public AugmentEffectiveStatementImpl(final AugmentStatement declared, final SchemaNodeIdentifier argument,
-            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    public AugmentEffectiveStatementImpl(final @NonNull AugmentStatement declared,
+            final SchemaNodeIdentifier argument, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
         this.flags = flags;

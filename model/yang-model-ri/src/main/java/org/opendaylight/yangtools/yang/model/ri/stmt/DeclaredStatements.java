@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -38,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
@@ -340,7 +340,7 @@ public final class DeclaredStatements {
             : new RegularDescriptionStatement(argument, substatements);
     }
 
-    public static DeviateStatement createDeviate(final DeviateKind argument,
+    public static DeviateStatement createDeviate(final DeviateArgument argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new DeviateStatementImpl(argument, substatements);
     }

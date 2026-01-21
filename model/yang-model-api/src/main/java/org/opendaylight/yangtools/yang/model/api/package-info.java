@@ -87,7 +87,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Deviation}
  *
  * <dt>deviate
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument}
  *
  * <dt>feature
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.FeatureDefinition}
@@ -237,13 +237,13 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ExtensionDefinition#isYinElement()}
  *
  * <dt>add
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#ADD}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument#ADD}
  *
  * <dt>current
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Status#CURRENT}
  *
  * <dt>delete
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#DELETE}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument#DELETE}
  *
  * <dt>deprecated
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Status#DEPRECATED}
@@ -258,13 +258,13 @@
  *   <dd>Not exposed
  *
  * <dt>not-supported
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#NOT_SUPPORTED}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument#NOT_SUPPORTED}
  *
  * <dt>obsolete
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Status#OBSOLETE}
  *
  * <dt>replace
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#REPLACE}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument#REPLACE}
  *
  * <dt>system
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode#isUserOrdered()}
