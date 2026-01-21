@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -195,5 +197,20 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
     @Deprecated(since = "15.0.0", forRemoval = true)
     default @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveRepresentation();
+    }
+
+    // FIXME: remove this when YangStmtMapping dies
+    @Beta
+    @NonNullByDefault
+    static String toString(final StatementDefinition self) {
+        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", self.statementName());
+        final var argDef = self.argumentDefinition();
+        if (argDef != null) {
+            helper.add("argument", argDef.argumentName()).add("yin-element", argDef.isYinElement());
+        }
+        return helper
+            .add("declared", self.declaredRepresentation().getName())
+            .add("effective", self.effectiveRepresentation().getName())
+            .toString();
     }
 }
