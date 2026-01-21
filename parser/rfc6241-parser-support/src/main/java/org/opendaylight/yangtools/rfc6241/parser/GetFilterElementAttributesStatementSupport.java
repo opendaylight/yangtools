@@ -11,10 +11,12 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -69,12 +71,12 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {
-        final StmtContext<?, ?, ?> parent = stmt.getParentContext();
+        final var parent = stmt.getParentContext();
         if (parent == null) {
             LOG.debug("No parent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (parent.publicDefinition() != YangStmtMapping.ANYXML) {
+        if (!parent.producesDeclared(AnyxmlStatement.class)) {
             LOG.debug("Parent is not an anyxml node, ignoring get-filter-element-attributes statement");
             return false;
         }
@@ -83,22 +85,22 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
             return false;
         }
 
-        final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
+        final var grandParent = parent.getParentContext();
         if (grandParent == null) {
             LOG.debug("No grandparent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (grandParent.publicDefinition() != YangStmtMapping.INPUT) {
+        if (!grandParent.producesDeclared(InputStatement.class)) {
             LOG.debug("Grandparent is not an input node, ignoring get-filter-element-attributes statement");
             return false;
         }
 
-        final StmtContext<?, ?, ?> greatGrandParent = grandParent.getParentContext();
+        final var greatGrandParent = grandParent.getParentContext();
         if (greatGrandParent == null) {
             LOG.debug("No grandparent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (greatGrandParent.publicDefinition() != YangStmtMapping.RPC) {
+        if (!greatGrandParent.producesDeclared(RpcStatement.class)) {
             LOG.debug("Grandparent is not an RPC node, ignoring get-filter-element-attributes statement");
             return false;
         }
