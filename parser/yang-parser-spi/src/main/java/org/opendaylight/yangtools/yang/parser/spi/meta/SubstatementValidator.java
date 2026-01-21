@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -26,11 +27,11 @@ public final class SubstatementValidator {
 
     private final StatementCardinality[] mandatoryStatements;
     private final Map<StatementDefinition, Cardinality> otherStatements;
-    private final StatementDefinition currentStatement;
+    private final @NonNull StatementDefinition currentStatement;
 
     private SubstatementValidator(final StatementDefinition currentStatement,
             final ImmutableMap<StatementDefinition, Cardinality> cardinalityMap) {
-        this.currentStatement = currentStatement;
+        this.currentStatement = requireNonNull(currentStatement);
 
         // Split the cardinalities based on mandatory/non-mandatory
         mandatoryStatements = cardinalityMap.entrySet().stream()
@@ -42,6 +43,7 @@ public final class SubstatementValidator {
             .collect(Collectors.toUnmodifiableMap(Entry::getKey, Entry::getValue));
     }
 
+    @NonNullByDefault
     public static Builder builder(final StatementDefinition currentStatement) {
         return new Builder(currentStatement);
     }
@@ -49,10 +51,10 @@ public final class SubstatementValidator {
     public static final class Builder {
         // We are using ImmutableMap because it retains encounter order
         private final ImmutableMap.Builder<StatementDefinition, Cardinality> cardinalityMap = ImmutableMap.builder();
-        private final StatementDefinition currentStatement;
+        private final @NonNull StatementDefinition currentStatement;
 
         Builder(final StatementDefinition currentStatement) {
-            this.currentStatement = currentStatement;
+            this.currentStatement = requireNonNull(currentStatement);
         }
 
         private Builder add(final StatementDefinition def, final Cardinality card) {
@@ -94,7 +96,7 @@ public final class SubstatementValidator {
             return add(def, Cardinality.atMostOne());
         }
 
-        public SubstatementValidator build() {
+        public @NonNull SubstatementValidator build() {
             return new SubstatementValidator(currentStatement, cardinalityMap.build());
         }
     }
