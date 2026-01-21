@@ -12,12 +12,12 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateKind, DeviateStatement>
+public final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateArgument, @NonNull DeviateStatement>
         implements DeviateDefinition, DeviateEffectiveStatement {
     public DeviateEffectiveStatementImpl(final DeviateStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -38,7 +38,7 @@ public final class DeviateEffectiveStatementImpl extends WithSubstatements<Devia
     }
 
     @Override
-    public DeviateKind getDeviateType() {
+    public DeviateArgument getDeviateType() {
         return argument();
     }
 
