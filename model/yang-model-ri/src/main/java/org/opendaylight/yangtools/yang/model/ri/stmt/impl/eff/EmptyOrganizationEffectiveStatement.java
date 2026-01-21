@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyOrganizationEffectiveStatement extends DefaultArgument<String, OrganizationStatement>
+public final class EmptyOrganizationEffectiveStatement extends DefaultArgument<String, @NonNull OrganizationStatement>
         implements OrganizationEffectiveStatement {
-    public EmptyOrganizationEffectiveStatement(final OrganizationStatement declared) {
+    public EmptyOrganizationEffectiveStatement(final @NonNull OrganizationStatement declared) {
         super(declared);
     }
 }

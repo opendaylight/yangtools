@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularContactEffectiveStatement extends WithSubstatements<String, ContactStatement>
+public final class RegularContactEffectiveStatement extends WithSubstatements<String, @NonNull ContactStatement>
         implements ContactEffectiveStatement {
-    public RegularContactEffectiveStatement(final ContactStatement declared,
+    public RegularContactEffectiveStatement(final @NonNull ContactStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

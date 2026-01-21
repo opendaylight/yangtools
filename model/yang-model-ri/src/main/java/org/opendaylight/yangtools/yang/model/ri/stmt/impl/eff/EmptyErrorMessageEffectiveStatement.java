@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyErrorMessageEffectiveStatement extends DefaultArgument<String, ErrorMessageStatement>
+public final class EmptyErrorMessageEffectiveStatement extends DefaultArgument<String, @NonNull ErrorMessageStatement>
         implements ErrorMessageEffectiveStatement {
-    public EmptyErrorMessageEffectiveStatement(final ErrorMessageStatement declared) {
+    public EmptyErrorMessageEffectiveStatement(final @NonNull ErrorMessageStatement declared) {
         super(declared);
     }
 }

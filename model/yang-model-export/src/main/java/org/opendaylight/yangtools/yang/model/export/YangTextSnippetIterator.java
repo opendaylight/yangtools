@@ -14,11 +14,10 @@ import static org.eclipse.jdt.annotation.DefaultLocation.RETURN_TYPE;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -27,6 +26,11 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 
 /**
  * This is an iterator over strings needed to assemble a YANG snippet.
@@ -44,12 +48,14 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
     private static final CharMatcher NEED_QUOTE_MATCHER = CharMatcher.anyOf(" \t\r'\";{}");
     private static final CharMatcher DQUOT_MATCHER = CharMatcher.is('"');
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
-    private static final ImmutableSet<StatementDefinition> QUOTE_MULTILINE_STATEMENTS = ImmutableSet.of(
-        YangStmtMapping.CONTACT,
-        YangStmtMapping.DESCRIPTION,
-        YangStmtMapping.ERROR_MESSAGE,
-        YangStmtMapping.ORGANIZATION,
-        YangStmtMapping.REFERENCE);
+
+    // Note this happens to match DeclaredHumanTextStatement, but this is actually an IETF best practice
+    private static final Set<StatementDefinition> QUOTE_MULTILINE_STATEMENTS = Set.of(
+        ContactStatement.DEFINITION,
+        DescriptionStatement.DEFINITION,
+        ErrorMessageStatement.DEFINITION,
+        OrganizationStatement.DEFINITION,
+        ReferenceStatement.DEFINITION);
 
     /*
      * https://www.rfc-editor.org/rfc/rfc6087#section-4.3:
@@ -58,17 +64,15 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      *            are commonly used with the default value, which would make the module
      *            difficult to read if used everywhere they are allowed.
      */
-    private static final ImmutableMap<StatementDefinition, String> DEFAULT_STATEMENTS =
-            ImmutableMap.<StatementDefinition, String>builder()
-            .put(YangStmtMapping.CONFIG, "true")
-            .put(YangStmtMapping.MANDATORY, "true")
-            .put(YangStmtMapping.MAX_ELEMENTS, "unbounded")
-            .put(YangStmtMapping.MIN_ELEMENTS, "0")
-            .put(YangStmtMapping.ORDERED_BY, "system")
-            .put(YangStmtMapping.REQUIRE_INSTANCE, "true")
-            .put(YangStmtMapping.STATUS, "current")
-            .put(YangStmtMapping.YIN_ELEMENT, "false")
-            .build();
+    private static final Map<StatementDefinition, String> DEFAULT_STATEMENTS = Map.of(
+        YangStmtMapping.CONFIG, "true",
+        YangStmtMapping.MANDATORY, "true",
+        YangStmtMapping.MAX_ELEMENTS, "unbounded",
+        YangStmtMapping.MIN_ELEMENTS, "0",
+        YangStmtMapping.ORDERED_BY, "system",
+        YangStmtMapping.REQUIRE_INSTANCE, "true",
+        YangStmtMapping.STATUS, "current",
+        YangStmtMapping.YIN_ELEMENT, "false");
 
     private static final String INDENT = "  ";
     private static final int INDENT_STRINGS_SIZE = 16;

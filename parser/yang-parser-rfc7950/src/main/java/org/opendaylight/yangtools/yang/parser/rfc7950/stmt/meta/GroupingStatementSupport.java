@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -44,12 +46,12 @@ public final class GroupingStatementSupport
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
@@ -61,13 +63,13 @@ public final class GroupingStatementSupport
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)

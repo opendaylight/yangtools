@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyContactEffectiveStatement extends DefaultArgument<String, ContactStatement>
+public final class EmptyContactEffectiveStatement extends DefaultArgument<String, @NonNull ContactStatement>
         implements ContactEffectiveStatement {
-    public EmptyContactEffectiveStatement(final ContactStatement declared) {
+    public EmptyContactEffectiveStatement(final @NonNull ContactStatement declared) {
         super(declared);
     }
 }

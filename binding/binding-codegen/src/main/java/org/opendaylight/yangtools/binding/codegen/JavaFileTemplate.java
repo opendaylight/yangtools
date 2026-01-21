@@ -55,11 +55,14 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
@@ -170,10 +173,10 @@ class JavaFileTemplate {
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
-        .addIgnoredStatement(YangStmtMapping.CONTACT)
-        .addIgnoredStatement(YangStmtMapping.DESCRIPTION)
-        .addIgnoredStatement(YangStmtMapping.REFERENCE)
-        .addIgnoredStatement(YangStmtMapping.ORGANIZATION)
+        .addIgnoredStatement(ContactStatement.DEFINITION)
+        .addIgnoredStatement(DescriptionStatement.DEFINITION)
+        .addIgnoredStatement(OrganizationStatement.DEFINITION)
+        .addIgnoredStatement(ReferenceStatement.DEFINITION)
         .build();
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 

@@ -14,8 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -31,12 +33,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class RpcStatementSupport extends AbstractOperationStatementSupport<RpcStatement, RpcEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.RPC)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(InputStatement.DEFINITION)
             .addOptional(OutputStatement.DEFINITION)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .build();

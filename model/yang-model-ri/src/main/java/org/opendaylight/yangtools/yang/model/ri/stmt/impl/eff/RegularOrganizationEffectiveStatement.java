@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularOrganizationEffectiveStatement extends WithSubstatements<String, OrganizationStatement>
-        implements OrganizationEffectiveStatement {
-    public RegularOrganizationEffectiveStatement(final OrganizationStatement declared,
+public final class RegularOrganizationEffectiveStatement
+        extends WithSubstatements<String, @NonNull OrganizationStatement> implements OrganizationEffectiveStatement {
+    public RegularOrganizationEffectiveStatement(final @NonNull OrganizationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }
