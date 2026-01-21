@@ -7,16 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code contact} statement.
  */
-public interface ContactStatement extends DeclaredStatement<String> {
+public interface ContactStatement extends DeclaredHumanTextStatement {
+    /**
+     * The definition of {@code contact} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ContactStatement.class, ContactEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "contact", "text", true);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.CONTACT;
+        return DEFINITION;
     }
 }

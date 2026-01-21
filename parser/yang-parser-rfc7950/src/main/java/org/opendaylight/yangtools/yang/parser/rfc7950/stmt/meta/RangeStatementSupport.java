@@ -17,8 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
@@ -39,10 +42,10 @@ public final class RangeStatementSupport
         extends AbstractStatementSupport<ValueRanges, RangeStatement, RangeEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.RANGE)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(YangStmtMapping.ERROR_APP_TAG)
-            .addOptional(YangStmtMapping.ERROR_MESSAGE)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ErrorMessageStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     public RangeStatementSupport(final YangParserConfiguration config) {

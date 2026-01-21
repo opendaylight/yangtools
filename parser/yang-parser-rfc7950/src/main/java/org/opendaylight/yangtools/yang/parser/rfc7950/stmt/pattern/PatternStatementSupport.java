@@ -15,9 +15,12 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -33,18 +36,18 @@ public final class PatternStatementSupport
         extends AbstractStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.PATTERN)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(YangStmtMapping.ERROR_APP_TAG)
-            .addOptional(YangStmtMapping.ERROR_MESSAGE)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ErrorMessageStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.PATTERN)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(YangStmtMapping.ERROR_APP_TAG)
-            .addOptional(YangStmtMapping.ERROR_MESSAGE)
+            .addOptional(ErrorMessageStatement.DEFINITION)
             .addOptional(YangStmtMapping.MODIFIER)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     private PatternStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
