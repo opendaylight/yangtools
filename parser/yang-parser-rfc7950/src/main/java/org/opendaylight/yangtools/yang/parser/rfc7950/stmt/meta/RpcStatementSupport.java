@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -32,8 +34,8 @@ public final class RpcStatementSupport extends AbstractOperationStatementSupport
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
-            .addOptional(YangStmtMapping.INPUT)
-            .addOptional(YangStmtMapping.OUTPUT)
+            .addOptional(InputStatement.DEFINITION)
+            .addOptional(OutputStatement.DEFINITION)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
