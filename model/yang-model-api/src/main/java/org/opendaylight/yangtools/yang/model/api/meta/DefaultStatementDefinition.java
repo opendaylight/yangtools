@@ -29,14 +29,7 @@ record DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends E
         @Nullable ArgumentDefinition argumentDefinition) implements StatementDefinition {
     DefaultStatementDefinition {
         requireNonNull(statementName);
-        if (!declaredRepresentation.isInterface()) {
-            throw new IllegalArgumentException(
-                "Declared representation " + declaredRepresentation + " is not an interface");
-        }
-        if (!effectiveRepresentation.isInterface()) {
-            throw new IllegalArgumentException(
-                "Effective representation " + effectiveRepresentation + " is not an interface");
-        }
+        DefaultStatementMapping.checkArgument(declaredRepresentation, effectiveRepresentation);
     }
 
     @Override
