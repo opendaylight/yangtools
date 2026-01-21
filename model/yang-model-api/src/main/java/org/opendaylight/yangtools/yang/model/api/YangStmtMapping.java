@@ -224,7 +224,7 @@ public enum YangStmtMapping implements StatementDefinition {
         declaredRepresentation = requireNonNull(declared);
         effectiveRepresentation = requireNonNull(effective);
         statementName = qualifyName(name);
-        argumentDefinition = ArgumentDefinition.of(qualifyName(argName), yinElement);
+        argumentDefinition = new ArgumentDefinition(qualifyName(argName), yinElement);
     }
 
     private static @NonNull QName qualifyName(final String name) {
