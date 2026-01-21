@@ -106,6 +106,10 @@ public abstract class AbstractYangTest {
         return ret;
     }
 
+    public static @NonNull InferenceException assertInferenceException(final String... yangResourceName) {
+        return assertException(InferenceException.class, yangResourceName);
+    }
+
     public static @NonNull InferenceException assertInferenceException(final Matcher<String> matcher,
             final String... yangResourceName) {
         return assertException(InferenceException.class, matcher, yangResourceName);
@@ -144,6 +148,13 @@ public abstract class AbstractYangTest {
     public static @NonNull InvalidBitDefinitionException assertInvalidBitDefinitionException(
             final Matcher<String> matcher, final String... yangResourceName) {
         return assertArgumentException(InvalidBitDefinitionException.class, matcher, yangResourceName);
+    }
+
+    public static @NonNull SourceException assertSourceException(final String... yangResourceName) {
+        final var ret = assertException(SourceException.class, yangResourceName);
+        // SourceException is the base of the hierarchy, we should normally assert subclasses
+        assertEquals(SourceException.class, ret.getClass());
+        return ret;
     }
 
     public static @NonNull SourceException assertSourceException(final Matcher<String> matcher,

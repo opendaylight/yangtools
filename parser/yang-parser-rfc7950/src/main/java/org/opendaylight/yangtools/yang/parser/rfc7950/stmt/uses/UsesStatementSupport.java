@@ -290,10 +290,12 @@ public final class UsesStatementSupport
             final Mutable<?, ?, ?> refineTargetNodeCtx) {
         final var refineSubstatementDef = refineSubstatementCtx.publicDefinition();
         if (!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx)) {
-            throw new SourceException(refineSubstatementCtx,
-                "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
-                refineSubstatementCtx.getRoot().rawArgument(), refineSubstatementCtx.coerceParentContext().argument(),
-                refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());
+            throw new InferenceException(refineSubstatementCtx,
+                "unsupported statement %s in target %s while refining uses %s", refineSubstatementDef.humanName(),
+                refineTargetNodeCtx.publicDefinition().humanName(),
+                // FIXNE: this should always boil down SchemaNodeIdentifier.Descendant: we should be able to output
+                //        that in a more friendly format
+                refineSubstatementCtx.coerceParentContext().argument());
         }
 
         if (!isAllowedToAddByRefine(refineSubstatementDef)) {
