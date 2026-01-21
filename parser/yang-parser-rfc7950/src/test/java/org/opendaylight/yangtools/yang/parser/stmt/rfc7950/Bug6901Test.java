@@ -62,13 +62,13 @@ class Bug6901Test extends AbstractYangTest {
 
     @Test
     void ifFeature10EnumTest() {
-        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for ENUM"),
+        assertInvalidSubstatementException(startsWith("enum statement does not allow if-feature substatements [at "),
             "/rfc7950/bug6901/invalid-foo-10-enum.yang");
     }
 
     @Test
     void ifFeature10BitTest() {
-        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for BIT"),
+        assertInvalidSubstatementException(startsWith("bit statement does not allow if-feature substatements [at "),
             "/rfc7950/bug6901/invalid-foo-10-bit.yang");
     }
 }

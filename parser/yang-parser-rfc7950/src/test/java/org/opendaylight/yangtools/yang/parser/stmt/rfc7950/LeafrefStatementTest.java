@@ -51,7 +51,8 @@ class LeafrefStatementTest extends AbstractYangTest {
 
     @Test
     void testInvalidYang10() {
-        assertInvalidSubstatementException(startsWith("REQUIRE_INSTANCE is not valid for TYPE"),
+        assertInvalidSubstatementException(
+            startsWith("type statement does not allow require-instance substatements [at "),
             "/rfc7950/leafref-stmt/foo10.yang");
     }
 }

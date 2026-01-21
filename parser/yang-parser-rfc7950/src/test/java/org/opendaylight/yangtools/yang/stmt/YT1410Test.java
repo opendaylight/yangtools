@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 class YT1410Test extends AbstractYangTest {
     @Test
     void testRFC6020() {
-        assertInvalidSubstatementException(
-            startsWith("CHOICE is not valid for CHOICE. Error in module foo (QNameModule{ns=foo}) [at "),
+        assertInvalidSubstatementException(startsWith("choice statement does not allow choice substatements [at "),
             "/bugs/YT1410/foo.yang");
     }
 

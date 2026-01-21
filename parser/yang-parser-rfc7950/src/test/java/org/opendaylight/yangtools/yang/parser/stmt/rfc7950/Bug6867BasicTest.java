@@ -26,13 +26,15 @@ class Bug6867BasicTest extends AbstractYangTest {
 
     @Test
     void invalid10Test() {
-        assertException(InvalidSubstatementException.class, startsWith("NOTIFICATION is not valid for CONTAINER"),
+        assertException(InvalidSubstatementException.class,
+            startsWith("container statement does not allow notification substatements [at "),
             "/rfc7950/basic-test/invalid-10.yang");
     }
 
     @Test
     void invalid11Test() {
-        assertException(InvalidSubstatementException.class, startsWith("RPC is not valid for CONTAINER"),
+        assertException(InvalidSubstatementException.class,
+            startsWith("container statement does not allow rpc substatements [at "),
             "/rfc7950/basic-test/invalid-11.yang");
     }
 

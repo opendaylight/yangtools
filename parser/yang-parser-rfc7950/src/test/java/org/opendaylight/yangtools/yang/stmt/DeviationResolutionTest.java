@@ -193,14 +193,16 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidYang10Model() {
-        assertInvalidSubstatementException(startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."),
+        assertInvalidSubstatementException(
+            startsWith("deviate statement allows at most 1 default substatement(s), 2 present [at "),
             "/deviation-resolution-test/deviation-add/foo10-invalid.yang",
             "/deviation-resolution-test/deviation-add/bar10-invalid.yang");
     }
 
     @Test
     void shouldFailOnInvalidYang10Model2() {
-        assertInvalidSubstatementException(startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."),
+        assertInvalidSubstatementException(
+            startsWith("deviate statement allows at most 1 default substatement(s), 2 present [at "),
             "/deviation-resolution-test/deviation-delete/foo10-invalid.yang",
             "/deviation-resolution-test/deviation-delete/bar10-invalid.yang");
     }
@@ -298,21 +300,21 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviateAddSubstatement() {
-        assertInvalidSubstatementException(startsWith("TYPE is not valid for DEVIATE."),
+        assertInvalidSubstatementException(startsWith("deviate statement does not allow type substatements [at "),
             "/deviation-resolution-test/deviation-add/foo-invalid-3.yang",
             "/deviation-resolution-test/deviation-add/bar-invalid-3.yang");
     }
 
     @Test
     void shouldFailOnInvalidDeviateReplaceSubstatement() {
-        assertInvalidSubstatementException(startsWith("MUST is not valid for DEVIATE."),
+        assertInvalidSubstatementException(startsWith("deviate statement does not allow must substatements [at "),
             "/deviation-resolution-test/deviation-replace/foo-invalid-3.yang",
             "/deviation-resolution-test/deviation-replace/bar-invalid-3.yang");
     }
 
     @Test
     void shouldFailOnInvalidDeviateDeleteSubstatement() {
-        assertInvalidSubstatementException(startsWith("CONFIG is not valid for DEVIATE."),
+        assertInvalidSubstatementException(startsWith("deviate statement does not allow config substatements [at "),
             "/deviation-resolution-test/deviation-delete/foo-invalid-2.yang",
             "/deviation-resolution-test/deviation-delete/bar-invalid-2.yang");
     }

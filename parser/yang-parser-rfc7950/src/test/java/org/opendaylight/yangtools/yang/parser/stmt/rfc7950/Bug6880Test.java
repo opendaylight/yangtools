@@ -28,7 +28,7 @@ class Bug6880Test extends AbstractYangTest {
 
     @Test
     void invalid10Test() {
-        assertInvalidSubstatementException(startsWith("DEFAULT is not valid for LEAF_LIST"),
+        assertInvalidSubstatementException(startsWith("leaf-list statement does not allow default substatements [at "),
             "/rfc7950/bug6880/invalid10.yang");
     }
 }
