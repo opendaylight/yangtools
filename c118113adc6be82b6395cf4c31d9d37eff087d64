@@ -16,6 +16,329 @@
       "message": "recheck",
       "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd58b880_eb266111",
+        "filename": "parser/rfc8040-parser-support/src/main/java/org/opendaylight/yangtools/rfc8040/parser/OperationsValidateModuleAction.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "can be var",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0fe9a003_ffd76932",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "using this. is not needed",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f1d9fd7_d7b6085b",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ResolvedSourceBuilder.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "not needed empty line",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2a4384e_0c789374",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ResolvedSourceBuilder.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "private non final can be separated, null init is not necessary",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb3719eb_d65b5dc5",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ResolvedSourceBuilder.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "@NonNull Nullable?",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36d143d0_5ce6c012",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ResolvedSourceBuilder.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "just context() is more modern",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "575518b0_34fdf5b6",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ResolvedSourceBuilder.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "nullability, javadoc?",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd10c4e3_3395c2b7",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ResolvedSourceBuilder.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "two spaces in To,  \"Can",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "702ee0b9_b0392b0b",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "please add annotations @NonNull",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b1075918_25a246fe",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "consider one line returns jaavdoc",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91717147_494448ed",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "do not use this when its not needed",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42fbf25b_f8b9c896",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/repo/YinStatementStreamSource.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "static",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ec42942_38dd59e3",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/import_/ImportStatementSupport.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "static",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64085fba_01a04087",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/meta/DeviateStatementSupport.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "we know its a qnamemodule - use var",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cd26c606_e092e87a",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/module/ModuleEffectiveStatementImpl.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "collect(ImmutableMap.toImmutableMap",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "47cbb33b_ed0210e4",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "can we log some msg in verify in case of failure?",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a1f6b30_89474a4e",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/ResolvedSourceInfo.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "4 more spaces",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1220729e_13d890bd",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/ResolvedSourceInfo.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "please mark nullability with annotations",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb947be3_9601b115",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/ResolvedSourceInfo.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-01-21T12:48:01Z",
+      "side": 1,
+      "message": "4 more spaces for continuation parameters",
+      "revId": "c118113adc6be82b6395cf4c31d9d37eff087d64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
