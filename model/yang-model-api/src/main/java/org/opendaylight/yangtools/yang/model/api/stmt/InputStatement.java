@@ -8,17 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code input} statement.
  */
-public interface InputStatement extends DeclaredStatement<QName>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
-        MustStatementAwareDeclaredStatement<QName> {
+public non-sealed interface InputStatement extends DeclaredOperationBodyStatement {
     /**
      * The definition of {@code input} statement.
      *

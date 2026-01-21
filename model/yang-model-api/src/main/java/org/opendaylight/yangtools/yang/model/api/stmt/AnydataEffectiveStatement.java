@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code anydata} statement.
  */
-public interface AnydataEffectiveStatement extends DataTreeEffectiveStatement<AnydataStatement> {
+public non-sealed interface AnydataEffectiveStatement extends DataTreeEffectiveStatement<AnydataStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ANYDATA;

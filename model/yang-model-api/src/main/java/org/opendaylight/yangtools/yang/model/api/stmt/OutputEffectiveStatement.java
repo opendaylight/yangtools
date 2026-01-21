@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code output} statement.
  */
-public interface OutputEffectiveStatement extends DataTreeEffectiveStatement<@NonNull OutputStatement>,
-        DataTreeAwareEffectiveStatement<QName, @NonNull OutputStatement>,
-        TypedefAwareEffectiveStatement<QName, @NonNull OutputStatement> {
+public non-sealed interface OutputEffectiveStatement extends EffectiveOperationBodyStatement<@NonNull OutputStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return OutputStatement.DEFINITION;

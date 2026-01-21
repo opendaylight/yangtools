@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 
 public final class YangValidationBundles {
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
@@ -83,7 +84,7 @@ public final class YangValidationBundles {
 
     public static final Set<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = ImmutableSet.of(
         YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.CASE, InputStatement.DEFINITION,
-        OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION, YangStmtMapping.CHOICE, YangStmtMapping.RPC);
+        OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION, YangStmtMapping.CHOICE, RpcStatement.DEFINITION);
 
     // FIXME: 7.0.0: consider hiding this list, as choice nodes are handling creation of implied shorthands themselves.
     //               This has implications on other members of this class, as they really seem like something which
