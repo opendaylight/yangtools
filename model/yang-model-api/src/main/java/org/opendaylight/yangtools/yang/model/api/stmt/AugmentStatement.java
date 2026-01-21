@@ -9,21 +9,32 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredSchemaTreeReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
 
 /**
  * Declared representation of a {@code augment} statement.
  */
-public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
+public interface AugmentStatement
+    extends DeclaredSchemaTreeReferenceStatement<SchemaNodeIdentifier>,
+        DocumentedDeclaredStatement.WithStatus<SchemaNodeIdentifier>,
         DataDefinitionAwareDeclaredStatement<SchemaNodeIdentifier>,
         NotificationStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
         ActionStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
         WhenStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
+    /**
+     * The definition of {@code augment} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        AugmentStatement.class, AugmentEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "augment", "target-node");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.AUGMENT;
+        return DEFINITION;
     }
 
     // FIXME: 7.0.0: determine the utility of this method

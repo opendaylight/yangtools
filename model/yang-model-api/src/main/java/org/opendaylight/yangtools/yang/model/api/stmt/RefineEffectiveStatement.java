@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveSchemaTreeReferenceTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Effective representation of a {@code refine} statement.
  */
-public interface RefineEffectiveStatement extends EffectiveStatement<Descendant, RefineStatement> {
+public interface RefineEffectiveStatement
+        extends EffectiveSchemaTreeReferenceTextStatement<Descendant, @NonNull RefineStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.REFINE;
+        return RefineStatement.DEFINITION;
     }
 }

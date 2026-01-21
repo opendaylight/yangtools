@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 class EffectiveModuleTest {
@@ -76,7 +76,7 @@ class EffectiveModuleTest {
         assertNotNull(deviationStmt);
         final var importedContQName = QName.create(QNameModule.of(XMLNamespace.of("imported"), REVISION), "cont");
         assertEquals(Absolute.of(importedContQName), deviationStmt.getTargetPath());
-        assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
+        assertEquals(DeviateArgument.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
         assertEquals(Optional.of("deviate reference"), deviationStmt.getReference());
 
         final var identities = rootModule.getIdentities();

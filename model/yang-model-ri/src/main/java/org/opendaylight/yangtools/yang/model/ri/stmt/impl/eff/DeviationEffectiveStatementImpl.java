@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -18,9 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-public final class DeviationEffectiveStatementImpl extends WithSubstatements<Absolute, DeviationStatement>
-        implements DeviationEffectiveStatement, Deviation, DocumentedNodeMixin<Absolute, DeviationStatement> {
-    public DeviationEffectiveStatementImpl(final DeviationStatement declared,
+public final class DeviationEffectiveStatementImpl extends WithSubstatements<Absolute, @NonNull DeviationStatement>
+        implements DeviationEffectiveStatement, Deviation, DocumentedNodeMixin<Absolute, @NonNull DeviationStatement> {
+    public DeviationEffectiveStatementImpl(final @NonNull DeviationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

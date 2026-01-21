@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.VerifyException;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
@@ -61,10 +61,10 @@ public final class UsesStatementSupport
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.USES)
-            .addAny(YangStmtMapping.AUGMENT)
+            .addAny(AugmentStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
-            .addAny(YangStmtMapping.REFINE)
+            .addAny(RefineStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.WHEN)
@@ -91,7 +91,6 @@ public final class UsesStatementSupport
         final var targetNodePre = usesAction.mutatesEffectiveCtx(usesNode.getParentContext());
 
         usesAction.apply(new InferenceAction() {
-
             @Override
             public void apply(final InferenceContext ctx) {
                 final var targetNodeStmtCtx = targetNodePre.resolve(ctx);
@@ -101,8 +100,11 @@ public final class UsesStatementSupport
 
                 // Apply any refine statements
                 for (var subStmt : usesNode.mutableDeclaredSubstatements()) {
-                    if (subStmt.producesDeclared(RefineStatement.class) && subStmt.isSupportedToBuildEffective()) {
-                        performRefine(subStmt, targetNodeStmtCtx);
+                    if (subStmt.isSupportedToBuildEffective()) {
+                        final var refine = subStmt.tryDeclaring(RefineStatement.class);
+                        if (refine != null) {
+                            performRefine(refine, targetNodeStmtCtx);
+                        }
                     }
                 }
 
@@ -133,14 +135,15 @@ public final class UsesStatementSupport
     @Override
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final EffectiveStatement<?, ?> source =
-            verifyNotNull(stmt.namespaceItem(SourceGroupingNamespace.INSTANCE, Empty.value())).buildEffective();
-        verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
-        final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
+        final var source = verifyNotNull(stmt.namespaceItem(SourceGroupingNamespace.INSTANCE, Empty.value()))
+            .buildEffective();
+        if (!(source instanceof GroupingDefinition sourceGrouping)) {
+            throw new VerifyException("Unexpected source" + source);
+        }
 
         final int flags = EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements);
-        final QName argument = stmt.getArgument();
-        final UsesStatement declared = stmt.declared();
+        final var argument = stmt.getArgument();
+        final var declared = stmt.declared();
 
         if (substatements.isEmpty()) {
             return argument.equals(declared.argument())
@@ -239,33 +242,25 @@ public final class UsesStatementSupport
         if (targetCtx.getParentContext() == null) {
             return targetCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
         }
-        if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
-            return targetCtx.definingModule();
+        final var targetAugment = targetCtx.tryDeclaring(AugmentStatement.class);
+        if (targetAugment != null) {
+            return targetAugment.definingModule();
         }
-        if (targetCtx.argument() instanceof QName targetQName && stmtContext.argument() instanceof QName) {
-            return targetQName.getModule();
-        }
-
-        return null;
+        // FIXME: what is the semantic meaning of this?
+        return targetCtx.argument() instanceof QName targetQName && stmtContext.argument() instanceof QName
+            ? targetQName.getModule() : null;
     }
 
-    private static void performRefine(final Mutable<?, ?, ?> refineStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
-        final Object refineArgument = refineStmtCtx.argument();
-        if (!(refineArgument instanceof Descendant refineDescendant)) {
-            throw new InferenceException(refineStmtCtx,
-                "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
-        }
-
+    private static void performRefine(final Mutable<Descendant, RefineStatement, ?> refineStmtCtx,
+            final StmtContext<?, ?, ?> usesParentCtx) {
+        final var descendant = refineStmtCtx.getArgument();
         // FIXME: this really should be handled via separate inference, i.e. we first instantiate the template and when
         //        it appears, this refine will trigger on it. This reinforces the FIXME below.
-        final var optRefineTargetCtx = ParserNamespaces.findSchemaTreeStatement(usesParentCtx, refineDescendant);
-        InferenceException.throwIf(optRefineTargetCtx.isEmpty(), refineStmtCtx, "Refine target node %s not found.",
-            refineDescendant);
-
         // FIXME: This communicates the looked-up target node to RefineStatementSupport.buildEffective(). We should do
         //        this trick through a shared namespace or similar reactor-agnostic meeting place. It really feels like
         //        an inference action RefineStatementSupport should be doing.
-        final var refineTargetCtx = optRefineTargetCtx.orElseThrow();
+        final var refineTargetCtx = ParserNamespaces.findSchemaTreeStatement(usesParentCtx, descendant)
+            .orElseThrow(() -> new InferenceException(refineStmtCtx, "Refine target node %s not found.", descendant));
         if (StmtContextUtils.isUnknownStatement(refineTargetCtx)) {
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", refineStmtCtx.argument(),

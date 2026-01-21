@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -214,22 +213,21 @@ final class AugmentInferenceAction implements InferenceAction {
     private static boolean requireCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
             Mutable<?, ?, ?> targetCtx) {
         /*
-         * If the statement argument is not QName, it cannot be mandatory
-         * statement, therefore return false and skip mandatory nodes validation
+         * If the statement argument is not QName, it cannot be mandatory statement, therefore return false and skip
+         * mandatory nodes validation
          */
-        final Object arg = sourceCtx.argument();
-        if (!(arg instanceof QName sourceStmtQName)) {
+        if (!(sourceCtx.argument() instanceof QName sourceStmtQName)) {
             return false;
         }
         // RootStatementContext, for example
-        final Mutable<?, ?, ?> root = targetCtx.getRoot();
+        final var root = targetCtx.getRoot();
         do {
             final Object targetArg = targetCtx.argument();
-            verify(targetArg instanceof QName, "Argument of augment target statement must be QName, not %s", targetArg);
-            final QName targetStmtQName = (QName) targetArg;
-            /*
-             * If target is from another module, return true and perform mandatory nodes validation
-             */
+            if (!(targetArg instanceof QName targetStmtQName)) {
+                throw new VerifyException("Argument of augment target statement must be QName, not " + targetArg);
+            }
+
+            // If target is from another module, return true and perform mandatory nodes validation
             if (!targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
                 return true;
             }
@@ -255,9 +253,11 @@ final class AugmentInferenceAction implements InferenceAction {
                 if (optPrevCopy.isPresent()) {
                     final var original = optPrevCopy.orElseThrow();
                     final var origArg = original.getArgument();
-                    verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
+                    if (!(origArg instanceof QName qname)) {
+                        throw new VerifyException("Unexpected statement argument " + origArg);
+                    }
 
-                    if (sourceStmtQName.getModule().equals(((QName) origArg).getModule())
+                    if (sourceStmtQName.getModule().equals(qname.getModule())
                         && AbstractAugmentStatementSupport.hasWhenSubstatement(getParentAugmentation(original))) {
                         return false;
                     }
@@ -273,9 +273,9 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
-        StmtContext<?, ?, ?> parent = verifyNotNull(child.getParentContext(), "Child %s has not parent", child);
-        while (parent.publicDefinition() != YangStmtMapping.AUGMENT) {
-            parent = verifyNotNull(parent.getParentContext(), "Failed to find augmentation parent of %s", child);
+        var parent = child.coerceParentContext();
+        while (parent.producesDeclared(AugmentStatement.class)) {
+            parent = parent.coerceParentContext();
         }
         return parent;
     }
@@ -289,8 +289,8 @@ final class AugmentInferenceAction implements InferenceAction {
          * the same QName. We must find the Container and the Grouping must be
          * ignored as disallowed augment target.
          */
-        final Collection<?> allowedAugmentTargets = substatementCtx.namespaceItem(
-            ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
+        final var allowedAugmentTargets = substatementCtx.namespaceItem(ValidationBundles.NAMESPACE,
+            ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
 
         // if no allowed target is returned we consider all targets allowed
         return allowedAugmentTargets == null || allowedAugmentTargets.isEmpty()

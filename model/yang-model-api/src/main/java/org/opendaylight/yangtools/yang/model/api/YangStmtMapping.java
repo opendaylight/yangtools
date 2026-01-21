@@ -24,8 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
@@ -42,10 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
@@ -106,8 +100,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
@@ -146,7 +138,6 @@ public enum YangStmtMapping implements StatementDefinition {
     ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
     ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
     ARGUMENT(ArgumentStatement.class, ArgumentEffectiveStatement.class, "argument", "name"),
-    AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
     BASE(BaseStatement.class, BaseEffectiveStatement.class, "base", "name"),
     BELONGS_TO(BelongsToStatement.class, BelongsToEffectiveStatement.class, "belongs-to", "module"),
     BIT(BitStatement.class, BitEffectiveStatement.class, "bit", "name"),
@@ -155,8 +146,6 @@ public enum YangStmtMapping implements StatementDefinition {
     CONFIG(ConfigStatement.class, ConfigEffectiveStatement.class, "config", "value"),
     CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
     DEFAULT(DefaultStatement.class, DefaultEffectiveStatement.class, "default", "value"),
-    DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
-    DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
     ENUM(EnumStatement.class, EnumEffectiveStatement.class, "enum", "name"),
     ERROR_APP_TAG(ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class, "error-app-tag", "value"),
     EXTENSION(ExtensionStatement.class, ExtensionEffectiveStatement.class, "extension", "name"),
@@ -187,7 +176,6 @@ public enum YangStmtMapping implements StatementDefinition {
     PREFIX(PrefixStatement.class, PrefixEffectiveStatement.class, "prefix", "value"),
     PRESENCE(PresenceStatement.class, PresenceEffectiveStatement.class, "presence", "value"),
     RANGE(RangeStatement.class, RangeEffectiveStatement.class, "range", "value"),
-    REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
     REQUIRE_INSTANCE(RequireInstanceStatement.class, RequireInstanceEffectiveStatement.class, "require-instance",
         "value"),
     REVISION(RevisionStatement.class, RevisionEffectiveStatement.class, "revision", "date"),
