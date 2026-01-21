@@ -14,9 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code notification} statement.
  */
-public interface NotificationEffectiveStatement extends SchemaTreeEffectiveStatement<NotificationStatement>,
-        DataTreeAwareEffectiveStatement<QName, NotificationStatement>,
-        TypedefAwareEffectiveStatement<QName, NotificationStatement> {
+public non-sealed interface NotificationEffectiveStatement
+    extends SchemaTreeEffectiveStatement<NotificationStatement>,
+            DataTreeAwareEffectiveStatement<QName, NotificationStatement>,
+            TypedefAwareEffectiveStatement<QName, NotificationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.NOTIFICATION;

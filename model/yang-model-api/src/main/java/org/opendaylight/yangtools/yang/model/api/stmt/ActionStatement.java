@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * takes one argument, which is an identifier, followed by a block of substatements that holds detailed action
  * information. The argument is the name of the action.
  */
-public non-sealed interface ActionStatement extends OperationDeclaredStatement {
+public non-sealed interface ActionStatement extends DeclaredOperationStatement {
     /**
      * The definition of {@code action} statement.
      *

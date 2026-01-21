@@ -114,8 +114,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
@@ -194,7 +192,6 @@ public enum YangStmtMapping implements StatementDefinition {
         "value"),
     REVISION(RevisionStatement.class, RevisionEffectiveStatement.class, "revision", "date"),
     REVISION_DATE(RevisionDateStatement.class, RevisionDateEffectiveStatement.class, "revision-date", "date"),
-    RPC(RpcStatement.class, RpcEffectiveStatement.class, "rpc", "name"),
     STATUS(StatusStatement.class, StatusEffectiveStatement.class, "status", "value"),
     SUBMODULE(SubmoduleStatement.class, SubmoduleEffectiveStatement.class, "submodule", "name"),
     @SuppressWarnings({ "unchecked", "rawtypes" })
