@@ -10,21 +10,22 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -50,14 +51,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DeviateStatementSupport
-        extends AbstractStatementSupport<DeviateKind, DeviateStatement, DeviateEffectiveStatement> {
+        extends AbstractStatementSupport<DeviateArgument, DeviateStatement, DeviateEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(DeviateStatementSupport.class);
 
     // Shared by both
     private static final SubstatementValidator NOT_SUPPORTED_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE).build();
+        SubstatementValidator.builder(DeviateStatement.DEFINITION).build();
     private static final SubstatementValidator REPLACE_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(YangStmtMapping.CONFIG)
             .addOptional(YangStmtMapping.DEFAULT)
             .addOptional(YangStmtMapping.MANDATORY)
@@ -69,7 +70,7 @@ public final class DeviateStatementSupport
 
     // RFC6020
     private static final SubstatementValidator RFC6020_ADD_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(YangStmtMapping.CONFIG)
             .addOptional(YangStmtMapping.DEFAULT)
             .addOptional(YangStmtMapping.MANDATORY)
@@ -80,7 +81,7 @@ public final class DeviateStatementSupport
             .addOptional(YangStmtMapping.UNITS)
             .build();
     private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(YangStmtMapping.DEFAULT)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
@@ -89,7 +90,7 @@ public final class DeviateStatementSupport
 
     // RFC7950
     private static final SubstatementValidator RFC7950_ADD_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.DEFAULT)
             .addOptional(YangStmtMapping.MANDATORY)
@@ -100,19 +101,19 @@ public final class DeviateStatementSupport
             .addOptional(YangStmtMapping.UNITS)
             .build();
     private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addAny(YangStmtMapping.DEFAULT)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
             .addOptional(YangStmtMapping.UNITS)
             .build();
 
-    private static final ImmutableSet<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(
+    private static final Set<YangStmtMapping> IMPLICIT_STATEMENTS = Set.of(
         YangStmtMapping.CONFIG,
         YangStmtMapping.MANDATORY,
         YangStmtMapping.MAX_ELEMENTS,
         YangStmtMapping.MIN_ELEMENTS);
-    private static final ImmutableSet<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
+    private static final Set<YangStmtMapping> SINGLETON_STATEMENTS = Set.of(
         YangStmtMapping.CONFIG,
         YangStmtMapping.MANDATORY,
         YangStmtMapping.MIN_ELEMENTS,
@@ -126,7 +127,7 @@ public final class DeviateStatementSupport
             final SubstatementValidator addValidator, final SubstatementValidator deleteValidator) {
         // Note: we are performing our own validation based on deviate kind.
         // TODO: perhaps we should do argumentSpecificSupport?
-        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), SubtreePolicy.template(), config, null);
+        super(DeviateStatement.DEFINITION, StatementPolicy.contextIndependent(), SubtreePolicy.template(), config, null);
         this.addValidator = requireNonNull(addValidator);
         this.deleteValidator = requireNonNull(deleteValidator);
     }
@@ -140,33 +141,38 @@ public final class DeviateStatementSupport
     }
 
     @Override
-    public DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(DeviateKind.forArgument(value), ctx,
+    public DeviateArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return SourceException.throwIfNull(DeviateArgument.forArgument(value), ctx,
             "String '%s' is not valid deviate argument", value);
     }
 
     @Override
     public void onFullDefinitionDeclared(
-            final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx) {
-        final var deviateKind = deviateStmtCtx.argument();
-        getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
+            final Mutable<DeviateArgument, DeviateStatement, DeviateEffectiveStatement> deviateCtx) {
+        final var deviateArg = deviateCtx.argument();
+        getSubstatementValidatorForDeviate(deviateArg).validate(deviateCtx);
 
-        final var deviationTarget = (SchemaNodeIdentifier) deviateStmtCtx.coerceParentContext().argument();
-        if (!isDeviationSupported(deviateStmtCtx, deviationTarget)) {
+        final var parent = deviateCtx.coerceParentContext();
+        final var parentDeviation = parent.tryDeclaring(DeviationStatement.class);
+        if (parentDeviation == null) {
+            throw new InferenceException(deviateCtx, "Unexpected parent statement %s",
+                parent.publicDefinition().humanName());
+        }
+
+        final var targetNode = parentDeviation.getArgument();
+        if (!isDeviationSupported(deviateCtx, targetNode)) {
             return;
         }
 
-        final var deviateAction = deviateStmtCtx.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-
-        final var sourceCtxPrerequisite = deviateAction.requiresCtx(deviateStmtCtx,
-            ModelProcessingPhase.EFFECTIVE_MODEL);
-        final var targetCtxPrerequisite = deviateAction.mutatesEffectiveCtxPath(deviateStmtCtx.getRoot(),
-            ParserNamespaces.schemaTree(), deviationTarget.getNodeIdentifiers());
+        final var deviateAction = deviateCtx.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var sourceCtxPrerequisite = deviateAction.requiresCtx(deviateCtx, ModelProcessingPhase.EFFECTIVE_MODEL);
+        final var targetCtxPrerequisite = deviateAction.mutatesEffectiveCtxPath(deviateCtx.getRoot(),
+            ParserNamespaces.schemaTree(), targetNode.getNodeIdentifiers());
 
         deviateAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                if (!deviateStmtCtx.isSupportedToBuildEffective()) {
+                if (!deviateCtx.isSupportedToBuildEffective()) {
                     // We are not building effective model, hence we should not be performing any effects
                     return;
                 }
@@ -174,7 +180,7 @@ public final class DeviateStatementSupport
                 final var sourceNodeStmtCtx = sourceCtxPrerequisite.resolve(ctx);
                 final var targetNodeStmtCtx = targetCtxPrerequisite.resolve(ctx);
 
-                switch (deviateKind) {
+                switch (deviateArg) {
                     case null -> throw new NullPointerException();
                     case NOT_SUPPORTED ->
                         // FIXME: this can be short-circuited without an inference action
@@ -187,14 +193,15 @@ public final class DeviateStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                throw new InferenceException(deviateStmtCtx.coerceParentContext(), "Deviation target '%s' not found.",
-                    deviationTarget);
+                // FIXME: improve formatting
+                throw new InferenceException(deviateCtx.coerceParentContext(), "Deviation target '%s' not found.",
+                    targetNode);
             }
 
             @Override
             public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
                 if (targetCtxPrerequisite.equals(unavail)) {
-                    deviateStmtCtx.setUnsupported();
+                    deviateCtx.setUnsupported();
                 } else {
                     prerequisiteFailed(List.of(unavail));
                 }
@@ -214,7 +221,7 @@ public final class DeviateStatementSupport
     }
 
     @Override
-    protected DeviateStatement createDeclared(final BoundStmtCtx<DeviateKind> ctx,
+    protected DeviateStatement createDeclared(final BoundStmtCtx<DeviateArgument> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createDeviate(ctx.getArgument(), substatements);
     }
@@ -226,12 +233,12 @@ public final class DeviateStatementSupport
     }
 
     @Override
-    protected DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
+    protected DeviateEffectiveStatement createEffective(final Current<DeviateArgument, DeviateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDeviate(stmt.declared(), substatements);
     }
 
-    protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
+    protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateArgument deviateKind) {
         return switch (deviateKind) {
             case ADD -> addValidator;
             case DELETE -> deleteValidator;
@@ -241,7 +248,7 @@ public final class DeviateStatementSupport
     }
 
     private static boolean isDeviationSupported(
-            final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
+            final Mutable<DeviateArgument, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
         final var modulesDeviatedByModules = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULES_DEVIATED_BY,
             Empty.value());
