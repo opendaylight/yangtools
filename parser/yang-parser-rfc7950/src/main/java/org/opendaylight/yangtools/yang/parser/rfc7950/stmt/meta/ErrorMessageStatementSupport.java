@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ErrorMessageStatementSupport
         extends AbstractStringStatementSupport<ErrorMessageStatement, ErrorMessageEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.ERROR_MESSAGE).build();
+        SubstatementValidator.builder(ErrorMessageStatement.DEFINITION).build();
 
     public ErrorMessageStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ERROR_MESSAGE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(ErrorMessageStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

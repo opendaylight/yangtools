@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -31,8 +33,8 @@ public final class RevisionStatementSupport
         extends AbstractStatementSupport<Revision, RevisionStatement, RevisionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.REVISION)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     public RevisionStatementSupport(final YangParserConfiguration config) {

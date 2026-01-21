@@ -7,16 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code organization} statement.
  */
-public interface OrganizationStatement extends DeclaredStatement<String> {
+public interface OrganizationStatement extends DeclaredHumanTextStatement {
+    /**
+     * The definition of {@code organization} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        OrganizationStatement.class, OrganizationEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "organization", "text", true);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ORGANIZATION;
+        return DEFINITION;
     }
 }

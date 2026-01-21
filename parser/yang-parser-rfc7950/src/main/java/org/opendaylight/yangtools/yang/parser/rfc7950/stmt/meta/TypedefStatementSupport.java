@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -47,8 +49,8 @@ public final class TypedefStatementSupport extends
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPEDEF)
         .addOptional(YangStmtMapping.DEFAULT)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(DescriptionStatement.DEFINITION)
+        .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(YangStmtMapping.STATUS)
         .addMandatory(YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.UNITS)

@@ -17,16 +17,16 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -36,11 +36,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatem
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -55,8 +53,8 @@ public final class ImportStatementSupport
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.IMPORT)
         .addMandatory(YangStmtMapping.PREFIX)
         .addOptional(YangStmtMapping.REVISION_DATE)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(DescriptionStatement.DEFINITION)
+        .addOptional(ReferenceStatement.DEFINITION)
         .build();
 
     private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
@@ -78,11 +76,11 @@ public final class ImportStatementSupport
          * Based on this information, required modules are searched from library
          * sources.
          */
-        final SourceIdentifier importId = RevisionImport.getImportedSourceIdentifier(stmt);
+        final var importId = RevisionImport.getImportedSourceIdentifier(stmt);
         stmt.addRequiredSource(importId);
 
-        final Unqualified moduleName = stmt.getArgument();
-        final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
+        final var moduleName = stmt.getArgument();
+        final var importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final var imported = importAction.requiresCtx(stmt, ParserNamespaces.PRELINKAGE_MODULE, moduleName,
             SOURCE_PRE_LINKAGE);
         final Prerequisite<Mutable<?, ?, ?>> rootPrereq = importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
@@ -90,18 +88,18 @@ public final class ImportStatementSupport
         importAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
+                final var importedModuleContext = imported.resolve(ctx);
                 verify(moduleName.equals(importedModuleContext.getArgument()));
-                final XMLNamespace importedModuleNamespace = verifyNotNull(importedModuleContext.namespaceItem(
+                final var importedModuleNamespace = verifyNotNull(importedModuleContext.namespaceItem(
                     ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName));
-                final String impPrefix = SourceException.throwIfNull(
+                final var impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
                     "Missing prefix statement");
 
-                final Mutable<?, ?, ?> root = rootPrereq.resolve(ctx);
+                final var root = rootPrereq.resolve(ctx);
                 // Version 1 sources must not import-by-revision Version 1.1 modules
                 if (importId.revision() != null && root.yangVersion() == YangVersion.VERSION_1) {
-                    final YangVersion importedVersion = importedModuleContext.yangVersion();
+                    final var importedVersion = importedModuleContext.yangVersion();
                     if (importedVersion != YangVersion.VERSION_1) {
                         throw new YangVersionLinkageException(stmt, "Cannot import by revision version %s module %s",
                             importedVersion, moduleName.getLocalName());

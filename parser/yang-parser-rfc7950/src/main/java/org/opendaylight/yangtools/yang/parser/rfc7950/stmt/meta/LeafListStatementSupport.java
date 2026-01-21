@@ -21,9 +21,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -45,13 +47,13 @@ public final class LeafListStatementSupport
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
             .addOptional(YangStmtMapping.CONFIG)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(YangStmtMapping.MIN_ELEMENTS)
             .addOptional(YangStmtMapping.MAX_ELEMENTS)
             .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.ORDERED_BY)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.UNITS)
@@ -61,13 +63,13 @@ public final class LeafListStatementSupport
         SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.DEFAULT)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(YangStmtMapping.MIN_ELEMENTS)
             .addOptional(YangStmtMapping.MAX_ELEMENTS)
             .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.ORDERED_BY)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.UNITS)
