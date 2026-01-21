@@ -22,15 +22,13 @@ class SubstatementValidatorTest extends AbstractYangTest {
     @Test
     void undesirableElementException() {
         assertInvalidSubstatementExceptionDir("/substatement-validator/undesirable-element",
-            startsWith("TYPE is not valid for REVISION. Error in module undesirable "
-                + "(QNameModule{ns=urn:opendaylight.undesirable, rev=2015-11-11}) [at "));
+            startsWith("revision statement does not allow type substatements [at "));
     }
 
     @Test
     void maximalElementCountException() {
         assertInvalidSubstatementExceptionDir("/substatement-validator/maximal-element",
-            startsWith("Maximal count of DESCRIPTION for AUGMENT is 1, detected 2. Error in module baz "
-                + "(QNameModule{ns=urn:opendaylight.baz, rev=2015-11-11}) [at "));
+            startsWith("augment statement allows at most 1 description substatement(s), 2 present [at "));
     }
 
     @Test

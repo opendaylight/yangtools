@@ -71,7 +71,7 @@ class Bug6897Test extends AbstractYangTest {
 
     @Test
     void invalid10Test() {
-        assertInvalidSubstatementException(startsWith("NOTIFICATION is not valid for"),
+        assertInvalidSubstatementException(startsWith("list statement does not allow notification substatements [at "),
             "/rfc7950/notifications-in-data-nodes/foo10.yang");
     }
 

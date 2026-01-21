@@ -73,7 +73,8 @@ class Bug6869Test extends AbstractYangTest {
 
     @Test
     void invalidYang10Test() {
-        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for IDENTITY"),
+        assertInvalidSubstatementException(
+            startsWith("identity statement does not allow if-feature substatements [at "),
             "/rfc7950/bug6869/invalid10.yang");
     }
 }

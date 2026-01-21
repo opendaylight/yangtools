@@ -30,7 +30,8 @@ class IdentityStatementTest extends AbstractYangTest {
 
     @Test
     void testInvalidYang10() {
-        assertInvalidSubstatementException(startsWith("Maximal count of BASE for IDENTITY is 1, detected 3."),
+        assertInvalidSubstatementException(
+            startsWith("identity statement allows at most 1 base substatement(s), 3 present [at "),
             "/rfc7950/identity-stmt/foo10.yang");
     }
 }

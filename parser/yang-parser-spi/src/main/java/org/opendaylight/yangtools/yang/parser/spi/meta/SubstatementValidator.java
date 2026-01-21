@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,15 +23,15 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class SubstatementValidator {
-    private static final StatementCardinality[] EMPTY_MANDATORY = new StatementCardinality[0];
+    private static final @NonNull StatementCardinality @NonNull [] EMPTY_MANDATORY = new StatementCardinality[0];
 
-    private final StatementCardinality[] mandatoryStatements;
-    private final Map<StatementDefinition, Cardinality> otherStatements;
-    private final StatementDefinition currentStatement;
+    private final @NonNull StatementCardinality[] mandatoryStatements;
+    private final @NonNull Map<StatementDefinition, Cardinality> otherStatements;
+    private final @NonNull StatementDefinition currentStatement;
 
     private SubstatementValidator(final StatementDefinition currentStatement,
             final ImmutableMap<StatementDefinition, Cardinality> cardinalityMap) {
-        this.currentStatement = currentStatement;
+        this.currentStatement = requireNonNull(currentStatement);
 
         // Split the cardinalities based on mandatory/non-mandatory
         mandatoryStatements = cardinalityMap.entrySet().stream()
@@ -42,6 +43,7 @@ public final class SubstatementValidator {
             .collect(Collectors.toUnmodifiableMap(Entry::getKey, Entry::getValue));
     }
 
+    @NonNullByDefault
     public static Builder builder(final StatementDefinition currentStatement) {
         return new Builder(currentStatement);
     }
@@ -49,10 +51,10 @@ public final class SubstatementValidator {
     public static final class Builder {
         // We are using ImmutableMap because it retains encounter order
         private final ImmutableMap.Builder<StatementDefinition, Cardinality> cardinalityMap = ImmutableMap.builder();
-        private final StatementDefinition currentStatement;
+        private final @NonNull StatementDefinition currentStatement;
 
         Builder(final StatementDefinition currentStatement) {
-            this.currentStatement = currentStatement;
+            this.currentStatement = requireNonNull(currentStatement);
         }
 
         private Builder add(final StatementDefinition def, final Cardinality card) {
@@ -94,7 +96,7 @@ public final class SubstatementValidator {
             return add(def, Cardinality.atMostOne());
         }
 
-        public SubstatementValidator build() {
+        public @NonNull SubstatementValidator build() {
             return new SubstatementValidator(currentStatement, cardinalityMap.build());
         }
     }
@@ -106,7 +108,7 @@ public final class SubstatementValidator {
      * @throws InvalidSubstatementException when there is a disallowed statement present.
      * @throws MissingSubstatementException when a mandatory statement is missing.
      */
-    public void validate(final StmtContext<?, ?, ?> ctx) {
+    public void validate(final @NonNull StmtContext<?, ?, ?> ctx) {
         // Single pass through all substatements, grouping them by their public definition and computing their
         // frequency.
         // Note we provide an LinkedHashMap::new, so we know the resulting map is mutable and has encounter order
@@ -156,53 +158,44 @@ public final class SubstatementValidator {
         }
     }
 
+    @NonNullByDefault
     private @Nullable SourceException evaluate(final StmtContext<?, ?, ?> ctx, final StatementCardinality cardinality,
             final @Nullable Integer count) {
-        if (count == null) {
-            final var root = ctx.getRoot();
-            return new MissingSubstatementException(ctx,
-                "%s is missing %s. Minimal count is %s. Error in module %s (%s)", currentStatement, cardinality.def,
-                cardinality.minRequired, root.rawArgument(),
-                ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
-        }
-        return evaluateMinMax(ctx, cardinality, count);
+        return evaluateMinMax(ctx, cardinality, count == null ? 0 : count);
     }
 
+    @NonNullByDefault
     private @Nullable SourceException evaluate(final StmtContext<?, ?, ?> ctx, final StatementDefinition def,
             final int count, final @Nullable Cardinality cardinality) {
         if (cardinality == null) {
-            if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.statementName()) == null) {
-                final var root = ctx.getRoot();
-                return new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", def,
-                    currentStatement, root.rawArgument(),
-                    ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
+            if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.statementName()) != null) {
+                return null;
             }
-            return null;
+            return new InvalidSubstatementException(ctx, "%s statement does not allow %s substatements",
+                currentStatement.humanName(), def.humanName());
         }
         return evaluateMax(ctx, def, cardinality, count);
     }
 
+    @NonNullByDefault
     private @Nullable InvalidSubstatementException evaluateMinMax(final StmtContext<?, ?, ?> ctx,
             final StatementCardinality cardinality, final int count) {
         final var def = cardinality.def;
         if (count < cardinality.minRequired()) {
-            final var root = ctx.getRoot();
             return new InvalidSubstatementException(ctx,
-                "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
-                cardinality.minRequired(), count, root.rawArgument(),
-                ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
+                "%s statement requires at least %s %s substatement(s), %s present", currentStatement.humanName(),
+                cardinality.minRequired(), def.humanName(), count);
         }
         return evaluateMax(ctx, def, cardinality, count);
     }
 
+    @NonNullByDefault
     private @Nullable InvalidSubstatementException evaluateMax(final StmtContext<?, ?, ?> ctx,
             final StatementDefinition def, final Cardinality cardinality, final int count) {
         if (count > cardinality.maxAllowed()) {
-            final var root = ctx.getRoot();
             return new InvalidSubstatementException(ctx,
-                "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", def, currentStatement,
-                cardinality.maxAllowed(), count, root.rawArgument(),
-                ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root));
+                "%s statement allows at most %s %s substatement(s), %s present", currentStatement.humanName(),
+                cardinality.maxAllowed(), def.humanName(), count);
         }
         return null;
     }

@@ -42,6 +42,6 @@ class Bug7038Test extends AbstractYangTest {
     @Test
     void testYang10() {
         assertInvalidSubstatementExceptionDir("/bugs/bug7038/yang10",
-            startsWith("REQUIRE_INSTANCE is not valid for TYPE"));
+            startsWith("type statement does not allow require-instance substatements [at "));
     }
 }

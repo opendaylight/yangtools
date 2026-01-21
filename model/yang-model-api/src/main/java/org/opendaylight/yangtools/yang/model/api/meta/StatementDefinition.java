@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 
 /**
@@ -125,6 +126,16 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
     @Deprecated(since = "15.0.0", forRemoval = true)
     default @NonNull QName getStatementName() {
         return statementName();
+    }
+
+    /**
+     * {@return a human-friendly string representation of {link #statementName()}}
+     * @since 15.0.0
+     */
+    default @NonNull String humanName() {
+        final var statementName = statementName();
+        return YangConstants.RFC6020_YIN_MODULE.equals(statementName) ? statementName.getLocalName()
+            : statementName.toString();
     }
 
     /**

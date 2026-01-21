@@ -41,7 +41,8 @@ class IdentityrefStatementTest extends AbstractYangTest {
 
     @Test
     void testInvalidYang10() {
-        assertInvalidSubstatementException(startsWith("Maximal count of BASE for TYPE is 1, detected 3."),
+        assertInvalidSubstatementException(
+            startsWith("type statement allows at most 1 base substatement(s), 3 present [at "),
             "/rfc7950/identityref-stmt/foo10.yang");
     }
 }
