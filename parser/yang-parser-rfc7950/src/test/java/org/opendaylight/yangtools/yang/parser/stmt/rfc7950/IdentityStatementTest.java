@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class IdentityStatementTest extends AbstractYangTest {
 
     @Test
     void testInvalidYang10() {
-        assertInvalidSubstatementException(startsWith("Maximal count of BASE for IDENTITY is 1, detected 3."),
-            "/rfc7950/identity-stmt/foo10.yang");
+        assertThat(assertInvalidSubstatementException("/rfc7950/identity-stmt/foo10.yang").getMessage())
+            .startsWith("statement identity allows at most 1 base substatement: 3 present [at ");
     }
 }

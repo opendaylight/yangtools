@@ -193,16 +193,18 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidYang10Model() {
-        assertInvalidSubstatementException(startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."),
+        assertThat(assertInvalidSubstatementException(
             "/deviation-resolution-test/deviation-add/foo10-invalid.yang",
-            "/deviation-resolution-test/deviation-add/bar10-invalid.yang");
+            "/deviation-resolution-test/deviation-add/bar10-invalid.yang")
+            .getMessage()).startsWith("statement deviate allows at most 1 default substatement: 2 present [at ");
     }
 
     @Test
     void shouldFailOnInvalidYang10Model2() {
-        assertInvalidSubstatementException(startsWith("Maximal count of DEFAULT for DEVIATE is 1, detected 2."),
+        assertThat(assertInvalidSubstatementException(
             "/deviation-resolution-test/deviation-delete/foo10-invalid.yang",
-            "/deviation-resolution-test/deviation-delete/bar10-invalid.yang");
+            "/deviation-resolution-test/deviation-delete/bar10-invalid.yang")
+            .getMessage()).startsWith("statement deviate allows at most 1 default substatement: 2 present [at ");
     }
 
     @Test
@@ -298,22 +300,29 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviateAddSubstatement() {
-        assertInvalidSubstatementException(startsWith("TYPE is not valid for DEVIATE."),
+        assertThat(assertInvalidSubstatementException(
             "/deviation-resolution-test/deviation-add/foo-invalid-3.yang",
-            "/deviation-resolution-test/deviation-add/bar-invalid-3.yang");
+            "/deviation-resolution-test/deviation-add/bar-invalid-3.yang")
+            .getMessage())
+        .startsWith("statement deviate does not allow type substatements: 1 present [at ");
     }
 
     @Test
     void shouldFailOnInvalidDeviateReplaceSubstatement() {
-        assertInvalidSubstatementException(startsWith("MUST is not valid for DEVIATE."),
+        assertThat(assertInvalidSubstatementException(
             "/deviation-resolution-test/deviation-replace/foo-invalid-3.yang",
-            "/deviation-resolution-test/deviation-replace/bar-invalid-3.yang");
+            "/deviation-resolution-test/deviation-replace/bar-invalid-3.yang")
+            .getMessage())
+        .startsWith("statement deviate does not allow must substatements: 1 present [at ");
     }
 
     @Test
     void shouldFailOnInvalidDeviateDeleteSubstatement() {
-        assertInvalidSubstatementException(startsWith("CONFIG is not valid for DEVIATE."),
+        assertThat(assertInvalidSubstatementException(
             "/deviation-resolution-test/deviation-delete/foo-invalid-2.yang",
-            "/deviation-resolution-test/deviation-delete/bar-invalid-2.yang");
+            "/deviation-resolution-test/deviation-delete/bar-invalid-2.yang")
+            .getMessage())
+            .startsWith("statement deviate does not allow config substatements: 1 present [at ");
+
     }
 }

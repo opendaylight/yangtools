@@ -117,8 +117,18 @@ public abstract class AbstractYangTest {
     }
 
     public static @NonNull InvalidSubstatementException assertInvalidSubstatementException(
+            final String... yangResourceName) {
+        return assertException(InvalidSubstatementException.class, yangResourceName);
+    }
+
+    public static @NonNull InvalidSubstatementException assertInvalidSubstatementException(
             final Matcher<String> matcher, final String... yangResourceName) {
         return assertException(InvalidSubstatementException.class, matcher, yangResourceName);
+    }
+
+    public static @NonNull InvalidSubstatementException assertInvalidSubstatementExceptionDir(
+            final String yangResourceName) {
+        return assertExceptionDir(yangResourceName, InvalidSubstatementException.class);
     }
 
     public static @NonNull InvalidSubstatementException assertInvalidSubstatementExceptionDir(

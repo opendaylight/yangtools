@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -41,7 +41,7 @@ class Bug7038Test extends AbstractYangTest {
 
     @Test
     void testYang10() {
-        assertInvalidSubstatementExceptionDir("/bugs/bug7038/yang10",
-            startsWith("REQUIRE_INSTANCE is not valid for TYPE"));
+        assertThat(assertInvalidSubstatementExceptionDir("/bugs/bug7038/yang10").getMessage())
+            .startsWith("statement type does not allow require-instance substatements: 1 present [at ");
     }
 }
