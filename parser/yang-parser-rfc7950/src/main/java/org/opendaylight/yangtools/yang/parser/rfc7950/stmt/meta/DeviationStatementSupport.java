@@ -37,14 +37,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class DeviationStatementSupport
         extends AbstractStatementSupport<Absolute, DeviationStatement, DeviationEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATION)
+        SubstatementValidator.builder(DeviationStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.DEVIATE)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     public DeviationStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.DEVIATION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(DeviationStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
