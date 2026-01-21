@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -235,47 +234,43 @@ public enum YangStmtMapping implements StatementDefinition {
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
-    private final @NonNull QName name;
-    private final @Nullable QName argumentName;
-    private final boolean yinElement;
+    private final @NonNull QName statementName;
+    private final @Nullable ArgumentDefinition argumentDefinition;
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
-            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String name) {
         declaredRepresentation = requireNonNull(declared);
         effectiveRepresentation = requireNonNull(effective);
-        name = yinQName(nameStr);
-        argumentName = null;
-        yinElement = false;
+        statementName = qualifyName(name);
+        argumentDefinition = null;
     }
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
-            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr) {
-        this(declared, effective, nameStr, argumentStr, false);
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String name, final String argName) {
+        this(declared, effective, name, argName, false);
     }
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
-            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String name, final String argName,
             final boolean yinElement) {
         declaredRepresentation = requireNonNull(declared);
         effectiveRepresentation = requireNonNull(effective);
-        name = yinQName(nameStr);
-        argumentName = yinQName(argumentStr);
-        this.yinElement = yinElement;
+        statementName = qualifyName(name);
+        argumentDefinition = ArgumentDefinition.of(qualifyName(argName), yinElement);
     }
 
-    @NonNullByDefault
-    private static QName yinQName(final String nameStr) {
-        return QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr).intern();
+    private static @NonNull QName qualifyName(final String name) {
+        return QName.create(YangConstants.RFC6020_YIN_MODULE, name).intern();
     }
 
     @Override
     public QName statementName() {
-        return name;
+        return statementName;
     }
 
     @Override
     public ArgumentDefinition argumentDefinition() {
-        return argumentName == null ? null : ArgumentDefinition.of(argumentName, yinElement);
+        return argumentDefinition;
     }
 
     @Override
