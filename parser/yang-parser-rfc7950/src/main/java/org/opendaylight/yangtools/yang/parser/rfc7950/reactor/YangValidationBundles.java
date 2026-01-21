@@ -19,6 +19,8 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 
 public final class YangValidationBundles {
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
@@ -71,15 +73,15 @@ public final class YangValidationBundles {
                 YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYXML))
         .put(VERSION_1_1, YangStmtMapping.MUST, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
                 YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML,
-                YangStmtMapping.INPUT, YangStmtMapping.OUTPUT, YangStmtMapping.NOTIFICATION))
+                InputStatement.DEFINITION, OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION))
         .put(VERSION_1, YangStmtMapping.TYPE, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
         .put(VERSION_1, YangStmtMapping.UNIQUE, ImmutableSet.of(YangStmtMapping.LIST))
         .put(VERSION_1, YangStmtMapping.UNITS, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
         .build();
 
     public static final Set<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = ImmutableSet.of(
-        YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.CASE, YangStmtMapping.INPUT,
-        YangStmtMapping.OUTPUT, YangStmtMapping.NOTIFICATION, YangStmtMapping.CHOICE, YangStmtMapping.RPC);
+        YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.CASE, InputStatement.DEFINITION,
+        OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION, YangStmtMapping.CHOICE, YangStmtMapping.RPC);
 
     // FIXME: 7.0.0: consider hiding this list, as choice nodes are handling creation of implied shorthands themselves.
     //               This has implications on other members of this class, as they really seem like something which
