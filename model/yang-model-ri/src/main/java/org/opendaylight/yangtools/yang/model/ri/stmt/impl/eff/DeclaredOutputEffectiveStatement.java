@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationContainerMixin;
 
-public final class DeclaredOutputEffectiveStatement extends WithTypedefNamespace<QName, OutputStatement>
-        implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
+public final class DeclaredOutputEffectiveStatement extends WithTypedefNamespace<QName, @NonNull OutputStatement>
+        implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<@NonNull OutputStatement> {
     private final @NonNull QName argument;
     private final int flags;
 
-    public DeclaredOutputEffectiveStatement(final OutputStatement declared,
+    public DeclaredOutputEffectiveStatement(final @NonNull OutputStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
             final int flags) {
         super(declared, substatements);

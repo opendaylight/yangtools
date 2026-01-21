@@ -20,14 +20,14 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.CopyableMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationDefinitionMixin;
 
-public final class ActionEffectiveStatementImpl extends WithTypedefNamespace<QName, ActionStatement>
-        implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<ActionStatement>,
-                   CopyableMixin<QName, ActionStatement> {
+public final class ActionEffectiveStatementImpl extends WithTypedefNamespace<QName, @NonNull ActionStatement>
+        implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<@NonNull ActionStatement>,
+                   CopyableMixin<QName, @NonNull ActionStatement> {
     private final @NonNull QName argument;
     private final int flags;
 
-    public ActionEffectiveStatementImpl(final ActionStatement declared, final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    public ActionEffectiveStatementImpl(final @NonNull ActionStatement declared, final QName argument,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
         this.flags = flags;
