@@ -19,7 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -44,9 +48,9 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.AUGMENT)
             .addMandatory(YangStmtMapping.BELONGS_TO)
             .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONTACT)
+            .addOptional(ContactStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(YangStmtMapping.EXTENSION)
             .addAny(YangStmtMapping.FEATURE)
@@ -58,8 +62,8 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.ORGANIZATION)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(OrganizationStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addAny(YangStmtMapping.REVISION)
             .addAny(YangStmtMapping.RPC)
             .addAny(YangStmtMapping.TYPEDEF)
@@ -73,9 +77,9 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.AUGMENT)
             .addMandatory(YangStmtMapping.BELONGS_TO)
             .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONTACT)
+            .addOptional(ContactStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(YangStmtMapping.EXTENSION)
             .addAny(YangStmtMapping.FEATURE)
@@ -87,8 +91,8 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.ORGANIZATION)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(OrganizationStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
             .addAny(YangStmtMapping.REVISION)
             .addAny(YangStmtMapping.RPC)
             .addAny(YangStmtMapping.TYPEDEF)

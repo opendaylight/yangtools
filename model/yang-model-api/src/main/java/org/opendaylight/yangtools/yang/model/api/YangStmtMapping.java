@@ -38,14 +38,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
@@ -54,8 +50,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
@@ -100,8 +94,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
@@ -114,8 +106,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
@@ -165,15 +155,12 @@ public enum YangStmtMapping implements StatementDefinition {
     CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
     CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
     CONFIG(ConfigStatement.class, ConfigEffectiveStatement.class, "config", "value"),
-    CONTACT(ContactStatement.class, ContactEffectiveStatement.class, "contact", "text", true),
     CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
     DEFAULT(DefaultStatement.class, DefaultEffectiveStatement.class, "default", "value"),
-    DESCRIPTION(DescriptionStatement.class, DescriptionEffectiveStatement.class, "description", "text", true),
     DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
     ENUM(EnumStatement.class, EnumEffectiveStatement.class, "enum", "name"),
     ERROR_APP_TAG(ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class, "error-app-tag", "value"),
-    ERROR_MESSAGE(ErrorMessageStatement.class, ErrorMessageEffectiveStatement.class, "error-message", "value", true),
     EXTENSION(ExtensionStatement.class, ExtensionEffectiveStatement.class, "extension", "name"),
     FEATURE(FeatureStatement.class, FeatureEffectiveStatement.class, "feature", "name"),
     FRACTION_DIGITS(FractionDigitsStatement.class, FractionDigitsEffectiveStatement.class, "fraction-digits", "value"),
@@ -196,14 +183,12 @@ public enum YangStmtMapping implements StatementDefinition {
     NAMESPACE(NamespaceStatement.class, NamespaceEffectiveStatement.class, "namespace", "uri"),
     NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
     ORDERED_BY(OrderedByStatement.class, OrderedByEffectiveStatement.class, "ordered-by", "value"),
-    ORGANIZATION(OrganizationStatement.class, OrganizationEffectiveStatement.class, "organization", "text", true),
     PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
     PATTERN(PatternStatement.class, PatternEffectiveStatement.class, "pattern", "value"),
     POSITION(PositionStatement.class, PositionEffectiveStatement.class, "position", "value"),
     PREFIX(PrefixStatement.class, PrefixEffectiveStatement.class, "prefix", "value"),
     PRESENCE(PresenceStatement.class, PresenceEffectiveStatement.class, "presence", "value"),
     RANGE(RangeStatement.class, RangeEffectiveStatement.class, "range", "value"),
-    REFERENCE(ReferenceStatement.class, ReferenceEffectiveStatement.class, "reference", "text", true),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
     REQUIRE_INSTANCE(RequireInstanceStatement.class, RequireInstanceEffectiveStatement.class, "require-instance",
         "value"),

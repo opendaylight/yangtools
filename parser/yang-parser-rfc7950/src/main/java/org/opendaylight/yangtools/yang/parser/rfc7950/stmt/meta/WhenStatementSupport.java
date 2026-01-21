@@ -15,6 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -32,8 +34,8 @@ public final class WhenStatementSupport
         extends AbstractStatementSupport<QualifiedBound, WhenStatement, WhenEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.WHEN)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     private final @NonNull XPathSupport xpathSupport;

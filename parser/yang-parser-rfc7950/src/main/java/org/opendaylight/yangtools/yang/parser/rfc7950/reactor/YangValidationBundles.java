@@ -19,12 +19,14 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 
 public final class YangValidationBundles {
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
-        YangStmtMapping.DEFAULT, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.CONFIG,
+        YangStmtMapping.DEFAULT, DescriptionStatement.DEFINITION, ReferenceStatement.DEFINITION, YangStmtMapping.CONFIG,
         YangStmtMapping.MANDATORY, YangStmtMapping.MUST, YangStmtMapping.PRESENCE, YangStmtMapping.MIN_ELEMENTS,
         YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.IF_FEATURE);
 
