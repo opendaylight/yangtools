@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
@@ -29,7 +30,9 @@ public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateE
      *
      * @return enum which describes the type of this deviate statement
      */
-    @NonNull DeviateKind getDeviateType();
+    default @NonNull DeviateArgument getDeviateType() {
+        return asEffectiveStatement().argument();
+    }
 
     /**
      * Returns deviated config value.
