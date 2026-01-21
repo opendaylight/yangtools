@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -73,7 +73,7 @@ class Bug6869Test extends AbstractYangTest {
 
     @Test
     void invalidYang10Test() {
-        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for IDENTITY"),
-            "/rfc7950/bug6869/invalid10.yang");
+        assertThat(assertInvalidSubstatementException("/rfc7950/bug6869/invalid10.yang").getMessage())
+            .startsWith("statement identity does not allow if-feature substatements: 1 present [at ");
     }
 }

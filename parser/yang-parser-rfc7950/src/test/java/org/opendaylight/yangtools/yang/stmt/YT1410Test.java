@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 class YT1410Test extends AbstractYangTest {
     @Test
     void testRFC6020() {
-        assertInvalidSubstatementException(
-            startsWith("CHOICE is not valid for CHOICE. Error in module foo (QNameModule{ns=foo}) [at "),
-            "/bugs/YT1410/foo.yang");
+        assertThat(assertInvalidSubstatementException("/bugs/YT1410/foo.yang").getMessage())
+            .startsWith("statement choice does not allow choice substatements: 1 present [at ");
     }
 
     @Test

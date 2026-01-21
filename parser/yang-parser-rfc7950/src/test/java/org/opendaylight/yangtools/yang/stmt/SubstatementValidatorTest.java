@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,16 +22,14 @@ class SubstatementValidatorTest extends AbstractYangTest {
 
     @Test
     void undesirableElementException() {
-        assertInvalidSubstatementExceptionDir("/substatement-validator/undesirable-element",
-            startsWith("TYPE is not valid for REVISION. Error in module undesirable "
-                + "(QNameModule{ns=urn:opendaylight.undesirable, rev=2015-11-11}) [at "));
+        assertThat(assertInvalidSubstatementExceptionDir("/substatement-validator/undesirable-element").getMessage())
+            .startsWith("statement revision does not allow type substatements: 1 present [at ");
     }
 
     @Test
     void maximalElementCountException() {
-        assertInvalidSubstatementExceptionDir("/substatement-validator/maximal-element",
-            startsWith("Maximal count of DESCRIPTION for AUGMENT is 1, detected 2. Error in module baz "
-                + "(QNameModule{ns=urn:opendaylight.baz, rev=2015-11-11}) [at "));
+        assertThat(assertInvalidSubstatementExceptionDir("/substatement-validator/maximal-element").getMessage())
+            .startsWith("statement augment allows at most 1 description substatement: 2 present [at ");
     }
 
     @Test
@@ -47,8 +46,7 @@ class SubstatementValidatorTest extends AbstractYangTest {
 
     @Test
     void bug4310test() {
-        assertExceptionDir("/substatement-validator/bug-4310", MissingSubstatementException.class,
-            startsWith("TYPE is missing TYPE. Minimal count is 1. Error in module bug4310 "
-                + "(QNameModule{ns=urn:opendaylight.bug4310}) [at "));
+        assertThat(assertExceptionDir("/substatement-validator/bug-4310", MissingSubstatementException.class)
+            .getMessage()).startsWith("statement type requires at least 1 type substatement: none present [at ");
     }
 }

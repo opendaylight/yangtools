@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 
@@ -62,13 +63,14 @@ class Bug6901Test extends AbstractYangTest {
 
     @Test
     void ifFeature10EnumTest() {
-        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for ENUM"),
-            "/rfc7950/bug6901/invalid-foo-10-enum.yang");
+        assertThat(assertInvalidSubstatementException("/rfc7950/bug6901/invalid-foo-10-enum.yang").getMessage())
+            .startsWith("statement enum does not allow if-feature substatements: 1 present [at ");
     }
 
     @Test
     void ifFeature10BitTest() {
-        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for BIT"),
-            "/rfc7950/bug6901/invalid-foo-10-bit.yang");
+        assertThat(assertInvalidSubstatementException("/rfc7950/bug6901/invalid-foo-10-bit.yang").getMessage())
+            .startsWith("statement bit does not allow if-feature substatements: 1 present [at ");
+
     }
 }

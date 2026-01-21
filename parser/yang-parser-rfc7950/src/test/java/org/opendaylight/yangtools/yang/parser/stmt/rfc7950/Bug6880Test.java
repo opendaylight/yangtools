@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -28,7 +28,7 @@ class Bug6880Test extends AbstractYangTest {
 
     @Test
     void invalid10Test() {
-        assertInvalidSubstatementException(startsWith("DEFAULT is not valid for LEAF_LIST"),
-            "/rfc7950/bug6880/invalid10.yang");
+        assertThat(assertInvalidSubstatementException("/rfc7950/bug6880/invalid10.yang").getMessage())
+            .startsWith("statement leaf-list does not allow default substatements: 2 present [at ");
     }
 }
