@@ -10,20 +10,30 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredSchemaTreeReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Declared representation of a {@code refine} statement.
  */
-public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<Descendant>,
-        DocumentedDeclaredStatement<Descendant>, IfFeatureAwareDeclaredStatement<Descendant>,
-        MandatoryStatementAwareDeclaredStatement<Descendant>,
-        MustStatementAwareDeclaredStatement<Descendant> {
+public interface RefineStatement
+    extends DeclaredSchemaTreeReferenceStatement<Descendant>, DocumentedDeclaredStatement<Descendant>,
+            ConfigStatementAwareDeclaredStatement<Descendant>, IfFeatureAwareDeclaredStatement<Descendant>,
+            MandatoryStatementAwareDeclaredStatement<Descendant>, MustStatementAwareDeclaredStatement<Descendant> {
+    /**
+     * The definition of {@code refine} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        RefineStatement.class, RefineEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "refine", "target-node");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.REFINE;
+        return DEFINITION;
     }
 
     default @NonNull Collection<? extends @NonNull DefaultStatement> getDefaults() {

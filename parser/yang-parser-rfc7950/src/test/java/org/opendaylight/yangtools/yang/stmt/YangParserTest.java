@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -429,7 +429,7 @@ class YangParserTest extends AbstractModelTest {
         assertEquals(Optional.of("system/user ref"), dev.getReference());
 
         assertEquals(Absolute.of(barQName("interfaces"), barQName("ifEntry")), dev.getTargetPath());
-        assertEquals(DeviateKind.ADD, dev.getDeviates().iterator().next().getDeviateType());
+        assertEquals(DeviateArgument.ADD, dev.getDeviates().iterator().next().getDeviateType());
     }
 
     @Test

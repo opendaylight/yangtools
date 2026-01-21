@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public abstract sealed class RefineStatementSupport
         extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
     private static final class Rfc6020 extends RefineStatementSupport {
-        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
+        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(RefineStatement.DEFINITION)
             .addOptional(YangStmtMapping.DEFAULT)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
@@ -51,7 +51,7 @@ public abstract sealed class RefineStatementSupport
     }
 
     private static final class Rfc7950 extends RefineStatementSupport {
-        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
+        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(RefineStatement.DEFINITION)
             .addOptional(YangStmtMapping.DEFAULT)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
@@ -80,7 +80,7 @@ public abstract sealed class RefineStatementSupport
     }
 
     private RefineStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.REFINE, StatementPolicy.reject(), config, validator);
+        super(RefineStatement.DEFINITION, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull RefineStatementSupport rfc6020Instance(final YangParserConfiguration config) {
