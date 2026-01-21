@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code error-message} statement.
  */
-public interface ErrorMessageEffectiveStatement extends EffectiveStatement<String, ErrorMessageStatement> {
+public interface ErrorMessageEffectiveStatement extends EffectiveHumanTextStatement<@NonNull ErrorMessageStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.ERROR_MESSAGE;
+        return ErrorMessageStatement.DEFINITION;
     }
 }

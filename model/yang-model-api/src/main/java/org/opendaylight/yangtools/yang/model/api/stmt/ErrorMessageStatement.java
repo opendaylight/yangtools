@@ -7,17 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code error-message} statement.
  */
-public interface ErrorMessageStatement extends DeclaredStatement<String> {
+public interface ErrorMessageStatement extends DeclaredHumanTextStatement {
+    /**
+     * The definition of {@code error-message} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ErrorMessageStatement.class, ErrorMessageEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "error-message", "value", true);
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ERROR_MESSAGE;
+        return DEFINITION;
     }
 }
 
