@@ -9,82 +9,23 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
-import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Definition of an argument to a YANG statement.
+ *
+ * @param argumentName the name of the argument
+ * @param yinElement {@code true} if the argument is a YIN element
  */
-public abstract sealed class ArgumentDefinition implements Immutable {
-    private static final class YinAttribute extends ArgumentDefinition {
-        YinAttribute(final QName argumentName) {
-            super(argumentName);
-        }
-
-        @Override
-        public boolean isYinElement() {
-            return false;
-        }
-    }
-
-    private static final class YinElement extends ArgumentDefinition {
-        YinElement(final QName argumentName) {
-            super(argumentName);
-        }
-
-        @Override
-        public boolean isYinElement() {
-            return true;
-        }
-    }
-
-    private final @NonNull QName argumentName;
-
-    ArgumentDefinition(final QName argumentName) {
-        this.argumentName = requireNonNull(argumentName);
-    }
-
-    public static @NonNull ArgumentDefinition of(final QName argumentName, final boolean yinElement) {
-        return yinElement ? new YinElement(argumentName) : new YinAttribute(argumentName);
-    }
-
-    public static @NonNull Optional<ArgumentDefinition> ofNullable(final @Nullable QName argumentName,
-            final boolean yinElement) {
-        return argumentName == null ? Optional.empty() : Optional.of(of(argumentName, yinElement));
-    }
-
-    public final @NonNull QName argumentName() {
-        return argumentName;
-    }
-
+public record ArgumentDefinition(QName argumentName, boolean yinElement) implements Immutable {
     /**
-     * Returns true, if argument of statement is represented as value of YIN element. If argument of statement is
-     * represented as argument of YIN element, returns false.
+     * Default constructor.
      *
-     * @return returns true, if statement argument is represented as value of YIN element, otherwise returns false.
+     * @param argumentName the name of the argument
+     * @param yinElement {@code true} if the argument is a YIN element
      */
-    public abstract boolean isYinElement();
-
-    @Override
-    public final int hashCode() {
-        return Boolean.hashCode(isYinElement()) * 31 + argumentName.hashCode();
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        return this == obj || obj instanceof ArgumentDefinition other && isYinElement() == other.isYinElement()
-            && argumentName.equals(other.argumentName);
-    }
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(ArgumentDefinition.class)
-            .add("argumentName", argumentName)
-            .add("yinElement", isYinElement())
-            .toString();
+    public ArgumentDefinition {
+        requireNonNull(argumentName);
     }
 }

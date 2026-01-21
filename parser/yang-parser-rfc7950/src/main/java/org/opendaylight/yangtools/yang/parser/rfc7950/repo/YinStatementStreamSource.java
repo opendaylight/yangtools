@@ -137,7 +137,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             final var argDef = def.argumentDefinition();
             if (argDef != null) {
                 argName = argDef.argumentName();
-                allAttrs = argDef.isYinElement();
+                allAttrs = argDef.yinElement();
                 allElements = !allAttrs;
             } else {
                 argName = null;
@@ -156,7 +156,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
             final var argDef = def.argumentDefinition();
             if (argDef != null) {
                 argName = argDef.argumentName();
-                allAttrs = argDef.isYinElement();
+                allAttrs = argDef.yinElement();
                 allElements = !allAttrs;
 
                 argValue = getArgValue(element, argName, allAttrs);
