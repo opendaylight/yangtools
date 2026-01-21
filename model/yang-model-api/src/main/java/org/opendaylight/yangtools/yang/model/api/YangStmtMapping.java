@@ -73,8 +73,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
@@ -105,8 +103,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
@@ -187,7 +183,6 @@ public enum YangStmtMapping implements StatementDefinition {
     IF_FEATURE(IfFeatureStatement.class, IfFeatureEffectiveStatement.class, "if-feature", "name"),
     IMPORT(ImportStatement.class, ImportEffectiveStatement.class, "import", "module"),
     INCLUDE(IncludeStatement.class, IncludeEffectiveStatement.class, "include", "module"),
-    INPUT(InputStatement.class, InputEffectiveStatement.class, "input"),
     KEY(KeyStatement.class, KeyEffectiveStatement.class, "key", "value"),
     LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
@@ -203,7 +198,6 @@ public enum YangStmtMapping implements StatementDefinition {
     NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
     ORDERED_BY(OrderedByStatement.class, OrderedByEffectiveStatement.class, "ordered-by", "value"),
     ORGANIZATION(OrganizationStatement.class, OrganizationEffectiveStatement.class, "organization", "text", true),
-    OUTPUT(OutputStatement.class, OutputEffectiveStatement.class, "output"),
     PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
     PATTERN(PatternStatement.class, PatternEffectiveStatement.class, "pattern", "value"),
     POSITION(PositionStatement.class, PositionEffectiveStatement.class, "position", "value"),
@@ -235,15 +229,6 @@ public enum YangStmtMapping implements StatementDefinition {
     private final @NonNull QName name;
     private final @Nullable QName argumentName;
     private final boolean yinElement;
-
-    YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
-            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
-        declaredRepresentation = requireNonNull(declared);
-        effectiveRepresentation = requireNonNull(effective);
-        name = yinQName(nameStr);
-        argumentName = null;
-        yinElement = false;
-    }
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr) {

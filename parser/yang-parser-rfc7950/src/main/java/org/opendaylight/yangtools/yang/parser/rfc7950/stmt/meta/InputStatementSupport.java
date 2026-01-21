@@ -31,33 +31,35 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class InputStatementSupport
         extends AbstractOperationContainerStatementSupport<InputStatement, InputEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.INPUT)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addAny(YangStmtMapping.TYPEDEF)
-        .addAny(YangStmtMapping.USES)
-        .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.INPUT)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addAny(YangStmtMapping.MUST)
-        .addAny(YangStmtMapping.TYPEDEF)
-        .addAny(YangStmtMapping.USES)
-        .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(InputStatement.DEFINITION)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(InputStatement.DEFINITION)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build();
 
     private InputStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.INPUT, config, validator, YangConstants::operationInputQName);
+        super(InputStatement.DEFINITION, config, validator, YangConstants::operationInputQName);
     }
 
     public static @NonNull InputStatementSupport rfc6020Instance(final YangParserConfiguration config) {
