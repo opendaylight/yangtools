@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code presence} statement.
  */
-public interface PresenceEffectiveStatement extends EffectiveStatement<String, PresenceStatement> {
+public interface PresenceEffectiveStatement extends EffectiveStatement<String, @NonNull PresenceStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.PRESENCE;
+        return PresenceStatement.DEFINITION;
     }
 }

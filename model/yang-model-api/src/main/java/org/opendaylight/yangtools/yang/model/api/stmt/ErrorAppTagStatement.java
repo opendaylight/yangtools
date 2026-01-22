@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,9 +16,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code error-app-tag} statement.
  */
 public interface ErrorAppTagStatement extends DeclaredStatement<String> {
+    /**
+     * The definition of {@code error-app-tag} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "error-app-tag", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ERROR_APP_TAG;
+        return DEFINITION;
     }
 }
 

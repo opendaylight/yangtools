@@ -21,7 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
@@ -84,8 +86,8 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.BASE)
-            .addAny(YangStmtMapping.BIT)
-            .addAny(YangStmtMapping.ENUM)
+            .addAny(BitStatement.DEFINITION)
+            .addAny(EnumStatement.DEFINITION)
             .addOptional(YangStmtMapping.FRACTION_DIGITS)
             .addOptional(YangStmtMapping.LENGTH)
             .addOptional(YangStmtMapping.PATH)
