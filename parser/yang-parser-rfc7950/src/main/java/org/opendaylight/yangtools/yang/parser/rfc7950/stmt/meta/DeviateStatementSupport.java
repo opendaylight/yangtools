@@ -26,6 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -279,7 +281,7 @@ public final class DeviateStatementSupport
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
             final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
-                    && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
+                    && LeafStatement.DEFINITION.equals(targetCtx.publicDefinition())) {
                 for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
                         stmtCtxToBeAdded, """
@@ -305,7 +307,7 @@ public final class DeviateStatementSupport
         final var stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
         if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
-                && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
+                && LeafListStatement.DEFINITION.equals(targetCtx.publicDefinition())) {
             LOG.error("""
                 Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can have multiple \
                 default statements. At line: {}""", stmtToBeReplaced.statementName(), targetCtx.argument(),

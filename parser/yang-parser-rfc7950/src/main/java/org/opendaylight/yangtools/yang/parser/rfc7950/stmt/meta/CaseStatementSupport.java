@@ -21,9 +21,15 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -44,29 +50,29 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class CaseStatementSupport
         extends AbstractImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
-        .addAny(YangStmtMapping.ANYXML)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(ContainerStatement.DEFINITION)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.IF_FEATURE)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(YangStmtMapping.STATUS)
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
+        .addAny(AnydataStatement.DEFINITION)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(ContainerStatement.DEFINITION)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.IF_FEATURE)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(YangStmtMapping.STATUS)
         .addAny(YangStmtMapping.USES)

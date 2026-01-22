@@ -25,10 +25,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -54,45 +60,45 @@ public final class ChoiceStatementSupport
         extends AbstractSchemaTreeStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.ANYXML)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(YangStmtMapping.CASE)
         .addOptional(YangStmtMapping.CONFIG)
-        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(ContainerStatement.DEFINITION)
         .addOptional(YangStmtMapping.DEFAULT)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.IF_FEATURE)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
         .addOptional(YangStmtMapping.MANDATORY)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
     private static final ImmutableSet<StatementDefinition> RFC6020_CASE_SHORTHANDS = ImmutableSet.of(
-        YangStmtMapping.ANYXML, YangStmtMapping.CONTAINER, YangStmtMapping.LEAF, YangStmtMapping.LIST,
-        YangStmtMapping.LEAF_LIST);
+        AnyxmlStatement.DEFINITION, ContainerStatement.DEFINITION, LeafStatement.DEFINITION, ListStatement.DEFINITION,
+        LeafListStatement.DEFINITION);
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
+        .addAny(AnydataStatement.DEFINITION)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(YangStmtMapping.CASE)
         .addAny(YangStmtMapping.CHOICE)
         .addOptional(YangStmtMapping.CONFIG)
-        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(ContainerStatement.DEFINITION)
         .addOptional(YangStmtMapping.DEFAULT)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.IF_FEATURE)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
         .addOptional(YangStmtMapping.MANDATORY)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
     private static final ImmutableSet<StatementDefinition> RFC7950_CASE_SHORTHANDS = ImmutableSet.of(
-        YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML, YangStmtMapping.CHOICE, YangStmtMapping.CONTAINER,
-        YangStmtMapping.LEAF, YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST);
+        AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION, YangStmtMapping.CHOICE, ContainerStatement.DEFINITION,
+        LeafStatement.DEFINITION, ListStatement.DEFINITION, LeafListStatement.DEFINITION);
 
     private final ImmutableSet<StatementDefinition> caseShorthands;
 

@@ -19,8 +19,14 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
@@ -34,15 +40,15 @@ public final class YangValidationBundles {
     public static final Map<StatementDefinition, Set<StatementDefinition>> SUPPORTED_REFINE_TARGETS =
         ImmutableMap.<StatementDefinition, Set<StatementDefinition>>builder()
             .put(YangStmtMapping.DEFAULT, ImmutableSet.of(
-                YangStmtMapping.LEAF, YangStmtMapping.CHOICE, YangStmtMapping.LEAF_LIST))
+                LeafStatement.DEFINITION, YangStmtMapping.CHOICE, LeafListStatement.DEFINITION))
             .put(YangStmtMapping.MANDATORY, ImmutableSet.of(
-                YangStmtMapping.LEAF, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML, YangStmtMapping.CHOICE))
-            .put(YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
-            .put(YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
+                LeafStatement.DEFINITION, AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION, YangStmtMapping.CHOICE))
+            .put(YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(ListStatement.DEFINITION, LeafListStatement.DEFINITION))
+            .put(YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(ListStatement.DEFINITION, LeafListStatement.DEFINITION))
             .put(YangStmtMapping.MUST, ImmutableSet.of(
-                YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.CONTAINER,
-                YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML))
-            .put(YangStmtMapping.PRESENCE, ImmutableSet.of(YangStmtMapping.CONTAINER))
+                LeafStatement.DEFINITION, LeafListStatement.DEFINITION, ListStatement.DEFINITION,
+                ContainerStatement.DEFINITION, AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION))
+            .put(YangStmtMapping.PRESENCE, ImmutableSet.of(ContainerStatement.DEFINITION))
             .build();
 
     private YangValidationBundles() {
@@ -62,28 +68,32 @@ public final class YangValidationBundles {
     @Deprecated
     public static final Table<YangVersion, StatementDefinition, Set<StatementDefinition>> SUPPORTED_DEVIATION_TARGETS =
             ImmutableTable.<YangVersion, StatementDefinition, Set<StatementDefinition>>builder()
-        .put(VERSION_1, YangStmtMapping.CONFIG, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
-                YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.CHOICE, YangStmtMapping.ANYDATA,
-                YangStmtMapping.ANYXML))
-        .put(VERSION_1, YangStmtMapping.DEFAULT, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.CHOICE))
-        .put(VERSION_1_1, YangStmtMapping.DEFAULT, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
-                YangStmtMapping.CHOICE))
-        .put(VERSION_1, YangStmtMapping.MANDATORY, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.CHOICE,
-                YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML))
-        .put(VERSION_1, YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
-        .put(VERSION_1, YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
-        .put(VERSION_1, YangStmtMapping.MUST, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
-                YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYXML))
-        .put(VERSION_1_1, YangStmtMapping.MUST, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
-                YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML,
-                InputStatement.DEFINITION, OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION))
-        .put(VERSION_1, YangStmtMapping.TYPE, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
-        .put(VERSION_1, YangStmtMapping.UNIQUE, ImmutableSet.of(YangStmtMapping.LIST))
-        .put(VERSION_1, YangStmtMapping.UNITS, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
+        .put(VERSION_1, YangStmtMapping.CONFIG, ImmutableSet.of(ContainerStatement.DEFINITION, LeafStatement.DEFINITION,
+            LeafListStatement.DEFINITION, ListStatement.DEFINITION, YangStmtMapping.CHOICE, AnydataStatement.DEFINITION,
+            AnyxmlStatement.DEFINITION))
+        .put(VERSION_1, YangStmtMapping.DEFAULT, ImmutableSet.of(LeafStatement.DEFINITION, YangStmtMapping.CHOICE))
+        .put(VERSION_1_1, YangStmtMapping.DEFAULT, ImmutableSet.of(LeafStatement.DEFINITION,
+            LeafListStatement.DEFINITION, YangStmtMapping.CHOICE))
+        .put(VERSION_1, YangStmtMapping.MANDATORY, ImmutableSet.of(LeafStatement.DEFINITION, YangStmtMapping.CHOICE,
+            AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION))
+        .put(VERSION_1, YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(ListStatement.DEFINITION,
+            LeafListStatement.DEFINITION))
+        .put(VERSION_1, YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(ListStatement.DEFINITION,
+            LeafListStatement.DEFINITION))
+        .put(VERSION_1, YangStmtMapping.MUST, ImmutableSet.of(ContainerStatement.DEFINITION,
+            LeafStatement.DEFINITION, LeafListStatement.DEFINITION, ListStatement.DEFINITION,
+            AnyxmlStatement.DEFINITION))
+        .put(VERSION_1_1, YangStmtMapping.MUST, ImmutableSet.of(ContainerStatement.DEFINITION, LeafStatement.DEFINITION,
+            LeafListStatement.DEFINITION, ListStatement.DEFINITION, AnydataStatement.DEFINITION,
+            AnyxmlStatement.DEFINITION, InputStatement.DEFINITION, OutputStatement.DEFINITION,
+            YangStmtMapping.NOTIFICATION))
+        .put(VERSION_1, YangStmtMapping.TYPE, ImmutableSet.of(LeafStatement.DEFINITION, LeafListStatement.DEFINITION))
+        .put(VERSION_1, YangStmtMapping.UNIQUE, ImmutableSet.of(ListStatement.DEFINITION))
+        .put(VERSION_1, YangStmtMapping.UNITS, ImmutableSet.of(LeafStatement.DEFINITION, LeafListStatement.DEFINITION))
         .build();
 
     public static final Set<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = ImmutableSet.of(
-        YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.CASE, InputStatement.DEFINITION,
+        ContainerStatement.DEFINITION, ListStatement.DEFINITION, YangStmtMapping.CASE, InputStatement.DEFINITION,
         OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION, YangStmtMapping.CHOICE, RpcStatement.DEFINITION);
 
     // FIXME: 7.0.0: consider hiding this list, as choice nodes are handling creation of implied shorthands themselves.
@@ -91,10 +101,10 @@ public final class YangValidationBundles {
     //               should live in corresponding StatementSupport classes.
     @Deprecated(forRemoval = true, since = "8.0.2")
     public static final Set<StatementDefinition> SUPPORTED_CASE_SHORTHANDS = ImmutableSet.of(
-        YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
-        YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA);
+        ContainerStatement.DEFINITION, ListStatement.DEFINITION, LeafStatement.DEFINITION, LeafListStatement.DEFINITION,
+        AnyxmlStatement.DEFINITION, AnydataStatement.DEFINITION);
 
     public static final Set<StatementDefinition> SUPPORTED_DATA_NODES = ImmutableSet.of(
-        YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
-        YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA);
+        ContainerStatement.DEFINITION, ListStatement.DEFINITION, LeafStatement.DEFINITION, LeafListStatement.DEFINITION,
+        AnyxmlStatement.DEFINITION, AnydataStatement.DEFINITION);
 }
