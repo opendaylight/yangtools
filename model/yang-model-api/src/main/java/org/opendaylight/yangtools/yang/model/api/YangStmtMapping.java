@@ -22,8 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -46,8 +44,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
@@ -80,8 +76,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
@@ -102,8 +96,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 
@@ -115,7 +107,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 public enum YangStmtMapping implements StatementDefinition {
     ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
     ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
-    ARGUMENT(ArgumentStatement.class, ArgumentEffectiveStatement.class, "argument", "name"),
     AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
     BASE(BaseStatement.class, BaseEffectiveStatement.class, "base", "name"),
     BELONGS_TO(BelongsToStatement.class, BelongsToEffectiveStatement.class, "belongs-to", "module"),
@@ -127,7 +118,6 @@ public enum YangStmtMapping implements StatementDefinition {
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
     EXTENSION(ExtensionStatement.class, ExtensionEffectiveStatement.class, "extension", "name"),
     FEATURE(FeatureStatement.class, FeatureEffectiveStatement.class, "feature", "name"),
-    FRACTION_DIGITS(FractionDigitsStatement.class, FractionDigitsEffectiveStatement.class, "fraction-digits", "value"),
     GROUPING(GroupingStatement.class, GroupingEffectiveStatement.class, "grouping", "name"),
     IDENTITY(IdentityStatement.class, IdentityEffectiveStatement.class, "identity", "name"),
     IF_FEATURE(IfFeatureStatement.class, IfFeatureEffectiveStatement.class, "if-feature", "name"),
@@ -144,7 +134,6 @@ public enum YangStmtMapping implements StatementDefinition {
     NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
     PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
     PATTERN(PatternStatement.class, PatternEffectiveStatement.class, "pattern", "value"),
-    POSITION(PositionStatement.class, PositionEffectiveStatement.class, "position", "value"),
     PREFIX(PrefixStatement.class, PrefixEffectiveStatement.class, "prefix", "value"),
     RANGE(RangeStatement.class, RangeEffectiveStatement.class, "range", "value"),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
@@ -156,7 +145,6 @@ public enum YangStmtMapping implements StatementDefinition {
     TYPEDEF(TypedefStatement.class, TypedefEffectiveStatement.class, "typedef", "name"),
     UNIQUE(UniqueStatement.class, UniqueEffectiveStatement.class, "unique", "tag"),
     USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name"),
-    VALUE(ValueStatement.class, ValueEffectiveStatement.class, "value", "value"),
     WHEN(WhenStatement.class, WhenEffectiveStatement.class, "when", "condition");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;

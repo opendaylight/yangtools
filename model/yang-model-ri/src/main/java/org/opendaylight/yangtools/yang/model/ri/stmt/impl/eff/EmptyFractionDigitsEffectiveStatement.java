@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyFractionDigitsEffectiveStatement extends DefaultArgument<Integer, FractionDigitsStatement>
-        implements FractionDigitsEffectiveStatement {
-    public EmptyFractionDigitsEffectiveStatement(final FractionDigitsStatement declared) {
+public final class EmptyFractionDigitsEffectiveStatement
+        extends DefaultArgument<Integer, @NonNull FractionDigitsStatement> implements FractionDigitsEffectiveStatement {
+    public EmptyFractionDigitsEffectiveStatement(final @NonNull FractionDigitsStatement declared) {
         super(declared);
     }
 }

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -35,7 +36,7 @@ public final class EnumStatementSupport
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addOptional(YangStmtMapping.VALUE)
+            .addOptional(ValueStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(EnumStatement.DEFINITION)
@@ -43,7 +44,7 @@ public final class EnumStatementSupport
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addOptional(YangStmtMapping.VALUE)
+            .addOptional(ValueStatement.DEFINITION)
             .build();
 
     private EnumStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

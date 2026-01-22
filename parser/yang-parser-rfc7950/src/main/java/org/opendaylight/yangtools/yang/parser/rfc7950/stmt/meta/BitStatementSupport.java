@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -36,7 +37,7 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addOptional(YangStmtMapping.POSITION)
+            .addOptional(PositionStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(BitStatement.DEFINITION)
@@ -44,7 +45,7 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addOptional(YangStmtMapping.POSITION)
+            .addOptional(PositionStatement.DEFINITION)
             .build();
 
     private BitStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

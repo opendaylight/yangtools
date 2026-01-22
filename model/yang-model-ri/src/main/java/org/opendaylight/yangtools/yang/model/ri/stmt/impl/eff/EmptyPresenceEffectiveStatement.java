@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyPresenceEffectiveStatement extends DefaultArgument<String, PresenceStatement>
+public final class EmptyPresenceEffectiveStatement extends DefaultArgument<String, @NonNull PresenceStatement>
         implements PresenceEffectiveStatement {
-    public EmptyPresenceEffectiveStatement(final PresenceStatement declared) {
+    public EmptyPresenceEffectiveStatement(final @NonNull PresenceStatement declared) {
         super(declared);
     }
 }
