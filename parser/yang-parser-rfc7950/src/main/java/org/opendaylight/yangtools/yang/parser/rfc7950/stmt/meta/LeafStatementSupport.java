@@ -47,7 +47,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LeafStatementSupport
         extends AbstractImplicitStatementSupport<LeafStatement, LeafEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.LEAF)
+        SubstatementValidator.builder(LeafStatement.DEFINITION)
             .addOptional(YangStmtMapping.CONFIG)
             .addOptional(YangStmtMapping.DEFAULT)
             .addOptional(DescriptionStatement.DEFINITION)
@@ -62,7 +62,7 @@ public final class LeafStatementSupport
             .build();
 
     public LeafStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.LEAF, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
+        super(LeafStatement.DEFINITION, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

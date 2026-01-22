@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -20,10 +21,19 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * model for anydata content to become known through protocol signaling or other means that are outside the scope
  * of this document.
  */
-public interface AnydataStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
-        MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+public interface AnydataStatement
+    extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
+            MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+    /**
+     * The definition of {@code anydata} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        AnydataStatement.class, AnydataEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "anydata", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ANYDATA;
+        return DEFINITION;
     }
 }

@@ -16,9 +16,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -43,14 +49,14 @@ public final class GroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.ANYXML)
+            .addAny(AnyxmlStatement.DEFINITION)
             .addAny(YangStmtMapping.CHOICE)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
@@ -59,15 +65,15 @@ public final class GroupingStatementSupport
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.GROUPING)
             .addAny(ActionStatement.DEFINITION)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
+            .addAny(AnydataStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
             .addAny(YangStmtMapping.CHOICE)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(YangStmtMapping.STATUS)
