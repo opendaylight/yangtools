@@ -26,10 +26,8 @@ public interface TypedefEffectiveStatement
     }
 
     /**
-     * Return this type definition as an effective type statement.
-     *
-     * @return Effective type statement.
+     * {@return this type definition as an effective type statement}
      */
     @Beta
-    @NonNull TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement();
+    @NonNull TypeEffectiveStatement asTypeEffectiveStatement();
 }

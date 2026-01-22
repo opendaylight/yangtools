@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -51,14 +50,13 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
     }
 
     @Override
-    protected EffectiveStatement<QName, BitsSpecification> createEffective(
-            final Current<QName, BitsSpecification> stmt,
+    protected EffectiveStatement<QName, BitsSpecification> createEffective(final Current<QName, BitsSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBits(stmt);
         }
 
-        final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(stmt.argumentAsTypeQName());
+        final var builder = BaseTypes.bitsTypeBuilder(stmt.argumentAsTypeQName());
         Uint32 highestPosition = null;
         for (var subStmt : substatements) {
             if (subStmt instanceof BitEffectiveStatement bitSubStmt) {
@@ -85,7 +83,7 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        return new TypeEffectiveStatementImpl(stmt.declared(), substatements, builder);
     }
 
     private static SourceException noBits(final CommonStmtCtx stmt) {

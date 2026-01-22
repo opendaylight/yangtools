@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -56,15 +55,15 @@ final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecifica
             throw noType(stmt);
         }
 
-        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(stmt.argumentAsTypeQName());
+        final var builder = BaseTypes.unionTypeBuilder(stmt.argumentAsTypeQName());
 
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof TypeEffectiveStatement) {
-                builder.addType(((TypeEffectiveStatement<?>)subStmt).getTypeDefinition());
+        for (var subStmt : substatements) {
+            if (subStmt instanceof TypeEffectiveStatement tes) {
+                builder.addType(tes.getTypeDefinition());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        return new TypeEffectiveStatementImpl(stmt.declared(), substatements, builder);
     }
 
     private static SourceException noType(final @NonNull CommonStmtCtx stmt) {

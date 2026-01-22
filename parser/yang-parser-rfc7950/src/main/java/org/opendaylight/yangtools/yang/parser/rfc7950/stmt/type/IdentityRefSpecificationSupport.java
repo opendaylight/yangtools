@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,11 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -92,19 +90,20 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
             throw noBase(stmt);
         }
 
-        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(stmt.argumentAsTypeQName());
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof BaseEffectiveStatement) {
-                final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();
-                final IdentityEffectiveStatement baseIdentity =
-                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, identityQName)).buildEffective();
-                verify(baseIdentity instanceof IdentitySchemaNode, "Statement %s is not an IdentitySchemaNode",
-                    baseIdentity);
-                builder.addIdentity((IdentitySchemaNode) baseIdentity);
+        final var builder = BaseTypes.identityrefTypeBuilder(stmt.argumentAsTypeQName());
+        for (var subStmt : substatements) {
+            if (subStmt instanceof BaseEffectiveStatement bes) {
+                final var identityQName = bes.argument();
+                final var baseIdentity = verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, identityQName))
+                    .buildEffective();
+                if (!(baseIdentity instanceof IdentitySchemaNode isn)) {
+                    throw new VerifyException("Statement " + baseIdentity + " is not an IdentitySchemaNode");
+                }
+                builder.addIdentity(isn);
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        return new TypeEffectiveStatementImpl(stmt.declared(), substatements, builder);
     }
 
     private static SourceException noBase(final CommonStmtCtx stmt) {
