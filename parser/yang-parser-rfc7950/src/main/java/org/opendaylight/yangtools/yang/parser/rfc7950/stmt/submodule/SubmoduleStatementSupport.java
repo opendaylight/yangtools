@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -55,7 +56,7 @@ public final class SubmoduleStatementSupport
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(YangStmtMapping.EXTENSION)
-            .addAny(YangStmtMapping.FEATURE)
+            .addAny(FeatureStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IDENTITY)
             .addAny(YangStmtMapping.IMPORT)
@@ -84,7 +85,7 @@ public final class SubmoduleStatementSupport
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(YangStmtMapping.EXTENSION)
-            .addAny(YangStmtMapping.FEATURE)
+            .addAny(FeatureStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IDENTITY)
             .addAny(YangStmtMapping.IMPORT)

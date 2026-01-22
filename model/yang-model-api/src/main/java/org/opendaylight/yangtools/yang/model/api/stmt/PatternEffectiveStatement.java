@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
  * Effective representation of a {@code pattern} statement.
  */
 public interface PatternEffectiveStatement
-        extends EffectiveStatement<PatternExpression, PatternStatement>, PatternConstraint {
+        extends EffectiveStatement<PatternExpression, @NonNull PatternStatement>, PatternConstraint {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.PATTERN;
+        return PatternStatement.DEFINITION;
     }
 
     @Override

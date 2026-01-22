@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
@@ -14,11 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
-public class EmptyFeatureEffectiveStatement extends DefaultArgument<QName, FeatureStatement>
-        implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<FeatureStatement> {
+public class EmptyFeatureEffectiveStatement extends DefaultArgument<QName, @NonNull FeatureStatement>
+        implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<@NonNull FeatureStatement> {
     private final int flags;
 
-    public EmptyFeatureEffectiveStatement(final FeatureStatement declared, final int flags) {
+    public EmptyFeatureEffectiveStatement(final @NonNull FeatureStatement declared, final int flags) {
         super(declared);
         this.flags = flags;
     }

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -20,9 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  * string, including leafs with default values, MUST be unique within all list entry instances in which all referenced
  * leafs exist (for more information see RFC-6020 section 7.8.3.).
  */
-public interface UniqueEffectiveStatement extends EffectiveStatement<Set<Descendant>, UniqueStatement> {
+// FIXME: UniqueArgument instead of Set<Descendant>
+public interface UniqueEffectiveStatement extends EffectiveStatement<Set<Descendant>, @NonNull UniqueStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.UNIQUE;
+        return UniqueStatement.DEFINITION;
     }
 }

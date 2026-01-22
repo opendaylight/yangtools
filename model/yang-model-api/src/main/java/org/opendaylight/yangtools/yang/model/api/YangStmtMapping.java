@@ -42,14 +42,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
@@ -58,8 +54,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
@@ -74,12 +68,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
@@ -92,8 +82,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
@@ -117,15 +105,12 @@ public enum YangStmtMapping implements StatementDefinition {
     DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
     EXTENSION(ExtensionStatement.class, ExtensionEffectiveStatement.class, "extension", "name"),
-    FEATURE(FeatureStatement.class, FeatureEffectiveStatement.class, "feature", "name"),
     GROUPING(GroupingStatement.class, GroupingEffectiveStatement.class, "grouping", "name"),
     IDENTITY(IdentityStatement.class, IdentityEffectiveStatement.class, "identity", "name"),
-    IF_FEATURE(IfFeatureStatement.class, IfFeatureEffectiveStatement.class, "if-feature", "name"),
     IMPORT(ImportStatement.class, ImportEffectiveStatement.class, "import", "module"),
     INCLUDE(IncludeStatement.class, IncludeEffectiveStatement.class, "include", "module"),
     LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
-    LENGTH(LengthStatement.class, LengthEffectiveStatement.class, "length", "value"),
     LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
     MODIFIER(ModifierStatement.class, ModifierEffectiveStatement.class, "modifier", "value"),
     MODULE(ModuleStatement.class, ModuleEffectiveStatement.class, "module", "name"),
@@ -133,9 +118,7 @@ public enum YangStmtMapping implements StatementDefinition {
     NAMESPACE(NamespaceStatement.class, NamespaceEffectiveStatement.class, "namespace", "uri"),
     NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
     PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
-    PATTERN(PatternStatement.class, PatternEffectiveStatement.class, "pattern", "value"),
     PREFIX(PrefixStatement.class, PrefixEffectiveStatement.class, "prefix", "value"),
-    RANGE(RangeStatement.class, RangeEffectiveStatement.class, "range", "value"),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
     REVISION(RevisionStatement.class, RevisionEffectiveStatement.class, "revision", "date"),
     REVISION_DATE(RevisionDateStatement.class, RevisionDateEffectiveStatement.class, "revision-date", "date"),
@@ -143,7 +126,6 @@ public enum YangStmtMapping implements StatementDefinition {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     TYPE(TypeStatement.class, (Class) TypeEffectiveStatement.class, "type", "name"),
     TYPEDEF(TypedefStatement.class, TypedefEffectiveStatement.class, "typedef", "name"),
-    UNIQUE(UniqueStatement.class, UniqueEffectiveStatement.class, "unique", "tag"),
     USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name"),
     WHEN(WhenStatement.class, WhenEffectiveStatement.class, "when", "condition");
 

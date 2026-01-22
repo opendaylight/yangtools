@@ -12,7 +12,6 @@ import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint64;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -41,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LengthStatementSupport
         extends AbstractStatementSupport<ValueRanges, LengthStatement, LengthEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.LENGTH)
+        SubstatementValidator.builder(LengthStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
@@ -49,7 +48,7 @@ public final class LengthStatementSupport
             .build();
 
     public LengthStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.LENGTH, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(LengthStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
