@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d96434d_58afe1df",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/BitStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-22T14:13:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c5449ea_12ae93f2",
+      "range": {
+        "startLine": 21,
+        "startChar": 32,
+        "endLine": 21,
+        "endChar": 35
+      },
+      "revId": "491d08a94cac3e58455e8c4948e4d79a342fd708",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5be8c3a3_58f53bbf",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-22T10:41:13Z",
       "side": 1,
       "message": "getValue",
+      "range": {
+        "startLine": 33,
+        "startChar": 37,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "491d08a94cac3e58455e8c4948e4d79a342fd708",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b5ea0205_424ef28c",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/EnumStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-22T14:13:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5be8c3a3_58f53bbf",
       "range": {
         "startLine": 33,
         "startChar": 37,
