@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,9 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code config} statement.
  */
 public interface ConfigStatement extends DeclaredStatement<Boolean> {
+    /**
+     * The definition of {@code config} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ConfigStatement.class, ConfigEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "config", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.CONFIG;
+        return DEFINITION;
     }
 }
 

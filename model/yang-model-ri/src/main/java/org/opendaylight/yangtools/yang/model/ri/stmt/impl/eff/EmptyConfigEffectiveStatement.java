@@ -13,14 +13,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyConfigStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyConfigEffectiveStatement extends DefaultArgument<Boolean, ConfigStatement>
+public final class EmptyConfigEffectiveStatement extends DefaultArgument<Boolean, @NonNull ConfigStatement>
         implements ConfigEffectiveStatement {
     public static final @NonNull EmptyConfigEffectiveStatement FALSE =
         new EmptyConfigEffectiveStatement(EmptyConfigStatement.FALSE);
     public static final @NonNull EmptyConfigEffectiveStatement TRUE =
         new EmptyConfigEffectiveStatement(EmptyConfigStatement.TRUE);
 
-    public EmptyConfigEffectiveStatement(final ConfigStatement declared) {
+    public EmptyConfigEffectiveStatement(final @NonNull ConfigStatement declared) {
         super(declared);
     }
 }

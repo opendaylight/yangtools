@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularConfigEffectiveStatement extends WithSubstatements<Boolean, ConfigStatement>
+public final class RegularConfigEffectiveStatement extends WithSubstatements<Boolean, @NonNull ConfigStatement>
         implements ConfigEffectiveStatement {
-    public RegularConfigEffectiveStatement(final ConfigStatement declared,
+    public RegularConfigEffectiveStatement(final @NonNull ConfigStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }
