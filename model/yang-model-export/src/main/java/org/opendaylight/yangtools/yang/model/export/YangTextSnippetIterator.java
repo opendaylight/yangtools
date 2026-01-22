@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 
 /**
  * This is an iterator over strings needed to assemble a YANG snippet.
@@ -71,7 +72,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         YangStmtMapping.MIN_ELEMENTS, "0",
         YangStmtMapping.ORDERED_BY, "system",
         YangStmtMapping.REQUIRE_INSTANCE, "true",
-        YangStmtMapping.STATUS, "current",
+        StatusStatement.DEFINITION, "current",
         YangStmtMapping.YIN_ELEMENT, "false");
 
     private static final String INDENT = "  ";

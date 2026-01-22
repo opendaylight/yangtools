@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -34,8 +36,8 @@ public final class AnnotationStatementSupport
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.IF_FEATURE)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(YangStmtMapping.STATUS)
-        .addOptional(YangStmtMapping.UNITS)
+        .addOptional(StatusStatement.DEFINITION)
+        .addOptional(UnitsStatement.DEFINITION)
         .build();
 
     public AnnotationStatementSupport(final YangParserConfiguration config) {

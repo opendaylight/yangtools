@@ -27,7 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -54,9 +56,9 @@ public final class LeafListStatementSupport
             .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.ORDERED_BY)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addMandatory(YangStmtMapping.TYPE)
-            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(UnitsStatement.DEFINITION)
             .addOptional(YangStmtMapping.WHEN)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
@@ -70,9 +72,9 @@ public final class LeafListStatementSupport
             .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.ORDERED_BY)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addMandatory(YangStmtMapping.TYPE)
-            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(UnitsStatement.DEFINITION)
             .addOptional(YangStmtMapping.WHEN)
             .build();
 

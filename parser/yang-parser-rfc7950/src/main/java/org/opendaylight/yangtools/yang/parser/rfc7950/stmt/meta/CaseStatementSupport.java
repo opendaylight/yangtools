@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -53,7 +54,7 @@ public final class CaseStatementSupport
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();
@@ -68,7 +69,7 @@ public final class CaseStatementSupport
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();

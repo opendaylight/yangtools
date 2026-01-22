@@ -8,15 +8,16 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularStatusEffectiveStatement extends WithSubstatements<Status, StatusStatement>
+public final class RegularStatusEffectiveStatement extends WithSubstatements<Status, @NonNull StatusStatement>
         implements StatusEffectiveStatement {
-    public RegularStatusEffectiveStatement(final StatusStatement declared,
+    public RegularStatusEffectiveStatement(final @NonNull StatusStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

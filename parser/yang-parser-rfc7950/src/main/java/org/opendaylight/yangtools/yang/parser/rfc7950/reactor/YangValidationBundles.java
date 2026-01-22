@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 
 public final class YangValidationBundles {
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
@@ -79,7 +80,7 @@ public final class YangValidationBundles {
                 InputStatement.DEFINITION, OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION))
         .put(VERSION_1, YangStmtMapping.TYPE, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
         .put(VERSION_1, YangStmtMapping.UNIQUE, ImmutableSet.of(YangStmtMapping.LIST))
-        .put(VERSION_1, YangStmtMapping.UNITS, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
+        .put(VERSION_1, UnitsStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
         .build();
 
     public static final Set<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = ImmutableSet.of(

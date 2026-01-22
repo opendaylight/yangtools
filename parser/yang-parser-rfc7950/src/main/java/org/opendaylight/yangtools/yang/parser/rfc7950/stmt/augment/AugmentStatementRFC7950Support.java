@@ -11,6 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -34,7 +35,7 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
             .build();

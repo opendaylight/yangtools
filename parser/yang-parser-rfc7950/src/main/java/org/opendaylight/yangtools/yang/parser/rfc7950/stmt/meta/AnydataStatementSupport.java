@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -46,7 +47,7 @@ public final class AnydataStatementSupport
             .addOptional(YangStmtMapping.MANDATORY)
             .addAny(YangStmtMapping.MUST)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addOptional(YangStmtMapping.WHEN)
             .build();
 

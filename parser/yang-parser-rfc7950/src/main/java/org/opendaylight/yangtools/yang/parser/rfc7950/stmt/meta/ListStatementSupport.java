@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -68,7 +69,7 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.MUST)
         .addOptional(YangStmtMapping.ORDERED_BY)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.UNIQUE)
         .addAny(YangStmtMapping.USES)
@@ -94,7 +95,7 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.NOTIFICATION)
         .addOptional(YangStmtMapping.ORDERED_BY)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.UNIQUE)
         .addAny(YangStmtMapping.USES)

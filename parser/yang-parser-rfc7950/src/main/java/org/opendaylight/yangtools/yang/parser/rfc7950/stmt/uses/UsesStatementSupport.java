@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -66,7 +67,7 @@ public final class UsesStatementSupport
             .addAny(YangStmtMapping.IF_FEATURE)
             .addAny(YangStmtMapping.REFINE)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addOptional(YangStmtMapping.WHEN)
             .build();
 

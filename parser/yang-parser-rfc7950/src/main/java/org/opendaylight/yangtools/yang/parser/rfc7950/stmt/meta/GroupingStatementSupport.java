@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -52,7 +53,7 @@ public final class GroupingStatementSupport
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();
@@ -70,7 +71,7 @@ public final class GroupingStatementSupport
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();

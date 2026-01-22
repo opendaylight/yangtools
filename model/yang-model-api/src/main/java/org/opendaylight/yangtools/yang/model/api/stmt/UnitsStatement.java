@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code units} statement.
  */
 public interface UnitsStatement extends DeclaredStatement<String> {
+    /**
+     * The definition of {@code units} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        UnitsStatement.class, UnitsEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "units", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.UNITS;
+        return DEFINITION;
     }
 }

@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -57,7 +58,7 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.PRESENCE)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
@@ -81,7 +82,7 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(YangStmtMapping.PRESENCE)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(StatusStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
