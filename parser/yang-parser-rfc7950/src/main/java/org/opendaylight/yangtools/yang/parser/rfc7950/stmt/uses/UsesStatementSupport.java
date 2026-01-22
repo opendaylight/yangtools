@@ -69,7 +69,7 @@ public final class UsesStatementSupport
             .addAny(YangStmtMapping.AUGMENT)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(YangStmtMapping.REFINE)
+            .addAny(RefineStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addOptional(WhenStatement.DEFINITION)
