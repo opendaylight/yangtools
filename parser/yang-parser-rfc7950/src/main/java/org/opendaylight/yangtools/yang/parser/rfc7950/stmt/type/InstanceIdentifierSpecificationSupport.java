@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -52,16 +51,16 @@ final class InstanceIdentifierSpecificationSupport
     protected EffectiveStatement<QName, InstanceIdentifierSpecification> createEffective(
             final Current<QName, InstanceIdentifierSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(
-            BaseTypes.instanceIdentifierType(), stmt.argumentAsTypeQName());
+        final var builder = RestrictedTypes.newInstanceIdentifierBuilder(BaseTypes.instanceIdentifierType(),
+            stmt.argumentAsTypeQName());
 
         // TODO: we could do better here for empty substatements, but its really splitting hairs
-        for (EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement)subStmt).argument());
+        for (var subStmt : substatements) {
+            if (subStmt instanceof RequireInstanceEffectiveStatement ries) {
+                builder.setRequireInstance(ries.argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        return new TypeEffectiveStatementImpl(stmt.declared(), substatements, builder);
     }
 }

@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.DecimalTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -61,8 +60,8 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
             throw noFracDigits(stmt);
         }
 
-        final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(stmt.argumentAsTypeQName());
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+        final var builder = BaseTypes.decimalTypeBuilder(stmt.argumentAsTypeQName());
+        for (var subStmt : substatements) {
             if (subStmt instanceof FractionDigitsEffectiveStatement fracDigits) {
                 builder.setFractionDigits(fracDigits.argument());
             }
@@ -72,7 +71,7 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
         }
 
         try {
-            return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+            return new TypeEffectiveStatementImpl(stmt.declared(), substatements, builder);
         } catch (ArithmeticException e) {
             throw new SourceException("Range constraint does not match fraction-digits: " + e.getMessage(), stmt, e);
         }

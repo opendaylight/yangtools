@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -18,9 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -59,11 +56,11 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
             throw noEnum(stmt);
         }
 
-        final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(stmt.argumentAsTypeQName());
+        final var builder = BaseTypes.enumerationTypeBuilder(stmt.argumentAsTypeQName());
         Integer highestValue = null;
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+        for (var subStmt : substatements) {
             if (subStmt instanceof final EnumEffectiveStatement enumSubStmt) {
-                final Optional<Integer> declaredValue =
+                final var declaredValue =
                         enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
                 final int effectiveValue;
                 if (declaredValue.isEmpty()) {
@@ -78,7 +75,7 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
                     effectiveValue = declaredValue.orElseThrow();
                 }
 
-                final EnumPair pair = EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue);
+                final var pair = EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue);
                 if (highestValue == null || highestValue < pair.getValue()) {
                     highestValue = pair.getValue();
                 }
@@ -87,7 +84,7 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        return new TypeEffectiveStatementImpl(stmt.declared(), substatements, builder);
     }
 
     private static SourceException noEnum(final CommonStmtCtx stmt) {
