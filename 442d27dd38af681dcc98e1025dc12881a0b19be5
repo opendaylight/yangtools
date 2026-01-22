@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d50b061_5a43e507",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/FeatureStatement.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-22T15:15:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19a8ea50_8af40947",
+      "range": {
+        "startLine": 21,
+        "startChar": 32,
+        "endLine": 21,
+        "endChar": 38
+      },
+      "revId": "442d27dd38af681dcc98e1025dc12881a0b19be5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e81c723f_6d6fc2ec",
@@ -47,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1e0736db_8db5f5b8",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/LengthStatement.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-22T15:15:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e81c723f_6d6fc2ec",
+      "range": {
+        "startLine": 19,
+        "startChar": 32,
+        "endLine": 19,
+        "endChar": 38
+      },
+      "revId": "442d27dd38af681dcc98e1025dc12881a0b19be5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ece9fa79_fb2f0600",
@@ -60,6 +108,30 @@
       "writtenOn": "2026-01-22T15:14:11Z",
       "side": 1,
       "message": "unique",
+      "range": {
+        "startLine": 21,
+        "startChar": 32,
+        "endLine": 21,
+        "endChar": 38
+      },
+      "revId": "442d27dd38af681dcc98e1025dc12881a0b19be5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97ea6163_427481dd",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/UniqueStatement.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-22T15:15:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ece9fa79_fb2f0600",
       "range": {
         "startLine": 21,
         "startChar": 32,
