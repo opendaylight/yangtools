@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -57,7 +58,7 @@ public final class CaseStatementSupport
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
-        .addOptional(YangStmtMapping.WHEN)
+        .addOptional(WhenStatement.DEFINITION)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
         .addAny(YangStmtMapping.ANYDATA)
@@ -72,7 +73,7 @@ public final class CaseStatementSupport
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
-        .addOptional(YangStmtMapping.WHEN)
+        .addOptional(WhenStatement.DEFINITION)
         .build();
 
     private CaseStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

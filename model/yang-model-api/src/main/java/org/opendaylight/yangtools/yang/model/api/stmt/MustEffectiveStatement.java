@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 /**
  * Effective representation of a {@code must} statement.
  */
-public interface MustEffectiveStatement extends EffectiveStatement<QualifiedBound, MustStatement> {
+public interface MustEffectiveStatement extends EffectiveStatement<QualifiedBound, @NonNull MustStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MUST;
+        return MustStatement.DEFINITION;
     }
 }

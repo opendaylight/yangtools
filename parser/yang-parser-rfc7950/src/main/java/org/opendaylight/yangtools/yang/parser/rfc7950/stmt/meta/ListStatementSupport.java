@@ -32,12 +32,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -73,14 +75,14 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.LIST)
         .addOptional(MaxElementsStatement.DEFINITION)
         .addOptional(MinElementsStatement.DEFINITION)
-        .addAny(YangStmtMapping.MUST)
+        .addAny(MustStatement.DEFINITION)
         .addOptional(OrderedByStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(UniqueStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
-        .addOptional(YangStmtMapping.WHEN)
+        .addOptional(WhenStatement.DEFINITION)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
         .addAny(ActionStatement.DEFINITION)
@@ -98,7 +100,7 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.LIST)
         .addOptional(MaxElementsStatement.DEFINITION)
         .addOptional(MinElementsStatement.DEFINITION)
-        .addAny(YangStmtMapping.MUST)
+        .addAny(MustStatement.DEFINITION)
         .addAny(YangStmtMapping.NOTIFICATION)
         .addOptional(OrderedByStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
@@ -106,7 +108,7 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(UniqueStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
-        .addOptional(YangStmtMapping.WHEN)
+        .addOptional(WhenStatement.DEFINITION)
         .build();
 
     private final boolean warnForUnkeyedLists;

@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -35,7 +34,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 public final class MustStatementSupport
         extends AbstractStatementSupport<QualifiedBound, MustStatement, MustEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.MUST)
+        SubstatementValidator.builder(MustStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
@@ -46,7 +45,7 @@ public final class MustStatementSupport
 
     public MustStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.MUST, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(MustStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 

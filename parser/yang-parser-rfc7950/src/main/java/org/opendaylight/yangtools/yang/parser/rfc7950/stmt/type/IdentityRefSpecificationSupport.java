@@ -37,9 +37,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class IdentityRefSpecificationSupport extends AbstractTypeSupport<IdentityRefSpecification> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(YangStmtMapping.BASE).build();
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(BaseStatement.DEFINITION).build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.BASE).build();
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(BaseStatement.DEFINITION).build();
 
     private IdentityRefSpecificationSupport(final YangParserConfiguration config,
             final SubstatementValidator validator) {

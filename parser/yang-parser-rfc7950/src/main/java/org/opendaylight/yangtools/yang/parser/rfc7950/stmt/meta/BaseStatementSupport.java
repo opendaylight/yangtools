@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -36,10 +35,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class BaseStatementSupport extends AbstractQNameStatementSupport<BaseStatement, BaseEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.BASE).build();
+            SubstatementValidator.builder(BaseStatement.DEFINITION).build();
 
     public BaseStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.BASE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(BaseStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

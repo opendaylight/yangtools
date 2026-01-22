@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -53,7 +54,7 @@ public final class OutputStatementSupport
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();

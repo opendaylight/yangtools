@@ -10,17 +10,26 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code identity} statement.
  */
-public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        IfFeatureAwareDeclaredStatement<QName> {
+public interface IdentityStatement
+        extends DocumentedDeclaredStatement.WithStatus<QName>, IfFeatureAwareDeclaredStatement<QName> {
+    /**
+     * The definition of {@code identity} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        IdentityStatement.class, IdentityEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "identity", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.IDENTITY;
+        return DEFINITION;
     }
 
     /**

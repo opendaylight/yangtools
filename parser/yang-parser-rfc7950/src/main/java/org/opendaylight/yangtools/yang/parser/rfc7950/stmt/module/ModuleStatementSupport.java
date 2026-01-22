@@ -30,7 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -67,10 +69,10 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.DEVIATION)
-        .addAny(YangStmtMapping.EXTENSION)
+        .addAny(ExtensionStatement.DEFINITION)
         .addAny(FeatureStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.IDENTITY)
+        .addAny(IdentityStatement.DEFINITION)
         .addAny(ImportStatement.DEFINITION)
         .addAny(IncludeStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
@@ -96,10 +98,10 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.DEVIATION)
-        .addAny(YangStmtMapping.EXTENSION)
+        .addAny(ExtensionStatement.DEFINITION)
         .addAny(FeatureStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.IDENTITY)
+        .addAny(IdentityStatement.DEFINITION)
         .addAny(ImportStatement.DEFINITION)
         .addAny(IncludeStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)

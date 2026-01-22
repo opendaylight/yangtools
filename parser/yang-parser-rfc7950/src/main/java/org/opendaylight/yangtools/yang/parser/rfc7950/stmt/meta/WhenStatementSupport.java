@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -33,7 +32,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 public final class WhenStatementSupport
         extends AbstractStatementSupport<QualifiedBound, WhenStatement, WhenEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.WHEN)
+        SubstatementValidator.builder(WhenStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
@@ -42,7 +41,7 @@ public final class WhenStatementSupport
 
     public WhenStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(WhenStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 

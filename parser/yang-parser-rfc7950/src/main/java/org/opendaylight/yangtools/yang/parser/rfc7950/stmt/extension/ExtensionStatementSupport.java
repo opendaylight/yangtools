@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -41,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ExtensionStatementSupport
         extends AbstractQNameStatementSupport<ExtensionStatement, ExtensionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.EXTENSION)
+        SubstatementValidator.builder(ExtensionStatement.DEFINITION)
             .addOptional(ArgumentStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
@@ -51,7 +50,7 @@ public final class ExtensionStatementSupport
     private final YangParserConfiguration config;
 
     public ExtensionStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.EXTENSION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(ExtensionStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
         this.config = requireNonNull(config);
     }
 

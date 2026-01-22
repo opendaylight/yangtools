@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -36,8 +37,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 public final class YangValidationBundles {
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
         YangStmtMapping.DEFAULT, DescriptionStatement.DEFINITION, ReferenceStatement.DEFINITION,
-        ConfigStatement.DEFINITION, MandatoryStatement.DEFINITION, YangStmtMapping.MUST, PresenceStatement.DEFINITION,
-        MinElementsStatement.DEFINITION, MaxElementsStatement.DEFINITION, IfFeatureStatement.DEFINITION);
+        ConfigStatement.DEFINITION, MandatoryStatement.DEFINITION, MustStatement.DEFINITION,
+        PresenceStatement.DEFINITION, MinElementsStatement.DEFINITION, MaxElementsStatement.DEFINITION,
+        IfFeatureStatement.DEFINITION);
 
     public static final Map<StatementDefinition, Set<StatementDefinition>> SUPPORTED_REFINE_TARGETS =
         ImmutableMap.<StatementDefinition, Set<StatementDefinition>>builder()
@@ -47,7 +49,7 @@ public final class YangValidationBundles {
                 YangStmtMapping.LEAF, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML, YangStmtMapping.CHOICE))
             .put(MaxElementsStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
             .put(MinElementsStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
-            .put(YangStmtMapping.MUST, ImmutableSet.of(
+            .put(MustStatement.DEFINITION, ImmutableSet.of(
                 YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.CONTAINER,
                 YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML))
             .put(PresenceStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.CONTAINER))
@@ -82,9 +84,9 @@ public final class YangValidationBundles {
                 YangStmtMapping.LEAF_LIST))
         .put(VERSION_1, MinElementsStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.LIST,
                 YangStmtMapping.LEAF_LIST))
-        .put(VERSION_1, YangStmtMapping.MUST, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
+        .put(VERSION_1, MustStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
                 YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYXML))
-        .put(VERSION_1_1, YangStmtMapping.MUST, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
+        .put(VERSION_1_1, MustStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
                 YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML,
                 InputStatement.DEFINITION, OutputStatement.DEFINITION, YangStmtMapping.NOTIFICATION))
         .put(VERSION_1, YangStmtMapping.TYPE, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))

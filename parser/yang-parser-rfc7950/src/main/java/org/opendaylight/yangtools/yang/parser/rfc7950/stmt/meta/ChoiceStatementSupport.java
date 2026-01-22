@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -71,7 +72,7 @@ public final class ChoiceStatementSupport
         .addOptional(MandatoryStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
-        .addOptional(YangStmtMapping.WHEN)
+        .addOptional(WhenStatement.DEFINITION)
         .build();
     private static final ImmutableSet<StatementDefinition> RFC6020_CASE_SHORTHANDS = ImmutableSet.of(
         YangStmtMapping.ANYXML, YangStmtMapping.CONTAINER, YangStmtMapping.LEAF, YangStmtMapping.LIST,
@@ -92,7 +93,7 @@ public final class ChoiceStatementSupport
         .addOptional(MandatoryStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
-        .addOptional(YangStmtMapping.WHEN)
+        .addOptional(WhenStatement.DEFINITION)
         .build();
     private static final ImmutableSet<StatementDefinition> RFC7950_CASE_SHORTHANDS = ImmutableSet.of(
         YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML, YangStmtMapping.CHOICE, YangStmtMapping.CONTAINER,

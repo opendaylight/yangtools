@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -54,7 +55,7 @@ final class AugmentInferenceAction implements InferenceAction {
         ReferenceStatement.DEFINITION,
         StatusStatement.DEFINITION,
         YangStmtMapping.USES,
-        YangStmtMapping.WHEN);
+        WhenStatement.DEFINITION);
 
     private final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
     private final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;

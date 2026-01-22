@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -81,14 +82,14 @@ public final class DeviateStatementSupport
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addOptional(YangStmtMapping.DEFAULT)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
@@ -101,14 +102,14 @@ public final class DeviateStatementSupport
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addAny(YangStmtMapping.DEFAULT)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();

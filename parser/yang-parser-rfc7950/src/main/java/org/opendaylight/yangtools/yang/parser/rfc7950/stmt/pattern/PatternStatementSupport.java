@@ -11,13 +11,13 @@ import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
@@ -47,7 +47,7 @@ public final class PatternStatementSupport
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
-            .addOptional(YangStmtMapping.MODIFIER)
+            .addOptional(ModifierStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
 

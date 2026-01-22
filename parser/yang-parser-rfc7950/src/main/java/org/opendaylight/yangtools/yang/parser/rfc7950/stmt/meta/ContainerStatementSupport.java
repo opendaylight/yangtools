@@ -24,11 +24,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -58,13 +60,13 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addOptional(PresenceStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.WHEN)
+            .addOptional(WhenStatement.DEFINITION)
             .build();
 
     private static final SubstatementValidator RFC7950_VALIDATOR =
@@ -81,14 +83,14 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(PresenceStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.WHEN)
+            .addOptional(WhenStatement.DEFINITION)
             .build();
 
     private ContainerStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

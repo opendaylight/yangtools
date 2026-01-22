@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -35,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -58,13 +60,13 @@ public final class LeafListStatementSupport
             .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addOptional(OrderedByStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(UnitsStatement.DEFINITION)
-            .addOptional(YangStmtMapping.WHEN)
+            .addOptional(WhenStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
@@ -74,13 +76,13 @@ public final class LeafListStatementSupport
             .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addOptional(OrderedByStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(UnitsStatement.DEFINITION)
-            .addOptional(YangStmtMapping.WHEN)
+            .addOptional(WhenStatement.DEFINITION)
             .build();
 
     private LeafListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

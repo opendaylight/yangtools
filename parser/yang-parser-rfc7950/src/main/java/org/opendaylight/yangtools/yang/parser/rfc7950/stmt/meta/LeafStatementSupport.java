@@ -27,11 +27,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -58,12 +60,12 @@ public final class LeafStatementSupport
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(UnitsStatement.DEFINITION)
-            .addOptional(YangStmtMapping.WHEN)
+            .addOptional(WhenStatement.DEFINITION)
             .build();
 
     public LeafStatementSupport(final YangParserConfiguration config) {

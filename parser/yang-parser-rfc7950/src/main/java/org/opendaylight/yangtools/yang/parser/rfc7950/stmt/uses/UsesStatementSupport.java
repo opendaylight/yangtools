@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
@@ -34,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -70,7 +72,7 @@ public final class UsesStatementSupport
             .addAny(YangStmtMapping.REFINE)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addOptional(YangStmtMapping.WHEN)
+            .addOptional(WhenStatement.DEFINITION)
             .build();
 
     public UsesStatementSupport(final YangParserConfiguration config) {
@@ -309,14 +311,14 @@ public final class UsesStatementSupport
         refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx.replicaAsChildOf(refineTargetNodeCtx));
     }
 
-    // FIXME: clarify this and inline into single caller
+    // FIXME: clarify this and inline into single caller and work on prodicesDeclared()
     private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
-        return YangStmtMapping.MUST.equals(publicDefinition);
+        return MustStatement.DEFINITION.equals(publicDefinition);
     }
 
     private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {
-        final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.namespaceItem(
-                ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
+        final var supportedRefineSubstatements = refineSubstatementCtx.namespaceItem(ValidationBundles.NAMESPACE,
+            ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
                 || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())

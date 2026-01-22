@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
@@ -46,7 +47,7 @@ public abstract sealed class RefineStatementSupport
             .addOptional(ConfigStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(PresenceStatement.DEFINITION)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
             .build();
@@ -65,7 +66,7 @@ public abstract sealed class RefineStatementSupport
             .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(PresenceStatement.DEFINITION)
-            .addAny(YangStmtMapping.MUST)
+            .addAny(MustStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
             .build();

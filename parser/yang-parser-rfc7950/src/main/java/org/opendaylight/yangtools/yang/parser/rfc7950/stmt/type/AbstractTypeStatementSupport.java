@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
@@ -89,7 +90,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         implements UndeclaredStatementFactory<QName, TypeStatement, TypeEffectiveStatement<TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.TYPE)
-            .addOptional(YangStmtMapping.BASE)
+            .addOptional(BaseStatement.DEFINITION)
             .addAny(BitStatement.DEFINITION)
             .addAny(EnumStatement.DEFINITION)
             .addOptional(FractionDigitsStatement.DEFINITION)

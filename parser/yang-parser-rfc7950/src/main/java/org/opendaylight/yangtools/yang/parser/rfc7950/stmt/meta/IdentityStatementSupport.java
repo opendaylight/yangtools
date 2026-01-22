@@ -17,11 +17,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
@@ -45,15 +45,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class IdentityStatementSupport
         extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.IDENTITY)
-            .addOptional(YangStmtMapping.BASE)
+        SubstatementValidator.builder(IdentityStatement.DEFINITION)
+            .addOptional(BaseStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.IDENTITY)
-            .addAny(YangStmtMapping.BASE)
+        SubstatementValidator.builder(IdentityStatement.DEFINITION)
+            .addAny(BaseStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
@@ -61,7 +61,7 @@ public final class IdentityStatementSupport
             .build();
 
     private IdentityStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.IDENTITY, StatementPolicy.reject(), config, validator);
+        super(IdentityStatement.DEFINITION, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull IdentityStatementSupport rfc6020Instance(final YangParserConfiguration config) {

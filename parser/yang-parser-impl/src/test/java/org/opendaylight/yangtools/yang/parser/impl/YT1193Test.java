@@ -20,6 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
@@ -114,8 +116,8 @@ class YT1193Test {
         assertReference(it.next(), PrefixStatement.DEFINITION, 3, 3);
         assertReference(it.next(), YangVersionStatement.DEFINITION, 4, 3);
         assertReference(it.next(), ImportStatement.DEFINITION, 6, 3);
-        assertReference(it.next(), YangStmtMapping.IDENTITY, 11, 3);
-        assertReference(it.next(), YangStmtMapping.IDENTITY, 13, 3);
+        assertReference(it.next(), IdentityStatement.DEFINITION, 11, 3);
+        assertReference(it.next(), IdentityStatement.DEFINITION, 13, 3);
         assertReference(it.next(), YangStmtMapping.ANYDATA, 17, 3);
         assertReference(it.next(), YangStmtMapping.ANYXML, 18, 3);
         assertReference(it.next(), IncludeStatement.DEFINITION, 20, 3);
@@ -128,7 +130,7 @@ class YT1193Test {
         final var it = baz.declaredSubstatements().iterator();
         assertReference(it.next(), YangVersionStatement.DEFINITION, 2, 3);
         assertReference(it.next(), BelongsToStatement.DEFINITION, 4, 3);
-        assertReference(it.next(), YangStmtMapping.EXTENSION, 8, 3);
+        assertReference(it.next(), ExtensionStatement.DEFINITION, 8, 3);
         assertFalse(it.hasNext());
     }
 

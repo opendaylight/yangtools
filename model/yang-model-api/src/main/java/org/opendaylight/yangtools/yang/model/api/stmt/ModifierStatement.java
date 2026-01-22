@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
@@ -21,8 +22,17 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
  * that do not match the pattern.
  */
 public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
+    /**
+     * The definition of {@code modifier} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ModifierStatement.class, ModifierEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "modifier", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MODIFIER;
+        return DEFINITION;
     }
 }
