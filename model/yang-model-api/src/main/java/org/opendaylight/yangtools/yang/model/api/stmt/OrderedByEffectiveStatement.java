@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code ordered-by} statement.
  */
-public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering, OrderedByStatement> {
+public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering, @NonNull OrderedByStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.ORDERED_BY;
+        return OrderedByStatement.DEFINITION;
     }
 }

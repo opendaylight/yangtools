@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -47,7 +48,7 @@ public final class ContainerStatementSupport
         SubstatementValidator.builder(YangStmtMapping.CONTAINER)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(ConfigStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
@@ -70,7 +71,7 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(ConfigStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)

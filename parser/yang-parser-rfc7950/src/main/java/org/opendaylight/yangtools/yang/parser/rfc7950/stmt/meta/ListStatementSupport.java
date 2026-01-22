@@ -22,13 +22,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -56,7 +60,7 @@ public final class ListStatementSupport
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.CHOICE)
-        .addOptional(YangStmtMapping.CONFIG)
+        .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
@@ -65,10 +69,10 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
-        .addOptional(YangStmtMapping.MAX_ELEMENTS)
-        .addOptional(YangStmtMapping.MIN_ELEMENTS)
+        .addOptional(MaxElementsStatement.DEFINITION)
+        .addOptional(MinElementsStatement.DEFINITION)
         .addAny(YangStmtMapping.MUST)
-        .addOptional(YangStmtMapping.ORDERED_BY)
+        .addOptional(OrderedByStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
@@ -81,7 +85,7 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.ANYDATA)
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.CHOICE)
-        .addOptional(YangStmtMapping.CONFIG)
+        .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
@@ -90,11 +94,11 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
-        .addOptional(YangStmtMapping.MAX_ELEMENTS)
-        .addOptional(YangStmtMapping.MIN_ELEMENTS)
+        .addOptional(MaxElementsStatement.DEFINITION)
+        .addOptional(MinElementsStatement.DEFINITION)
         .addAny(YangStmtMapping.MUST)
         .addAny(YangStmtMapping.NOTIFICATION)
-        .addOptional(YangStmtMapping.ORDERED_BY)
+        .addOptional(OrderedByStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)

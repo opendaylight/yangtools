@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code max-elements} statement.
  */
 public interface MaxElementsStatement extends DeclaredStatement<MaxElementsArgument> {
+    /**
+     * The definition of {@code max-elements} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        MaxElementsStatement.class, MaxElementsEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "max-elements", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MAX_ELEMENTS;
+        return DEFINITION;
     }
 }

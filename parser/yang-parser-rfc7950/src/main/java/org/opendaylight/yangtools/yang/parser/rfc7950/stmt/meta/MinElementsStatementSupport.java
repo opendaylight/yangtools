@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import java.text.ParseException;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -28,10 +27,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class MinElementsStatementSupport extends AbstractInternedStatementSupport<
         MinElementsArgument, MinElementsStatement, MinElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.MIN_ELEMENTS).build();
+        SubstatementValidator.builder(MinElementsStatement.DEFINITION).build();
 
     public MinElementsStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.MIN_ELEMENTS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(MinElementsStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

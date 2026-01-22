@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code max-elements} statement.
  */
-public interface MaxElementsEffectiveStatement extends EffectiveStatement<MaxElementsArgument, MaxElementsStatement> {
+public interface MaxElementsEffectiveStatement
+        extends EffectiveStatement<MaxElementsArgument, @NonNull MaxElementsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MAX_ELEMENTS;
+        return MaxElementsStatement.DEFINITION;
     }
 }

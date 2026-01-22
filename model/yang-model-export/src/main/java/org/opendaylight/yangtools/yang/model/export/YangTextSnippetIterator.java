@@ -23,14 +23,19 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 
@@ -67,12 +72,12 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      *            difficult to read if used everywhere they are allowed.
      */
     private static final Map<StatementDefinition, String> DEFAULT_STATEMENTS = Map.of(
-        YangStmtMapping.CONFIG, "true",
-        YangStmtMapping.MANDATORY, "true",
-        YangStmtMapping.MAX_ELEMENTS, "unbounded",
-        YangStmtMapping.MIN_ELEMENTS, "0",
-        YangStmtMapping.ORDERED_BY, "system",
-        YangStmtMapping.REQUIRE_INSTANCE, "true",
+        ConfigStatement.DEFINITION, "true",
+        MandatoryStatement.DEFINITION, "true",
+        MaxElementsStatement.DEFINITION, "unbounded",
+        MinElementsStatement.DEFINITION, "0",
+        OrderedByStatement.DEFINITION, "system",
+        RequireInstanceStatement.DEFINITION, "true",
         StatusStatement.DEFINITION, "current",
         YinElementStatement.DEFINITION, "false");
 

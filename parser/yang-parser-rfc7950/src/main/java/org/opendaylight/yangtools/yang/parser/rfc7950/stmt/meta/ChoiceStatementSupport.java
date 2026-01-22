@@ -27,9 +27,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -57,7 +59,7 @@ public final class ChoiceStatementSupport
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CHOICE)
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.CASE)
-        .addOptional(YangStmtMapping.CONFIG)
+        .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(YangStmtMapping.DEFAULT)
         .addOptional(DescriptionStatement.DEFINITION)
@@ -65,7 +67,7 @@ public final class ChoiceStatementSupport
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
-        .addOptional(YangStmtMapping.MANDATORY)
+        .addOptional(MandatoryStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addOptional(YangStmtMapping.WHEN)
@@ -78,7 +80,7 @@ public final class ChoiceStatementSupport
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.CASE)
         .addAny(YangStmtMapping.CHOICE)
-        .addOptional(YangStmtMapping.CONFIG)
+        .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(YangStmtMapping.DEFAULT)
         .addOptional(DescriptionStatement.DEFINITION)
@@ -86,7 +88,7 @@ public final class ChoiceStatementSupport
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
-        .addOptional(YangStmtMapping.MANDATORY)
+        .addOptional(MandatoryStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addOptional(YangStmtMapping.WHEN)
