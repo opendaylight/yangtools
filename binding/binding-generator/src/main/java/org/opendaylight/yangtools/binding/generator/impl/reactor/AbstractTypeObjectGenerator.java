@@ -226,13 +226,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         private final Map<EffectiveStatement<?, ?>, TypeReference> leafTypes = new HashMap<>();
         private final Map<QName, TypedefGenerator> baseTypes = new HashMap<>();
 
-        UnionDependencies(final TypeEffectiveStatement<?> type, final GeneratorContext context) {
+        UnionDependencies(final TypeEffectiveStatement type, final GeneratorContext context) {
             resolveUnionDependencies(context, type);
         }
 
-        private void resolveUnionDependencies(final GeneratorContext context, final TypeEffectiveStatement<?> union) {
-            for (EffectiveStatement<?, ?> stmt : union.effectiveSubstatements()) {
-                if (stmt instanceof TypeEffectiveStatement<?> type) {
+        private void resolveUnionDependencies(final GeneratorContext context, final TypeEffectiveStatement union) {
+            for (var stmt : union.effectiveSubstatements()) {
+                if (stmt instanceof TypeEffectiveStatement type) {
                     final QName typeName = type.argument();
                     if (TypeDefinitions.IDENTITYREF.equals(typeName)) {
                         if (!identityTypes.containsKey(stmt)) {
@@ -276,7 +276,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         .put(TypeDefinitions.UINT64, BaseYangTypes.UINT64_TYPE)
         .build();
 
-    private final TypeEffectiveStatement<?> type;
+    private final TypeEffectiveStatement type;
 
     // FIXME: these fields should be better-controlled with explicit sequencing guards. It it currently stands, we are
     //        expending two (or more) additional fields to express downstream linking. If we had the concept of
@@ -696,8 +696,8 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     private static @NonNull GeneratedTransferObject createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
             final TypeBuilderFactory builderFactory, final EffectiveStatement<?, ?> definingStatement,
             final UnionDependencies dependencies, final JavaTypeName typeName, final ModuleGenerator module,
-            final TypeEffectiveStatement<?> type, final boolean isTypedef, final TypeDefinition<?> typedef) {
-        final GeneratedUnionBuilder builder = builderFactory.newGeneratedUnionBuilder(typeName);
+            final TypeEffectiveStatement type, final boolean isTypedef, final TypeDefinition<?> typedef) {
+        final var builder = builderFactory.newGeneratedUnionBuilder(typeName);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
         builder.addImplementsType(BindingTypes.UNION_TYPE_OBJECT);
         builder.setIsUnion(true);
@@ -710,22 +710,22 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         // Pattern string is the key, XSD regex is the value. The reason for this choice is that the pattern carries
         // also negation information and hence guarantees uniqueness.
-        final Map<String, String> expressions = new HashMap<>();
+        final var expressions = new HashMap<String, String>();
 
         // Linear list of properties generated from subtypes. We need this information for runtime types, as it allows
         // direct mapping of type to corresponding property -- without having to resort to re-resolving the leafrefs
         // again.
-        final List<String> typeProperties = new ArrayList<>();
+        final var typeProperties = new ArrayList<String>();
 
         for (EffectiveStatement<?, ?> stmt : type.effectiveSubstatements()) {
-            if (stmt instanceof TypeEffectiveStatement<?> subType) {
+            if (stmt instanceof TypeEffectiveStatement subType) {
                 final QName subName = subType.argument();
                 final String localName = subName.getLocalName();
 
                 String propSource = localName;
                 final Type generatedType;
                 if (TypeDefinitions.UNION.equals(subName)) {
-                    final JavaTypeName subUnionName = typeName.createEnclosed(
+                    final var subUnionName = typeName.createEnclosed(
                         provideAvailableNameForGenTOBuilder(typeName.simpleName()));
                     final GeneratedTransferObject subUnion = createUnion(auxiliaryGeneratedTypes, builderFactory,
                         definingStatement, dependencies, subUnionName, module, subType, isTypedef,
@@ -734,13 +734,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
                 } else if (TypeDefinitions.ENUMERATION.equals(subName)) {
-                    final Enumeration subEnumeration = createEnumeration(builderFactory, definingStatement,
+                    final var subEnumeration = createEnumeration(builderFactory, definingStatement,
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
                         (EnumTypeDefinition) subType.getTypeDefinition());
                     builder.addEnumeration(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (TypeDefinitions.BITS.equals(subName)) {
-                    final GeneratedTransferObject subBits = createBits(builderFactory, definingStatement,
+                    final var subBits = createBits(builderFactory, definingStatement,
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
                         (BitsTypeDefinition) subType.getTypeDefinition(), isTypedef);
                     builder.addEnclosingTransferObject(subBits);

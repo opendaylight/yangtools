@@ -7,23 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -35,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class IdentityRefSpecificationSupport extends AbstractTypeSupport<IdentityRefSpecification> {
+final class IdentityRefSpecificationSupport extends AbstractTypeSupport.Specific<IdentityRefSpecification> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(TypeStatement.DEF).addMandatory(BaseStatement.DEF).build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
@@ -43,7 +41,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
 
     private IdentityRefSpecificationSupport(final YangParserConfiguration config,
             final SubstatementValidator validator) {
-        super(config, validator);
+        super(config, validator, IdentityRefSpecification.class);
     }
 
     static @NonNull IdentityRefSpecificationSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -55,8 +53,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, IdentityRefSpecification,
-            EffectiveStatement<QName, IdentityRefSpecification>> stmt) {
+    public void onFullDefinitionDeclared(final Mutable<QName, TypeStatement, TypeEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         for (var baseStmt : StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class)) {
@@ -79,28 +76,22 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport<Identity
     }
 
     @Override
-    protected IdentityRefSpecification attachDeclarationReference(final IdentityRefSpecification stmt,
-            final DeclarationReference reference) {
-        return new RefIdentityRefSpecification(stmt, reference);
-    }
-
-    @Override
-    protected EffectiveStatement<QName, IdentityRefSpecification> createEffective(
-            final Current<QName, IdentityRefSpecification> stmt,
+    TypeEffectiveStatement createEffectiveImpl(final Current<QName, IdentityRefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBase(stmt);
         }
 
-        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(stmt.argumentAsTypeQName());
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof BaseEffectiveStatement) {
-                final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();
-                final IdentityEffectiveStatement baseIdentity =
-                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, identityQName)).buildEffective();
-                verify(baseIdentity instanceof IdentitySchemaNode, "Statement %s is not an IdentitySchemaNode",
-                    baseIdentity);
-                builder.addIdentity((IdentitySchemaNode) baseIdentity);
+        final var builder = BaseTypes.identityrefTypeBuilder(stmt.argumentAsTypeQName());
+        for (var subStmt : substatements) {
+            if (subStmt instanceof BaseEffectiveStatement bes) {
+                final var identityQName = bes.argument();
+                final var baseIdentity = verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, identityQName))
+                    .buildEffective();
+                if (!(baseIdentity instanceof IdentitySchemaNode isn)) {
+                    throw new VerifyException("Statement " + baseIdentity + " is not an IdentitySchemaNode");
+                }
+                builder.addIdentity(isn);
             }
         }
 
