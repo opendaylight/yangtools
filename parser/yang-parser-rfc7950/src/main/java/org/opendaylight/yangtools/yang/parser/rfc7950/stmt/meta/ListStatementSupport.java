@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -36,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -64,7 +66,7 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.IF_FEATURE)
+        .addAny(IfFeatureStatement.DEFINITION)
         .addOptional(KeyStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
@@ -76,7 +78,7 @@ public final class ListStatementSupport
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
-        .addAny(YangStmtMapping.UNIQUE)
+        .addAny(UniqueStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();
@@ -89,7 +91,7 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.IF_FEATURE)
+        .addAny(IfFeatureStatement.DEFINITION)
         .addOptional(KeyStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
@@ -102,7 +104,7 @@ public final class ListStatementSupport
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
-        .addAny(YangStmtMapping.UNIQUE)
+        .addAny(UniqueStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();

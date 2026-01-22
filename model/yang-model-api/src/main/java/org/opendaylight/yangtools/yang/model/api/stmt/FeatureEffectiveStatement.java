@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code feature} statement.
  */
-public interface FeatureEffectiveStatement extends EffectiveStatement<QName, FeatureStatement> {
+public interface FeatureEffectiveStatement extends EffectiveStatement<QName, @NonNull FeatureStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.FEATURE;
+        return FeatureStatement.DEFINITION;
     }
 }

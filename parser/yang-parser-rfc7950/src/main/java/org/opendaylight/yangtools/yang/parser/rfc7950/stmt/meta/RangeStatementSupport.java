@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint64;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -42,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class RangeStatementSupport
         extends AbstractStatementSupport<ValueRanges, RangeStatement, RangeEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.RANGE)
+        SubstatementValidator.builder(RangeStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
@@ -50,7 +49,7 @@ public final class RangeStatementSupport
             .build();
 
     public RangeStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.RANGE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(RangeStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

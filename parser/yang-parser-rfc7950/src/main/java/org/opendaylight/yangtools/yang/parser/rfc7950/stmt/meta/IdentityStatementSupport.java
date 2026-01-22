@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -54,7 +55,7 @@ public final class IdentityStatementSupport
         SubstatementValidator.builder(YangStmtMapping.IDENTITY)
             .addAny(YangStmtMapping.BASE)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .build();

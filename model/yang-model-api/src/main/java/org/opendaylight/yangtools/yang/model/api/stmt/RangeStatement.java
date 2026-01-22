@@ -7,15 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code range} statement.
  */
 public interface RangeStatement extends ConstrainedDocumentedDeclaredStatement<ValueRanges> {
+    /**
+     * The definition of {@code range} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        RangeStatement.class, RangeEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "range", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.RANGE;
+        return DEFINITION;
     }
 }

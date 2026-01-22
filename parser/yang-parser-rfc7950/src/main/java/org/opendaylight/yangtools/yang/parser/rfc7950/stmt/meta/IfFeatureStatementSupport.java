@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -47,13 +46,13 @@ public final class IfFeatureStatementSupport
         extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.IF_FEATURE).build();
+        SubstatementValidator.builder(IfFeatureStatement.DEFINITION).build();
 
     private final @NonNull IfFeatureArgumentParser argumentParser;
 
     private IfFeatureStatementSupport(final YangParserConfiguration config,
             final IfFeatureArgumentParser argumentParser) {
-        super(YangStmtMapping.IF_FEATURE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(IfFeatureStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.argumentParser = requireNonNull(argumentParser);
     }
 

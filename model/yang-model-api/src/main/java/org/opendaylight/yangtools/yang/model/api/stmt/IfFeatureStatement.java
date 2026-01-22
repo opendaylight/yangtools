@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Represents YANG if-feature statement. The "if-feature" statement makes its parent statement conditional.
  */
 public interface IfFeatureStatement extends DeclaredStatement<IfFeatureExpr> {
+    /**
+     * The definition of {@code if-feature} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        IfFeatureStatement.class, IfFeatureEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "if-feature", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.IF_FEATURE;
+        return DEFINITION;
     }
 }

@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -64,10 +63,10 @@ public final class UniqueStatementSupport
             .omitEmptyStrings();
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.UNIQUE).build();
+        SubstatementValidator.builder(UniqueStatement.DEFINITION).build();
 
     public UniqueStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.UNIQUE,
+        super(UniqueStatement.DEFINITION,
             StatementPolicy.copyDeclared(
                 (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
             config, SUBSTATEMENT_VALIDATOR);

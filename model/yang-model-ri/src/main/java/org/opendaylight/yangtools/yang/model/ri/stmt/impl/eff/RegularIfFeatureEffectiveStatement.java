@@ -8,15 +8,16 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularIfFeatureEffectiveStatement extends WithSubstatements<IfFeatureExpr, IfFeatureStatement>
-        implements IfFeatureEffectiveStatement {
-    public RegularIfFeatureEffectiveStatement(final IfFeatureStatement declared,
+public final class RegularIfFeatureEffectiveStatement
+        extends WithSubstatements<IfFeatureExpr, @NonNull IfFeatureStatement> implements IfFeatureEffectiveStatement {
+    public RegularIfFeatureEffectiveStatement(final @NonNull IfFeatureStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

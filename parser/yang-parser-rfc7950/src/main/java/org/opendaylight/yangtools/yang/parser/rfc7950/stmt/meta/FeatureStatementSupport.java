@@ -11,13 +11,13 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -36,15 +36,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class FeatureStatementSupport
         extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.FEATURE)
+        SubstatementValidator.builder(FeatureStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     public FeatureStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.FEATURE, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(FeatureStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

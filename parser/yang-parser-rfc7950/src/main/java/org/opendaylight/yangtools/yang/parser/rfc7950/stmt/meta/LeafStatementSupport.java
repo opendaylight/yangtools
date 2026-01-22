@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
@@ -55,7 +56,7 @@ public final class LeafStatementSupport
             .addOptional(ConfigStatement.DEFINITION)
             .addOptional(YangStmtMapping.DEFAULT)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
             .addOptional(ReferenceStatement.DEFINITION)

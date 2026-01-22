@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -44,7 +45,7 @@ public final class ActionStatementSupport
         SubstatementValidator.builder(ActionStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(InputStatement.DEFINITION)
             .addOptional(OutputStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
