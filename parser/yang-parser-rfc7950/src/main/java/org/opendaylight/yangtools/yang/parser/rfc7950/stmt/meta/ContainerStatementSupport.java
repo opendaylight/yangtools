@@ -19,9 +19,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -43,17 +48,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class ContainerStatementSupport
         extends AbstractSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.CONTAINER)
-            .addAny(YangStmtMapping.ANYXML)
+        SubstatementValidator.builder(ContainerStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONFIG)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.PRESENCE)
             .addOptional(ReferenceStatement.DEFINITION)
@@ -64,19 +69,19 @@ public final class ContainerStatementSupport
             .build();
 
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.CONTAINER)
+        SubstatementValidator.builder(ContainerStatement.DEFINITION)
             .addAny(ActionStatement.DEFINITION)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
+            .addAny(AnydataStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONFIG)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(YangStmtMapping.PRESENCE)
@@ -88,7 +93,7 @@ public final class ContainerStatementSupport
             .build();
 
     private ContainerStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.CONTAINER, instantiatedPolicy(), config, validator);
+        super(ContainerStatement.DEFINITION, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull ContainerStatementSupport rfc6020Instance(final YangParserConfiguration config) {
