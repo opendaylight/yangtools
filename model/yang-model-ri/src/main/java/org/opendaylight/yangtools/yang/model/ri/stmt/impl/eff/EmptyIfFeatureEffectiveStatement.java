@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyIfFeatureEffectiveStatement extends DefaultArgument<IfFeatureExpr, IfFeatureStatement>
+public final class EmptyIfFeatureEffectiveStatement extends DefaultArgument<IfFeatureExpr, @NonNull IfFeatureStatement>
         implements IfFeatureEffectiveStatement {
-    public EmptyIfFeatureEffectiveStatement(final IfFeatureStatement declared) {
+    public EmptyIfFeatureEffectiveStatement(final @NonNull IfFeatureStatement declared) {
         super(declared);
     }
 }

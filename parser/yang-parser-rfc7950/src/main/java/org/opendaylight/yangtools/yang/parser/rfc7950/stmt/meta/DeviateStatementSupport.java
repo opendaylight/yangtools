@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -81,14 +82,14 @@ public final class DeviateStatementSupport
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
-            .addAny(YangStmtMapping.UNIQUE)
+            .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addOptional(YangStmtMapping.DEFAULT)
             .addAny(YangStmtMapping.MUST)
-            .addAny(YangStmtMapping.UNIQUE)
+            .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
 
@@ -101,14 +102,14 @@ public final class DeviateStatementSupport
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
-            .addAny(YangStmtMapping.UNIQUE)
+            .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addAny(YangStmtMapping.DEFAULT)
             .addAny(YangStmtMapping.MUST)
-            .addAny(YangStmtMapping.UNIQUE)
+            .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
 

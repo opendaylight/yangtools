@@ -7,17 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code pattern} statement.
  */
 public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternExpression> {
+    /**
+     * The definition of {@code pattern} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        PatternStatement.class, PatternEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "pattern", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.PATTERN;
+        return DEFINITION;
     }
 
     /**

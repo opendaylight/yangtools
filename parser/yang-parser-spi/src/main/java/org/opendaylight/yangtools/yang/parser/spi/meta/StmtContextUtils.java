@@ -25,11 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
@@ -37,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -228,10 +230,10 @@ public final class StmtContextUtils {
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (var stmt : stmtContext.declaredSubstatements()) {
-            if (YangStmtMapping.IF_FEATURE.equals(stmt.publicDefinition())) {
+            final var declaring = stmt.tryDeclaring(IfFeatureStatement.class);
+            if (declaring != null) {
                 containsIfFeature = true;
-                final var argument = (IfFeatureExpr) stmt.getArgument();
-                if (!argument.test(supportedFeatures)) {
+                if (!declaring.getArgument().test(supportedFeatures)) {
                     isSupported = false;
                     break;
                 }
@@ -386,50 +388,75 @@ public final class StmtContextUtils {
      * @param ctx statement context to be validated
      */
     public static void validateIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> ctx) {
-        if (!isRelevantForIfFeatureAndWhenOnListKeysCheck(ctx)) {
+        // Preliminary checks
+        if (YangVersion.VERSION_1_1 != ctx.yangVersion()) {
             return;
         }
+        final var parent = ctx.getParentContext();
+        if (parent == null) {
+            return;
+        }
+        final var listCtx = parent.tryDeclaring(ListStatement.class);
+        if (listCtx == null) {
+            return;
+        }
+        final var keyCtx = findFirstDeclaredSubstatement(listCtx, KeyStatement.class);
+        if (keyCtx == null) {
+            return;
+        }
+        final var keyArg = keyCtx.argument();
 
-        final var listStmtCtx = ctx.coerceParentContext();
-        final var keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
-
+        // deal with the case of a single leaf
         final var leafCtx = ctx.tryDeclaring(LeafStatement.class);
         if (leafCtx != null) {
-            if (isListKey(leafCtx, keyStmtCtx)) {
-                disallowIfFeatureAndWhenOnListKeys(ctx);
-            }
+            validateIfFeatureOnLeaf(listCtx, keyArg, leafCtx);
             return;
         }
 
+        // otherwise deal with the case of a uses statement
         final var usesCtx = ctx.tryDeclaring(UsesStatement.class);
         if (usesCtx != null) {
-            for (var subStmtContext : listStmtCtx.effectiveSubstatements()) {
+            for (var subStmtContext : listCtx.effectiveSubstatements()) {
                 final var declaring = subStmtContext.tryDeclaring(LeafStatement.class);
-                if (declaring != null && isListKey(declaring, keyStmtCtx)) {
-                    disallowIfFeatureAndWhenOnListKeys(declaring);
+                if (declaring != null) {
+                    validateIfFeatureOnLeaf(listCtx, keyArg, declaring);
                 }
             }
         }
     }
 
-    private static boolean isRelevantForIfFeatureAndWhenOnListKeysCheck(final StmtContext<?, ?, ?> ctx) {
-        return YangVersion.VERSION_1_1.equals(ctx.yangVersion()) && hasParentOfType(ctx, YangStmtMapping.LIST)
-                && findFirstDeclaredSubstatement(ctx.coerceParentContext(), KeyStatement.class) != null;
+    private static void validateIfFeatureOnLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
+            final KeyArgument keyArg, final StmtContext<QName, LeafStatement, ?> leafCtx) {
+        // check if the leaf is part of the argument
+        if (!keyArg.contains(leafCtx.getArgument())) {
+            return;
+        }
+
+        // collect all offending statements
+        final var it = leafCtx.allSubstatementsStream()
+            .filter(stmt -> {
+                final var repr = stmt.publicDefinition().declaredRepresentation();
+                return IfFeatureStatement.class.isAssignableFrom(repr)
+                    || WhenStatement.class.isAssignableFrom(repr);
+            })
+            .toList()
+            .iterator();
+
+        // check if we are happy
+        if (!it.hasNext()) {
+            return;
+        }
+
+        final var ex = reportConditionalLeaf(listCtx, leafCtx, it.next());
+        it.forEachRemaining(stmt -> ex.addSuppressed(reportConditionalLeaf(listCtx, leafCtx, stmt)));
+        throw ex;
     }
 
-    private static boolean isListKey(final StmtContext<QName, LeafStatement, ?> leafStmtCtx,
-            final StmtContext<KeyArgument, KeyStatement, ?> keyStmtCtx) {
-        return keyStmtCtx.getArgument().contains(leafStmtCtx.getArgument());
-    }
-
-    private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
-        leafStmtCtx.allSubstatements().forEach(leafSubstmtCtx -> {
-            final var statementDef = leafSubstmtCtx.publicDefinition();
-            SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
-                    || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx,
-                    "%s statement is not allowed in %s leaf statement which is specified as a list key.",
-                    statementDef.statementName(), leafStmtCtx.argument());
-        });
+    private static @NonNull SourceException reportConditionalLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
+            final StmtContext<QName, LeafStatement, ?> leafCtx, final StmtContext<?, ?, ?> offender) {
+        return new SourceException(leafCtx,
+            "leaf statement %s is a key in list statement %s: it cannot be conditional on %s statement",
+            leafCtx.argument(), listCtx.argument(), offender.publicDefinition().humanName());
     }
 
     /**

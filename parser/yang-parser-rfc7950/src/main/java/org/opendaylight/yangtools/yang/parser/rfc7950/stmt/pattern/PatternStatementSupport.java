@@ -36,14 +36,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class PatternStatementSupport
         extends AbstractStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.PATTERN)
+        SubstatementValidator.builder(PatternStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.PATTERN)
+        SubstatementValidator.builder(PatternStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
@@ -52,7 +52,7 @@ public final class PatternStatementSupport
             .build();
 
     private PatternStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.PATTERN, StatementPolicy.contextIndependent(), config, validator);
+        super(PatternStatement.DEFINITION, StatementPolicy.contextIndependent(), config, validator);
     }
 
     public static @NonNull PatternStatementSupport rfc6020Instance(final YangParserConfiguration config) {

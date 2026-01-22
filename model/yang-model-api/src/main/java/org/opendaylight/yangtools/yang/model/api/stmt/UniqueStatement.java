@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -16,8 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code unique} statement.
  */
 public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Descendant>> {
+    /**
+     * The definition of {@code action} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        UniqueStatement.class, UniqueEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "unique", "tag");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.UNIQUE;
+        return DEFINITION;
     }
 }
