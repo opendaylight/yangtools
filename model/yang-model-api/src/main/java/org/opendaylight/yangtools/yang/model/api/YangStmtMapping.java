@@ -18,10 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -36,8 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
@@ -62,14 +56,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
@@ -135,8 +123,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 // FIXME: eliminate this class
 @Beta
 public enum YangStmtMapping implements StatementDefinition {
-    ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
-    ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
     ARGUMENT(ArgumentStatement.class, ArgumentEffectiveStatement.class, "argument", "name"),
     BASE(BaseStatement.class, BaseEffectiveStatement.class, "base", "name"),
     BELONGS_TO(BelongsToStatement.class, BelongsToEffectiveStatement.class, "belongs-to", "module"),
@@ -144,7 +130,6 @@ public enum YangStmtMapping implements StatementDefinition {
     CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
     CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
     CONFIG(ConfigStatement.class, ConfigEffectiveStatement.class, "config", "value"),
-    CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
     DEFAULT(DefaultStatement.class, DefaultEffectiveStatement.class, "default", "value"),
     ENUM(EnumStatement.class, EnumEffectiveStatement.class, "enum", "name"),
     ERROR_APP_TAG(ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class, "error-app-tag", "value"),
@@ -157,10 +142,7 @@ public enum YangStmtMapping implements StatementDefinition {
     IMPORT(ImportStatement.class, ImportEffectiveStatement.class, "import", "module"),
     INCLUDE(IncludeStatement.class, IncludeEffectiveStatement.class, "include", "module"),
     KEY(KeyStatement.class, KeyEffectiveStatement.class, "key", "value"),
-    LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
-    LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
     LENGTH(LengthStatement.class, LengthEffectiveStatement.class, "length", "value"),
-    LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
     MANDATORY(MandatoryStatement.class, MandatoryEffectiveStatement.class, "mandatory", "value"),
     MAX_ELEMENTS(MaxElementsStatement.class, MaxElementsEffectiveStatement.class, "max-elements", "value"),
     MIN_ELEMENTS(MinElementsStatement.class, MinElementsEffectiveStatement.class, "min-elements", "value"),

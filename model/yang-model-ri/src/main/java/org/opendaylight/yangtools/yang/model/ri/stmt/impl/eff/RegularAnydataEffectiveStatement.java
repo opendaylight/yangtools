@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 public final class RegularAnydataEffectiveStatement extends EmptyAnydataEffectiveStatement {
     private final @NonNull Object substatements;
 
-    public RegularAnydataEffectiveStatement(final AnydataStatement declared, final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    public RegularAnydataEffectiveStatement(final @NonNull AnydataStatement declared, final QName argument,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, argument, flags);
         this.substatements = maskList(substatements);
     }

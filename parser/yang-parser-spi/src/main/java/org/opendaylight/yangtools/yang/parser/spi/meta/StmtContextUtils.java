@@ -26,13 +26,17 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatementAwareDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MultipleElementsDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -252,7 +256,8 @@ public final class StmtContextUtils {
      * @return true if it is a presence container
      */
     public static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.publicDefinition() == YangStmtMapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
+        final var declaring = stmtCtx.tryDeclaring(ContainerStatement.class);
+        return declaring != null && declaring.hasSubstatement(PresenceEffectiveStatement.class);
     }
 
     /**
@@ -263,33 +268,25 @@ public final class StmtContextUtils {
      * @return true if it is a non-presence container
      */
     public static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.publicDefinition() == YangStmtMapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
-    }
-
-    private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
+        final var declaring = stmtCtx.tryDeclaring(ContainerStatement.class);
+        return declaring != null && !declaring.hasSubstatement(PresenceEffectiveStatement.class);
     }
 
     /**
-     * Checks whether statement context is a mandatory leaf, choice, anyxml,
-     * list or leaf-list according to RFC6020 or not.
+     * Checks whether statement context is a mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020 or
+     * not.
      *
-     * @param stmtCtx
-     *            statement context
-     * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list
-     *         according to RFC6020.
+     * @param stmtCtx statement context
+     * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020.
      */
     public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
-        if (stmtCtx.publicDefinition() instanceof YangStmtMapping mapping) {
-            return switch (mapping) {
-                case LEAF, CHOICE, ANYXML -> Boolean.TRUE.equals(
-                    firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
-                case LIST, LEAF_LIST -> {
-                    final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
-                    yield minElements != null && minElements.lowerInt() > -1;
-                }
-                default -> false;
-            };
+        final var declaredRepr = stmtCtx.publicDefinition().declaredRepresentation();
+        if (MandatoryStatementAwareDeclaredStatement.class.isAssignableFrom(declaredRepr)) {
+            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
+        }
+        if (MultipleElementsDeclaredStatement.class.isAssignableFrom(declaredRepr)) {
+            final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+            return minElements != null && minElements.lowerInt() > -1;
         }
         return false;
     }
@@ -328,7 +325,7 @@ public final class StmtContextUtils {
         var current = stmt.coerceParentContext();
         var parent = current.getParentContext();
         while (parent != null) {
-            if (YangStmtMapping.LIST == current.publicDefinition()
+            if (ListStatement.DEFINITION == current.publicDefinition()
                     && !current.hasSubstatement(KeyEffectiveStatement.class)) {
                 if (ModelProcessingPhase.FULL_DECLARATION.isCompletedBy(current.getCompletedPhase())) {
                     throw new SourceException(stmt, "%s %s is defined within a list that has no key statement", name,
@@ -395,7 +392,7 @@ public final class StmtContextUtils {
         final var listStmtCtx = ctx.coerceParentContext();
         final var keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
 
-        if (YangStmtMapping.LEAF.equals(ctx.publicDefinition())) {
+        if (LeafStatement.DEFINITION.equals(ctx.publicDefinition())) {
             if (isListKey(ctx, keyStmtCtx)) {
                 disallowIfFeatureAndWhenOnListKeys(ctx);
             }
@@ -409,7 +406,7 @@ public final class StmtContextUtils {
     }
 
     private static boolean isRelevantForIfFeatureAndWhenOnListKeysCheck(final StmtContext<?, ?, ?> ctx) {
-        return YangVersion.VERSION_1_1.equals(ctx.yangVersion()) && hasParentOfType(ctx, YangStmtMapping.LIST)
+        return YangVersion.VERSION_1_1.equals(ctx.yangVersion()) && hasParentOfType(ctx, ListStatement.DEFINITION)
                 && findFirstDeclaredSubstatement(ctx.coerceParentContext(), KeyStatement.class) != null;
     }
 
