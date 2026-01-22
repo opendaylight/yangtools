@@ -211,10 +211,10 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
     @Beta
     @NonNullByDefault
     static String toString(final StatementDefinition self) {
-        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", self.statementName());
+        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", self.humanName());
         final var argDef = self.argumentDefinition();
         if (argDef != null) {
-            helper.add("argument", argDef.argumentName()).add("yin-element", argDef.yinElement());
+            helper.add("argument", argDef.humanName()).add("yin-element", argDef.yinElement());
         }
         return helper
             .add("declared", self.declaredRepresentation().getName())

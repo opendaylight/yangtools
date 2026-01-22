@@ -103,19 +103,16 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
         verify(REVISION.equals(YangStmtMapping.REVISION.simpleName()));
         verify(MODULE.equals(YangStmtMapping.MODULE.simpleName()));
         verify(SUBMODULE.equals(YangStmtMapping.SUBMODULE.simpleName()));
-        verify(NAME.equals(YangStmtMapping.MODULE.getArgumentDefinition().argumentName().getLocalName()));
-        verify(NAME.equals(YangStmtMapping.SUBMODULE.getArgumentDefinition().argumentName().getLocalName()));
+        verify(NAME.equals(YangStmtMapping.MODULE.getArgumentDefinition().simpleName()));
+        verify(NAME.equals(YangStmtMapping.SUBMODULE.getArgumentDefinition().simpleName()));
     }
 
     private static final String PREFIX = YangStmtMapping.PREFIX.simpleName();
-    private static final String PREFIX_ARG =
-        YangStmtMapping.PREFIX.getArgumentDefinition().argumentName().getLocalName();
+    private static final String PREFIX_ARG = YangStmtMapping.PREFIX.getArgumentDefinition().simpleName();
     private static final String REVISION_DATE = YangStmtMapping.REVISION_DATE.simpleName();
-    private static final String REVISION_DATE_ARG =
-        YangStmtMapping.REVISION_DATE.getArgumentDefinition().argumentName().getLocalName();
+    private static final String REVISION_DATE_ARG = YangStmtMapping.REVISION_DATE.getArgumentDefinition().simpleName();
     private static final String YANG_VERSION = YangVersionStatement.DEFINITION.simpleName();
-    private static final String YANG_VERSION_ARG =
-        YangVersionStatement.DEFINITION.getArgumentDefinition().argumentName().getLocalName();
+    private static final String YANG_VERSION_ARG = YangVersionStatement.DEFINITION.getArgumentDefinition().simpleName();
 
     private final SourceRefProvider refProvider;
     final Element root;
