@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -47,18 +46,18 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
 public final class IncludeStatementSupport
         extends AbstractUnqualifiedStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.INCLUDE)
-            .addOptional(YangStmtMapping.REVISION_DATE)
+        SubstatementValidator.builder(IncludeStatement.DEFINITION)
+            .addOptional(RevisionDateStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.INCLUDE)
-            .addOptional(YangStmtMapping.REVISION_DATE)
+        SubstatementValidator.builder(IncludeStatement.DEFINITION)
+            .addOptional(RevisionDateStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     IncludeStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.INCLUDE, StatementPolicy.reject(), config, validator);
+        super(IncludeStatement.DEFINITION, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull IncludeStatementSupport rfc6020Instance(final YangParserConfiguration config) {

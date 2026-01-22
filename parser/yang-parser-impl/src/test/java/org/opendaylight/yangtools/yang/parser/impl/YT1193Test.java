@@ -17,11 +17,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -56,10 +62,10 @@ class YT1193Test {
         assertReference(foo, YangStmtMapping.MODULE, 1, 1);
 
         final var it = foo.declaredSubstatements().iterator();
-        assertReference(it.next(), YangStmtMapping.NAMESPACE, 2, 3);
-        assertReference(it.next(), YangStmtMapping.PREFIX, 3, 3);
+        assertReference(it.next(), NamespaceStatement.DEFINITION, 2, 3);
+        assertReference(it.next(), PrefixStatement.DEFINITION, 3, 3);
         assertReference(it.next(), YangVersionStatement.DEFINITION, 4, 3);
-        assertReference(it.next(), YangStmtMapping.REVISION, 6, 3);
+        assertReference(it.next(), RevisionStatement.DEFINITION, 6, 3);
         assertReference(it.next(), OrganizationStatement.DEFINITION, 8, 3);
         assertReference(it.next(), DescriptionStatement.DEFINITION, 9, 3);
         assertReference(it.next(), ReferenceStatement.DEFINITION, 10, 3);
@@ -104,15 +110,15 @@ class YT1193Test {
         assertReference(bar, YangStmtMapping.MODULE, 1, 1);
 
         final var it = bar.declaredSubstatements().iterator();
-        assertReference(it.next(), YangStmtMapping.NAMESPACE, 2, 3);
-        assertReference(it.next(), YangStmtMapping.PREFIX, 3, 3);
+        assertReference(it.next(), NamespaceStatement.DEFINITION, 2, 3);
+        assertReference(it.next(), PrefixStatement.DEFINITION, 3, 3);
         assertReference(it.next(), YangVersionStatement.DEFINITION, 4, 3);
-        assertReference(it.next(), YangStmtMapping.IMPORT, 6, 3);
+        assertReference(it.next(), ImportStatement.DEFINITION, 6, 3);
         assertReference(it.next(), YangStmtMapping.IDENTITY, 11, 3);
         assertReference(it.next(), YangStmtMapping.IDENTITY, 13, 3);
         assertReference(it.next(), YangStmtMapping.ANYDATA, 17, 3);
         assertReference(it.next(), YangStmtMapping.ANYXML, 18, 3);
-        assertReference(it.next(), YangStmtMapping.INCLUDE, 20, 3);
+        assertReference(it.next(), IncludeStatement.DEFINITION, 20, 3);
         assertFalse(it.hasNext());
     }
 
@@ -121,7 +127,7 @@ class YT1193Test {
 
         final var it = baz.declaredSubstatements().iterator();
         assertReference(it.next(), YangVersionStatement.DEFINITION, 2, 3);
-        assertReference(it.next(), YangStmtMapping.BELONGS_TO, 4, 3);
+        assertReference(it.next(), BelongsToStatement.DEFINITION, 4, 3);
         assertReference(it.next(), YangStmtMapping.EXTENSION, 8, 3);
         assertFalse(it.hasNext());
     }

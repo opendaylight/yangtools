@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyRevisionDateEffectiveStatement extends DefaultArgument<Revision, RevisionDateStatement>
+public final class EmptyRevisionDateEffectiveStatement extends DefaultArgument<Revision, @NonNull RevisionDateStatement>
         implements RevisionDateEffectiveStatement {
-    public EmptyRevisionDateEffectiveStatement(final RevisionDateStatement declared) {
+    public EmptyRevisionDateEffectiveStatement(final @NonNull RevisionDateStatement declared) {
         super(declared);
     }
 }

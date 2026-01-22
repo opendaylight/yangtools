@@ -10,17 +10,16 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code import} statement.
  */
-public interface ImportEffectiveStatement extends EffectiveStatement<Unqualified, ImportStatement> {
+public interface ImportEffectiveStatement extends EffectiveStatement<Unqualified, @NonNull ImportStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.IMPORT;
+        return ImportStatement.DEFINITION;
     }
 
     /**

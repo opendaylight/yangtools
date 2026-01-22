@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -17,9 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code belongs-to} statement.
  */
 public interface BelongsToStatement extends DeclaredStatement<Unqualified> {
+    /**
+     * The definition of {@code belongs-to} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        BelongsToStatement.class, BelongsToEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "belongs-to", "module");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.BELONGS_TO;
+        return DEFINITION;
     }
 
     default @NonNull PrefixStatement getPrefix() {

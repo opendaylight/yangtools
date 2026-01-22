@@ -10,9 +10,6 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_MODULE;
-import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.MODULE;
-import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.REVISION;
-import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.SUBMODULE;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
@@ -30,9 +27,11 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,9 +162,9 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
 
     private static final Logger LOG = LoggerFactory.getLogger(YinDomSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-    private static final QName REVISION_STMT = REVISION.statementName();
-    private static final String MODULE_ARG = MODULE.getArgumentDefinition().argumentName().getLocalName();
-    private static final String REVISION_ARG = REVISION.getArgumentDefinition().argumentName().getLocalName();
+    private static final QName REVISION_STMT = RevisionStatement.DEFINITION.statementName();
+    private static final String MODULE_ARG = YangStmtMapping.MODULE.getArgumentDefinition().simpleName();
+    private static final String REVISION_ARG = RevisionStatement.DEFINITION.getArgumentDefinition().simpleName();
 
     private final @NonNull SourceRefProvider refProvider;
 
@@ -213,8 +212,9 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
         final QName qname = QName.create(rootNs, root.getLocalName());
         checkArgument(RFC6020_YIN_MODULE.equals(qname.getModule()),
             "Root node namepsace %s does not match %s", rootNs, YangConstants.RFC6020_YIN_NAMESPACE);
-        checkArgument(MODULE.statementName().equals(qname)
-            || SUBMODULE.statementName().equals(qname), "Root element %s is not a module nor a submodule", qname);
+        checkArgument(YangStmtMapping.MODULE.statementName().equals(qname)
+            || YangStmtMapping.SUBMODULE.statementName().equals(qname),
+            "Root element %s is not a module nor a submodule", qname);
 
         checkArgument(root instanceof Element, "Root node %s is not an element", root);
         final Element element = (Element)root;

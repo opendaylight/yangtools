@@ -26,8 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -46,10 +44,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
@@ -62,20 +56,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -97,7 +83,6 @@ public enum YangStmtMapping implements StatementDefinition {
     ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
     AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
     BASE(BaseStatement.class, BaseEffectiveStatement.class, "base", "name"),
-    BELONGS_TO(BelongsToStatement.class, BelongsToEffectiveStatement.class, "belongs-to", "module"),
     CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
     CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
     CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
@@ -107,21 +92,15 @@ public enum YangStmtMapping implements StatementDefinition {
     EXTENSION(ExtensionStatement.class, ExtensionEffectiveStatement.class, "extension", "name"),
     GROUPING(GroupingStatement.class, GroupingEffectiveStatement.class, "grouping", "name"),
     IDENTITY(IdentityStatement.class, IdentityEffectiveStatement.class, "identity", "name"),
-    IMPORT(ImportStatement.class, ImportEffectiveStatement.class, "import", "module"),
-    INCLUDE(IncludeStatement.class, IncludeEffectiveStatement.class, "include", "module"),
     LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
     LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
     MODIFIER(ModifierStatement.class, ModifierEffectiveStatement.class, "modifier", "value"),
     MODULE(ModuleStatement.class, ModuleEffectiveStatement.class, "module", "name"),
     MUST(MustStatement.class, MustEffectiveStatement.class, "must", "condition"),
-    NAMESPACE(NamespaceStatement.class, NamespaceEffectiveStatement.class, "namespace", "uri"),
     NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
     PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
-    PREFIX(PrefixStatement.class, PrefixEffectiveStatement.class, "prefix", "value"),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
-    REVISION(RevisionStatement.class, RevisionEffectiveStatement.class, "revision", "date"),
-    REVISION_DATE(RevisionDateStatement.class, RevisionDateEffectiveStatement.class, "revision-date", "date"),
     SUBMODULE(SubmoduleStatement.class, SubmoduleEffectiveStatement.class, "submodule", "name"),
     @SuppressWarnings({ "unchecked", "rawtypes" })
     TYPE(TypeStatement.class, (Class) TypeEffectiveStatement.class, "type", "name"),

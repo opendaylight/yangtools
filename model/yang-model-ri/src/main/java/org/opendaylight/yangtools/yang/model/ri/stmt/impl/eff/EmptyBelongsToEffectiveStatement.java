@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyBelongsToEffectiveStatement extends DefaultArgument<Unqualified, BelongsToStatement>
+public final class EmptyBelongsToEffectiveStatement extends DefaultArgument<Unqualified, @NonNull BelongsToStatement>
         implements BelongsToEffectiveStatement {
-    public EmptyBelongsToEffectiveStatement(final BelongsToStatement declared) {
+    public EmptyBelongsToEffectiveStatement(final @NonNull BelongsToStatement declared) {
         super(declared);
     }
 }

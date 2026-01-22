@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import java.time.format.DateTimeParseException;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,13 +31,13 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class RevisionStatementSupport
         extends AbstractStatementSupport<Revision, RevisionStatement, RevisionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.REVISION)
+        SubstatementValidator.builder(RevisionStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     public RevisionStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.REVISION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(RevisionStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

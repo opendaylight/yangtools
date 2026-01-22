@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -16,8 +17,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code namespace} statement.
  */
 public interface NamespaceStatement extends DeclaredStatement<XMLNamespace> {
+    /**
+     * The definition of {@code namespace} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        NamespaceStatement.class, NamespaceEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "namespace", "uri");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.NAMESPACE;
+        return DEFINITION;
     }
 }

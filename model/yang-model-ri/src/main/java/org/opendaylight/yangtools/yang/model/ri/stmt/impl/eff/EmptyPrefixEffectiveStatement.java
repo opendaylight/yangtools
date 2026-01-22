@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyPrefixEffectiveStatement extends DefaultArgument<String, PrefixStatement>
+public final class EmptyPrefixEffectiveStatement extends DefaultArgument<String, @NonNull PrefixStatement>
         implements PrefixEffectiveStatement {
-    public EmptyPrefixEffectiveStatement(final PrefixStatement declared) {
+    public EmptyPrefixEffectiveStatement(final @NonNull PrefixStatement declared) {
         super(declared);
     }
 }

@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyNamespaceEffectiveStatement extends DefaultArgument<XMLNamespace, NamespaceStatement>
+public final class EmptyNamespaceEffectiveStatement extends DefaultArgument<XMLNamespace, @NonNull NamespaceStatement>
         implements NamespaceEffectiveStatement {
-    public EmptyNamespaceEffectiveStatement(final NamespaceStatement declared) {
+    public EmptyNamespaceEffectiveStatement(final @NonNull NamespaceStatement declared) {
         super(declared);
     }
 }
