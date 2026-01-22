@@ -22,9 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -49,7 +52,7 @@ public final class SubmoduleStatementSupport
         SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.AUGMENT)
-            .addMandatory(YangStmtMapping.BELONGS_TO)
+            .addMandatory(BelongsToStatement.DEFINITION)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(ContactStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
@@ -59,15 +62,15 @@ public final class SubmoduleStatementSupport
             .addAny(FeatureStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IDENTITY)
-            .addAny(YangStmtMapping.IMPORT)
-            .addAny(YangStmtMapping.INCLUDE)
+            .addAny(ImportStatement.DEFINITION)
+            .addAny(IncludeStatement.DEFINITION)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(OrganizationStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addAny(YangStmtMapping.REVISION)
+            .addAny(RevisionStatement.DEFINITION)
             .addAny(RpcStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
@@ -78,7 +81,7 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.AUGMENT)
-            .addMandatory(YangStmtMapping.BELONGS_TO)
+            .addMandatory(BelongsToStatement.DEFINITION)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(ContactStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
@@ -88,15 +91,15 @@ public final class SubmoduleStatementSupport
             .addAny(FeatureStatement.DEFINITION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IDENTITY)
-            .addAny(YangStmtMapping.IMPORT)
-            .addAny(YangStmtMapping.INCLUDE)
+            .addAny(ImportStatement.DEFINITION)
+            .addAny(IncludeStatement.DEFINITION)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(OrganizationStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
-            .addAny(YangStmtMapping.REVISION)
+            .addAny(RevisionStatement.DEFINITION)
             .addAny(RpcStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)

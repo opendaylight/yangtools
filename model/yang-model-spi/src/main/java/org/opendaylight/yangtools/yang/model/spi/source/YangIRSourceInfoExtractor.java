@@ -23,12 +23,18 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.ir.StringEscaping;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
@@ -37,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
  */
 abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor {
     static final class ForModule extends YangIRSourceInfoExtractor {
-        private static final @NonNull String NAMESPACE = YangStmtMapping.NAMESPACE.simpleName();
+        private static final @NonNull String NAMESPACE = NamespaceStatement.DEFINITION.simpleName();
 
         @NonNullByDefault
         ForModule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
@@ -66,7 +72,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     static final class ForSubmodule extends YangIRSourceInfoExtractor {
-        private static final @NonNull String BELONGS_TO = YangStmtMapping.BELONGS_TO.simpleName();
+        private static final @NonNull String BELONGS_TO = BelongsToStatement.DEFINITION.simpleName();
 
         @NonNullByDefault
         ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
@@ -93,13 +99,13 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     private static final @NonNull String REVISION = "revision";
 
     static {
-        verify(IMPORT.equals(YangStmtMapping.IMPORT.simpleName()));
-        verify(INCLUDE.equals(YangStmtMapping.INCLUDE.simpleName()));
-        verify(REVISION.equals(YangStmtMapping.REVISION.simpleName()));
+        verify(IMPORT.equals(ImportStatement.DEFINITION.simpleName()));
+        verify(INCLUDE.equals(IncludeStatement.DEFINITION.simpleName()));
+        verify(REVISION.equals(RevisionStatement.DEFINITION.simpleName()));
     }
 
-    private static final @NonNull String PREFIX = YangStmtMapping.PREFIX.simpleName();
-    private static final @NonNull String REVISION_DATE = YangStmtMapping.REVISION_DATE.simpleName();
+    private static final @NonNull String PREFIX = PrefixStatement.DEFINITION.simpleName();
+    private static final @NonNull String REVISION_DATE = RevisionDateStatement.DEFINITION.simpleName();
     private static final @NonNull String YANG_VERSION = YangVersionStatement.DEFINITION.simpleName();
 
     private final @NonNull SourceIdentifier sourceId;

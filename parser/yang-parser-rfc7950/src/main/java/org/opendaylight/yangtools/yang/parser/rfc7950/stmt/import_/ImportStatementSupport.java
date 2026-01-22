@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -27,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -46,19 +46,21 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
 
 public final class ImportStatementSupport
         extends AbstractUnqualifiedStatementSupport<ImportStatement, ImportEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.IMPORT)
-        .addMandatory(YangStmtMapping.PREFIX)
-        .addOptional(YangStmtMapping.REVISION_DATE)
-        .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.IMPORT)
-        .addMandatory(YangStmtMapping.PREFIX)
-        .addOptional(YangStmtMapping.REVISION_DATE)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(ImportStatement.DEFINITION)
+            .addMandatory(PrefixStatement.DEFINITION)
+            .addOptional(RevisionDateStatement.DEFINITION)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(ImportStatement.DEFINITION)
+            .addMandatory(PrefixStatement.DEFINITION)
+            .addOptional(RevisionDateStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .build();
 
     private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.IMPORT, StatementPolicy.reject(), config, validator);
+        super(ImportStatement.DEFINITION, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull ImportStatementSupport rfc6020Instance(final YangParserConfiguration config) {

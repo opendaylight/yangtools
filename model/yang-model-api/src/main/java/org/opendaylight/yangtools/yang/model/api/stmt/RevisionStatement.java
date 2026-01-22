@@ -7,16 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code revision} statement.
  */
 public interface RevisionStatement extends DocumentedDeclaredStatement<Revision> {
+    /**
+     * The definition of {@code revision} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        RevisionStatement.class, RevisionEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "revision", "date");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.REVISION;
+        return DEFINITION;
     }
 }

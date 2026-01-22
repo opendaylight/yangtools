@@ -10,16 +10,24 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code import} statement.
  */
 public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified> {
+    /**
+     * The definition of {@code import} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ImportStatement.class, ImportEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "import", "module");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.IMPORT;
+        return DEFINITION;
     }
 
     default @NonNull PrefixStatement getPrefix() {
