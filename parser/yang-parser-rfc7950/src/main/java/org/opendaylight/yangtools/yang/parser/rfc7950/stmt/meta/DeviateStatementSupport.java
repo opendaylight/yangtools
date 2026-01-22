@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -43,7 +44,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -269,7 +269,7 @@ public final class DeviateStatementSupport
     }
 
     private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
-        if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
+        if (!stmtCtxToBeAdded.producesDeclared(UnknownStatement.class)) {
             final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
@@ -373,7 +373,7 @@ public final class DeviateStatementSupport
     private static void copyStatement(final StmtContext<?, ?, ?> stmtCtxToBeCopied, final Mutable<?, ?, ?> targetCtx) {
         // we need to make a copy of the statement context only if it is an unknown statement, otherwise
         // we can reuse the original statement context
-        if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeCopied)) {
+        if (!stmtCtxToBeCopied.producesDeclared(UnknownStatement.class)) {
             // FIXME: I think this should be handled by the corresponding support's copy policy
             targetCtx.addEffectiveSubstatement(stmtCtxToBeCopied.replicaAsChildOf(targetCtx));
         } else {

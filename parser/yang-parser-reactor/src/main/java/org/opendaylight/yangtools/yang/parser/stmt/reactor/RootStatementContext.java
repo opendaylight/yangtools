@@ -111,7 +111,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     @Override
     public QNameModule definingModule() {
-        final var declaredRepr = publicDefinition().getDeclaredRepresentationClass();
+        final var declaredRepr = publicDefinition().declaredRepresentation();
         final StmtContext<?, ?, ?> module;
         if (ModuleStatement.class.isAssignableFrom(declaredRepr)) {
             module = this;
