@@ -82,7 +82,7 @@ final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpeci
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+        return new TypeEffectiveStatementImpl(stmt.declared(), substatements, builder);
     }
 
     private static SourceException noPath(final CommonStmtCtx stmt) {

@@ -46,7 +46,7 @@ class YT1282Test {
 
     @Test
     void testResolveTypedef() {
-        final TypeEffectiveStatement<?> type = stack.enterTypedef(QName.create("foo", "foo"))
+        final var type = stack.enterTypedef(QName.create("foo", "foo"))
                 .findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         assertFalse(stack.inInstantiatedContext());
         assertFalse(stack.inGrouping());

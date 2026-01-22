@@ -73,8 +73,7 @@ class YT1283Test {
     private void assertResolve(final EffectiveStatement<?, ?> foo) {
         assertInstanceOf(LeafEffectiveStatement.class, foo);
 
-        final TypeEffectiveStatement<?> type = foo.findFirstEffectiveSubstatement(TypeEffectiveStatement.class)
-            .orElseThrow();
+        final var type = foo.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
         final var bar = assertInstanceOf(LeafEffectiveStatement.class,
             stack.resolvePathExpression(
                 type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow()));
