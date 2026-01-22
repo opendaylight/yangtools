@@ -59,8 +59,8 @@ final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecifica
         final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(stmt.argumentAsTypeQName());
 
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof TypeEffectiveStatement) {
-                builder.addType(((TypeEffectiveStatement<?>)subStmt).getTypeDefinition());
+            if (subStmt instanceof TypeEffectiveStatement tes) {
+                builder.addType(tes.getTypeDefinition());
             }
         }
 
