@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code value} statement.
  */
 public interface ValueStatement extends DeclaredStatement<Integer> {
+    /**
+     * The definition of {@code value} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ValueStatement.class, ValueEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "value", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.VALUE;
+        return DEFINITION;
     }
 }

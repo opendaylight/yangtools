@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code position} statement.
  */
-public interface PositionEffectiveStatement extends EffectiveStatement<Uint32, PositionStatement> {
+public interface PositionEffectiveStatement extends EffectiveStatement<Uint32, @NonNull PositionStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.POSITION;
+        return PositionStatement.DEFINITION;
     }
 }

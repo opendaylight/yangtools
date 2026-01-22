@@ -227,7 +227,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals("test reference", extensionStatement.getReference().orElseThrow().argument());
         final var argumentStatement = extensionStatement.getArgument();
         assertEquals("ext-argument", argumentStatement.argument().getLocalName());
-        assertTrue(argumentStatement.getYinElement().argument());
+        assertTrue(argumentStatement.yinElement().argument());
 
         assertEquals(2, moduleStatement.getFeatures().size());
         final var featureStatement = moduleStatement.getFeatures().iterator().next();
