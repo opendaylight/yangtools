@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code yin-element} statement.
  */
 public interface YinElementStatement extends DeclaredStatement<Boolean> {
+    /**
+     * The definition of {@code yin-element} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        YinElementStatement.class, YinElementEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "yin-element", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.YIN_ELEMENT;
+        return DEFINITION;
     }
 }

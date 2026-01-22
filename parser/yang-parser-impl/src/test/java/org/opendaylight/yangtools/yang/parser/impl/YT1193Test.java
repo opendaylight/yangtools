@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.impl.dagger.DaggerYangParserComponent;
@@ -56,7 +57,7 @@ class YT1193Test {
         final var it = foo.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.NAMESPACE, 2, 3);
         assertReference(it.next(), YangStmtMapping.PREFIX, 3, 3);
-        assertReference(it.next(), YangStmtMapping.YANG_VERSION, 4, 3);
+        assertReference(it.next(), YangVersionStatement.DEFINITION, 4, 3);
         assertReference(it.next(), YangStmtMapping.REVISION, 6, 3);
         assertReference(it.next(), OrganizationStatement.DEFINITION, 8, 3);
         assertReference(it.next(), DescriptionStatement.DEFINITION, 9, 3);
@@ -104,7 +105,7 @@ class YT1193Test {
         final var it = bar.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.NAMESPACE, 2, 3);
         assertReference(it.next(), YangStmtMapping.PREFIX, 3, 3);
-        assertReference(it.next(), YangStmtMapping.YANG_VERSION, 4, 3);
+        assertReference(it.next(), YangVersionStatement.DEFINITION, 4, 3);
         assertReference(it.next(), YangStmtMapping.IMPORT, 6, 3);
         assertReference(it.next(), YangStmtMapping.IDENTITY, 11, 3);
         assertReference(it.next(), YangStmtMapping.IDENTITY, 13, 3);
@@ -118,7 +119,7 @@ class YT1193Test {
         assertReference(baz, YangStmtMapping.SUBMODULE, 1, 1);
 
         final var it = baz.declaredSubstatements().iterator();
-        assertReference(it.next(), YangStmtMapping.YANG_VERSION, 2, 3);
+        assertReference(it.next(), YangVersionStatement.DEFINITION, 2, 3);
         assertReference(it.next(), YangStmtMapping.BELONGS_TO, 4, 3);
         assertReference(it.next(), YangStmtMapping.EXTENSION, 8, 3);
         assertFalse(it.hasNext());

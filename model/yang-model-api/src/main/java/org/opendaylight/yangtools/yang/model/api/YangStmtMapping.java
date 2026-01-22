@@ -126,10 +126,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 
 /**
  * Mapping for both RFC6020 and RFC7950 statements.
@@ -192,9 +188,7 @@ public enum YangStmtMapping implements StatementDefinition {
     UNIQUE(UniqueStatement.class, UniqueEffectiveStatement.class, "unique", "tag"),
     USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name"),
     VALUE(ValueStatement.class, ValueEffectiveStatement.class, "value", "value"),
-    WHEN(WhenStatement.class, WhenEffectiveStatement.class, "when", "condition"),
-    YANG_VERSION(YangVersionStatement.class, YangVersionEffectiveStatement.class, "yang-version", "value"),
-    YIN_ELEMENT(YinElementStatement.class, YinElementEffectiveStatement.class, "yin-element", "value");
+    WHEN(WhenStatement.class, WhenEffectiveStatement.class, "when", "condition");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
