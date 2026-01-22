@@ -10,17 +10,16 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code choice} statement.
  */
-public non-sealed interface ChoiceEffectiveStatement
-        extends SchemaTreeEffectiveStatement<ChoiceStatement>, DataTreeAwareEffectiveStatement<QName, ChoiceStatement> {
+public non-sealed interface ChoiceEffectiveStatement extends SchemaTreeEffectiveStatement<@NonNull ChoiceStatement>,
+        DataTreeAwareEffectiveStatement<QName, @NonNull ChoiceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.CHOICE;
+        return ChoiceStatement.DEFINITION;
     }
 
     /**

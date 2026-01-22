@@ -14,7 +14,6 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -45,7 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class AnydataStatementSupport
         extends AbstractSchemaTreeStatementSupport<AnydataStatement, AnydataEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.ANYDATA)
+        SubstatementValidator.builder(AnydataStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
@@ -57,7 +56,7 @@ public final class AnydataStatementSupport
             .build();
 
     public AnydataStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ANYDATA, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
+        super(AnydataStatement.DEFINITION, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

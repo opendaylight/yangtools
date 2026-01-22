@@ -23,8 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -245,8 +247,8 @@ final class AugmentInferenceAction implements InferenceAction {
              * are not mandatory node containers according to RFC 6020 section 3.1.
              */
             if (StmtContextUtils.isPresenceContainer(targetCtx)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.CHOICE)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.LIST)) {
+                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ChoiceStatement.DEFINITION)
+                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ListStatement.DEFINITION)) {
                 return false;
             }
 

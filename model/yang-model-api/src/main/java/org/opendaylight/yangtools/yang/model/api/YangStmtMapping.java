@@ -18,26 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 
@@ -47,16 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 // FIXME: eliminate this class
 @Beta
 public enum YangStmtMapping implements StatementDefinition {
-    ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
-    ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
     AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
-    CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
-    CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
-    CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
-    LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
-    LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
-    LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
