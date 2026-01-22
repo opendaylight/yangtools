@@ -42,7 +42,7 @@ public final class ExtensionStatementSupport
         extends AbstractQNameStatementSupport<ExtensionStatement, ExtensionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.EXTENSION)
-            .addOptional(YangStmtMapping.ARGUMENT)
+            .addOptional(ArgumentStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)

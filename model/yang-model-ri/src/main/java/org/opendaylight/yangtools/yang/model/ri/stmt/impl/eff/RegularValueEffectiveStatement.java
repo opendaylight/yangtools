@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularValueEffectiveStatement extends WithSubstatements<Integer, ValueStatement>
+public final class RegularValueEffectiveStatement extends WithSubstatements<Integer, @NonNull ValueStatement>
         implements ValueEffectiveStatement {
-    public RegularValueEffectiveStatement(final ValueStatement declared,
+    public RegularValueEffectiveStatement(final @NonNull ValueStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

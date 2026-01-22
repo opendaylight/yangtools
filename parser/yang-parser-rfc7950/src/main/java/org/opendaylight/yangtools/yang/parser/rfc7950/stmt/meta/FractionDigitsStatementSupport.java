@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -31,22 +29,22 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class FractionDigitsStatementSupport
         extends AbstractStatementSupport<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.FRACTION_DIGITS).build();
+            SubstatementValidator.builder(FractionDigitsStatement.DEFINITION).build();
 
     // FIXME: move this to yang-model-spi
     private static final ImmutableMap<FractionDigitsStatement, FractionDigitsEffectiveStatement> EMPTY_EFF;
 
     static {
-        final Builder<FractionDigitsStatement, FractionDigitsEffectiveStatement> effBuilder = ImmutableMap.builder();
+        final var effBuilder = ImmutableMap.<FractionDigitsStatement, FractionDigitsEffectiveStatement>builder();
         for (int i = 1; i <= 18; ++i) {
-            final FractionDigitsStatement decl = DeclaredStatements.createFractionDigits(i);
+            final var decl = DeclaredStatements.createFractionDigits(i);
             effBuilder.put(decl, EffectiveStatements.createFractionDigits(decl));
         }
         EMPTY_EFF = effBuilder.build();
     }
 
     public FractionDigitsStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.FRACTION_DIGITS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(FractionDigitsStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -84,7 +82,7 @@ public final class FractionDigitsStatementSupport
 
     private static @NonNull FractionDigitsEffectiveStatement createEmptyEffective(
             final FractionDigitsStatement declared) {
-        final FractionDigitsEffectiveStatement shared = EMPTY_EFF.get(declared);
+        final var shared = EMPTY_EFF.get(declared);
         return shared != null ? shared : EffectiveStatements.createFractionDigits(declared);
     }
 }

@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code fraction-digits} statement.
  */
-public interface FractionDigitsEffectiveStatement extends EffectiveStatement<Integer, FractionDigitsStatement> {
+public interface FractionDigitsEffectiveStatement
+        extends EffectiveStatement<Integer, @NonNull FractionDigitsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.FRACTION_DIGITS;
+        return FractionDigitsStatement.DEFINITION;
     }
 }
