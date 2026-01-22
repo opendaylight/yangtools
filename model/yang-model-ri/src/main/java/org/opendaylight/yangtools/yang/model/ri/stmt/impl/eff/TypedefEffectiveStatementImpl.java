@@ -78,8 +78,8 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
     }
 
     @Override
-    public TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement() {
-        final ProxyTypeEffectiveStatement local = (ProxyTypeEffectiveStatement) TYPE_STATEMENT.getAcquire(this);
+    public TypeEffectiveStatement asTypeEffectiveStatement() {
+        final var local = (ProxyTypeEffectiveStatement) TYPE_STATEMENT.getAcquire(this);
         return local != null ? local : loadTypeStatement();
     }
 
@@ -93,7 +93,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
                 case DescriptionEffectiveStatement description -> builder.setDescription(description.argument());
                 case ReferenceEffectiveStatement reference -> builder.setReference(reference.argument());
                 case StatusEffectiveStatement status -> builder.setStatus(status.argument());
-                case TypeEffectiveStatement<?> tef -> {
+                case TypeEffectiveStatement tef -> {
                     // No-op
                 }
                 case UnitsEffectiveStatement units -> builder.setUnits(units.argument());
@@ -101,9 +101,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
                     // FIXME: should not directly implement, I think
                     builder.addUnknownSchemaNode(unknown);
                 }
-                default -> {
-                    LOG.debug("Ignoring statement {}", stmt);
-                }
+                default -> LOG.debug("Ignoring statement {}", stmt);
             }
         });
 
@@ -118,7 +116,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
         return witness == null ? created : (ProxyTypeEffectiveStatement) witness;
     }
 
-    private final class ProxyTypeEffectiveStatement implements TypeEffectiveStatement<TypeStatement> {
+    private final class ProxyTypeEffectiveStatement implements TypeEffectiveStatement {
         @Override
         public TypeStatement declared() {
             return null;

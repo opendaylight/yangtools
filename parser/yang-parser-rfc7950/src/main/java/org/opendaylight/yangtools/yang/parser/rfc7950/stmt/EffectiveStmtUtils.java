@@ -97,7 +97,7 @@ public final class EffectiveStmtUtils {
      * @return true if any of specified default values is marked with an if-feature, otherwise false
      */
     public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
-            final TypeEffectiveStatement<?> typeStmt, final Set<String> defaultValues) {
+            final TypeEffectiveStatement typeStmt, final Set<String> defaultValues) {
         return !defaultValues.isEmpty() && yangVersion == YangVersion.VERSION_1_1
                 && isRelevantForIfFeatureCheck(typeStmt)
                 && isAnyDefaultValueMarkedWithIfFeature(typeStmt, new HashSet<>(defaultValues));
@@ -118,20 +118,20 @@ public final class EffectiveStmtUtils {
      *         otherwise false
      */
     public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
-            final TypeEffectiveStatement<?> typeStmt, final String defaultValue) {
+            final TypeEffectiveStatement typeStmt, final String defaultValue) {
         final var defaultValues = new HashSet<String>();
         defaultValues.add(defaultValue);
         return !Strings.isNullOrEmpty(defaultValue) && yangVersion == YangVersion.VERSION_1_1
             && isRelevantForIfFeatureCheck(typeStmt) && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
     }
 
-    private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement<?> typeStmt) {
+    private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement typeStmt) {
         final var typeDefinition = typeStmt.getTypeDefinition();
         return typeDefinition instanceof EnumTypeDefinition || typeDefinition instanceof BitsTypeDefinition
                 || typeDefinition instanceof UnionTypeDefinition;
     }
 
-    private static boolean isAnyDefaultValueMarkedWithIfFeature(final TypeEffectiveStatement<?> typeStmt,
+    private static boolean isAnyDefaultValueMarkedWithIfFeature(final TypeEffectiveStatement typeStmt,
             final Set<String> defaultValues) {
         final var iter = typeStmt.effectiveSubstatements().iterator();
         while (iter.hasNext() && !defaultValues.isEmpty()) {
@@ -146,7 +146,7 @@ public final class EffectiveStmtUtils {
                         return true;
                     }
                 }
-                case TypeEffectiveStatement<?> tes -> {
+                case TypeEffectiveStatement tes -> {
                     if (isAnyDefaultValueMarkedWithIfFeature(tes, defaultValues)) {
                         return true;
                     }

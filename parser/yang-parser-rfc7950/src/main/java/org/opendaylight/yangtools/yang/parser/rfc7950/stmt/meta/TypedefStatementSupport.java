@@ -112,11 +112,10 @@ public final class TypedefStatementSupport extends
     @Override
     protected TypedefEffectiveStatement createEffective(final Current<QName, TypedefStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final TypedefStatement declared = stmt.declared();
+        final var declared = stmt.declared();
         checkState(!substatements.isEmpty(), "Refusing to create empty typedef for %s", stmt.declared());
 
-        final TypeEffectiveStatement<?> typeEffectiveStmt = findFirstStatement(substatements,
-            TypeEffectiveStatement.class);
+        final var typeEffectiveStmt = findFirstStatement(substatements, TypeEffectiveStatement.class);
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
             EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeEffectiveStmt, dflt), stmt,
@@ -126,15 +125,15 @@ public final class TypedefStatementSupport extends
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final QName arg = stmt.getArgument();
-        final StmtContext<?, ?, ?> existing = parent.namespaceItem(ParserNamespaces.TYPE, arg);
+        final var arg = stmt.getArgument();
+        final var existing = parent.namespaceItem(ParserNamespaces.TYPE, arg);
         // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
         SourceException.throwIf(existing != null, stmt, "Duplicate name for typedef %s", arg);
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .toFlags();
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .toFlags();
     }
 }

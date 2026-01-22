@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 /**
  * Common shared effective statements for built-in types.
  */
-enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> {
+enum BuiltinEffectiveStatement implements TypeEffectiveStatement{
     BINARY(BaseTypes.binaryType()),
     BOOLEAN(BaseTypes.booleanType()),
     EMPTY(BaseTypes.emptyType()),
