@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyYinElementEffectiveStatement extends DefaultArgument<Boolean, YinElementStatement>
+public final class EmptyYinElementEffectiveStatement extends DefaultArgument<Boolean, @NonNull YinElementStatement>
         implements YinElementEffectiveStatement {
-    public EmptyYinElementEffectiveStatement(final YinElementStatement declared) {
+    public EmptyYinElementEffectiveStatement(final @NonNull YinElementStatement declared) {
         super(declared);
     }
 }

@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code yin-element} statement.
  */
-public interface YinElementEffectiveStatement extends EffectiveStatement<Boolean, YinElementStatement> {
+public interface YinElementEffectiveStatement extends EffectiveStatement<Boolean, @NonNull YinElementStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.YIN_ELEMENT;
+        return YinElementStatement.DEFINITION;
     }
 }

@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
@@ -69,7 +70,7 @@ public final class SubmoduleStatementSupport
             .addAny(RpcStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.YANG_VERSION)
+            .addOptional(YangVersionStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
@@ -98,7 +99,7 @@ public final class SubmoduleStatementSupport
             .addAny(RpcStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.YANG_VERSION)
+            .addOptional(YangVersionStatement.DEFINITION)
             .build();
 
     private SubmoduleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

@@ -14,14 +14,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyYangVersionEffectiveStatement extends DefaultArgument<YangVersion, YangVersionStatement>
-        implements YangVersionEffectiveStatement {
+public final class EmptyYangVersionEffectiveStatement
+        extends DefaultArgument<YangVersion, @NonNull YangVersionStatement> implements YangVersionEffectiveStatement {
     public static final @NonNull EmptyYangVersionEffectiveStatement VERSION_1 =
         new EmptyYangVersionEffectiveStatement(EmptyYangVersionStatement.VERSION_1);
     public static final @NonNull EmptyYangVersionEffectiveStatement VERSION_1_1 =
         new EmptyYangVersionEffectiveStatement(EmptyYangVersionStatement.VERSION_1_1);
 
-    public EmptyYangVersionEffectiveStatement(final YangVersionStatement declared) {
+    public EmptyYangVersionEffectiveStatement(final @NonNull YangVersionStatement declared) {
         super(declared);
     }
 }

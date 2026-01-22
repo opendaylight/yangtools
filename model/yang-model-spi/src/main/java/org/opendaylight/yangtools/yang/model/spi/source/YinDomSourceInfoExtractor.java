@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.w3c.dom.Element;
@@ -30,7 +31,7 @@ import org.w3c.dom.Element;
 @NonNullByDefault
 abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor {
     static final class ForModule extends YinDomSourceInfoExtractor {
-        private static final String NAMESPACE = YangStmtMapping.NAMESPACE.statementName().getLocalName();
+        private static final String NAMESPACE = YangStmtMapping.NAMESPACE.simpleName();
         private static final String NAMESPACE_ARG =
             YangStmtMapping.NAMESPACE.getArgumentDefinition().argumentName().getLocalName();
 
@@ -60,7 +61,7 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     static final class ForSubmodule extends YinDomSourceInfoExtractor {
-        private static final String BELONGS_TO = YangStmtMapping.BELONGS_TO.statementName().getLocalName();
+        private static final String BELONGS_TO = YangStmtMapping.BELONGS_TO.simpleName();
         private static final String BELONGS_TO_ARG =
             YangStmtMapping.BELONGS_TO.getArgumentDefinition().argumentName().getLocalName();
 
@@ -97,24 +98,24 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     private static final String NAME = "name";
 
     static {
-        verify(IMPORT.equals(YangStmtMapping.IMPORT.statementName().getLocalName()));
-        verify(INCLUDE.equals(YangStmtMapping.INCLUDE.statementName().getLocalName()));
-        verify(REVISION.equals(YangStmtMapping.REVISION.statementName().getLocalName()));
-        verify(MODULE.equals(YangStmtMapping.MODULE.statementName().getLocalName()));
-        verify(SUBMODULE.equals(YangStmtMapping.SUBMODULE.statementName().getLocalName()));
+        verify(IMPORT.equals(YangStmtMapping.IMPORT.simpleName()));
+        verify(INCLUDE.equals(YangStmtMapping.INCLUDE.simpleName()));
+        verify(REVISION.equals(YangStmtMapping.REVISION.simpleName()));
+        verify(MODULE.equals(YangStmtMapping.MODULE.simpleName()));
+        verify(SUBMODULE.equals(YangStmtMapping.SUBMODULE.simpleName()));
         verify(NAME.equals(YangStmtMapping.MODULE.getArgumentDefinition().argumentName().getLocalName()));
         verify(NAME.equals(YangStmtMapping.SUBMODULE.getArgumentDefinition().argumentName().getLocalName()));
     }
 
-    private static final String PREFIX = YangStmtMapping.PREFIX.statementName().getLocalName();
+    private static final String PREFIX = YangStmtMapping.PREFIX.simpleName();
     private static final String PREFIX_ARG =
         YangStmtMapping.PREFIX.getArgumentDefinition().argumentName().getLocalName();
-    private static final String REVISION_DATE = YangStmtMapping.REVISION_DATE.statementName().getLocalName();
+    private static final String REVISION_DATE = YangStmtMapping.REVISION_DATE.simpleName();
     private static final String REVISION_DATE_ARG =
         YangStmtMapping.REVISION_DATE.getArgumentDefinition().argumentName().getLocalName();
-    private static final String YANG_VERSION = YangStmtMapping.YANG_VERSION.statementName().getLocalName();
+    private static final String YANG_VERSION = YangVersionStatement.DEFINITION.simpleName();
     private static final String YANG_VERSION_ARG =
-        YangStmtMapping.YANG_VERSION.getArgumentDefinition().argumentName().getLocalName();
+        YangVersionStatement.DEFINITION.getArgumentDefinition().argumentName().getLocalName();
 
     private final SourceRefProvider refProvider;
     final Element root;
