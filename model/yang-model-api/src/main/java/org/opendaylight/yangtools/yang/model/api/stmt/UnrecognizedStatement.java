@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.Empty;
  * <p>This construct does not have a {@link UnknownEffectiveStatement} counterpart because we cannot reasonably build an
  * effective model of something we do not recognize.
  */
-@NonNullByDefault
 public interface UnrecognizedStatement extends UnknownStatement<Object> {
     /**
      * {@inheritDoc}
@@ -30,5 +29,8 @@ public interface UnrecognizedStatement extends UnknownStatement<Object> {
      * </ul>
      */
     @Override
-    Object argument();
+    default @NonNull Object argument() {
+        final var rawArgument = rawArgument();
+        return rawArgument != null ? rawArgument : Empty.value();
+    }
 }
