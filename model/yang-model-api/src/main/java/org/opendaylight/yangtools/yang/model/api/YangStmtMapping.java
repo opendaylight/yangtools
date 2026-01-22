@@ -24,8 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -38,24 +36,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
@@ -70,8 +60,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 
 /**
  * Mapping for both RFC6020 and RFC7950 statements.
@@ -82,22 +70,17 @@ public enum YangStmtMapping implements StatementDefinition {
     ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
     ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
     AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
-    BASE(BaseStatement.class, BaseEffectiveStatement.class, "base", "name"),
     CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
     CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
     CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
     DEFAULT(DefaultStatement.class, DefaultEffectiveStatement.class, "default", "value"),
     DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
-    EXTENSION(ExtensionStatement.class, ExtensionEffectiveStatement.class, "extension", "name"),
     GROUPING(GroupingStatement.class, GroupingEffectiveStatement.class, "grouping", "name"),
-    IDENTITY(IdentityStatement.class, IdentityEffectiveStatement.class, "identity", "name"),
     LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
     LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
-    MODIFIER(ModifierStatement.class, ModifierEffectiveStatement.class, "modifier", "value"),
     MODULE(ModuleStatement.class, ModuleEffectiveStatement.class, "module", "name"),
-    MUST(MustStatement.class, MustEffectiveStatement.class, "must", "condition"),
     NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
     PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
@@ -105,8 +88,7 @@ public enum YangStmtMapping implements StatementDefinition {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     TYPE(TypeStatement.class, (Class) TypeEffectiveStatement.class, "type", "name"),
     TYPEDEF(TypedefStatement.class, TypedefEffectiveStatement.class, "typedef", "name"),
-    USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name"),
-    WHEN(WhenStatement.class, WhenEffectiveStatement.class, "when", "condition");
+    USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;

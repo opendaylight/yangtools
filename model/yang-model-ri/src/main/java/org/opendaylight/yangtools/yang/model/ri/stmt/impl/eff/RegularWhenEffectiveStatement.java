@@ -8,15 +8,16 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public final class RegularWhenEffectiveStatement extends WithSubstatements<QualifiedBound, WhenStatement>
+public final class RegularWhenEffectiveStatement extends WithSubstatements<QualifiedBound, @NonNull WhenStatement>
         implements WhenEffectiveStatement {
-    public RegularWhenEffectiveStatement(final WhenStatement declared,
+    public RegularWhenEffectiveStatement(final @NonNull WhenStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

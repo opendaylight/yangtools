@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 /**
  * Effective representation of a {@code modifier} statement.
  */
-public interface ModifierEffectiveStatement extends EffectiveStatement<ModifierKind, ModifierStatement> {
+public interface ModifierEffectiveStatement extends EffectiveStatement<ModifierKind, @NonNull ModifierStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MODIFIER;
+        return ModifierStatement.DEFINITION;
     }
 }

@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyModifierEffectiveStatement extends DefaultArgument<ModifierKind, ModifierStatement>
+public final class EmptyModifierEffectiveStatement extends DefaultArgument<ModifierKind, @NonNull ModifierStatement>
         implements ModifierEffectiveStatement {
-    public EmptyModifierEffectiveStatement(final ModifierStatement declared) {
+    public EmptyModifierEffectiveStatement(final @NonNull ModifierStatement declared) {
         super(declared);
     }
 }

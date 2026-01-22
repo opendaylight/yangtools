@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public final class EmptyWhenEffectiveStatement extends DefaultArgument<QualifiedBound, WhenStatement>
+public final class EmptyWhenEffectiveStatement extends DefaultArgument<QualifiedBound, @NonNull WhenStatement>
         implements WhenEffectiveStatement {
-    public EmptyWhenEffectiveStatement(final WhenStatement declared) {
+    public EmptyWhenEffectiveStatement(final @NonNull WhenStatement declared) {
         super(declared);
     }
 }

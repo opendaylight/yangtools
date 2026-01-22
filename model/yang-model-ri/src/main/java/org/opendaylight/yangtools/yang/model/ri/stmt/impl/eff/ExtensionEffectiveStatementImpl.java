@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -22,11 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStateme
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, ExtensionStatement>
-        implements ExtensionDefinition, ExtensionEffectiveStatement, DocumentedNodeMixin<QName, ExtensionStatement> {
+public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, @NonNull ExtensionStatement>
+        implements ExtensionDefinition, ExtensionEffectiveStatement,
+                   DocumentedNodeMixin<QName, @NonNull ExtensionStatement> {
     private final Object substatements;
 
-    public ExtensionEffectiveStatementImpl(final ExtensionStatement declared,
+    public ExtensionEffectiveStatementImpl(final @NonNull ExtensionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.substatements = maskList(substatements);

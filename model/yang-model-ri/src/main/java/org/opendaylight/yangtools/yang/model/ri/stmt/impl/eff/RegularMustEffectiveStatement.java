@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public final class RegularMustEffectiveStatement extends WithSubstatements<QualifiedBound, MustStatement>
+public final class RegularMustEffectiveStatement extends WithSubstatements<QualifiedBound, @NonNull MustStatement>
         implements MustDefinitionMixin {
-    public RegularMustEffectiveStatement(final MustStatement declared,
+    public RegularMustEffectiveStatement(final @NonNull MustStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
@@ -15,8 +16,16 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
  * Declared representation of a {@code when} statement.
  */
 public interface WhenStatement extends DocumentedDeclaredStatement<QualifiedBound> {
+    /**
+     * The definition of {@code when} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(WhenStatement.class, WhenEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "when", "condition");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.WHEN;
+        return DEFINITION;
     }
 }
