@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -76,7 +77,7 @@ class YT1193Test {
 
         final var it = foo.declaredSubstatements().iterator();
         assertReference(it.next(), ActionStatement.DEFINITION, 14, 5);
-        assertReference(it.next(), YangStmtMapping.PRESENCE, 22, 5);
+        assertReference(it.next(), PresenceStatement.DEFINITION, 22, 5);
         assertFalse(it.hasNext());
     }
 

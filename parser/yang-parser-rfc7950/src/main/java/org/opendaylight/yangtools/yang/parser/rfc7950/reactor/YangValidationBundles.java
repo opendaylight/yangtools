@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -33,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 public final class YangValidationBundles {
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
         YangStmtMapping.DEFAULT, DescriptionStatement.DEFINITION, ReferenceStatement.DEFINITION,
-        ConfigStatement.DEFINITION, MandatoryStatement.DEFINITION, YangStmtMapping.MUST, YangStmtMapping.PRESENCE,
+        ConfigStatement.DEFINITION, MandatoryStatement.DEFINITION, YangStmtMapping.MUST, PresenceStatement.DEFINITION,
         MinElementsStatement.DEFINITION, MaxElementsStatement.DEFINITION, YangStmtMapping.IF_FEATURE);
 
     public static final Map<StatementDefinition, Set<StatementDefinition>> SUPPORTED_REFINE_TARGETS =
@@ -47,7 +48,7 @@ public final class YangValidationBundles {
             .put(YangStmtMapping.MUST, ImmutableSet.of(
                 YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.CONTAINER,
                 YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML))
-            .put(YangStmtMapping.PRESENCE, ImmutableSet.of(YangStmtMapping.CONTAINER))
+            .put(PresenceStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.CONTAINER))
             .build();
 
     private YangValidationBundles() {

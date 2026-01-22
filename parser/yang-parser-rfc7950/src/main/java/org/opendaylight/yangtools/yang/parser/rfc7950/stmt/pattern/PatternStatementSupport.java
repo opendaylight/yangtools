@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
@@ -37,14 +38,14 @@ public final class PatternStatementSupport
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.PATTERN)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.PATTERN)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(ErrorAppTagStatement.DEFINITION)
             .addOptional(ErrorMessageStatement.DEFINITION)
             .addOptional(YangStmtMapping.MODIFIER)
             .addOptional(ReferenceStatement.DEFINITION)

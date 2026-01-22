@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -28,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.BIT).build();
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(BitStatement.DEFINITION).build();
 
     BitsSpecificationSupport(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);

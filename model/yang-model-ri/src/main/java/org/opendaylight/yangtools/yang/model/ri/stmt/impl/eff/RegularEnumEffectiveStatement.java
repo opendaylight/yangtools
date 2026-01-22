@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -17,9 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-public final class RegularEnumEffectiveStatement extends WithSubstatements<String, EnumStatement>
-        implements EnumEffectiveStatement, DocumentedNodeMixin<String, EnumStatement>, WithStatus {
-    public  RegularEnumEffectiveStatement(final EnumStatement declared,
+public final class RegularEnumEffectiveStatement extends WithSubstatements<String, @NonNull EnumStatement>
+        implements EnumEffectiveStatement, DocumentedNodeMixin<String, @NonNull EnumStatement>, WithStatus {
+    public  RegularEnumEffectiveStatement(final @NonNull EnumStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

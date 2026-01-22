@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.ENUM).build();
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(EnumStatement.DEFINITION).build();
 
     EnumSpecificationSupport(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);
@@ -61,9 +62,7 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
         final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(stmt.argumentAsTypeQName());
         Integer highestValue = null;
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof EnumEffectiveStatement) {
-                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) subStmt;
-
+            if (subStmt instanceof final EnumEffectiveStatement enumSubStmt) {
                 final Optional<Integer> declaredValue =
                         enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
                 final int effectiveValue;
