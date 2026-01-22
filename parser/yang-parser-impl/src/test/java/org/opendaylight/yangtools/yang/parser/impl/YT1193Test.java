@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
@@ -32,6 +34,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
@@ -61,7 +65,7 @@ class YT1193Test {
     }
 
     private static void assertFooReferences(final DeclaredStatement<?> foo) {
-        assertReference(foo, YangStmtMapping.MODULE, 1, 1);
+        assertReference(foo, ModuleStatement.DEFINITION, 1, 1);
 
         final var it = foo.declaredSubstatements().iterator();
         assertReference(it.next(), NamespaceStatement.DEFINITION, 2, 3);
@@ -74,7 +78,7 @@ class YT1193Test {
         assertReference(it.next(), ContactStatement.DEFINITION, 11, 3);
         assertFooContainerReferences(it.next());
         assertReference(it.next(), RpcStatement.DEFINITION, 25, 3);
-        assertReference(it.next(), YangStmtMapping.NOTIFICATION, 26, 3);
+        assertReference(it.next(), NotificationStatement.DEFINITION, 26, 3);
         assertDeprLeafListReferences(it.next());
         assertObsoTypedefReferences(it.next());
         assertFalse(it.hasNext());
@@ -100,7 +104,7 @@ class YT1193Test {
     }
 
     private static void assertObsoTypedefReferences(final DeclaredStatement<?> obso) {
-        assertReference(obso, YangStmtMapping.TYPEDEF, 40, 3);
+        assertReference(obso, TypedefStatement.DEFINITION, 40, 3);
 
         final var it = obso.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.TYPE, 41, 5);
@@ -109,7 +113,7 @@ class YT1193Test {
     }
 
     private static void assertBarReferences(final DeclaredStatement<?> bar) {
-        assertReference(bar, YangStmtMapping.MODULE, 1, 1);
+        assertReference(bar, ModuleStatement.DEFINITION, 1, 1);
 
         final var it = bar.declaredSubstatements().iterator();
         assertReference(it.next(), NamespaceStatement.DEFINITION, 2, 3);
@@ -125,7 +129,7 @@ class YT1193Test {
     }
 
     private static void assertBazReferences(final DeclaredStatement<?> baz) {
-        assertReference(baz, YangStmtMapping.SUBMODULE, 1, 1);
+        assertReference(baz, SubmoduleStatement.DEFINITION, 1, 1);
 
         final var it = baz.declaredSubstatements().iterator();
         assertReference(it.next(), YangVersionStatement.DEFINITION, 2, 3);

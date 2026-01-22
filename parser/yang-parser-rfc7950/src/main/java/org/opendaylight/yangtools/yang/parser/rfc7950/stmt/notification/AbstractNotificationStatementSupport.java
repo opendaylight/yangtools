@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -35,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractNotificationStatementSupport
         extends AbstractSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
     AbstractNotificationStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy(), SubtreePolicy.structure(), config, validator);
+        super(NotificationStatement.DEFINITION, uninstantiatedPolicy(), SubtreePolicy.structure(), config, validator);
     }
 
     @Override

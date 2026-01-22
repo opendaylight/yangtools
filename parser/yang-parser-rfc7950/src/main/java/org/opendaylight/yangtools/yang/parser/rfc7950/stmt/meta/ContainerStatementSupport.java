@@ -25,11 +25,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -64,7 +66,7 @@ public final class ContainerStatementSupport
             .addOptional(PresenceStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(TypedefStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .addOptional(WhenStatement.DEFINITION)
             .build();
@@ -84,11 +86,11 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(MustStatement.DEFINITION)
-            .addAny(YangStmtMapping.NOTIFICATION)
+            .addAny(NotificationStatement.DEFINITION)
             .addOptional(PresenceStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(TypedefStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .addOptional(WhenStatement.DEFINITION)
             .build();

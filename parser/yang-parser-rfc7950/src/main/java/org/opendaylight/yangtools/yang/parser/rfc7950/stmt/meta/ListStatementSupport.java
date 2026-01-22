@@ -33,11 +33,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -79,7 +81,7 @@ public final class ListStatementSupport
         .addOptional(OrderedByStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
-        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(TypedefStatement.DEFINITION)
         .addAny(UniqueStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
         .addOptional(WhenStatement.DEFINITION)
@@ -101,11 +103,11 @@ public final class ListStatementSupport
         .addOptional(MaxElementsStatement.DEFINITION)
         .addOptional(MinElementsStatement.DEFINITION)
         .addAny(MustStatement.DEFINITION)
-        .addAny(YangStmtMapping.NOTIFICATION)
+        .addAny(NotificationStatement.DEFINITION)
         .addOptional(OrderedByStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
-        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(TypedefStatement.DEFINITION)
         .addAny(UniqueStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
         .addOptional(WhenStatement.DEFINITION)

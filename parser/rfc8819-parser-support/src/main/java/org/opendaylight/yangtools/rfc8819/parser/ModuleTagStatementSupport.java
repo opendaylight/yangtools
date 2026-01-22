@@ -12,10 +12,11 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagEffectiveStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.Tag;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -54,9 +55,10 @@ public final class ModuleTagStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<Tag, ModuleTagStatement, ModuleTagEffectiveStatement> stmt) {
-        final var parentDef = stmt.coerceParentContext().publicDefinition();
-        SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
-                stmt, "Tags may only be defined at root of either a module or a submodule");
+        final var parent = stmt.coerceParentContext();
+        if (!parent.producesDeclared(ModuleStatement.class) && !parent.producesDeclared(SubmoduleStatement.class)) {
+            throw new SourceException("Tags may only be defined at root of either a module or a submodule", stmt);
+        }
     }
 
     @Override

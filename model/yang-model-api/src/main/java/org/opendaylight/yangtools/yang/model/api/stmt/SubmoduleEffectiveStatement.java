@@ -10,19 +10,18 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Representation of {@code submodule} statement.
  */
 public non-sealed interface SubmoduleEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<Unqualified, SubmoduleStatement>,
-                RootEffectiveStatement<SubmoduleStatement>,
-                TypedefAwareEffectiveStatement<Unqualified, SubmoduleStatement> {
+    extends DataTreeAwareEffectiveStatement<Unqualified, @NonNull SubmoduleStatement>,
+            RootEffectiveStatement<@NonNull SubmoduleStatement>,
+            TypedefAwareEffectiveStatement<Unqualified, @NonNull SubmoduleStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.SUBMODULE;
+        return SubmoduleStatement.DEFINITION;
     }
 
     /**

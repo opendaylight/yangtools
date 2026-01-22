@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
@@ -168,7 +169,7 @@ final class AugmentInferenceAction implements InferenceAction {
                 copy.setUnsupported();
             }
             buffer.add(copy);
-        } else if (!unsupported && original.publicDefinition() == YangStmtMapping.TYPEDEF) {
+        } else if (!unsupported && original.producesDeclared(TypedefStatement.class)) {
             // FIXME: what is this branch doing, really?
             //        Typedef's policy would imply a replica, hence normal target.childCopyOf(original, typeOfCopy)
             //        would suffice.

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code default} statement.
  */
 public interface DefaultStatement extends DeclaredStatement<String> {
+    /**
+     * The definition of {@code default} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        DefaultStatement.class, DefaultEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "default", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.DEFAULT;
+        return DEFINITION;
     }
 }

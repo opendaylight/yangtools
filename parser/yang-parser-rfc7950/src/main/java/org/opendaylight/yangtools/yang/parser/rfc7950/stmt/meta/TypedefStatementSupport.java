@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -48,18 +49,18 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class TypedefStatementSupport extends
         AbstractQNameStatementSupport<TypedefStatement, TypedefEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.TYPEDEF)
-        .addOptional(YangStmtMapping.DEFAULT)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addMandatory(YangStmtMapping.TYPE)
-        .addOptional(UnitsStatement.DEFINITION)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(TypedefStatement.DEFINITION)
+            .addOptional(DefaultStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addOptional(StatusStatement.DEFINITION)
+            .addMandatory(YangStmtMapping.TYPE)
+            .addOptional(UnitsStatement.DEFINITION)
+            .build();
 
     public TypedefStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.TYPEDEF, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
+        super(TypedefStatement.DEFINITION, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

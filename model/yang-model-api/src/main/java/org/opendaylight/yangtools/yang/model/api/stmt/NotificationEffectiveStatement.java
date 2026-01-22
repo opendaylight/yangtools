@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code notification} statement.
  */
 public non-sealed interface NotificationEffectiveStatement
-    extends SchemaTreeEffectiveStatement<NotificationStatement>,
-            DataTreeAwareEffectiveStatement<QName, NotificationStatement>,
-            TypedefAwareEffectiveStatement<QName, NotificationStatement> {
+    extends SchemaTreeEffectiveStatement<@NonNull NotificationStatement>,
+            DataTreeAwareEffectiveStatement<QName, @NonNull NotificationStatement>,
+            TypedefAwareEffectiveStatement<QName, @NonNull NotificationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.NOTIFICATION;
+        return NotificationStatement.DEFINITION;
     }
 }

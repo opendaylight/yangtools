@@ -7,18 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code notification} statement.
  */
-public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>, IfFeatureAwareDeclaredStatement<QName>,
-        MustStatementAwareDeclaredStatement<QName> {
+public interface NotificationStatement
+    extends DocumentedDeclaredStatement.WithStatus<QName>,
+            DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>, IfFeatureAwareDeclaredStatement<QName>,
+            MustStatementAwareDeclaredStatement<QName> {
+    /**
+     * The definition of {@code notification} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        NotificationStatement.class, NotificationEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "notification", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.NOTIFICATION;
+        return DEFINITION;
     }
 }

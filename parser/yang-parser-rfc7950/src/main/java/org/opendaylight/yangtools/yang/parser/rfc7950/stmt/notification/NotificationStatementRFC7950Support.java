@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 public final class NotificationStatementRFC7950Support extends AbstractNotificationStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.NOTIFICATION)
+        SubstatementValidator.builder(NotificationStatement.DEFINITION)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
@@ -43,7 +44,7 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .addAny(MustStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(TypedefStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .build();
 

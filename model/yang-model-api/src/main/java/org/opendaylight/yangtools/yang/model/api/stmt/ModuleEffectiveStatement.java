@@ -14,17 +14,16 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective view of a {@code module} statement.
  */
 public non-sealed interface ModuleEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<Unqualified, ModuleStatement>,
-                RootEffectiveStatement<ModuleStatement>,
-                TypedefAwareEffectiveStatement<Unqualified, ModuleStatement>,
-                SchemaTreeRoot {
+    extends DataTreeAwareEffectiveStatement<Unqualified, @NonNull ModuleStatement>,
+            RootEffectiveStatement<@NonNull ModuleStatement>,
+            TypedefAwareEffectiveStatement<Unqualified, @NonNull ModuleStatement>,
+            SchemaTreeRoot {
     /**
      * Conformance type, as defined by <a href="https://www.rfc-editor.org/rfc/rfc7895#page-9">RFC7895</a> and
      * indirectly referenced in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-5.6.4">RFC7950</a>. The NMDA
@@ -69,7 +68,7 @@ public non-sealed interface ModuleEffectiveStatement
 
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MODULE;
+        return ModuleStatement.DEFINITION;
     }
 
     /**

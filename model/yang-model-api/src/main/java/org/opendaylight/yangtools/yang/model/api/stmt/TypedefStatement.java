@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -16,8 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         TypeAwareDeclaredStatement<QName>, DefaultStatementAwareDeclaredStatement {
+    /**
+     * The definition of {@code typedef} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        TypedefStatement.class, TypedefEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "typedef", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.TYPEDEF;
+        return DEFINITION;
     }
 }

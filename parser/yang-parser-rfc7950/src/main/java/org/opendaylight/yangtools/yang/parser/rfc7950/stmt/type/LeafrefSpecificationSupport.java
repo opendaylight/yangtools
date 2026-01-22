@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
@@ -27,10 +28,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpecification> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(YangStmtMapping.PATH).build();
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(PathStatement.DEFINITION).build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.TYPE)
-            .addMandatory(YangStmtMapping.PATH)
+            .addMandatory(PathStatement.DEFINITION)
             .addOptional(RequireInstanceStatement.DEFINITION)
             .build();
 

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
@@ -41,7 +42,7 @@ public abstract sealed class RefineStatementSupport
         extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
     private static final class Rfc6020 extends RefineStatementSupport {
         private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
-            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(DefaultStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
@@ -59,7 +60,7 @@ public abstract sealed class RefineStatementSupport
 
     private static final class Rfc7950 extends RefineStatementSupport {
         private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangStmtMapping.REFINE)
-            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(DefaultStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)

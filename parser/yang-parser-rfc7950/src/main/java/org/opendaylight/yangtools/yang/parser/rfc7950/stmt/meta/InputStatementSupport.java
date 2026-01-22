@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -41,7 +42,7 @@ public final class InputStatementSupport
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(TypedefStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
@@ -55,7 +56,7 @@ public final class InputStatementSupport
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(MustStatement.DEFINITION)
-            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(TypedefStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .build();
 

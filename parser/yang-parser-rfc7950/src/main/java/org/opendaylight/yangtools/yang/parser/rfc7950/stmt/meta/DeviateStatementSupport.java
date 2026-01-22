@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
@@ -66,7 +67,7 @@ public final class DeviateStatementSupport
     private static final SubstatementValidator REPLACE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(DefaultStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
@@ -78,7 +79,7 @@ public final class DeviateStatementSupport
     private static final SubstatementValidator RFC6020_ADD_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(DefaultStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
@@ -88,7 +89,7 @@ public final class DeviateStatementSupport
             .build();
     private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(DefaultStatement.DEFINITION)
             .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
@@ -98,7 +99,7 @@ public final class DeviateStatementSupport
     private static final SubstatementValidator RFC7950_ADD_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addOptional(ConfigStatement.DEFINITION)
-            .addAny(YangStmtMapping.DEFAULT)
+            .addAny(DefaultStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
@@ -108,7 +109,7 @@ public final class DeviateStatementSupport
             .build();
     private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-            .addAny(YangStmtMapping.DEFAULT)
+            .addAny(DefaultStatement.DEFINITION)
             .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
@@ -278,7 +279,7 @@ public final class DeviateStatementSupport
     private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
         if (!stmtCtxToBeAdded.producesDeclared(UnknownStatement.class)) {
             final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
-            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
+            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || DefaultStatement.DEFINITION.equals(stmtToBeAdded)
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
                 for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
@@ -304,7 +305,7 @@ public final class DeviateStatementSupport
             final Mutable<?, ?, ?> targetCtx) {
         final var stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
-        if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
+        if (DefaultStatement.DEFINITION.equals(stmtToBeReplaced)
                 && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
             LOG.error("""
                 Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can have multiple \
