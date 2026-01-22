@@ -16,9 +16,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 module org.opendaylight.yangtools.yang.xpath.impl {
     exports org.opendaylight.yangtools.yang.xpath.dagger;
 
-    // FIXME: 15.0.0: remove this package
-    exports org.opendaylight.yangtools.yang.xpath.impl.di;
-
     provides YangXPathParserFactory with org.opendaylight.yangtools.yang.xpath.impl.AntlrXPathParserFactory;
 
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
