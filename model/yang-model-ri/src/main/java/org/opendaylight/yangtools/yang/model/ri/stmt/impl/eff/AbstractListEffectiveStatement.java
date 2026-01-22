@@ -30,14 +30,18 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.N
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
-abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName, ListStatement>
+abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName, @NonNull ListStatement>
         implements ListEffectiveStatement, ListSchemaNode,
-            ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
-            NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
-            DataSchemaNodeMixin<ListStatement>, UserOrderedAwareMixin<QName, ListStatement, ListEffectiveStatement>,
-            DataNodeContainerMixin<QName, ListStatement>, WhenConditionMixin<QName, ListStatement>,
-            AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
-            ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
+            ActionNodeContainerCompat<QName, @NonNull ListStatement, ListEffectiveStatement>,
+            NotificationNodeContainerCompat<QName, @NonNull ListStatement, ListEffectiveStatement>,
+            DataSchemaNodeMixin<@NonNull ListStatement>,
+            UserOrderedAwareMixin<QName, @NonNull ListStatement, ListEffectiveStatement>,
+            DataNodeContainerMixin<QName, @NonNull ListStatement>,
+            WhenConditionMixin<QName, @NonNull ListStatement>,
+            AugmentationTargetMixin<QName, @NonNull ListStatement>,
+            NotificationNodeContainerMixin<QName, @NonNull ListStatement>,
+            ActionNodeContainerMixin<QName, @NonNull ListStatement>,
+            MustConstraintMixin<QName, @NonNull ListStatement> {
     private final int flags;
     private final @NonNull Object keyDefinition;
 

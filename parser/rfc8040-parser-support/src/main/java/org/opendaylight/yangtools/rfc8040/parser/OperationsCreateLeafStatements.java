@@ -80,7 +80,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
             .collect(Collectors.toUnmodifiableList());
 
         if (!qnames.isEmpty()) {
-            final var leafSupport = getSupport(YangStmtMapping.LEAF, LeafEffectiveStatement.class);
+            final var leafSupport = getSupport(LeafStatement.DEFINITION, LeafEffectiveStatement.class);
             final var typeSupport = getSupport(YangStmtMapping.TYPE, TypeEffectiveStatement.class);
 
             for (var qname : qnames) {
