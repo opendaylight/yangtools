@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 class IetfYangSmiv2ExtensionsMappingTest {
     @Test
     void testGetEffectiveRepresentationClass() {
-        assertEquals(AliasEffectiveStatement.class,
-            AliasStatement.DEFINITION.getEffectiveRepresentationClass());
+        assertEquals(AliasEffectiveStatement.class, AliasStatement.DEFINITION.effectiveRepresentation());
     }
 
     @Test

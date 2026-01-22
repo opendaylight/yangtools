@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -108,7 +109,7 @@ final class AugmentInferenceAction implements InferenceAction {
             final var augmentArg = augmentNode.getArgument();
             final var targetNode = ParserNamespaces.findSchemaTreeStatement(
                 AbstractAugmentStatementSupport.getSearchRoot(augmentNode), augmentArg);
-            if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.orElseThrow())) {
+            if (targetNode.isPresent() && targetNode.orElseThrow().producesDeclared(UnknownStatement.class)) {
                 augmentNode.setUnsupported();
                 LOG.warn("Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
                     augmentArg, augmentNode.sourceReference());

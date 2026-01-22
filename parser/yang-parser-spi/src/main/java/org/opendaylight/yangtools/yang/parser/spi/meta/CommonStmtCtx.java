@@ -35,7 +35,7 @@ public interface CommonStmtCtx {
      * @return True if this context results in specified {@link DeclaredStatement} representation
      */
     default <D extends DeclaredStatement<?>> boolean producesDeclared(final Class<? super D> type) {
-        return type.isAssignableFrom(publicDefinition().getDeclaredRepresentationClass());
+        return type.isAssignableFrom(publicDefinition().declaredRepresentation());
     }
 
     /**
@@ -46,7 +46,7 @@ public interface CommonStmtCtx {
      * @return True if this context results in specified {@link EffectiveStatement} representation
      */
     default <E extends EffectiveStatement<?, ?>> boolean producesEffective(final Class<? super E> type) {
-        return type.isAssignableFrom(publicDefinition().getEffectiveRepresentationClass());
+        return type.isAssignableFrom(publicDefinition().effectiveRepresentation());
     }
 
     /**

@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -208,8 +209,7 @@ public final class UsesStatementSupport
         //
         // This means that the statement that is about to be copied (and can be subjected to buildEffective() I think)
         // is actually a SchemaTreeEffectiveStatement
-        if (SchemaTreeEffectiveStatement.class.isAssignableFrom(
-                stmt.publicDefinition().getEffectiveRepresentationClass())) {
+        if (stmt.producesEffective(SchemaTreeEffectiveStatement.class)) {
             return true;
         }
 
@@ -232,7 +232,7 @@ public final class UsesStatementSupport
         //
         // We do not live in that world yet, hence we do the following and keep our fingers crossed.
         // FIXME: YANGTOOLS-403: this should not be necessary once we implement the above (although tests will complain)
-        return StmtContextUtils.isUnknownStatement(stmt);
+        return stmt.producesDeclared(UnknownStatement.class);
     }
 
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
@@ -267,7 +267,7 @@ public final class UsesStatementSupport
         //        this trick through a shared namespace or similar reactor-agnostic meeting place. It really feels like
         //        an inference action RefineStatementSupport should be doing.
         final var refineTargetCtx = optRefineTargetCtx.orElseThrow();
-        if (StmtContextUtils.isUnknownStatement(refineTargetCtx)) {
+        if (refineTargetCtx.producesDeclared(UnknownStatement.class)) {
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", refineStmtCtx.argument(),
                 refineStmtCtx.coerceParentContext().argument(), refineTargetCtx.argument(),
@@ -319,7 +319,7 @@ public final class UsesStatementSupport
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
                 || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())
-                || StmtContextUtils.isUnknownStatement(refineSubstatementCtx);
+                || refineSubstatementCtx.producesDeclared(UnknownStatement.class);
     }
 
     private static boolean isSupportedRefineTarget(final StmtContext<?, ?, ?> refineSubstatementCtx,
