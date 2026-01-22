@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -18,9 +18,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
         DefaultStatementAwareDeclaredStatement, MandatoryStatementAwareDeclaredStatement<QName> {
+    /**
+     * The definition of {@code choice} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ChoiceStatement.class, ChoiceEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "choice", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.CHOICE;
+        return DEFINITION;
     }
 
     default @NonNull Collection<? extends @NonNull CaseStatement> getCases() {

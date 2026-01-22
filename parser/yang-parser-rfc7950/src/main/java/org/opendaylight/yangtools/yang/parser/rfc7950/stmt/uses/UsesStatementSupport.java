@@ -327,7 +327,7 @@ public final class UsesStatementSupport
 
     private static boolean isSupportedRefineTarget(final StmtContext<?, ?, ?> refineSubstatementCtx,
             final StmtContext<?, ?, ?> refineTargetNodeCtx) {
-        final Collection<?> supportedRefineTargets = YangValidationBundles.SUPPORTED_REFINE_TARGETS.get(
+        final var supportedRefineTargets = YangValidationBundles.SUPPORTED_REFINE_TARGETS.get(
             refineSubstatementCtx.publicDefinition());
 
         return supportedRefineTargets == null || supportedRefineTargets.isEmpty()

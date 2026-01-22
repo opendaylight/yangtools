@@ -12,12 +12,13 @@ import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -68,9 +69,11 @@ public final class MountPointStatementSupport
     @Override
     public void onStatementAdded(
             final Mutable<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> stmt) {
-        final var parentDef = stmt.coerceParentContext().publicDefinition();
-        SourceException.throwIf(YangStmtMapping.CONTAINER != parentDef && YangStmtMapping.LIST != parentDef, stmt,
-            "Mount points may only be defined at either a container or a list");
+        final var parent = stmt.coerceParentContext();
+        if (!parent.producesDeclared(ContainerStatement.class) && !parent.producesDeclared(ListStatement.class)) {
+            throw new SourceException(stmt, "Mount points may only be defined at either a container or a list, not %s",
+                parent.publicDefinition().humanName());
+        }
     }
 
     @Override

@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -27,6 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
@@ -282,7 +283,7 @@ public final class DeviateStatementSupport
         if (!stmtCtxToBeAdded.producesDeclared(UnknownStatement.class)) {
             final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || DefaultStatement.DEFINITION.equals(stmtToBeAdded)
-                    && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
+                    && LeafStatement.DEFINITION.equals(targetCtx.publicDefinition())) {
                 for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
                         stmtCtxToBeAdded, """
@@ -308,7 +309,7 @@ public final class DeviateStatementSupport
         final var stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
         if (DefaultStatement.DEFINITION.equals(stmtToBeReplaced)
-                && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
+                && LeafListStatement.DEFINITION.equals(targetCtx.publicDefinition())) {
             LOG.error("""
                 Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can have multiple \
                 default statements. At line: {}""", stmtToBeReplaced.statementName(), targetCtx.argument(),

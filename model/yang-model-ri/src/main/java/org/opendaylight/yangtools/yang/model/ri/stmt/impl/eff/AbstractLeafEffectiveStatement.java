@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
 public abstract class AbstractLeafEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<QName, LeafStatement>
-        implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<LeafStatement>,
-            MandatoryMixin<QName, LeafStatement>, MustConstraintMixin<QName, LeafStatement> {
+        extends AbstractDeclaredEffectiveStatement.Default<QName, @NonNull LeafStatement>
+        implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<@NonNull LeafStatement>,
+            MandatoryMixin<QName, @NonNull LeafStatement>, MustConstraintMixin<QName, @NonNull LeafStatement> {
     private static final VarHandle TYPE;
 
     static {
@@ -42,11 +42,10 @@ public abstract class AbstractLeafEffectiveStatement
     private final @NonNull Object substatements;
     private final int flags;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> type;
 
-    AbstractLeafEffectiveStatement(final LeafStatement declared, final int flags,
+    AbstractLeafEffectiveStatement(final @NonNull LeafStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.flags = flags;

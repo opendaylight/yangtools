@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -81,7 +81,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
             .collect(Collectors.toUnmodifiableList());
 
         if (!qnames.isEmpty()) {
-            final var leafSupport = getSupport(YangStmtMapping.LEAF, LeafEffectiveStatement.class);
+            final var leafSupport = getSupport(LeafStatement.DEFINITION, LeafEffectiveStatement.class);
             final var typeSupport = getSupport(TypeStatement.DEFINITION, TypeEffectiveStatement.class);
 
             for (var qname : qnames) {

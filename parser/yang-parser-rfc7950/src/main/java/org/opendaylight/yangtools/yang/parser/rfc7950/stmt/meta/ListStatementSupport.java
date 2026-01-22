@@ -17,18 +17,23 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
@@ -65,60 +70,62 @@ import org.slf4j.LoggerFactory;
 public final class ListStatementSupport
         extends AbstractSchemaTreeStatementSupport<ListStatement, ListEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(ListStatementSupport.class);
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.CHOICE)
-        .addOptional(ConfigStatement.DEFINITION)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(GroupingStatement.DEFINITION)
-        .addAny(IfFeatureStatement.DEFINITION)
-        .addOptional(KeyStatement.DEFINITION)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addOptional(MaxElementsStatement.DEFINITION)
-        .addOptional(MinElementsStatement.DEFINITION)
-        .addAny(MustStatement.DEFINITION)
-        .addOptional(OrderedByStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addAny(TypedefStatement.DEFINITION)
-        .addAny(UniqueStatement.DEFINITION)
-        .addAny(UsesStatement.DEFINITION)
-        .addOptional(WhenStatement.DEFINITION)
-        .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
-        .addAny(ActionStatement.DEFINITION)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.CHOICE)
-        .addOptional(ConfigStatement.DEFINITION)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(GroupingStatement.DEFINITION)
-        .addAny(IfFeatureStatement.DEFINITION)
-        .addOptional(KeyStatement.DEFINITION)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addOptional(MaxElementsStatement.DEFINITION)
-        .addOptional(MinElementsStatement.DEFINITION)
-        .addAny(MustStatement.DEFINITION)
-        .addAny(NotificationStatement.DEFINITION)
-        .addOptional(OrderedByStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addAny(TypedefStatement.DEFINITION)
-        .addAny(UniqueStatement.DEFINITION)
-        .addAny(UsesStatement.DEFINITION)
-        .addOptional(WhenStatement.DEFINITION)
-        .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(ListStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
+            .addAny(ChoiceStatement.DEFINITION)
+            .addOptional(ConfigStatement.DEFINITION)
+            .addAny(ContainerStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addAny(GroupingStatement.DEFINITION)
+            .addAny(IfFeatureStatement.DEFINITION)
+            .addOptional(KeyStatement.DEFINITION)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
+            .addOptional(MaxElementsStatement.DEFINITION)
+            .addOptional(MinElementsStatement.DEFINITION)
+            .addAny(MustStatement.DEFINITION)
+            .addOptional(OrderedByStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addOptional(StatusStatement.DEFINITION)
+            .addAny(TypedefStatement.DEFINITION)
+            .addAny(UniqueStatement.DEFINITION)
+            .addAny(UsesStatement.DEFINITION)
+            .addOptional(WhenStatement.DEFINITION)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(ListStatement.DEFINITION)
+            .addAny(ActionStatement.DEFINITION)
+            .addAny(AnydataStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
+            .addAny(ChoiceStatement.DEFINITION)
+            .addOptional(ConfigStatement.DEFINITION)
+            .addAny(ContainerStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addAny(GroupingStatement.DEFINITION)
+            .addAny(IfFeatureStatement.DEFINITION)
+            .addOptional(KeyStatement.DEFINITION)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
+            .addOptional(MaxElementsStatement.DEFINITION)
+            .addOptional(MinElementsStatement.DEFINITION)
+            .addAny(MustStatement.DEFINITION)
+            .addAny(NotificationStatement.DEFINITION)
+            .addOptional(OrderedByStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addOptional(StatusStatement.DEFINITION)
+            .addAny(TypedefStatement.DEFINITION)
+            .addAny(UniqueStatement.DEFINITION)
+            .addAny(UsesStatement.DEFINITION)
+            .addOptional(WhenStatement.DEFINITION)
+            .build();
 
     private final boolean warnForUnkeyedLists;
 
     ListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.LIST, instantiatedPolicy(), config, validator);
+        super(ListStatement.DEFINITION, instantiatedPolicy(), config, validator);
         warnForUnkeyedLists = config.warnForUnkeyedLists();
     }
 

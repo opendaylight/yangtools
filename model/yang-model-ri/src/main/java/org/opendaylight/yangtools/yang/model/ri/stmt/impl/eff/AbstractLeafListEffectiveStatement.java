@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 
 abstract class AbstractLeafListEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<QName, LeafListStatement>
+        extends AbstractDeclaredEffectiveStatement.Default<QName, @NonNull LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode,
-            UserOrderedAwareMixin<QName, LeafListStatement, LeafListEffectiveStatement>,
-            DataSchemaNodeMixin<LeafListStatement>, MustConstraintMixin<QName, LeafListStatement> {
+            UserOrderedAwareMixin<QName, @NonNull LeafListStatement, LeafListEffectiveStatement>,
+            DataSchemaNodeMixin<@NonNull LeafListStatement>, MustConstraintMixin<QName, @NonNull LeafListStatement> {
     private static final VarHandle TYPE;
 
     static {
@@ -43,11 +43,10 @@ abstract class AbstractLeafListEffectiveStatement
     private final @NonNull Object substatements;
     private final int flags;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> type;
 
-    AbstractLeafListEffectiveStatement(final LeafListStatement declared, final int flags,
+    AbstractLeafListEffectiveStatement(final @NonNull LeafListStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.substatements = maskList(substatements);

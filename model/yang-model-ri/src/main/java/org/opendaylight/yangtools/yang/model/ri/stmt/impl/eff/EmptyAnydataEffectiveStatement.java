@@ -19,12 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
 
-public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
-        implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
+public class EmptyAnydataEffectiveStatement extends Default<QName, @NonNull AnydataStatement>
+        implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<@NonNull AnydataStatement> {
     private final @NonNull QName argument;
     private final int flags;
 
-    public EmptyAnydataEffectiveStatement(final AnydataStatement declared, final QName argument, final int flags) {
+    public EmptyAnydataEffectiveStatement(final @NonNull AnydataStatement declared, final QName argument,
+            final int flags) {
         super(declared);
         this.argument = requireNonNull(argument);
         this.flags = flags;

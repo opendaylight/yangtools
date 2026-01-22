@@ -15,7 +15,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -56,7 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LeafStatementSupport
         extends AbstractImplicitStatementSupport<LeafStatement, LeafEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.LEAF)
+        SubstatementValidator.builder(LeafStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
             .addOptional(DefaultStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
@@ -71,7 +70,7 @@ public final class LeafStatementSupport
             .build();
 
     public LeafStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.LEAF, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
+        super(LeafStatement.DEFINITION, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

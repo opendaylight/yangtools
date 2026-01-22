@@ -16,12 +16,18 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -65,13 +71,13 @@ public final class YangDataStatementSupport
     // The cardinality is not exactly constrained, but the entirety of substatements are required to resolve to a single
     // XML document (page 80). This is enforced when we arrive at full declaration.
     private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatement.DEFINITION)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
+        .addAny(ContainerStatement.DEFINITION)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
+        .addAny(ChoiceStatement.DEFINITION)
+        .addAny(AnydataStatement.DEFINITION)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(UsesStatement.DEFINITION)
         .build();
 
