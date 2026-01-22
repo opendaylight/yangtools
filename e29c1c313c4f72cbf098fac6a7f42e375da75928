@@ -22,6 +22,30 @@
       },
       "revId": "e29c1c313c4f72cbf098fac6a7f42e375da75928",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9eb6dd25_3d5e6a15",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/FractionDigitsStatement.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-22T15:11:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "622b008d_641f6c2b",
+      "range": {
+        "startLine": 20,
+        "startChar": 32,
+        "endLine": 20,
+        "endChar": 38
+      },
+      "revId": "e29c1c313c4f72cbf098fac6a7f42e375da75928",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
