@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code anyxml} statement.
  */
-public non-sealed interface AnyxmlEffectiveStatement extends DataTreeEffectiveStatement<AnyxmlStatement> {
+public non-sealed interface AnyxmlEffectiveStatement extends DataTreeEffectiveStatement<@NonNull AnyxmlStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ANYXML;
+        return AnyxmlStatement.DEFINITION;
     }
 }

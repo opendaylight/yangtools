@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -17,8 +18,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface LeafStatement extends DataDefinitionStatement, TypeAwareDeclaredStatement<QName>,
         ConfigStatementAwareDeclaredStatement<QName>, DefaultStatementAwareDeclaredStatement,
         MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+    /**
+     * The definition of {@code leaf} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(LeafStatement.class, LeafEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "leaf", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.LEAF;
+        return DEFINITION;
     }
 }

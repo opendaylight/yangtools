@@ -21,14 +21,17 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
@@ -252,7 +255,7 @@ public final class StmtContextUtils {
      * @return true if it is a presence container
      */
     public static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.publicDefinition() == YangStmtMapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.producesDeclared(ContainerStatement.class) && containsPresenceSubStmt(stmtCtx);
     }
 
     /**
@@ -263,7 +266,7 @@ public final class StmtContextUtils {
      * @return true if it is a non-presence container
      */
     public static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.publicDefinition() == YangStmtMapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.producesDeclared(ContainerStatement.class) && !containsPresenceSubStmt(stmtCtx);
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
@@ -274,22 +277,20 @@ public final class StmtContextUtils {
      * Checks whether statement context is a mandatory leaf, choice, anyxml,
      * list or leaf-list according to RFC6020 or not.
      *
-     * @param stmtCtx
-     *            statement context
+     * @param stmtCtx statement context
      * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list
      *         according to RFC6020.
      */
     public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
-        if (stmtCtx.publicDefinition() instanceof YangStmtMapping mapping) {
-            return switch (mapping) {
-                case LEAF, CHOICE, ANYXML -> Boolean.TRUE.equals(
-                    firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
-                case LIST, LEAF_LIST -> {
-                    final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
-                    yield minElements != null && minElements.lowerInt() > -1;
-                }
-                default -> false;
-            };
+        final var def = stmtCtx.publicDefinition();
+        // FIXME: improve this patch ... by exposing the appropriate trait?
+        if (LeafStatement.DEFINITION.equals(def) || ChoiceStatement.DEFINITION.equals(def)
+            || AnyxmlStatement.DEFINITION.equals(def)) {
+            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
+        }
+        if (ListStatement.DEFINITION.equals(def) || LeafListStatement.DEFINITION.equals(def)) {
+            final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+            return minElements != null && minElements.lowerInt() > -1;
         }
         return false;
     }
@@ -328,7 +329,7 @@ public final class StmtContextUtils {
         var current = stmt.coerceParentContext();
         var parent = current.getParentContext();
         while (parent != null) {
-            if (YangStmtMapping.LIST == current.publicDefinition()
+            if (current.producesDeclared(ListStatement.class)
                     && !current.hasSubstatement(KeyEffectiveStatement.class)) {
                 if (ModelProcessingPhase.FULL_DECLARATION.isCompletedBy(current.getCompletedPhase())) {
                     throw new SourceException(stmt, "%s %s is defined within a list that has no key statement", name,

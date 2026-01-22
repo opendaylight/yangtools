@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -19,9 +20,18 @@ public interface ContainerStatement extends DataDefinitionStatement,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
         ActionStatementAwareDeclaredStatement<QName>, ConfigStatementAwareDeclaredStatement<QName>,
         NotificationStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+    /**
+     * The definition of {@code container} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ContainerStatement.class, ContainerEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "container", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.CONTAINER;
+        return DEFINITION;
     }
 
     default @Nullable PresenceStatement getPresence() {

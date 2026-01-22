@@ -28,7 +28,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
@@ -36,6 +40,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
@@ -67,11 +74,11 @@ public final class ModuleStatementSupport
         extends AbstractUnqualifiedStatementSupport<ModuleStatement, ModuleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(ModuleStatement.DEFINITION)
-            .addAny(YangStmtMapping.ANYXML)
+            .addAny(AnyxmlStatement.DEFINITION)
             .addAny(YangStmtMapping.AUGMENT)
-            .addAny(YangStmtMapping.CHOICE)
+            .addAny(ChoiceStatement.DEFINITION)
             .addOptional(ContactStatement.DEFINITION)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(ExtensionStatement.DEFINITION)
@@ -80,9 +87,9 @@ public final class ModuleStatementSupport
             .addAny(IdentityStatement.DEFINITION)
             .addAny(ImportStatement.DEFINITION)
             .addAny(IncludeStatement.DEFINITION)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addMandatory(NamespaceStatement.DEFINITION)
             .addAny(NotificationStatement.DEFINITION)
             .addOptional(OrganizationStatement.DEFINITION)
@@ -96,12 +103,12 @@ public final class ModuleStatementSupport
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(ModuleStatement.DEFINITION)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
+            .addAny(AnydataStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
             .addAny(YangStmtMapping.AUGMENT)
-            .addAny(YangStmtMapping.CHOICE)
+            .addAny(ChoiceStatement.DEFINITION)
             .addOptional(ContactStatement.DEFINITION)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(ExtensionStatement.DEFINITION)
@@ -110,9 +117,9 @@ public final class ModuleStatementSupport
             .addAny(IdentityStatement.DEFINITION)
             .addAny(ImportStatement.DEFINITION)
             .addAny(IncludeStatement.DEFINITION)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addMandatory(NamespaceStatement.DEFINITION)
             .addAny(NotificationStatement.DEFINITION)
             .addOptional(OrganizationStatement.DEFINITION)

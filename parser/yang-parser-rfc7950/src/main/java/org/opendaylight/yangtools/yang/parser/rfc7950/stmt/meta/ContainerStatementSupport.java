@@ -14,17 +14,22 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
@@ -53,17 +58,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class ContainerStatementSupport
         extends AbstractSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.CONTAINER)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
+        SubstatementValidator.builder(ContainerStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
+            .addAny(ChoiceStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(GroupingStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addAny(MustStatement.DEFINITION)
             .addOptional(PresenceStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
@@ -74,19 +79,19 @@ public final class ContainerStatementSupport
             .build();
 
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.CONTAINER)
+        SubstatementValidator.builder(ContainerStatement.DEFINITION)
             .addAny(ActionStatement.DEFINITION)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
+            .addAny(AnydataStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
+            .addAny(ChoiceStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
-            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(GroupingStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
             .addAny(MustStatement.DEFINITION)
             .addAny(NotificationStatement.DEFINITION)
             .addOptional(PresenceStatement.DEFINITION)
@@ -98,7 +103,7 @@ public final class ContainerStatementSupport
             .build();
 
     private ContainerStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.CONTAINER, instantiatedPolicy(), config, validator);
+        super(ContainerStatement.DEFINITION, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull ContainerStatementSupport rfc6020Instance(final YangParserConfiguration config) {

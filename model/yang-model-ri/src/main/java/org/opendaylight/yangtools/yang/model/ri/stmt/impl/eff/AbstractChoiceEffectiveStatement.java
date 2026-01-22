@@ -22,12 +22,12 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.A
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
 
-public abstract class AbstractChoiceEffectiveStatement extends DefaultWithDataTree<QName, ChoiceStatement>
-        implements ChoiceEffectiveStatement, ChoiceSchemaNode, DataSchemaNodeMixin<ChoiceStatement>,
-            AugmentationTargetMixin<QName, ChoiceStatement>, MandatoryMixin<QName, ChoiceStatement> {
+public abstract class AbstractChoiceEffectiveStatement extends DefaultWithDataTree<QName, @NonNull ChoiceStatement>
+        implements ChoiceEffectiveStatement, ChoiceSchemaNode, DataSchemaNodeMixin<@NonNull ChoiceStatement>,
+            AugmentationTargetMixin<QName, @NonNull ChoiceStatement>, MandatoryMixin<QName, @NonNull ChoiceStatement> {
     private final int flags;
 
-    AbstractChoiceEffectiveStatement(final ChoiceStatement declared,
+    AbstractChoiceEffectiveStatement(final @NonNull ChoiceStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags) {
         super(declared, substatements);
         this.flags = flags;

@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -56,7 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LeafListStatementSupport
         extends AbstractSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
+        SubstatementValidator.builder(LeafListStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
@@ -71,7 +70,7 @@ public final class LeafListStatementSupport
             .addOptional(WhenStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
+        SubstatementValidator.builder(LeafListStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
             .addAny(DefaultStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
@@ -88,7 +87,7 @@ public final class LeafListStatementSupport
             .build();
 
     private LeafListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.LEAF_LIST, instantiatedPolicy(), config, validator);
+        super(LeafListStatement.DEFINITION, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull LeafListStatementSupport rfc6020Instance(final YangParserConfiguration config) {
