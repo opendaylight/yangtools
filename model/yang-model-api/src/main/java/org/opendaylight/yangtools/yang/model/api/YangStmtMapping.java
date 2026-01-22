@@ -36,8 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
@@ -74,12 +72,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -90,8 +82,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
@@ -106,8 +96,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
@@ -142,7 +130,6 @@ public enum YangStmtMapping implements StatementDefinition {
     BIT(BitStatement.class, BitEffectiveStatement.class, "bit", "name"),
     CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
     CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
-    CONFIG(ConfigStatement.class, ConfigEffectiveStatement.class, "config", "value"),
     CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
     DEFAULT(DefaultStatement.class, DefaultEffectiveStatement.class, "default", "value"),
     DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
@@ -161,15 +148,11 @@ public enum YangStmtMapping implements StatementDefinition {
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
     LENGTH(LengthStatement.class, LengthEffectiveStatement.class, "length", "value"),
     LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
-    MANDATORY(MandatoryStatement.class, MandatoryEffectiveStatement.class, "mandatory", "value"),
-    MAX_ELEMENTS(MaxElementsStatement.class, MaxElementsEffectiveStatement.class, "max-elements", "value"),
-    MIN_ELEMENTS(MinElementsStatement.class, MinElementsEffectiveStatement.class, "min-elements", "value"),
     MODIFIER(ModifierStatement.class, ModifierEffectiveStatement.class, "modifier", "value"),
     MODULE(ModuleStatement.class, ModuleEffectiveStatement.class, "module", "name"),
     MUST(MustStatement.class, MustEffectiveStatement.class, "must", "condition"),
     NAMESPACE(NamespaceStatement.class, NamespaceEffectiveStatement.class, "namespace", "uri"),
     NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
-    ORDERED_BY(OrderedByStatement.class, OrderedByEffectiveStatement.class, "ordered-by", "value"),
     PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
     PATTERN(PatternStatement.class, PatternEffectiveStatement.class, "pattern", "value"),
     POSITION(PositionStatement.class, PositionEffectiveStatement.class, "position", "value"),
@@ -177,8 +160,6 @@ public enum YangStmtMapping implements StatementDefinition {
     PRESENCE(PresenceStatement.class, PresenceEffectiveStatement.class, "presence", "value"),
     RANGE(RangeStatement.class, RangeEffectiveStatement.class, "range", "value"),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
-    REQUIRE_INSTANCE(RequireInstanceStatement.class, RequireInstanceEffectiveStatement.class, "require-instance",
-        "value"),
     REVISION(RevisionStatement.class, RevisionEffectiveStatement.class, "revision", "date"),
     REVISION_DATE(RevisionDateStatement.class, RevisionDateEffectiveStatement.class, "revision-date", "date"),
     SUBMODULE(SubmoduleStatement.class, SubmoduleEffectiveStatement.class, "submodule", "name"),

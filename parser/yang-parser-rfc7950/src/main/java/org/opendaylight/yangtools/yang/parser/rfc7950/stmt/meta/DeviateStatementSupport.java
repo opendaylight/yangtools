@@ -23,8 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -59,11 +63,11 @@ public final class DeviateStatementSupport
         SubstatementValidator.builder(YangStmtMapping.DEVIATE).build();
     private static final SubstatementValidator REPLACE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(ConfigStatement.DEFINITION)
             .addOptional(YangStmtMapping.DEFAULT)
-            .addOptional(YangStmtMapping.MANDATORY)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(MandatoryStatement.DEFINITION)
+            .addOptional(MaxElementsStatement.DEFINITION)
+            .addOptional(MinElementsStatement.DEFINITION)
             .addOptional(YangStmtMapping.TYPE)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
@@ -71,11 +75,11 @@ public final class DeviateStatementSupport
     // RFC6020
     private static final SubstatementValidator RFC6020_ADD_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(ConfigStatement.DEFINITION)
             .addOptional(YangStmtMapping.DEFAULT)
-            .addOptional(YangStmtMapping.MANDATORY)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(MandatoryStatement.DEFINITION)
+            .addOptional(MaxElementsStatement.DEFINITION)
+            .addOptional(MinElementsStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
             .addOptional(UnitsStatement.DEFINITION)
@@ -91,11 +95,11 @@ public final class DeviateStatementSupport
     // RFC7950
     private static final SubstatementValidator RFC7950_ADD_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
-            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(ConfigStatement.DEFINITION)
             .addAny(YangStmtMapping.DEFAULT)
-            .addOptional(YangStmtMapping.MANDATORY)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(MandatoryStatement.DEFINITION)
+            .addOptional(MaxElementsStatement.DEFINITION)
+            .addOptional(MinElementsStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
             .addOptional(UnitsStatement.DEFINITION)
@@ -108,16 +112,16 @@ public final class DeviateStatementSupport
             .addOptional(UnitsStatement.DEFINITION)
             .build();
 
-    private static final Set<YangStmtMapping> IMPLICIT_STATEMENTS = Set.of(
-        YangStmtMapping.CONFIG,
-        YangStmtMapping.MANDATORY,
-        YangStmtMapping.MAX_ELEMENTS,
-        YangStmtMapping.MIN_ELEMENTS);
+    private static final Set<StatementDefinition> IMPLICIT_STATEMENTS = Set.of(
+        ConfigStatement.DEFINITION,
+        MandatoryStatement.DEFINITION,
+        MaxElementsStatement.DEFINITION,
+        MinElementsStatement.DEFINITION);
     private static final Set<StatementDefinition> SINGLETON_STATEMENTS = Set.of(
-        YangStmtMapping.CONFIG,
-        YangStmtMapping.MANDATORY,
-        YangStmtMapping.MIN_ELEMENTS,
-        YangStmtMapping.MAX_ELEMENTS,
+        ConfigStatement.DEFINITION,
+        MandatoryStatement.DEFINITION,
+        MinElementsStatement.DEFINITION,
+        MaxElementsStatement.DEFINITION,
         UnitsStatement.DEFINITION);
 
     private final SubstatementValidator addValidator;

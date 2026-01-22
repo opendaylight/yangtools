@@ -20,11 +20,15 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -48,13 +52,13 @@ public final class LeafListStatementSupport
         extends AbstractSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
-            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(ConfigStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(MaxElementsStatement.DEFINITION)
+            .addOptional(MinElementsStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
-            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(OrderedByStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addMandatory(YangStmtMapping.TYPE)
@@ -63,14 +67,14 @@ public final class LeafListStatementSupport
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
-            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(ConfigStatement.DEFINITION)
             .addAny(YangStmtMapping.DEFAULT)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(MaxElementsStatement.DEFINITION)
+            .addOptional(MinElementsStatement.DEFINITION)
             .addAny(YangStmtMapping.MUST)
-            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(OrderedByStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addMandatory(YangStmtMapping.TYPE)

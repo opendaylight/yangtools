@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -16,8 +17,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code ordered-by} statement.
  */
 public interface OrderedByStatement extends DeclaredStatement<Ordering> {
+    /**
+     * The definition of {@code ordered-by} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        OrderedByStatement.class, OrderedByEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "ordered-by", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ORDERED_BY;
+        return DEFINITION;
     }
 }
