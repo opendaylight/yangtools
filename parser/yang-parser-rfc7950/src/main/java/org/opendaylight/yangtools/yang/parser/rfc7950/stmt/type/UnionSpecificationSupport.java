@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -25,12 +23,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecification> {
+final class UnionSpecificationSupport extends AbstractTypeSupport.Specific<UnionSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(TypeStatement.DEF).addMultiple(TypeStatement.DEF).build();
 
     UnionSpecificationSupport(final YangParserConfiguration config) {
-        super(config, SUBSTATEMENT_VALIDATOR);
+        super(config, SUBSTATEMENT_VALIDATOR, UnionSpecification.class);
     }
 
     @Override
@@ -43,24 +41,17 @@ final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecifica
     }
 
     @Override
-    protected UnionSpecification attachDeclarationReference(final UnionSpecification stmt,
-            final DeclarationReference reference) {
-        return new RefUnionSpecification(stmt, reference);
-    }
-
-    @Override
-    protected EffectiveStatement<QName, UnionSpecification> createEffective(
-            final Current<QName, UnionSpecification> stmt,
+    TypeEffectiveStatement createEffectiveImpl(final Current<QName, UnionSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noType(stmt);
         }
 
-        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(stmt.argumentAsTypeQName());
+        final var builder = BaseTypes.unionTypeBuilder(stmt.argumentAsTypeQName());
 
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
-            if (subStmt instanceof TypeEffectiveStatement) {
-                builder.addType(((TypeEffectiveStatement<?>)subStmt).getTypeDefinition());
+        for (var subStmt : substatements) {
+            if (subStmt instanceof TypeEffectiveStatement tes) {
+                builder.addType(tes.getTypeDefinition());
             }
         }
 

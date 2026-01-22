@@ -8,19 +8,16 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -28,12 +25,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecification> {
+final class EnumSpecificationSupport extends AbstractTypeSupport.Specific<EnumSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(TypeStatement.DEF).addMultiple(EnumStatement.DEF).build();
 
     EnumSpecificationSupport(final YangParserConfiguration config) {
-        super(config, SUBSTATEMENT_VALIDATOR);
+        super(config, SUBSTATEMENT_VALIDATOR, EnumSpecification.class);
     }
 
     @Override
@@ -46,24 +43,17 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
     }
 
     @Override
-    protected EnumSpecification attachDeclarationReference(final EnumSpecification stmt,
-            final DeclarationReference reference) {
-        return new RefEnumSpecification(stmt, reference);
-    }
-
-    @Override
-    protected EffectiveStatement<QName, EnumSpecification> createEffective(
-            final Current<QName, EnumSpecification> stmt,
+    TypeEffectiveStatement createEffectiveImpl(final Current<QName, EnumSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noEnum(stmt);
         }
 
-        final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(stmt.argumentAsTypeQName());
+        final var builder = BaseTypes.enumerationTypeBuilder(stmt.argumentAsTypeQName());
         Integer highestValue = null;
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+        for (var subStmt : substatements) {
             if (subStmt instanceof final EnumEffectiveStatement enumSubStmt) {
-                final Optional<Integer> declaredValue =
+                final var declaredValue =
                         enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
                 final int effectiveValue;
                 if (declaredValue.isEmpty()) {
@@ -78,7 +68,7 @@ final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecificati
                     effectiveValue = declaredValue.orElseThrow();
                 }
 
-                final EnumPair pair = EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue);
+                final var pair = EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue);
                 if (highestValue == null || highestValue < pair.getValue()) {
                     highestValue = pair.getValue();
                 }

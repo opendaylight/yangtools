@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
@@ -61,7 +60,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.ri.type.InvalidRangeConstraintException;
@@ -86,8 +84,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement>
-        implements UndeclaredStatementFactory<QName, TypeStatement, TypeEffectiveStatement<TypeStatement>> {
+abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement>
+        implements UndeclaredStatementFactory<QName, TypeStatement, TypeEffectiveStatement>
+        permits TypeStatementRFC6020Support, TypeStatementRFC7950Support {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(TypeStatement.DEF)
             .addOptional(BaseStatement.DEF)
@@ -137,8 +136,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
-            final Mutable<QName, TypeStatement, EffectiveStatement<QName, TypeStatement>> stmt) {
+    public final void onFullDefinitionDeclared(final Mutable<QName, TypeStatement, TypeEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         final var typeQName = stmt.getArgument();
@@ -182,8 +180,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     }
 
     @Override
-    public final TypeEffectiveStatement<TypeStatement> createUndeclaredEffective(
-            final UndeclaredCurrent<QName, TypeStatement> stmt,
+    public final TypeEffectiveStatement createUndeclaredEffective(final UndeclaredCurrent<QName, TypeStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
         final var substatements = buildEffectiveSubstatements(stmt,
             statementsToBuild(stmt, effectiveSubstatements.filter(StmtContext::isSupportedToBuildEffective)));
@@ -211,13 +208,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     }
 
     @Override
-    protected final TypeStatement attachDeclarationReference(final TypeStatement stmt,
-            final DeclarationReference reference) {
-        return DeclaredStatementDecorators.decorateType(stmt, reference);
-    }
-
-    @Override
-    protected EffectiveStatement<QName, TypeStatement> createEffective(final Current<QName, TypeStatement> stmt,
+    protected final TypeEffectiveStatement createEffective(final Current<QName, TypeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // First look up the proper base type
         final var typeStmt = resolveType(stmt);
@@ -272,7 +263,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
      * @return Resolved type
      * @throws SourceException if the target type cannot be found
      */
-    private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final NamespaceStmtCtx ctx) {
+    private static @NonNull TypeEffectiveStatement resolveType(final NamespaceStmtCtx ctx) {
         final var obj = verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.INSTANCE, Empty.value()));
         return switch (obj) {
             case BuiltinEffectiveStatement builtin -> builtin;
@@ -282,7 +273,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         };
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createBinary(final Current<QName, ?> ctx,
+    private static @NonNull TypeEffectiveStatement createBinary(final Current<QName, ?> ctx,
             final BinaryTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newBinaryBuilder(baseType, typeEffectiveQName(ctx));
@@ -302,7 +293,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
+    private @NonNull TypeEffectiveStatement createBits(final Current<?, ?> ctx,
             final BitsTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newBitsBuilder(baseType, ctx.argumentAsTypeQName());
@@ -319,14 +310,14 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     abstract @NonNull Bit addRestrictedBit(@NonNull EffectiveStmtCtx stmt, @NonNull BitsTypeDefinition base,
         @NonNull BitEffectiveStatement bit);
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createBoolean(final Current<QName, ?> ctx,
+    private static @NonNull TypeEffectiveStatement createBoolean(final Current<QName, ?> ctx,
             final BooleanTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newBooleanBuilder(baseType,
             typeEffectiveQName(ctx)));
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createDecimal(final Current<QName, ?> ctx,
+    private static @NonNull TypeEffectiveStatement createDecimal(final Current<QName, ?> ctx,
             final DecimalTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newDecima64Builder(baseType, typeEffectiveQName(ctx));
@@ -348,15 +339,15 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createEmpty(final Current<QName, ?> ctx,
-            final EmptyTypeDefinition baseType, final TypeStatement declared,
+    private static @NonNull TypeEffectiveStatement createEmpty(final Current<QName, ?> ctx,
+            final EmptyTypeDefinition baseType, final @NonNull TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newEmptyBuilder(baseType,
             typeEffectiveQName(ctx)));
     }
 
-    private @NonNull TypeEffectiveStatement<TypeStatement> createEnum(final Current<?, ?> ctx,
-            final EnumTypeDefinition baseType, final TypeStatement declared,
+    private @NonNull TypeEffectiveStatement createEnum(final Current<?, ?> ctx, final EnumTypeDefinition baseType,
+            final @NonNull TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newEnumerationBuilder(baseType, ctx.argumentAsTypeQName());
 
@@ -372,15 +363,15 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     abstract @NonNull EnumPair addRestrictedEnum(@NonNull EffectiveStmtCtx stmt, @NonNull EnumTypeDefinition base,
         @NonNull EnumEffectiveStatement enumStmt);
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createIdentityref(final Current<QName, ?> ctx,
-            final IdentityrefTypeDefinition baseType, final TypeStatement declared,
+    private static @NonNull TypeEffectiveStatement createIdentityref(final Current<QName, ?> ctx,
+            final IdentityrefTypeDefinition baseType, final @NonNull TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newIdentityrefBuilder(baseType,
             typeEffectiveQName(ctx)));
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createInstanceIdentifier(final Current<QName, ?> ctx,
-            final InstanceIdentifierTypeDefinition baseType, final TypeStatement declared,
+    private static @NonNull TypeEffectiveStatement createInstanceIdentifier(final Current<QName, ?> ctx,
+            final InstanceIdentifierTypeDefinition baseType, final @NonNull TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newInstanceIdentifierBuilder(baseType, typeEffectiveQName(ctx));
 
@@ -394,8 +385,8 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     }
 
     private static <T extends RangeRestrictedTypeDefinition<T, N>, N extends Number & Comparable<N>>
-        @NonNull TypeEffectiveStatement<TypeStatement> createIntegral(final Current<?, ?> ctx,
-                final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+        @NonNull TypeEffectiveStatement createIntegral(final Current<?, ?> ctx, final @NonNull TypeStatement declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
                 final RangeRestrictedTypeBuilder<T, N> builder) {
         for (var stmt : substatements) {
             if (stmt instanceof RangeEffectiveStatement range) {
@@ -410,7 +401,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         }
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createLeafref(final Current<QName, ?> ctx,
+    private static @NonNull TypeEffectiveStatement createLeafref(final Current<QName, ?> ctx,
             final LeafrefTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newLeafrefBuilder(baseType,
@@ -424,7 +415,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createString(final Current<QName, ?> ctx,
+    private static @NonNull TypeEffectiveStatement createString(final Current<QName, ?> ctx,
             final StringTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newStringBuilder(baseType,
@@ -451,7 +442,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createUnion(final Current<QName, ?> ctx,
+    private static @NonNull TypeEffectiveStatement createUnion(final Current<QName, ?> ctx,
             final UnionTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newUnionBuilder(baseType,

@@ -18,12 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class TypeEffectiveStatementImpl<T extends TypeDefinition<T>, D extends TypeStatement>
-        extends WithSubstatements<QName, D> implements TypeEffectiveStatement<D> {
+final class TypeEffectiveStatementImpl<T extends TypeDefinition<T>>
+        extends WithSubstatements<QName, @NonNull TypeStatement> implements TypeEffectiveStatement {
     private final @NonNull T typeDefinition;
 
-    TypeEffectiveStatementImpl(final D declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final TypeBuilder<T> builder) {
+    TypeEffectiveStatementImpl(final @NonNull TypeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final TypeBuilder<T> builder) {
         super(declared, substatements);
 
         for (var stmt : substatements) {
