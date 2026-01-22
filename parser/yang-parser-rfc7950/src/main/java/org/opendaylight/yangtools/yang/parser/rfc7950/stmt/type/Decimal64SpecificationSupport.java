@@ -9,17 +9,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.ri.type.DecimalTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64Specification> {
+final class Decimal64SpecificationSupport extends AbstractTypeSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(TypeStatement.DEF)
             .addMandatory(FractionDigitsStatement.DEF)
@@ -48,21 +47,14 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
     }
 
     @Override
-    protected Decimal64Specification attachDeclarationReference(final Decimal64Specification stmt,
-            final DeclarationReference reference) {
-        return new RefDecimal64Specification(stmt, reference);
-    }
-
-    @Override
-    protected EffectiveStatement<QName, Decimal64Specification> createEffective(
-            final Current<QName, Decimal64Specification> stmt,
+    protected TypeEffectiveStatement createEffective(final Current<QName, TypeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noFracDigits(stmt);
         }
 
-        final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(stmt.argumentAsTypeQName());
-        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+        final var builder = BaseTypes.decimalTypeBuilder(stmt.argumentAsTypeQName());
+        for (var subStmt : substatements) {
             if (subStmt instanceof FractionDigitsEffectiveStatement fracDigits) {
                 builder.setFractionDigits(fracDigits.argument());
             }

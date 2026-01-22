@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpecification> {
+final class LeafrefSpecificationSupport extends AbstractTypeSupport {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(TypeStatement.DEF).addMandatory(PathStatement.DEF).build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
@@ -57,14 +57,7 @@ final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpeci
     }
 
     @Override
-    protected LeafrefSpecification attachDeclarationReference(final LeafrefSpecification stmt,
-            final DeclarationReference reference) {
-        return new RefLeafrefSpecification(stmt, reference);
-    }
-
-    @Override
-    protected EffectiveStatement<QName, LeafrefSpecification> createEffective(
-            final Current<QName, LeafrefSpecification> stmt,
+    protected TypeEffectiveStatement createEffective(final Current<QName, TypeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noPath(stmt);
