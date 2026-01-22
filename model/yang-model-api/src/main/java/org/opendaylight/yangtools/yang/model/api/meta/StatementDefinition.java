@@ -141,6 +141,14 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
     }
 
     /**
+     * {@return a plain statement name}
+     * @since 15.0.0
+     */
+    default @NonNull String simpleName() {
+        return statementName().getLocalName();
+    }
+
+    /**
      * {@return {@link ArgumentDefinition} or {@code null}, if statement does not take argument}
      */
     @Nullable ArgumentDefinition argumentDefinition();
