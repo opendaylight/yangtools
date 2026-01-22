@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -90,7 +91,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             .addOptional(YangStmtMapping.PATH)
             .addAny(YangStmtMapping.PATTERN)
             .addOptional(YangStmtMapping.RANGE)
-            .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
+            .addOptional(RequireInstanceStatement.DEFINITION)
             .addAny(YangStmtMapping.TYPE)
             .build();
 

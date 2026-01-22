@@ -13,14 +13,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyRequireInstanceEffectiveStatement extends DefaultArgument<Boolean, RequireInstanceStatement>
+public final class EmptyRequireInstanceEffectiveStatement
+        extends DefaultArgument<Boolean, @NonNull RequireInstanceStatement>
         implements RequireInstanceEffectiveStatement {
     public static final @NonNull EmptyRequireInstanceEffectiveStatement FALSE =
         new EmptyRequireInstanceEffectiveStatement(EmptyRequireInstanceStatement.FALSE);
     public static final @NonNull EmptyRequireInstanceEffectiveStatement TRUE =
         new EmptyRequireInstanceEffectiveStatement(EmptyRequireInstanceStatement.TRUE);
 
-    public EmptyRequireInstanceEffectiveStatement(final RequireInstanceStatement declared) {
+    public EmptyRequireInstanceEffectiveStatement(final @NonNull RequireInstanceStatement declared) {
         super(declared);
     }
 }

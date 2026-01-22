@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code min-elements} statement.
  */
 public interface MinElementsStatement extends DeclaredStatement<MinElementsArgument> {
+    /**
+     * The definition of {@code min-elements} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        MinElementsStatement.class, MinElementsEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "min-elements", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MIN_ELEMENTS;
+        return DEFINITION;
     }
 }

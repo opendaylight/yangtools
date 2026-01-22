@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code min-elements} statement.
  */
-public interface MinElementsEffectiveStatement extends EffectiveStatement<MinElementsArgument, MinElementsStatement> {
+public interface MinElementsEffectiveStatement
+        extends EffectiveStatement<MinElementsArgument, @NonNull MinElementsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MIN_ELEMENTS;
+        return MinElementsStatement.DEFINITION;
     }
 }

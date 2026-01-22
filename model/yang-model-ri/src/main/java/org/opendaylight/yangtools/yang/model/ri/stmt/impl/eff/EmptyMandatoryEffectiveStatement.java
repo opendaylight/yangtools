@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyMandatoryEffectiveStatement extends DefaultArgument<Boolean, MandatoryStatement>
+public final class EmptyMandatoryEffectiveStatement extends DefaultArgument<Boolean, @NonNull MandatoryStatement>
         implements MandatoryEffectiveStatement {
-    public EmptyMandatoryEffectiveStatement(final MandatoryStatement declared) {
+    public EmptyMandatoryEffectiveStatement(final @NonNull MandatoryStatement declared) {
         super(declared);
     }
 }

@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
 import java.text.ParseException;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class MaxElementsStatementSupport
         extends AbstractStatementSupport<MaxElementsArgument, MaxElementsStatement, MaxElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.MAX_ELEMENTS).build();
+        SubstatementValidator.builder(MaxElementsStatement.DEFINITION).build();
     private static final String UNBOUNDED_STR = "unbounded";
 
     static {
@@ -40,7 +39,7 @@ public final class MaxElementsStatementSupport
     }
 
     public MaxElementsStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(MaxElementsStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

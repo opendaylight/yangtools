@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -30,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class OrderedByStatementSupport
         extends AbstractStatementSupport<Ordering, OrderedByStatement, OrderedByEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
+        SubstatementValidator.builder(OrderedByStatement.DEFINITION).build();
 
     /*
      * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
@@ -47,7 +46,7 @@ public final class OrderedByStatementSupport
         EffectiveStatements.createOrderedBy(EMPTY_USER_DECL);
 
     public OrderedByStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(OrderedByStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -63,29 +62,25 @@ public final class OrderedByStatementSupport
     public String internArgument(final String rawArgument) {
         if ("user".equals(rawArgument)) {
             return "user";
-        } else if ("system".equals(rawArgument)) {
-            return "system";
-        } else {
-            return rawArgument;
         }
+        if ("system".equals(rawArgument)) {
+            return "system";
+        }
+        return rawArgument;
     }
 
     @Override
     protected OrderedByStatement createDeclared(final BoundStmtCtx<Ordering> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        if (substatements.isEmpty()) {
-            final Ordering argument = ctx.getArgument();
-            switch (argument) {
-                case SYSTEM:
-                    return EMPTY_SYSTEM_DECL;
-                case USER:
-                    return EMPTY_USER_DECL;
-                default:
-                    throw new IllegalStateException("Unhandled argument " + argument);
-            }
-        } else {
+        if (!substatements.isEmpty()) {
             return DeclaredStatements.createOrderedBy(ctx.getArgument(), substatements);
         }
+        final Ordering argument = ctx.getArgument();
+        return switch (argument) {
+            case SYSTEM -> EMPTY_SYSTEM_DECL;
+            case USER -> EMPTY_USER_DECL;
+            default -> throw new IllegalStateException("Unhandled argument " + argument);
+        };
     }
 
     @Override
@@ -107,10 +102,10 @@ public final class OrderedByStatementSupport
         if (EMPTY_USER_DECL.equals(declared)) {
             // Most likely to be seen (as system is the default)
             return EMPTY_USER_EFF;
-        } else if (EMPTY_SYSTEM_DECL.equals(declared)) {
-            return EMPTY_SYSTEM_EFF;
-        } else {
-            return EffectiveStatements.createOrderedBy(declared);
         }
+        if (EMPTY_SYSTEM_DECL.equals(declared)) {
+            return EMPTY_SYSTEM_EFF;
+        }
+        return EffectiveStatements.createOrderedBy(declared);
     }
 }

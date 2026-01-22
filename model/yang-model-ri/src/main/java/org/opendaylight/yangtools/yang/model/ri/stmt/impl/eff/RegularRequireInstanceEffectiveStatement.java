@@ -8,14 +8,16 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularRequireInstanceEffectiveStatement extends WithSubstatements<Boolean, RequireInstanceStatement>
+public final class RegularRequireInstanceEffectiveStatement
+        extends WithSubstatements<Boolean, @NonNull RequireInstanceStatement>
         implements RequireInstanceEffectiveStatement {
-    public RegularRequireInstanceEffectiveStatement(final RequireInstanceStatement declared,
+    public RegularRequireInstanceEffectiveStatement(final @NonNull RequireInstanceStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

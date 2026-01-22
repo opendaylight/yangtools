@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyMaxElementsEffectiveStatement extends DefaultArgument<MaxElementsArgument, MaxElementsStatement>
+public final class EmptyMaxElementsEffectiveStatement
+        extends DefaultArgument<MaxElementsArgument, @NonNull MaxElementsStatement>
         implements MaxElementsEffectiveStatement {
-    public EmptyMaxElementsEffectiveStatement(final MaxElementsStatement declared) {
+    public EmptyMaxElementsEffectiveStatement(final @NonNull MaxElementsStatement declared) {
         super(declared);
     }
 }
