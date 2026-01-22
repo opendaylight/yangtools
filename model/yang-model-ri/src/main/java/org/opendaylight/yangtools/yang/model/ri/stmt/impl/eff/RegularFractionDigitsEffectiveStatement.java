@@ -8,14 +8,16 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularFractionDigitsEffectiveStatement extends WithSubstatements<Integer, FractionDigitsStatement>
+public final class RegularFractionDigitsEffectiveStatement
+        extends WithSubstatements<Integer, @NonNull FractionDigitsStatement>
         implements FractionDigitsEffectiveStatement {
-    public RegularFractionDigitsEffectiveStatement(final FractionDigitsStatement declared,
+    public RegularFractionDigitsEffectiveStatement(final @NonNull FractionDigitsStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

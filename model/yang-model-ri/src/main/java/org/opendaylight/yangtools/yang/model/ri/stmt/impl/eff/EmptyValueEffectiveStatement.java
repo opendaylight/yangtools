@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyValueEffectiveStatement extends DefaultArgument<Integer, ValueStatement>
+public final class EmptyValueEffectiveStatement extends DefaultArgument<Integer, @NonNull ValueStatement>
         implements ValueEffectiveStatement {
-    public EmptyValueEffectiveStatement(final ValueStatement declared) {
+    public EmptyValueEffectiveStatement(final @NonNull ValueStatement declared) {
         super(declared);
     }
 }

@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -17,9 +18,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code argument} statement.
  */
 public interface ArgumentStatement extends DeclaredStatement<QName> {
+    /**
+     * The definition of {@code argument} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ArgumentStatement.class, ArgumentEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "argument", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.ARGUMENT;
+        return DEFINITION;
     }
 
     default @Nullable YinElementStatement getYinElement() {

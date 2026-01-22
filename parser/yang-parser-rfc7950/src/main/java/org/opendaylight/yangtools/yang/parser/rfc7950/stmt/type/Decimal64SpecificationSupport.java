@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -28,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64Specification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.TYPE)
-            .addMandatory(YangStmtMapping.FRACTION_DIGITS)
+            .addMandatory(FractionDigitsStatement.DEFINITION)
             .addOptional(YangStmtMapping.RANGE)
             .build();
 
