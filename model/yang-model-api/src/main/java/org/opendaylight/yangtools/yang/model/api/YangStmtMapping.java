@@ -22,8 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 
 /**
  * Mapping for both RFC6020 and RFC7950 statements.
@@ -32,8 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 @Beta
 public enum YangStmtMapping implements StatementDefinition {
     AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
-    DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
-    REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node");
+    DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
