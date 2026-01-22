@@ -191,7 +191,7 @@ public final class StmtContextUtils {
             if (parent.getParentContext() == null) {
                 return false;
             }
-            if (isUnknownStatement(parent)) {
+            if (parent.producesDeclared(UnknownStatement.class)) {
                 return true;
             }
             current = parent;
@@ -199,18 +199,16 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Returns true if supplied statement context represents unknown statement,
-     * otherwise returns false.
+     * Returns true if supplied statement context represents unknown statement, otherwise returns false.
      *
-     * @param stmtCtx
-     *            statement context to be checked
-     * @return true if supplied statement context represents unknown statement,
-     *         otherwise false
-     * @throws NullPointerException
-     *             if supplied statement context is null
+     * @param stmtCtx statement context to be checked
+     * @return true if supplied statement context represents unknown statement, otherwise false
+     * @throws NullPointerException if supplied statement context is null
+     * @deprecated Use {@code stmtCtx.producesDeclared(UnknownStatement.class)} instead
      */
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
-        return UnknownStatement.class.isAssignableFrom(stmtCtx.publicDefinition().getDeclaredRepresentationClass());
+        return stmtCtx.producesDeclared(UnknownStatement.class);
     }
 
     /**

@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
@@ -638,7 +639,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final QNameModule effectiveNamespace() {
-        if (StmtContextUtils.isUnknownStatement(this)) {
+        if (producesDeclared(UnknownStatement.class)) {
             return publicDefinition().statementName().getModule();
         }
         if (producesDeclared(UsesStatement.class)) {
@@ -684,7 +685,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                 localName = namesParts[1];
                 qnameModule = StmtContextUtils.getModuleQNameByPrefix(root, prefix);
                 // in case of unknown statement argument, we're not going to parse it
-                if (qnameModule == null && StmtContextUtils.isUnknownStatement(ctx)) {
+                if (qnameModule == null && ctx.producesDeclared(UnknownStatement.class)) {
                     localName = value;
                     qnameModule = ctx.definingModule();
                 }
