@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b6b22ad_134c4d3e",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/NamespaceStatement.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-22T15:18:27Z",
+      "side": 1,
+      "message": "namespace",
+      "range": {
+        "startLine": 21,
+        "startChar": 32,
+        "endLine": 21,
+        "endChar": 38
+      },
+      "revId": "a38ca600cf63eed4e34ecc4f67d5cb144de92a85",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
