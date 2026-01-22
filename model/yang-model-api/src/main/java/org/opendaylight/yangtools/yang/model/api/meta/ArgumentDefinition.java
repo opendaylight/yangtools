@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Definition of an argument to a YANG statement.
@@ -18,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * @param argumentName the name of the argument
  * @param yinElement {@code true} if the argument is a YIN element
  */
+@NonNullByDefault
 public record ArgumentDefinition(QName argumentName, boolean yinElement) implements Immutable {
     /**
      * Default constructor.
@@ -27,5 +30,22 @@ public record ArgumentDefinition(QName argumentName, boolean yinElement) impleme
      */
     public ArgumentDefinition {
         requireNonNull(argumentName);
+    }
+
+    /**
+     * {@return a human-friendly string representation of {link #argumentName()}}
+     * @since 15.0.0
+     */
+    public String humanName() {
+        return YangConstants.RFC6020_YIN_MODULE.equals(argumentName.getModule()) ? argumentName.getLocalName()
+            : argumentName.toString();
+    }
+
+    /**
+     * {@return a plain argument name}
+     * @since 15.0.0
+     */
+    public String simpleName() {
+        return argumentName.getLocalName();
     }
 }
