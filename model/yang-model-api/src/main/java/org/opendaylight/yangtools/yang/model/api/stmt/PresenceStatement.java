@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -15,8 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code presence} statement.
  */
 public interface PresenceStatement extends DeclaredStatement<String> {
+    /**
+     * The definition of {@code presence} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        PresenceStatement.class, PresenceEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "presence", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.PRESENCE;
+        return DEFINITION;
     }
 }

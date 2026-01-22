@@ -31,22 +31,24 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class BitStatementSupport extends AbstractStatementSupport<String, BitStatement, BitEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.BIT)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addOptional(YangStmtMapping.POSITION)
-        .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.BIT)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addOptional(YangStmtMapping.POSITION)
-        .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(BitStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addOptional(StatusStatement.DEFINITION)
+            .addOptional(YangStmtMapping.POSITION)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(BitStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addOptional(StatusStatement.DEFINITION)
+            .addOptional(YangStmtMapping.POSITION)
+            .build();
 
     private BitStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.BIT, StatementPolicy.contextIndependent(), config, requireNonNull(validator));
+        super(BitStatement.DEFINITION, StatementPolicy.contextIndependent(), config, requireNonNull(validator));
     }
 
     public static @NonNull BitStatementSupport rfc6020Instance(final YangParserConfiguration config) {

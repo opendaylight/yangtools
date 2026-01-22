@@ -30,13 +30,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class EnumStatementSupport
         extends AbstractStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.ENUM)
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(EnumStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addOptional(YangStmtMapping.VALUE)
             .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.ENUM)
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(EnumStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(ReferenceStatement.DEFINITION)
@@ -45,7 +47,7 @@ public final class EnumStatementSupport
             .build();
 
     private EnumStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.ENUM, StatementPolicy.contextIndependent(), config, validator);
+        super(EnumStatement.DEFINITION, StatementPolicy.contextIndependent(), config, validator);
     }
 
     public static @NonNull EnumStatementSupport rfc6020Instance(final YangParserConfiguration config) {
