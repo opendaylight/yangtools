@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree;
 
-public final class UndeclaredCaseEffectiveStatement extends DefaultWithDataTree<QName, CaseStatement>
+public final class UndeclaredCaseEffectiveStatement extends DefaultWithDataTree<QName, @NonNull CaseStatement>
         implements CaseEffectiveStatementMixin {
     private final @NonNull QName argument;
     private final int flags;

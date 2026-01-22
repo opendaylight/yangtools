@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -25,17 +26,19 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.PresenceMixin;
 
-public abstract class AbstractContainerEffectiveStatement extends WithTypedefNamespace<QName, ContainerStatement>
-        implements ContainerEffectiveStatement, ContainerSchemaNode, DataSchemaNodeMixin<ContainerStatement>,
-            DataNodeContainerMixin<QName, ContainerStatement>, ActionNodeContainerMixin<QName, ContainerStatement>,
-            ActionNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
-            NotificationNodeContainerMixin<QName, ContainerStatement>,
-            NotificationNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
-            MustConstraintMixin<QName, ContainerStatement>, PresenceMixin<QName, ContainerStatement>,
-            AugmentationTargetMixin<QName, ContainerStatement> {
+public abstract class AbstractContainerEffectiveStatement
+        extends WithTypedefNamespace<QName, @NonNull ContainerStatement>
+        implements ContainerEffectiveStatement, ContainerSchemaNode, DataSchemaNodeMixin<@NonNull ContainerStatement>,
+            DataNodeContainerMixin<QName, @NonNull ContainerStatement>,
+            ActionNodeContainerMixin<QName, @NonNull ContainerStatement>,
+            ActionNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
+            NotificationNodeContainerMixin<QName, @NonNull ContainerStatement>,
+            NotificationNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
+            MustConstraintMixin<QName, @NonNull ContainerStatement>, PresenceMixin<QName, @NonNull ContainerStatement>,
+            AugmentationTargetMixin<QName, @NonNull ContainerStatement> {
     private final int flags;
 
-    AbstractContainerEffectiveStatement(final ContainerStatement declared,
+    AbstractContainerEffectiveStatement(final @NonNull ContainerStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags) {
         super(declared, substatements);
         this.flags = flags;

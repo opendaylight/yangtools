@@ -17,12 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
 
-public class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
-        implements AnyxmlEffectiveStatement, AnyxmlSchemaNode, OpaqueDataSchemaNodeMixin<AnyxmlStatement> {
+public class EmptyAnyxmlEffectiveStatement extends Default<QName, @NonNull AnyxmlStatement>
+        implements AnyxmlEffectiveStatement, AnyxmlSchemaNode, OpaqueDataSchemaNodeMixin<@NonNull AnyxmlStatement> {
     private final @NonNull QName argument;
     private final int flags;
 
-    public EmptyAnyxmlEffectiveStatement(final AnyxmlStatement declared, final QName argument, final int flags) {
+    public EmptyAnyxmlEffectiveStatement(final @NonNull AnyxmlStatement declared, final QName argument,
+            final int flags) {
         super(declared);
         this.argument = requireNonNull(argument);
         this.flags = flags;

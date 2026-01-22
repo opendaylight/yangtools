@@ -17,14 +17,20 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -47,38 +53,40 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class CaseStatementSupport
         extends AbstractImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(IfFeatureStatement.DEFINITION)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addAny(UsesStatement.DEFINITION)
-        .addOptional(WhenStatement.DEFINITION)
-        .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(IfFeatureStatement.DEFINITION)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addAny(UsesStatement.DEFINITION)
-        .addOptional(WhenStatement.DEFINITION)
-        .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(CaseStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
+            .addAny(ChoiceStatement.DEFINITION)
+            .addAny(ContainerStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addAny(IfFeatureStatement.DEFINITION)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addOptional(StatusStatement.DEFINITION)
+            .addAny(UsesStatement.DEFINITION)
+            .addOptional(WhenStatement.DEFINITION)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(CaseStatement.DEFINITION)
+            .addAny(AnydataStatement.DEFINITION)
+            .addAny(AnyxmlStatement.DEFINITION)
+            .addAny(ChoiceStatement.DEFINITION)
+            .addAny(ContainerStatement.DEFINITION)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addAny(IfFeatureStatement.DEFINITION)
+            .addAny(LeafStatement.DEFINITION)
+            .addAny(LeafListStatement.DEFINITION)
+            .addAny(ListStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addOptional(StatusStatement.DEFINITION)
+            .addAny(UsesStatement.DEFINITION)
+            .addOptional(WhenStatement.DEFINITION)
+            .build();
 
     private CaseStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.CASE, instantiatedPolicy(), config, validator);
+        super(CaseStatement.DEFINITION, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull CaseStatementSupport rfc6020Instance(final YangParserConfiguration config) {

@@ -12,18 +12,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
@@ -86,7 +89,7 @@ class YT1193Test {
     }
 
     private static void assertFooContainerReferences(final DeclaredStatement<?> foo) {
-        assertReference(foo, YangStmtMapping.CONTAINER, 13, 3);
+        assertReference(foo, ContainerStatement.DEFINITION, 13, 3);
 
         final var it = foo.declaredSubstatements().iterator();
         assertReference(it.next(), ActionStatement.DEFINITION, 14, 5);
@@ -95,7 +98,7 @@ class YT1193Test {
     }
 
     private static void assertDeprLeafListReferences(final DeclaredStatement<?> depr) {
-        assertReference(depr, YangStmtMapping.LEAF_LIST, 28, 3);
+        assertReference(depr, LeafListStatement.DEFINITION, 28, 3);
 
         final var it = depr.declaredSubstatements().iterator();
         assertReference(it.next(), TypeStatement.DEFINITION, 29, 5);
@@ -123,8 +126,8 @@ class YT1193Test {
         assertReference(it.next(), ImportStatement.DEFINITION, 6, 3);
         assertReference(it.next(), IdentityStatement.DEFINITION, 11, 3);
         assertReference(it.next(), IdentityStatement.DEFINITION, 13, 3);
-        assertReference(it.next(), YangStmtMapping.ANYDATA, 17, 3);
-        assertReference(it.next(), YangStmtMapping.ANYXML, 18, 3);
+        assertReference(it.next(), AnydataStatement.DEFINITION, 17, 3);
+        assertReference(it.next(), AnyxmlStatement.DEFINITION, 18, 3);
         assertReference(it.next(), IncludeStatement.DEFINITION, 20, 3);
         assertFalse(it.hasNext());
     }
