@@ -25,16 +25,16 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 
 abstract class AbstractLeafListEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<QName, LeafListStatement>
+        extends AbstractDeclaredEffectiveStatement.Default<QName, @NonNull LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode,
-            UserOrderedAwareMixin<QName, LeafListStatement, LeafListEffectiveStatement>,
-            DataSchemaNodeMixin<LeafListStatement>, MustConstraintMixin<QName, LeafListStatement> {
+            UserOrderedAwareMixin<QName, @NonNull LeafListStatement, LeafListEffectiveStatement>,
+            DataSchemaNodeMixin<@NonNull LeafListStatement>, MustConstraintMixin<QName, @NonNull LeafListStatement> {
     private static final VarHandle TYPE;
 
     static {
         try {
-            TYPE = MethodHandles.lookup().findVarHandle(AbstractLeafListEffectiveStatement.class, "type",
-                TypeDefinition.class);
+            TYPE = MethodHandles.lookup()
+                .findVarHandle(AbstractLeafListEffectiveStatement.class, "type", TypeDefinition.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -43,7 +43,6 @@ abstract class AbstractLeafListEffectiveStatement
     private final @NonNull Object substatements;
     private final int flags;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> type;
 

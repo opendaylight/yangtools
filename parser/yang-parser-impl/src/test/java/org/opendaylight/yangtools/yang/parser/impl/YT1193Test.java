@@ -69,7 +69,7 @@ class YT1193Test {
     }
 
     private static void assertFooContainerReferences(final DeclaredStatement<?> foo) {
-        assertReference(foo, YangStmtMapping.CONTAINER, 13, 3);
+        assertReference(foo, ContainerStatement.DEFINITION, 13, 3);
 
         final var it = foo.declaredSubstatements().iterator();
         assertReference(it.next(), ActionStatement.DEFINITION, 14, 5);
@@ -78,7 +78,7 @@ class YT1193Test {
     }
 
     private static void assertDeprLeafListReferences(final DeclaredStatement<?> depr) {
-        assertReference(depr, YangStmtMapping.LEAF_LIST, 28, 3);
+        assertReference(depr, LeafListStatement.DEFINITION, 28, 3);
 
         final var it = depr.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.TYPE, 29, 5);
@@ -107,7 +107,7 @@ class YT1193Test {
         assertReference(it.next(), YangStmtMapping.IDENTITY, 11, 3);
         assertReference(it.next(), YangStmtMapping.IDENTITY, 13, 3);
         assertReference(it.next(), YangStmtMapping.ANYDATA, 17, 3);
-        assertReference(it.next(), YangStmtMapping.ANYXML, 18, 3);
+        assertReference(it.next(), AnyxmlStatement.DEFINITION, 18, 3);
         assertReference(it.next(), YangStmtMapping.INCLUDE, 20, 3);
         assertFalse(it.hasNext());
     }

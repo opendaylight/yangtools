@@ -25,15 +25,15 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
 public abstract class AbstractLeafEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<QName, LeafStatement>
-        implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<LeafStatement>,
-            MandatoryMixin<QName, LeafStatement>, MustConstraintMixin<QName, LeafStatement> {
+        extends AbstractDeclaredEffectiveStatement.Default<QName, @NonNull LeafStatement>
+        implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<@NonNull LeafStatement>,
+                   MandatoryMixin<QName, @NonNull LeafStatement>, MustConstraintMixin<QName, @NonNull LeafStatement> {
     private static final VarHandle TYPE;
 
     static {
         try {
-            TYPE = MethodHandles.lookup().findVarHandle(AbstractLeafEffectiveStatement.class, "type",
-                TypeDefinition.class);
+            TYPE = MethodHandles.lookup()
+                .findVarHandle(AbstractLeafEffectiveStatement.class, "type", TypeDefinition.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -42,7 +42,6 @@ public abstract class AbstractLeafEffectiveStatement
     private final @NonNull Object substatements;
     private final int flags;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> type;
 

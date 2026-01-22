@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code leaf} statement.
  */
-public non-sealed interface LeafEffectiveStatement extends DataTreeEffectiveStatement<LeafStatement> {
+public non-sealed interface LeafEffectiveStatement extends DataTreeEffectiveStatement<@NonNull LeafStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.LEAF;
+        return LeafStatement.DEFINITION;
     }
 }
