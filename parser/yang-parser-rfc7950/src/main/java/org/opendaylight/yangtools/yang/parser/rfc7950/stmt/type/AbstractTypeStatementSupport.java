@@ -282,7 +282,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         };
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createBinary(final Current<QName, ?> ctx,
+    private static @NonNull TypeEffectiveStatement createBinary(final Current<QName, ?> ctx,
             final BinaryTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newBinaryBuilder(baseType, typeEffectiveQName(ctx));
@@ -302,7 +302,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
+    private @NonNull TypeEffectiveStatement createBits(final Current<?, ?> ctx,
             final BitsTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var builder = RestrictedTypes.newBitsBuilder(baseType, ctx.argumentAsTypeQName());
