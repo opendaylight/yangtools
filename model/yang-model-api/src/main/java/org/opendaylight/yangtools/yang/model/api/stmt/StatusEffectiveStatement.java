@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -41,9 +41,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * {@code bar}'s {@code baz} leaf. Users are advised to use utility classes related to statement inference which
  * consider parent/child relationships of statements.
  */
-public interface StatusEffectiveStatement extends EffectiveStatement<Status, StatusStatement> {
+public interface StatusEffectiveStatement extends EffectiveStatement<Status, @NonNull StatusStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.STATUS;
+    default StatementDefinition statementDefinition() {
+        return StatusStatement.DEFINITION;
     }
 }

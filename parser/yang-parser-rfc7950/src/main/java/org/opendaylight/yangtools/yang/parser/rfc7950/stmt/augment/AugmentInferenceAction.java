@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -50,7 +51,7 @@ final class AugmentInferenceAction implements InferenceAction {
     private static final Set<StatementDefinition> NOCOPY_DEF_SET = Set.of(
         DescriptionStatement.DEFINITION,
         ReferenceStatement.DEFINITION,
-        YangStmtMapping.STATUS,
+        StatusStatement.DEFINITION,
         YangStmtMapping.USES,
         YangStmtMapping.WHEN);
 

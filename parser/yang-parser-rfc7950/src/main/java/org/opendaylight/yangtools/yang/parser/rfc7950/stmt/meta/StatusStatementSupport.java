@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -29,10 +28,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class StatusStatementSupport
         extends AbstractStatementSupport<Status, StatusStatement, StatusEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.STATUS).build();
+        SubstatementValidator.builder(StatusStatement.DEFINITION).build();
 
     public StatusStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(StatusStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

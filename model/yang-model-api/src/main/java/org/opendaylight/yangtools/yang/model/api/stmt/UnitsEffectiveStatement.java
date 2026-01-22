@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code units} statement.
  */
-public interface UnitsEffectiveStatement extends EffectiveStatement<String, UnitsStatement> {
+public interface UnitsEffectiveStatement extends EffectiveStatement<String, @NonNull UnitsStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.UNITS;
+    default StatementDefinition statementDefinition() {
+        return UnitsStatement.DEFINITION;
     }
 }

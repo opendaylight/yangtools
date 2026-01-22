@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.impl.dagger.DaggerYangParserComponent;
@@ -82,8 +84,8 @@ class YT1193Test {
 
         final var it = depr.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.TYPE, 29, 5);
-        assertReference(it.next(), YangStmtMapping.UNITS, 36, 5);
-        assertReference(it.next(), YangStmtMapping.STATUS, 37, 5);
+        assertReference(it.next(), UnitsStatement.DEFINITION, 36, 5);
+        assertReference(it.next(), StatusStatement.DEFINITION, 37, 5);
         assertFalse(it.hasNext());
     }
 
@@ -92,7 +94,7 @@ class YT1193Test {
 
         final var it = obso.declaredSubstatements().iterator();
         assertReference(it.next(), YangStmtMapping.TYPE, 41, 5);
-        assertReference(it.next(), YangStmtMapping.STATUS, 44, 5);
+        assertReference(it.next(), StatusStatement.DEFINITION, 44, 5);
         assertFalse(it.hasNext());
     }
 

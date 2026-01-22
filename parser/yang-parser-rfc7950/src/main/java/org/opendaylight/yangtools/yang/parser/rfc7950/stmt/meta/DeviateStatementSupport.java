@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -64,7 +65,7 @@ public final class DeviateStatementSupport
             .addOptional(YangStmtMapping.MAX_ELEMENTS)
             .addOptional(YangStmtMapping.MIN_ELEMENTS)
             .addOptional(YangStmtMapping.TYPE)
-            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(UnitsStatement.DEFINITION)
             .build();
 
     // RFC6020
@@ -77,14 +78,14 @@ public final class DeviateStatementSupport
             .addOptional(YangStmtMapping.MIN_ELEMENTS)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
-            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addOptional(YangStmtMapping.DEFAULT)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
-            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(UnitsStatement.DEFINITION)
             .build();
 
     // RFC7950
@@ -97,27 +98,27 @@ public final class DeviateStatementSupport
             .addOptional(YangStmtMapping.MIN_ELEMENTS)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
-            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.DEVIATE)
             .addAny(YangStmtMapping.DEFAULT)
             .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.UNIQUE)
-            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(UnitsStatement.DEFINITION)
             .build();
 
-    private static final ImmutableSet<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(
+    private static final Set<YangStmtMapping> IMPLICIT_STATEMENTS = Set.of(
         YangStmtMapping.CONFIG,
         YangStmtMapping.MANDATORY,
         YangStmtMapping.MAX_ELEMENTS,
         YangStmtMapping.MIN_ELEMENTS);
-    private static final ImmutableSet<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
+    private static final Set<StatementDefinition> SINGLETON_STATEMENTS = Set.of(
         YangStmtMapping.CONFIG,
         YangStmtMapping.MANDATORY,
         YangStmtMapping.MIN_ELEMENTS,
         YangStmtMapping.MAX_ELEMENTS,
-        YangStmtMapping.UNITS);
+        UnitsStatement.DEFINITION);
 
     private final SubstatementValidator addValidator;
     private final SubstatementValidator deleteValidator;

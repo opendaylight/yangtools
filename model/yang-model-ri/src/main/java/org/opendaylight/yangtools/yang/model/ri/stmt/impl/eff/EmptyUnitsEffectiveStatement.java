@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyUnitsEffectiveStatement extends DefaultArgument<String, UnitsStatement>
+public final class EmptyUnitsEffectiveStatement extends DefaultArgument<String, @NonNull UnitsStatement>
         implements UnitsEffectiveStatement {
-    public EmptyUnitsEffectiveStatement(final UnitsStatement declared) {
+    public EmptyUnitsEffectiveStatement(final @NonNull UnitsStatement declared) {
         super(declared);
     }
 }

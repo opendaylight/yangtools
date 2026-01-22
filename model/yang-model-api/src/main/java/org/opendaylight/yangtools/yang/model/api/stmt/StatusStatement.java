@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -16,8 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code status} statement.
  */
 public interface StatusStatement extends DeclaredStatement<Status> {
+    /**
+     * The definition of {@code status} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        StatusStatement.class, StatusEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "status", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.STATUS;
+        return DEFINITION;
     }
 }

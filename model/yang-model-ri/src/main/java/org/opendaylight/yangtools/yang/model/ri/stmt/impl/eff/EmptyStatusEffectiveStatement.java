@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public final class EmptyStatusEffectiveStatement extends DefaultArgument<Status, StatusStatement>
+public final class EmptyStatusEffectiveStatement extends DefaultArgument<Status, @NonNull StatusStatement>
         implements StatusEffectiveStatement {
     /*
      * status has low argument cardinality, hence we can reuse them in case declaration does not have any
@@ -27,7 +27,7 @@ public final class EmptyStatusEffectiveStatement extends DefaultArgument<Status,
     public static final @NonNull EmptyStatusEffectiveStatement OBSOLETE =
         new EmptyStatusEffectiveStatement(EmptyStatusStatement.OBSOLETE);
 
-    public EmptyStatusEffectiveStatement(final StatusStatement declared) {
+    public EmptyStatusEffectiveStatement(final @NonNull StatusStatement declared) {
         super(declared);
     }
 }

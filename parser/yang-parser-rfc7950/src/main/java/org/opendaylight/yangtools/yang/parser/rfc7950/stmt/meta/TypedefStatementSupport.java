@@ -21,9 +21,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -51,9 +53,9 @@ public final class TypedefStatementSupport extends
         .addOptional(YangStmtMapping.DEFAULT)
         .addOptional(DescriptionStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(StatusStatement.DEFINITION)
         .addMandatory(YangStmtMapping.TYPE)
-        .addOptional(YangStmtMapping.UNITS)
+        .addOptional(UnitsStatement.DEFINITION)
         .build();
 
     public TypedefStatementSupport(final YangParserConfiguration config) {

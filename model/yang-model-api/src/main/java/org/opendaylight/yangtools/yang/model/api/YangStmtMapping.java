@@ -112,8 +112,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -122,8 +120,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
@@ -189,13 +185,11 @@ public enum YangStmtMapping implements StatementDefinition {
         "value"),
     REVISION(RevisionStatement.class, RevisionEffectiveStatement.class, "revision", "date"),
     REVISION_DATE(RevisionDateStatement.class, RevisionDateEffectiveStatement.class, "revision-date", "date"),
-    STATUS(StatusStatement.class, StatusEffectiveStatement.class, "status", "value"),
     SUBMODULE(SubmoduleStatement.class, SubmoduleEffectiveStatement.class, "submodule", "name"),
     @SuppressWarnings({ "unchecked", "rawtypes" })
     TYPE(TypeStatement.class, (Class) TypeEffectiveStatement.class, "type", "name"),
     TYPEDEF(TypedefStatement.class, TypedefEffectiveStatement.class, "typedef", "name"),
     UNIQUE(UniqueStatement.class, UniqueEffectiveStatement.class, "unique", "tag"),
-    UNITS(UnitsStatement.class, UnitsEffectiveStatement.class, "units", "name"),
     USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name"),
     VALUE(ValueStatement.class, ValueEffectiveStatement.class, "value", "value"),
     WHEN(WhenStatement.class, WhenEffectiveStatement.class, "when", "condition"),

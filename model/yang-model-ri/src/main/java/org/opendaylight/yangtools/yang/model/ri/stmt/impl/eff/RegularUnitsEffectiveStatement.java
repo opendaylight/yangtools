@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularUnitsEffectiveStatement extends WithSubstatements<String, UnitsStatement>
+public final class RegularUnitsEffectiveStatement extends WithSubstatements<String, @NonNull UnitsStatement>
         implements UnitsEffectiveStatement {
-    public RegularUnitsEffectiveStatement(final UnitsStatement declared,
+    public RegularUnitsEffectiveStatement(final @NonNull UnitsStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }
