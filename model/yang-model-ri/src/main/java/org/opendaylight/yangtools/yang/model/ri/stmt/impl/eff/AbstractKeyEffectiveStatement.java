@@ -15,13 +15,13 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyKeyStatement
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 
 abstract class AbstractKeyEffectiveStatement
-        extends AbstractDeclaredEffectiveStatement.Default<KeyArgument, KeyStatement>
+        extends AbstractDeclaredEffectiveStatement.Default<KeyArgument, @NonNull KeyStatement>
         implements KeyEffectiveStatement {
     abstract static class Foreign extends AbstractKeyEffectiveStatement {
         // Polymorphic: either a QName or KeyArgument.OfMore
         private final @NonNull Object argument;
 
-        Foreign(final KeyStatement declared, final KeyArgument argument) {
+        Foreign(final KeyStatement declared, final @NonNull KeyArgument argument) {
             super(declared);
             this.argument = EmptyKeyStatement.maskArgument(argument);
         }
