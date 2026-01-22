@@ -26,15 +26,16 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
-public final class UndeclaredLeafEffectiveStatement extends AbstractUndeclaredEffectiveStatement<QName, LeafStatement>
-        implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<LeafStatement>,
-                   MandatoryMixin<QName, LeafStatement>, MustConstraintMixin<QName, LeafStatement> {
+public final class UndeclaredLeafEffectiveStatement
+        extends AbstractUndeclaredEffectiveStatement<QName, @NonNull LeafStatement>
+        implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<@NonNull LeafStatement>,
+                   MandatoryMixin<QName, @NonNull LeafStatement>, MustConstraintMixin<QName, @NonNull LeafStatement> {
     private static final VarHandle TYPE;
 
     static {
         try {
-            TYPE = MethodHandles.lookup().findVarHandle(UndeclaredLeafEffectiveStatement.class, "type",
-                TypeDefinition.class);
+            TYPE = MethodHandles.lookup()
+                .findVarHandle(UndeclaredLeafEffectiveStatement.class, "type", TypeDefinition.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -44,7 +45,6 @@ public final class UndeclaredLeafEffectiveStatement extends AbstractUndeclaredEf
     private final @NonNull QName argument;
     private final int flags;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> type;
 

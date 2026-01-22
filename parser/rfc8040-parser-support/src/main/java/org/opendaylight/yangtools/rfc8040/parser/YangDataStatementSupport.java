@@ -65,13 +65,13 @@ public final class YangDataStatementSupport
     // The cardinality is not exactly constrained, but the entirety of substatements are required to resolve to a single
     // XML document (page 80). This is enforced when we arrive at full declaration.
     private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatement.DEFINITION)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
+        .addAny(ContainerStatement.DEFINITION)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
         .addAny(YangStmtMapping.CHOICE)
         .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(YangStmtMapping.USES)
         .build();
 
