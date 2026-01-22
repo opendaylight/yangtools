@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LeafListStatementSupport
         extends AbstractSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
+        SubstatementValidator.builder(LeafListStatement.DEFINITION)
             .addOptional(YangStmtMapping.CONFIG)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(YangStmtMapping.IF_FEATURE)
@@ -60,7 +60,7 @@ public final class LeafListStatementSupport
             .addOptional(YangStmtMapping.WHEN)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
+        SubstatementValidator.builder(LeafListStatement.DEFINITION)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.DEFAULT)
             .addOptional(DescriptionStatement.DEFINITION)
@@ -77,7 +77,7 @@ public final class LeafListStatementSupport
             .build();
 
     private LeafListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.LEAF_LIST, instantiatedPolicy(), config, validator);
+        super(LeafListStatement.DEFINITION, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull LeafListStatementSupport rfc6020Instance(final YangParserConfiguration config) {

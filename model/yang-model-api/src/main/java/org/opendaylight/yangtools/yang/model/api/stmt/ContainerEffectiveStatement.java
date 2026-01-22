@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code container} statement.
  */
 public non-sealed interface ContainerEffectiveStatement
-    extends DataTreeEffectiveStatement<ContainerStatement>,
-            DataTreeAwareEffectiveStatement<QName, ContainerStatement>,
-            TypedefAwareEffectiveStatement<QName, ContainerStatement> {
+    extends DataTreeEffectiveStatement<@NonNull ContainerStatement>,
+            DataTreeAwareEffectiveStatement<QName, @NonNull ContainerStatement>,
+            TypedefAwareEffectiveStatement<QName, @NonNull ContainerStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.CONTAINER;
+        return ContainerStatement.DEFINITION;
     }
 }

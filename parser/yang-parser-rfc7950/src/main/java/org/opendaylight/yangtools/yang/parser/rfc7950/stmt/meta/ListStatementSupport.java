@@ -23,8 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
@@ -51,18 +56,18 @@ import org.slf4j.LoggerFactory;
 public final class ListStatementSupport
         extends AbstractSchemaTreeStatementSupport<ListStatement, ListEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(ListStatementSupport.class);
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
-        .addAny(YangStmtMapping.ANYXML)
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(ListStatement.DEFINITION)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(YangStmtMapping.CHOICE)
         .addOptional(YangStmtMapping.CONFIG)
-        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(ContainerStatement.DEFINITION)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
         .addAny(YangStmtMapping.IF_FEATURE)
         .addOptional(YangStmtMapping.KEY)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
         .addOptional(YangStmtMapping.MAX_ELEMENTS)
         .addOptional(YangStmtMapping.MIN_ELEMENTS)
         .addAny(YangStmtMapping.MUST)
@@ -74,20 +79,20 @@ public final class ListStatementSupport
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(ListStatement.DEFINITION)
         .addAny(ActionStatement.DEFINITION)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
+        .addAny(AnydataStatement.DEFINITION)
+        .addAny(AnyxmlStatement.DEFINITION)
         .addAny(YangStmtMapping.CHOICE)
         .addOptional(YangStmtMapping.CONFIG)
-        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(ContainerStatement.DEFINITION)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
         .addAny(YangStmtMapping.IF_FEATURE)
         .addOptional(YangStmtMapping.KEY)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
+        .addAny(LeafStatement.DEFINITION)
+        .addAny(LeafListStatement.DEFINITION)
+        .addAny(ListStatement.DEFINITION)
         .addOptional(YangStmtMapping.MAX_ELEMENTS)
         .addOptional(YangStmtMapping.MIN_ELEMENTS)
         .addAny(YangStmtMapping.MUST)
@@ -104,7 +109,7 @@ public final class ListStatementSupport
     private final boolean warnForUnkeyedLists;
 
     ListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.LIST, instantiatedPolicy(), config, validator);
+        super(ListStatement.DEFINITION, instantiatedPolicy(), config, validator);
         warnForUnkeyedLists = config.warnForUnkeyedLists();
     }
 
