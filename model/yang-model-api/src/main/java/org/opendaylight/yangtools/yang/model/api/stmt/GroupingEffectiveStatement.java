@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code grouping} statement.
  */
 public interface GroupingEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<QName, GroupingStatement>,
-                TypedefAwareEffectiveStatement<QName, GroupingStatement> {
+        extends DataTreeAwareEffectiveStatement<QName, @NonNull GroupingStatement>,
+                TypedefAwareEffectiveStatement<QName, @NonNull GroupingStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.GROUPING;
+        return GroupingStatement.DEFINITION;
     }
 }

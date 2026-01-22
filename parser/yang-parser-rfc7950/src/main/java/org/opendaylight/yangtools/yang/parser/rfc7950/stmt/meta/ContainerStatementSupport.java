@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
@@ -32,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -57,7 +59,7 @@ public final class ContainerStatementSupport
             .addOptional(ConfigStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
@@ -67,7 +69,7 @@ public final class ContainerStatementSupport
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addAny(TypedefStatement.DEFINITION)
-            .addAny(YangStmtMapping.USES)
+            .addAny(UsesStatement.DEFINITION)
             .addOptional(WhenStatement.DEFINITION)
             .build();
 
@@ -80,7 +82,7 @@ public final class ContainerStatementSupport
             .addOptional(ConfigStatement.DEFINITION)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
@@ -91,7 +93,7 @@ public final class ContainerStatementSupport
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addAny(TypedefStatement.DEFINITION)
-            .addAny(YangStmtMapping.USES)
+            .addAny(UsesStatement.DEFINITION)
             .addOptional(WhenStatement.DEFINITION)
             .build();
 

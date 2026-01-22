@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
@@ -50,7 +49,7 @@ abstract class AbstractTypeSupport<T extends TypeStatement>
         QName::getLocalName);
 
     AbstractTypeSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica(), config, requireNonNull(validator));
+        super(TypeStatement.DEFINITION, StatementPolicy.exactReplica(), config, requireNonNull(validator));
     }
 
     @Override

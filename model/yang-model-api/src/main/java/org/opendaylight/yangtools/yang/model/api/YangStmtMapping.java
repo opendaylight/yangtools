@@ -30,12 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
@@ -44,10 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 
 /**
  * Mapping for both RFC6020 and RFC7950 statements.
@@ -61,16 +53,11 @@ public enum YangStmtMapping implements StatementDefinition {
     CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
     CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
     CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
-    DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
-    GROUPING(GroupingStatement.class, GroupingEffectiveStatement.class, "grouping", "name"),
     LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
     LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
-    REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    TYPE(TypeStatement.class, (Class) TypeEffectiveStatement.class, "type", "name"),
-    USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name");
+    REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
     private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;

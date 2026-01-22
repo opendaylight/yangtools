@@ -14,13 +14,13 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
@@ -37,9 +37,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class IdentityRefSpecificationSupport extends AbstractTypeSupport<IdentityRefSpecification> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(BaseStatement.DEFINITION).build();
+        SubstatementValidator.builder(TypeStatement.DEFINITION).addMandatory(BaseStatement.DEFINITION).build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(BaseStatement.DEFINITION).build();
+        SubstatementValidator.builder(TypeStatement.DEFINITION).addMultiple(BaseStatement.DEFINITION).build();
 
     private IdentityRefSpecificationSupport(final YangParserConfiguration config,
             final SubstatementValidator validator) {

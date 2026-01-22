@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
@@ -35,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -64,7 +66,7 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(ExtensionStatement.DEFINITION)
             .addAny(FeatureStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(IdentityStatement.DEFINITION)
             .addAny(ImportStatement.DEFINITION)
             .addAny(IncludeStatement.DEFINITION)
@@ -77,7 +79,7 @@ public final class SubmoduleStatementSupport
             .addAny(RevisionStatement.DEFINITION)
             .addAny(RpcStatement.DEFINITION)
             .addAny(TypedefStatement.DEFINITION)
-            .addAny(YangStmtMapping.USES)
+            .addAny(UsesStatement.DEFINITION)
             .addOptional(YangVersionStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
@@ -93,7 +95,7 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.DEVIATION)
             .addAny(ExtensionStatement.DEFINITION)
             .addAny(FeatureStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(IdentityStatement.DEFINITION)
             .addAny(ImportStatement.DEFINITION)
             .addAny(IncludeStatement.DEFINITION)
@@ -106,7 +108,7 @@ public final class SubmoduleStatementSupport
             .addAny(RevisionStatement.DEFINITION)
             .addAny(RpcStatement.DEFINITION)
             .addAny(TypedefStatement.DEFINITION)
-            .addAny(YangStmtMapping.USES)
+            .addAny(UsesStatement.DEFINITION)
             .addOptional(YangVersionStatement.DEFINITION)
             .build();
 

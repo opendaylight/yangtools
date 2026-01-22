@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -17,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveSta
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.DecimalTypeBuilder;
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64Specification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE)
+        SubstatementValidator.builder(TypeStatement.DEFINITION)
             .addMandatory(FractionDigitsStatement.DEFINITION)
             .addOptional(RangeStatement.DEFINITION)
             .build();

@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class RegularPathEffectiveStatement extends WithSubstatements<PathExpression, PathStatement>
+public final class RegularPathEffectiveStatement extends WithSubstatements<PathExpression, @NonNull PathStatement>
         implements PathEffectiveStatement {
     public RegularPathEffectiveStatement(final PathStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

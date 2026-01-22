@@ -12,7 +12,6 @@ import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -22,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class AnnotationStatementSupport
          extends AbstractStatementSupport<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AnnotationStatement.DEFINITION)
-        .addMandatory(YangStmtMapping.TYPE)
+        .addMandatory(TypeStatement.DEFINITION)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(IfFeatureStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)

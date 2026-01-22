@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -63,21 +64,21 @@ public final class DeviateStatementSupport
 
     // Shared by both
     private static final SubstatementValidator NOT_SUPPORTED_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE).build();
+        SubstatementValidator.builder(DeviateStatement.DEFINITION).build();
     private static final SubstatementValidator REPLACE_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
             .addOptional(DefaultStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)
             .addOptional(MinElementsStatement.DEFINITION)
-            .addOptional(YangStmtMapping.TYPE)
+            .addOptional(TypeStatement.DEFINITION)
             .addOptional(UnitsStatement.DEFINITION)
             .build();
 
     // RFC6020
     private static final SubstatementValidator RFC6020_ADD_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
             .addOptional(DefaultStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
@@ -88,7 +89,7 @@ public final class DeviateStatementSupport
             .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(DefaultStatement.DEFINITION)
             .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
@@ -97,7 +98,7 @@ public final class DeviateStatementSupport
 
     // RFC7950
     private static final SubstatementValidator RFC7950_ADD_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addOptional(ConfigStatement.DEFINITION)
             .addAny(DefaultStatement.DEFINITION)
             .addOptional(MandatoryStatement.DEFINITION)
@@ -108,7 +109,7 @@ public final class DeviateStatementSupport
             .addOptional(UnitsStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATE)
+        SubstatementValidator.builder(DeviateStatement.DEFINITION)
             .addAny(DefaultStatement.DEFINITION)
             .addAny(MustStatement.DEFINITION)
             .addAny(UniqueStatement.DEFINITION)
@@ -134,7 +135,8 @@ public final class DeviateStatementSupport
             final SubstatementValidator addValidator, final SubstatementValidator deleteValidator) {
         // Note: we are performing our own validation based on deviate kind.
         // TODO: perhaps we should do argumentSpecificSupport?
-        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), SubtreePolicy.template(), config, null);
+        super(DeviateStatement.DEFINITION, StatementPolicy.contextIndependent(), SubtreePolicy.template(), config,
+            null);
         this.addValidator = requireNonNull(addValidator);
         this.deleteValidator = requireNonNull(deleteValidator);
     }

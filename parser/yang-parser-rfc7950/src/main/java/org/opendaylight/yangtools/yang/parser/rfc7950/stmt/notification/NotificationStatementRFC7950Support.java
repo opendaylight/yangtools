@@ -11,6 +11,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -36,7 +38,7 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .addAny(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
@@ -45,7 +47,7 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addAny(TypedefStatement.DEFINITION)
-            .addAny(YangStmtMapping.USES)
+            .addAny(UsesStatement.DEFINITION)
             .build();
 
     public NotificationStatementRFC7950Support(final YangParserConfiguration config) {

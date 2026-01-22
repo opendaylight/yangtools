@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -17,8 +18,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface GroupingStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
         NotificationStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName> {
+    /**
+     * The definition of {@code grouping} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        GroupingStatement.class, GroupingEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "grouping", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.GROUPING;
+        return DEFINITION;
     }
 }

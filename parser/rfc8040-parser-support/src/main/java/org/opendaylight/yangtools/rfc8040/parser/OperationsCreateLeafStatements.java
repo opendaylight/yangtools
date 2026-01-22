@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -81,7 +82,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
 
         if (!qnames.isEmpty()) {
             final var leafSupport = getSupport(YangStmtMapping.LEAF, LeafEffectiveStatement.class);
-            final var typeSupport = getSupport(YangStmtMapping.TYPE, TypeEffectiveStatement.class);
+            final var typeSupport = getSupport(TypeStatement.DEFINITION, TypeEffectiveStatement.class);
 
             for (var qname : qnames) {
                 final var leaf = operations.createUndeclaredSubstatement(leafSupport, qname);

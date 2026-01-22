@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -57,7 +58,7 @@ public final class CaseStatementSupport
         .addAny(YangStmtMapping.LIST)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
-        .addAny(YangStmtMapping.USES)
+        .addAny(UsesStatement.DEFINITION)
         .addOptional(WhenStatement.DEFINITION)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CASE)
@@ -72,7 +73,7 @@ public final class CaseStatementSupport
         .addAny(YangStmtMapping.LIST)
         .addOptional(ReferenceStatement.DEFINITION)
         .addOptional(StatusStatement.DEFINITION)
-        .addAny(YangStmtMapping.USES)
+        .addAny(UsesStatement.DEFINITION)
         .addOptional(WhenStatement.DEFINITION)
         .build();
 

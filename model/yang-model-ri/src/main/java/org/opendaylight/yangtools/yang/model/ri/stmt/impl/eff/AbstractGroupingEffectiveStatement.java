@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -21,11 +22,12 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
-public abstract class AbstractGroupingEffectiveStatement extends WithTypedefNamespace<QName, GroupingStatement>
+public abstract class AbstractGroupingEffectiveStatement extends WithTypedefNamespace<QName, @NonNull GroupingStatement>
         implements GroupingDefinition, GroupingEffectiveStatement,
-            DataNodeContainerMixin<QName, GroupingStatement>, SchemaNodeMixin<GroupingStatement>,
-            ActionNodeContainerMixin<QName, GroupingStatement>,
-            NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
+            DataNodeContainerMixin<QName, @NonNull GroupingStatement>, SchemaNodeMixin<@NonNull GroupingStatement>,
+            ActionNodeContainerMixin<QName, @NonNull GroupingStatement>,
+            NotificationNodeContainerMixin<QName, @NonNull GroupingStatement>,
+            AddedByUsesMixin<QName, @NonNull GroupingStatement> {
     private final int flags;
 
     AbstractGroupingEffectiveStatement(final GroupingStatement declared,

@@ -9,16 +9,24 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code uses} statement.
  */
 public interface UsesStatement extends DataDefinitionStatement {
+    /**
+     * The definition of {@code uses} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(UsesStatement.class, UsesEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "uses", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.USES;
+        return DEFINITION;
     }
 
     default @NonNull Collection<? extends @NonNull RefineStatement> getRefines() {

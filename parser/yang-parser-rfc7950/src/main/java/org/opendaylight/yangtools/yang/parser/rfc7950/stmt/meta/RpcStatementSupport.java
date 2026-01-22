@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
@@ -37,7 +37,7 @@ public final class RpcStatementSupport extends AbstractOperationStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(RpcStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(InputStatement.DEFINITION)
             .addOptional(OutputStatement.DEFINITION)

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -14,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code path} statement.
  */
-public interface PathEffectiveStatement extends EffectiveStatement<PathExpression, PathStatement> {
+public interface PathEffectiveStatement extends EffectiveStatement<PathExpression, @NonNull PathStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return PathStatement.DEFINITION;

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -54,8 +55,7 @@ abstract class AbstractAugmentStatementSupport
         // The argument is either Absolute or Descendant based on whether the statement is declared within a 'uses'
         // statement. The mechanics differs wildly between the two cases, so let's start by ensuring our argument
         // is in the correct domain.
-        final var parent = ctx.coerceParentContext().publicDefinition();
-        return parent == YangStmtMapping.USES
+        return ctx.coerceParentContext().producesDeclared(UsesStatement.class)
             ? ctx.identifierBinding().parseDescendantSchemaNodeidAs("uses-augment-arg", ctx, value)
             : ctx.identifierBinding().parseAbsoluteSchemaNodeidAs("augment-arg", ctx, value);
     }
@@ -125,10 +125,7 @@ abstract class AbstractAugmentStatementSupport
     static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.
         final var parent = augmentContext.coerceParentContext();
-        if (YangStmtMapping.USES == parent.publicDefinition()) {
-            return parent.getParentContext();
-        }
-        return parent;
+        return parent.producesDeclared(UsesStatement.class) ? parent.getParentContext() : parent;
     }
 
     static boolean hasWhenSubstatement(final StmtContext<?, ?, ?> ctx) {

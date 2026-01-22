@@ -33,13 +33,13 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
  * also substatements here. We do not handle further refines, though, as that requires yet another field, further
  * growing instance size. That case is handled by {@link FullCopiedUsesEffectiveStatement}.
  */
-class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstatements<QName, UsesStatement>
-        implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, UsesStatement>,
-            WhenConditionMixin<QName, UsesStatement>, WithStatus<QName, UsesStatement> {
+class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstatements<QName, @NonNull UsesStatement>
+        implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, @NonNull UsesStatement>,
+            WhenConditionMixin<QName, @NonNull UsesStatement>, WithStatus<QName, @NonNull UsesStatement> {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final int flags;
 
-    SimpleCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
+    SimpleCopiedUsesEffectiveStatement(final @NonNull UsesStatement declared, final QName argument,
             final GroupingDefinition sourceGrouping, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, argument, substatements);
@@ -47,7 +47,7 @@ class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstat
         this.flags = flags;
     }
 
-    SimpleCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
+    SimpleCopiedUsesEffectiveStatement(final @NonNull UsesStatement declared, final QName argument,
             final GroupingDefinition sourceGrouping, final int flags) {
         this(declared, argument, sourceGrouping, flags, ImmutableList.of());
     }

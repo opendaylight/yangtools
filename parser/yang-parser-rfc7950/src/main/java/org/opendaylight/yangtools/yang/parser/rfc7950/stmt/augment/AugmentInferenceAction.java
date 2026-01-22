@@ -55,7 +55,7 @@ final class AugmentInferenceAction implements InferenceAction {
         DescriptionStatement.DEFINITION,
         ReferenceStatement.DEFINITION,
         StatusStatement.DEFINITION,
-        YangStmtMapping.USES,
+        UsesStatement.DEFINITION,
         WhenStatement.DEFINITION);
 
     private final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
@@ -99,10 +99,8 @@ final class AugmentInferenceAction implements InferenceAction {
 
     @Override
     public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-        /*
-         * Do not fail, if it is an uses-augment to an unknown node.
-         */
-        if (YangStmtMapping.USES == augmentNode.coerceParentContext().publicDefinition()) {
+        // do not fail, if it is an uses-augment to an unknown node
+        if (augmentNode.coerceParentContext().producesDeclared(UsesStatement.class)) {
             if (!augmentNode.isSupportedToBuildEffective()) {
                 // We are not supported, hence the uses is not effective and we should bail
                 return;

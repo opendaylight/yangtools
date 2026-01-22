@@ -32,13 +32,13 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
  * <p>This provides minimum footprint, as we share the argument from the declared instance and just keep the flags and
  * source grouping pointer.
  */
-class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, UsesStatement>
-        implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, UsesStatement>,
-            WhenConditionMixin<QName, UsesStatement>, WithStatus<QName, UsesStatement> {
+class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, @NonNull UsesStatement>
+        implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, @NonNull UsesStatement>,
+            WhenConditionMixin<QName, @NonNull UsesStatement>, WithStatus<QName, @NonNull UsesStatement> {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final int flags;
 
-    EmptyLocalUsesEffectiveStatement(final UsesStatement declared, final GroupingDefinition sourceGrouping,
+    EmptyLocalUsesEffectiveStatement(final @NonNull UsesStatement declared, final GroupingDefinition sourceGrouping,
             final int flags) {
         super(declared);
         this.sourceGrouping = requireNonNull(sourceGrouping);

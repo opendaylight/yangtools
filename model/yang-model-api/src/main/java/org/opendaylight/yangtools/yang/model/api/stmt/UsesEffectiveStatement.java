@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code uses} statement.
  */
-public interface UsesEffectiveStatement extends EffectiveStatement<QName, UsesStatement> {
+public interface UsesEffectiveStatement extends EffectiveStatement<QName, @NonNull UsesStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.USES;
+        return UsesStatement.DEFINITION;
     }
 }

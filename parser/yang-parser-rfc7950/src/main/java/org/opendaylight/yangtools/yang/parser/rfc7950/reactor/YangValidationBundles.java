@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 
@@ -91,7 +92,7 @@ public final class YangValidationBundles {
         .put(VERSION_1_1, MustStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
                 YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML,
                 InputStatement.DEFINITION, OutputStatement.DEFINITION, NotificationStatement.DEFINITION))
-        .put(VERSION_1, YangStmtMapping.TYPE, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
+        .put(VERSION_1, TypeStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
         .put(VERSION_1, UniqueStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.LIST))
         .put(VERSION_1, UnitsStatement.DEFINITION, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST))
         .build();

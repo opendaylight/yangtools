@@ -30,9 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-public final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateKind, DeviateStatement>
+public final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateKind, @NonNull DeviateStatement>
         implements DeviateDefinition, DeviateEffectiveStatement {
-    public DeviateEffectiveStatementImpl(final DeviateStatement declared,
+    public DeviateEffectiveStatementImpl(final @NonNull DeviateStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }

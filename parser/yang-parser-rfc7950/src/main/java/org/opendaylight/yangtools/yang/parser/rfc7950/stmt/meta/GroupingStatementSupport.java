@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -45,29 +46,29 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class GroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.GROUPING)
+        SubstatementValidator.builder(GroupingStatement.DEFINITION)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addAny(TypedefStatement.DEFINITION)
-            .addAny(YangStmtMapping.USES)
+            .addAny(UsesStatement.DEFINITION)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.GROUPING)
+        SubstatementValidator.builder(GroupingStatement.DEFINITION)
             .addAny(ActionStatement.DEFINITION)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(GroupingStatement.DEFINITION)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
@@ -75,11 +76,11 @@ public final class GroupingStatementSupport
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
             .addAny(TypedefStatement.DEFINITION)
-            .addAny(YangStmtMapping.USES)
+            .addAny(UsesStatement.DEFINITION)
             .build();
 
     GroupingStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.GROUPING, StatementPolicy.copyDeclared(
+        super(GroupingStatement.DEFINITION, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.history().isAddedByUses() == current.history().isAddedByUses()
                 && copy.getArgument().equals(current.getArgument())), SubtreePolicy.template(), config, validator);

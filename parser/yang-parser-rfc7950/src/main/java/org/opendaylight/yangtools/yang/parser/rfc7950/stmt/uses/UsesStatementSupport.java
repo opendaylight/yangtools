@@ -65,7 +65,7 @@ public final class UsesStatementSupport
         extends AbstractQNameStatementSupport<UsesStatement, UsesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.USES)
+        SubstatementValidator.builder(UsesStatement.DEFINITION)
             .addAny(YangStmtMapping.AUGMENT)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
@@ -76,7 +76,7 @@ public final class UsesStatementSupport
             .build();
 
     public UsesStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.USES, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
+        super(UsesStatement.DEFINITION, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

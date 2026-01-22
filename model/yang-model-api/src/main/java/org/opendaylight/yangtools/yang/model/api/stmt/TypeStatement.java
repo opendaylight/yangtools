@@ -11,7 +11,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -19,9 +19,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code type} statement.
  */
 public interface TypeStatement extends DeclaredStatement<QName> {
+    /**
+     * The definition of {@code type} statement.
+     *
+     * @since 15.0.0
+     */
+    @SuppressWarnings({ "unchecked" })
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        TypeStatement.class, TypeEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "type", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.TYPE;
+        return DEFINITION;
     }
 
     // FIXME: 7.0.0: this interface does not have an implementation

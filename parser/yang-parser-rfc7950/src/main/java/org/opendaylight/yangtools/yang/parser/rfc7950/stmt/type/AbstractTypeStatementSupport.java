@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -90,7 +89,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement>
         implements UndeclaredStatementFactory<QName, TypeStatement, TypeEffectiveStatement<TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.TYPE)
+        SubstatementValidator.builder(TypeStatement.DEFINITION)
             .addOptional(BaseStatement.DEFINITION)
             .addAny(BitStatement.DEFINITION)
             .addAny(EnumStatement.DEFINITION)
@@ -100,7 +99,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             .addAny(PatternStatement.DEFINITION)
             .addOptional(RangeStatement.DEFINITION)
             .addOptional(RequireInstanceStatement.DEFINITION)
-            .addAny(YangStmtMapping.TYPE)
+            .addAny(TypeStatement.DEFINITION)
             .build();
 
     private static final ImmutableMap<QName, BuiltinEffectiveStatement> STATIC_BUILT_IN_TYPES =

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,10 +45,10 @@ class QNameToStatementDefinitionMapTest {
 
     @Test
     void testPut() {
-        doReturn(YangStmtMapping.TYPE).when(support).definition();
+        doReturn(TypeStatement.DEFINITION).when(support).definition();
 
         map.put(QNAME, support);
-        assertSame(YangStmtMapping.TYPE, map.get(QNAME));
+        assertSame(TypeStatement.DEFINITION, map.get(QNAME));
         assertSame(support, map.getSupport(QNAME));
     }
 }

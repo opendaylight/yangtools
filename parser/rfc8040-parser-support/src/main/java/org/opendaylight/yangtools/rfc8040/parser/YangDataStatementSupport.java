@@ -72,7 +72,7 @@ public final class YangDataStatementSupport
         .addAny(YangStmtMapping.CHOICE)
         .addAny(YangStmtMapping.ANYDATA)
         .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.USES)
+        .addAny(UsesStatement.DEFINITION)
         .build();
 
     @VisibleForTesting

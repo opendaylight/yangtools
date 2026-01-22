@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -69,7 +71,7 @@ public final class ListStatementSupport
         .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(YangStmtMapping.GROUPING)
+        .addAny(GroupingStatement.DEFINITION)
         .addAny(IfFeatureStatement.DEFINITION)
         .addOptional(KeyStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
@@ -83,7 +85,7 @@ public final class ListStatementSupport
         .addOptional(StatusStatement.DEFINITION)
         .addAny(TypedefStatement.DEFINITION)
         .addAny(UniqueStatement.DEFINITION)
-        .addAny(YangStmtMapping.USES)
+        .addAny(UsesStatement.DEFINITION)
         .addOptional(WhenStatement.DEFINITION)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
@@ -94,7 +96,7 @@ public final class ListStatementSupport
         .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
         .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(YangStmtMapping.GROUPING)
+        .addAny(GroupingStatement.DEFINITION)
         .addAny(IfFeatureStatement.DEFINITION)
         .addOptional(KeyStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
@@ -109,7 +111,7 @@ public final class ListStatementSupport
         .addOptional(StatusStatement.DEFINITION)
         .addAny(TypedefStatement.DEFINITION)
         .addAny(UniqueStatement.DEFINITION)
-        .addAny(YangStmtMapping.USES)
+        .addAny(UsesStatement.DEFINITION)
         .addOptional(WhenStatement.DEFINITION)
         .build();
 
