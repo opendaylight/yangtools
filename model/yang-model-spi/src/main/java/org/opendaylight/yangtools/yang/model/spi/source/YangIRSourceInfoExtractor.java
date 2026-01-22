@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Belongs
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
@@ -36,7 +37,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
  */
 abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor {
     static final class ForModule extends YangIRSourceInfoExtractor {
-        private static final @NonNull String NAMESPACE = YangStmtMapping.NAMESPACE.statementName().getLocalName();
+        private static final @NonNull String NAMESPACE = YangStmtMapping.NAMESPACE.simpleName();
 
         @NonNullByDefault
         ForModule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
@@ -65,7 +66,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     static final class ForSubmodule extends YangIRSourceInfoExtractor {
-        private static final @NonNull String BELONGS_TO = YangStmtMapping.BELONGS_TO.statementName().getLocalName();
+        private static final @NonNull String BELONGS_TO = YangStmtMapping.BELONGS_TO.simpleName();
 
         @NonNullByDefault
         ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
@@ -92,14 +93,14 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     private static final @NonNull String REVISION = "revision";
 
     static {
-        verify(IMPORT.equals(YangStmtMapping.IMPORT.statementName().getLocalName()));
-        verify(INCLUDE.equals(YangStmtMapping.INCLUDE.statementName().getLocalName()));
-        verify(REVISION.equals(YangStmtMapping.REVISION.statementName().getLocalName()));
+        verify(IMPORT.equals(YangStmtMapping.IMPORT.simpleName()));
+        verify(INCLUDE.equals(YangStmtMapping.INCLUDE.simpleName()));
+        verify(REVISION.equals(YangStmtMapping.REVISION.simpleName()));
     }
 
-    private static final @NonNull String PREFIX = YangStmtMapping.PREFIX.statementName().getLocalName();
-    private static final @NonNull String REVISION_DATE = YangStmtMapping.REVISION_DATE.statementName().getLocalName();
-    private static final @NonNull String YANG_VERSION = YangStmtMapping.YANG_VERSION.statementName().getLocalName();
+    private static final @NonNull String PREFIX = YangStmtMapping.PREFIX.simpleName();
+    private static final @NonNull String REVISION_DATE = YangStmtMapping.REVISION_DATE.simpleName();
+    private static final @NonNull String YANG_VERSION = YangVersionStatement.DEFINITION.simpleName();
 
     private final @NonNull SourceIdentifier sourceId;
     private final @NonNull StringEscaping escaping;

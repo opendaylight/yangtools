@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class YinElementStatementSupport
         extends AbstractBooleanStatementSupport<YinElementStatement, YinElementEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.YIN_ELEMENT).build();
+        SubstatementValidator.builder(YinElementStatement.DEFINITION).build();
 
     public YinElementStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.YIN_ELEMENT,
+        super(YinElementStatement.DEFINITION,
             EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(false)),
             EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(true)),
             StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
