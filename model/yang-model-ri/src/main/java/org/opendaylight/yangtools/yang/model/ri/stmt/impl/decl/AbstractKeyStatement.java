@@ -7,16 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawArgument;
 
-@NonNullByDefault
 abstract class AbstractKeyStatement extends WithRawArgument<KeyArgument> implements KeyStatement {
-    private final Object argument;
+    private final @NonNull Object argument;
 
-    AbstractKeyStatement(final String rawArgument, final KeyArgument argument) {
+    AbstractKeyStatement(final String rawArgument, final @NonNull KeyArgument argument) {
         super(rawArgument);
         this.argument = EmptyKeyStatement.maskArgument(argument);
     }
