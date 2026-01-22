@@ -18,15 +18,16 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
@@ -103,10 +104,10 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
         verify(IMPORT.equals(ImportStatement.DEFINITION.simpleName()));
         verify(INCLUDE.equals(IncludeStatement.DEFINITION.simpleName()));
         verify(REVISION.equals(RevisionStatement.DEFINITION.simpleName()));
-        verify(MODULE.equals(YangStmtMapping.MODULE.simpleName()));
-        verify(SUBMODULE.equals(YangStmtMapping.SUBMODULE.simpleName()));
-        verify(NAME.equals(YangStmtMapping.MODULE.getArgumentDefinition().simpleName()));
-        verify(NAME.equals(YangStmtMapping.SUBMODULE.getArgumentDefinition().simpleName()));
+        verify(MODULE.equals(ModuleStatement.DEFINITION.simpleName()));
+        verify(SUBMODULE.equals(SubmoduleStatement.DEFINITION.simpleName()));
+        verify(NAME.equals(ModuleStatement.DEFINITION.getArgumentDefinition().simpleName()));
+        verify(NAME.equals(SubmoduleStatement.DEFINITION.getArgumentDefinition().simpleName()));
     }
 
     private static final String PREFIX = PrefixStatement.DEFINITION.simpleName();

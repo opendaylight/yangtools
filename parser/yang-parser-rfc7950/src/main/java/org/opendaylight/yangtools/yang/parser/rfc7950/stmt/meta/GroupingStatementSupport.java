@@ -19,8 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -54,7 +56,7 @@ public final class GroupingStatementSupport
             .addAny(YangStmtMapping.LIST)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(TypedefStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
@@ -69,10 +71,10 @@ public final class GroupingStatementSupport
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.NOTIFICATION)
+            .addAny(NotificationStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .addOptional(StatusStatement.DEFINITION)
-            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(TypedefStatement.DEFINITION)
             .addAny(YangStmtMapping.USES)
             .build();
 

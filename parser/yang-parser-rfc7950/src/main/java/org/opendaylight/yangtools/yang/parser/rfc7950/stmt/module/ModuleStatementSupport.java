@@ -38,11 +38,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -61,66 +63,68 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ModuleStatementSupport
         extends AbstractUnqualifiedStatementSupport<ModuleStatement, ModuleEffectiveStatement> {
-    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.AUGMENT)
-        .addAny(YangStmtMapping.CHOICE)
-        .addOptional(ContactStatement.DEFINITION)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(YangStmtMapping.DEVIATION)
-        .addAny(ExtensionStatement.DEFINITION)
-        .addAny(FeatureStatement.DEFINITION)
-        .addAny(YangStmtMapping.GROUPING)
-        .addAny(IdentityStatement.DEFINITION)
-        .addAny(ImportStatement.DEFINITION)
-        .addAny(IncludeStatement.DEFINITION)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addMandatory(NamespaceStatement.DEFINITION)
-        .addAny(YangStmtMapping.NOTIFICATION)
-        .addOptional(OrganizationStatement.DEFINITION)
-        .addMandatory(PrefixStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addAny(RevisionStatement.DEFINITION)
-        .addAny(RpcStatement.DEFINITION)
-        .addAny(YangStmtMapping.TYPEDEF)
-        .addAny(YangStmtMapping.USES)
-        .addOptional(YangVersionStatement.DEFINITION)
-        .build();
-    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
-        .addAny(YangStmtMapping.ANYDATA)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.AUGMENT)
-        .addAny(YangStmtMapping.CHOICE)
-        .addOptional(ContactStatement.DEFINITION)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(YangStmtMapping.DEVIATION)
-        .addAny(ExtensionStatement.DEFINITION)
-        .addAny(FeatureStatement.DEFINITION)
-        .addAny(YangStmtMapping.GROUPING)
-        .addAny(IdentityStatement.DEFINITION)
-        .addAny(ImportStatement.DEFINITION)
-        .addAny(IncludeStatement.DEFINITION)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addMandatory(NamespaceStatement.DEFINITION)
-        .addAny(YangStmtMapping.NOTIFICATION)
-        .addOptional(OrganizationStatement.DEFINITION)
-        .addMandatory(PrefixStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addAny(RevisionStatement.DEFINITION)
-        .addAny(RpcStatement.DEFINITION)
-        .addAny(YangStmtMapping.TYPEDEF)
-        .addAny(YangStmtMapping.USES)
-        .addMandatory(YangVersionStatement.DEFINITION)
-        .build();
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(ModuleStatement.DEFINITION)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(ContactStatement.DEFINITION)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(ExtensionStatement.DEFINITION)
+            .addAny(FeatureStatement.DEFINITION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(IdentityStatement.DEFINITION)
+            .addAny(ImportStatement.DEFINITION)
+            .addAny(IncludeStatement.DEFINITION)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addMandatory(NamespaceStatement.DEFINITION)
+            .addAny(NotificationStatement.DEFINITION)
+            .addOptional(OrganizationStatement.DEFINITION)
+            .addMandatory(PrefixStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addAny(RevisionStatement.DEFINITION)
+            .addAny(RpcStatement.DEFINITION)
+            .addAny(TypedefStatement.DEFINITION)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangVersionStatement.DEFINITION)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(ModuleStatement.DEFINITION)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(ContactStatement.DEFINITION)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(DescriptionStatement.DEFINITION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(ExtensionStatement.DEFINITION)
+            .addAny(FeatureStatement.DEFINITION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(IdentityStatement.DEFINITION)
+            .addAny(ImportStatement.DEFINITION)
+            .addAny(IncludeStatement.DEFINITION)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addMandatory(NamespaceStatement.DEFINITION)
+            .addAny(NotificationStatement.DEFINITION)
+            .addOptional(OrganizationStatement.DEFINITION)
+            .addMandatory(PrefixStatement.DEFINITION)
+            .addOptional(ReferenceStatement.DEFINITION)
+            .addAny(RevisionStatement.DEFINITION)
+            .addAny(RpcStatement.DEFINITION)
+            .addAny(TypedefStatement.DEFINITION)
+            .addAny(YangStmtMapping.USES)
+            .addMandatory(YangVersionStatement.DEFINITION)
+            .build();
 
     private ModuleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.MODULE, StatementPolicy.reject(), config, validator);
+        super(ModuleStatement.DEFINITION, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull ModuleStatementSupport rfc6020Instance(final YangParserConfiguration config) {

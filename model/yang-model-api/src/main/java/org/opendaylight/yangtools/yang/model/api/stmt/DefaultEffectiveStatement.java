@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code default} statement.
  */
-public interface DefaultEffectiveStatement extends EffectiveStatement<String, DefaultStatement> {
+public interface DefaultEffectiveStatement extends EffectiveStatement<String, @NonNull DefaultStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.DEFAULT;
+        return DefaultStatement.DEFINITION;
     }
 }

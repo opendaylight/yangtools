@@ -9,16 +9,24 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code module} statement.
  */
 public non-sealed interface ModuleStatement extends RootDeclaredStatement {
+    /**
+     * The definition of {@code module} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        ModuleStatement.class, ModuleEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "module", "name");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.MODULE;
+        return DEFINITION;
     }
 
     default @Nullable YangVersionStatement getYangVersion() {

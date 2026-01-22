@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
@@ -71,7 +72,7 @@ public final class LeafListStatementSupport
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
             .addOptional(ConfigStatement.DEFINITION)
-            .addAny(YangStmtMapping.DEFAULT)
+            .addAny(DefaultStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(IfFeatureStatement.DEFINITION)
             .addOptional(MaxElementsStatement.DEFINITION)

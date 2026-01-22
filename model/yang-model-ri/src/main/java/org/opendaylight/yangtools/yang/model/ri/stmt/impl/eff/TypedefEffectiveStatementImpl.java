@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.S
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName, TypedefStatement>
-        implements TypedefEffectiveStatement, SchemaNodeMixin<TypedefStatement> {
+public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName, @NonNull TypedefStatement>
+        implements TypedefEffectiveStatement, SchemaNodeMixin<@NonNull TypedefStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(TypedefEffectiveStatementImpl.class);
 
     private static final VarHandle TYPE_DEFINITION;
@@ -54,15 +54,13 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
     private final int flags;
 
     // Accessed via TYPE_DEFINITION
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> typeDefinition;
     // Accessed via TYPE_STATEMENT
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ProxyTypeEffectiveStatement typeStatement;
 
-    public TypedefEffectiveStatementImpl(final TypedefStatement declared, final int flags,
+    public TypedefEffectiveStatementImpl(final @NonNull TypedefStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
         this.flags = flags;

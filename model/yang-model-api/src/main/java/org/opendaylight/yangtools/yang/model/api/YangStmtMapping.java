@@ -30,8 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
@@ -44,20 +42,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 
@@ -73,21 +61,15 @@ public enum YangStmtMapping implements StatementDefinition {
     CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
     CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
     CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
-    DEFAULT(DefaultStatement.class, DefaultEffectiveStatement.class, "default", "value"),
     DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
     GROUPING(GroupingStatement.class, GroupingEffectiveStatement.class, "grouping", "name"),
     LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
     LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
     LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
-    MODULE(ModuleStatement.class, ModuleEffectiveStatement.class, "module", "name"),
-    NOTIFICATION(NotificationStatement.class, NotificationEffectiveStatement.class, "notification", "name"),
-    PATH(PathStatement.class, PathEffectiveStatement.class, "path", "value"),
     REFINE(RefineStatement.class, RefineEffectiveStatement.class, "refine", "target-node"),
-    SUBMODULE(SubmoduleStatement.class, SubmoduleEffectiveStatement.class, "submodule", "name"),
     @SuppressWarnings({ "unchecked", "rawtypes" })
     TYPE(TypeStatement.class, (Class) TypeEffectiveStatement.class, "type", "name"),
-    TYPEDEF(TypedefStatement.class, TypedefEffectiveStatement.class, "typedef", "name"),
     USES(UsesStatement.class, UsesEffectiveStatement.class, "uses", "name");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;

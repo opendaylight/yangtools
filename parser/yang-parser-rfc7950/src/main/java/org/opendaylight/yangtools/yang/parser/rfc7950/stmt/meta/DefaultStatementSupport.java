@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,11 +25,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class DefaultStatementSupport
         extends AbstractStringStatementSupport<DefaultStatement, DefaultEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEFAULT).build();
+        SubstatementValidator.builder(DefaultStatement.DEFINITION).build();
 
     public DefaultStatementSupport(final YangParserConfiguration config) {
         // Note: if we start interpreting the string we'll need to use StatementPolicy.declaredCopy()
-        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(DefaultStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

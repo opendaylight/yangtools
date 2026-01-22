@@ -24,16 +24,19 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
-public final class NotificationEffectiveStatementImpl extends WithTypedefNamespace<QName, NotificationStatement>
+public final class NotificationEffectiveStatementImpl
+        extends WithTypedefNamespace<QName, @NonNull NotificationStatement>
         implements NotificationDefinition, NotificationEffectiveStatement,
-                   SchemaNodeMixin<NotificationStatement>, DataNodeContainerMixin<QName, NotificationStatement>,
-                   AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
-                   MustConstraintMixin<QName, NotificationStatement> {
+                   SchemaNodeMixin<@NonNull NotificationStatement>,
+                   DataNodeContainerMixin<QName, @NonNull NotificationStatement>,
+                   AugmentationTargetMixin<QName, @NonNull NotificationStatement>,
+                   CopyableMixin<QName, @NonNull NotificationStatement>,
+                   MustConstraintMixin<QName, @NonNull NotificationStatement> {
 
     private final @NonNull QName argument;
     private final int flags;
 
-    public NotificationEffectiveStatementImpl(final NotificationStatement declared,
+    public NotificationEffectiveStatementImpl(final @NonNull NotificationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
             final int flags) {
         super(declared, substatements);

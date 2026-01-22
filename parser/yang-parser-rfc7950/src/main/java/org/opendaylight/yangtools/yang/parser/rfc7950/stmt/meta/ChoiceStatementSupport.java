@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
@@ -63,7 +64,7 @@ public final class ChoiceStatementSupport
         .addAny(YangStmtMapping.CASE)
         .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(YangStmtMapping.DEFAULT)
+        .addOptional(DefaultStatement.DEFINITION)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(IfFeatureStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
@@ -84,7 +85,7 @@ public final class ChoiceStatementSupport
         .addAny(YangStmtMapping.CHOICE)
         .addOptional(ConfigStatement.DEFINITION)
         .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(YangStmtMapping.DEFAULT)
+        .addOptional(DefaultStatement.DEFINITION)
         .addOptional(DescriptionStatement.DEFINITION)
         .addAny(IfFeatureStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)

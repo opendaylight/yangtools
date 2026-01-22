@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -16,8 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code path} statement.
  */
 public interface PathStatement extends DeclaredStatement<PathExpression> {
+    /**
+     * The definition of {@code path} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(PathStatement.class, PathEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "path", "value");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.PATH;
+        return DEFINITION;
     }
 }

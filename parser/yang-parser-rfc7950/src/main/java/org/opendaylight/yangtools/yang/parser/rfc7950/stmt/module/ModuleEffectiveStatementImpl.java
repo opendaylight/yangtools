@@ -34,7 +34,8 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModu
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
+final class ModuleEffectiveStatementImpl
+        extends AbstractEffectiveModule<@NonNull ModuleStatement, ModuleEffectiveStatement>
         implements Module, ModuleEffectiveStatement {
     private final ImmutableMap<Unqualified, SubmoduleEffectiveStatement> nameToSubmodule;
     private final ImmutableMap<QName, ExtensionEffectiveStatement> qnameToExtension;

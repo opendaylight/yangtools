@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -27,14 +26,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class PathStatementSupport
         extends AbstractStatementSupport<PathExpression, PathStatement, PathEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.PATH).build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(PathStatement.DEFINITION).build();
 
     private final PathExpressionParser parser = new PathExpressionParser();
 
     public PathStatementSupport(final YangParserConfiguration config) {
         // TODO: can 'path' really be copied?
-        super(YangStmtMapping.PATH, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(PathStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

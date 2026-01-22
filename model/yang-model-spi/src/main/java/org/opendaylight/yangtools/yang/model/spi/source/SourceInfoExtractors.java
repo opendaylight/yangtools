@@ -13,9 +13,10 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Extractor;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
@@ -32,8 +33,8 @@ public final class SourceInfoExtractors {
     static final String SUBMODULE = "submodule";
 
     static {
-        verify(MODULE.equals(YangStmtMapping.MODULE.statementName().getLocalName()));
-        verify(SUBMODULE.equals(YangStmtMapping.SUBMODULE.statementName().getLocalName()));
+        verify(MODULE.equals(ModuleStatement.DEFINITION.simpleName()));
+        verify(SUBMODULE.equals(SubmoduleStatement.DEFINITION.simpleName()));
     }
 
     private SourceInfoExtractors() {

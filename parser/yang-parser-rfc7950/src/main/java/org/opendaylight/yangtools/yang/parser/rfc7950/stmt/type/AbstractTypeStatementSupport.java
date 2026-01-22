@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveSta
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
@@ -95,7 +96,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             .addAny(EnumStatement.DEFINITION)
             .addOptional(FractionDigitsStatement.DEFINITION)
             .addOptional(LengthStatement.DEFINITION)
-            .addOptional(YangStmtMapping.PATH)
+            .addOptional(PathStatement.DEFINITION)
             .addAny(PatternStatement.DEFINITION)
             .addOptional(RangeStatement.DEFINITION)
             .addOptional(RequireInstanceStatement.DEFINITION)

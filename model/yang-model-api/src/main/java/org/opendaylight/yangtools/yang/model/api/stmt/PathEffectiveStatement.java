@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -18,6 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface PathEffectiveStatement extends EffectiveStatement<PathExpression, PathStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.PATH;
+        return PathStatement.DEFINITION;
     }
 }

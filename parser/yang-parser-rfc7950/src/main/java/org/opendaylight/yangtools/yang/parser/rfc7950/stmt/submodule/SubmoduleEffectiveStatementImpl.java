@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class SubmoduleEffectiveStatementImpl
-        extends AbstractEffectiveModule<SubmoduleStatement, SubmoduleEffectiveStatement>
+        extends AbstractEffectiveModule<@NonNull SubmoduleStatement, SubmoduleEffectiveStatement>
         implements Submodule, SubmoduleEffectiveStatement, MutableStatement {
     private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
