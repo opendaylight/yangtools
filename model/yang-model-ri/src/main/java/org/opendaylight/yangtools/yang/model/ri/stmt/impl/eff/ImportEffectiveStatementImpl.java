@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-public final class ImportEffectiveStatementImpl extends WithSubstatements<Unqualified, ImportStatement>
-        implements ImportEffectiveStatement, ModuleImport, DocumentedNodeMixin<Unqualified, ImportStatement> {
+public final class ImportEffectiveStatementImpl extends WithSubstatements<Unqualified, @NonNull ImportStatement>
+        implements ImportEffectiveStatement, ModuleImport, DocumentedNodeMixin<Unqualified, @NonNull ImportStatement> {
     private final @Nullable Revision revision;
 
-    public ImportEffectiveStatementImpl(final ImportStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final @NonNull Revision revision) {
+    public ImportEffectiveStatementImpl(final @NonNull ImportStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final @Nullable Revision revision) {
         super(declared, substatements);
         this.revision = revision;
     }

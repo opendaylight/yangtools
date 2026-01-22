@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code prefix} statement.
  */
-public interface PrefixEffectiveStatement extends EffectiveStatement<String, PrefixStatement> {
+public interface PrefixEffectiveStatement extends EffectiveStatement<String, @NonNull PrefixStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
-        return YangStmtMapping.PREFIX;
+    default StatementDefinition statementDefinition() {
+        return PrefixStatement.DEFINITION;
     }
 }

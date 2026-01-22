@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -40,10 +39,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class BelongsToStatementSupport
         extends AbstractUnqualifiedStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.BELONGS_TO).addMandatory(YangStmtMapping.PREFIX).build();
+        SubstatementValidator.builder(BelongsToStatement.DEFINITION).addMandatory(PrefixStatement.DEFINITION).build();
 
     public BelongsToStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(BelongsToStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

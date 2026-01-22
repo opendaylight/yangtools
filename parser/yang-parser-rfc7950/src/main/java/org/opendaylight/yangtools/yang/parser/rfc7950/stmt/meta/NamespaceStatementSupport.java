@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -29,10 +28,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class NamespaceStatementSupport
         extends AbstractStatementSupport<XMLNamespace, NamespaceStatement, NamespaceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.NAMESPACE).build();
+        SubstatementValidator.builder(NamespaceStatement.DEFINITION).build();
 
     public NamespaceStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.NAMESPACE, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(NamespaceStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

@@ -31,12 +31,15 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -68,17 +71,17 @@ public final class ModuleStatementSupport
         .addAny(FeatureStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
         .addAny(YangStmtMapping.IDENTITY)
-        .addAny(YangStmtMapping.IMPORT)
-        .addAny(YangStmtMapping.INCLUDE)
+        .addAny(ImportStatement.DEFINITION)
+        .addAny(IncludeStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
-        .addMandatory(YangStmtMapping.NAMESPACE)
+        .addMandatory(NamespaceStatement.DEFINITION)
         .addAny(YangStmtMapping.NOTIFICATION)
         .addOptional(OrganizationStatement.DEFINITION)
-        .addMandatory(YangStmtMapping.PREFIX)
+        .addMandatory(PrefixStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addAny(YangStmtMapping.REVISION)
+        .addAny(RevisionStatement.DEFINITION)
         .addAny(RpcStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
@@ -97,17 +100,17 @@ public final class ModuleStatementSupport
         .addAny(FeatureStatement.DEFINITION)
         .addAny(YangStmtMapping.GROUPING)
         .addAny(YangStmtMapping.IDENTITY)
-        .addAny(YangStmtMapping.IMPORT)
-        .addAny(YangStmtMapping.INCLUDE)
+        .addAny(ImportStatement.DEFINITION)
+        .addAny(IncludeStatement.DEFINITION)
         .addAny(YangStmtMapping.LEAF)
         .addAny(YangStmtMapping.LEAF_LIST)
         .addAny(YangStmtMapping.LIST)
-        .addMandatory(YangStmtMapping.NAMESPACE)
+        .addMandatory(NamespaceStatement.DEFINITION)
         .addAny(YangStmtMapping.NOTIFICATION)
         .addOptional(OrganizationStatement.DEFINITION)
-        .addMandatory(YangStmtMapping.PREFIX)
+        .addMandatory(PrefixStatement.DEFINITION)
         .addOptional(ReferenceStatement.DEFINITION)
-        .addAny(YangStmtMapping.REVISION)
+        .addAny(RevisionStatement.DEFINITION)
         .addAny(RpcStatement.DEFINITION)
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
