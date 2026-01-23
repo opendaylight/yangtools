@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface YangDataEffectiveStatement extends UnknownEffectiveStatement<YangDataName, @NonNull YangDataStatement>,
         DataTreeAwareEffectiveStatement<YangDataName, @NonNull YangDataStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<YangDataName, @NonNull YangDataStatement, ?> statementDefinition() {
         return YangDataStatement.DEF;
     }
 }

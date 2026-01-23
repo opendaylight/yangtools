@@ -22,7 +22,8 @@ public interface OpenConfigHashedValueStatement extends UnknownStatement<Empty> 
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
-        OpenConfigConstants.HASHED_VALUE_MODULE, "openconfig-hashed-value");
+    @NonNull StatementDefinition<Empty, @NonNull OpenConfigHashedValueStatement,
+        @NonNull OpenConfigHashedValueEffectiveStatement> DEF = StatementDefinition.of(
+            OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
+            OpenConfigConstants.HASHED_VALUE_MODULE, "openconfig-hashed-value");
 }

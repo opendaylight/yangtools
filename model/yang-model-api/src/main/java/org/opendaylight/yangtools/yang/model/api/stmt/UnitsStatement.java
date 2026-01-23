@@ -21,11 +21,12 @@ public interface UnitsStatement extends DeclaredStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(UnitsStatement.class, UnitsEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "units", "name");
+    @NonNull StatementDefinition<String, @NonNull UnitsStatement, @NonNull UnitsEffectiveStatement> DEF =
+        StatementDefinition.of(UnitsStatement.class, UnitsEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "units", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

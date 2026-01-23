@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface AnnotationEffectiveStatement
         extends UnknownEffectiveStatement<AnnotationName, @NonNull AnnotationStatement>, TypeDefinitionAware {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<AnnotationName, @NonNull AnnotationStatement, ?> statementDefinition() {
         return AnnotationStatement.DEF;
     }
 }

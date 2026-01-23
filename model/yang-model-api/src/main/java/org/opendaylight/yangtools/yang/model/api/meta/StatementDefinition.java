@@ -25,7 +25,8 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  *
  * <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3">RFC6020, section 6.3</a>
  */
-public sealed interface StatementDefinition extends Immutable permits DefaultStatementDefinition {
+public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends Immutable permits DefaultStatementDefinition {
     /**
      * Return a {@link StatementDefinition} combining all specified components.
      *
@@ -38,10 +39,10 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @param argument optional {@link ArgumentDefinition}
      * @return a {@link StatementDefinition}
      */
-    @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
-            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
-            final QName statementName, final @Nullable ArgumentDefinition argument) {
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        @NonNull StatementDefinition<A, D, E> of(final @NonNull Class<? extends D> declaredRepresentation,
+            final @NonNull Class<? extends E> effectiveRepresentation, final @NonNull QName statementName,
+            final @Nullable ArgumentDefinition argument) {
         return new DefaultStatementDefinition<>(statementName, declaredRepresentation, effectiveRepresentation,
             argument);
     }
@@ -60,8 +61,8 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @return a {@link StatementDefinition}
      */
     @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
-            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition<A, D, E> of(
+            final Class<? extends D> declaredRepresentation, final Class<? extends E> effectiveRepresentation,
             final QNameModule module, final String statementName) {
         return of(declaredRepresentation, effectiveRepresentation, QName.create(module, statementName).intern(), null);
     }
@@ -80,11 +81,10 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @param argumentName statement name
      * @return a {@link StatementDefinition}
      */
-    @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
-            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
-            final QNameModule module, final String statementName,
-            final String argumentName) {
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        @NonNull StatementDefinition<A, D, E> of(final @NonNull Class<? extends D> declaredRepresentation,
+            final @NonNull Class<? extends E> effectiveRepresentation, final @NonNull QNameModule module,
+            final @NonNull String statementName, final @NonNull String argumentName) {
         return of(declaredRepresentation, effectiveRepresentation, module, statementName, argumentName, false);
     }
 
@@ -103,10 +103,10 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @param yinElement P@code true} if the argument is encoded as YIN element
      * @return a {@link StatementDefinition}
      */
-    @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
-            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
-            final QNameModule module, final String statementName, final String argumentName, final boolean yinElement) {
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        @NonNull StatementDefinition<A, D, E> of(final @NonNull Class<? extends D> declaredRepresentation,
+            final @NonNull Class<? extends E> effectiveRepresentation, final @NonNull QNameModule module,
+            final @NonNull String statementName, final @NonNull String argumentName, final boolean yinElement) {
         return of(declaredRepresentation, effectiveRepresentation, QName.create(module, statementName).intern(),
             new ArgumentDefinition(QName.create(module, argumentName).intern(), yinElement));
     }
@@ -173,12 +173,12 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
     /**
      * {@return the class representing the declared version of the statement associated with this definition}
      */
-    @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation();
+    @NonNull Class<? extends D> declaredRepresentation();
 
     /**
      * {@return the class representing the effective version of the statement associated with this definition}
      */
-    @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation();
+    @NonNull Class<? extends E> effectiveRepresentation();
 
     /**
      * Returns class which represents declared version of statement associated with this definition. This class should
@@ -188,7 +188,7 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @deprecated Use {@link #declaredRepresentation()} instead.
      */
     @Deprecated(since = "15.0.0", forRemoval = true)
-    default @NonNull Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    default @NonNull Class<? extends D> getDeclaredRepresentationClass() {
         return declaredRepresentation();
     }
 
@@ -200,7 +200,7 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @deprecated Use {@link #effectiveRepresentation()} instead.
      */
     @Deprecated(since = "15.0.0", forRemoval = true)
-    default @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
+    default @NonNull Class<? extends E> getEffectiveRepresentationClass() {
         return effectiveRepresentation();
     }
 

@@ -23,12 +23,12 @@ public interface NotificationStatement extends DocumentedDeclaredStatement.WithS
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        NotificationStatement.class, NotificationEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "notification", "name");
+    @NonNull StatementDefinition<QName, @NonNull NotificationStatement, @NonNull NotificationEffectiveStatement> DEF =
+        StatementDefinition.of(NotificationStatement.class, NotificationEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "notification", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 }

@@ -25,15 +25,16 @@ public interface ContainerStatement extends DataDefinitionStatement,
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ContainerStatement.class, ContainerEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "container", "name");
+    @NonNull StatementDefinition<QName, @NonNull ContainerStatement, @NonNull ContainerEffectiveStatement> DEF =
+        StatementDefinition.of(ContainerStatement.class, ContainerEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "container", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 
+    // FIXME: rename/document
     default @Nullable PresenceStatement getPresence() {
         final var opt = findFirstDeclaredSubstatement(PresenceStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

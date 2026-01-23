@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface TypedefEffectiveStatement
         extends EffectiveStatement<QName, @NonNull TypedefStatement>, TypeDefinitionAware {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, @NonNull TypedefStatement, ?> statementDefinition() {
         return TypedefStatement.DEF;
     }
 

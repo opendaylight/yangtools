@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface AugmentIdentifierEffectiveStatement
         extends UnknownEffectiveStatement<Unqualified, @NonNull AugmentIdentifierStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, @NonNull AugmentIdentifierStatement, ?> statementDefinition() {
         return AugmentIdentifierStatement.DEF;
     }
 }

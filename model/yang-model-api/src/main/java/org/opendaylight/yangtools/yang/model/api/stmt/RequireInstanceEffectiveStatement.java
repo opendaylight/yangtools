@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface RequireInstanceEffectiveStatement
         extends EffectiveStatement<Boolean, @NonNull RequireInstanceStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Boolean, @NonNull RequireInstanceStatement, ?> statementDefinition() {
         return RequireInstanceStatement.DEF;
     }
 }

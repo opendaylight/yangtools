@@ -21,12 +21,12 @@ public interface ErrorMessageStatement extends DeclaredHumanTextStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ErrorMessageStatement.class, ErrorMessageEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "error-message", "value", true);
+    @NonNull StatementDefinition<String, @NonNull ErrorMessageStatement, @NonNull ErrorMessageEffectiveStatement> DEF =
+        StatementDefinition.of(ErrorMessageStatement.class, ErrorMessageEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "error-message", "value", true);
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

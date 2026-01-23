@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface PresenceEffectiveStatement extends EffectiveStatement<String, @NonNull PresenceStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default StatementDefinition<String, @NonNull PresenceStatement, ?> statementDefinition() {
         return PresenceStatement.DEF;
     }
 }

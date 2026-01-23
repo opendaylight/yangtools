@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface AugmentEffectiveStatement
         extends SchemaTreeAwareEffectiveStatement<SchemaNodeIdentifier, @NonNull AugmentStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<SchemaNodeIdentifier, @NonNull AugmentStatement, ?> statementDefinition() {
         return AugmentStatement.DEF;
     }
 }

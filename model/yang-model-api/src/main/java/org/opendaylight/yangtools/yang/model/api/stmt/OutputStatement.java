@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -20,11 +21,12 @@ public non-sealed interface OutputStatement extends DeclaredOperationBodyStateme
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(OutputStatement.class, OutputEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "output");
+    @NonNull StatementDefinition<QName, @NonNull OutputStatement, @NonNull OutputEffectiveStatement> DEF =
+        StatementDefinition.of(OutputStatement.class, OutputEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "output");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 }

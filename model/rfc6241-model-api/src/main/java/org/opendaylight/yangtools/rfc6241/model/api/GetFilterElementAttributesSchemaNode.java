@@ -23,8 +23,10 @@ public interface GetFilterElementAttributesSchemaNode extends UnknownSchemaNode 
      * @return {@link GetFilterElementAttributesSchemaNode} child, if present.
      */
     static Optional<GetFilterElementAttributesSchemaNode> findIn(final AnyxmlSchemaNode parent) {
-        return parent.getUnknownSchemaNodes().stream().filter(GetFilterElementAttributesSchemaNode.class::isInstance)
-                .findAny().map(GetFilterElementAttributesSchemaNode.class::cast);
+        return parent.getUnknownSchemaNodes().stream()
+            .filter(GetFilterElementAttributesSchemaNode.class::isInstance)
+            .findAny()
+            .map(GetFilterElementAttributesSchemaNode.class::cast);
     }
 
     @Override

@@ -9,18 +9,19 @@ package org.opendaylight.yangtools.rfc8791.model.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 class AugmentStructureArgumentTest {
     // https://en.wikipedia.org/wiki/Velvet_Revolution
-    private static final QName FOO = QName.create("cs", "1989-11-17", "CZ");
-    private static final QName BAR = QName.create("cs", "1989-11-17", "SVK");
+    private static final @NonNull QName FOO = QName.create("cs", "1989-11-17", "CZ");
+    private static final @NonNull QName BAR = QName.create("cs", "1989-11-17", "SVK");
     // https://en.wikipedia.org/wiki/Dissolution_of_Czechoslovakia
-    private static final QName BAZ = QName.create("cs", "1992-07-17", "SVK");
+    private static final @NonNull QName BAZ = QName.create("cs", "1992-07-17", "SVK");
     // a completely different thing
-    private static final QName XYZZY = QName.create("xns", "2025-11-17", "xyzzy");
+    private static final @NonNull QName XYZZY = QName.create("xns", "2025-11-17", "xyzzy");
 
     @Test
     void singleToString() {

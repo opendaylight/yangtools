@@ -21,7 +21,7 @@ public interface LengthEffectiveStatement extends EffectiveStatement<ValueRanges
         //               statements)
         ConstraintMetaDefinition {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<ValueRanges, @NonNull LengthStatement, ?> statementDefinition() {
         return LengthStatement.DEF;
     }
 }

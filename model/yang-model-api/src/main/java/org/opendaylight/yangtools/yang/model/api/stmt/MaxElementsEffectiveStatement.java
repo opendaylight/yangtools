@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface MaxElementsEffectiveStatement
         extends EffectiveStatement<MaxElementsArgument, @NonNull MaxElementsStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<MaxElementsArgument, @NonNull MaxElementsStatement, ?> statementDefinition() {
         return MaxElementsStatement.DEF;
     }
 }

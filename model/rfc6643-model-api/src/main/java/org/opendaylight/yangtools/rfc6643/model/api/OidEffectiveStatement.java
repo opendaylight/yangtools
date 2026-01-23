@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface OidEffectiveStatement extends UnknownEffectiveStatement<ObjectIdentifier, @NonNull OidStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<ObjectIdentifier, @NonNull OidStatement, ?> statementDefinition() {
         return OidStatement.DEF;
     }
 }

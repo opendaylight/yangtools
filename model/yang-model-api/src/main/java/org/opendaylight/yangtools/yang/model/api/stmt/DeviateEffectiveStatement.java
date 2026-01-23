@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface DeviateEffectiveStatement extends EffectiveStatement<DeviateKind, @NonNull DeviateStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<DeviateKind, @NonNull DeviateStatement, ?> statementDefinition() {
         return DeviateStatement.DEF;
     }
 }

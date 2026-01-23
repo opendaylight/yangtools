@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface MandatoryEffectiveStatement extends EffectiveStatement<Boolean, @NonNull MandatoryStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default StatementDefinition<Boolean, @NonNull MandatoryStatement, ?> statementDefinition() {
         return MandatoryStatement.DEF;
     }
 }

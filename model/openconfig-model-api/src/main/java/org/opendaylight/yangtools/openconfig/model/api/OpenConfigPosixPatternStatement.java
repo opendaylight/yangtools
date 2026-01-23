@@ -22,12 +22,13 @@ public interface OpenConfigPosixPatternStatement extends UnknownStatement<String
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        OpenConfigPosixPatternStatement.class, OpenConfigPosixPatternEffectiveStatement.class,
-        OpenConfigConstants.REGEXP_POSIX_MODULE, "posix-pattern", "pattern");
+    @NonNull StatementDefinition<String, @NonNull OpenConfigPosixPatternStatement,
+        @NonNull OpenConfigPosixPatternEffectiveStatement> DEF = StatementDefinition.of(
+            OpenConfigPosixPatternStatement.class, OpenConfigPosixPatternEffectiveStatement.class,
+            OpenConfigConstants.REGEXP_POSIX_MODULE, "posix-pattern", "pattern");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

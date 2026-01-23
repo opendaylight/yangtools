@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ValueEffectiveStatement extends EffectiveStatement<Integer, @NonNull ValueStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default StatementDefinition<Integer, @NonNull ValueStatement, ?> statementDefinition() {
         return ValueStatement.DEF;
     }
 }

@@ -26,12 +26,12 @@ public interface AnnotationStatement extends UnknownStatement<AnnotationName>, W
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        AnnotationStatement.class, AnnotationEffectiveStatement.class,
-        MetadataConstants.RFC7952_MODULE, "annotation", "name");
+    @NonNull StatementDefinition<AnnotationName, @NonNull AnnotationStatement, @NonNull AnnotationEffectiveStatement>
+        DEF = StatementDefinition.of(AnnotationStatement.class, AnnotationEffectiveStatement.class,
+            MetadataConstants.RFC7952_MODULE, "annotation", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<AnnotationName, ?, ?> statementDefinition() {
         return DEF;
     }
 

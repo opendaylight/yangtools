@@ -21,12 +21,12 @@ public interface ReferenceStatement extends DeclaredHumanTextStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ReferenceStatement.class, ReferenceEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "reference", "text", true);
+    @NonNull StatementDefinition<String, @NonNull ReferenceStatement, @NonNull ReferenceEffectiveStatement> DEF =
+        StatementDefinition.of(ReferenceStatement.class, ReferenceEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "reference", "text", true);
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

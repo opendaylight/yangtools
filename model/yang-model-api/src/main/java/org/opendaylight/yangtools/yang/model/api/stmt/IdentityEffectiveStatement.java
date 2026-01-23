@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface IdentityEffectiveStatement extends EffectiveStatement<QName, @NonNull IdentityStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, @NonNull IdentityStatement, ?> statementDefinition() {
         return IdentityStatement.DEF;
     }
 }
