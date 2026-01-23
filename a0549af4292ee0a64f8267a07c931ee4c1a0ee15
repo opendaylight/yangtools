@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68e0ba32_29bfd74e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-23T15:18:28Z",
+      "side": 1,
+      "message": "rework to do just the common trait thing",
+      "revId": "a0549af4292ee0a64f8267a07c931ee4c1a0ee15",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
