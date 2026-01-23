@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface RpcContextReferenceEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull RpcContextReferenceStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, RpcContextReferenceStatement, RpcContextReferenceEffectiveStatement>
+            statementDefinition() {
         return RpcContextReferenceStatement.DEF;
     }
 }

@@ -17,11 +17,11 @@ public interface OidStatement extends UnknownStatement<ObjectIdentifier> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(OidStatement.class, OidEffectiveStatement.class,
-        IetfYangSmiv2Constants.RFC6643_MODULE, "oid", "value");
+    @NonNull StatementDefinition<ObjectIdentifier, OidStatement, OidEffectiveStatement> DEF = StatementDefinition.of(
+        OidStatement.class, OidEffectiveStatement.class, IetfYangSmiv2Constants.RFC6643_MODULE, "oid", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<ObjectIdentifier, OidStatement, OidEffectiveStatement> statementDefinition() {
         return DEF;
     }
 

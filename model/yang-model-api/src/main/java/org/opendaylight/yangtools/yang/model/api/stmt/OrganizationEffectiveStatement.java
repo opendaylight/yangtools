@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface OrganizationEffectiveStatement extends EffectiveHumanTextStatement<@NonNull OrganizationStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, OrganizationStatement, OrganizationEffectiveStatement> statementDefinition() {
         return OrganizationStatement.DEF;
     }
 }

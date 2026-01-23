@@ -22,11 +22,12 @@ public interface YangDataStatement extends UnknownStatement<YangDataName> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(YangDataStatement.class, YangDataEffectiveStatement.class,
-        YangDataConstants.RFC8040_MODULE, "yang-data", "name");
+    @NonNull StatementDefinition<YangDataName, YangDataStatement, YangDataEffectiveStatement> DEF =
+        StatementDefinition.of(YangDataStatement.class, YangDataEffectiveStatement.class,
+            YangDataConstants.RFC8040_MODULE, "yang-data", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<YangDataName, YangDataStatement, YangDataEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

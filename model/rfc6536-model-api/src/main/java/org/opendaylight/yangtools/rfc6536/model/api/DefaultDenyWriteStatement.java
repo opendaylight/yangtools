@@ -22,12 +22,13 @@ public interface DefaultDenyWriteStatement extends UnknownStatement<Empty> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        DefaultDenyWriteStatement.class, DefaultDenyWriteEffectiveStatement.class,
-        NACMConstants.RFC6536_MODULE, "default-deny-write");
+    @NonNull StatementDefinition<Empty, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> DEF =
+        StatementDefinition.of(DefaultDenyWriteStatement.class, DefaultDenyWriteEffectiveStatement.class,
+            NACMConstants.RFC6536_MODULE, "default-deny-write");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement>
+            statementDefinition() {
         return DEF;
     }
 }
