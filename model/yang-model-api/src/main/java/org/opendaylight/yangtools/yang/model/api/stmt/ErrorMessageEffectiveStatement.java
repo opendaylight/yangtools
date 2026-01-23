@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ErrorMessageEffectiveStatement extends EffectiveHumanTextStatement<@NonNull ErrorMessageStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default  StatementDefinition<String, ErrorMessageStatement, ErrorMessageEffectiveStatement> statementDefinition() {
         return ErrorMessageStatement.DEF;
     }
 }

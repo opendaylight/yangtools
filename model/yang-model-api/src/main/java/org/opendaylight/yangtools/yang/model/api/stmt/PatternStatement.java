@@ -21,11 +21,12 @@ public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(PatternStatement.class, PatternEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "pattern", "value");
+    @NonNull StatementDefinition<PatternExpression, PatternStatement, PatternEffectiveStatement> DEF =
+        StatementDefinition.of(PatternStatement.class, PatternEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "pattern", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<PatternExpression, PatternStatement, PatternEffectiveStatement> statementDefinition() {
         return DEF;
     }
 

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ErrorAppTagEffectiveStatement extends EffectiveStatement<String, @NonNull ErrorAppTagStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ErrorAppTagStatement, ErrorAppTagEffectiveStatement> statementDefinition() {
         return ErrorAppTagStatement.DEF;
     }
 }

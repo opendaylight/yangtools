@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface IfFeatureEffectiveStatement extends EffectiveStatement<IfFeatureExpr, @NonNull IfFeatureStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> statementDefinition() {
         return IfFeatureStatement.DEF;
     }
 }
