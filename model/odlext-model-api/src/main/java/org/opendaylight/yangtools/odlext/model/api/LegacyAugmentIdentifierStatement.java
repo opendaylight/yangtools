@@ -19,12 +19,13 @@ public interface LegacyAugmentIdentifierStatement extends UnknownStatement<Unqua
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        LegacyAugmentIdentifierStatement.class, LegacyAugmentIdentifierEffectiveStatement.class,
-        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier", "identifier");
+    @NonNull StatementDefinition<Unqualified, @NonNull LegacyAugmentIdentifierStatement,
+        @NonNull LegacyAugmentIdentifierEffectiveStatement> DEF = StatementDefinition.of(
+            LegacyAugmentIdentifierStatement.class, LegacyAugmentIdentifierEffectiveStatement.class,
+            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier", "identifier");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, ?, ?> statementDefinition() {
         return DEF;
     }
 }

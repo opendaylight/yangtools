@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface ContextInstanceEffectiveStatement
         extends UnknownEffectiveStatement<QName, @NonNull ContextInstanceStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, @NonNull ContextInstanceStatement, ?> statementDefinition() {
         return ContextInstanceStatement.DEF;
     }
 

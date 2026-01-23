@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface NamespaceEffectiveStatement extends EffectiveStatement<XMLNamespace, @NonNull NamespaceStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<XMLNamespace, @NonNull NamespaceStatement, ?> statementDefinition() {
         return NamespaceStatement.DEF;
     }
 }

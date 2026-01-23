@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface IncludeEffectiveStatement extends EffectiveStatement<Unqualified, @NonNull IncludeStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, @NonNull IncludeStatement, ?> statementDefinition() {
         return IncludeStatement.DEF;
     }
 }

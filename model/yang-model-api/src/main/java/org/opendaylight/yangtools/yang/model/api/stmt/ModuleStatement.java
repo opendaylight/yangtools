@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -21,11 +22,12 @@ public non-sealed interface ModuleStatement extends RootDeclaredStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(ModuleStatement.class, ModuleEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "module", "name");
+    @NonNull StatementDefinition<Unqualified, @NonNull ModuleStatement, @NonNull ModuleEffectiveStatement> DEF =
+        StatementDefinition.of(ModuleStatement.class, ModuleEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "module", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, ?, ?> statementDefinition() {
         return DEF;
     }
 

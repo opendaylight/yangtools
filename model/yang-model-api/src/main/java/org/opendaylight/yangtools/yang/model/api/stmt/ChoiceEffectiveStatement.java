@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface ChoiceEffectiveStatement extends SchemaTreeEffectiveStatement<@NonNull ChoiceStatement>,
         DataTreeAwareEffectiveStatement<QName, @NonNull ChoiceStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, @NonNull ChoiceStatement, ?> statementDefinition() {
         return ChoiceStatement.DEF;
     }
 

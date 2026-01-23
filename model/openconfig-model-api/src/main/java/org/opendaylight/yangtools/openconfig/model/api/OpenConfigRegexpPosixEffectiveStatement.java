@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface OpenConfigRegexpPosixEffectiveStatement
         extends EffectiveStatement<Empty, @NonNull OpenConfigRegexpPosixStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, @NonNull OpenConfigRegexpPosixStatement, ?> statementDefinition() {
         return OpenConfigRegexpPosixStatement.DEF;
     }
 }

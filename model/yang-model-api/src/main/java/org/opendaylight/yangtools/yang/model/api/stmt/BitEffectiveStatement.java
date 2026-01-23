@@ -18,10 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface BitEffectiveStatement extends EffectiveStatement<String, @NonNull BitStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, @NonNull BitStatement, ?> statementDefinition() {
         return BitStatement.DEF;
     }
 
+    // FIXME: document
     default Optional<Uint32> findDeclaredPosition() {
         return findFirstEffectiveSubstatementArgument(PositionEffectiveStatement.class);
     }

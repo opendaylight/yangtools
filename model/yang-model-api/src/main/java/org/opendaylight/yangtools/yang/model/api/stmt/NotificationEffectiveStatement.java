@@ -19,7 +19,7 @@ public non-sealed interface NotificationEffectiveStatement
             DataTreeAwareEffectiveStatement<QName, @NonNull NotificationStatement>,
             TypedefAwareEffectiveStatement<QName, @NonNull NotificationStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, @NonNull NotificationStatement, ?> statementDefinition() {
         return NotificationStatement.DEF;
     }
 }

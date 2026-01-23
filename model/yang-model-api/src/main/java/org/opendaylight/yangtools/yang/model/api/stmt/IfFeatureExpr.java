@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  * <p>The set of features referenced in this expression is available through {@link #getReferencedFeatures()}.
  */
+// FIXME: rename to IfFeatureArgument and use interface + record
 public abstract sealed class IfFeatureExpr implements Immutable, Predicate<FeatureSet> {
     private abstract static sealed class Single extends IfFeatureExpr {
         final @NonNull QName qname;

@@ -22,12 +22,12 @@ public interface PositionStatement extends DeclaredStatement<Uint32> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        PositionStatement.class, PositionEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "position", "value");
+    @NonNull StatementDefinition<Uint32, @NonNull PositionStatement, @NonNull PositionEffectiveStatement> DEF =
+        StatementDefinition.of(PositionStatement.class, PositionEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "position", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Uint32, ?, ?> statementDefinition() {
         return DEF;
     }
 }

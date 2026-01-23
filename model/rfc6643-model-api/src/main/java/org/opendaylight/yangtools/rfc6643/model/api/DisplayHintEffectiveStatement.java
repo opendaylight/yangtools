@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface DisplayHintEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull DisplayHintStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, @NonNull DisplayHintStatement, ?> statementDefinition() {
         return DisplayHintStatement.DEF;
     }
 }

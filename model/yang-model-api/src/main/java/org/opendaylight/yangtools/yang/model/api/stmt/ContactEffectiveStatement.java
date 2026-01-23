@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ContactEffectiveStatement extends EffectiveHumanTextStatement<@NonNull ContactStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, @NonNull ContactStatement, ?> statementDefinition() {
         return ContactStatement.DEF;
     }
 }

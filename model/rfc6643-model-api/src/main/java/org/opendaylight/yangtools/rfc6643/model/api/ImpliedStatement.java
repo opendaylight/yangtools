@@ -17,11 +17,12 @@ public interface ImpliedStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(ImpliedStatement.class, ImpliedEffectiveStatement.class,
-        IetfYangSmiv2Constants.RFC6643_MODULE, "implied", "index");
+    @NonNull StatementDefinition<String, @NonNull ImpliedStatement, @NonNull ImpliedEffectiveStatement> DEF =
+        StatementDefinition.of(ImpliedStatement.class, ImpliedEffectiveStatement.class,
+            IetfYangSmiv2Constants.RFC6643_MODULE, "implied", "index");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

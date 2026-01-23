@@ -18,12 +18,12 @@ public interface ContextReferenceStatement extends UnknownStatement<QName> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ContextReferenceStatement.class, ContextReferenceEffectiveStatement.class,
-        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-reference", "context-type");
+    @NonNull StatementDefinition<QName, @NonNull ContextReferenceStatement, @NonNull ContextReferenceEffectiveStatement>
+        DEF = StatementDefinition.of(ContextReferenceStatement.class, ContextReferenceEffectiveStatement.class,
+            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-reference", "context-type");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 }

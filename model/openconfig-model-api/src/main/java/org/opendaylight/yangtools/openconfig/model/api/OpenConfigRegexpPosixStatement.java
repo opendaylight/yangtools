@@ -23,12 +23,13 @@ public interface OpenConfigRegexpPosixStatement extends UnknownStatement<Empty> 
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        OpenConfigRegexpPosixStatement.class, OpenConfigRegexpPosixEffectiveStatement.class,
-        OpenConfigConstants.REGEXP_POSIX_MODULE, "regexp-posix");
+    @NonNull StatementDefinition<Empty, @NonNull OpenConfigRegexpPosixStatement,
+        @NonNull OpenConfigRegexpPosixEffectiveStatement> DEF = StatementDefinition.of(
+            OpenConfigRegexpPosixStatement.class, OpenConfigRegexpPosixEffectiveStatement.class,
+            OpenConfigConstants.REGEXP_POSIX_MODULE, "regexp-posix");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, ?, ?> statementDefinition() {
         return DEF;
     }
 }

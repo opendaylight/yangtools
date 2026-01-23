@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface SubscriptionStateNotificationEffectiveStatement
         extends EffectiveStatement<Empty, @NonNull SubscriptionStateNotificationStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, SubscriptionStateNotificationStatement,
+            SubscriptionStateNotificationEffectiveStatement> statementDefinition() {
         return SubscriptionStateNotificationStatement.DEF;
     }
 }

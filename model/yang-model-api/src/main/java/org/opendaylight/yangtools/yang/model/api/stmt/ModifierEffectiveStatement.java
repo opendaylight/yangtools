@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
  */
 public interface ModifierEffectiveStatement extends EffectiveStatement<ModifierKind, @NonNull ModifierStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<ModifierKind, @NonNull ModifierStatement, ?> statementDefinition() {
         return ModifierStatement.DEF;
     }
 }

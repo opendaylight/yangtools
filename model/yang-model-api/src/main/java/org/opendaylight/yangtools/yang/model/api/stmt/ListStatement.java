@@ -26,11 +26,12 @@ public interface ListStatement extends MultipleElementsDeclaredStatement,
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ListStatement.class, ListEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "list", "name");
+    @NonNull StatementDefinition<QName, @NonNull ListStatement, @NonNull ListEffectiveStatement> DEF =
+        StatementDefinition.of(ListStatement.class, ListEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "list", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 

@@ -21,11 +21,12 @@ public interface DefaultStatement extends DeclaredStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(DefaultStatement.class, DefaultEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "default", "value");
+    @NonNull StatementDefinition<String, @NonNull DefaultStatement, @NonNull DefaultEffectiveStatement> DEF =
+        StatementDefinition.of(DefaultStatement.class, DefaultEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "default", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

@@ -23,14 +23,16 @@ public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatemen
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(ChoiceStatement.class, ChoiceEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "choice", "name");
+    @NonNull StatementDefinition<QName, @NonNull ChoiceStatement, @NonNull ChoiceEffectiveStatement> DEF =
+        StatementDefinition.of(ChoiceStatement.class, ChoiceEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "choice", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 
+    // FIXME: document
     default @NonNull Collection<? extends @NonNull CaseStatement> getCases() {
         return declaredSubstatements(CaseStatement.class);
     }
