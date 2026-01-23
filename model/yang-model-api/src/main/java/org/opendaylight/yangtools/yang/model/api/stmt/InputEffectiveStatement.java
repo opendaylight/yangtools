@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -15,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public non-sealed interface InputEffectiveStatement extends EffectiveOperationBodyStatement<@NonNull InputStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, InputStatement, InputEffectiveStatement> statementDefinition() {
         return InputStatement.DEF;
     }
 }

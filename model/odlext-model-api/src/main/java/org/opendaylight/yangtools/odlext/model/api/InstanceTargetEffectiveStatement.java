@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface InstanceTargetEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull InstanceTargetStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, InstanceTargetStatement, InstanceTargetEffectiveStatement>
+            statementDefinition() {
         return InstanceTargetStatement.DEF;
     }
 }

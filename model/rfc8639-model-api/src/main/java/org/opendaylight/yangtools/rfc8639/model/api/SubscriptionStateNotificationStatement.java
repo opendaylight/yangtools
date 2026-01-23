@@ -18,12 +18,14 @@ public interface SubscriptionStateNotificationStatement extends DeclaredStatemen
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        SubscriptionStateNotificationStatement.class, SubscriptionStateNotificationEffectiveStatement.class,
-        SubscribedNotificationsConstants.RFC8639_MODULE, "subscription-state-notification");
+    @NonNull StatementDefinition<Empty, SubscriptionStateNotificationStatement,
+            SubscriptionStateNotificationEffectiveStatement> DEF = StatementDefinition.of(
+                SubscriptionStateNotificationStatement.class, SubscriptionStateNotificationEffectiveStatement.class,
+                SubscribedNotificationsConstants.RFC8639_MODULE, "subscription-state-notification");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, SubscriptionStateNotificationStatement,
+            SubscriptionStateNotificationEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

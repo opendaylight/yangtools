@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 public interface PatternEffectiveStatement
         extends EffectiveStatement<PatternExpression, @NonNull PatternStatement>, PatternConstraint {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<PatternExpression, PatternStatement, PatternEffectiveStatement> statementDefinition() {
         return PatternStatement.DEF;
     }
 

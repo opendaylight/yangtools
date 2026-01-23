@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface FractionDigitsEffectiveStatement
         extends EffectiveStatement<Integer, @NonNull FractionDigitsStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement>
+            statementDefinition() {
         return FractionDigitsStatement.DEF;
     }
 }

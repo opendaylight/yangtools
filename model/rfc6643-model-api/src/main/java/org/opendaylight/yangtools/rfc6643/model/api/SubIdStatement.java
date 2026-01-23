@@ -18,11 +18,11 @@ public interface SubIdStatement extends UnknownStatement<Uint32> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(SubIdStatement.class, SubIdEffectiveStatement.class,
-        IetfYangSmiv2Constants.RFC6643_MODULE, "subid", "value");
+    @NonNull StatementDefinition<Uint32, SubIdStatement, SubIdEffectiveStatement> DEF = StatementDefinition.of(
+        SubIdStatement.class, SubIdEffectiveStatement.class, IetfYangSmiv2Constants.RFC6643_MODULE, "subid", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Uint32, SubIdStatement, SubIdEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

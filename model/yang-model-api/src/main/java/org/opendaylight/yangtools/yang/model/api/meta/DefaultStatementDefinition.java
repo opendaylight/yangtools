@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 record DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>(
         @NonNull QName statementName,
-        @NonNull Class<D> declaredRepresentation,
-        @NonNull Class<E> effectiveRepresentation,
-        @Nullable ArgumentDefinition argumentDefinition) implements StatementDefinition {
+        @NonNull Class<? extends D> declaredRepresentation,
+        @NonNull Class<? extends E> effectiveRepresentation,
+        @Nullable ArgumentDefinition argumentDefinition) implements StatementDefinition<A, D, E> {
     DefaultStatementDefinition {
         requireNonNull(statementName);
         DefaultStatementMapping.checkArgument(declaredRepresentation, effectiveRepresentation);
