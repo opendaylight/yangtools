@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface MinElementsEffectiveStatement
         extends EffectiveStatement<MinElementsArgument, @NonNull MinElementsStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<MinElementsArgument, MinElementsStatement, MinElementsEffectiveStatement>
+            statementDefinition() {
         return MinElementsStatement.DEF;
     }
 }

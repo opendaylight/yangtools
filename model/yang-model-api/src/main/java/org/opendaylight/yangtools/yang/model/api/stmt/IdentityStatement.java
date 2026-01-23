@@ -23,11 +23,12 @@ public interface IdentityStatement
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(IdentityStatement.class, IdentityEffectiveStatement.class,
+    @NonNull StatementDefinition<QName, IdentityStatement, IdentityEffectiveStatement> DEF = StatementDefinition.of(
+        IdentityStatement.class, IdentityEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "identity", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, IdentityStatement, IdentityEffectiveStatement> statementDefinition() {
         return DEF;
     }
 

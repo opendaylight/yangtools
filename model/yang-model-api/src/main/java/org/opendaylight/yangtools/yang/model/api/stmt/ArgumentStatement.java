@@ -23,14 +23,16 @@ public interface ArgumentStatement extends DeclaredStatement<QName> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(ArgumentStatement.class, ArgumentEffectiveStatement.class,
+    @NonNull StatementDefinition<QName, ArgumentStatement, ArgumentEffectiveStatement> DEF = StatementDefinition.of(
+        ArgumentStatement.class, ArgumentEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "argument", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ArgumentStatement, ArgumentEffectiveStatement> statementDefinition() {
         return DEF;
     }
 
+    // FIXME: rename/document
     default @Nullable YinElementStatement getYinElement() {
         final var opt = findFirstDeclaredSubstatement(YinElementStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

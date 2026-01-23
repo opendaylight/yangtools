@@ -21,12 +21,12 @@ public interface RevisionStatement extends DocumentedDeclaredStatement<Revision>
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
+    @NonNull StatementDefinition<Revision, RevisionStatement, RevisionEffectiveStatement> DEF = StatementDefinition.of(
         RevisionStatement.class, RevisionEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "revision", "date");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Revision, RevisionStatement, RevisionEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 // FIXME: UniqueArgument instead of Set<Descendant>
 public interface UniqueEffectiveStatement extends EffectiveStatement<Set<Descendant>, @NonNull UniqueStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> statementDefinition() {
         return UniqueStatement.DEF;
     }
 }

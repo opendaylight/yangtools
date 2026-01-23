@@ -22,11 +22,11 @@ public interface PathStatement extends DeclaredStatement<PathExpression> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(PathStatement.class, PathEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "path", "value");
+    @NonNull StatementDefinition<PathExpression, PathStatement, PathEffectiveStatement> DEF = StatementDefinition.of(
+        PathStatement.class, PathEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "path", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<PathExpression, PathStatement, PathEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

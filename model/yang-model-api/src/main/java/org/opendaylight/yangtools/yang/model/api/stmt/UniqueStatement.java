@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Declared representation of a {@code unique} statement.
@@ -23,11 +24,12 @@ public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentif
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(UniqueStatement.class, UniqueEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "unique", "tag");
+    @NonNull StatementDefinition<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> DEF =
+        StatementDefinition.of(UniqueStatement.class, UniqueEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "unique", "tag");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }
