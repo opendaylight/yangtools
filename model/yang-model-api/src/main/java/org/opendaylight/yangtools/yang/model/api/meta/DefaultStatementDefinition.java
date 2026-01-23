@@ -26,7 +26,7 @@ record DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends E
         @NonNull QName statementName,
         @NonNull Class<D> declaredRepresentation,
         @NonNull Class<E> effectiveRepresentation,
-        @Nullable ArgumentDefinition argumentDefinition) implements StatementDefinition {
+        @Nullable ArgumentDefinition argumentDefinition) implements StatementDefinition<A, D, E> {
     DefaultStatementDefinition {
         requireNonNull(statementName);
         DefaultStatementMapping.checkArgument(declaredRepresentation, effectiveRepresentation);

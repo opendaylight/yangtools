@@ -25,7 +25,8 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  *
  * <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3">RFC6020, section 6.3</a>
  */
-public sealed interface StatementDefinition extends Immutable permits DefaultStatementDefinition {
+public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends Immutable permits DefaultStatementDefinition {
     /**
      * Return a {@link StatementDefinition} combining all specified components.
      *
@@ -38,10 +39,9 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @param argument optional {@link ArgumentDefinition}
      * @return a {@link StatementDefinition}
      */
-    @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
-            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
-            final QName statementName, final @Nullable ArgumentDefinition argument) {
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition<A, D, E> of(
+            final @NonNull Class<D> declaredRepresentation, final @NonNull Class<E> effectiveRepresentation,
+            final @NonNull QName statementName, final @Nullable ArgumentDefinition argument) {
         return new DefaultStatementDefinition<>(statementName, declaredRepresentation, effectiveRepresentation,
             argument);
     }
@@ -60,7 +60,7 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @return a {@link StatementDefinition}
      */
     @NonNullByDefault
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition<A, D, E> of(
             final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
             final QNameModule module, final String statementName) {
         return of(declaredRepresentation, effectiveRepresentation, QName.create(module, statementName).intern(), null);
@@ -80,11 +80,10 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
      * @param argumentName statement name
      * @return a {@link StatementDefinition}
      */
-    @NonNullByDefault
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> StatementDefinition of(
-            final Class<D> declaredRepresentation, final Class<E> effectiveRepresentation,
-            final QNameModule module, final String statementName,
-            final String argumentName) {
+            final @NonNull Class<D> declaredRepresentation, final @NonNull Class<E> effectiveRepresentation,
+            final @NonNull QNameModule module, final @NonNull String statementName,
+            final @NonNull String argumentName) {
         return of(declaredRepresentation, effectiveRepresentation, module, statementName, argumentName, false);
     }
 
