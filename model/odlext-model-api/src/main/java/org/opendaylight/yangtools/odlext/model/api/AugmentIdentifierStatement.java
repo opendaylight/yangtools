@@ -16,12 +16,12 @@ public interface AugmentIdentifierStatement extends UnknownStatement<Unqualified
     /**
      * The definition of {@code yang-ext:augment-identifier} statement.
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         AugmentIdentifierStatement.class, AugmentIdentifierEffectiveStatement.class,
         CodegenExtensionsConstants.ORIGINAL_MODULE, "augment-identifier", "identifier");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

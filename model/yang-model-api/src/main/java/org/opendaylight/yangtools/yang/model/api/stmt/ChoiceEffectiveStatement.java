@@ -19,7 +19,7 @@ public non-sealed interface ChoiceEffectiveStatement extends SchemaTreeEffective
         DataTreeAwareEffectiveStatement<QName, @NonNull ChoiceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return ChoiceStatement.DEFINITION;
+        return ChoiceStatement.DEF;
     }
 
     /**

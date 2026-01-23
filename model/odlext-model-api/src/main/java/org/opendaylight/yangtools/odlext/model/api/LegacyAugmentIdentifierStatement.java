@@ -12,18 +12,19 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
+// FIXME: remove this class in favor of projecting AugmentIdentifierStatement via two definitions
 public interface LegacyAugmentIdentifierStatement extends UnknownStatement<Unqualified> {
     /**
      * The definition of {@code yang-ext:augment-identiifer} statement.
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         LegacyAugmentIdentifierStatement.class, LegacyAugmentIdentifierEffectiveStatement.class,
         OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier", "identifier");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

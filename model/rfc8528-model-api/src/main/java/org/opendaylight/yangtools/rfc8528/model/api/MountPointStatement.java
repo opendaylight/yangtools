@@ -25,13 +25,13 @@ public interface MountPointStatement extends UnknownStatement<MountPointLabel>, 
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         MountPointStatement.class, MountPointEffectiveStatement.class,
         SchemaMountConstants.RFC8528_MODULE, "mount-point", "label");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
     @Override

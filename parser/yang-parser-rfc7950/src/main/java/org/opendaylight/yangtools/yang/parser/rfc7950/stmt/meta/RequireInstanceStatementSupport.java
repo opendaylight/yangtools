@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class RequireInstanceStatementSupport
         extends AbstractBooleanStatementSupport<RequireInstanceStatement, RequireInstanceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(RequireInstanceStatement.DEFINITION).build();
+        SubstatementValidator.builder(RequireInstanceStatement.DEF).build();
 
     public RequireInstanceStatementSupport(final YangParserConfiguration config) {
-        super(RequireInstanceStatement.DEFINITION,
+        super(RequireInstanceStatement.DEF,
             EffectiveStatements.createRequireInstance(false), EffectiveStatements.createRequireInstance(true),
             StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }

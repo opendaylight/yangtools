@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering, @NonNull OrderedByStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return OrderedByStatement.DEFINITION;
+        return OrderedByStatement.DEF;
     }
 }

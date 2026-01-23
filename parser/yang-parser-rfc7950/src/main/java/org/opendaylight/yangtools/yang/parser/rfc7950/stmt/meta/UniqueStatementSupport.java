@@ -63,10 +63,10 @@ public final class UniqueStatementSupport
             .omitEmptyStrings();
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(UniqueStatement.DEFINITION).build();
+        SubstatementValidator.builder(UniqueStatement.DEF).build();
 
     public UniqueStatementSupport(final YangParserConfiguration config) {
-        super(UniqueStatement.DEFINITION,
+        super(UniqueStatement.DEF,
             StatementPolicy.copyDeclared(
                 (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
             config, SUBSTATEMENT_VALIDATOR);

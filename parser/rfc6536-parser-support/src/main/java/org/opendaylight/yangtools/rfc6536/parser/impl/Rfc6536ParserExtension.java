@@ -32,7 +32,7 @@ public final class Rfc6536ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc6536ParserExtension() {
-        super(DefaultDenyAllStatement.DEFINITION, DefaultDenyWriteStatement.DEFINITION);
+        super(DefaultDenyAllStatement.DEF, DefaultDenyWriteStatement.DEF);
     }
 
     @Override

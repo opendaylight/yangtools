@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class AugmentIdentifierStatementSupport
         extends AbstractUnqualifiedStatementSupport<AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(AugmentIdentifierStatement.DEFINITION).build();
+        SubstatementValidator.builder(AugmentIdentifierStatement.DEF).build();
 
     public AugmentIdentifierStatementSupport(final YangParserConfiguration config) {
-        super(AugmentIdentifierStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(AugmentIdentifierStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

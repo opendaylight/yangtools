@@ -55,22 +55,22 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LeafStatementSupport
         extends AbstractImplicitStatementSupport<LeafStatement, LeafEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(LeafStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addMandatory(TypeStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(LeafStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addMandatory(TypeStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
 
     public LeafStatementSupport(final YangParserConfiguration config) {
-        super(LeafStatement.DEFINITION, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
+        super(LeafStatement.DEF, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

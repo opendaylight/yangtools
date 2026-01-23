@@ -66,54 +66,54 @@ public final class ChoiceStatementSupport
         extends AbstractSchemaTreeStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(ChoiceStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(CaseStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(ChoiceStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(CaseStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
     private static final ImmutableSet<StatementDefinition> RFC6020_CASE_SHORTHANDS = ImmutableSet.of(
-        AnyxmlStatement.DEFINITION, ContainerStatement.DEFINITION, LeafStatement.DEFINITION, ListStatement.DEFINITION,
-        LeafListStatement.DEFINITION);
+        AnyxmlStatement.DEF, ContainerStatement.DEF, LeafStatement.DEF, ListStatement.DEF,
+        LeafListStatement.DEF);
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(ChoiceStatement.DEFINITION)
-            .addAny(AnydataStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(CaseStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(ChoiceStatement.DEF)
+            .addAny(AnydataStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(CaseStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
     private static final ImmutableSet<StatementDefinition> RFC7950_CASE_SHORTHANDS = ImmutableSet.of(
-        AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION, ChoiceStatement.DEFINITION,
-        ContainerStatement.DEFINITION, LeafStatement.DEFINITION, ListStatement.DEFINITION,
-        LeafListStatement.DEFINITION);
+        AnydataStatement.DEF, AnyxmlStatement.DEF, ChoiceStatement.DEF,
+        ContainerStatement.DEF, LeafStatement.DEF, ListStatement.DEF,
+        LeafListStatement.DEF);
 
     private final ImmutableSet<StatementDefinition> caseShorthands;
 
     private ChoiceStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
             final ImmutableSet<StatementDefinition> caseShorthands) {
-        super(ChoiceStatement.DEFINITION, instantiatedPolicy(), config, requireNonNull(validator));
+        super(ChoiceStatement.DEF, instantiatedPolicy(), config, requireNonNull(validator));
         this.caseShorthands = requireNonNull(caseShorthands);
     }
 
@@ -132,7 +132,7 @@ public final class ChoiceStatementSupport
             return Optional.empty();
         }
         return Optional.of(verifyNotNull(parent.namespaceItem(StatementSupport.NAMESPACE,
-            CaseStatement.DEFINITION.statementName())));
+            CaseStatement.DEF.statementName())));
     }
 
     @Override

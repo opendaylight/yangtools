@@ -21,12 +21,12 @@ public interface MandatoryStatement extends DeclaredStatement<Boolean> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         MandatoryStatement.class, MandatoryEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "mandatory", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

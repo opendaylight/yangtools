@@ -18,6 +18,6 @@ public interface RequireInstanceEffectiveStatement
         extends EffectiveStatement<Boolean, @NonNull RequireInstanceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return RequireInstanceStatement.DEFINITION;
+        return RequireInstanceStatement.DEF;
     }
 }

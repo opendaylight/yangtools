@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface ModuleTagEffectiveStatement extends UnknownEffectiveStatement<Tag, @NonNull ModuleTagStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return ModuleTagStatement.DEFINITION;
+        return ModuleTagStatement.DEF;
     }
 }

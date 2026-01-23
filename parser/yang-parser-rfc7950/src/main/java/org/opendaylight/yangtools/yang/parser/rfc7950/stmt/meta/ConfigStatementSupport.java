@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ConfigStatementSupport
         extends AbstractBooleanStatementSupport<ConfigStatement, ConfigEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(ConfigStatement.DEFINITION).build();
+        SubstatementValidator.builder(ConfigStatement.DEF).build();
 
     public ConfigStatementSupport(final YangParserConfiguration config) {
-        super(ConfigStatement.DEFINITION,
+        super(ConfigStatement.DEF,
             EffectiveStatements.createConfig(false), EffectiveStatements.createConfig(true),
             // FIXME: not quite: we want to have a 'parent sensitive' policy where we get the new BoundStmtCtx or
             //        similar, but will do for now

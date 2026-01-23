@@ -58,11 +58,11 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
 
     // Note this happens to match DeclaredHumanTextStatement, but this is actually an IETF best practice
     private static final Set<StatementDefinition> QUOTE_MULTILINE_STATEMENTS = Set.of(
-        ContactStatement.DEFINITION,
-        DescriptionStatement.DEFINITION,
-        ErrorMessageStatement.DEFINITION,
-        OrganizationStatement.DEFINITION,
-        ReferenceStatement.DEFINITION);
+        ContactStatement.DEF,
+        DescriptionStatement.DEF,
+        ErrorMessageStatement.DEF,
+        OrganizationStatement.DEF,
+        ReferenceStatement.DEF);
 
     /*
      * https://www.rfc-editor.org/rfc/rfc6087#section-4.3:
@@ -72,14 +72,14 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      *            difficult to read if used everywhere they are allowed.
      */
     private static final Map<StatementDefinition, String> DEFAULT_STATEMENTS = Map.of(
-        ConfigStatement.DEFINITION, "true",
-        MandatoryStatement.DEFINITION, "true",
-        MaxElementsStatement.DEFINITION, "unbounded",
-        MinElementsStatement.DEFINITION, "0",
-        OrderedByStatement.DEFINITION, "system",
-        RequireInstanceStatement.DEFINITION, "true",
-        StatusStatement.DEFINITION, "current",
-        YinElementStatement.DEFINITION, "false");
+        ConfigStatement.DEF, "true",
+        MandatoryStatement.DEF, "true",
+        MaxElementsStatement.DEF, "unbounded",
+        MinElementsStatement.DEF, "0",
+        OrderedByStatement.DEF, "system",
+        RequireInstanceStatement.DEF, "true",
+        StatusStatement.DEF, "current",
+        YinElementStatement.DEF, "false");
 
     private static final String INDENT = "  ";
     private static final int INDENT_STRINGS_SIZE = 16;

@@ -36,23 +36,23 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class PatternStatementSupport
         extends AbstractStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(PatternStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ErrorAppTagStatement.DEFINITION)
-            .addOptional(ErrorMessageStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(PatternStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ErrorAppTagStatement.DEF)
+            .addOptional(ErrorMessageStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(PatternStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ErrorAppTagStatement.DEFINITION)
-            .addOptional(ErrorMessageStatement.DEFINITION)
-            .addOptional(ModifierStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(PatternStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ErrorAppTagStatement.DEF)
+            .addOptional(ErrorMessageStatement.DEF)
+            .addOptional(ModifierStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     private PatternStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(PatternStatement.DEFINITION, StatementPolicy.contextIndependent(), config, validator);
+        super(PatternStatement.DEF, StatementPolicy.contextIndependent(), config, validator);
     }
 
     public static @NonNull PatternStatementSupport rfc6020Instance(final YangParserConfiguration config) {

@@ -32,16 +32,16 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 public final class WhenStatementSupport
         extends AbstractStatementSupport<QualifiedBound, WhenStatement, WhenEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(WhenStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(WhenStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     private final @NonNull XPathSupport xpathSupport;
 
     public WhenStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(WhenStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(WhenStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 

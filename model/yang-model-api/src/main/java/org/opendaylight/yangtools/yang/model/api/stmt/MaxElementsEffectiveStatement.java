@@ -18,6 +18,6 @@ public interface MaxElementsEffectiveStatement
         extends EffectiveStatement<MaxElementsArgument, @NonNull MaxElementsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return MaxElementsStatement.DEFINITION;
+        return MaxElementsStatement.DEF;
     }
 }

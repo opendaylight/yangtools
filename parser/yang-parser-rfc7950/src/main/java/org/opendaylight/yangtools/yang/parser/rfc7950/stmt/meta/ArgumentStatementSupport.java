@@ -27,10 +27,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ArgumentStatementSupport
         extends AbstractQNameStatementSupport<ArgumentStatement, ArgumentEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(ArgumentStatement.DEFINITION).addOptional(YinElementStatement.DEFINITION).build();
+        SubstatementValidator.builder(ArgumentStatement.DEF).addOptional(YinElementStatement.DEF).build();
 
     public ArgumentStatementSupport(final YangParserConfiguration config) {
-        super(ArgumentStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(ArgumentStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

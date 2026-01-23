@@ -30,7 +30,7 @@ public final class Rfc6241ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc6241ParserExtension() {
-        super(GetFilterElementAttributesStatement.DEFINITION);
+        super(GetFilterElementAttributesStatement.DEF);
     }
 
     @Override

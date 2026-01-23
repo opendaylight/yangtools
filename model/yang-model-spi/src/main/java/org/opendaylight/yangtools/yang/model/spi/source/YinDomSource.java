@@ -162,9 +162,9 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
 
     private static final Logger LOG = LoggerFactory.getLogger(YinDomSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-    private static final QName REVISION_STMT = RevisionStatement.DEFINITION.statementName();
-    private static final String MODULE_ARG = ModuleStatement.DEFINITION.getArgumentDefinition().simpleName();
-    private static final String REVISION_ARG = RevisionStatement.DEFINITION.getArgumentDefinition().simpleName();
+    private static final QName REVISION_STMT = RevisionStatement.DEF.statementName();
+    private static final String MODULE_ARG = ModuleStatement.DEF.getArgumentDefinition().simpleName();
+    private static final String REVISION_ARG = RevisionStatement.DEF.getArgumentDefinition().simpleName();
 
     private final @NonNull SourceRefProvider refProvider;
 
@@ -215,8 +215,8 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
         }
 
         final var rootName = root.getLocalName();
-        if (!rootName.equals(ModuleStatement.DEFINITION.simpleName())
-            && !rootName.equals(SubmoduleStatement.DEFINITION.simpleName())) {
+        if (!rootName.equals(ModuleStatement.DEF.simpleName())
+            && !rootName.equals(SubmoduleStatement.DEF.simpleName())) {
             throw new IllegalArgumentException("Root element " + rootName + " is not a module nor a submodule");
         }
 

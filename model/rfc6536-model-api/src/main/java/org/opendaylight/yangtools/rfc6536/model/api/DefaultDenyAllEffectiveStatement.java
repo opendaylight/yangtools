@@ -20,6 +20,6 @@ public interface DefaultDenyAllEffectiveStatement
         extends UnknownEffectiveStatement<Empty, @NonNull DefaultDenyAllStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return DefaultDenyAllStatement.DEFINITION;
+        return DefaultDenyAllStatement.DEF;
     }
 }

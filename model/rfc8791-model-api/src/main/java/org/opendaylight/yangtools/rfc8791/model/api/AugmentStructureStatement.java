@@ -22,12 +22,12 @@ public interface AugmentStructureStatement
     /**
      * The definition of {@code sx:augment-structure} statement.
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         AugmentStructureStatement.class, AugmentStructureEffectiveStatement.class,
         YangDataStructureConstants.RFC8791_MODULE, "augment-structure", "path");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

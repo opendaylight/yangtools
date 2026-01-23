@@ -41,15 +41,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class RangeStatementSupport
         extends AbstractStatementSupport<ValueRanges, RangeStatement, RangeEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(RangeStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ErrorAppTagStatement.DEFINITION)
-            .addOptional(ErrorMessageStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(RangeStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ErrorAppTagStatement.DEF)
+            .addOptional(ErrorMessageStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     public RangeStatementSupport(final YangParserConfiguration config) {
-        super(RangeStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(RangeStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

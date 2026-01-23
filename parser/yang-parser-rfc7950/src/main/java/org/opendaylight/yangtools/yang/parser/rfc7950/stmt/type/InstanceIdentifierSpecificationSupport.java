@@ -27,8 +27,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 final class InstanceIdentifierSpecificationSupport
         extends AbstractTypeSupport<InstanceIdentifierSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION)
-            .addOptional(RequireInstanceStatement.DEFINITION)
+        SubstatementValidator.builder(TypeStatement.DEF)
+            .addOptional(RequireInstanceStatement.DEF)
             .build();
 
     InstanceIdentifierSpecificationSupport(final YangParserConfiguration config) {

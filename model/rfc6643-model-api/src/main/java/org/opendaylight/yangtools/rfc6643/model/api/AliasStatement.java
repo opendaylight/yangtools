@@ -18,17 +18,17 @@ public interface AliasStatement extends UnknownStatement<String>, DocumentedDecl
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         AliasStatement.class, AliasEffectiveStatement.class,
         IetfYangSmiv2Constants.RFC6643_MODULE, "alias", "descriptor");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: rename/document
     default @NonNull OidStatement getOidStatement() {
         return findFirstDeclaredSubstatement(OidStatement.class).orElseThrow();
     }
 }
-

@@ -20,11 +20,11 @@ public non-sealed interface InputStatement extends DeclaredOperationBodyStatemen
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        InputStatement.class, InputEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "input");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(InputStatement.class, InputEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "input");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

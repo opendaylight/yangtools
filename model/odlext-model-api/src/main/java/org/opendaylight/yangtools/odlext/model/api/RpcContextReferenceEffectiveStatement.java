@@ -15,6 +15,6 @@ public interface RpcContextReferenceEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull RpcContextReferenceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return RpcContextReferenceStatement.DEFINITION;
+        return RpcContextReferenceStatement.DEF;
     }
 }

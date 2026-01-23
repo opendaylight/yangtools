@@ -21,11 +21,11 @@ public interface MustStatement extends ConstrainedDocumentedDeclaredStatement<Qu
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(MustStatement.class, MustEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(MustStatement.class, MustEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "must", "condition");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

@@ -17,12 +17,12 @@ public interface MaxAccessStatement extends UnknownStatement<MaxAccess> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         MaxAccessStatement.class, MaxAccessEffectiveStatement.class,
         IetfYangSmiv2Constants.RFC6643_MODULE, "max-access", "access");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

@@ -89,17 +89,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement>
         implements UndeclaredStatementFactory<QName, TypeStatement, TypeEffectiveStatement<TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION)
-            .addOptional(BaseStatement.DEFINITION)
-            .addAny(BitStatement.DEFINITION)
-            .addAny(EnumStatement.DEFINITION)
-            .addOptional(FractionDigitsStatement.DEFINITION)
-            .addOptional(LengthStatement.DEFINITION)
-            .addOptional(PathStatement.DEFINITION)
-            .addAny(PatternStatement.DEFINITION)
-            .addOptional(RangeStatement.DEFINITION)
-            .addOptional(RequireInstanceStatement.DEFINITION)
-            .addAny(TypeStatement.DEFINITION)
+        SubstatementValidator.builder(TypeStatement.DEF)
+            .addOptional(BaseStatement.DEF)
+            .addAny(BitStatement.DEF)
+            .addAny(EnumStatement.DEF)
+            .addOptional(FractionDigitsStatement.DEF)
+            .addOptional(LengthStatement.DEF)
+            .addOptional(PathStatement.DEF)
+            .addAny(PatternStatement.DEF)
+            .addOptional(RangeStatement.DEF)
+            .addOptional(RequireInstanceStatement.DEF)
+            .addAny(TypeStatement.DEF)
             .build();
 
     private static final ImmutableMap<QName, BuiltinEffectiveStatement> STATIC_BUILT_IN_TYPES =

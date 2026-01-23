@@ -22,13 +22,13 @@ public interface BelongsToStatement extends DeclaredStatement<Unqualified> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         BelongsToStatement.class, BelongsToEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "belongs-to", "module");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
     default @NonNull PrefixStatement getPrefix() {

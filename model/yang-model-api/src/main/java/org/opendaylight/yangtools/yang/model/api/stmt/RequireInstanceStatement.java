@@ -21,12 +21,12 @@ public interface RequireInstanceStatement extends DeclaredStatement<Boolean> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         RequireInstanceStatement.class, RequireInstanceEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "require-instance", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

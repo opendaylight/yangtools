@@ -39,10 +39,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class BelongsToStatementSupport
         extends AbstractUnqualifiedStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(BelongsToStatement.DEFINITION).addMandatory(PrefixStatement.DEFINITION).build();
+        SubstatementValidator.builder(BelongsToStatement.DEF).addMandatory(PrefixStatement.DEF).build();
 
     public BelongsToStatementSupport(final YangParserConfiguration config) {
-        super(BelongsToStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(BelongsToStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

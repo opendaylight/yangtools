@@ -23,11 +23,11 @@ public interface LeafStatement extends DataDefinitionStatement, TypeAwareDeclare
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(LeafStatement.class, LeafEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(LeafStatement.class, LeafEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "leaf", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

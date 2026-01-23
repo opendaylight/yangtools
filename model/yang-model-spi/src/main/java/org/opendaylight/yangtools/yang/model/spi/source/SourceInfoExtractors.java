@@ -33,8 +33,8 @@ public final class SourceInfoExtractors {
     static final String SUBMODULE = "submodule";
 
     static {
-        verify(MODULE.equals(ModuleStatement.DEFINITION.simpleName()));
-        verify(SUBMODULE.equals(SubmoduleStatement.DEFINITION.simpleName()));
+        verify(MODULE.equals(ModuleStatement.DEF.simpleName()));
+        verify(SUBMODULE.equals(SubmoduleStatement.DEF.simpleName()));
     }
 
     private SourceInfoExtractors() {

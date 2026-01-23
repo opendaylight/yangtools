@@ -22,11 +22,11 @@ public interface DeviateStatement extends DeclaredStatement<DeviateKind> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        DeviateStatement.class, DeviateEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "deviate", "value");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(DeviateStatement.class, DeviateEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "deviate", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

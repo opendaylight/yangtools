@@ -49,7 +49,7 @@ abstract class AbstractTypeSupport<T extends TypeStatement>
         QName::getLocalName);
 
     AbstractTypeSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(TypeStatement.DEFINITION, StatementPolicy.exactReplica(), config, requireNonNull(validator));
+        super(TypeStatement.DEF, StatementPolicy.exactReplica(), config, requireNonNull(validator));
     }
 
     @Override

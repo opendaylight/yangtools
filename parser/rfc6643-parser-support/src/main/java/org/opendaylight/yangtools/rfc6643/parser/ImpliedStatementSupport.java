@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ImpliedStatementSupport
         extends AbstractStringStatementSupport<ImpliedStatement, ImpliedEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(ImpliedStatement.DEFINITION).build();
+            SubstatementValidator.builder(ImpliedStatement.DEF).build();
 
     public ImpliedStatementSupport(final YangParserConfiguration config) {
-        super(ImpliedStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(ImpliedStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

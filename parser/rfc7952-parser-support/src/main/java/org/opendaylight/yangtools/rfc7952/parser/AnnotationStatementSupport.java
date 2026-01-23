@@ -34,17 +34,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class AnnotationStatementSupport
          extends AbstractStatementSupport<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AnnotationStatement.DEFINITION)
-        .addMandatory(TypeStatement.DEFINITION)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addAny(IfFeatureStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addOptional(UnitsStatement.DEFINITION)
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AnnotationStatement.DEF)
+        .addMandatory(TypeStatement.DEF)
+        .addOptional(DescriptionStatement.DEF)
+        .addAny(IfFeatureStatement.DEF)
+        .addOptional(ReferenceStatement.DEF)
+        .addOptional(StatusStatement.DEF)
+        .addOptional(UnitsStatement.DEF)
         .build();
 
     public AnnotationStatementSupport(final YangParserConfiguration config) {
-        super(AnnotationStatement.DEFINITION, StatementPolicy.reject(), config, VALIDATOR);
+        super(AnnotationStatement.DEF, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override

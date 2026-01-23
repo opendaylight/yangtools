@@ -18,12 +18,12 @@ public interface ContextInstanceStatement extends UnknownStatement<QName> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         ContextInstanceStatement.class, ContextInstanceEffectiveStatement.class,
         OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-instance", "context-type");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

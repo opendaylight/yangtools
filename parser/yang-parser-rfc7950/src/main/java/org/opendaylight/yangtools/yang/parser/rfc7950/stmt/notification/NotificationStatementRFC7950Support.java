@@ -38,22 +38,22 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 public final class NotificationStatementRFC7950Support extends AbstractNotificationStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(NotificationStatement.DEFINITION)
-            .addAny(AnydataStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(GroupingStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addAny(TypedefStatement.DEFINITION)
-            .addAny(UsesStatement.DEFINITION)
+        SubstatementValidator.builder(NotificationStatement.DEF)
+            .addAny(AnydataStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(GroupingStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(TypedefStatement.DEF)
+            .addAny(UsesStatement.DEF)
             .build();
 
     public NotificationStatementRFC7950Support(final YangParserConfiguration config) {

@@ -41,12 +41,12 @@ public final class YangExtParserExtension extends AbstractParserExtension {
      */
     public YangExtParserExtension() {
         super(
-            ContextInstanceStatement.DEFINITION,
-            ContextReferenceStatement.DEFINITION,
-            InstanceTargetStatement.DEFINITION,
-            LegacyAugmentIdentifierStatement.DEFINITION,
-            MountStatement.DEFINITION,
-            RpcContextReferenceStatement.DEFINITION);
+            ContextInstanceStatement.DEF,
+            ContextReferenceStatement.DEF,
+            InstanceTargetStatement.DEF,
+            LegacyAugmentIdentifierStatement.DEF,
+            MountStatement.DEF,
+            RpcContextReferenceStatement.DEF);
     }
 
     @Override

@@ -21,12 +21,12 @@ public interface MaxElementsStatement extends DeclaredStatement<MaxElementsArgum
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         MaxElementsStatement.class, MaxElementsEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "max-elements", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

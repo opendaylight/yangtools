@@ -31,13 +31,13 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class RevisionStatementSupport
         extends AbstractStatementSupport<Revision, RevisionStatement, RevisionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(RevisionStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(RevisionStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     public RevisionStatementSupport(final YangParserConfiguration config) {
-        super(RevisionStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(RevisionStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

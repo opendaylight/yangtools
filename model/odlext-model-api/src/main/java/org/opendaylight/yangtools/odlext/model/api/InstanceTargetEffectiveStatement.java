@@ -15,6 +15,6 @@ public interface InstanceTargetEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull InstanceTargetStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return InstanceTargetStatement.DEFINITION;
+        return InstanceTargetStatement.DEF;
     }
 }

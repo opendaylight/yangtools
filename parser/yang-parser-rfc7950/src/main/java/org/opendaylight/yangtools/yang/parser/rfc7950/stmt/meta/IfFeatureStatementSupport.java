@@ -46,13 +46,13 @@ public final class IfFeatureStatementSupport
         extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(IfFeatureStatement.DEFINITION).build();
+        SubstatementValidator.builder(IfFeatureStatement.DEF).build();
 
     private final @NonNull IfFeatureArgumentParser argumentParser;
 
     private IfFeatureStatementSupport(final YangParserConfiguration config,
             final IfFeatureArgumentParser argumentParser) {
-        super(IfFeatureStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(IfFeatureStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.argumentParser = requireNonNull(argumentParser);
     }
 

@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 public interface ModifierEffectiveStatement extends EffectiveStatement<ModifierKind, @NonNull ModifierStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return ModifierStatement.DEFINITION;
+        return ModifierStatement.DEF;
     }
 }

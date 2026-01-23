@@ -27,10 +27,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class MinElementsStatementSupport extends AbstractInternedStatementSupport<
         MinElementsArgument, MinElementsStatement, MinElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(MinElementsStatement.DEFINITION).build();
+        SubstatementValidator.builder(MinElementsStatement.DEF).build();
 
     public MinElementsStatementSupport(final YangParserConfiguration config) {
-        super(MinElementsStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(MinElementsStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

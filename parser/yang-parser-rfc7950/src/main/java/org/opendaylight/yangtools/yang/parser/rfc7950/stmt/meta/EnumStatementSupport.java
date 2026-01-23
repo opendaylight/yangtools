@@ -32,23 +32,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class EnumStatementSupport
         extends AbstractStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(EnumStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addOptional(ValueStatement.DEFINITION)
+        SubstatementValidator.builder(EnumStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addOptional(ValueStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(EnumStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addOptional(ValueStatement.DEFINITION)
+        SubstatementValidator.builder(EnumStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addOptional(ValueStatement.DEF)
             .build();
 
     private EnumStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(EnumStatement.DEFINITION, StatementPolicy.contextIndependent(), config, validator);
+        super(EnumStatement.DEF, StatementPolicy.contextIndependent(), config, validator);
     }
 
     public static @NonNull EnumStatementSupport rfc6020Instance(final YangParserConfiguration config) {

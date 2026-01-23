@@ -21,13 +21,12 @@ public interface DescriptionStatement extends DeclaredHumanTextStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         DescriptionStatement.class, DescriptionEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "description", "text", true);
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }
-

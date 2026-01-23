@@ -21,11 +21,11 @@ public interface PrefixStatement extends DeclaredStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        PrefixStatement.class, PrefixEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "prefix", "value");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(PrefixStatement.class, PrefixEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "prefix", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

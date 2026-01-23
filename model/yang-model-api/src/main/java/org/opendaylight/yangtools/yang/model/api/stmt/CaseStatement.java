@@ -22,11 +22,11 @@ public interface CaseStatement extends DocumentedDeclaredStatement.WithStatus<QN
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(CaseStatement.class, CaseEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(CaseStatement.class, CaseEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "case", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

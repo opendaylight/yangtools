@@ -20,6 +20,6 @@ public non-sealed interface NotificationEffectiveStatement
             TypedefAwareEffectiveStatement<QName, @NonNull NotificationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return NotificationStatement.DEFINITION;
+        return NotificationStatement.DEF;
     }
 }

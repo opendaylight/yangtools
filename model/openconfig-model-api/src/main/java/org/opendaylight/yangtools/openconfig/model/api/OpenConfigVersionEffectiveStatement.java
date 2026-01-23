@@ -16,6 +16,6 @@ public interface OpenConfigVersionEffectiveStatement
         extends UnknownEffectiveStatement<SemVer, @NonNull OpenConfigVersionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenConfigVersionStatement.DEFINITION;
+        return OpenConfigVersionStatement.DEF;
     }
 }

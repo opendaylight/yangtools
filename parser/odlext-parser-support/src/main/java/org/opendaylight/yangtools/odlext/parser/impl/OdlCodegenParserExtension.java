@@ -30,7 +30,7 @@ public final class OdlCodegenParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public OdlCodegenParserExtension() {
-        super(AugmentIdentifierStatement.DEFINITION);
+        super(AugmentIdentifierStatement.DEF);
     }
 
     @Override

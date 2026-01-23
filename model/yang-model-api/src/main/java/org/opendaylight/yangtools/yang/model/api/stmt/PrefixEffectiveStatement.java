@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface PrefixEffectiveStatement extends EffectiveStatement<String, @NonNull PrefixStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return PrefixStatement.DEFINITION;
+        return PrefixStatement.DEF;
     }
 }

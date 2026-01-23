@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface DeviateEffectiveStatement extends EffectiveStatement<DeviateKind, @NonNull DeviateStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return DeviateStatement.DEFINITION;
+        return DeviateStatement.DEF;
     }
 }

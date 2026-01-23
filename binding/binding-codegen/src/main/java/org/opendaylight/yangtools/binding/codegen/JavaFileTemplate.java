@@ -173,10 +173,10 @@ class JavaFileTemplate {
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
-        .addIgnoredStatement(ContactStatement.DEFINITION)
-        .addIgnoredStatement(DescriptionStatement.DEFINITION)
-        .addIgnoredStatement(OrganizationStatement.DEFINITION)
-        .addIgnoredStatement(ReferenceStatement.DEFINITION)
+        .addIgnoredStatement(ContactStatement.DEF)
+        .addIgnoredStatement(DescriptionStatement.DEF)
+        .addIgnoredStatement(OrganizationStatement.DEF)
+        .addIgnoredStatement(ReferenceStatement.DEF)
         .build();
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 

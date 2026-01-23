@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @Beta
 @NonNullByDefault
+// FIXME: rename to PatterArgument
 public final class PatternExpression implements Immutable {
     private static final Interner<PatternExpression> INTERNER = Interners.newWeakInterner();
 

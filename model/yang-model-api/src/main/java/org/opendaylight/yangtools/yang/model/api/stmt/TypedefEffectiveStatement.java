@@ -22,7 +22,7 @@ public interface TypedefEffectiveStatement
         extends EffectiveStatement<QName, @NonNull TypedefStatement>, TypeDefinitionAware {
     @Override
     default StatementDefinition statementDefinition() {
-        return TypedefStatement.DEFINITION;
+        return TypedefStatement.DEF;
     }
 
     /**

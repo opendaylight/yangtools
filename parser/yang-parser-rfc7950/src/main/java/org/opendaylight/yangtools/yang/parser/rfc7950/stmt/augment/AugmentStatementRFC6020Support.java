@@ -27,20 +27,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class AugmentStatementRFC6020Support extends AbstractAugmentStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(AugmentStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(CaseStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addAny(UsesStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(AugmentStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(CaseStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(UsesStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
 
     public AugmentStatementRFC6020Support(final YangParserConfiguration config) {

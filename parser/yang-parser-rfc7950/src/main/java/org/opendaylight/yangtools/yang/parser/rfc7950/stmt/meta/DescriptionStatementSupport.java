@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class DescriptionStatementSupport
         extends AbstractStringStatementSupport<DescriptionStatement, DescriptionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(DescriptionStatement.DEFINITION).build();
+        SubstatementValidator.builder(DescriptionStatement.DEF).build();
 
     public DescriptionStatementSupport(final YangParserConfiguration config) {
-        super(DescriptionStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(DescriptionStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

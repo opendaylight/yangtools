@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface FeatureEffectiveStatement extends EffectiveStatement<QName, @NonNull FeatureStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return FeatureStatement.DEFINITION;
+        return FeatureStatement.DEF;
     }
 }

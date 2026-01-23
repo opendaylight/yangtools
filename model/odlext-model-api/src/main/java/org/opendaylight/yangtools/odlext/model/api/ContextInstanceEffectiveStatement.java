@@ -17,7 +17,7 @@ public interface ContextInstanceEffectiveStatement
         extends UnknownEffectiveStatement<QName, @NonNull ContextInstanceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return ContextInstanceStatement.DEFINITION;
+        return ContextInstanceStatement.DEF;
     }
 
     /**

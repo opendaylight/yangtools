@@ -20,11 +20,11 @@ public non-sealed interface RpcStatement extends DeclaredOperationStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(RpcStatement.class, RpcEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(RpcStatement.class, RpcEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "rpc", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

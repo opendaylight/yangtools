@@ -30,7 +30,7 @@ public final class Rfc7952ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc7952ParserExtension() {
-        super(AnnotationStatement.DEFINITION);
+        super(AnnotationStatement.DEF);
     }
 
     @Override

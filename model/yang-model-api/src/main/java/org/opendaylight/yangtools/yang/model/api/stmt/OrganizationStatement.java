@@ -21,12 +21,12 @@ public interface OrganizationStatement extends DeclaredHumanTextStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         OrganizationStatement.class, OrganizationEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "organization", "text", true);
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

@@ -17,11 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * Effective statement representation of 'yang-data' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>.
  */
-public interface YangDataEffectiveStatement
-        extends UnknownEffectiveStatement<YangDataName, @NonNull YangDataStatement>,
-                DataTreeAwareEffectiveStatement<YangDataName, @NonNull YangDataStatement> {
+public interface YangDataEffectiveStatement extends UnknownEffectiveStatement<YangDataName, @NonNull YangDataStatement>,
+        DataTreeAwareEffectiveStatement<YangDataName, @NonNull YangDataStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangDataStatement.DEFINITION;
+        return YangDataStatement.DEF;
     }
 }

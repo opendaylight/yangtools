@@ -20,6 +20,6 @@ public interface MountPointEffectiveStatement
         extends UnknownEffectiveStatement<MountPointLabel, @NonNull MountPointStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return MountPointStatement.DEFINITION;
+        return MountPointStatement.DEF;
     }
 }

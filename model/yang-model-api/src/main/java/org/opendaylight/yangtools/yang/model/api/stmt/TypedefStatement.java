@@ -22,11 +22,11 @@ public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        TypedefStatement.class, TypedefEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "typedef", "name");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(TypedefStatement.class, TypedefEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "typedef", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

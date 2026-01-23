@@ -22,11 +22,11 @@ public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatemen
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        AnyxmlStatement.class, AnyxmlEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "anyxml", "name");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(AnyxmlStatement.class, AnyxmlEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "anyxml", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

@@ -50,17 +50,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class TypedefStatementSupport extends
         AbstractQNameStatementSupport<TypedefStatement, TypedefEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(TypedefStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addMandatory(TypeStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
+        SubstatementValidator.builder(TypedefStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addMandatory(TypeStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
             .build();
 
     public TypedefStatementSupport(final YangParserConfiguration config) {
-        super(TypedefStatement.DEFINITION, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
+        super(TypedefStatement.DEF, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

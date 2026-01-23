@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface RevisionEffectiveStatement extends EffectiveStatement<Revision, @NonNull RevisionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return RevisionStatement.DEFINITION;
+        return RevisionStatement.DEF;
     }
 }

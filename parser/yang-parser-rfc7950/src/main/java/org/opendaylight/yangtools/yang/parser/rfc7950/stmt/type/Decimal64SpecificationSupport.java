@@ -29,9 +29,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64Specification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION)
-            .addMandatory(FractionDigitsStatement.DEFINITION)
-            .addOptional(RangeStatement.DEFINITION)
+        SubstatementValidator.builder(TypeStatement.DEF)
+            .addMandatory(FractionDigitsStatement.DEF)
+            .addOptional(RangeStatement.DEF)
             .build();
 
     Decimal64SpecificationSupport(final YangParserConfiguration config) {

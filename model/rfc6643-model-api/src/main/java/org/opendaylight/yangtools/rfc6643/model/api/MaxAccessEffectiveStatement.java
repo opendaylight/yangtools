@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface MaxAccessEffectiveStatement extends UnknownEffectiveStatement<MaxAccess, @NonNull MaxAccessStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return MaxAccessStatement.DEFINITION;
+        return MaxAccessStatement.DEF;
     }
 }

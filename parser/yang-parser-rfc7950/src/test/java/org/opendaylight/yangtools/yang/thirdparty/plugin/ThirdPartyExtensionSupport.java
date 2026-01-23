@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 public final class ThirdPartyExtensionSupport
         extends AbstractStringStatementSupport<ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> {
     public ThirdPartyExtensionSupport(final YangParserConfiguration config) {
-        super(ThirdPartyExtensionStatement.DEFINITION, StatementPolicy.contextIndependent(), config, null);
+        super(ThirdPartyExtensionStatement.DEF, StatementPolicy.contextIndependent(), config, null);
     }
 
     @Override

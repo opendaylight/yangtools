@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class SubIdStatementSupport
         extends AbstractStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(SubIdStatement.DEFINITION).build();
+            SubstatementValidator.builder(SubIdStatement.DEF).build();
 
     public SubIdStatementSupport(final YangParserConfiguration config) {
-        super(SubIdStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(SubIdStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

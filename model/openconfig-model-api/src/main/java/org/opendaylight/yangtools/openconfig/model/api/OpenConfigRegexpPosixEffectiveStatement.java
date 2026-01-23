@@ -19,6 +19,6 @@ public interface OpenConfigRegexpPosixEffectiveStatement
         extends EffectiveStatement<Empty, @NonNull OpenConfigRegexpPosixStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenConfigRegexpPosixStatement.DEFINITION;
+        return OpenConfigRegexpPosixStatement.DEF;
     }
 }

@@ -65,69 +65,69 @@ public final class DeviateStatementSupport
 
     // Shared by both
     private static final SubstatementValidator NOT_SUPPORTED_VALIDATOR =
-        SubstatementValidator.builder(DeviateStatement.DEFINITION).build();
+        SubstatementValidator.builder(DeviateStatement.DEF).build();
     private static final SubstatementValidator REPLACE_VALIDATOR =
-        SubstatementValidator.builder(DeviateStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addOptional(MaxElementsStatement.DEFINITION)
-            .addOptional(MinElementsStatement.DEFINITION)
-            .addOptional(TypeStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
+        SubstatementValidator.builder(DeviateStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addOptional(MaxElementsStatement.DEF)
+            .addOptional(MinElementsStatement.DEF)
+            .addOptional(TypeStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
             .build();
 
     // RFC6020
     private static final SubstatementValidator RFC6020_ADD_VALIDATOR =
-        SubstatementValidator.builder(DeviateStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addOptional(MaxElementsStatement.DEFINITION)
-            .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addAny(UniqueStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
+        SubstatementValidator.builder(DeviateStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addOptional(MaxElementsStatement.DEF)
+            .addOptional(MinElementsStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addAny(UniqueStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
             .build();
     private static final SubstatementValidator RFC6020_DELETE_VALIDATOR =
-        SubstatementValidator.builder(DeviateStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addAny(UniqueStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
+        SubstatementValidator.builder(DeviateStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addAny(UniqueStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
             .build();
 
     // RFC7950
     private static final SubstatementValidator RFC7950_ADD_VALIDATOR =
-        SubstatementValidator.builder(DeviateStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addAny(DefaultStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addOptional(MaxElementsStatement.DEFINITION)
-            .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addAny(UniqueStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
+        SubstatementValidator.builder(DeviateStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addAny(DefaultStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addOptional(MaxElementsStatement.DEF)
+            .addOptional(MinElementsStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addAny(UniqueStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_DELETE_VALIDATOR =
-        SubstatementValidator.builder(DeviateStatement.DEFINITION)
-            .addAny(DefaultStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addAny(UniqueStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
+        SubstatementValidator.builder(DeviateStatement.DEF)
+            .addAny(DefaultStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addAny(UniqueStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
             .build();
 
     private static final Set<StatementDefinition> IMPLICIT_STATEMENTS = Set.of(
-        ConfigStatement.DEFINITION,
-        MandatoryStatement.DEFINITION,
-        MaxElementsStatement.DEFINITION,
-        MinElementsStatement.DEFINITION);
+        ConfigStatement.DEF,
+        MandatoryStatement.DEF,
+        MaxElementsStatement.DEF,
+        MinElementsStatement.DEF);
     private static final Set<StatementDefinition> SINGLETON_STATEMENTS = Set.of(
-        ConfigStatement.DEFINITION,
-        MandatoryStatement.DEFINITION,
-        MinElementsStatement.DEFINITION,
-        MaxElementsStatement.DEFINITION,
-        UnitsStatement.DEFINITION);
+        ConfigStatement.DEF,
+        MandatoryStatement.DEF,
+        MinElementsStatement.DEF,
+        MaxElementsStatement.DEF,
+        UnitsStatement.DEF);
 
     private final SubstatementValidator addValidator;
     private final SubstatementValidator deleteValidator;
@@ -136,7 +136,7 @@ public final class DeviateStatementSupport
             final SubstatementValidator addValidator, final SubstatementValidator deleteValidator) {
         // Note: we are performing our own validation based on deviate kind.
         // TODO: perhaps we should do argumentSpecificSupport?
-        super(DeviateStatement.DEFINITION, StatementPolicy.contextIndependent(), SubtreePolicy.template(), config,
+        super(DeviateStatement.DEF, StatementPolicy.contextIndependent(), SubtreePolicy.template(), config,
             null);
         this.addValidator = requireNonNull(addValidator);
         this.deleteValidator = requireNonNull(deleteValidator);
@@ -282,8 +282,8 @@ public final class DeviateStatementSupport
     private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
         if (!stmtCtxToBeAdded.producesDeclared(UnknownStatement.class)) {
             final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
-            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || DefaultStatement.DEFINITION.equals(stmtToBeAdded)
-                    && LeafStatement.DEFINITION.equals(targetCtx.publicDefinition())) {
+            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || DefaultStatement.DEF.equals(stmtToBeAdded)
+                    && LeafStatement.DEF.equals(targetCtx.publicDefinition())) {
                 for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
                         stmtCtxToBeAdded, """
@@ -308,8 +308,8 @@ public final class DeviateStatementSupport
             final Mutable<?, ?, ?> targetCtx) {
         final var stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
-        if (DefaultStatement.DEFINITION.equals(stmtToBeReplaced)
-                && LeafListStatement.DEFINITION.equals(targetCtx.publicDefinition())) {
+        if (DefaultStatement.DEF.equals(stmtToBeReplaced)
+                && LeafListStatement.DEF.equals(targetCtx.publicDefinition())) {
             LOG.error("""
                 Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can have multiple \
                 default statements. At line: {}""", stmtToBeReplaced.statementName(), targetCtx.argument(),

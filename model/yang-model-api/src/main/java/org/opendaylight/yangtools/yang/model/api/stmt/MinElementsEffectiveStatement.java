@@ -18,6 +18,6 @@ public interface MinElementsEffectiveStatement
         extends EffectiveStatement<MinElementsArgument, @NonNull MinElementsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return MinElementsStatement.DEFINITION;
+        return MinElementsStatement.DEF;
     }
 }

@@ -40,15 +40,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LengthStatementSupport
         extends AbstractStatementSupport<ValueRanges, LengthStatement, LengthEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(LengthStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ErrorAppTagStatement.DEFINITION)
-            .addOptional(ErrorMessageStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(LengthStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ErrorAppTagStatement.DEF)
+            .addOptional(ErrorMessageStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     public LengthStatementSupport(final YangParserConfiguration config) {
-        super(LengthStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(LengthStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

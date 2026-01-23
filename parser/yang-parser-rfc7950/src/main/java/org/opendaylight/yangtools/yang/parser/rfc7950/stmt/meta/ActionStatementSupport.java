@@ -43,19 +43,19 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class ActionStatementSupport
         extends AbstractOperationStatementSupport<ActionStatement, ActionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(ActionStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(GroupingStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(InputStatement.DEFINITION)
-            .addOptional(OutputStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addAny(TypedefStatement.DEFINITION)
+        SubstatementValidator.builder(ActionStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(GroupingStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(InputStatement.DEF)
+            .addOptional(OutputStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(TypedefStatement.DEF)
             .build();
 
     public ActionStatementSupport(final YangParserConfiguration config) {
-        super(ActionStatement.DEFINITION, uninstantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
+        super(ActionStatement.DEF, uninstantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

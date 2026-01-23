@@ -28,10 +28,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class NamespaceStatementSupport
         extends AbstractStatementSupport<XMLNamespace, NamespaceStatement, NamespaceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(NamespaceStatement.DEFINITION).build();
+        SubstatementValidator.builder(NamespaceStatement.DEF).build();
 
     public NamespaceStatementSupport(final YangParserConfiguration config) {
-        super(NamespaceStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(NamespaceStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

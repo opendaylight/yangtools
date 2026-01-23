@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class FractionDigitsStatementSupport
         extends AbstractStatementSupport<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(FractionDigitsStatement.DEFINITION).build();
+            SubstatementValidator.builder(FractionDigitsStatement.DEF).build();
 
     // FIXME: move this to yang-model-spi
     private static final ImmutableMap<FractionDigitsStatement, FractionDigitsEffectiveStatement> EMPTY_EFF;
@@ -44,7 +44,7 @@ public final class FractionDigitsStatementSupport
     }
 
     public FractionDigitsStatementSupport(final YangParserConfiguration config) {
-        super(FractionDigitsStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(FractionDigitsStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

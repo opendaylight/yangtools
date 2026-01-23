@@ -19,6 +19,6 @@ public interface GroupingEffectiveStatement
                 TypedefAwareEffectiveStatement<QName, @NonNull GroupingStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return GroupingStatement.DEFINITION;
+        return GroupingStatement.DEF;
     }
 }

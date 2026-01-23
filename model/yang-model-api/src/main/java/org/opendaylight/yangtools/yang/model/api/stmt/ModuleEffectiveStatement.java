@@ -68,7 +68,7 @@ public non-sealed interface ModuleEffectiveStatement
 
     @Override
     default StatementDefinition statementDefinition() {
-        return ModuleStatement.DEFINITION;
+        return ModuleStatement.DEF;
     }
 
     /**

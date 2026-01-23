@@ -65,18 +65,18 @@ public final class UsesStatementSupport
         extends AbstractQNameStatementSupport<UsesStatement, UsesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(UsesStatement.DEFINITION)
-            .addAny(AugmentStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(RefineStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(UsesStatement.DEF)
+            .addAny(AugmentStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(RefineStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
 
     public UsesStatementSupport(final YangParserConfiguration config) {
-        super(UsesStatement.DEFINITION, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
+        super(UsesStatement.DEF, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -313,7 +313,7 @@ public final class UsesStatementSupport
 
     // FIXME: clarify this and inline into single caller and work on prodicesDeclared()
     private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
-        return MustStatement.DEFINITION.equals(publicDefinition);
+        return MustStatement.DEF.equals(publicDefinition);
     }
 
     private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {

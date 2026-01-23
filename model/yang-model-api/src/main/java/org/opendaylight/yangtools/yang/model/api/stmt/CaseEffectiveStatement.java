@@ -18,6 +18,6 @@ public non-sealed interface CaseEffectiveStatement extends SchemaTreeEffectiveSt
         DataTreeAwareEffectiveStatement<QName, @NonNull CaseStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return CaseStatement.DEFINITION;
+        return CaseStatement.DEF;
     }
 }

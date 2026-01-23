@@ -22,6 +22,6 @@ public non-sealed interface ListEffectiveStatement extends DataTreeEffectiveStat
         OrderedByAwareEffectiveStatement<QName, @NonNull ListStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return ListStatement.DEFINITION;
+        return ListStatement.DEF;
     }
 }

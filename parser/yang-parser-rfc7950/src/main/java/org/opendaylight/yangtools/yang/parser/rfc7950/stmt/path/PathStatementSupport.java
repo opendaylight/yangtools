@@ -27,13 +27,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class PathStatementSupport
         extends AbstractStatementSupport<PathExpression, PathStatement, PathEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(PathStatement.DEFINITION).build();
+        SubstatementValidator.builder(PathStatement.DEF).build();
 
     private final PathExpressionParser parser = new PathExpressionParser();
 
     public PathStatementSupport(final YangParserConfiguration config) {
         // TODO: can 'path' really be copied?
-        super(PathStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(PathStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

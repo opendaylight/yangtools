@@ -69,76 +69,76 @@ class YT1193Test {
     }
 
     private static void assertFooReferences(final DeclaredStatement<?> foo) {
-        assertReference(foo, ModuleStatement.DEFINITION, 1, 1);
+        assertReference(foo, ModuleStatement.DEF, 1, 1);
 
         final var it = foo.declaredSubstatements().iterator();
-        assertReference(it.next(), NamespaceStatement.DEFINITION, 2, 3);
-        assertReference(it.next(), PrefixStatement.DEFINITION, 3, 3);
-        assertReference(it.next(), YangVersionStatement.DEFINITION, 4, 3);
-        assertReference(it.next(), RevisionStatement.DEFINITION, 6, 3);
-        assertReference(it.next(), OrganizationStatement.DEFINITION, 8, 3);
-        assertReference(it.next(), DescriptionStatement.DEFINITION, 9, 3);
-        assertReference(it.next(), ReferenceStatement.DEFINITION, 10, 3);
-        assertReference(it.next(), ContactStatement.DEFINITION, 11, 3);
+        assertReference(it.next(), NamespaceStatement.DEF, 2, 3);
+        assertReference(it.next(), PrefixStatement.DEF, 3, 3);
+        assertReference(it.next(), YangVersionStatement.DEF, 4, 3);
+        assertReference(it.next(), RevisionStatement.DEF, 6, 3);
+        assertReference(it.next(), OrganizationStatement.DEF, 8, 3);
+        assertReference(it.next(), DescriptionStatement.DEF, 9, 3);
+        assertReference(it.next(), ReferenceStatement.DEF, 10, 3);
+        assertReference(it.next(), ContactStatement.DEF, 11, 3);
         assertFooContainerReferences(it.next());
-        assertReference(it.next(), RpcStatement.DEFINITION, 25, 3);
-        assertReference(it.next(), NotificationStatement.DEFINITION, 26, 3);
+        assertReference(it.next(), RpcStatement.DEF, 25, 3);
+        assertReference(it.next(), NotificationStatement.DEF, 26, 3);
         assertDeprLeafListReferences(it.next());
         assertObsoTypedefReferences(it.next());
         assertFalse(it.hasNext());
     }
 
     private static void assertFooContainerReferences(final DeclaredStatement<?> foo) {
-        assertReference(foo, ContainerStatement.DEFINITION, 13, 3);
+        assertReference(foo, ContainerStatement.DEF, 13, 3);
 
         final var it = foo.declaredSubstatements().iterator();
-        assertReference(it.next(), ActionStatement.DEFINITION, 14, 5);
-        assertReference(it.next(), PresenceStatement.DEFINITION, 22, 5);
+        assertReference(it.next(), ActionStatement.DEF, 14, 5);
+        assertReference(it.next(), PresenceStatement.DEF, 22, 5);
         assertFalse(it.hasNext());
     }
 
     private static void assertDeprLeafListReferences(final DeclaredStatement<?> depr) {
-        assertReference(depr, LeafListStatement.DEFINITION, 28, 3);
+        assertReference(depr, LeafListStatement.DEF, 28, 3);
 
         final var it = depr.declaredSubstatements().iterator();
-        assertReference(it.next(), TypeStatement.DEFINITION, 29, 5);
-        assertReference(it.next(), UnitsStatement.DEFINITION, 36, 5);
-        assertReference(it.next(), StatusStatement.DEFINITION, 37, 5);
+        assertReference(it.next(), TypeStatement.DEF, 29, 5);
+        assertReference(it.next(), UnitsStatement.DEF, 36, 5);
+        assertReference(it.next(), StatusStatement.DEF, 37, 5);
         assertFalse(it.hasNext());
     }
 
     private static void assertObsoTypedefReferences(final DeclaredStatement<?> obso) {
-        assertReference(obso, TypedefStatement.DEFINITION, 40, 3);
+        assertReference(obso, TypedefStatement.DEF, 40, 3);
 
         final var it = obso.declaredSubstatements().iterator();
-        assertReference(it.next(), TypeStatement.DEFINITION, 41, 5);
-        assertReference(it.next(), StatusStatement.DEFINITION, 44, 5);
+        assertReference(it.next(), TypeStatement.DEF, 41, 5);
+        assertReference(it.next(), StatusStatement.DEF, 44, 5);
         assertFalse(it.hasNext());
     }
 
     private static void assertBarReferences(final DeclaredStatement<?> bar) {
-        assertReference(bar, ModuleStatement.DEFINITION, 1, 1);
+        assertReference(bar, ModuleStatement.DEF, 1, 1);
 
         final var it = bar.declaredSubstatements().iterator();
-        assertReference(it.next(), NamespaceStatement.DEFINITION, 2, 3);
-        assertReference(it.next(), PrefixStatement.DEFINITION, 3, 3);
-        assertReference(it.next(), YangVersionStatement.DEFINITION, 4, 3);
-        assertReference(it.next(), ImportStatement.DEFINITION, 6, 3);
-        assertReference(it.next(), IdentityStatement.DEFINITION, 11, 3);
-        assertReference(it.next(), IdentityStatement.DEFINITION, 13, 3);
-        assertReference(it.next(), AnydataStatement.DEFINITION, 17, 3);
-        assertReference(it.next(), AnyxmlStatement.DEFINITION, 18, 3);
-        assertReference(it.next(), IncludeStatement.DEFINITION, 20, 3);
+        assertReference(it.next(), NamespaceStatement.DEF, 2, 3);
+        assertReference(it.next(), PrefixStatement.DEF, 3, 3);
+        assertReference(it.next(), YangVersionStatement.DEF, 4, 3);
+        assertReference(it.next(), ImportStatement.DEF, 6, 3);
+        assertReference(it.next(), IdentityStatement.DEF, 11, 3);
+        assertReference(it.next(), IdentityStatement.DEF, 13, 3);
+        assertReference(it.next(), AnydataStatement.DEF, 17, 3);
+        assertReference(it.next(), AnyxmlStatement.DEF, 18, 3);
+        assertReference(it.next(), IncludeStatement.DEF, 20, 3);
         assertFalse(it.hasNext());
     }
 
     private static void assertBazReferences(final DeclaredStatement<?> baz) {
-        assertReference(baz, SubmoduleStatement.DEFINITION, 1, 1);
+        assertReference(baz, SubmoduleStatement.DEF, 1, 1);
 
         final var it = baz.declaredSubstatements().iterator();
-        assertReference(it.next(), YangVersionStatement.DEFINITION, 2, 3);
-        assertReference(it.next(), BelongsToStatement.DEFINITION, 4, 3);
-        assertReference(it.next(), ExtensionStatement.DEFINITION, 8, 3);
+        assertReference(it.next(), YangVersionStatement.DEF, 2, 3);
+        assertReference(it.next(), BelongsToStatement.DEF, 4, 3);
+        assertReference(it.next(), ExtensionStatement.DEF, 8, 3);
         assertFalse(it.hasNext());
     }
 

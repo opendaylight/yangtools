@@ -22,6 +22,6 @@ public interface AugmentStructureEffectiveStatement
                 UnknownEffectiveStatement<AugmentStructureArgument, @NonNull AugmentStructureStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return AugmentStructureStatement.DEFINITION;
+        return AugmentStructureStatement.DEF;
     }
 }

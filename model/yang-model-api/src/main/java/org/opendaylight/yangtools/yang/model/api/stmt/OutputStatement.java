@@ -20,11 +20,11 @@ public non-sealed interface OutputStatement extends DeclaredOperationBodyStateme
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        OutputStatement.class, OutputEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "output");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(OutputStatement.class, OutputEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "output");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

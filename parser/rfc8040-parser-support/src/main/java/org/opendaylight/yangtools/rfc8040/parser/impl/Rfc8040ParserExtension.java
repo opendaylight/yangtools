@@ -30,7 +30,7 @@ public final class Rfc8040ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc8040ParserExtension() {
-        super(YangDataStatement.DEFINITION);
+        super(YangDataStatement.DEF);
     }
 
     @Override

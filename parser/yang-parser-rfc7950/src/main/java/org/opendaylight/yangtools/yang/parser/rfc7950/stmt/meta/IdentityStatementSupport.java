@@ -45,23 +45,23 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class IdentityStatementSupport
         extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(IdentityStatement.DEFINITION)
-            .addOptional(BaseStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
+        SubstatementValidator.builder(IdentityStatement.DEF)
+            .addOptional(BaseStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(IdentityStatement.DEFINITION)
-            .addAny(BaseStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
+        SubstatementValidator.builder(IdentityStatement.DEF)
+            .addAny(BaseStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
             .build();
 
     private IdentityStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(IdentityStatement.DEFINITION, StatementPolicy.reject(), config, validator);
+        super(IdentityStatement.DEF, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull IdentityStatementSupport rfc6020Instance(final YangParserConfiguration config) {

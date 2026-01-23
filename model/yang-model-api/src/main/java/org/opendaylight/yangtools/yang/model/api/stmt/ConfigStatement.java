@@ -21,12 +21,11 @@ public interface ConfigStatement extends DeclaredStatement<Boolean> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        ConfigStatement.class, ConfigEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "config", "value");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(ConfigStatement.class, ConfigEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "config", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }
-

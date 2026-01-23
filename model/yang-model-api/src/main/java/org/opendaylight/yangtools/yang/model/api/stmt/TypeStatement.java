@@ -25,12 +25,12 @@ public interface TypeStatement extends DeclaredStatement<QName> {
      * @since 15.0.0
      */
     @SuppressWarnings({ "unchecked" })
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        TypeStatement.class, TypeEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "type", "name");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(TypeStatement.class, TypeEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "type", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
     // FIXME: 7.0.0: this interface does not have an implementation

@@ -35,10 +35,10 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
         GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(GetFilterElementAttributesStatement.DEFINITION).build();
+        SubstatementValidator.builder(GetFilterElementAttributesStatement.DEF).build();
 
     public GetFilterElementAttributesStatementSupport(final YangParserConfiguration config) {
-        super(GetFilterElementAttributesStatement.DEFINITION, StatementPolicy.reject(), config, VALIDATOR);
+        super(GetFilterElementAttributesStatement.DEF, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override

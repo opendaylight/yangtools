@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class DefaultDenyWriteStatementSupport
         extends AbstractEmptyStatementSupport<DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(DefaultDenyWriteStatement.DEFINITION).build();
+        SubstatementValidator.builder(DefaultDenyWriteStatement.DEF).build();
 
     public DefaultDenyWriteStatementSupport(final YangParserConfiguration config) {
-        super(DefaultDenyWriteStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(DefaultDenyWriteStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

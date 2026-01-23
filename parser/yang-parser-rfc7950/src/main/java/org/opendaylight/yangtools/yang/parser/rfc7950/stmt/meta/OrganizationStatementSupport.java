@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class OrganizationStatementSupport
         extends AbstractInternedStringStatementSupport<OrganizationStatement, OrganizationEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(OrganizationStatement.DEFINITION).build();
+        SubstatementValidator.builder(OrganizationStatement.DEF).build();
 
     public OrganizationStatementSupport(final YangParserConfiguration config) {
-        super(OrganizationStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(OrganizationStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

@@ -30,7 +30,7 @@ public final class Rfc8639ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc8639ParserExtension() {
-        super(SubscriptionStateNotificationStatement.DEFINITION);
+        super(SubscriptionStateNotificationStatement.DEF);
     }
 
     @Override

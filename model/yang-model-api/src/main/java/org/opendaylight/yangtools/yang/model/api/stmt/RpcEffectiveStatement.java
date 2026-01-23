@@ -16,6 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface RpcEffectiveStatement extends EffectiveOperationStatement<@NonNull RpcStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return RpcStatement.DEFINITION;
+        return RpcStatement.DEF;
     }
 }

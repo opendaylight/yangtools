@@ -42,34 +42,34 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class OutputStatementSupport
         extends AbstractOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(OutputStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addAny(GroupingStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addAny(TypedefStatement.DEFINITION)
-            .addAny(UsesStatement.DEFINITION)
+        SubstatementValidator.builder(OutputStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addAny(GroupingStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addAny(TypedefStatement.DEF)
+            .addAny(UsesStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(OutputStatement.DEFINITION)
-            .addAny(AnydataStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addAny(GroupingStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addAny(TypedefStatement.DEFINITION)
-            .addAny(UsesStatement.DEFINITION)
+        SubstatementValidator.builder(OutputStatement.DEF)
+            .addAny(AnydataStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addAny(GroupingStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addAny(TypedefStatement.DEF)
+            .addAny(UsesStatement.DEF)
             .build();
 
     private OutputStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(OutputStatement.DEFINITION, config, validator, YangConstants::operationOutputQName);
+        super(OutputStatement.DEF, config, validator, YangConstants::operationOutputQName);
     }
 
     public static @NonNull OutputStatementSupport rfc6020Instance(final YangParserConfiguration config) {

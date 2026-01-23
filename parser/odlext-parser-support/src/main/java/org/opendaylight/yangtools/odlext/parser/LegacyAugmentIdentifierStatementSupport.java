@@ -26,10 +26,10 @@ public final class LegacyAugmentIdentifierStatementSupport
         extends AbstractUnqualifiedStatementSupport<LegacyAugmentIdentifierStatement,
             LegacyAugmentIdentifierEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(LegacyAugmentIdentifierStatement.DEFINITION).build();
+        SubstatementValidator.builder(LegacyAugmentIdentifierStatement.DEF).build();
 
     public LegacyAugmentIdentifierStatementSupport(final YangParserConfiguration config) {
-        super(LegacyAugmentIdentifierStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(LegacyAugmentIdentifierStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class PositionStatementSupport
         extends AbstractInternedStatementSupport<Uint32, PositionStatement, PositionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(PositionStatement.DEFINITION).build();
+        SubstatementValidator.builder(PositionStatement.DEF).build();
 
     public PositionStatementSupport(final YangParserConfiguration config) {
-        super(PositionStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(PositionStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

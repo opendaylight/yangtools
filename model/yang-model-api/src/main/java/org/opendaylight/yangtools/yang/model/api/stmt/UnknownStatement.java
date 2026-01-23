@@ -19,5 +19,5 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  */
 // FIXME: remove this interface once UnknownSchemaNode is gone
 public interface UnknownStatement<A> extends DeclaredStatement<A> {
-
+    // Nothing else
 }

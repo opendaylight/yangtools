@@ -40,17 +40,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ExtensionStatementSupport
         extends AbstractQNameStatementSupport<ExtensionStatement, ExtensionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(ExtensionStatement.DEFINITION)
-            .addOptional(ArgumentStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
+        SubstatementValidator.builder(ExtensionStatement.DEF)
+            .addOptional(ArgumentStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
             .build();
 
     private final YangParserConfiguration config;
 
     public ExtensionStatementSupport(final YangParserConfiguration config) {
-        super(ExtensionStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(ExtensionStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
         this.config = requireNonNull(config);
     }
 

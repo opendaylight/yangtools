@@ -50,6 +50,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface ConfigEffectiveStatement extends EffectiveStatement<Boolean, @NonNull ConfigStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return ConfigStatement.DEFINITION;
+        return ConfigStatement.DEF;
     }
 }

@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ErrorMessageStatementSupport
         extends AbstractStringStatementSupport<ErrorMessageStatement, ErrorMessageEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(ErrorMessageStatement.DEFINITION).build();
+        SubstatementValidator.builder(ErrorMessageStatement.DEF).build();
 
     public ErrorMessageStatementSupport(final YangParserConfiguration config) {
-        super(ErrorMessageStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(ErrorMessageStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

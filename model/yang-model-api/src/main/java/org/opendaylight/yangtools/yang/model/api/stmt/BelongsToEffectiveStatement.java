@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface BelongsToEffectiveStatement extends EffectiveStatement<Unqualified, @NonNull BelongsToStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return BelongsToStatement.DEFINITION;
+        return BelongsToStatement.DEF;
     }
 
     /**

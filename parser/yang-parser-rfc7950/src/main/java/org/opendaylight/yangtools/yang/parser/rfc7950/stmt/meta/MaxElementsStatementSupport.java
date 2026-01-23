@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class MaxElementsStatementSupport
         extends AbstractStatementSupport<MaxElementsArgument, MaxElementsStatement, MaxElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(MaxElementsStatement.DEFINITION).build();
+        SubstatementValidator.builder(MaxElementsStatement.DEF).build();
     private static final String UNBOUNDED_STR = "unbounded";
 
     static {
@@ -39,7 +39,7 @@ public final class MaxElementsStatementSupport
     }
 
     public MaxElementsStatementSupport(final YangParserConfiguration config) {
-        super(MaxElementsStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(MaxElementsStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

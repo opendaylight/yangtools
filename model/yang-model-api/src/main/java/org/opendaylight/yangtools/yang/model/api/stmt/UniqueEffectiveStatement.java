@@ -24,6 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 public interface UniqueEffectiveStatement extends EffectiveStatement<Set<Descendant>, @NonNull UniqueStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return UniqueStatement.DEFINITION;
+        return UniqueStatement.DEF;
     }
 }
