@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
@@ -52,13 +53,16 @@ import org.opendaylight.yangtools.yang.common.Empty;
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
+@NonNullByDefault
 public sealed interface ModelStatement<A> permits DeclaredStatement, EffectiveStatement, AbstractModelStatement {
     /**
      * Statement Definition of this statement.
      *
      * @return definition of this statement.
      */
-    @NonNull StatementDefinition statementDefinition();
+    // FIXME: clarify the contract w.r.t. FooStatement.DEF constants and the returned value
+    // FIXME: rename to 'definition' something different to reflect name
+    StatementDefinition<A, ?, ?> statementDefinition();
 
     /**
      * Returns statement argument.
