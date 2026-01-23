@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -38,14 +37,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class DeviationStatementSupport
         extends AbstractStatementSupport<Absolute, DeviationStatement, DeviationEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.DEVIATION)
+        SubstatementValidator.builder(DeviationStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
             .addAny(DeviateStatement.DEFINITION)
             .addOptional(ReferenceStatement.DEFINITION)
             .build();
 
     public DeviationStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.DEVIATION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(DeviationStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

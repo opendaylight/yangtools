@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 /**
  * Effective representation of a {@code deviation} statement.
  */
-public interface DeviationEffectiveStatement extends EffectiveStatement<Absolute, DeviationStatement> {
+public interface DeviationEffectiveStatement extends EffectiveStatement<Absolute, @NonNull DeviationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.DEVIATION;
+        return DeviationStatement.DEFINITION;
     }
 }

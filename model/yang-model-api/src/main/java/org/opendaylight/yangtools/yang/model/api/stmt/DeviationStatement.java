@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
@@ -17,9 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  * Declared representation of a {@code deviation} statement.
  */
 public interface DeviationStatement extends DocumentedDeclaredStatement<Absolute> {
+    /**
+     * The definition of {@code deviation} statement.
+     *
+     * @since 15.0.0
+     */
+    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+        DeviationStatement.class, DeviationEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "deviation", "target-node");
+
     @Override
     default StatementDefinition statementDefinition() {
-        return YangStmtMapping.DEVIATION;
+        return DEFINITION;
     }
 
     // FIXME: 11.0.0: evaluate usefulness of this

@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -71,7 +71,7 @@ public final class SubmoduleStatementSupport
             .addOptional(ContactStatement.DEFINITION)
             .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(DeviationStatement.DEFINITION)
             .addAny(ExtensionStatement.DEFINITION)
             .addAny(FeatureStatement.DEFINITION)
             .addAny(GroupingStatement.DEFINITION)
@@ -100,7 +100,7 @@ public final class SubmoduleStatementSupport
             .addOptional(ContactStatement.DEFINITION)
             .addAny(ContainerStatement.DEFINITION)
             .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(DeviationStatement.DEFINITION)
             .addAny(ExtensionStatement.DEFINITION)
             .addAny(FeatureStatement.DEFINITION)
             .addAny(GroupingStatement.DEFINITION)

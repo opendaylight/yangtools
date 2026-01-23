@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -43,6 +44,14 @@ record DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends E
 
     @Override
     public String toString() {
-        return StatementDefinition.toString(this);
+        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", humanName());
+        final var argDef = argumentDefinition;
+        if (argDef != null) {
+            helper.add("argument", argDef.humanName()).add("yin-element", argDef.yinElement());
+        }
+        return helper
+            .add("declared", declaredRepresentation.getName())
+            .add("effective", effectiveRepresentation.getName())
+            .toString();
     }
 }

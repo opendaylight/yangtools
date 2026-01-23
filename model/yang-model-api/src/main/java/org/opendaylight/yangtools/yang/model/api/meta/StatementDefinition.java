@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -18,7 +16,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 
 /**
  * Definition / model of YANG {@link DeclaredStatement} and {@link EffectiveStatement}.
@@ -28,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
  *
  * <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-6.3">RFC6020, section 6.3</a>
  */
-public sealed interface StatementDefinition extends Immutable permits DefaultStatementDefinition, YangStmtMapping {
+public sealed interface StatementDefinition extends Immutable permits DefaultStatementDefinition {
     /**
      * Return a {@link StatementDefinition} combining all specified components.
      *
@@ -207,18 +204,16 @@ public sealed interface StatementDefinition extends Immutable permits DefaultSta
         return effectiveRepresentation();
     }
 
-    // FIXME: remove this when YangStmtMapping dies
-    @Beta
-    @NonNullByDefault
-    static String toString(final StatementDefinition self) {
-        final var helper = MoreObjects.toStringHelper(StatementDefinition.class).add("name", self.humanName());
-        final var argDef = self.argumentDefinition();
-        if (argDef != null) {
-            helper.add("argument", argDef.humanName()).add("yin-element", argDef.yinElement());
-        }
-        return helper
-            .add("declared", self.declaredRepresentation().getName())
-            .add("effective", self.effectiveRepresentation().getName())
-            .toString();
-    }
+    /**
+     * {@return the {@link System#identityHashCode(Object)} of this object}
+     */
+    @Override
+    int hashCode();
+
+    /**
+     * {@return {@code true} IFF {@code obj} is the same instance as this object}
+     * @param obj the reference object with which to compare.
+     */
+    @Override
+    boolean equals(Object obj);
 }
