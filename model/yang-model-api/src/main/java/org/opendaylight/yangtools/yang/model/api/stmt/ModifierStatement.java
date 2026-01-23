@@ -27,12 +27,11 @@ public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        ModifierStatement.class, ModifierEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(ModifierStatement.class, ModifierEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "modifier", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

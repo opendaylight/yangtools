@@ -18,19 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  */
 public interface OpenConfigHashedValueStatement extends UnknownStatement<Empty> {
     /**
-     * The definition of {@code oc-ext:openconfig-encrypted-value} statement.
-     *
-     * @since 15.0.0
-     */
-    @NonNull StatementDefinition ENCRYPTED_DEFINITION = StatementDefinition.of(
-        OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
-        OpenConfigConstants.ENCRYPTED_VALUE_MODULE, "openconfig-encrypted-value");
-    /**
      * The definition of {@code oc-ext:openconfig-hashed-value} statement.
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition HASHED_DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
         OpenConfigConstants.HASHED_VALUE_MODULE, "openconfig-hashed-value");
 }

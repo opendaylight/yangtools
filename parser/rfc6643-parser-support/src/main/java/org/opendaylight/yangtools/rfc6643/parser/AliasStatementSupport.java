@@ -27,15 +27,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 @Beta
 public final class AliasStatementSupport
         extends AbstractStringStatementSupport<AliasStatement, AliasEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AliasStatement.DEFINITION)
-        .addOptional(DescriptionStatement.DEFINITION)
-        .addOptional(ReferenceStatement.DEFINITION)
-        .addOptional(StatusStatement.DEFINITION)
-        .addOptional(OidStatement.DEFINITION)
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AliasStatement.DEF)
+        .addOptional(DescriptionStatement.DEF)
+        .addOptional(ReferenceStatement.DEF)
+        .addOptional(StatusStatement.DEF)
+        .addOptional(OidStatement.DEF)
         .build();
 
     public AliasStatementSupport(final YangParserConfiguration config) {
-        super(AliasStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(AliasStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

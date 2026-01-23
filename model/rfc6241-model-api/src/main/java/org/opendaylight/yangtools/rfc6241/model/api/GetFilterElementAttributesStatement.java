@@ -22,12 +22,12 @@ public interface GetFilterElementAttributesStatement extends UnknownStatement<Em
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         GetFilterElementAttributesStatement.class, GetFilterElementAttributesEffectiveStatement.class,
         NetconfConstants.RFC6241_MODULE, "get-filter-element-attributes");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

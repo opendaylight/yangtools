@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class MountStatementSupport
         extends AbstractEmptyStatementSupport<MountStatement, MountEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(MountStatement.DEFINITION).build();
+        SubstatementValidator.builder(MountStatement.DEF).build();
 
     public MountStatementSupport(final YangParserConfiguration config) {
-        super(MountStatement.DEFINITION, StatementPolicy.exactReplica(), config, VALIDATOR);
+        super(MountStatement.DEF, StatementPolicy.exactReplica(), config, VALIDATOR);
     }
 
     @Override

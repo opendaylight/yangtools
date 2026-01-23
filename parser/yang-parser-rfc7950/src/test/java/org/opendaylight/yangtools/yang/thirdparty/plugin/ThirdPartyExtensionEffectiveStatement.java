@@ -18,7 +18,7 @@ public interface ThirdPartyExtensionEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull ThirdPartyExtensionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return ThirdPartyExtensionStatement.DEFINITION;
+        return ThirdPartyExtensionStatement.DEF;
     }
 
     String getValueFromNamespace();

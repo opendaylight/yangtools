@@ -17,12 +17,11 @@ public interface DefValStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        DefValStatement.class, DefValEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(DefValStatement.class, DefValEffectiveStatement.class,
         IetfYangSmiv2Constants.RFC6643_MODULE, "defval", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

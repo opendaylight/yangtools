@@ -54,10 +54,10 @@ public final class KeyStatementSupport
     private static final Splitter KEY_ARG_SPLITTER = Splitter.on(SEP).omitEmptyStrings();
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(KeyStatement.DEFINITION).build();
+        SubstatementValidator.builder(KeyStatement.DEF).build();
 
     public KeyStatementSupport(final YangParserConfiguration config) {
-        super(KeyStatement.DEFINITION, StatementPolicy.copyDeclared(
+        super(KeyStatement.DEF, StatementPolicy.copyDeclared(
             // Identity comparison is sufficient because adaptArgumentValue() is careful about reuse.
             (copy, current, substatements) -> copy.getArgument() == current.getArgument()),
             config, SUBSTATEMENT_VALIDATOR);

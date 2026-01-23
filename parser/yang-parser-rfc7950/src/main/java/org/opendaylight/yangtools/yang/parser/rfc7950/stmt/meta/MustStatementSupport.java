@@ -34,18 +34,18 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 public final class MustStatementSupport
         extends AbstractStatementSupport<QualifiedBound, MustStatement, MustEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(MustStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ErrorAppTagStatement.DEFINITION)
-            .addOptional(ErrorMessageStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(MustStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ErrorAppTagStatement.DEF)
+            .addOptional(ErrorMessageStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     private final @NonNull XPathSupport xpathSupport;
 
     public MustStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(MustStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(MustStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 

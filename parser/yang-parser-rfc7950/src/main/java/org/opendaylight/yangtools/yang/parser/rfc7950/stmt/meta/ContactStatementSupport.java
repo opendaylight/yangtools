@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ContactStatementSupport
         extends AbstractInternedStringStatementSupport<ContactStatement, ContactEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(ContactStatement.DEFINITION).build();
+        SubstatementValidator.builder(ContactStatement.DEF).build();
 
     public ContactStatementSupport(final YangParserConfiguration config) {
-        super(ContactStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(ContactStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

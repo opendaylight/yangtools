@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class OpenConfigVersionSupport
         extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(OpenConfigVersionStatement.DEFINITION).build();
+        SubstatementValidator.builder(OpenConfigVersionStatement.DEF).build();
 
     public OpenConfigVersionSupport(final YangParserConfiguration config) {
-        super(OpenConfigVersionStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(OpenConfigVersionStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

@@ -16,6 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface OutputEffectiveStatement extends EffectiveOperationBodyStatement<@NonNull OutputStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return OutputStatement.DEFINITION;
+        return OutputStatement.DEF;
     }
 }

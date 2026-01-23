@@ -22,14 +22,15 @@ public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualifie
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        IncludeStatement.class, IncludeEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "include", "module");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(IncludeStatement.class, IncludeEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "include", "module");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: document
     default @Nullable RevisionDateStatement getRevisionDate() {
         final var opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

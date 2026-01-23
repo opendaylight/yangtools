@@ -16,6 +16,6 @@ public interface AugmentIdentifierEffectiveStatement
         extends UnknownEffectiveStatement<Unqualified, @NonNull AugmentIdentifierStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return AugmentIdentifierStatement.DEFINITION;
+        return AugmentIdentifierStatement.DEF;
     }
 }

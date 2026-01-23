@@ -22,12 +22,12 @@ public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<Str
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(BitStatement.class, BitEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(BitStatement.class, BitEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "bit", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
     default @Nullable PositionStatement getPosition() {

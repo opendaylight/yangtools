@@ -16,6 +16,6 @@ public interface SubscriptionStateNotificationEffectiveStatement
         extends EffectiveStatement<Empty, @NonNull SubscriptionStateNotificationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return SubscriptionStateNotificationStatement.DEFINITION;
+        return SubscriptionStateNotificationStatement.DEF;
     }
 }

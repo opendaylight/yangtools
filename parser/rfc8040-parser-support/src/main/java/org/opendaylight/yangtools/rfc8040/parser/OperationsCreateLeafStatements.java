@@ -81,8 +81,8 @@ final class OperationsCreateLeafStatements implements InferenceAction {
             .collect(Collectors.toUnmodifiableList());
 
         if (!qnames.isEmpty()) {
-            final var leafSupport = getSupport(LeafStatement.DEFINITION, LeafEffectiveStatement.class);
-            final var typeSupport = getSupport(TypeStatement.DEFINITION, TypeEffectiveStatement.class);
+            final var leafSupport = getSupport(LeafStatement.DEF, LeafEffectiveStatement.class);
+            final var typeSupport = getSupport(TypeStatement.DEF, TypeEffectiveStatement.class);
 
             for (var qname : qnames) {
                 final var leaf = operations.createUndeclaredSubstatement(leafSupport, qname);

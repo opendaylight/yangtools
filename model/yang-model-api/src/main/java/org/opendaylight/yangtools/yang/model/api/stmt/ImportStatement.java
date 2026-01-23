@@ -22,18 +22,20 @@ public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        ImportStatement.class, ImportEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "import", "module");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(ImportStatement.class, ImportEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "import", "module");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: document
     default @NonNull PrefixStatement getPrefix() {
         return findFirstDeclaredSubstatement(PrefixStatement.class).orElseThrow();
     }
 
+    // FIXME: document
     default @Nullable RevisionDateStatement getRevisionDate() {
         final var opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

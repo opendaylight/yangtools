@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface PositionEffectiveStatement extends EffectiveStatement<Uint32, @NonNull PositionStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return PositionStatement.DEFINITION;
+        return PositionStatement.DEF;
     }
 }

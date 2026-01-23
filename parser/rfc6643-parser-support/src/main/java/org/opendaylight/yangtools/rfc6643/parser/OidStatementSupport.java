@@ -27,10 +27,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class OidStatementSupport
         extends AbstractStatementSupport<ObjectIdentifier, OidStatement, OidEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(OidStatement.DEFINITION).build();
+            SubstatementValidator.builder(OidStatement.DEF).build();
 
     public OidStatementSupport(final YangParserConfiguration config) {
-        super(OidStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(OidStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

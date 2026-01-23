@@ -16,6 +16,6 @@ public interface LegacyAugmentIdentifierEffectiveStatement
         extends UnknownEffectiveStatement<Unqualified, @NonNull LegacyAugmentIdentifierStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return LegacyAugmentIdentifierStatement.DEFINITION;
+        return LegacyAugmentIdentifierStatement.DEF;
     }
 }

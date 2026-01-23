@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface DescriptionEffectiveStatement extends EffectiveHumanTextStatement<@NonNull DescriptionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return DescriptionStatement.DEFINITION;
+        return DescriptionStatement.DEF;
     }
 }

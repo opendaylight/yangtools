@@ -46,26 +46,26 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 
 public final class YangValidationBundles {
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
-        DefaultStatement.DEFINITION, DescriptionStatement.DEFINITION, ReferenceStatement.DEFINITION,
-        ConfigStatement.DEFINITION, MandatoryStatement.DEFINITION, MustStatement.DEFINITION,
-        PresenceStatement.DEFINITION, MinElementsStatement.DEFINITION, MaxElementsStatement.DEFINITION,
-        IfFeatureStatement.DEFINITION);
+        DefaultStatement.DEF, DescriptionStatement.DEF, ReferenceStatement.DEF,
+        ConfigStatement.DEF, MandatoryStatement.DEF, MustStatement.DEF,
+        PresenceStatement.DEF, MinElementsStatement.DEF, MaxElementsStatement.DEF,
+        IfFeatureStatement.DEF);
 
     public static final Map<StatementDefinition, Set<StatementDefinition>> SUPPORTED_REFINE_TARGETS =
         ImmutableMap.<StatementDefinition, Set<StatementDefinition>>builder()
-            .put(DefaultStatement.DEFINITION, ImmutableSet.of(
-                LeafStatement.DEFINITION, ChoiceStatement.DEFINITION, LeafListStatement.DEFINITION))
-            .put(MandatoryStatement.DEFINITION, ImmutableSet.of(
-                LeafStatement.DEFINITION, AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION,
-                ChoiceStatement.DEFINITION))
-            .put(MaxElementsStatement.DEFINITION, ImmutableSet.of(ListStatement.DEFINITION,
-                LeafListStatement.DEFINITION))
-            .put(MinElementsStatement.DEFINITION, ImmutableSet.of(ListStatement.DEFINITION,
-                LeafListStatement.DEFINITION))
-            .put(MustStatement.DEFINITION, ImmutableSet.of(
-                LeafStatement.DEFINITION, LeafListStatement.DEFINITION, ListStatement.DEFINITION,
-                ContainerStatement.DEFINITION, AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION))
-            .put(PresenceStatement.DEFINITION, ImmutableSet.of(ContainerStatement.DEFINITION))
+            .put(DefaultStatement.DEF, ImmutableSet.of(
+                LeafStatement.DEF, ChoiceStatement.DEF, LeafListStatement.DEF))
+            .put(MandatoryStatement.DEF, ImmutableSet.of(
+                LeafStatement.DEF, AnydataStatement.DEF, AnyxmlStatement.DEF,
+                ChoiceStatement.DEF))
+            .put(MaxElementsStatement.DEF, ImmutableSet.of(ListStatement.DEF,
+                LeafListStatement.DEF))
+            .put(MinElementsStatement.DEF, ImmutableSet.of(ListStatement.DEF,
+                LeafListStatement.DEF))
+            .put(MustStatement.DEF, ImmutableSet.of(
+                LeafStatement.DEF, LeafListStatement.DEF, ListStatement.DEF,
+                ContainerStatement.DEF, AnydataStatement.DEF, AnyxmlStatement.DEF))
+            .put(PresenceStatement.DEF, ImmutableSet.of(ContainerStatement.DEF))
             .build();
 
     private YangValidationBundles() {
@@ -85,47 +85,47 @@ public final class YangValidationBundles {
     @Deprecated
     public static final Table<YangVersion, StatementDefinition, Set<StatementDefinition>> SUPPORTED_DEVIATION_TARGETS =
             ImmutableTable.<YangVersion, StatementDefinition, Set<StatementDefinition>>builder()
-        .put(VERSION_1, ConfigStatement.DEFINITION, ImmutableSet.of(ContainerStatement.DEFINITION,
-                LeafStatement.DEFINITION, LeafListStatement.DEFINITION, ListStatement.DEFINITION,
-                ChoiceStatement.DEFINITION, AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION))
-        .put(VERSION_1, DefaultStatement.DEFINITION, ImmutableSet.of(LeafStatement.DEFINITION,
-                ChoiceStatement.DEFINITION))
-        .put(VERSION_1_1, DefaultStatement.DEFINITION, ImmutableSet.of(LeafStatement.DEFINITION,
-                LeafListStatement.DEFINITION, ChoiceStatement.DEFINITION))
-        .put(VERSION_1, MandatoryStatement.DEFINITION, ImmutableSet.of(LeafStatement.DEFINITION,
-                ChoiceStatement.DEFINITION, AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION))
-        .put(VERSION_1, MaxElementsStatement.DEFINITION, ImmutableSet.of(ListStatement.DEFINITION,
-                LeafListStatement.DEFINITION))
-        .put(VERSION_1, MinElementsStatement.DEFINITION, ImmutableSet.of(ListStatement.DEFINITION,
-                LeafListStatement.DEFINITION))
-        .put(VERSION_1, MustStatement.DEFINITION, ImmutableSet.of(ContainerStatement.DEFINITION,
-                LeafStatement.DEFINITION, LeafListStatement.DEFINITION, ListStatement.DEFINITION,
-                AnyxmlStatement.DEFINITION))
-        .put(VERSION_1_1, MustStatement.DEFINITION, ImmutableSet.of(ContainerStatement.DEFINITION,
-                LeafStatement.DEFINITION, LeafListStatement.DEFINITION, ListStatement.DEFINITION,
-                AnydataStatement.DEFINITION, AnyxmlStatement.DEFINITION, InputStatement.DEFINITION,
-                OutputStatement.DEFINITION, NotificationStatement.DEFINITION))
-        .put(VERSION_1, TypeStatement.DEFINITION, ImmutableSet.of(LeafStatement.DEFINITION,
-                LeafListStatement.DEFINITION))
-        .put(VERSION_1, UniqueStatement.DEFINITION, ImmutableSet.of(ListStatement.DEFINITION))
-        .put(VERSION_1, UnitsStatement.DEFINITION, ImmutableSet.of(LeafStatement.DEFINITION,
-                LeafListStatement.DEFINITION))
+        .put(VERSION_1, ConfigStatement.DEF, ImmutableSet.of(ContainerStatement.DEF,
+                LeafStatement.DEF, LeafListStatement.DEF, ListStatement.DEF,
+                ChoiceStatement.DEF, AnydataStatement.DEF, AnyxmlStatement.DEF))
+        .put(VERSION_1, DefaultStatement.DEF, ImmutableSet.of(LeafStatement.DEF,
+                ChoiceStatement.DEF))
+        .put(VERSION_1_1, DefaultStatement.DEF, ImmutableSet.of(LeafStatement.DEF,
+                LeafListStatement.DEF, ChoiceStatement.DEF))
+        .put(VERSION_1, MandatoryStatement.DEF, ImmutableSet.of(LeafStatement.DEF,
+                ChoiceStatement.DEF, AnydataStatement.DEF, AnyxmlStatement.DEF))
+        .put(VERSION_1, MaxElementsStatement.DEF, ImmutableSet.of(ListStatement.DEF,
+                LeafListStatement.DEF))
+        .put(VERSION_1, MinElementsStatement.DEF, ImmutableSet.of(ListStatement.DEF,
+                LeafListStatement.DEF))
+        .put(VERSION_1, MustStatement.DEF, ImmutableSet.of(ContainerStatement.DEF,
+                LeafStatement.DEF, LeafListStatement.DEF, ListStatement.DEF,
+                AnyxmlStatement.DEF))
+        .put(VERSION_1_1, MustStatement.DEF, ImmutableSet.of(ContainerStatement.DEF,
+                LeafStatement.DEF, LeafListStatement.DEF, ListStatement.DEF,
+                AnydataStatement.DEF, AnyxmlStatement.DEF, InputStatement.DEF,
+                OutputStatement.DEF, NotificationStatement.DEF))
+        .put(VERSION_1, TypeStatement.DEF, ImmutableSet.of(LeafStatement.DEF,
+                LeafListStatement.DEF))
+        .put(VERSION_1, UniqueStatement.DEF, ImmutableSet.of(ListStatement.DEF))
+        .put(VERSION_1, UnitsStatement.DEF, ImmutableSet.of(LeafStatement.DEF,
+                LeafListStatement.DEF))
         .build();
 
     public static final Set<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = ImmutableSet.of(
-        ContainerStatement.DEFINITION, ListStatement.DEFINITION, CaseStatement.DEFINITION, InputStatement.DEFINITION,
-        OutputStatement.DEFINITION, NotificationStatement.DEFINITION, ChoiceStatement.DEFINITION,
-        RpcStatement.DEFINITION);
+        ContainerStatement.DEF, ListStatement.DEF, CaseStatement.DEF, InputStatement.DEF,
+        OutputStatement.DEF, NotificationStatement.DEF, ChoiceStatement.DEF,
+        RpcStatement.DEF);
 
     // FIXME: 7.0.0: consider hiding this list, as choice nodes are handling creation of implied shorthands themselves.
     //               This has implications on other members of this class, as they really seem like something which
     //               should live in corresponding StatementSupport classes.
     @Deprecated(forRemoval = true, since = "8.0.2")
     public static final Set<StatementDefinition> SUPPORTED_CASE_SHORTHANDS = ImmutableSet.of(
-        ContainerStatement.DEFINITION, ListStatement.DEFINITION, LeafStatement.DEFINITION, LeafListStatement.DEFINITION,
-        AnyxmlStatement.DEFINITION, AnydataStatement.DEFINITION);
+        ContainerStatement.DEF, ListStatement.DEF, LeafStatement.DEF, LeafListStatement.DEF,
+        AnyxmlStatement.DEF, AnydataStatement.DEF);
 
     public static final Set<StatementDefinition> SUPPORTED_DATA_NODES = ImmutableSet.of(
-        ContainerStatement.DEFINITION, ListStatement.DEFINITION, LeafStatement.DEFINITION, LeafListStatement.DEFINITION,
-        AnyxmlStatement.DEFINITION, AnydataStatement.DEFINITION);
+        ContainerStatement.DEF, ListStatement.DEF, LeafStatement.DEF, LeafListStatement.DEF,
+        AnyxmlStatement.DEF, AnydataStatement.DEF);
 }

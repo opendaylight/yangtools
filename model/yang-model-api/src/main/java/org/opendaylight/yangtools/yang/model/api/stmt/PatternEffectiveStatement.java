@@ -21,7 +21,7 @@ public interface PatternEffectiveStatement
         extends EffectiveStatement<PatternExpression, @NonNull PatternStatement>, PatternConstraint {
     @Override
     default StatementDefinition statementDefinition() {
-        return PatternStatement.DEFINITION;
+        return PatternStatement.DEF;
     }
 
     @Override

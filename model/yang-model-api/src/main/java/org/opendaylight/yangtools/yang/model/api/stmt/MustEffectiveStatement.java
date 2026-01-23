@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 public interface MustEffectiveStatement extends EffectiveStatement<QualifiedBound, @NonNull MustStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return MustStatement.DEFINITION;
+        return MustStatement.DEF;
     }
 }

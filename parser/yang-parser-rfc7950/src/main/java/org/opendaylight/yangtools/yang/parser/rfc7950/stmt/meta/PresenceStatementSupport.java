@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class PresenceStatementSupport
         extends AbstractStringStatementSupport<PresenceStatement, PresenceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(PresenceStatement.DEFINITION).build();
+        SubstatementValidator.builder(PresenceStatement.DEF).build();
 
     public PresenceStatementSupport(final YangParserConfiguration config) {
-        super(PresenceStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(PresenceStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

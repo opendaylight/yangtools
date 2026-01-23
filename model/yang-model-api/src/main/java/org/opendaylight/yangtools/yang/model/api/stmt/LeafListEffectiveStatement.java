@@ -20,6 +20,6 @@ public non-sealed interface LeafListEffectiveStatement extends DataTreeEffective
         OrderedByAwareEffectiveStatement<QName, @NonNull LeafListStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return LeafListStatement.DEFINITION;
+        return LeafListStatement.DEF;
     }
 }

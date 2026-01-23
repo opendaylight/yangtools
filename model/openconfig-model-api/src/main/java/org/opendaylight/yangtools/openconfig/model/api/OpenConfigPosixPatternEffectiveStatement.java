@@ -20,6 +20,6 @@ public interface OpenConfigPosixPatternEffectiveStatement
         extends EffectiveStatement<String, @NonNull OpenConfigPosixPatternStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return OpenConfigPosixPatternStatement.DEFINITION;
+        return OpenConfigPosixPatternStatement.DEF;
     }
 }

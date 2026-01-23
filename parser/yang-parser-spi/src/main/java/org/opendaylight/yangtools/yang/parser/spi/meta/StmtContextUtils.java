@@ -284,11 +284,11 @@ public final class StmtContextUtils {
     public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
         final var def = stmtCtx.publicDefinition();
         // FIXME: improve this patch ... by exposing the appropriate trait?
-        if (LeafStatement.DEFINITION.equals(def) || ChoiceStatement.DEFINITION.equals(def)
-            || AnyxmlStatement.DEFINITION.equals(def)) {
+        if (LeafStatement.DEF.equals(def) || ChoiceStatement.DEF.equals(def)
+            || AnyxmlStatement.DEF.equals(def)) {
             return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
         }
-        if (ListStatement.DEFINITION.equals(def) || LeafListStatement.DEFINITION.equals(def)) {
+        if (ListStatement.DEF.equals(def) || LeafListStatement.DEF.equals(def)) {
             final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
             return minElements != null && minElements.lowerInt() > -1;
         }

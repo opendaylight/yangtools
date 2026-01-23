@@ -35,19 +35,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class RpcStatementSupport extends AbstractOperationStatementSupport<RpcStatement, RpcEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(RpcStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(GroupingStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(InputStatement.DEFINITION)
-            .addOptional(OutputStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addAny(TypedefStatement.DEFINITION)
+        SubstatementValidator.builder(RpcStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(GroupingStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(InputStatement.DEF)
+            .addOptional(OutputStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(TypedefStatement.DEF)
             .build();
 
     public RpcStatementSupport(final YangParserConfiguration config) {
-        super(RpcStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(RpcStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

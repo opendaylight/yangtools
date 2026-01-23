@@ -40,16 +40,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public abstract sealed class RefineStatementSupport
         extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
     private static final class Rfc6020 extends RefineStatementSupport {
-        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(RefineStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addOptional(PresenceStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addOptional(MaxElementsStatement.DEFINITION)
-            .addOptional(MinElementsStatement.DEFINITION)
+        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(RefineStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addOptional(PresenceStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addOptional(MaxElementsStatement.DEF)
+            .addOptional(MinElementsStatement.DEF)
             .build();
 
         Rfc6020(final YangParserConfiguration config) {
@@ -58,17 +58,17 @@ public abstract sealed class RefineStatementSupport
     }
 
     private static final class Rfc7950 extends RefineStatementSupport {
-        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(RefineStatement.DEFINITION)
-            .addOptional(DefaultStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addOptional(PresenceStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addOptional(MaxElementsStatement.DEFINITION)
-            .addOptional(MinElementsStatement.DEFINITION)
+        private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(RefineStatement.DEF)
+            .addOptional(DefaultStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addOptional(PresenceStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addOptional(MaxElementsStatement.DEF)
+            .addOptional(MinElementsStatement.DEF)
             .build();
 
         Rfc7950(final YangParserConfiguration config) {
@@ -87,7 +87,7 @@ public abstract sealed class RefineStatementSupport
     }
 
     private RefineStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(RefineStatement.DEFINITION, StatementPolicy.reject(), config, validator);
+        super(RefineStatement.DEF, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull RefineStatementSupport rfc6020Instance(final YangParserConfiguration config) {

@@ -43,13 +43,13 @@ public final class Rfc6643ParserExtension extends AbstractParserExtension {
      */
     public Rfc6643ParserExtension() {
         super(
-            AliasStatement.DEFINITION,
-            DefValStatement.DEFINITION,
-            DisplayHintStatement.DEFINITION,
-            ImpliedStatement.DEFINITION,
-            MaxAccessStatement.DEFINITION,
-            OidStatement.DEFINITION,
-            SubIdStatement.DEFINITION);
+            AliasStatement.DEF,
+            DefValStatement.DEF,
+            DisplayHintStatement.DEF,
+            ImpliedStatement.DEF,
+            MaxAccessStatement.DEF,
+            OidStatement.DEF,
+            SubIdStatement.DEF);
     }
 
     @Override

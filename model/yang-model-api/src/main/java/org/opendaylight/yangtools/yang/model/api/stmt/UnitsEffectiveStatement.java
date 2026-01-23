@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface UnitsEffectiveStatement extends EffectiveStatement<String, @NonNull UnitsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return UnitsStatement.DEFINITION;
+        return UnitsStatement.DEF;
     }
 }

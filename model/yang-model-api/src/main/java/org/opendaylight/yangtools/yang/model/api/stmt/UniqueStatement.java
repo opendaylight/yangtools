@@ -16,17 +16,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code unique} statement.
  */
+// FIXME: UniqueAargument instead of Set<SchemaNodeIdentifier.Descendant>
 public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Descendant>> {
     /**
      * The definition of {@code unique} statement.
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        UniqueStatement.class, UniqueEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "unique", "tag");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(UniqueStatement.class, UniqueEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "unique", "tag");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

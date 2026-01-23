@@ -23,6 +23,6 @@ public interface StructureEffectiveStatement
                 UnknownEffectiveStatement<QName, @NonNull StructureStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return StructureStatement.DEFINITION;
+        return StructureStatement.DEF;
     }
 }

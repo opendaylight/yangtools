@@ -45,10 +45,10 @@ class QNameToStatementDefinitionMapTest {
 
     @Test
     void testPut() {
-        doReturn(TypeStatement.DEFINITION).when(support).definition();
+        doReturn(TypeStatement.DEF).when(support).definition();
 
         map.put(QNAME, support);
-        assertSame(TypeStatement.DEFINITION, map.get(QNAME));
+        assertSame(TypeStatement.DEF, map.get(QNAME));
         assertSame(support, map.getSupport(QNAME));
     }
 }

@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION).addMultiple(EnumStatement.DEFINITION).build();
+        SubstatementValidator.builder(TypeStatement.DEF).addMultiple(EnumStatement.DEF).build();
 
     EnumSpecificationSupport(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);

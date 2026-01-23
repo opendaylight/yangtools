@@ -19,6 +19,6 @@ public interface AugmentEffectiveStatement
         extends SchemaTreeAwareEffectiveStatement<SchemaNodeIdentifier, @NonNull AugmentStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return AugmentStatement.DEFINITION;
+        return AugmentStatement.DEF;
     }
 }

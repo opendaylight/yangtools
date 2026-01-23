@@ -22,12 +22,12 @@ public interface NamespaceStatement extends DeclaredStatement<XMLNamespace> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         NamespaceStatement.class, NamespaceEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "namespace", "uri");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

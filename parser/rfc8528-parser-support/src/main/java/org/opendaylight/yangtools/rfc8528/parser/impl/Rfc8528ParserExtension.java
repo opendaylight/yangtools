@@ -30,7 +30,7 @@ public final class Rfc8528ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc8528ParserExtension() {
-        super(MountPointStatement.DEFINITION);
+        super(MountPointStatement.DEF);
     }
 
     @Override

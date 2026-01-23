@@ -59,10 +59,10 @@ abstract sealed class AbstractOperationStatementSupport<
         }
 
         if (needInput) {
-            appendImplicitSubstatement(stmt, InputStatement.DEFINITION);
+            appendImplicitSubstatement(stmt, InputStatement.DEF);
         }
         if (needOutput) {
-            appendImplicitSubstatement(stmt, OutputStatement.DEFINITION);
+            appendImplicitSubstatement(stmt, OutputStatement.DEF);
         }
     }
 

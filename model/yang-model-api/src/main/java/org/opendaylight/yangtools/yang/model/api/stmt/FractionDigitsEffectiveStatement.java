@@ -18,6 +18,6 @@ public interface FractionDigitsEffectiveStatement
         extends EffectiveStatement<Integer, @NonNull FractionDigitsStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return FractionDigitsStatement.DEFINITION;
+        return FractionDigitsStatement.DEF;
     }
 }

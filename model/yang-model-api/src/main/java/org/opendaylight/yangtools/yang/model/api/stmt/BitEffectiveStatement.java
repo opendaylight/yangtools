@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface BitEffectiveStatement extends EffectiveStatement<String, @NonNull BitStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return BitStatement.DEFINITION;
+        return BitStatement.DEF;
     }
 
     default Optional<Uint32> findDeclaredPosition() {

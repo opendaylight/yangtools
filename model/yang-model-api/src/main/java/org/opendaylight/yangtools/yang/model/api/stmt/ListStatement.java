@@ -26,19 +26,21 @@ public interface ListStatement extends MultipleElementsDeclaredStatement,
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         ListStatement.class, ListEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "list", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: rename and document
     default @Nullable KeyStatement getKey() {
         final var opt = findFirstDeclaredSubstatement(KeyStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
+    // FIXME: rename and document
     default @NonNull Collection<? extends @NonNull UniqueStatement> getUnique() {
         return declaredSubstatements(UniqueStatement.class);
     }

@@ -46,18 +46,18 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
 public final class IncludeStatementSupport
         extends AbstractUnqualifiedStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(IncludeStatement.DEFINITION)
-            .addOptional(RevisionDateStatement.DEFINITION)
+        SubstatementValidator.builder(IncludeStatement.DEF)
+            .addOptional(RevisionDateStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(IncludeStatement.DEFINITION)
-            .addOptional(RevisionDateStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(IncludeStatement.DEF)
+            .addOptional(RevisionDateStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     IncludeStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(IncludeStatement.DEFINITION, StatementPolicy.reject(), config, validator);
+        super(IncludeStatement.DEF, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull IncludeStatementSupport rfc6020Instance(final YangParserConfiguration config) {

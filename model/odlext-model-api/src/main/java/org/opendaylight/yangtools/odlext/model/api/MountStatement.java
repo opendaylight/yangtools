@@ -18,12 +18,11 @@ public interface MountStatement extends UnknownStatement<Empty> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        MountStatement.class, MountEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(MountStatement.class, MountEffectiveStatement.class,
         OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "mount");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

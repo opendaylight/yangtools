@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ReferenceStatementSupport
         extends AbstractInternedStringStatementSupport<ReferenceStatement, ReferenceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(ReferenceStatement.DEFINITION).build();
+        SubstatementValidator.builder(ReferenceStatement.DEF).build();
 
     public ReferenceStatementSupport(final YangParserConfiguration config) {
-        super(ReferenceStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(ReferenceStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

@@ -8,16 +8,27 @@
 package org.opendaylight.yangtools.openconfig.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigConstants;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @NonNullByDefault
 public final class EncryptedValueStatementSupport extends AbstractHashedValueStatementSupport {
-    private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenConfigHashedValueStatement.ENCRYPTED_DEFINITION).build();
+    /**
+     * The definition of {@code oc-ext:openconfig-encrypted-value} statement.
+     *
+     * @since 15.0.0
+     */
+    public static final StatementDefinition DEF = StatementDefinition.of(
+        OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
+        OpenConfigConstants.ENCRYPTED_VALUE_MODULE, "openconfig-encrypted-value");
+
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(DEF).build();
 
     public EncryptedValueStatementSupport(final YangParserConfiguration config) {
-        super(OpenConfigHashedValueStatement.ENCRYPTED_DEFINITION, config, VALIDATOR);
+        super(DEF, config, VALIDATOR);
     }
 }

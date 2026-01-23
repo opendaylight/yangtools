@@ -17,12 +17,12 @@ public interface RpcContextReferenceStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         RpcContextReferenceStatement.class, RpcContextReferenceEffectiveStatement.class,
         OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "rpc-context-reference", "context-type");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

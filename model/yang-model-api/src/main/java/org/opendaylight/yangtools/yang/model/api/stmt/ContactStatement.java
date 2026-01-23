@@ -21,12 +21,11 @@ public interface ContactStatement extends DeclaredHumanTextStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        ContactStatement.class, ContactEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(ContactStatement.class, ContactEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "contact", "text", true);
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

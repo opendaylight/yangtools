@@ -21,6 +21,6 @@ public interface TypeEffectiveStatement<T extends TypeStatement>
         extends EffectiveStatement<QName, T>, TypeDefinitionAware {
     @Override
     default StatementDefinition statementDefinition() {
-        return TypeStatement.DEFINITION;
+        return TypeStatement.DEF;
     }
 }

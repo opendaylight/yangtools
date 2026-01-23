@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class YinElementStatementSupport
         extends AbstractBooleanStatementSupport<YinElementStatement, YinElementEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YinElementStatement.DEFINITION).build();
+        SubstatementValidator.builder(YinElementStatement.DEF).build();
 
     public YinElementStatementSupport(final YangParserConfiguration config) {
-        super(YinElementStatement.DEFINITION,
+        super(YinElementStatement.DEF,
             EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(false)),
             EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(true)),
             StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);

@@ -21,6 +21,6 @@ public interface AnnotationEffectiveStatement
         extends UnknownEffectiveStatement<AnnotationName, @NonNull AnnotationStatement>, TypeDefinitionAware {
     @Override
     default StatementDefinition statementDefinition() {
-        return AnnotationStatement.DEFINITION;
+        return AnnotationStatement.DEF;
     }
 }

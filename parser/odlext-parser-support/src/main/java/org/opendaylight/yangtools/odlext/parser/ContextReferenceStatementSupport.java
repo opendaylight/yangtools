@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ContextReferenceStatementSupport
         extends AbstractIdentityAwareStatementSupport<ContextReferenceStatement, ContextReferenceEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(ContextReferenceStatement.DEFINITION).build();
+        SubstatementValidator.builder(ContextReferenceStatement.DEF).build();
 
     public ContextReferenceStatementSupport(final YangParserConfiguration config) {
-        super(ContextReferenceStatement.DEFINITION, config, VALIDATOR);
+        super(ContextReferenceStatement.DEF, config, VALIDATOR);
     }
 
     @Override

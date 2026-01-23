@@ -21,12 +21,12 @@ public interface MinElementsStatement extends DeclaredStatement<MinElementsArgum
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         MinElementsStatement.class, MinElementsEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "min-elements", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

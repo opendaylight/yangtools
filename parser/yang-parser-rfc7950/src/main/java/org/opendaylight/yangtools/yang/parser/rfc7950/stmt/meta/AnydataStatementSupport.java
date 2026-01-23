@@ -44,19 +44,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class AnydataStatementSupport
         extends AbstractSchemaTreeStatementSupport<AnydataStatement, AnydataEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(AnydataStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(MandatoryStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(AnydataStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(MandatoryStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
 
     public AnydataStatementSupport(final YangParserConfiguration config) {
-        super(AnydataStatement.DEFINITION, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
+        super(AnydataStatement.DEF, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

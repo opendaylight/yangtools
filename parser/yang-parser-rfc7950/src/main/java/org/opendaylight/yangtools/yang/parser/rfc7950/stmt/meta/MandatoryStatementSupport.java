@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class MandatoryStatementSupport extends
         AbstractBooleanStatementSupport<MandatoryStatement, MandatoryEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(MandatoryStatement.DEFINITION).build();
+        SubstatementValidator.builder(MandatoryStatement.DEF).build();
 
     public MandatoryStatementSupport(final YangParserConfiguration config) {
-        super(MandatoryStatement.DEFINITION,
+        super(MandatoryStatement.DEF,
             EffectiveStatements.createMandatory(DeclaredStatements.createMandatory(Boolean.FALSE)),
             EffectiveStatements.createMandatory(DeclaredStatements.createMandatory(Boolean.TRUE)),
             StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);

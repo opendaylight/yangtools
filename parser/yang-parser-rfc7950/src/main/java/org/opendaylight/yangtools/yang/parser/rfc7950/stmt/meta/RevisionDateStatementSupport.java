@@ -29,10 +29,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class RevisionDateStatementSupport
         extends AbstractStatementSupport<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(RevisionDateStatement.DEFINITION).build();
+        SubstatementValidator.builder(RevisionDateStatement.DEF).build();
 
     public RevisionDateStatementSupport(final YangParserConfiguration config) {
-        super(RevisionDateStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(RevisionDateStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

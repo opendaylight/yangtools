@@ -21,22 +21,23 @@ public non-sealed interface SubmoduleStatement extends RootDeclaredStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         SubmoduleStatement.class, SubmoduleEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "submodule", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: rename/document and share with ModuleStatement
     default @Nullable YangVersionStatement getYangVersion() {
         final var opt = findFirstDeclaredSubstatement(YangVersionStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
+    // FIXME: rename/document
     default @NonNull BelongsToStatement getBelongsTo() {
         return findFirstDeclaredSubstatement(BelongsToStatement.class).orElseThrow();
     }
 }
-

@@ -22,13 +22,12 @@ public interface YangVersionStatement extends DeclaredStatement<YangVersion> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         YangVersionStatement.class, YangVersionEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "yang-version", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }
-

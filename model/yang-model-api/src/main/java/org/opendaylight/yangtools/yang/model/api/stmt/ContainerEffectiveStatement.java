@@ -19,6 +19,6 @@ public non-sealed interface ContainerEffectiveStatement extends DataTreeEffectiv
         TypedefAwareEffectiveStatement<QName, @NonNull ContainerStatement> {
     @Override
     default  StatementDefinition statementDefinition() {
-        return ContainerStatement.DEFINITION;
+        return ContainerStatement.DEF;
     }
 }

@@ -70,22 +70,22 @@ public final class YangDataStatementSupport
     //
     // The cardinality is not exactly constrained, but the entirety of substatements are required to resolve to a single
     // XML document (page 80). This is enforced when we arrive at full declaration.
-    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatement.DEFINITION)
-        .addAny(ContainerStatement.DEFINITION)
-        .addAny(LeafStatement.DEFINITION)
-        .addAny(LeafListStatement.DEFINITION)
-        .addAny(ListStatement.DEFINITION)
-        .addAny(ChoiceStatement.DEFINITION)
-        .addAny(AnydataStatement.DEFINITION)
-        .addAny(AnyxmlStatement.DEFINITION)
-        .addAny(UsesStatement.DEFINITION)
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatement.DEF)
+        .addAny(ContainerStatement.DEF)
+        .addAny(LeafStatement.DEF)
+        .addAny(LeafListStatement.DEF)
+        .addAny(ListStatement.DEF)
+        .addAny(ChoiceStatement.DEF)
+        .addAny(AnydataStatement.DEF)
+        .addAny(AnyxmlStatement.DEF)
+        .addAny(UsesStatement.DEF)
         .build();
 
     @VisibleForTesting
     static final YangDataName YANG_API = new YangDataName(YangDataConstants.RFC8040_MODULE, "yang-api");
 
     public YangDataStatementSupport(final YangParserConfiguration config) {
-        super(YangDataStatement.DEFINITION, StatementPolicy.reject(), SubtreePolicy.structure(true), config, VALIDATOR);
+        super(YangDataStatement.DEF, StatementPolicy.reject(), SubtreePolicy.structure(true), config, VALIDATOR);
     }
 
     @Override

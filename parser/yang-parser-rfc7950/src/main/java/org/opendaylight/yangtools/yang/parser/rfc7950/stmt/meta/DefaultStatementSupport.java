@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class DefaultStatementSupport
         extends AbstractStringStatementSupport<DefaultStatement, DefaultEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(DefaultStatement.DEFINITION).build();
+        SubstatementValidator.builder(DefaultStatement.DEF).build();
 
     public DefaultStatementSupport(final YangParserConfiguration config) {
         // Note: if we start interpreting the string we'll need to use StatementPolicy.declaredCopy()
-        super(DefaultStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(DefaultStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

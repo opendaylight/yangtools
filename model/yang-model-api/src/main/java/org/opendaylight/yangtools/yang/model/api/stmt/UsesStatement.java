@@ -21,18 +21,20 @@ public interface UsesStatement extends DataDefinitionStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(UsesStatement.class, UsesEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(UsesStatement.class, UsesEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "uses", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: document/rename
     default @NonNull Collection<? extends @NonNull RefineStatement> getRefines() {
         return declaredSubstatements(RefineStatement.class);
     }
 
+    // FIXME: document/rename
     default @NonNull Collection<? extends @NonNull AugmentStatement> getAugments() {
         return declaredSubstatements(AugmentStatement.class);
     }

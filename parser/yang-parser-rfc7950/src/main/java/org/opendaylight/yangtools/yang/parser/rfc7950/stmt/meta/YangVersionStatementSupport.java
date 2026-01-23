@@ -29,10 +29,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class YangVersionStatementSupport
         extends AbstractStatementSupport<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangVersionStatement.DEFINITION).build();
+        SubstatementValidator.builder(YangVersionStatement.DEF).build();
 
     public YangVersionStatementSupport(final YangParserConfiguration config) {
-        super(YangVersionStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(YangVersionStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

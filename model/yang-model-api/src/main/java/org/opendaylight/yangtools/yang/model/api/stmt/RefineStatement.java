@@ -26,29 +26,32 @@ public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<D
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        RefineStatement.class, RefineEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(RefineStatement.class, RefineEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "refine", "target-node");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: document/rename
     default @NonNull Collection<? extends @NonNull DefaultStatement> getDefaults() {
         return declaredSubstatements(DefaultStatement.class);
     }
 
+    // FIXME: document/rename
     default @Nullable PresenceStatement getPresence() {
         final var opt = findFirstDeclaredSubstatement(PresenceStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
+    // FIXME: document/rename
     default @Nullable MinElementsStatement getMinElements() {
         final var opt = findFirstDeclaredSubstatement(MinElementsStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
+    // FIXME: document/rename
     default @Nullable MaxElementsStatement getMaxElements() {
         final var opt = findFirstDeclaredSubstatement(MaxElementsStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

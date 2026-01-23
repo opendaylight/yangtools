@@ -20,6 +20,6 @@ public interface GetFilterElementAttributesEffectiveStatement
         extends UnknownEffectiveStatement<Empty, @NonNull GetFilterElementAttributesStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return GetFilterElementAttributesStatement.DEFINITION;
+        return GetFilterElementAttributesStatement.DEF;
     }
 }

@@ -26,20 +26,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class NotificationStatementRFC6020Support extends AbstractNotificationStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(NotificationStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(GroupingStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addAny(TypedefStatement.DEFINITION)
-            .addAny(UsesStatement.DEFINITION)
+        SubstatementValidator.builder(NotificationStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(GroupingStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(TypedefStatement.DEF)
+            .addAny(UsesStatement.DEF)
             .build();
 
     public NotificationStatementRFC6020Support(final YangParserConfiguration config) {

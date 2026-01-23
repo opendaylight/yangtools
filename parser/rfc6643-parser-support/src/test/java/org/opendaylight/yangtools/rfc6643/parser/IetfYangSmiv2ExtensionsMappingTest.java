@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 class IetfYangSmiv2ExtensionsMappingTest {
     @Test
     void testGetEffectiveRepresentationClass() {
-        assertEquals(AliasEffectiveStatement.class, AliasStatement.DEFINITION.effectiveRepresentation());
+        assertEquals(AliasEffectiveStatement.class, AliasStatement.DEF.effectiveRepresentation());
     }
 
     @Test
     void testIsArgumentYinElement() {
-        assertFalse(AliasStatement.DEFINITION.getArgumentDefinition().yinElement());
+        assertFalse(AliasStatement.DEF.getArgumentDefinition().yinElement());
     }
 }

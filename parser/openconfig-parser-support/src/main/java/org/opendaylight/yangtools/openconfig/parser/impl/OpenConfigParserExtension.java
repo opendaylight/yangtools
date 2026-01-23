@@ -33,10 +33,8 @@ public final class OpenConfigParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public OpenConfigParserExtension() {
-        super(
-            OpenConfigHashedValueStatement.ENCRYPTED_DEFINITION,
-            OpenConfigHashedValueStatement.HASHED_DEFINITION,
-            OpenConfigVersionStatement.DEFINITION);
+        super(EncryptedValueStatementSupport.DEF, OpenConfigHashedValueStatement.DEF,
+            OpenConfigVersionStatement.DEF);
     }
 
     @Override

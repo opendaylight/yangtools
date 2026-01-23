@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
  */
 abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor {
     static final class ForModule extends YangIRSourceInfoExtractor {
-        private static final @NonNull String NAMESPACE = NamespaceStatement.DEFINITION.simpleName();
+        private static final @NonNull String NAMESPACE = NamespaceStatement.DEF.simpleName();
 
         @NonNullByDefault
         ForModule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
@@ -72,7 +72,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     static final class ForSubmodule extends YangIRSourceInfoExtractor {
-        private static final @NonNull String BELONGS_TO = BelongsToStatement.DEFINITION.simpleName();
+        private static final @NonNull String BELONGS_TO = BelongsToStatement.DEF.simpleName();
 
         @NonNullByDefault
         ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
@@ -99,14 +99,14 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     private static final @NonNull String REVISION = "revision";
 
     static {
-        verify(IMPORT.equals(ImportStatement.DEFINITION.simpleName()));
-        verify(INCLUDE.equals(IncludeStatement.DEFINITION.simpleName()));
-        verify(REVISION.equals(RevisionStatement.DEFINITION.simpleName()));
+        verify(IMPORT.equals(ImportStatement.DEF.simpleName()));
+        verify(INCLUDE.equals(IncludeStatement.DEF.simpleName()));
+        verify(REVISION.equals(RevisionStatement.DEF.simpleName()));
     }
 
-    private static final @NonNull String PREFIX = PrefixStatement.DEFINITION.simpleName();
-    private static final @NonNull String REVISION_DATE = RevisionDateStatement.DEFINITION.simpleName();
-    private static final @NonNull String YANG_VERSION = YangVersionStatement.DEFINITION.simpleName();
+    private static final @NonNull String PREFIX = PrefixStatement.DEF.simpleName();
+    private static final @NonNull String REVISION_DATE = RevisionDateStatement.DEF.simpleName();
+    private static final @NonNull String YANG_VERSION = YangVersionStatement.DEF.simpleName();
 
     private final @NonNull SourceIdentifier sourceId;
     private final @NonNull StringEscaping escaping;

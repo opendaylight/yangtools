@@ -27,10 +27,10 @@ public final class SubscriptionStateNotificationStatementSupport
         extends AbstractEmptyStatementSupport<SubscriptionStateNotificationStatement,
             SubscriptionStateNotificationEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(SubscriptionStateNotificationStatement.DEFINITION).build();
+        SubstatementValidator.builder(SubscriptionStateNotificationStatement.DEF).build();
 
     public SubscriptionStateNotificationStatementSupport(final YangParserConfiguration config) {
-        super(SubscriptionStateNotificationStatement.DEFINITION, StatementPolicy.exactReplica(), config, VALIDATOR);
+        super(SubscriptionStateNotificationStatement.DEF, StatementPolicy.exactReplica(), config, VALIDATOR);
     }
 
     @Override

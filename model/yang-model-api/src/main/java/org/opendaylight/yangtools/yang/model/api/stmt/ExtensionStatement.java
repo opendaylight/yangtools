@@ -22,15 +22,16 @@ public interface ExtensionStatement extends DocumentedDeclaredStatement.WithStat
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         ExtensionStatement.class, ExtensionEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "extension", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: document
     default @Nullable ArgumentStatement getArgument() {
         final var opt = findFirstDeclaredSubstatement(ArgumentStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

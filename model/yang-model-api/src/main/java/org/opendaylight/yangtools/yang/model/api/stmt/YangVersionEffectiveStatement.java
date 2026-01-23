@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface YangVersionEffectiveStatement extends EffectiveStatement<YangVersion, @NonNull YangVersionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return YangVersionStatement.DEFINITION;
+        return YangVersionStatement.DEF;
     }
 }

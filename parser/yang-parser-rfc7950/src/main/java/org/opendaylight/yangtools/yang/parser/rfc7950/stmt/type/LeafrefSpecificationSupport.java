@@ -28,11 +28,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpecification> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION).addMandatory(PathStatement.DEFINITION).build();
+        SubstatementValidator.builder(TypeStatement.DEF).addMandatory(PathStatement.DEF).build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION)
-            .addMandatory(PathStatement.DEFINITION)
-            .addOptional(RequireInstanceStatement.DEFINITION)
+        SubstatementValidator.builder(TypeStatement.DEF)
+            .addMandatory(PathStatement.DEF)
+            .addOptional(RequireInstanceStatement.DEF)
             .build();
 
     private LeafrefSpecificationSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

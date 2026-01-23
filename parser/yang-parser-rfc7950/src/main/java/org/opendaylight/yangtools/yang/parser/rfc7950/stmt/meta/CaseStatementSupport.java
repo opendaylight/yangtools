@@ -54,39 +54,39 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class CaseStatementSupport
         extends AbstractImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(CaseStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addAny(UsesStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(CaseStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(UsesStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(CaseStatement.DEFINITION)
-            .addAny(AnydataStatement.DEFINITION)
-            .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(ChoiceStatement.DEFINITION)
-            .addAny(ContainerStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addAny(LeafStatement.DEFINITION)
-            .addAny(LeafListStatement.DEFINITION)
-            .addAny(ListStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addAny(UsesStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(CaseStatement.DEF)
+            .addAny(AnydataStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(UsesStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
 
     private CaseStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(CaseStatement.DEFINITION, instantiatedPolicy(), config, validator);
+        super(CaseStatement.DEF, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull CaseStatementSupport rfc6020Instance(final YangParserConfiguration config) {

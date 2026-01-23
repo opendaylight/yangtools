@@ -22,6 +22,6 @@ public interface RangeEffectiveStatement extends EffectiveStatement<ValueRanges,
         ConstraintMetaDefinition {
     @Override
     default StatementDefinition statementDefinition() {
-        return RangeStatement.DEFINITION;
+        return RangeStatement.DEF;
     }
 }

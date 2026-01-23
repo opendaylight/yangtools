@@ -22,14 +22,15 @@ public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<St
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(EnumStatement.class, EnumEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(EnumStatement.class, EnumEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "enum", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
+    // FIXME: document
     default @Nullable ValueStatement getValue() {
         final var opt = findFirstDeclaredSubstatement(ValueStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

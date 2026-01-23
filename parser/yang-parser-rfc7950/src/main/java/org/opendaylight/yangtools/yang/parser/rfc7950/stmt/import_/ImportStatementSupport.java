@@ -47,20 +47,20 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
 public final class ImportStatementSupport
         extends AbstractUnqualifiedStatementSupport<ImportStatement, ImportEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(ImportStatement.DEFINITION)
-            .addMandatory(PrefixStatement.DEFINITION)
-            .addOptional(RevisionDateStatement.DEFINITION)
+        SubstatementValidator.builder(ImportStatement.DEF)
+            .addMandatory(PrefixStatement.DEF)
+            .addOptional(RevisionDateStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(ImportStatement.DEFINITION)
-            .addMandatory(PrefixStatement.DEFINITION)
-            .addOptional(RevisionDateStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
+        SubstatementValidator.builder(ImportStatement.DEF)
+            .addMandatory(PrefixStatement.DEF)
+            .addOptional(RevisionDateStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
             .build();
 
     private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(ImportStatement.DEFINITION, StatementPolicy.reject(), config, validator);
+        super(ImportStatement.DEF, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull ImportStatementSupport rfc6020Instance(final YangParserConfiguration config) {

@@ -23,13 +23,12 @@ public interface ArgumentStatement extends DeclaredStatement<QName> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        ArgumentStatement.class, ArgumentEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(ArgumentStatement.class, ArgumentEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "argument", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
     default @Nullable YinElementStatement getYinElement() {
@@ -37,4 +36,3 @@ public interface ArgumentStatement extends DeclaredStatement<QName> {
         return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
-

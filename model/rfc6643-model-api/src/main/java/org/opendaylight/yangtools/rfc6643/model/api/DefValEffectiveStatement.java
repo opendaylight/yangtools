@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface DefValEffectiveStatement extends UnknownEffectiveStatement<String, @NonNull DefValStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return DefValStatement.DEFINITION;
+        return DefValStatement.DEF;
     }
 }

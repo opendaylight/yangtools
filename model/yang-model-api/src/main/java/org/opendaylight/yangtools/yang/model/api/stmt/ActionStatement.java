@@ -24,11 +24,11 @@ public non-sealed interface ActionStatement extends DeclaredOperationStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        ActionStatement.class, ActionEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "action", "name");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(ActionStatement.class, ActionEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "action", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

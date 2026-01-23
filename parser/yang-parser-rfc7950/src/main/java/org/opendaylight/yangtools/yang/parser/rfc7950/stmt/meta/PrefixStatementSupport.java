@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class PrefixStatementSupport
         extends AbstractStringStatementSupport<PrefixStatement, PrefixEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(PrefixStatement.DEFINITION).build();
+        SubstatementValidator.builder(PrefixStatement.DEF).build();
 
     public PrefixStatementSupport(final YangParserConfiguration config) {
-        super(PrefixStatement.DEFINITION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
+        super(PrefixStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

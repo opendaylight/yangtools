@@ -33,10 +33,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class ModuleTagStatementSupport
         extends AbstractStatementSupport<Tag, ModuleTagStatement, ModuleTagEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(ModuleTagStatement.DEFINITION).build();
+        SubstatementValidator.builder(ModuleTagStatement.DEF).build();
 
     public ModuleTagStatementSupport(final YangParserConfiguration config) {
-        super(ModuleTagStatement.DEFINITION, StatementPolicy.reject(), config, VALIDATOR);
+        super(ModuleTagStatement.DEF, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override

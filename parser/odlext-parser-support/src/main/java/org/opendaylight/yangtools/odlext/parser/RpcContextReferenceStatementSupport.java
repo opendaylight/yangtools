@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class RpcContextReferenceStatementSupport
         extends AbstractStringStatementSupport<RpcContextReferenceStatement, RpcContextReferenceEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(RpcContextReferenceStatement.DEFINITION).build();
+        SubstatementValidator.builder(RpcContextReferenceStatement.DEF).build();
 
     public RpcContextReferenceStatementSupport(final YangParserConfiguration config) {
-        super(RpcContextReferenceStatement.DEFINITION, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        super(RpcContextReferenceStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

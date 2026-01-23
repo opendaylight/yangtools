@@ -30,7 +30,7 @@ public final class Rfc8819ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc8819ParserExtension() {
-        super(ModuleTagStatement.DEFINITION);
+        super(ModuleTagStatement.DEF);
     }
 
     @Override

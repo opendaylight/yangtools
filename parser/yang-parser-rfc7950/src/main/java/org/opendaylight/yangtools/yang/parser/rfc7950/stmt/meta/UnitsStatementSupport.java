@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class UnitsStatementSupport
         extends AbstractStringStatementSupport<UnitsStatement, UnitsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(UnitsStatement.DEFINITION).build();
+        SubstatementValidator.builder(UnitsStatement.DEF).build();
 
     public UnitsStatementSupport(final YangParserConfiguration config) {
-        super(UnitsStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(UnitsStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

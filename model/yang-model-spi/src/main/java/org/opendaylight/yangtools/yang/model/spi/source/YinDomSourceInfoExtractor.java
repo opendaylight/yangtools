@@ -39,8 +39,8 @@ import org.w3c.dom.Element;
 @NonNullByDefault
 abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor {
     static final class ForModule extends YinDomSourceInfoExtractor {
-        private static final String NAMESPACE = NamespaceStatement.DEFINITION.simpleName();
-        private static final String NAMESPACE_ARG = NamespaceStatement.DEFINITION.getArgumentDefinition().simpleName();
+        private static final String NAMESPACE = NamespaceStatement.DEF.simpleName();
+        private static final String NAMESPACE_ARG = NamespaceStatement.DEF.getArgumentDefinition().simpleName();
 
         ForModule(final Element root, final SourceRefProvider refProvider) {
             super(root, refProvider);
@@ -68,8 +68,8 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     static final class ForSubmodule extends YinDomSourceInfoExtractor {
-        private static final String BELONGS_TO = BelongsToStatement.DEFINITION.simpleName();
-        private static final String BELONGS_TO_ARG = BelongsToStatement.DEFINITION.getArgumentDefinition().simpleName();
+        private static final String BELONGS_TO = BelongsToStatement.DEF.simpleName();
+        private static final String BELONGS_TO_ARG = BelongsToStatement.DEF.getArgumentDefinition().simpleName();
 
         ForSubmodule(final Element root, final SourceRefProvider refProvider) {
             super(root, refProvider);
@@ -89,11 +89,11 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     private static final String INCLUDE = "include";
-    private static final String INCLUDE_ARG = IncludeStatement.DEFINITION.getArgumentDefinition().simpleName();
+    private static final String INCLUDE_ARG = IncludeStatement.DEF.getArgumentDefinition().simpleName();
     private static final String IMPORT = "import";
-    private static final String IMPORT_ARG = ImportStatement.DEFINITION.getArgumentDefinition().simpleName();
+    private static final String IMPORT_ARG = ImportStatement.DEF.getArgumentDefinition().simpleName();
     private static final String REVISION = "revision";
-    private static final String REVISION_ARG = RevisionStatement.DEFINITION.getArgumentDefinition().simpleName();
+    private static final String REVISION_ARG = RevisionStatement.DEF.getArgumentDefinition().simpleName();
 
     // module, submodule and their common argument name
     private static final String MODULE = "module";
@@ -101,22 +101,22 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     private static final String NAME = "name";
 
     static {
-        verify(IMPORT.equals(ImportStatement.DEFINITION.simpleName()));
-        verify(INCLUDE.equals(IncludeStatement.DEFINITION.simpleName()));
-        verify(REVISION.equals(RevisionStatement.DEFINITION.simpleName()));
-        verify(MODULE.equals(ModuleStatement.DEFINITION.simpleName()));
-        verify(SUBMODULE.equals(SubmoduleStatement.DEFINITION.simpleName()));
-        verify(NAME.equals(ModuleStatement.DEFINITION.getArgumentDefinition().simpleName()));
-        verify(NAME.equals(SubmoduleStatement.DEFINITION.getArgumentDefinition().simpleName()));
+        verify(IMPORT.equals(ImportStatement.DEF.simpleName()));
+        verify(INCLUDE.equals(IncludeStatement.DEF.simpleName()));
+        verify(REVISION.equals(RevisionStatement.DEF.simpleName()));
+        verify(MODULE.equals(ModuleStatement.DEF.simpleName()));
+        verify(SUBMODULE.equals(SubmoduleStatement.DEF.simpleName()));
+        verify(NAME.equals(ModuleStatement.DEF.getArgumentDefinition().simpleName()));
+        verify(NAME.equals(SubmoduleStatement.DEF.getArgumentDefinition().simpleName()));
     }
 
-    private static final String PREFIX = PrefixStatement.DEFINITION.simpleName();
-    private static final String PREFIX_ARG = PrefixStatement.DEFINITION.getArgumentDefinition().simpleName();
-    private static final String REVISION_DATE = RevisionDateStatement.DEFINITION.simpleName();
+    private static final String PREFIX = PrefixStatement.DEF.simpleName();
+    private static final String PREFIX_ARG = PrefixStatement.DEF.getArgumentDefinition().simpleName();
+    private static final String REVISION_DATE = RevisionDateStatement.DEF.simpleName();
     private static final String REVISION_DATE_ARG =
-        RevisionDateStatement.DEFINITION.getArgumentDefinition().simpleName();
-    private static final String YANG_VERSION = YangVersionStatement.DEFINITION.simpleName();
-    private static final String YANG_VERSION_ARG = YangVersionStatement.DEFINITION.getArgumentDefinition().simpleName();
+        RevisionDateStatement.DEF.getArgumentDefinition().simpleName();
+    private static final String YANG_VERSION = YangVersionStatement.DEF.simpleName();
+    private static final String YANG_VERSION_ARG = YangVersionStatement.DEF.getArgumentDefinition().simpleName();
 
     private final SourceRefProvider refProvider;
     final Element root;

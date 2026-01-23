@@ -53,11 +53,11 @@ import org.slf4j.LoggerFactory;
 final class AugmentInferenceAction implements InferenceAction {
     private static final Logger LOG = LoggerFactory.getLogger(AugmentInferenceAction.class);
     private static final Set<StatementDefinition> NOCOPY_DEF_SET = Set.of(
-        DescriptionStatement.DEFINITION,
-        ReferenceStatement.DEFINITION,
-        StatusStatement.DEFINITION,
-        UsesStatement.DEFINITION,
-        WhenStatement.DEFINITION);
+        DescriptionStatement.DEF,
+        ReferenceStatement.DEF,
+        StatusStatement.DEF,
+        UsesStatement.DEF,
+        WhenStatement.DEF);
 
     private final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
     private final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
@@ -246,8 +246,8 @@ final class AugmentInferenceAction implements InferenceAction {
              * are not mandatory node containers according to RFC 6020 section 3.1.
              */
             if (StmtContextUtils.isPresenceContainer(targetCtx)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ChoiceStatement.DEFINITION)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ListStatement.DEFINITION)) {
+                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ChoiceStatement.DEF)
+                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ListStatement.DEF)) {
                 return false;
             }
 

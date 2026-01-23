@@ -22,11 +22,11 @@ public interface StatusStatement extends DeclaredStatement<Status> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        StatusStatement.class, StatusEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "status", "value");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(StatusStatement.class, StatusEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "status", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

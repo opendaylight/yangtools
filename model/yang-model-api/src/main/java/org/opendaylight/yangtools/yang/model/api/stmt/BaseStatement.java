@@ -22,11 +22,11 @@ public interface BaseStatement extends DeclaredStatement<QName> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(BaseStatement.class, BaseEffectiveStatement.class,
+    @NonNull StatementDefinition DEF = StatementDefinition.of(BaseStatement.class, BaseEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "base", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

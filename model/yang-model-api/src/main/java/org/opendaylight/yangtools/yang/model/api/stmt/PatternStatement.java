@@ -21,12 +21,12 @@ public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
-        PatternStatement.class, PatternEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "pattern", "value");
+    @NonNull StatementDefinition DEF = StatementDefinition.of(PatternStatement.class, PatternEffectiveStatement.class,
+        YangConstants.RFC6020_YIN_MODULE, "pattern", "value");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 
     /**
@@ -35,6 +35,7 @@ public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement
      *
      * @return modifier statement, null if not present.
      */
+    // FIXME: rename
     default @Nullable ModifierStatement getModifierStatement() {
         final var opt = findFirstDeclaredSubstatement(ModifierStatement.class);
         return opt.isPresent() ? opt.orElseThrow() : null;

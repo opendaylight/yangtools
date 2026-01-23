@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION).addMultiple(TypeStatement.DEFINITION).build();
+        SubstatementValidator.builder(TypeStatement.DEF).addMultiple(TypeStatement.DEF).build();
 
     UnionSpecificationSupport(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);

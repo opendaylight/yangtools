@@ -15,6 +15,6 @@ public interface DisplayHintEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull DisplayHintStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return DisplayHintStatement.DEFINITION;
+        return DisplayHintStatement.DEF;
     }
 }

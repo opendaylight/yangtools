@@ -16,6 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface AnyxmlEffectiveStatement extends DataTreeEffectiveStatement<@NonNull AnyxmlStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return AnyxmlStatement.DEFINITION;
+        return AnyxmlStatement.DEF;
     }
 }

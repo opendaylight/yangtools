@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface KeyEffectiveStatement extends EffectiveStatement<KeyArgument, @NonNull KeyStatement> {
     @Override
     default StatementDefinition statementDefinition() {
-        return KeyStatement.DEFINITION;
+        return KeyStatement.DEF;
     }
 }

@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class OrderedByStatementSupport
         extends AbstractStatementSupport<Ordering, OrderedByStatement, OrderedByEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(OrderedByStatement.DEFINITION).build();
+        SubstatementValidator.builder(OrderedByStatement.DEF).build();
 
     /*
      * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
@@ -46,7 +46,7 @@ public final class OrderedByStatementSupport
         EffectiveStatements.createOrderedBy(EMPTY_USER_DECL);
 
     public OrderedByStatementSupport(final YangParserConfiguration config) {
-        super(OrderedByStatement.DEFINITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
+        super(OrderedByStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

@@ -55,39 +55,39 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class LeafListStatementSupport
         extends AbstractSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
-        SubstatementValidator.builder(LeafListStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(MaxElementsStatement.DEFINITION)
-            .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addOptional(OrderedByStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addMandatory(TypeStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(LeafListStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(MaxElementsStatement.DEF)
+            .addOptional(MinElementsStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addOptional(OrderedByStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addMandatory(TypeStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
     private static final SubstatementValidator RFC7950_VALIDATOR =
-        SubstatementValidator.builder(LeafListStatement.DEFINITION)
-            .addOptional(ConfigStatement.DEFINITION)
-            .addAny(DefaultStatement.DEFINITION)
-            .addOptional(DescriptionStatement.DEFINITION)
-            .addAny(IfFeatureStatement.DEFINITION)
-            .addOptional(MaxElementsStatement.DEFINITION)
-            .addOptional(MinElementsStatement.DEFINITION)
-            .addAny(MustStatement.DEFINITION)
-            .addOptional(OrderedByStatement.DEFINITION)
-            .addOptional(ReferenceStatement.DEFINITION)
-            .addOptional(StatusStatement.DEFINITION)
-            .addMandatory(TypeStatement.DEFINITION)
-            .addOptional(UnitsStatement.DEFINITION)
-            .addOptional(WhenStatement.DEFINITION)
+        SubstatementValidator.builder(LeafListStatement.DEF)
+            .addOptional(ConfigStatement.DEF)
+            .addAny(DefaultStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addOptional(MaxElementsStatement.DEF)
+            .addOptional(MinElementsStatement.DEF)
+            .addAny(MustStatement.DEF)
+            .addOptional(OrderedByStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addMandatory(TypeStatement.DEF)
+            .addOptional(UnitsStatement.DEF)
+            .addOptional(WhenStatement.DEF)
             .build();
 
     private LeafListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(LeafListStatement.DEFINITION, instantiatedPolicy(), config, validator);
+        super(LeafListStatement.DEF, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull LeafListStatementSupport rfc6020Instance(final YangParserConfiguration config) {

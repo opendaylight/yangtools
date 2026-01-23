@@ -21,12 +21,12 @@ public interface IfFeatureStatement extends DeclaredStatement<IfFeatureExpr> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEFINITION = StatementDefinition.of(
+    @NonNull StatementDefinition DEF = StatementDefinition.of(
         IfFeatureStatement.class, IfFeatureEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "if-feature", "name");
 
     @Override
     default StatementDefinition statementDefinition() {
-        return DEFINITION;
+        return DEF;
     }
 }

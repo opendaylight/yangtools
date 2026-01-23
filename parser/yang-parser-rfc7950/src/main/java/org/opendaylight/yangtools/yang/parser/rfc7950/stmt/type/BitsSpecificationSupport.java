@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(TypeStatement.DEFINITION).addMultiple(BitStatement.DEFINITION).build();
+        SubstatementValidator.builder(TypeStatement.DEF).addMultiple(BitStatement.DEF).build();
 
     BitsSpecificationSupport(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);
