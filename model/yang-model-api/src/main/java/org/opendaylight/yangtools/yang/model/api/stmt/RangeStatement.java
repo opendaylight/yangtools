@@ -20,11 +20,11 @@ public interface RangeStatement extends ConstrainedDocumentedDeclaredStatement<V
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(RangeStatement.class, RangeEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "range", "value");
+    @NonNull StatementDefinition<ValueRanges, RangeStatement, RangeEffectiveStatement> DEF = StatementDefinition.of(
+        RangeStatement.class, RangeEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "range", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<ValueRanges, RangeStatement, RangeEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }
