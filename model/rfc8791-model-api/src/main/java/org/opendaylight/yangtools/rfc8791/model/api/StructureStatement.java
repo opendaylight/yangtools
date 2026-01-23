@@ -21,12 +21,12 @@ public interface StructureStatement extends UnknownStatement<QName> {
     /**
      * The definition of {@code sx:structure} statement.
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
+    @NonNull StatementDefinition<QName, StructureStatement, StructureEffectiveStatement> DEF = StatementDefinition.of(
         StructureStatement.class, StructureEffectiveStatement.class,
         YangDataStructureConstants.RFC8791_MODULE, "structure", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, StructureStatement, StructureEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

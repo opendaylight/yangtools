@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface GetFilterElementAttributesEffectiveStatement
         extends UnknownEffectiveStatement<Empty, @NonNull GetFilterElementAttributesStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, GetFilterElementAttributesStatement,
+            GetFilterElementAttributesEffectiveStatement> statementDefinition() {
         return GetFilterElementAttributesStatement.DEF;
     }
 }

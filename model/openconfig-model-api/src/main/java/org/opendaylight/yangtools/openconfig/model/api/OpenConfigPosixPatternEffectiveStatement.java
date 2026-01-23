@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface OpenConfigPosixPatternEffectiveStatement
         extends EffectiveStatement<String, @NonNull OpenConfigPosixPatternStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, OpenConfigPosixPatternStatement, OpenConfigPosixPatternEffectiveStatement>
+            statementDefinition() {
         return OpenConfigPosixPatternStatement.DEF;
     }
 }

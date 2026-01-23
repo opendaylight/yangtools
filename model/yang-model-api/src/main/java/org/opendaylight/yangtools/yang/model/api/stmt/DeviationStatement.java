@@ -22,12 +22,12 @@ public interface DeviationStatement extends DocumentedDeclaredStatement<Absolute
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        DeviationStatement.class, DeviationEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "deviation", "target-node");
+    @NonNull StatementDefinition<Absolute, DeviationStatement, DeviationEffectiveStatement> DEF =
+        StatementDefinition.of(DeviationStatement.class, DeviationEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "deviation", "target-node");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Absolute, DeviationStatement, DeviationEffectiveStatement> statementDefinition() {
         return DEF;
     }
 

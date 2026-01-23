@@ -21,12 +21,12 @@ public interface ModuleTagStatement extends UnknownStatement<Tag> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
+    @NonNull StatementDefinition<Tag, ModuleTagStatement, ModuleTagEffectiveStatement> DEF = StatementDefinition.of(
         ModuleTagStatement.class, ModuleTagEffectiveStatement.class,
         ModuleTagConstants.RFC8819_MODULE, "module-tag", "tag");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Tag, ModuleTagStatement, ModuleTagEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

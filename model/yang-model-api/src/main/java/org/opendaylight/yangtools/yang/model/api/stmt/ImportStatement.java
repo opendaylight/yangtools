@@ -22,11 +22,11 @@ public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(ImportStatement.class, ImportEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "import", "module");
+    @NonNull StatementDefinition<Unqualified, ImportStatement, ImportEffectiveStatement> DEF = StatementDefinition.of(
+        ImportStatement.class, ImportEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "import", "module");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, ImportStatement, ImportEffectiveStatement> statementDefinition() {
         return DEF;
     }
 

@@ -23,11 +23,11 @@ public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatemen
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(ChoiceStatement.class, ChoiceEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "choice", "name");
+    @NonNull StatementDefinition<QName, ChoiceStatement, ChoiceEffectiveStatement> DEF = StatementDefinition.of(
+        ChoiceStatement.class, ChoiceEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "choice", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ChoiceStatement, ChoiceEffectiveStatement> statementDefinition() {
         return DEF;
     }
 

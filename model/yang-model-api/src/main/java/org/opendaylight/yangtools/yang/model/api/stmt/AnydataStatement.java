@@ -28,11 +28,11 @@ public interface AnydataStatement extends DataDefinitionStatement, ConfigStateme
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(AnydataStatement.class, AnydataEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "anydata", "name");
+    @NonNull StatementDefinition<QName, AnydataStatement, AnydataEffectiveStatement> DEF = StatementDefinition.of(
+        AnydataStatement.class, AnydataEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "anydata", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, AnydataStatement, AnydataEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

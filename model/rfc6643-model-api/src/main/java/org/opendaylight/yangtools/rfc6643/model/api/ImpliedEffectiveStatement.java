@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface ImpliedEffectiveStatement extends UnknownEffectiveStatement<String, @NonNull ImpliedStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ImpliedStatement, ImpliedEffectiveStatement> statementDefinition() {
         return ImpliedStatement.DEF;
     }
 }

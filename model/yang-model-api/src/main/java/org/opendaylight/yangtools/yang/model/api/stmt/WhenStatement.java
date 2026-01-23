@@ -21,11 +21,11 @@ public interface WhenStatement extends DocumentedDeclaredStatement<QualifiedBoun
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(WhenStatement.class, WhenEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "when", "condition");
+    @NonNull StatementDefinition<QualifiedBound, WhenStatement, WhenEffectiveStatement> DEF = StatementDefinition.of(
+        WhenStatement.class, WhenEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "when", "condition");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QualifiedBound, WhenStatement, WhenEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

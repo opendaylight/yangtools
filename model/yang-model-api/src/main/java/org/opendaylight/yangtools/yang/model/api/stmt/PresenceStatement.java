@@ -21,12 +21,12 @@ public interface PresenceStatement extends DeclaredStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
+    @NonNull StatementDefinition<String, PresenceStatement, PresenceEffectiveStatement> DEF = StatementDefinition.of(
         PresenceStatement.class, PresenceEffectiveStatement.class,
         YangConstants.RFC6020_YIN_MODULE, "presence", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, PresenceStatement, PresenceEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

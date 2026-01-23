@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface MountPointEffectiveStatement
         extends UnknownEffectiveStatement<MountPointLabel, @NonNull MountPointStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<MountPointLabel, MountPointStatement, MountPointEffectiveStatement>
+            statementDefinition() {
         return MountPointStatement.DEF;
     }
 }
