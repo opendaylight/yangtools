@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
@@ -64,7 +65,7 @@ public final class SubmoduleStatementSupport
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(SubmoduleStatement.DEFINITION)
             .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(YangStmtMapping.AUGMENT)
+            .addAny(AugmentStatement.DEFINITION)
             .addMandatory(BelongsToStatement.DEFINITION)
             .addAny(ChoiceStatement.DEFINITION)
             .addOptional(ContactStatement.DEFINITION)
@@ -93,7 +94,7 @@ public final class SubmoduleStatementSupport
         SubstatementValidator.builder(SubmoduleStatement.DEFINITION)
             .addAny(AnydataStatement.DEFINITION)
             .addAny(AnyxmlStatement.DEFINITION)
-            .addAny(YangStmtMapping.AUGMENT)
+            .addAny(AugmentStatement.DEFINITION)
             .addMandatory(BelongsToStatement.DEFINITION)
             .addAny(ChoiceStatement.DEFINITION)
             .addOptional(ContactStatement.DEFINITION)

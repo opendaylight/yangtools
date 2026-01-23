@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 
@@ -29,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 // FIXME: eliminate this class
 @Beta
 public enum YangStmtMapping implements StatementDefinition {
-    AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
     DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node");
 
     private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;

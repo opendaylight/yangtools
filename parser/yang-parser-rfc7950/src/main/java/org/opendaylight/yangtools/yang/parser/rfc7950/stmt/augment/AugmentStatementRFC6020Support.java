@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class AugmentStatementRFC6020Support extends AbstractAugmentStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-        SubstatementValidator.builder(YangStmtMapping.AUGMENT)
+        SubstatementValidator.builder(AugmentStatement.DEFINITION)
             .addAny(AnyxmlStatement.DEFINITION)
             .addAny(CaseStatement.DEFINITION)
             .addAny(ChoiceStatement.DEFINITION)

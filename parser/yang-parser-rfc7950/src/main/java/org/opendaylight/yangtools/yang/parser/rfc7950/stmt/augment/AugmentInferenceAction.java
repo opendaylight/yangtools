@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
@@ -33,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -262,7 +261,7 @@ final class AugmentInferenceAction implements InferenceAction {
                     verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
 
                     if (sourceStmtQName.getModule().equals(((QName) origArg).getModule())
-                        && AbstractAugmentStatementSupport.hasWhenSubstatement(getParentAugmentation(original))) {
+                        && getParentAugmentation(original).hasSubstatement(WhenEffectiveStatement.class)) {
                         return false;
                     }
                 }
@@ -277,9 +276,9 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
-        StmtContext<?, ?, ?> parent = verifyNotNull(child.getParentContext(), "Child %s has not parent", child);
-        while (parent.publicDefinition() != YangStmtMapping.AUGMENT) {
-            parent = verifyNotNull(parent.getParentContext(), "Failed to find augmentation parent of %s", child);
+        var parent = child.coerceParentContext();
+        while (!parent.producesDeclared(AugmentStatement.class)) {
+            parent = parent.coerceParentContext();
         }
         return parent;
     }

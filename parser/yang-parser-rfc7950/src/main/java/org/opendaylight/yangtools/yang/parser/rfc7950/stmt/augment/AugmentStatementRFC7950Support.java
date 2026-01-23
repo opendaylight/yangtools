@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -33,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
  */
 public final class AugmentStatementRFC7950Support extends AbstractAugmentStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
-            .builder(YangStmtMapping.AUGMENT)
+            .builder(AugmentStatement.DEFINITION)
             .addAny(ActionStatement.DEFINITION)
             .addAny(AnydataStatement.DEFINITION)
             .addAny(AnyxmlStatement.DEFINITION)
@@ -58,6 +59,6 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
 
     @Override
     boolean allowsMandatory(final StmtContext<?, ?, ?> ctx) {
-        return ctx.publicDefinition() == YangStmtMapping.AUGMENT && hasWhenSubstatement(ctx);
+        return ctx.producesDeclared(AugmentStatement.class) && ctx.hasSubstatement(WhenEffectiveStatement.class);
     }
 }

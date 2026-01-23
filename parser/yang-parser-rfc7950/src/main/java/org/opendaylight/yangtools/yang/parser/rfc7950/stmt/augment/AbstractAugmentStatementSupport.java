@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -20,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -41,7 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractAugmentStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
     AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
+        super(AugmentStatement.DEFINITION, StatementPolicy.copyDeclared(
             (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
             SubtreePolicy.template(), config, validator);
     }
@@ -126,9 +124,5 @@ abstract class AbstractAugmentStatementSupport
         // Augment is in uses - we need to augment instantiated nodes in parent.
         final var parent = augmentContext.coerceParentContext();
         return parent.producesDeclared(UsesStatement.class) ? parent.getParentContext() : parent;
-    }
-
-    static boolean hasWhenSubstatement(final StmtContext<?, ?, ?> ctx) {
-        return ctx.hasSubstatement(WhenEffectiveStatement.class);
     }
 }
