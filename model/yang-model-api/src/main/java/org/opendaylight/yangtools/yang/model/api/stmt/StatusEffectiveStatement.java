@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface StatusEffectiveStatement extends EffectiveStatement<Status, @NonNull StatusStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Status, StatusStatement, StatusEffectiveStatement> statementDefinition() {
         return StatusStatement.DEF;
     }
 }

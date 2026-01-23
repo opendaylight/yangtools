@@ -25,6 +25,9 @@ import org.opendaylight.yangtools.yang.common.Empty;
  * @param <D> Class representing declared version of this statement.
  */
 public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends ModelStatement<A> {
+    @Override
+    StatementDefinition<A, D, ?> statementDefinition();
+
     /**
      * Returns {@link StatementOrigin}, which denotes if statement was explicitly declared in original model or inferred
      * during semantic processing of model.
