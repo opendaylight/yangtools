@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  */
 public interface RefineEffectiveStatement extends EffectiveStatement<Descendant, @NonNull RefineStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Descendant, RefineStatement, RefineEffectiveStatement> statementDefinition() {
         return RefineStatement.DEF;
     }
 }

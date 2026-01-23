@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public abstract class ForwardingDeclaredStatement<A, D extends DeclaredStatement<A>>
         extends ForwardingObject implements DeclaredStatement<A> {
     @Override
-    public StatementDefinition statementDefinition() {
+    public StatementDefinition<A, ?, ?> statementDefinition() {
         return delegate().statementDefinition();
     }
 

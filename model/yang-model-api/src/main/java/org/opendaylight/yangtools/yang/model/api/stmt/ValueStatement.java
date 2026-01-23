@@ -21,11 +21,11 @@ public interface ValueStatement extends DeclaredStatement<Integer> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
+    @NonNull StatementDefinition<Integer, ValueStatement, ValueEffectiveStatement> DEF = StatementDefinition.of(
         ValueStatement.class, ValueEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "value", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Integer, ValueStatement, ValueEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

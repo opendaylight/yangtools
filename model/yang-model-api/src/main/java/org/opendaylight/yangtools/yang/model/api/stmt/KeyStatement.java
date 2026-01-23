@@ -21,11 +21,11 @@ public interface KeyStatement extends DeclaredStatement<KeyArgument> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(KeyStatement.class, KeyEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "key", "value");
+    @NonNull StatementDefinition<KeyArgument, KeyStatement, KeyEffectiveStatement> DEF = StatementDefinition.of(
+        KeyStatement.class, KeyEffectiveStatement.class, YangConstants.RFC6020_YIN_MODULE, "key", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<KeyArgument, KeyStatement, KeyEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

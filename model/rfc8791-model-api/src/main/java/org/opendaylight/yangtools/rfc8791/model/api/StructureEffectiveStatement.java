@@ -18,11 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  *
  * @since 14.0.21
  */
-public interface StructureEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<QName, @NonNull StructureStatement>,
-                UnknownEffectiveStatement<QName, @NonNull StructureStatement> {
+public interface StructureEffectiveStatement extends UnknownEffectiveStatement<QName, @NonNull StructureStatement>,
+        DataTreeAwareEffectiveStatement<QName, @NonNull StructureStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, StructureStatement, StructureEffectiveStatement> statementDefinition() {
         return StructureStatement.DEF;
     }
 }

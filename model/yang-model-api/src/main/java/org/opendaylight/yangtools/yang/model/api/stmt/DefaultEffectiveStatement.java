@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface DefaultEffectiveStatement extends EffectiveStatement<String, @NonNull DefaultStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default  StatementDefinition<String, DefaultStatement, DefaultEffectiveStatement> statementDefinition() {
         return DefaultStatement.DEF;
     }
 }

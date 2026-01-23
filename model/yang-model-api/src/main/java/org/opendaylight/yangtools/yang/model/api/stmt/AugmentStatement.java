@@ -26,11 +26,12 @@ public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(AugmentStatement.class, AugmentEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "augment", "target-node");
+    @NonNull StatementDefinition<SchemaNodeIdentifier, @NonNull AugmentStatement, @NonNull AugmentEffectiveStatement>
+        DEF = StatementDefinition.of(AugmentStatement.class, AugmentEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "augment", "target-node");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<SchemaNodeIdentifier, ?, ?> statementDefinition() {
         return DEF;
     }
 

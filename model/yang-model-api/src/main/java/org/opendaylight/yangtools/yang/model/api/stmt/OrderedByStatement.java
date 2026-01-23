@@ -22,12 +22,12 @@ public interface OrderedByStatement extends DeclaredStatement<Ordering> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        OrderedByStatement.class, OrderedByEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "ordered-by", "value");
+    @NonNull StatementDefinition<Ordering, OrderedByStatement, OrderedByEffectiveStatement> DEF =
+        StatementDefinition.of(OrderedByStatement.class, OrderedByEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "ordered-by", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Ordering, OrderedByStatement, OrderedByEffectiveStatement> statementDefinition() {
         return DEF;
     }
 }

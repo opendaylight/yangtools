@@ -22,12 +22,13 @@ public interface DefaultDenyAllStatement extends UnknownStatement<Empty> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        DefaultDenyAllStatement.class, DefaultDenyAllEffectiveStatement.class,
-        NACMConstants.RFC6536_MODULE, "default-deny-all");
+    @NonNull StatementDefinition<Empty, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> DEF =
+        StatementDefinition.of(DefaultDenyAllStatement.class, DefaultDenyAllEffectiveStatement.class,
+            NACMConstants.RFC6536_MODULE, "default-deny-all");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement>
+            statementDefinition() {
         return DEF;
     }
 }

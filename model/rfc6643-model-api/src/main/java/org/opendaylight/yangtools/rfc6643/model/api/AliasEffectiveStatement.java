@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface AliasEffectiveStatement extends UnknownEffectiveStatement<String, @NonNull AliasStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, AliasStatement, AliasEffectiveStatement> statementDefinition() {
         return AliasStatement.DEF;
     }
 }
