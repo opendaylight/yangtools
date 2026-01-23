@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface EnumEffectiveStatement extends EffectiveStatement<String, @NonNull EnumStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, @NonNull EnumStatement, ?> statementDefinition() {
         return EnumStatement.DEF;
     }
 }

@@ -21,12 +21,12 @@ public interface ErrorAppTagStatement extends DeclaredStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "error-app-tag", "value");
+    @NonNull StatementDefinition<String, @NonNull ErrorAppTagStatement, @NonNull ErrorAppTagEffectiveStatement> DEF =
+        StatementDefinition.of(ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "error-app-tag", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

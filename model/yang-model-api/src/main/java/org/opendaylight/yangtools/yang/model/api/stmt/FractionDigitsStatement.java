@@ -21,12 +21,12 @@ public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        FractionDigitsStatement.class, FractionDigitsEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "fraction-digits", "value");
+    @NonNull StatementDefinition<Integer, @NonNull FractionDigitsStatement, @NonNull FractionDigitsEffectiveStatement>
+        DEF = StatementDefinition.of(FractionDigitsStatement.class, FractionDigitsEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "fraction-digits", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Integer, ?, ?> statementDefinition() {
         return DEF;
     }
 }

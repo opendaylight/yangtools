@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface OpenConfigVersionEffectiveStatement
         extends UnknownEffectiveStatement<SemVer, @NonNull OpenConfigVersionStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<SemVer, @NonNull OpenConfigVersionStatement, ?> statementDefinition() {
         return OpenConfigVersionStatement.DEF;
     }
 }

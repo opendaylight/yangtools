@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface DefaultDenyAllEffectiveStatement
         extends UnknownEffectiveStatement<Empty, @NonNull DefaultDenyAllStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, @NonNull DefaultDenyAllStatement, ?> statementDefinition() {
         return DefaultDenyAllStatement.DEF;
     }
 }

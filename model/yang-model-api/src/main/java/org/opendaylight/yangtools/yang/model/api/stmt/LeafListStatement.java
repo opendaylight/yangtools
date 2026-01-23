@@ -23,12 +23,12 @@ public interface LeafListStatement extends MultipleElementsDeclaredStatement, Ty
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        LeafListStatement.class, LeafListEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "leaf-list", "name");
+    @NonNull StatementDefinition<QName, @NonNull LeafListStatement, @NonNull LeafListEffectiveStatement> DEF =
+        StatementDefinition.of(LeafListStatement.class, LeafListEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "leaf-list", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 

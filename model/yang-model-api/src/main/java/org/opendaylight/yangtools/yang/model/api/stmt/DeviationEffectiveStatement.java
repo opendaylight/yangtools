@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  */
 public interface DeviationEffectiveStatement extends EffectiveStatement<Absolute, @NonNull DeviationStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Absolute, @NonNull DeviationStatement, ?> statementDefinition() {
         return DeviationStatement.DEF;
     }
 }

@@ -19,12 +19,13 @@ public interface OpenConfigVersionStatement extends UnknownStatement<SemVer> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        OpenConfigVersionStatement.class, OpenConfigVersionEffectiveStatement.class,
-        QNameModule.of(OpenConfigConstants.MODULE_NAMESPACE), "openconfig-version", "semver");
+    @NonNull StatementDefinition<SemVer, @NonNull OpenConfigVersionStatement,
+        @NonNull OpenConfigVersionEffectiveStatement> DEF = StatementDefinition.of(
+            OpenConfigVersionStatement.class, OpenConfigVersionEffectiveStatement.class,
+            QNameModule.of(OpenConfigConstants.MODULE_NAMESPACE), "openconfig-version", "semver");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<SemVer, ?, ?> statementDefinition() {
         return DEF;
     }
 }

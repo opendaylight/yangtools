@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface YinElementEffectiveStatement extends EffectiveStatement<Boolean, @NonNull YinElementStatement> {
     @Override
-    default  StatementDefinition statementDefinition() {
+    default  StatementDefinition<Boolean, @NonNull YinElementStatement, ?> statementDefinition() {
         return YinElementStatement.DEF;
     }
 }

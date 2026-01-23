@@ -22,12 +22,12 @@ public interface ExtensionStatement extends DocumentedDeclaredStatement.WithStat
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ExtensionStatement.class, ExtensionEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "extension", "name");
+    @NonNull StatementDefinition<QName, @NonNull ExtensionStatement, @NonNull ExtensionEffectiveStatement> DEF =
+        StatementDefinition.of(ExtensionStatement.class, ExtensionEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "extension", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 

@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface RevisionDateEffectiveStatement extends EffectiveStatement<Revision, @NonNull RevisionDateStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Revision, @NonNull RevisionDateStatement, ?> statementDefinition() {
         return RevisionDateStatement.DEF;
     }
 }

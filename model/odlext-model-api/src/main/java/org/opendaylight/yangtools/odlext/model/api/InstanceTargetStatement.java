@@ -17,12 +17,12 @@ public interface InstanceTargetStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class,
-        OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "instance-target", "path");
+    @NonNull StatementDefinition<String, @NonNull InstanceTargetStatement, @NonNull InstanceTargetEffectiveStatement>
+        DEF = StatementDefinition.of(InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class,
+            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "instance-target", "path");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 }

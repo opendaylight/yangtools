@@ -20,11 +20,12 @@ public interface LengthStatement extends ConstrainedDocumentedDeclaredStatement<
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(LengthStatement.class, LengthEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "length", "value");
+    @NonNull StatementDefinition<ValueRanges, @NonNull LengthStatement, @NonNull LengthEffectiveStatement> DEF =
+        StatementDefinition.of(LengthStatement.class, LengthEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "length", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<ValueRanges, ?, ?> statementDefinition() {
         return DEF;
     }
 }

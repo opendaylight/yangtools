@@ -23,8 +23,10 @@ public interface DefaultDenyAllSchemaNode extends UnknownSchemaNode {
      * @return {@link DefaultDenyAllSchemaNode} child, if present.
      */
     static Optional<DefaultDenyAllSchemaNode> findIn(final DataSchemaNode parent) {
-        return parent.getUnknownSchemaNodes().stream().filter(DefaultDenyAllSchemaNode.class::isInstance).findAny()
-                .map(DefaultDenyAllSchemaNode.class::cast);
+        return parent.getUnknownSchemaNodes().stream()
+            .filter(DefaultDenyAllSchemaNode.class::isInstance)
+            .findAny()
+            .map(DefaultDenyAllSchemaNode.class::cast);
     }
 
     @Override

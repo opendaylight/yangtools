@@ -22,12 +22,12 @@ public interface RevisionDateStatement extends DeclaredStatement<Revision> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        RevisionDateStatement.class, RevisionDateEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "revision-date", "date");
+    @NonNull StatementDefinition<Revision, @NonNull RevisionDateStatement, @NonNull RevisionDateEffectiveStatement> DEF
+        = StatementDefinition.of(RevisionDateStatement.class, RevisionDateEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "revision-date", "date");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Revision, ?, ?> statementDefinition() {
         return DEF;
     }
 }

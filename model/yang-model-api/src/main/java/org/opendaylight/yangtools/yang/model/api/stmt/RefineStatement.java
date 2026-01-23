@@ -26,11 +26,12 @@ public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<D
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(RefineStatement.class, RefineEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "refine", "target-node");
+    @NonNull StatementDefinition<Descendant, @NonNull RefineStatement, @NonNull RefineEffectiveStatement> DEF =
+        StatementDefinition.of(RefineStatement.class, RefineEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "refine", "target-node");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Descendant, ?, ?> statementDefinition() {
         return DEF;
     }
 

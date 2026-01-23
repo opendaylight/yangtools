@@ -22,11 +22,12 @@ public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<St
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(EnumStatement.class, EnumEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "enum", "name");
+    @NonNull StatementDefinition<String, @NonNull EnumStatement, @NonNull EnumEffectiveStatement> DEF =
+        StatementDefinition.of(EnumStatement.class, EnumEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "enum", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
     }
 

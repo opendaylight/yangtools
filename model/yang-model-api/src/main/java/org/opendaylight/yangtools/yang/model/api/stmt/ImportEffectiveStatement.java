@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ImportEffectiveStatement extends EffectiveStatement<Unqualified, @NonNull ImportStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, @NonNull ImportStatement, ?> statementDefinition() {
         return ImportStatement.DEF;
     }
 

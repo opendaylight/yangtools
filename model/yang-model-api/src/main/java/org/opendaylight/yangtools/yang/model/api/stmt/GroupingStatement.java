@@ -23,11 +23,12 @@ public interface GroupingStatement extends DocumentedDeclaredStatement.WithStatu
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(GroupingStatement.class, GroupingEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "grouping", "name");
+    @NonNull StatementDefinition<QName, @NonNull GroupingStatement, @NonNull GroupingEffectiveStatement> DEF =
+        StatementDefinition.of(GroupingStatement.class, GroupingEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "grouping", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 }

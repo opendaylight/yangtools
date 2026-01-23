@@ -21,12 +21,12 @@ public interface YinElementStatement extends DeclaredStatement<Boolean> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        YinElementStatement.class, YinElementEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "yin-element", "value");
+    @NonNull StatementDefinition<Boolean, @NonNull YinElementStatement, @NonNull YinElementEffectiveStatement> DEF =
+        StatementDefinition.of(YinElementStatement.class, YinElementEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "yin-element", "value");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Boolean, ?, ?> statementDefinition() {
         return DEF;
     }
 }

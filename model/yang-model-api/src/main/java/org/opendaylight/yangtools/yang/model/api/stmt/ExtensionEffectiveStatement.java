@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ExtensionEffectiveStatement extends EffectiveStatement<QName, @NonNull ExtensionStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, @NonNull ExtensionStatement, ?> statementDefinition() {
         return ExtensionStatement.DEF;
     }
 }

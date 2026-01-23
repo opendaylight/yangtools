@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface SubIdEffectiveStatement extends UnknownEffectiveStatement<Uint32, @NonNull SubIdStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Uint32, @NonNull SubIdStatement, ?> statementDefinition() {
         return SubIdStatement.DEF;
     }
 }

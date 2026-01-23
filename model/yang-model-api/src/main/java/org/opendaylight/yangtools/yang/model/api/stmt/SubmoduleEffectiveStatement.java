@@ -20,7 +20,7 @@ public non-sealed interface SubmoduleEffectiveStatement
             RootEffectiveStatement<@NonNull SubmoduleStatement>,
             TypedefAwareEffectiveStatement<Unqualified, @NonNull SubmoduleStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, @NonNull SubmoduleStatement, ?> statementDefinition() {
         return SubmoduleStatement.DEF;
     }
 

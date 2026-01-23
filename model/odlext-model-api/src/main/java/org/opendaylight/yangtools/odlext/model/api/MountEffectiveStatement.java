@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface MountEffectiveStatement extends UnknownEffectiveStatement<Empty, @NonNull MountStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Empty, @NonNull MountStatement, ?> statementDefinition() {
         return MountStatement.DEF;
     }
 }

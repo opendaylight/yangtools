@@ -24,11 +24,12 @@ public interface TypeStatement extends DeclaredStatement<QName> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(TypeStatement.class, TypeEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "type", "name");
+    @NonNull StatementDefinition<QName, @NonNull TypeStatement, @NonNull TypeEffectiveStatement> DEF =
+        StatementDefinition.of(TypeStatement.class, TypeEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "type", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 

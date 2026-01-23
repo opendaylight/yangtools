@@ -17,17 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  *
  * @since 14.0.21
  */
-public interface AugmentStructureStatement
-        extends DeclaredStatement<AugmentStructureArgument>, UnknownStatement<AugmentStructureArgument> {
+public interface AugmentStructureStatement extends DeclaredStatement<AugmentStructureArgument>,
+        UnknownStatement<AugmentStructureArgument> {
     /**
      * The definition of {@code sx:augment-structure} statement.
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        AugmentStructureStatement.class, AugmentStructureEffectiveStatement.class,
-        YangDataStructureConstants.RFC8791_MODULE, "augment-structure", "path");
+    @NonNull StatementDefinition<AugmentStructureArgument, @NonNull AugmentStructureStatement,
+        @NonNull AugmentStructureEffectiveStatement> DEF = StatementDefinition.of(
+            AugmentStructureStatement.class, AugmentStructureEffectiveStatement.class,
+            YangDataStructureConstants.RFC8791_MODULE, "augment-structure", "path");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<AugmentStructureArgument, ?, ?> statementDefinition() {
         return DEF;
     }
 }

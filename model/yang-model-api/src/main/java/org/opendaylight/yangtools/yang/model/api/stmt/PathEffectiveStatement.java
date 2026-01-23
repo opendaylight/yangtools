@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface PathEffectiveStatement extends EffectiveStatement<PathExpression, @NonNull PathStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<PathExpression, @NonNull PathStatement, ?> statementDefinition() {
         return PathStatement.DEF;
     }
 }

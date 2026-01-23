@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -20,11 +21,12 @@ public non-sealed interface RpcStatement extends DeclaredOperationStatement {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(RpcStatement.class, RpcEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "rpc", "name");
+    @NonNull StatementDefinition<QName, @NonNull RpcStatement, @NonNull RpcEffectiveStatement> DEF =
+        StatementDefinition.of(RpcStatement.class, RpcEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "rpc", "name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
     }
 }

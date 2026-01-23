@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
  */
 public interface WhenEffectiveStatement extends EffectiveStatement<QualifiedBound, @NonNull WhenStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<QualifiedBound, @NonNull WhenStatement, ?> statementDefinition() {
         return WhenStatement.DEF;
     }
 }

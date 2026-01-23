@@ -22,11 +22,12 @@ public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualifie
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(IncludeStatement.class, IncludeEffectiveStatement.class,
-        YangConstants.RFC6020_YIN_MODULE, "include", "module");
+    @NonNull StatementDefinition<Unqualified, @NonNull IncludeStatement, @NonNull IncludeEffectiveStatement> DEF =
+        StatementDefinition.of(IncludeStatement.class, IncludeEffectiveStatement.class,
+            YangConstants.RFC6020_YIN_MODULE, "include", "module");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<Unqualified, ?, ?> statementDefinition() {
         return DEF;
     }
 
