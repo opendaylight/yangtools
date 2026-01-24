@@ -22,7 +22,97 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code type} statement.
  */
-public interface TypeStatement extends DeclaredStatement<QName> {
+public sealed interface TypeStatement extends DeclaredStatement<QName> {
+    /**
+     * A {@link TypeStatement} which is documented not have one some of {@code type-body-stmts} substatements.
+     */
+    sealed interface WithBodyStatements extends TypeStatement {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} which is documented to not bave any of {@code type-body-stmts} substatements.
+     */
+    non-sealed interface WithoutBodyStatements extends TypeStatement {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code binary-specification} ABNF production.
+     */
+    non-sealed interface OfBinary extends WithBodyStatements, LengthStatement.OptionalIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code bits-specification} ABNF production.
+     */
+    non-sealed interface OfBits extends WithBodyStatements, BitStatement.MultipleIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code decimal64-specification} ABNF production.
+     */
+    non-sealed interface OfDecimal64 extends WithBodyStatements, RangeStatement.OptionalIn<QName>,
+            FractionDigitsStatement.OptionalIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code enum-specification} ABNF production.
+     */
+    non-sealed interface OfEnum extends WithBodyStatements, EnumStatement.MultipleIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code identityref-specification} ABNF production.
+     */
+    non-sealed interface OfIdentityref extends WithBodyStatements, BaseStatement.MultipleIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code instance-identifier-specification} ABNF production.
+     */
+    non-sealed interface OfInstanceIdentifier extends WithBodyStatements, RequireInstanceStatement.OptionalIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code leafref-specification} ABNF production.
+     */
+    non-sealed interface OfLeafref extends WithBodyStatements, PathStatement.OptionalIn<QName>,
+            RequireInstanceStatement.OptionalIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code numerical-restrictions} ABNF production.
+     */
+    non-sealed interface OfNumerical extends WithBodyStatements, RangeStatement.OptionalIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code string-restrictions} ABNF production.
+     */
+    non-sealed interface OfString extends TypeStatement, LengthStatement.OptionalIn<QName>,
+            PatternStatement.MultipleIn<QName> {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code union-specification} ABNF production.
+     */
+     non-sealed interface OfUnion extends TypeStatement {
+         // FIXME: document
+        default @NonNull Collection<? extends @NonNull TypeStatement> types() {
+            return declaredSubstatements(TypeStatement.class);
+        }
+    }
+
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link TypeStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -73,55 +163,5 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: 7.0.0: this interface does not have an implementation
-    interface NumericalRestrictions extends TypeStatement, RangeStatement.OptionalIn<QName> {
-        // Nothing else
-    }
-
-    interface Decimal64Specification extends TypeStatement, RangeStatement.OptionalIn<QName>,
-            FractionDigitsStatement.OptionalIn<QName> {
-        // Nothing else
-    }
-
-    // FIXME: 7.0.0: this interface does not have an implementation
-    interface StringRestrictions extends TypeStatement, LengthStatement.OptionalIn<QName>,
-            PatternStatement.MultipleIn<QName> {
-        // Nothing else
-    }
-
-    interface EnumSpecification extends TypeStatement, EnumStatement.MultipleIn<QName> {
-        // Nothing else
-    }
-
-    interface LeafrefSpecification extends TypeStatement, PathStatement.OptionalIn<QName>,
-            RequireInstanceStatement.OptionalIn<QName> {
-        // Nothing else
-    }
-
-    interface InstanceIdentifierSpecification extends TypeStatement, RequireInstanceStatement.OptionalIn<QName> {
-        // Nothing else
-    }
-
-    interface IdentityRefSpecification extends TypeStatement, BaseStatement.MultipleIn<QName> {
-        // Nothing else
-    }
-
-    interface BitsSpecification extends TypeStatement, BitStatement.MultipleIn<QName> {
-        // Nothing else
-    }
-
-    interface UnionSpecification extends TypeStatement {
-        /**
-         * {@return all {@code TypeStatement} substatements}
-         */
-        default @NonNull Collection<? extends @NonNull TypeStatement> typeStatements() {
-            return declaredSubstatements(TypeStatement.class);
-        }
-    }
-
-    interface BinarySpecification extends TypeStatement, LengthStatement.OptionalIn<QName> {
-        // Nothing else
     }
 }
