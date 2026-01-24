@@ -53,16 +53,6 @@ abstract sealed class AbstractTypeSupport extends AbstractQNameStatementSupport<
     @Override
     protected final TypeStatement attachDeclarationReference(final TypeStatement stmt,
             final DeclarationReference reference) {
-        return switch (stmt) {
-            case TypeStatement.OfBits specific -> new RefBitsSpecification(specific, reference);
-            case TypeStatement.OfDecimal64 specific ->  new RefDecimal64Specification(specific, reference);
-            case TypeStatement.OfEnum specific -> new RefEnumSpecification(specific, reference);
-            case TypeStatement.OfIdentityref specific -> new RefIdentityRefSpecification(specific, reference);
-            case TypeStatement.OfInstanceIdentifier specific ->
-                new RefInstanceIdentifierSpecification(specific, reference);
-            case TypeStatement.OfLeafref specific -> new RefLeafrefSpecification(specific, reference);
-            case TypeStatement.OfUnion specific -> new RefUnionSpecification(specific, reference);
-            default -> DeclaredStatementDecorators.decorateType(stmt, reference);
-        };
+        return DeclaredStatementDecorators.decorateType(stmt, reference);
     }
 }

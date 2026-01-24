@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code type} statement.
  */
-public interface TypeStatement extends DeclaredStatement<QName> {
+public sealed interface TypeStatement extends DeclaredStatement<QName> {
     /**
      * A {@link TypeStatement} which is documented not have one some of {@code type-body-stmts} substatements.
      */
@@ -33,7 +33,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     /**
      * A {@link TypeStatement} which is documented to not bave any of {@code type-body-stmts} substatements.
      */
-    interface WithoutBodyStatements extends TypeStatement {
+    non-sealed interface WithoutBodyStatements extends TypeStatement {
         // Nothing else
     }
 

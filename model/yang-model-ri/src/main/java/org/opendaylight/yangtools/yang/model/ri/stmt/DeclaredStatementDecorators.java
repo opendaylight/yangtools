@@ -87,17 +87,21 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefArgumentStateme
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefAugmentStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefBaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefBelongsToStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefBinaryTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefBitStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefBitsTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefCaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefChoiceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefConfigStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefContactStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefContainerStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefDecimal64TypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefDefaultStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefDescriptionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefDeviateStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefDeviationStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefEnumStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefEnumTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefExtensionStatement;
@@ -105,13 +109,16 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefFeatureStatemen
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefFractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefGroupingStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefIdentityStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefIdentityrefTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefIfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefImportStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefIncludeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefInputStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefInstanceIdentifierTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefKeyStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefLeafListStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefLeafStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefLeafrefTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefLengthStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefListStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefMandatoryStatement;
@@ -122,6 +129,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefModuleStatement
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefMustStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefNamespaceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefNotificationStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefNumericaTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefOrderedByStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefOrganizationStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefOutputStatement;
@@ -138,9 +146,10 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefRevisionDateSta
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefRevisionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefRpcStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefStatusStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefStringTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefSubmoduleStatement;
-import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefTypedefStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUnionTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUniqueStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUnitsStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUnrecognizedStatement;
@@ -410,7 +419,18 @@ public final class DeclaredStatementDecorators {
     }
 
     public static TypeStatement decorateType(final TypeStatement stmt, final DeclarationReference ref) {
-        return new RefTypeStatement(stmt, ref);
+        return switch (stmt) {
+            case TypeStatement.OfBinary type -> new RefBinaryTypeStatement(type, ref);
+            case TypeStatement.OfBits type -> new RefBitsTypeStatement(type, ref);
+            case TypeStatement.OfDecimal64 type -> new RefDecimal64TypeStatement(type, ref);
+            case TypeStatement.OfEnum type -> new RefEnumTypeStatement(type, ref);
+            case TypeStatement.OfIdentityref type -> new RefIdentityrefTypeStatement(type, ref);
+            case TypeStatement.OfInstanceIdentifier type -> new RefInstanceIdentifierTypeStatement(type, ref);
+            case TypeStatement.OfLeafref type -> new RefLeafrefTypeStatement(type, ref);
+            case TypeStatement.OfNumerical type -> new RefNumericaTypeStatement(type, ref);
+            case TypeStatement.OfString type -> new RefStringTypeStatement(type, ref);
+            case TypeStatement.OfUnion type -> new RefUnionTypeStatement(type, ref);
+        };
     }
 
     public static TypedefStatement decorateTypedef(final TypedefStatement stmt, final DeclarationReference ref) {
