@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.meta.BuiltinType;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 
 class BooleanTypeTest {
     @Test
     void canCreateBooleanType() {
         final var boolType = BaseTypes.booleanType();
 
-        assertEquals(BuiltinType.BOOLEAN.typeName(), boolType.getQName());
+        assertEquals(BuiltInType.BOOLEAN.typeName(), boolType.getQName());
         assertEquals(Optional.empty(), boolType.getDescription());
 
         assertThat(boolType.toString()).contains("name=(urn:ietf:params:xml:ns:yang:1)boolean");

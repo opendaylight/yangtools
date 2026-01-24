@@ -15,29 +15,32 @@ import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
 
-final class BuiltinTypeStatement extends WithQNameArgument implements TypeStatement {
-    private static final ImmutableMap<String, BuiltinTypeStatement> BUILTINS;
+final class BuiltinTypeStatement extends WithQNameArgument implements TypeStatement.WithoutBodyStatements {
+    private static final ImmutableMap<String, TypeStatement> BUILTINS;
 
     static {
-        final Builder<String, BuiltinTypeStatement> builder = ImmutableMap.builder();
-        putBuiltin(builder, BuiltInType.BINARY);
-        putBuiltin(builder, BuiltInType.BOOLEAN);
-        putBuiltin(builder, BuiltInType.EMPTY);
-        putBuiltin(builder, BuiltInType.INSTANCE_IDENTIFIER);
-        putBuiltin(builder, BuiltInType.INT8);
-        putBuiltin(builder, BuiltInType.INT16);
-        putBuiltin(builder, BuiltInType.INT32);
-        putBuiltin(builder, BuiltInType.INT64);
-        putBuiltin(builder, BuiltInType.STRING);
-        putBuiltin(builder, BuiltInType.UINT8);
-        putBuiltin(builder, BuiltInType.UINT16);
-        putBuiltin(builder, BuiltInType.UINT32);
-        putBuiltin(builder, BuiltInType.UINT64);
+        final Builder<String, TypeStatement> builder = ImmutableMap.builder();
+        putBuiltin(builder, new BuiltinBinaryTypeStatement());
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.INT8.typeName()));
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.INT16.typeName()));
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.INT32.typeName()));
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.INT64.typeName()));
+        putBuiltin(builder, new BuiltinStringTypeStatement());
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.UINT8.typeName()));
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.UINT16.typeName()));
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.UINT32.typeName()));
+        putBuiltin(builder, new BuiltinNumericalTypeStatement(BuiltInType.UINT64.typeName()));
+
+        putBuiltin(builder, BuiltInType.BOOLEAN.typeName());
+        putBuiltin(builder, BuiltInType.EMPTY.typeName());
         BUILTINS = builder.build();
     }
 
-    private static void putBuiltin(final Builder<String, BuiltinTypeStatement> builder, final BuiltInType type) {
-        final var argument = type.typeName();
+    private static void putBuiltin(final Builder<String, TypeStatement> builder, final TypeStatement statement) {
+        builder.put(statement.argument().getLocalName(), statement);
+    }
+
+    private static void putBuiltin(final Builder<String, TypeStatement> builder, final QName argument) {
         builder.put(argument.getLocalName(), new BuiltinTypeStatement(argument));
     }
 

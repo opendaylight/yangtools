@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.meta.BuiltinType;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 
 class EmptyTypeTest {
     @Test
     void canCreateEmptyType() {
         final var emptyType = BaseTypes.emptyType();
 
-        assertEquals(BuiltinType.EMPTY.typeName(), emptyType.getQName(), "QName");
+        assertEquals(BuiltInType.EMPTY.typeName(), emptyType.getQName(), "QName");
         assertNull(emptyType.getBaseType(), "BaseType");
         assertEquals(Optional.empty(), emptyType.getDefaultValue(), "DefaultValue");
         assertEquals(Status.CURRENT, emptyType.getStatus(), "Status");
