@@ -18,7 +18,138 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code type} statement.
  */
-public interface TypeStatement extends DeclaredStatement<QName> {
+public sealed interface TypeStatement extends DeclaredStatement<QName> {
+    /**
+     * A {@link TypeStatement} conforming to {@code binary-specification} ABNF production.
+     */
+    non-sealed interface OfBinary extends WithLength {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code bits-specification} ABNF production.
+     */
+    non-sealed interface OfBits extends TypeStatement {
+        // FIXME: document
+        default @NonNull Collection<? extends @NonNull BitStatement> bits() {
+            return declaredSubstatements(BitStatement.class);
+        }
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code decimal64-specification} ABNF production.
+     */
+    non-sealed interface OfDecimal64 extends WithRange {
+        // FIXME: document
+        default @NonNull FractionDigitsStatement fractionDigits() {
+            return findFirstDeclaredSubstatement(FractionDigitsStatement.class).orElseThrow();
+        }
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code enum-specification} ABNF production.
+     */
+    non-sealed interface OfEnum extends TypeStatement {
+        // FIXME: document
+        default @NonNull Collection<? extends @NonNull EnumStatement> enums() {
+            return declaredSubstatements(EnumStatement.class);
+        }
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code identityref-specification} ABNF production.
+     */
+    non-sealed interface OfIdentityref extends TypeStatement {
+        /**
+         * Returns the base statements.
+         *
+         * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base
+         *         statement (in YANG 1.0 models)
+         */
+        default @NonNull Collection<? extends @NonNull BaseStatement> bases() {
+            return declaredSubstatements(BaseStatement.class);
+        }
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code instance-identifier-specification} ABNF production.
+     */
+    non-sealed interface OfInstanceIdentifier extends WithRequireInstance {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code leafref-specification} ABNF production.
+     */
+    non-sealed interface OfLeafref extends WithRequireInstance {
+        // FIXME: document
+        default @NonNull PathStatement path() {
+            return findFirstDeclaredSubstatement(PathStatement.class).orElseThrow();
+        }
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code numerical-restrictions} ABNF production.
+     */
+    non-sealed interface OfNumerical extends WithRange {
+        // Nothing else
+    }
+
+    non-sealed interface OfSimple extends TypeStatement {
+        // Nothing else
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code string-restrictions} ABNF production.
+     */
+    non-sealed interface OfString extends WithLength {
+        // FIXME: document
+        default @NonNull Collection<? extends @NonNull PatternStatement> patterns() {
+            return declaredSubstatements(PatternStatement.class);
+        }
+    }
+
+    /**
+     * A {@link TypeStatement} conforming to {@code union-specification} ABNF production.
+     */
+     non-sealed interface OfUnion extends TypeStatement {
+         // FIXME: document
+        default @NonNull Collection<? extends @NonNull TypeStatement> types() {
+            return declaredSubstatements(TypeStatement.class);
+        }
+    }
+
+     // FIXME: document
+    sealed interface WithLength extends TypeStatement permits OfBinary, OfString {
+        // FIXME: document
+        default @Nullable LengthStatement length() {
+            final var opt = findFirstDeclaredSubstatement(LengthStatement.class);
+            return opt.isPresent() ? opt.orElseThrow() : null;
+        }
+    }
+
+    // FIXME: document
+    sealed interface WithRange extends TypeStatement permits OfDecimal64, OfNumerical {
+        // FIXME: document
+        default @Nullable RangeStatement range() {
+            final var opt = findFirstDeclaredSubstatement(RangeStatement.class);
+            return opt.isPresent() ? opt.orElseThrow() : null;
+        }
+    }
+
+    // FIXME: document
+    sealed interface WithRequireInstance extends TypeStatement permits OfInstanceIdentifier, OfLeafref {
+        /**
+         * Return require-instance statement child, if present. For RFC6020 semantics, this method always returns null.
+         *
+         * @return require-instance statement, if present.
+         */
+        default @Nullable RequireInstanceStatement requireInstance() {
+            final var opt = findFirstDeclaredSubstatement(RequireInstanceStatement.class);
+            return opt.isPresent() ? opt.orElseThrow() : null;
+        }
+    }
+
     /**
      * The definition of {@code type} statement.
      *
@@ -31,100 +162,5 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: 7.0.0: this interface does not have an implementation
-    interface NumericalRestrictions extends TypeStatement {
-        default @Nullable RangeStatement getRange() {
-            return findFirstDeclaredSubstatement(RangeStatement.class).orElse(null);
-        }
-    }
-
-    interface Decimal64Specification extends TypeStatement {
-        default @NonNull FractionDigitsStatement getFractionDigits() {
-            return findFirstDeclaredSubstatement(FractionDigitsStatement.class).orElseThrow();
-        }
-
-        default @Nullable RangeStatement getRange() {
-            final var opt = findFirstDeclaredSubstatement(RangeStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
-    }
-
-    // FIXME: 7.0.0: this interface does not have an implementation
-    interface StringRestrictions extends TypeStatement {
-        default @Nullable LengthStatement getLength() {
-            final var opt = findFirstDeclaredSubstatement(LengthStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
-
-        default @NonNull Collection<? extends @NonNull PatternStatement> getPatterns() {
-            return declaredSubstatements(PatternStatement.class);
-        }
-    }
-
-    interface EnumSpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull EnumStatement> getEnums() {
-            return declaredSubstatements(EnumStatement.class);
-        }
-    }
-
-    interface LeafrefSpecification extends TypeStatement {
-        default @NonNull PathStatement getPath() {
-            return findFirstDeclaredSubstatement(PathStatement.class).orElseThrow();
-        }
-
-        /**
-         * Return require-instance statement child, if present. For RFC6020 semantics, this method always returns null.
-         *
-         * @return require-instance statement, if present.
-         */
-        default @Nullable RequireInstanceStatement getRequireInstance() {
-            final var opt = findFirstDeclaredSubstatement(RequireInstanceStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
-    }
-
-    interface InstanceIdentifierSpecification extends TypeStatement {
-        /**
-         * Return require-instance statement child, if present. For RFC6020 semantics, this method always returns
-         * null.
-         *
-         * @return require-instance statement, if present.
-         */
-        default @Nullable RequireInstanceStatement getRequireInstance() {
-            final var opt = findFirstDeclaredSubstatement(RequireInstanceStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
-    }
-
-    interface IdentityRefSpecification extends TypeStatement {
-        /**
-         * Returns the base statements.
-         *
-         * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base
-         *         statement (in YANG 1.0 models)
-         */
-        default @NonNull Collection<? extends @NonNull BaseStatement> getBases() {
-            return declaredSubstatements(BaseStatement.class);
-        }
-    }
-
-    interface BitsSpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull BitStatement> getBits() {
-            return declaredSubstatements(BitStatement.class);
-        }
-    }
-
-    interface UnionSpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull TypeStatement> getTypes() {
-            return declaredSubstatements(TypeStatement.class);
-        }
-    }
-
-    interface BinarySpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull LengthStatement> getLength() {
-            return declaredSubstatements(LengthStatement.class);
-        }
     }
 }
