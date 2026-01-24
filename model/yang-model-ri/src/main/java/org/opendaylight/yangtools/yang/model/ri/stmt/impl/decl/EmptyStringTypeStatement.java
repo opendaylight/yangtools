@@ -11,8 +11,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-public final class EmptyTypeStatement extends WithArgument<QName> implements TypeStatement {
-    public EmptyTypeStatement(final String rawArgument, final QName argument) {
+public final class EmptyStringTypeStatement extends WithArgument<QName> implements TypeStatement.OfString {
+    public EmptyStringTypeStatement(final String rawArgument, final QName argument) {
         super(rawArgument, argument);
     }
 }

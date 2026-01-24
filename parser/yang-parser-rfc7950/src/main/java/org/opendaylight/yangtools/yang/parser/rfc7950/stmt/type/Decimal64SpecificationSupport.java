@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfDecimal64;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -38,7 +38,7 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport {
     }
 
     @Override
-    protected Decimal64Specification createDeclared(final BoundStmtCtx<QName> ctx,
+    protected OfDecimal64 createDeclared(final BoundStmtCtx<QName> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noFracDigits(ctx);
