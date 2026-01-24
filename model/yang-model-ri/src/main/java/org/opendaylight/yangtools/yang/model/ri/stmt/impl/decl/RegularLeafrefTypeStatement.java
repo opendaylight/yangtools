@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfLeafref;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularTypeStatement extends WithSubstatements<QName> implements TypeStatement {
-    public RegularTypeStatement(final String rawArgument, final QName argument,
+public final class RegularLeafrefTypeStatement extends WithSubstatements<QName> implements OfLeafref {
+    public RegularLeafrefTypeStatement(final String rawArgument, final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
     }
