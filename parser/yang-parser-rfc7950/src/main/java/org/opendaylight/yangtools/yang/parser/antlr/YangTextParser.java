@@ -17,45 +17,31 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.parser.grammar.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser;
 import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.FileContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A parser for YANG text files.
  */
-public final class YangTextParser extends BaseErrorListener {
-    private static final Logger LOG = LoggerFactory.getLogger(YangTextParser.class);
+final class YangTextParser extends BaseErrorListener {
+    private final ArrayList<SourceSyntaxException> exceptions = new ArrayList<>();
+    private final @NonNull String fileName;
 
-    private final ArrayList<YangSyntaxErrorException> exceptions = new ArrayList<>();
-    private final @NonNull SourceIdentifier sourceId;
-
-    @NonNullByDefault
-    private YangTextParser(final SourceIdentifier sourceId) {
-        this.sourceId = requireNonNull(sourceId);
+    private YangTextParser(final String fileName) {
+        this.fileName = requireNonNull(fileName);
     }
 
-    /**
-     * Create an {@link IRStatement} by parsing the content of a {@link YangTextSource}.
-     *
-     * @param source the {@link YangTextSource}
-     * @return an IRStatement of top-level statement
-     * @throws IOException if an I/O error occurs
-     * @throws YangSyntaxErrorException if the content is not a valid YANG file
-     */
-    @NonNullByDefault
-    public static IRStatement parseToIR(final YangTextSource source) throws IOException, YangSyntaxErrorException {
-        return IRSupport.createStatement(new YangTextParser(source.sourceId()).parseToTree(source));
+    static FileContext parseSource(final YangTextSource source) throws SourceSyntaxException {
+        final var symbolicName = source.symbolicName();
+        return new YangTextParser(symbolicName != null ? symbolicName : source.sourceId().toYangFilename())
+            .parseToTree(source);
     }
 
-    private FileContext parseToTree(final YangTextSource source) throws IOException, YangSyntaxErrorException {
+    private FileContext parseToTree(final YangTextSource source) throws SourceSyntaxException {
         final FileContext file;
         try (var reader = source.openStream()) {
             final var lexer = new YangStatementLexer(CharStreams.fromReader(reader));
@@ -70,36 +56,30 @@ public final class YangTextParser extends BaseErrorListener {
             parser.addErrorListener(this);
 
             file = parser.file();
+        } catch (IOException e) {
+            throw new SourceSyntaxException("Failed to read source text", e);
         }
 
-        if (exceptions.isEmpty()) {
+        final var it = exceptions.iterator();
+        if (!it.hasNext()) {
             return file;
         }
 
-        // Single exception: just throw it
-        if (exceptions.size() == 1) {
-            throw exceptions.getFirst();
+        final var first = it.next();
+        if (!it.hasNext()) {
+            // Single exception: just throw it
+            throw first;
         }
 
-        final var sb = new StringBuilder();
-        boolean first = true;
-        for (var ex : exceptions) {
-            if (first) {
-                first = false;
-            } else {
-                sb.append('\n');
-            }
-
-            sb.append(ex.getFormattedMessage());
-        }
-
-        throw new YangSyntaxErrorException(sourceId, 0, 0, sb.toString());
+        final var sb = new StringBuilder().append(first.getMessage());
+        it.forEachRemaining(next -> sb.append('\n').append(next.getMessage()));
+        throw new SourceSyntaxException(sb.toString());
     }
 
     @Override
     public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
             final int charPositionInLine, final String msg, final RecognitionException cause) {
-        LOG.debug("Syntax error in {} at {}:{}: {}", sourceId, line, charPositionInLine, msg, cause);
-        exceptions.add(new YangSyntaxErrorException(sourceId, line, charPositionInLine, msg, cause));
+        exceptions.add(new SourceSyntaxException(msg, cause,
+            StatementDeclarations.inText(fileName, line, charPositionInLine)));
     }
 }

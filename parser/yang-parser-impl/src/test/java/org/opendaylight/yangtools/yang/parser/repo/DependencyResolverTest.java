@@ -19,9 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Belongs
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 
 class DependencyResolverTest {
+    private static final YangTextToIRSourceTransformer TRANSFORMER =
+        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+
     @Test
     void testModulesWithoutRevisionAndImport() throws Exception {
         final var resolved = resolveResources("/no-revision/imported.yang", "/no-revision/imported@2012-12-12.yang",
@@ -65,8 +69,8 @@ class DependencyResolverTest {
     private static RevisionDependencyResolver resolveResources(final String... resourceNames) throws Exception {
         final var map = new HashMap<SourceIdentifier, SourceInfo>();
         for (var resourceName : resourceNames) {
-            final var info = TextToIRTransformer.transformText(new URLYangTextSource(
-                DependencyResolverTest.class.getResource(resourceName)))
+            final var info = TRANSFORMER.transformSource(
+                new URLYangTextSource(DependencyResolverTest.class.getResource(resourceName)))
                 .extractSourceInfo();
             map.put(info.sourceId(), info);
         }
