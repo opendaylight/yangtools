@@ -18,8 +18,6 @@ module org.opendaylight.yangtools.odlext.parser.support {
 
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.odlext.parser;
-    // FIXME: remove this package
-    exports org.opendaylight.yangtools.odlext.parser.inject;
 
     provides ParserExtension with
         org.opendaylight.yangtools.odlext.parser.impl.OdlCodegenParserExtension,

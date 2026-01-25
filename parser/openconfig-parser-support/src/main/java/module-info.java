@@ -18,8 +18,6 @@ module org.opendaylight.yangtools.openconfig.parser.support {
 
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.openconfig.parser;
-    // FIXME: remove this package
-    exports org.opendaylight.yangtools.openconfig.parser.inject;
 
     provides ParserExtension with org.opendaylight.yangtools.openconfig.parser.impl.OpenConfigParserExtension;
 

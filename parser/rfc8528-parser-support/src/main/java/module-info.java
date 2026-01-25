@@ -17,8 +17,6 @@ module org.opendaylight.yangtools.rfc8528.parser.support {
 
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.rfc8528.parser;
-    // FIXME: remove this package
-    exports org.opendaylight.yangtools.rfc8528.parser.inject;
 
     provides ParserExtension with org.opendaylight.yangtools.rfc8528.parser.impl.Rfc8528ParserExtension;
 
