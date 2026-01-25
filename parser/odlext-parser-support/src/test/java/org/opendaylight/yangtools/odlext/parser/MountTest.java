@@ -15,12 +15,16 @@ import org.opendaylight.yangtools.odlext.parser.dagger.YangExtModule;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 
 class MountTest {
+    private static final YangTextToIRSourceTransformer TRANSFORMER =
+        YangTextToIRSourceTransformerModule.provideSourceTransformer();
     private static final QNameModule FOO = QNameModule.of("foo");
 
     @Test
@@ -30,10 +34,10 @@ class MountTest {
                 YangExtModule.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var foo = reactor.newBuild()
-            .addSource(YangStatementStreamSource.create(new URLYangTextSource(
-                MountTest.class.getResource("/yang-ext.yang"))))
-            .addSource(YangStatementStreamSource.create(new URLYangTextSource(
-                MountTest.class.getResource("/mount.yang"))))
+            .addSource(new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
+                MountTest.class.getResource("/yang-ext.yang")))))
+            .addSource(new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
+                MountTest.class.getResource("/mount.yang")))))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);

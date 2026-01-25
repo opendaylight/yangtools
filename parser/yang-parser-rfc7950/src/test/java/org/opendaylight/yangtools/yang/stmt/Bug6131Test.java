@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 class Bug6131Test extends AbstractYangTest {
     @Test
     void test() {
-        final var ex = assertThrows(StatementSourceException.class, () -> TestUtils.loadModules("/bugs/bug6131"));
-        assertEquals("Invalid root statement keyword container [at foo:1:1]", ex.getMessage());
+        final var ex = assertThrows(ExtractorException.class, () -> TestUtils.loadModules("/bugs/bug6131"));
+        assertEquals("Invalid root statement container: expecting module or submodule [at foo:1:1]", ex.getMessage());
     }
 }

@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
     @Test
@@ -153,7 +152,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
 
     static SettableSchemaProvider<YangIRSource> getRemoteYangSourceProviderFromResource(final String resourceName)
             throws Exception {
-        return SettableSchemaProvider.createRemote(TextToIRTransformer.transformText(
+        return SettableSchemaProvider.createRemote(TRANSFORMER.transformSource(
             new URLYangTextSource(SharedSchemaRepositoryTest.class.getResource(resourceName))),
             YangIRSource.class);
     }

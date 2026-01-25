@@ -55,11 +55,13 @@ public final class SourceInfoExtractors {
             throw new ExtractorException("Invalid root statement " + keyword, YangIRSource.refOf(sourceId, stmt));
         }
 
-        return switch (keyword.identifier()) {
+        final var identifier = keyword.identifier();
+        return switch (identifier) {
             case MODULE -> new YangIRSourceInfoExtractor.ForModule(sourceId, stmt);
             case SUBMODULE -> new YangIRSourceInfoExtractor.ForSubmodule(sourceId, stmt);
-            default -> throw new ExtractorException("Root of parsed AST must be either module or submodule",
-                YangIRSource.refOf(sourceId, stmt));
+            default ->
+                throw new ExtractorException("Invalid root statement " + identifier + ": expecting module or submodule",
+                    YangIRSource.refOf(sourceId, stmt));
         };
     }
 }

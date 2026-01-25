@@ -12,6 +12,7 @@ import dagger.Provides;
 import jakarta.inject.Singleton;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -29,7 +30,7 @@ public interface YangParserFactoryModule {
     @Provides
     @Singleton
     static YangParserFactory provideParserFactory(final YangXPathParserFactory xpathFactory,
-            final Set<ParserExtension> extensions) {
-        return new DefaultYangParserFactory(xpathFactory, extensions);
+            final YangTextToIRSourceTransformer textToIR, final Set<ParserExtension> extensions) {
+        return new DefaultYangParserFactory(xpathFactory, textToIR, extensions);
     }
 }

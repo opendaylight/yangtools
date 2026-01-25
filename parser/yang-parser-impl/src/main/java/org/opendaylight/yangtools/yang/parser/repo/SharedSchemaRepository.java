@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFacto
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaRepository;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 
@@ -53,7 +55,8 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
 
     @Deprecated(since = "14.0.21", forRemoval = true)
     public SharedSchemaRepository(final String id) {
-        this(id, new DefaultYangParserFactory());
+        this(id, new DefaultYangParserFactory(
+            ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow()));
     }
 
     public SharedSchemaRepository(final String id, final YangParserFactory factory) {
