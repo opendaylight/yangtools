@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c81251dd_88b5066b",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/DefaultEffectiveStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-25T00:05:18Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 19,
+        "startChar": 12,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "e3c95be9a62fac66c453b65c84e432b728c18a97",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8faaca44_585f5023",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/ErrorMessageEffectiveStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-25T00:05:18Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 19,
+        "startChar": 12,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "e3c95be9a62fac66c453b65c84e432b728c18a97",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "edc8cff6_1f44d49f",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/ListEffectiveStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-25T00:05:18Z",
+      "side": 1,
+      "message": "removw",
+      "range": {
+        "startLine": 24,
+        "startChar": 12,
+        "endLine": 24,
+        "endChar": 13
+      },
+      "revId": "e3c95be9a62fac66c453b65c84e432b728c18a97",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3477b939_d599b57a",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/MandatoryEffectiveStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-25T00:05:18Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 19,
+        "startChar": 12,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "e3c95be9a62fac66c453b65c84e432b728c18a97",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cca2855b_6023bf79",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/OrderedByEffectiveStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-25T00:05:18Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 20,
+        "startChar": 12,
+        "endLine": 20,
+        "endChar": 13
+      },
+      "revId": "e3c95be9a62fac66c453b65c84e432b728c18a97",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eb6923b4_17d3c21f",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/ValueEffectiveStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-25T00:05:18Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 19,
+        "startChar": 12,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "e3c95be9a62fac66c453b65c84e432b728c18a97",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3df5d5ab_3e664e63",
+        "filename": "model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/YinElementEffectiveStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-25T00:05:18Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 19,
+        "startChar": 12,
+        "endLine": 19,
+        "endChar": 13
+      },
+      "revId": "e3c95be9a62fac66c453b65c84e432b728c18a97",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
