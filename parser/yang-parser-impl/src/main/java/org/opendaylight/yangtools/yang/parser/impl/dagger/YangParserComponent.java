@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
 import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule;
 
 /**
@@ -36,6 +37,7 @@ import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule
 @Component(
     modules = {
         YangXPathParserFactoryModule.class,
+        YangTextToIRSourceTransformerModule.class,
         YangParserFactoryModule.class,
         YangLibResolverModule.class,
         Rfc6241Module.class,

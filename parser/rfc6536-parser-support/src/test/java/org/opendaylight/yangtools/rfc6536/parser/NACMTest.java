@@ -17,12 +17,17 @@ import org.opendaylight.yangtools.rfc6536.model.api.NACMConstants;
 import org.opendaylight.yangtools.rfc6536.parser.dagger.Rfc6536Module;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 class NACMTest {
+    private static final YangTextToIRSourceTransformer TRANSFORMER =
+        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+
     @Test
     void testResolution() throws Exception {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
@@ -31,11 +36,10 @@ class NACMTest {
             .build();
 
         final var context = reactor.newBuild()
-            .addSources(
-                YangStatementStreamSource.create(
-                    new URLYangTextSource(NACMTest.class.getResource("/ietf-netconf-acm@2012-02-22.yang"))),
-                YangStatementStreamSource.create(
-                    new URLYangTextSource(NACMTest.class.getResource("/ietf-yang-types@2013-07-15.yang"))))
+            .addSource(YangStatementStreamSource.create(TRANSFORMER.transformSource(
+                new URLYangTextSource(NACMTest.class.getResource("/ietf-netconf-acm@2012-02-22.yang")))))
+            .addSource(YangStatementStreamSource.create(TRANSFORMER.transformSource(
+                new URLYangTextSource(NACMTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))))
             .buildEffective();
 
         final var module = context.findModule(NACMConstants.RFC6536_MODULE).orElseThrow();

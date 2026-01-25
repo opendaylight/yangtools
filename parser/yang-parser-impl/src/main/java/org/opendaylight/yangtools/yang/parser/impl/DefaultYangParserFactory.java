@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -30,17 +32,21 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     private final ConcurrentHashMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
         new ConcurrentHashMap<>(2);
     private final Function<YangParserConfiguration, CrossSourceStatementReactor> reactorFactory;
+    private final YangTextToIRSourceTransformer textToIR;
 
     /**
      * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
      */
-    public DefaultYangParserFactory() {
+    public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR) {
+        this.textToIR = requireNonNull(textToIR);
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(config).build();
         // Make sure default reactor is available
         verifyNotNull(reactorFactory.apply(YangParserConfiguration.DEFAULT));
     }
 
-    public DefaultYangParserFactory(final YangXPathParserFactory xpathFactory) {
+    public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR,
+            final YangXPathParserFactory xpathFactory) {
+        this.textToIR = requireNonNull(textToIR);
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
     }
 
@@ -55,6 +61,6 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         if (!SUPPORTED_MODES.contains(importMode)) {
             throw new IllegalArgumentException("Unsupported import resolution mode " + importMode);
         }
-        return new DefaultYangParser(reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
+        return new DefaultYangParser(textToIR, reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
     }
 }

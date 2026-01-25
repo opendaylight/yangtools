@@ -21,13 +21,16 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.parser.antlr.DefaultYangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
@@ -53,7 +56,7 @@ public final class TestUtils {
 
         final var sources = new ArrayList<StatementStreamSource>(files.length);
         for (var file : files) {
-            sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
+            sources.add(YangStatementStreamSource.create(assertSchemaSource(file.toPath())));
         }
         return sources;
     }
@@ -98,8 +101,15 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static YangTextSource assertSchemaSource(final String resourcePath) {
-        return new URLYangTextSource(TestUtils.class.getResource(resourcePath));
+    public static @NonNull YangIRSource assertSchemaSource(final String resourcePath)
+            throws ExtractorException, SourceSyntaxException {
+        return new DefaultYangTextToIRSourceTransformer()
+            .transformSource(new URLYangTextSource(TestUtils.class.getResource(resourcePath)));
+    }
+
+    public static @NonNull YangIRSource assertSchemaSource(final Path file)
+            throws ExtractorException, SourceSyntaxException {
+        return new DefaultYangTextToIRSourceTransformer().transformSource(new FileYangTextSource(file));
     }
 
     // FIXME: these remain unaudited

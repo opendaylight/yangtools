@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.rfc8819.parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
@@ -22,8 +22,9 @@ import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagEffectiveStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.Tag;
 import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -32,6 +33,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 class ModuleTagTest {
+    private static final YangTextToIRSourceTransformer TRANSFORMER =
+        YangTextToIRSourceTransformerModule.provideSourceTransformer();
     private static CrossSourceStatementReactor reactor;
 
     @BeforeAll
@@ -88,11 +91,7 @@ class ModuleTagTest {
     }
 
     private static YangStatementStreamSource moduleFromResources(final String resourceName) {
-        try {
-            return YangStatementStreamSource.create(new URLYangTextSource(
-                ModuleTagTest.class.getResource(resourceName)));
-        } catch (final YangSyntaxErrorException | IOException e) {
-            throw new AssertionError("Failed to find resource " + resourceName, e);
-        }
+        return assertDoesNotThrow(() -> YangStatementStreamSource.create(TRANSFORMER.transformSource(
+            new URLYangTextSource(ModuleTagTest.class.getResource(resourceName)))));
     }
 }
