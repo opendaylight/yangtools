@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code bit} statement.
  */
 public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<String>,
-        IfFeatureAwareDeclaredStatement<String> {
+        IfFeatureStatement.MultipleIn<String> {
     /**
      * The definition of {@code bit} statement.
      *

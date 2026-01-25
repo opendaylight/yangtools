@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Common capture of declared traits shared by {@code input} and {@code output} statements.
  */
 public sealed interface DeclaredOperationBodyStatement
-    extends DeclaredStatement<QName>, DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
-            MustStatementAwareDeclaredStatement<QName>
+    extends DeclaredStatement<QName>, DataDefinitionAwareDeclaredStatement<QName>,
+            TypedefStatement.MultipleIn<QName>, GroupingStatementMultipleIn<QName>, MustStatement.MultipleIn<QName>
     permits InputStatement, OutputStatement {
     // Nothing else
 }

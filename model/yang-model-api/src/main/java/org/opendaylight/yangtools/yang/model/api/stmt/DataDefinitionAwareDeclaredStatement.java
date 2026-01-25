@@ -17,14 +17,4 @@ public interface DataDefinitionAwareDeclaredStatement<A> extends DeclaredStateme
     default @NonNull Collection<? extends @NonNull DataDefinitionStatement> getDataDefinitions() {
         return declaredSubstatements(DataDefinitionStatement.class);
     }
-
-    interface WithReusableDefinitions<A> extends DataDefinitionAwareDeclaredStatement<A> {
-        default @NonNull Collection<? extends @NonNull TypedefStatement> getTypedefs() {
-            return declaredSubstatements(TypedefStatement.class);
-        }
-
-        default @NonNull Collection<? extends @NonNull GroupingStatement> getGroupings() {
-            return declaredSubstatements(GroupingStatement.class);
-        }
-    }
 }

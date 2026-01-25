@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * <p>Defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-3">RFC6020, Section 3</a>, as
  * {@code data-def-stmt} ABNF rule.
  */
-public interface DataDefinitionStatement
-        extends DocumentedDeclaredStatement.WithStatus<QName>, WhenStatementAwareDeclaredStatement<QName> {
-
+public interface DataDefinitionStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
+    IfFeatureStatement.MultipleIn<QName>, WhenStatement.OptionalIn<QName> {
+    // Nothing else
 }

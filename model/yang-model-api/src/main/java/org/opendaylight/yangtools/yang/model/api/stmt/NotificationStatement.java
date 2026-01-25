@@ -7,17 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code notification} statement.
  */
 public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>, IfFeatureAwareDeclaredStatement<QName>,
-        MustStatementAwareDeclaredStatement<QName> {
+        DataDefinitionAwareDeclaredStatement<QName>, TypedefStatement.MultipleIn<QName>,
+        GroupingStatementMultipleIn<QName>, IfFeatureStatement.MultipleIn<QName>,
+        MustStatement.MultipleIn<QName> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link IfFeatureStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code NotificationStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull NotificationStatement> notificationStatements() {
+            return declaredSubstatements(NotificationStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code notification} statement.
      *

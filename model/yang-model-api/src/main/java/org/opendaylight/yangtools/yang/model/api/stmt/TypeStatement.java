@@ -52,11 +52,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     }
 
     // FIXME: 7.0.0: this interface does not have an implementation
-    interface StringRestrictions extends TypeStatement {
-        default @Nullable LengthStatement getLength() {
-            final var opt = findFirstDeclaredSubstatement(LengthStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
+    interface StringRestrictions extends TypeStatement, LengthStatement.OptionalIn<QName> {
 
         default @NonNull Collection<? extends @NonNull PatternStatement> getPatterns() {
             return declaredSubstatements(PatternStatement.class);

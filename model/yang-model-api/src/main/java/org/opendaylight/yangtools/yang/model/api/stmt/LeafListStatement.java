@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code leaf-list} statement.
  */
 public interface LeafListStatement extends MultipleElementsDeclaredStatement, TypeAwareDeclaredStatement<QName>,
-        ConfigStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+        ConfigStatement.OptionalIn<QName>, MustStatement.MultipleIn<QName> {
     /**
      * The definition of {@code leaf-list} statement.
      *

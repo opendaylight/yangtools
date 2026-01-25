@@ -7,16 +7,34 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code typedef} statement.
  */
 public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        TypeAwareDeclaredStatement<QName>, DefaultStatementAwareDeclaredStatement {
+        TypeAwareDeclaredStatement<QName>, DefaultStatement.OptionalIn<QName> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link TypedefStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code TypedefStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull TypedefStatement> typedefStatements() {
+            return declaredSubstatements(TypedefStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code typedef} statement.
      *

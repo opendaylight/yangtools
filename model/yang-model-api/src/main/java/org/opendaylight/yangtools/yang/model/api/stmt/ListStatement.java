@@ -17,10 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code list} statement.
  */
-public interface ListStatement extends MultipleElementsDeclaredStatement,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
-        ConfigStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName>,
-        MustStatementAwareDeclaredStatement<QName>, NotificationStatementAwareDeclaredStatement<QName> {
+public interface ListStatement extends MultipleElementsDeclaredStatement, DataDefinitionAwareDeclaredStatement<QName>,
+        ActionStatement.MultipleIn<QName>, ConfigStatement.OptionalIn<QName>, GroupingStatementMultipleIn<QName>,
+        MustStatement.MultipleIn<QName>, NotificationStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * The definition of {@code list} statement.
      *
