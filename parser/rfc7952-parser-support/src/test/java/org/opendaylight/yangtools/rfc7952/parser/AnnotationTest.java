@@ -20,12 +20,16 @@ import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 class AnnotationTest {
+    private static final YangTextToIRSourceTransformer TRANSFORMER =
+        YangTextToIRSourceTransformerModule.provideSourceTransformer();
     private static final AnnotationName LAST_MODIFIED =
         new AnnotationName(QName.create("http://example.org/example-last-modified", "last-modified"));
 
@@ -37,10 +41,10 @@ class AnnotationTest {
             .build();
         final var context = reactor.newBuild()
             .addSources(
-                YangStatementStreamSource.create(
-                    new URLYangTextSource(AnnotationTest.class.getResource("/ietf-yang-metadata@2016-08-05.yang"))),
-                YangStatementStreamSource.create(
-                    new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang"))))
+                YangStatementStreamSource.create(TRANSFORMER.transformSource(
+                    new URLYangTextSource(AnnotationTest.class.getResource("/ietf-yang-metadata@2016-08-05.yang")))),
+                YangStatementStreamSource.create(TRANSFORMER.transformSource(
+                    new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang")))))
             .buildEffective();
 
         final var annotations = AnnotationSchemaNode.findAll(context);
