@@ -18,14 +18,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationContainerMixin;
 
 abstract class AbstractUndeclaredOperationContainer<D extends DeclaredStatement<QName>>
         extends DefaultWithDataTree<QName, D>
-        implements TypedefAwareEffectiveStatement<QName, D>, OperationContainerMixin<D> {
+        implements TypedefEffectiveStatement.MultipleIn<QName, D>, OperationContainerMixin<D> {
     private final @NonNull QName argument;
     private final int flags;
 
