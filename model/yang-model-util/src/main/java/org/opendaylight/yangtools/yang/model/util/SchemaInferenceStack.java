@@ -53,7 +53,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -879,11 +878,12 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
 
     private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull EffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
-        if (parent instanceof TypedefAwareEffectiveStatement<?, ?> aware) {
-            final var ret = aware.findTypedef(nodeIdentifier)
-                .orElseThrow(() -> notPresent(parent, "Typedef", nodeIdentifier));
-            deque.addLast(ret);
-            return ret;
+        if (parent instanceof TypedefEffectiveStatement.MultipleIn<?, ?> aware) {
+            final var ret = aware.lookupTypedefStatement(nodeIdentifier);
+            if (ret != null) {
+                deque.addLast(ret);
+                return ret;
+            }
         }
         throw notPresent(parent, "Typedef", nodeIdentifier);
     }
