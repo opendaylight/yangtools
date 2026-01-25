@@ -399,7 +399,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     public static final @NonNull ParserNamespace<QName, StatementSupport<?, ?, ?>> NAMESPACE =
         new ParserNamespace<>("statementSupports");
 
-    private final @NonNull StatementDefinition publicDefinition;
+    private final @NonNull StatementDefinition<A, D, E> publicDefinition;
     private final @NonNull StatementPolicy<A, D> policy;
     private final @NonNull SubtreePolicy subtreePolicy;
     private final @NonNull CopyPolicy copyPolicy;
@@ -414,7 +414,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         copyPolicy = delegate.copyPolicy;
     }
 
-    protected StatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy,
+    protected StatementSupport(final StatementDefinition<A, D, E> publicDefinition, final StatementPolicy<A, D> policy,
             final SubtreePolicy subtreePolicy) {
         this.publicDefinition = requireNonNull(publicDefinition);
         this.policy = requireNonNull(policy);
@@ -430,13 +430,15 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      *
      * @return public statement definition, which will be present in built statements.
      */
-    public final @NonNull StatementDefinition getPublicView() {
+    // FIXME: explain this in detail
+    public final @NonNull StatementDefinition<A, D, E> getPublicView() {
         return publicDefinition;
     }
 
     // Appropriate to most definitions
     // Non-final for compatible extensions
-    public @NonNull StatementDefinition definition() {
+    // FIXME: explain this in detail
+    public @NonNull StatementDefinition<A, D, E> definition() {
         return publicDefinition;
     }
 

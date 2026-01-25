@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 public interface ThirdPartyExtensionEffectiveStatement
         extends UnknownEffectiveStatement<String, @NonNull ThirdPartyExtensionStatement> {
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, @NonNull ThirdPartyExtensionStatement, ?> statementDefinition() {
         return ThirdPartyExtensionStatement.DEF;
     }
 

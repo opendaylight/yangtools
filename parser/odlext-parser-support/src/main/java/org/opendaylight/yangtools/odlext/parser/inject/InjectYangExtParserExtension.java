@@ -45,7 +45,7 @@ public final class InjectYangExtParserExtension implements ParserExtension {
     }
 
     @Override
-    public Set<StatementDefinition> supportedStatements() {
+    public Set<StatementDefinition<?, ?, ?>> supportedStatements() {
         return delegate.supportedStatements();
     }
 }

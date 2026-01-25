@@ -312,7 +312,7 @@ public final class UsesStatementSupport
     }
 
     // FIXME: clarify this and inline into single caller and work on prodicesDeclared()
-    private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
+    private static boolean isAllowedToAddByRefine(final StatementDefinition<?, ?, ?> publicDefinition) {
         return MustStatement.DEF.equals(publicDefinition);
     }
 

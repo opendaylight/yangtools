@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -20,12 +20,44 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
  * Common interface for all statement contexts, exposing information which is always available. Note this includes only
  * stateless information -- hence we have {@link #rawArgument()} but do not have an equivalent {@code argument()}.
  */
-@Beta
 public interface CommonStmtCtx {
     /**
-     * See {@link StatementSupport#getPublicView()}.
+     * {@return the {@link StatementDefinition} corresponding to the statement this context produces}
      */
-    @NonNull StatementDefinition publicDefinition();
+    @NonNull StatementDefinition<?, ?, ?> publicDefinition();
+
+    /**
+     * {@return {@code true} if this context produces the statement corresponding to the specified
+     * {@link StatementDefinition}}
+     * @param def the {@link StatementDefinition}
+     */
+    default boolean produces(final StatementDefinition<?, ?, ?> def) {
+        return def.equals(publicDefinition());
+    }
+
+    /**
+     * {@return {@code true} if this context produces a statement corresponding to any of the specified
+     * {@link StatementDefinition}s}
+     * @param defs the {@link StatementDefinition}s
+     */
+    default boolean producesAnyOf(final StatementDefinition<?, ?, ?>... defs) {
+        final var myDef = publicDefinition();
+        for (var def : defs) {
+            if (def.equals(myDef)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@return {@code true} if this context produces a statement corresponding to any of the specified
+     * {@link StatementDefinition}s}
+     * @param defs the {@link StatementDefinition}s
+     */
+    default boolean producesAnyOf(final Collection<? extends StatementDefinition<?, ?, ?>> defs) {
+        return defs.contains(publicDefinition());
+    }
 
     /**
      * Return true if this context produces specified {@link DeclaredStatement} representation.

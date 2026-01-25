@@ -45,7 +45,7 @@ public final class InjectRfc8639ParserExtension implements ParserExtension {
     }
 
     @Override
-    public Set<StatementDefinition> supportedStatements() {
+    public Set<StatementDefinition<?, ?, ?>> supportedStatements() {
         return delegate.supportedStatements();
     }
 }

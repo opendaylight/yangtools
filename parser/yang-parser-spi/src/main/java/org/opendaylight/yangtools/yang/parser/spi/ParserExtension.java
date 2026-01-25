@@ -34,5 +34,5 @@ public interface ParserExtension {
      * {@return the set {@link StatementDefinition}s supported by this extension. Guaranteed to contain at least one
      * element.}
      */
-    Set<StatementDefinition> supportedStatements();
+    Set<StatementDefinition<?, ?, ?>> supportedStatements();
 }

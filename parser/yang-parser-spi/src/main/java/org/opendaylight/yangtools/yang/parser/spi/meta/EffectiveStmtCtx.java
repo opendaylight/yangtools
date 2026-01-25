@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective view of a {@link StmtContext} for the purposes of creating an {@link EffectiveStatement}.
@@ -110,6 +111,9 @@ public non-sealed interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextC
     @Beta
     non-sealed interface Current<A, D extends DeclaredStatement<A>>
             extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
+        @Override
+        StatementDefinition<A, D, ?> publicDefinition();
+
         @Override
         <X, Y extends DeclaredStatement<X>> @Nullable Current<X, Y> tryDeclaring(Class<Y> type);
 

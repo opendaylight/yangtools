@@ -63,7 +63,7 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public StatementDefinition publicDefinition() {
+    public StatementDefinition<A, D, ?> publicDefinition() {
         return delegate.publicDefinition();
     }
 

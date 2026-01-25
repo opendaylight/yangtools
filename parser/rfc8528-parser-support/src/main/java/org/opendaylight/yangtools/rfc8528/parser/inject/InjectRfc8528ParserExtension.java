@@ -37,12 +37,12 @@ public final class InjectRfc8528ParserExtension implements ParserExtension {
     }
 
     @Override
-    public StatementSupportBundle configureBundle(YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return delegate.configureBundle(config);
     }
 
     @Override
-    public Set<StatementDefinition> supportedStatements() {
+    public Set<StatementDefinition<?, ?, ?>> supportedStatements() {
         return delegate.supportedStatements();
     }
 }

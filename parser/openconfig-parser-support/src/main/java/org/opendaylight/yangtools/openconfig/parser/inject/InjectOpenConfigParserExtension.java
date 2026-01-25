@@ -40,12 +40,12 @@ public final class InjectOpenConfigParserExtension implements ParserExtension {
     }
 
     @Override
-    public StatementSupportBundle configureBundle(YangParserConfiguration config) {
+    public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return delegate.configureBundle(config);
     }
 
     @Override
-    public Set<StatementDefinition> supportedStatements() {
+    public Set<StatementDefinition<?, ?, ?>> supportedStatements() {
         return delegate.supportedStatements();
     }
 }

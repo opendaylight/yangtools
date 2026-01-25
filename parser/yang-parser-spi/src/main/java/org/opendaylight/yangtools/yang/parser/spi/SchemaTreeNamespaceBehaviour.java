@@ -40,9 +40,9 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     public StmtContext<QName, D, E> getFrom(final GlobalStorage global, final NamespaceStorage storage,
             final QName key) {
         // Get the backing storage node for the requested storage
-        final NamespaceStorage storageNode = globalOrStatementSpecific(storage);
+        final var storageNode = globalOrStatementSpecific(storage);
         // Check try to look up existing node
-        final StmtContext<QName, D, E> existing = storageNode.getFromLocalStorage(namespace(), key);
+        final var existing = storageNode.getFromLocalStorage(namespace(), key);
 
         // An existing node takes precedence, if it does not exist try to request it
         return existing != null ? existing : requestFrom(storageNode, key);

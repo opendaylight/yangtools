@@ -44,7 +44,7 @@ abstract sealed class AbstractOperationContainerStatementSupport<D extends Decla
         permits InputStatementSupport, OutputStatementSupport {
     private final Function<QNameModule, QName> createArgument;
 
-    AbstractOperationContainerStatementSupport(final StatementDefinition publicDefinition,
+    AbstractOperationContainerStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
             final YangParserConfiguration config, final SubstatementValidator validator,
             final Function<QNameModule, QName> createArgument) {
         super(publicDefinition, uninstantiatedPolicy(), config, validator);

@@ -61,12 +61,13 @@ public final class QNameToStatementDefinitionMap implements QNameToStatementDefi
     }
 
     @Override
-    public StatementDefinition get(final QName identifier) {
+    public StatementDefinition<?, ?, ?> get(final QName identifier) {
         return definitionOf(getSupport(identifier));
     }
 
     @Override
-    public StatementDefinition getByNamespaceAndLocalName(final XMLNamespace namespace, final String localName) {
+    public StatementDefinition<?, ?, ?> getByNamespaceAndLocalName(final XMLNamespace namespace,
+            final String localName) {
         return definitionOf(noRevQNameToSupport.get(QName.create(namespace, localName)));
     }
 
@@ -80,7 +81,8 @@ public final class QNameToStatementDefinitionMap implements QNameToStatementDefi
         return qnameToSupport.get(requireNonNull(identifier));
     }
 
-    private static @Nullable StatementDefinition definitionOf(final @Nullable StatementSupport<?, ?, ?> support) {
+    private static @Nullable StatementDefinition<?, ?, ?> definitionOf(
+            final @Nullable StatementSupport<?, ?, ?> support) {
         return support != null ? support.definition() : null;
     }
 }
