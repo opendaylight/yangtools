@@ -18,8 +18,6 @@ module org.opendaylight.yangtools.yang.parser.impl {
 
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.yang.parser.impl;
-    // FIXME: remove this package
-    exports org.opendaylight.yangtools.yang.parser.inject;
 
     provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 

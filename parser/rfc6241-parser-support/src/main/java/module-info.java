@@ -18,8 +18,6 @@ module org.opendaylight.yangtools.rfc6241.parser.support {
 
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.rfc6241.parser;
-    // FIXME: remove this package
-    exports org.opendaylight.yangtools.rfc6241.parser.inject;
 
     provides ParserExtension with org.opendaylight.yangtools.rfc6241.parser.impl.Rfc6241ParserExtension;
 
