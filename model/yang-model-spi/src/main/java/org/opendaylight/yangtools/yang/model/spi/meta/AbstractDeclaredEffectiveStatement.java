@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * Base stateless superclass for statements which (logically) always have an associated {@link DeclaredStatement}. This
@@ -249,7 +249,7 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
      */
     public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>> extends WithDataTree<A, D> {
         public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement<A>>
-                extends DefaultWithDataTree<A, D> implements TypedefAwareEffectiveStatement<A, D> {
+                extends DefaultWithDataTree<A, D> implements TypedefEffectiveStatement.MultipleIn<A, D> {
             protected WithTypedefNamespace(final D declared,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
                 super(declared, substatements);

@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface NotificationEffectiveStatement
     extends SchemaTreeEffectiveStatement<@NonNull NotificationStatement>,
             DataTreeAwareEffectiveStatement<QName, @NonNull NotificationStatement>,
-            TypedefAwareEffectiveStatement<QName, @NonNull NotificationStatement> {
+            TypedefEffectiveStatement.MultipleIn<QName, @NonNull NotificationStatement> {
     @Override
     default StatementDefinition<QName, @NonNull NotificationStatement, ?> statementDefinition() {
         return NotificationStatement.DEF;

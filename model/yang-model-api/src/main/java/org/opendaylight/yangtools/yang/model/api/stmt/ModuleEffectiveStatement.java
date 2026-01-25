@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface ModuleEffectiveStatement
     extends DataTreeAwareEffectiveStatement<Unqualified, @NonNull ModuleStatement>,
             RootEffectiveStatement<@NonNull ModuleStatement>,
-            TypedefAwareEffectiveStatement<Unqualified, @NonNull ModuleStatement>,
+            TypedefEffectiveStatement.MultipleIn<Unqualified, @NonNull ModuleStatement>,
             SchemaTreeRoot {
     /**
      * Conformance type, as defined by <a href="https://www.rfc-editor.org/rfc/rfc7895#page-9">RFC7895</a> and

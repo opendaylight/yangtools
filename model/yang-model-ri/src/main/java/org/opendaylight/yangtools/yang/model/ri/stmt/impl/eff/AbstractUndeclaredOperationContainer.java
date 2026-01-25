@@ -12,20 +12,18 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationContainerMixin;
 
 abstract class AbstractUndeclaredOperationContainer<D extends DeclaredStatement<QName>>
         extends DefaultWithDataTree<QName, D>
-        implements TypedefAwareEffectiveStatement<QName, D>, OperationContainerMixin<D> {
+        implements TypedefEffectiveStatement.MultipleIn<QName, D>, OperationContainerMixin<D> {
     private final @NonNull QName argument;
     private final int flags;
 
@@ -59,12 +57,12 @@ abstract class AbstractUndeclaredOperationContainer<D extends DeclaredStatement<
     }
 
     @Override
-    public final Collection<TypedefEffectiveStatement> typedefs() {
+    public final Collection<TypedefEffectiveStatement> typedefStatements() {
         return List.of();
     }
 
     @Override
-    public final Optional<TypedefEffectiveStatement> findTypedef(final QName qname) {
-        return Optional.empty();
+    public final TypedefEffectiveStatement lookupTypedefStatement(final QName qname) {
+        return null;
     }
 }
