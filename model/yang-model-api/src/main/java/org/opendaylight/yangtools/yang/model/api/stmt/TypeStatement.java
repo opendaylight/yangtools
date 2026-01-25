@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
 import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -19,6 +23,45 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code type} statement.
  */
 public interface TypeStatement extends DeclaredStatement<QName> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of a single {@link TypeStatement}.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface OptionalIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return the {@code TypeStatement} or {@code null} if not present}
+         */
+        default @Nullable TypeStatement typeStatement() {
+            for (var stmt : declaredSubstatements()) {
+                if (stmt instanceof TypeStatement type) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * {@return an optional {@code TypeStatement}}
+         */
+        default @NonNull Optional<TypeStatement> findTypeStatement() {
+            return Optional.ofNullable(typeStatement());
+        }
+
+        /**
+         * {@return the {@code TypeStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        default @NonNull TypeStatement getTypeStatement() {
+            final var type = typeStatement();
+            if (type == null) {
+                throw new NoSuchElementException("No type statement present in " + this);
+            }
+            return type;
+        }
+    }
+
+    /**
     /**
      * The definition of {@code type} statement.
      *
@@ -52,11 +95,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     }
 
     // FIXME: 7.0.0: this interface does not have an implementation
-    interface StringRestrictions extends TypeStatement {
-        default @Nullable LengthStatement getLength() {
-            final var opt = findFirstDeclaredSubstatement(LengthStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
+    interface StringRestrictions extends TypeStatement, LengthStatement.OptionalIn<QName> {
 
         default @NonNull Collection<? extends @NonNull PatternStatement> getPatterns() {
             return declaredSubstatements(PatternStatement.class);

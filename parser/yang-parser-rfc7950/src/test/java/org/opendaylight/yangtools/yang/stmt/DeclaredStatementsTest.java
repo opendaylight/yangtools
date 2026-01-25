@@ -38,20 +38,18 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var name = anyxmlStatement.argument();
         assertNotNull(name);
 
-        final var whenStatement = anyxmlStatement.getWhenStatement().orElseThrow();
+        final var whenStatement = anyxmlStatement.getWhenStatement();
         assertNotNull(whenStatement.argument());
         final var whenStatementDescription = whenStatement.getDescription().orElseThrow();
         assertNotNull(whenStatementDescription.argument());
         assertTrue(whenStatement.getReference().isPresent());
 
-        final var ifFeatureStatements = anyxmlStatement.getIfFeatures();
-        assertNotNull(ifFeatureStatements);
+        final var ifFeatureStatements = anyxmlStatement.ifFeatureStatements();
         assertEquals(1, ifFeatureStatements.size());
         final var ifFeaturePredicate = ifFeatureStatements.iterator().next().argument();
         assertNotNull(ifFeaturePredicate);
 
-        final var mustStatements = anyxmlStatement.getMustStatements();
-        assertNotNull(mustStatements);
+        final var mustStatements = anyxmlStatement.mustStatements();
         assertEquals(1, mustStatements.size());
         final var mustStatement = mustStatements.iterator().next();
         assertNotNull(mustStatement.argument());
@@ -60,7 +58,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertTrue(mustStatement.getDescription().isPresent());
         assertTrue(mustStatement.getReference().isPresent());
 
-        final var configStatement = anyxmlStatement.getConfig().orElseThrow();
+        final var configStatement = anyxmlStatement.getConfigStatement();
         assertFalse(configStatement.argument());
 
         final var statusStatement = anyxmlStatement.getStatus().orElseThrow();
@@ -73,7 +71,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var referenceStatement = anyxmlStatement.getReference().orElseThrow();
         assertEquals("anyxml reference", referenceStatement.argument());
 
-        assertTrue(anyxmlStatement.getMandatory().isPresent());
+        assertNotNull(anyxmlStatement.mandatoryStatement());
     }
 
     @Test
@@ -91,11 +89,11 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var name = choiceStatement.argument();
         assertNotNull(name);
 
-        final var defaultStatement = choiceStatement.getDefault().orElseThrow();
+        final var defaultStatement = choiceStatement.getDefaultStatement();
         assertEquals("case-two", defaultStatement.argument());
 
-        assertTrue(choiceStatement.getConfig().isPresent());
-        assertTrue(choiceStatement.getMandatory().isPresent());
+        assertNotNull(choiceStatement.configStatement());
+        assertNotNull(choiceStatement.mandatoryStatement());
 
         final var caseStatements = choiceStatement.getCases();
         assertNotNull(caseStatements);
@@ -103,21 +101,18 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var caseStatement = caseStatements.iterator().next();
         final var caseStatementName = caseStatement.argument();
         assertNotNull(caseStatementName);
-        assertNotNull(caseStatement.getWhenStatement().orElseThrow());
-        final var caseStatementIfFeatures = caseStatement.getIfFeatures();
-        assertNotNull(caseStatementIfFeatures);
+        assertNotNull(caseStatement.whenStatement());
+        final var caseStatementIfFeatures = caseStatement.ifFeatureStatements();
         assertEquals(1, caseStatementIfFeatures.size());
-        final var caseStatementDataDefinitions = caseStatement.getDataDefinitions();
-        assertNotNull(caseStatementDataDefinitions);
+        final var caseStatementDataDefinitions = caseStatement.dataDefinitionStatements();
         assertEquals(1, caseStatementDataDefinitions.size());
         assertTrue(caseStatement.getStatus().isPresent());
         assertTrue(caseStatement.getDescription().isPresent());
         assertTrue(caseStatement.getReference().isPresent());
 
-        assertNotNull(choiceStatement.getWhenStatement().orElseThrow());
+        assertNotNull(choiceStatement.whenStatement());
 
-        final var ifFeatureStatements = choiceStatement.getIfFeatures();
-        assertNotNull(ifFeatureStatements);
+        final var ifFeatureStatements = choiceStatement.ifFeatureStatements();
         assertEquals(1, ifFeatureStatements.size());
 
         assertTrue(choiceStatement.getStatus().isPresent());
@@ -142,8 +137,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var targetNode = augmentStatement.argument();
         assertNotNull(targetNode);
 
-        final var augmentStatementDataDefinitions = augmentStatement.getDataDefinitions();
-        assertNotNull(augmentStatementDataDefinitions);
+        final var augmentStatementDataDefinitions = augmentStatement.dataDefinitionStatements();
         assertEquals(1, augmentStatementDataDefinitions.size());
     }
 
@@ -235,7 +229,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals("test description", featureStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", featureStatement.getReference().orElseThrow().argument());
         assertEquals("test-feature", featureStatement.argument().getLocalName());
-        assertEquals(1, featureStatement.getIfFeatures().size());
+        assertEquals(1, featureStatement.ifFeatureStatements().size());
 
         assertEquals(2, moduleStatement.getIdentities().size());
         final var identityStatement = moduleStatement.getIdentities().stream()
@@ -249,14 +243,14 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals("test reference", identityStatement.getReference().orElseThrow().argument());
         assertEquals("test-id", identityStatement.argument().getLocalName());
 
-        assertEquals(1, moduleStatement.getTypedefs().size());
-        final var typedefStatement = moduleStatement.getTypedefs().iterator().next();
+        assertEquals(1, moduleStatement.typedefStatements().size());
+        final var typedefStatement = moduleStatement.typedefStatements().iterator().next();
         assertEquals(Status.CURRENT, typedefStatement.getStatus().orElseThrow().argument());
         assertEquals("test description", typedefStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", typedefStatement.getReference().orElseThrow().argument());
         assertEquals("test-typedef", typedefStatement.argument().getLocalName());
-        assertEquals("int32", typedefStatement.getType().rawArgument());
-        assertEquals("meter", typedefStatement.getUnits().orElseThrow().argument());
+        assertEquals("int32", typedefStatement.getTypeStatement().rawArgument());
+        assertEquals("meter", typedefStatement.getUnitsStatement().argument());
     }
 
     @Test
@@ -273,37 +267,29 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var name = containerStatement.argument();
         assertNotNull(name);
 
-        final var containerStatementWhen = containerStatement.getWhenStatement().orElseThrow();
-        assertNotNull(containerStatementWhen);
-
-        final var containerStatementIfFeatures = containerStatement.getIfFeatures();
-        assertNotNull(containerStatementIfFeatures);
+        assertNotNull(containerStatement.whenStatement());
+        final var containerStatementIfFeatures = containerStatement.ifFeatureStatements();
         assertEquals(1, containerStatementIfFeatures.size());
 
-        final var containerStatementMusts = containerStatement.getMustStatements();
-        assertNotNull(containerStatementMusts);
+        final var containerStatementMusts = containerStatement.mustStatements();
         assertEquals(1, containerStatementMusts.size());
 
         final var containerStatementPresence = containerStatement.getPresence();
         assertNotNull(containerStatementPresence);
         assertNotNull(containerStatementPresence.argument());
 
-        assertTrue(containerStatement.getConfig().isPresent());
+        assertNotNull(containerStatement.configStatement());
         assertTrue(containerStatement.getStatus().isPresent());
         assertTrue(containerStatement.getDescription().isPresent());
         assertTrue(containerStatement.getReference().isPresent());
 
-        final var containerStatementTypedefs = containerStatement.getTypedefs();
-        assertNotNull(containerStatementTypedefs);
+        final var containerStatementTypedefs = containerStatement.typedefStatements();
         assertEquals(1, containerStatementTypedefs.size());
 
-        final var containerStatementGroupings = containerStatement.getGroupings();
-        assertNotNull(containerStatementGroupings);
+        final var containerStatementGroupings = containerStatement.groupingStatements();
         assertEquals(1, containerStatementGroupings.size());
 
-        final var containerStatementDataDefinitions = containerStatement.getDataDefinitions();
-
-        assertNotNull(containerStatementDataDefinitions);
+        final var containerStatementDataDefinitions = containerStatement.dataDefinitionStatements();
         assertEquals(1, containerStatementDataDefinitions.size());
     }
 }

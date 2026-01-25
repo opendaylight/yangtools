@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code enum} statement.
  */
 public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<String>,
-        IfFeatureAwareDeclaredStatement<String> {
+        IfFeatureStatement.MultipleIn<String> {
     /**
      * The definition of {@code enum} statement.
      *

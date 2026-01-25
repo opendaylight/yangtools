@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -16,6 +21,44 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code default} statement.
  */
 public interface DefaultStatement extends DeclaredStatement<String> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of a single {@link DefaultStatement}.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface OptionalIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return the {@code DefaultStatement} or {@code null} if not present}
+         */
+        default @Nullable DefaultStatement defaultStatement() {
+            for (var stmt : declaredSubstatements()) {
+                if (stmt instanceof DefaultStatement dflt) {
+                    return dflt;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * {@return an optional {@code DefaultStatement}}
+         */
+        default @NonNull Optional<DefaultStatement> findDefaultStatement() {
+            return Optional.ofNullable(defaultStatement());
+        }
+
+        /**
+         * {@return the {@code DefaultStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        default @NonNull DefaultStatement getDefaultStatement() {
+            final var length = defaultStatement();
+            if (length == null) {
+                throw new NoSuchElementException("No default statement present in " + this);
+            }
+            return length;
+        }
+    }
+
     /**
      * The definition of {@code default} statement.
      *

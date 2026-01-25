@@ -11,8 +11,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureAwareDeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeAwareDeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
 public interface AnnotationStatement extends UnknownStatement<AnnotationName>, WithStatus<AnnotationName>,
-        IfFeatureAwareDeclaredStatement<AnnotationName>, TypeAwareDeclaredStatement<AnnotationName> {
+        IfFeatureStatement.MultipleIn<AnnotationName>, TypeStatement.OptionalIn<AnnotationName> {
     /**
      * The definition of {@code nc:get-filter-element-attributes} statement.
      *
