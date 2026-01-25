@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6241.parser;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -33,12 +35,13 @@ class NetconfTest {
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc6241Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
-        final var context = reactor.newBuild()
-            .addLibSources(YangStatementStreamSource.create(
-                new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang"))))
-            .addSource(YangStatementStreamSource.create(
-                new URLYangTextSource(NetconfTest.class.getResource("/ietf-netconf@2011-06-01.yang"))))
-            .buildEffective();
+        final var transformer = YangTextToIRSourceTransformerModule.provideSourceTransformer();
+        final var context = assertDoesNotThrow(() -> reactor.newBuild()
+            .addLibSources(YangStatementStreamSource.create(transformer.transformSource(
+                new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))))
+            .addSource(YangStatementStreamSource.create(transformer.transformSource(
+                new URLYangTextSource(NetconfTest.class.getResource("/ietf-netconf@2011-06-01.yang")))))
+            .buildEffective());
 
         final var module = context.findModule(NetconfConstants.RFC6241_MODULE).orElseThrow();
         final var rpcs = module.getRpcs();
