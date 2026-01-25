@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Function;
@@ -42,12 +41,14 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -57,15 +58,12 @@ import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 // FIXME: final
 class YangToSourcesProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesProcessor.class);
-    private static final YangParserFactory DEFAULT_PARSER_FACTORY;
-
-    static {
-        try {
-            DEFAULT_PARSER_FACTORY = ServiceLoader.load(YangParserFactory.class).iterator().next();
-        } catch (NoSuchElementException e) {
-            throw new IllegalStateException("Failed to find a YangParserFactory implementation", e);
-        }
-    }
+    private static final YangTextToIRSourceTransformer DEFAULT_TEXT_TO_IR =
+        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow(
+            () -> new IllegalStateException("Failed to find a YangTextToIRSourceTransformer implementation"));
+    private static final YangParserFactory DEFAULT_PARSER_FACTORY =
+        ServiceLoader.load(YangParserFactory.class).findFirst().orElseThrow(
+            () -> new IllegalStateException("Failed to find a YangParserFactory implementation"));
 
     private static final String META_INF_STR = "META-INF";
     private static final String YANG_STR = "yang";
@@ -101,6 +99,7 @@ class YangToSourcesProcessor {
         return stateListBuilder.build();
     };
 
+    private final YangTextToIRSourceTransformer textToIR;
     private final YangParserFactory parserFactory;
     private final File yangFilesRootDir;
     private final Set<File> excludedFiles;
@@ -126,6 +125,7 @@ class YangToSourcesProcessor {
         projectBuildDirectory = project.getBuild().getDirectory();
         stateStorage = StateStorage.of(buildContext, stateFilePath(projectBuildDirectory));
         parserFactory = DEFAULT_PARSER_FACTORY;
+        textToIR = DEFAULT_TEXT_TO_IR;
     }
 
     @VisibleForTesting
@@ -250,8 +250,8 @@ class YangToSourcesProcessor {
             .map(file -> {
                 final var textSource = new FileYangTextSource(file.toPath());
                 try {
-                    return Map.entry(textSource, TextToIRTransformer.transformText(textSource));
-                } catch (YangSyntaxErrorException | IOException e) {
+                    return Map.entry(textSource, textToIR.transformSource(textSource));
+                } catch (ExtractorException | SourceSyntaxException e) {
                     throw new IllegalArgumentException("Failed to parse " + file, e);
                 }
             })
