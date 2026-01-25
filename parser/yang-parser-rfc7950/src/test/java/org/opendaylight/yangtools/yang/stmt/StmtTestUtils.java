@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -23,9 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -64,22 +66,19 @@ public final class StmtTestUtils {
     }
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {
-        try {
-            return YangStatementStreamSource.create(new URLYangTextSource(
-                StmtTestUtils.class.getResource(resourceName)));
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new IllegalArgumentException("Failed to create source", e);
-        }
+        return YangStatementStreamSource.create(assertDoesNotThrow(() -> TestUtils.assertSchemaSource(resourceName)));
     }
 
     public static EffectiveModelContext parseYangSource(final String yangSourcePath, final Set<QName> supportedFeatures)
-            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
+            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException, ExtractorException,
+                   SourceSyntaxException {
         return parseYangSource(yangSourcePath, YangParserConfiguration.DEFAULT, supportedFeatures);
     }
 
     public static EffectiveModelContext parseYangSource(final String yangSourcePath,
             final YangParserConfiguration config, final Set<QName> supportedFeatures)
-                    throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
+                throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException, ExtractorException,
+                       SourceSyntaxException {
         return parseYangSources(config, supportedFeatures,
             Path.of(StmtTestUtils.class.getResource(yangSourcePath).toURI()).toFile());
     }
@@ -105,32 +104,33 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYangSources(final File... files) throws ReactorException, IOException,
-            YangSyntaxErrorException {
+            YangSyntaxErrorException, ExtractorException, SourceSyntaxException {
         return parseYangSources(YangParserConfiguration.DEFAULT, null, files);
     }
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final File... files)
-                throws ReactorException, IOException, YangSyntaxErrorException {
+                throws ReactorException, IOException, YangSyntaxErrorException,
+                ExtractorException, SourceSyntaxException {
         final var sources = new ArrayList<YangStatementStreamSource>(files.length);
         for (var file : files) {
-            sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
+            sources.add(YangStatementStreamSource.create(TestUtils.assertSchemaSource(file.toPath())));
         }
         return parseYangSources(config, supportedFeatures, sources);
     }
 
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
-            final YangParserConfiguration config) throws ReactorException, URISyntaxException, IOException,
-            YangSyntaxErrorException {
+            final YangParserConfiguration config)
+                throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException, ExtractorException,
+                       SourceSyntaxException {
         return parseYangSources(yangSourcesDirectoryPath, null, config);
     }
 
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
-            final Set<QName> supportedFeatures, final YangParserConfiguration config) throws ReactorException,
-            URISyntaxException, IOException, YangSyntaxErrorException {
-
+            final Set<QName> supportedFeatures, final YangParserConfiguration config)
+                throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException, ExtractorException,
+                       SourceSyntaxException {
         final var testSourcesDir = Path.of(StmtTestUtils.class.getResource(yangSourcesDirectoryPath).toURI()).toFile();
-
         return parseYangSources(config, supportedFeatures, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
