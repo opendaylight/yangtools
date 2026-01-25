@@ -57,13 +57,13 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
     private static final StatementPolicy<QName, ?> UNINSTANTIATED_POLICY =
         StatementPolicy.copyDeclared(new SchemaTreeEquality<>());
 
-    protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractSchemaTreeStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
             final StatementPolicy<QName, D> policy, final SubtreePolicy subtreePolicy,
             final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, subtreePolicy, config, validator);
     }
 
-    protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractSchemaTreeStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
             final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);

@@ -26,11 +26,11 @@ public final class SubstatementValidator {
     private static final @NonNull StatementCardinality @NonNull [] EMPTY_MANDATORY = new StatementCardinality[0];
 
     private final @NonNull StatementCardinality[] mandatoryStatements;
-    private final @NonNull Map<StatementDefinition, Cardinality> otherStatements;
-    private final @NonNull StatementDefinition currentStatement;
+    private final @NonNull Map<StatementDefinition<?, ?, ?>, Cardinality> otherStatements;
+    private final @NonNull StatementDefinition<?, ?, ?> currentStatement;
 
-    private SubstatementValidator(final StatementDefinition currentStatement,
-            final ImmutableMap<StatementDefinition, Cardinality> cardinalityMap) {
+    private SubstatementValidator(final StatementDefinition<?, ?, ?> currentStatement,
+            final ImmutableMap<StatementDefinition<?, ?, ?>, Cardinality> cardinalityMap) {
         this.currentStatement = requireNonNull(currentStatement);
 
         // Split the cardinalities based on mandatory/non-mandatory
@@ -43,56 +43,64 @@ public final class SubstatementValidator {
             .collect(Collectors.toUnmodifiableMap(Entry::getKey, Entry::getValue));
     }
 
+    /**
+     * {@return a {@link SubstatementValidator.Builder} producing validators for specified statement}
+     * @param statement the statement which is being validated
+     */
     @NonNullByDefault
-    public static Builder builder(final StatementDefinition currentStatement) {
-        return new Builder(currentStatement);
+    public static Builder builder(final StatementDefinition<?, ?, ?> statement) {
+        return new Builder(statement);
     }
 
+    /**
+     * Builder producing {@link SubstatementValidator} instances.
+     */
     public static final class Builder {
         // We are using ImmutableMap because it retains encounter order
-        private final ImmutableMap.Builder<StatementDefinition, Cardinality> cardinalityMap = ImmutableMap.builder();
-        private final @NonNull StatementDefinition currentStatement;
+        private final ImmutableMap.Builder<StatementDefinition<?, ?, ?>, Cardinality> cardinalityMap =
+            ImmutableMap.builder();
+        private final @NonNull StatementDefinition<?, ?, ?> currentStatement;
 
-        Builder(final StatementDefinition currentStatement) {
+        Builder(final StatementDefinition<?, ?, ?> currentStatement) {
             this.currentStatement = requireNonNull(currentStatement);
         }
 
-        private Builder add(final StatementDefinition def, final Cardinality card) {
+        private Builder add(final StatementDefinition<?, ?, ?> def, final Cardinality card) {
             cardinalityMap.put(def, card);
             return this;
         }
 
-        public Builder add(final StatementDefinition def, final int min, final int max) {
+        public Builder add(final StatementDefinition<?, ?, ?> def, final int min, final int max) {
             return add(def, Cardinality.of(min, max));
         }
 
         // Equivalent to min .. Integer.MAX_VALUE
-        public Builder addAtLeast(final StatementDefinition def, final int min) {
+        public Builder addAtLeast(final StatementDefinition<?, ?, ?> def, final int min) {
             return add(def, Cardinality.atLeast(min));
         }
 
         // Equivalent to 0 .. max
-        public Builder addAtMost(final StatementDefinition def, final int max) {
+        public Builder addAtMost(final StatementDefinition<?, ?, ?> def, final int max) {
             return add(def, Cardinality.atMost(max));
         }
 
         // Equivalent to 0 .. Integer.MAX_VALUE
-        public Builder addAny(final StatementDefinition def) {
+        public Builder addAny(final StatementDefinition<?, ?, ?> def) {
             return add(def, Cardinality.any());
         }
 
         // Equivalent to 1 .. 1
-        public Builder addMandatory(final StatementDefinition def) {
+        public Builder addMandatory(final StatementDefinition<?, ?, ?> def) {
             return add(def, Cardinality.exactlyOne());
         }
 
         // Equivalent to 1 .. MAX
-        public Builder addMultiple(final StatementDefinition def) {
+        public Builder addMultiple(final StatementDefinition<?, ?, ?> def) {
             return add(def, Cardinality.atLeastOne());
         }
 
         // Equivalent to 0 .. 1
-        public Builder addOptional(final StatementDefinition def) {
+        public Builder addOptional(final StatementDefinition<?, ?, ?> def) {
             return add(def, Cardinality.atMostOne());
         }
 
@@ -117,8 +125,9 @@ public final class SubstatementValidator {
         // We use this as our 'to check' scratchpool, which we then process with the conscious trade-off between the
         // two sets that need to be compared. We often see very little of what is allowed to be present beyond what is
         // required.
-        final var stmtCounts = ctx.allSubstatementsStream().collect(
-            Collectors.groupingBy(StmtContext::publicDefinition, LinkedHashMap::new, Collectors.summingInt(x -> 1)));
+        final var stmtCounts = ctx.allSubstatementsStream()
+            .collect(Collectors.groupingBy(StmtContext::publicDefinition, LinkedHashMap::new,
+                Collectors.summingInt(x -> 1)));
 
         // The exception to throw. This will be the first offence produced, if there are multiple errors, those will be
         // recorded as having been suppressed by it.
@@ -169,7 +178,7 @@ public final class SubstatementValidator {
     }
 
     private @Nullable SourceException evaluate(final @NonNull NamespaceStmtCtx ctx,
-            final @NonNull StatementDefinition def, final int count, final @Nullable Cardinality cardinality) {
+            final @NonNull StatementDefinition<?, ?, ?> def, final int count, final @Nullable Cardinality cardinality) {
         // FIXME: what does this check do and why?
         if (cardinality == null) {
             if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.statementName()) != null) {
@@ -193,7 +202,7 @@ public final class SubstatementValidator {
     }
 
     private @Nullable InvalidSubstatementException evaluateMax(final @NonNull CommonStmtCtx ctx,
-            final @NonNull StatementDefinition def, final @NonNull Cardinality cardinality, final int count) {
+            final @NonNull StatementDefinition<?, ?, ?> def, final @NonNull Cardinality cardinality, final int count) {
         if (count > cardinality.maxAllowed()) {
             return new InvalidSubstatementException(ctx, "statement %s allows at most %s: %s present",
                 currentStatement.humanName(), substatementsStr(def, cardinality.maxAllowed()), count);
@@ -202,7 +211,7 @@ public final class SubstatementValidator {
     }
 
     @NonNullByDefault
-    private static String substatementsStr(final StatementDefinition def, final int cardinality) {
+    private static String substatementsStr(final StatementDefinition<?, ?, ?> def, final int cardinality) {
         final var substatementName = def.humanName();
         return cardinality == 1 ? "1 " + substatementName + " substatement"
             : cardinality + " " + substatementName + " substatement";
@@ -302,18 +311,18 @@ public final class SubstatementValidator {
     }
 
     @NonNullByDefault
-    private record StatementCardinality(StatementDefinition def, int minRequired, int maxAllowed)
+    private record StatementCardinality(StatementDefinition<?, ?, ?>  def, int minRequired, int maxAllowed)
             implements Cardinality {
         StatementCardinality {
             requireNonNull(def);
             DefaultCardinality.checkInvariants(minRequired, maxAllowed);
         }
 
-        StatementCardinality(final StatementDefinition def, final Cardinality cardinality) {
+        StatementCardinality(final StatementDefinition<?, ?, ?> def, final Cardinality cardinality) {
             this(def, cardinality.minRequired(), cardinality.maxAllowed());
         }
 
-        StatementCardinality(final Entry<StatementDefinition, Cardinality> entry) {
+        StatementCardinality(final Entry<? extends StatementDefinition<?, ?, ?>, Cardinality> entry) {
             this(entry.getKey(), entry.getValue());
         }
     }

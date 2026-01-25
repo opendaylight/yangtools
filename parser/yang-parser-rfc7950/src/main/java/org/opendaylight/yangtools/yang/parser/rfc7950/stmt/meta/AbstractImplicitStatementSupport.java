@@ -34,8 +34,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactor
 abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractSchemaTreeStatementSupport<D, E>
         implements UndeclaredStatementFactory<QName, D, E> {
-    AbstractImplicitStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<QName, D> policy,
-            final YangParserConfiguration config, final SubstatementValidator validator) {
+    AbstractImplicitStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
+            final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
+            final SubstatementValidator validator) {
         super(publicDefinition, policy, config, requireNonNull(validator));
     }
 

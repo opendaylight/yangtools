@@ -92,7 +92,7 @@ class StatementContextVisitor {
         return foundStmtDef != null ? foundStmtDef.statementName() : null;
     }
 
-    StatementDefinition resolveStatement(final @NonNull QNameModule module, final @NonNull String localName) {
+    StatementDefinition<?, ?, ?> resolveStatement(final @NonNull QNameModule module, final @NonNull String localName) {
         return stmtDef.get(QName.unsafeOf(module, localName));
     }
 

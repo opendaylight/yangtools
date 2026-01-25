@@ -23,14 +23,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 @NonNullByDefault
 public abstract class AbstractParserExtension implements ParserExtension {
-    private final ImmutableSet<StatementDefinition> supportedStatements;
+    // FIXME: use Set.copyOf() instead
+    private final ImmutableSet<StatementDefinition<?, ?, ?>> supportedStatements;
 
     /**
      * Construct an instance supporting a single statement.
      *
      * @param supportedStatement the supported statement
      */
-    protected AbstractParserExtension(final StatementDefinition supportedStatement) {
+    protected AbstractParserExtension(final StatementDefinition<?, ?, ?> supportedStatement) {
         this(ImmutableSet.of(supportedStatement));
     }
 
@@ -40,7 +41,7 @@ public abstract class AbstractParserExtension implements ParserExtension {
      * @param supportedStatements supported statements
      * @throws IllegalArgumentException if {@code supportedStatements} is empty
      */
-    protected AbstractParserExtension(final StatementDefinition... supportedStatements) {
+    protected AbstractParserExtension(final StatementDefinition<?, ?, ?>... supportedStatements) {
         this(ImmutableSet.copyOf(supportedStatements));
     }
 
@@ -50,7 +51,7 @@ public abstract class AbstractParserExtension implements ParserExtension {
      * @param supportedStatements the supported statements
      * @throws IllegalArgumentException if {@code supportedStatements} is empty
      */
-    protected AbstractParserExtension(final ImmutableSet<StatementDefinition> supportedStatements) {
+    protected AbstractParserExtension(final ImmutableSet<StatementDefinition<?, ?, ?>> supportedStatements) {
         if (supportedStatements.isEmpty()) {
             throw new IllegalArgumentException("supportedStatements must not be empty");
         }
@@ -58,7 +59,7 @@ public abstract class AbstractParserExtension implements ParserExtension {
     }
 
     @Override
-    public final ImmutableSet<StatementDefinition> supportedStatements() {
+    public final ImmutableSet<StatementDefinition<?, ?, ?>> supportedStatements() {
         return supportedStatements;
     }
 

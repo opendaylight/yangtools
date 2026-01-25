@@ -32,7 +32,9 @@ final class UnrecognizedStatementSupport
         implements OverrideChildStatementSupport {
     private final YangParserConfiguration config;
 
-    UnrecognizedStatementSupport(final StatementDefinition publicDefinition, final YangParserConfiguration config) {
+    UnrecognizedStatementSupport(
+            final StatementDefinition<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement> publicDefinition,
+            final YangParserConfiguration config) {
         // We have no idea about the statement's semantics, hence there should be noone interested in its semantics.
         // Nevertheless it may be of interest for various hacks to understand there was an extension involved.
         super(publicDefinition, StatementPolicy.exactReplica(), config, null);
@@ -45,7 +47,7 @@ final class UnrecognizedStatementSupport
     }
 
     @Override
-    public UnrecognizedStatementSupport statementDefinitionOverrideOf(final StatementDefinition childDef) {
+    public UnrecognizedStatementSupport statementDefinitionOverrideOf(final StatementDefinition<?, ?, ?> childDef) {
         /*
          * This code wraps statements encountered inside an extension so they do not get confused with regular
          * statements.

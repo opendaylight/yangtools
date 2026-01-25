@@ -33,7 +33,7 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
     private final @NonNull D emptyDeclaredFalse;
     private final @NonNull D emptyDeclaredTrue;
 
-    protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractBooleanStatementSupport(final StatementDefinition<Boolean, D, E> publicDefinition,
             final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
             final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
@@ -44,7 +44,7 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
         emptyDeclaredTrue = emptyEffectiveTrue.requireDeclared();
     }
 
-    protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractBooleanStatementSupport(final StatementDefinition<Boolean, D, E> publicDefinition,
             final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
             final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);

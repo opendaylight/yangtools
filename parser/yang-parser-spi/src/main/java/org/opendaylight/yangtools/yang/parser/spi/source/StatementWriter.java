@@ -19,8 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 public interface StatementWriter {
     /**
      * Resumed statement state.
-     *
-     * @author Robert Varga
      */
     @Beta
     @NonNullByDefault
@@ -30,7 +28,7 @@ public interface StatementWriter {
          *
          * @return statement definition.
          */
-        StatementDefinition getDefinition();
+        StatementDefinition<?, ?, ?> getDefinition();
 
         /**
          * Return statement source reference.

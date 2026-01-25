@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Intermediate compatibility interface between {@link StmtContext} and {@link EffectiveStmtCtx.Current}.
@@ -22,6 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public sealed interface BoundStmtCtxCompat<A, D extends DeclaredStatement<A>>
         extends BoundStmtCtx<A>, StmtContextCompat
         permits EffectiveStmtCtx.Current, StmtContext {
+    @Override
+    StatementDefinition<A, D, ?> publicDefinition();
+
     /**
      * Returns the {@link DeclaredStatement} view of this statement.
      */

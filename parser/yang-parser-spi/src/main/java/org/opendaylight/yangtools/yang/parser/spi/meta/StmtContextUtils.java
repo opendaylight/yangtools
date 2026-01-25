@@ -255,7 +255,7 @@ public final class StmtContextUtils {
      * @return true if it is a presence container
      */
     public static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.producesDeclared(ContainerStatement.class) && containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.produces(ContainerStatement.DEF) && containsPresenceSubStmt(stmtCtx);
     }
 
     /**
@@ -266,7 +266,7 @@ public final class StmtContextUtils {
      * @return true if it is a non-presence container
      */
     public static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.producesDeclared(ContainerStatement.class) && !containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmtCtx);
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
@@ -282,13 +282,13 @@ public final class StmtContextUtils {
      *         according to RFC6020.
      */
     public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
-        final var def = stmtCtx.publicDefinition();
-        // FIXME: improve this patch ... by exposing the appropriate trait?
-        if (LeafStatement.DEF.equals(def) || ChoiceStatement.DEF.equals(def)
-            || AnyxmlStatement.DEF.equals(def)) {
+        // FIXME: check for MandatoryStatementAwareDeclaredStatement, renamed to MandatoryStatement.Parent via
+        //        producesDeclared()
+        if (stmtCtx.producesAnyOf(LeafStatement.DEF, ChoiceStatement.DEF, AnyxmlStatement.DEF)) {
             return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
         }
-        if (ListStatement.DEF.equals(def) || LeafListStatement.DEF.equals(def)) {
+        // FIXME: check for MultipleElementsDeclaredStatement via producesDeclared()
+        if (stmtCtx.producesAnyOf(ListStatement.DEF, LeafListStatement.DEF)) {
             final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
             return minElements != null && minElements.lowerInt() > -1;
         }
@@ -309,7 +309,7 @@ public final class StmtContextUtils {
      *         anyxml, list or leaf-list according to RFC6020
      */
     public static boolean isNotMandatoryNodeOfType(final StmtContext<?, ?, ?> stmtCtx,
-            final StatementDefinition stmtDef) {
+            final StatementDefinition<?, ?, ?> stmtDef) {
         return stmtCtx.publicDefinition().equals(stmtDef) && !isMandatoryNode(stmtCtx);
     }
 
@@ -373,9 +373,11 @@ public final class StmtContextUtils {
      * @param parentType type of parent to check
      * @return true if the parent of StmtContext is of specified type, otherwise false
      */
-    public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
+    public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx,
+            final StatementDefinition<?, ?, ?> parentType) {
         requireNonNull(parentType);
         final var parentContext = ctx.getParentContext();
+        // FIXME: class equality, not assignableFrom()!
         return parentContext != null && parentType.equals(parentContext.publicDefinition());
     }
 

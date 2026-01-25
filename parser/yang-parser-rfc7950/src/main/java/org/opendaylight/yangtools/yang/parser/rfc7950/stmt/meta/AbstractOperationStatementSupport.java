@@ -37,7 +37,7 @@ abstract sealed class AbstractOperationStatementSupport<
         D extends DeclaredOperationStatement, E extends EffectiveOperationStatement<D>>
         extends AbstractSchemaTreeStatementSupport<D, E>
         permits ActionStatementSupport, RpcStatementSupport {
-    AbstractOperationStatementSupport(final StatementDefinition publicDefinition,
+    AbstractOperationStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
             final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, SubtreePolicy.structure(), config, validator);
@@ -83,7 +83,7 @@ abstract sealed class AbstractOperationStatementSupport<
         @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     private static void appendImplicitSubstatement(final @NonNull Mutable<?, ?, ?> stmt,
-            final @NonNull StatementDefinition def) {
+            final @NonNull StatementDefinition<?, ?, ?> def) {
         final var statementName = def.statementName();
         final var support = stmt.namespaceItem(StatementSupport.NAMESPACE, statementName);
         if (support == null) {

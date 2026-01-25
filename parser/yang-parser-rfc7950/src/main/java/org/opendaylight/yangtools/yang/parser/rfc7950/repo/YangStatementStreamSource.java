@@ -87,7 +87,7 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
             final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
             @Override
-            StatementDefinition resolveStatement(final QNameModule module, final String localName) {
+            StatementDefinition<?, ?, ?> resolveStatement(final QNameModule module, final String localName) {
                 return stmtDef.getByNamespaceAndLocalName(module.namespace(), localName);
             }
         }.visit(rootStatement);

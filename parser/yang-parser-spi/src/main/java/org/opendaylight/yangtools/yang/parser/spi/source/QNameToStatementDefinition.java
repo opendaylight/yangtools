@@ -23,7 +23,7 @@ public interface QNameToStatementDefinition {
      * @param identifier QName of requested statement
      * @return StatementDefinition
      */
-    @Nullable StatementDefinition get(QName identifier);
+    @Nullable StatementDefinition<?, ?, ?> get(QName identifier);
 
     /**
      * Returns StatementDefinition with specified namespace and localName.
@@ -32,6 +32,6 @@ public interface QNameToStatementDefinition {
      * @param localName localName of requested statement
      * @return StatementDefinition
      */
-    @Nullable StatementDefinition getByNamespaceAndLocalName(@NonNull XMLNamespace namespace,
+    @Nullable StatementDefinition<?, ?, ?> getByNamespaceAndLocalName(@NonNull XMLNamespace namespace,
         @NonNull String localName);
 }

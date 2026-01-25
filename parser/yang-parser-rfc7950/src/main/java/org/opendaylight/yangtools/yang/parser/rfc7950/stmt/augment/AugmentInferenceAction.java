@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 final class AugmentInferenceAction implements InferenceAction {
     private static final Logger LOG = LoggerFactory.getLogger(AugmentInferenceAction.class);
-    private static final Set<StatementDefinition> NOCOPY_DEF_SET = Set.of(
+    private static final Set<StatementDefinition<?, ?, ?>> NOCOPY_DEF_SET = Set.of(
         DescriptionStatement.DEF,
         ReferenceStatement.DEF,
         StatusStatement.DEF,
@@ -82,8 +82,7 @@ final class AugmentInferenceAction implements InferenceAction {
         }
 
         final var augmentTargetCtx = target.resolve(ctx);
-        if (!isSupportedAugmentTarget(augmentTargetCtx)
-                || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
+        if (!isSupportedAugmentTarget(augmentTargetCtx) || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
             augmentNode.setUnsupported();
             return;
         }
@@ -131,7 +130,7 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx) {
-        final CopyType typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
+        final var typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
             ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
         /*
          * Since Yang 1.1, if an augmentation is made conditional with a
@@ -160,10 +159,10 @@ final class AugmentInferenceAction implements InferenceAction {
             final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
-        if (!NOCOPY_DEF_SET.contains(original.publicDefinition())) {
+        if (!original.producesAnyOf(NOCOPY_DEF_SET)) {
             validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
-            final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
+            final var copy = target.childCopyOf(original, typeOfCopy);
             if (unsupported) {
                 copy.setUnsupported();
             }

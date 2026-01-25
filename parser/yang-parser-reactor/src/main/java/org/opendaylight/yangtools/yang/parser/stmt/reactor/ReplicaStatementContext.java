@@ -209,13 +209,13 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition<?, ?, ?> statementDef) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @Deprecated
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition<?, ?, ?> statementDef,
             final String statementArg) {
         throw new UnsupportedOperationException();
     }

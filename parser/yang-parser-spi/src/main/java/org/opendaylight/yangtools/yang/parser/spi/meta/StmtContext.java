@@ -34,6 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
     @Override
+    StatementDefinition<A, D, E> publicDefinition();
+
+    @Override
     <X, Y extends DeclaredStatement<X>> @Nullable StmtContext<X, Y, ?> tryDeclaring(Class<Y> type);
 
     /**
@@ -337,7 +340,7 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
             @NonNull Mutable<X, Y, Z> createUndeclaredSubstatement(StatementSupport<X, Y, Z> support, @Nullable X arg);
 
         @Beta
-        void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef);
+        void removeStatementFromEffectiveSubstatements(StatementDefinition<?, ?, ?> statementDef);
 
         /**
          * Removes a statement context from the effective substatements based on its statement definition (i.e statement
@@ -352,7 +355,7 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
          * @param statementArg statement argument of the statement context to remove
          */
         @Beta
-        void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef, String statementArg);
+        void removeStatementFromEffectiveSubstatements(StatementDefinition<?, ?, ?> statementDef, String statementArg);
 
         @Beta
         // FIXME: this information should be exposed as a well-known Namespace
