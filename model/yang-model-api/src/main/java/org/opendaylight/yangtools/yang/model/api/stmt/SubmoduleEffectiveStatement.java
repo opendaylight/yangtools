@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface SubmoduleEffectiveStatement
     extends DataTreeAwareEffectiveStatement<Unqualified, @NonNull SubmoduleStatement>,
             RootEffectiveStatement<@NonNull SubmoduleStatement>,
-            TypedefAwareEffectiveStatement<Unqualified, @NonNull SubmoduleStatement> {
+            TypedefEffectiveStatement.MultipleIn<Unqualified, @NonNull SubmoduleStatement> {
     @Override
     default StatementDefinition<Unqualified, @NonNull SubmoduleStatement, ?> statementDefinition() {
         return SubmoduleStatement.DEF;

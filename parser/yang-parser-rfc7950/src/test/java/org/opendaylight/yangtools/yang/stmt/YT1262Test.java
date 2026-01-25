@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 class YT1262Test extends AbstractYangTest {
     @Test
@@ -45,7 +45,7 @@ class YT1262Test extends AbstractYangTest {
     }
 
     private static void assertTypedef(final EffectiveStatement<?, ?> parent, final String typedefName) {
-        assertTrue(assertInstanceOf(TypedefAwareEffectiveStatement.class, parent)
-            .findTypedef(QName.create("foo", typedefName)).isPresent());
+        assertNotNull(assertInstanceOf(TypedefEffectiveStatement.MultipleIn.class, parent)
+            .lookupTypedefStatement(QName.create("foo", typedefName)));
     }
 }

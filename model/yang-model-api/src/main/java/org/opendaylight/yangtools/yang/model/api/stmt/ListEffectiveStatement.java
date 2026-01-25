@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public non-sealed interface ListEffectiveStatement extends DataTreeEffectiveStatement<@NonNull ListStatement>,
         DataTreeAwareEffectiveStatement<QName, @NonNull ListStatement>,
-        TypedefAwareEffectiveStatement<QName, @NonNull ListStatement>,
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull ListStatement>,
         OrderedByAwareEffectiveStatement<QName, @NonNull ListStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ListStatement, ?> statementDefinition() {
