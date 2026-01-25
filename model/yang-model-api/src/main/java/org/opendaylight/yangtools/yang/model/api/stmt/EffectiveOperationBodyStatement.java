@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 public sealed interface EffectiveOperationBodyStatement<D extends DeclaredOperationBodyStatement>
     extends DataTreeEffectiveStatement<D>, DataTreeAwareEffectiveStatement<QName, D>,
-            TypedefAwareEffectiveStatement<QName, D>
+            TypedefEffectiveStatement.MultipleIn<QName, D>
     permits InputEffectiveStatement, OutputEffectiveStatement {
     // Nothing else
 }
