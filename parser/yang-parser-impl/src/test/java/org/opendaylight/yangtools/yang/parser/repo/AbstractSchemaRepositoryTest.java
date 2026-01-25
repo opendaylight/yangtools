@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -24,10 +24,13 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 
 abstract class AbstractSchemaRepositoryTest {
+    static final YangTextToIRSourceTransformer TRANSFORMER =
+        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+
     static @NonNull EffectiveModelContext assertModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
         final var future = createModelContext(modulesWithSupportedDeviations, resources);
@@ -64,14 +67,9 @@ abstract class AbstractSchemaRepositoryTest {
     }
 
     static final SettableSchemaProvider<YangIRSource> assertYangTextResource(final String resourceName) {
-        final YangIRSource yangSource;
-        try {
-            yangSource = TextToIRTransformer.transformText(
-                new URLYangTextSource(AbstractSchemaRepositoryTest.class.getResource(resourceName)));
-        } catch (YangSyntaxErrorException | IOException e) {
-            throw new AssertionError("Failed to parse " + resourceName, e);
-        }
-        return SettableSchemaProvider.createImmediate(yangSource, YangIRSource.class);
+        return SettableSchemaProvider.createImmediate(assertDoesNotThrow(() -> TRANSFORMER.transformSource(
+            new URLYangTextSource(AbstractSchemaRepositoryTest.class.getResource(resourceName)))),
+            YangIRSource.class);
     }
 
     static final void assertSchemaContext(final EffectiveModelContext schemaContext, final int moduleSize) {

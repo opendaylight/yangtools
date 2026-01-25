@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
@@ -52,8 +53,11 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Cost
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
@@ -70,6 +74,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
     private final GuavaSchemaSourceCache<YangIRSource> cache;
+    private final YangTextToIRSourceTransformer textToIR;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
     private final Registration transReg;
@@ -82,7 +87,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         this.repository = requireNonNull(repository);
         this.registry = requireNonNull(registry);
 
-        transReg = registry.registerSchemaSourceListener(TextToIRTransformer.create(repository, registry));
+        final var trans = TextToIRTransformer.create(repository, registry);
+        textToIR = trans.textToIR();
+        transReg = registry.registerSchemaSourceListener(trans);
         cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSource.class, SOURCE_LIFETIME);
     }
 
@@ -109,13 +116,25 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      */
     public @NonNull Registration registerSource(final @NonNull YangTextSource source)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
-        final var ast = TextToIRTransformer.transformText(source);
-        LOG.trace("Resolved source {} to source {}", source, ast);
+        final YangIRSource irSource;
+        try {
+            irSource = textToIR.transformSource(source);
+        } catch (SourceSyntaxException e) {
+            final var sourceRef = e.sourceRef();
+            if (sourceRef != null && sourceRef.declarationReference() instanceof DeclarationInText ref) {
+                throw new YangSyntaxErrorException(source.sourceId(), ref.startLine(), ref.startColumn(),
+                    e.getMessage(), e);
+            }
+            throw new YangSyntaxErrorException(source.sourceId(), 0, 0, e.getMessage(), e);
+        } catch (ExtractorException e) {
+            throw new SchemaSourceException(source.sourceId(), e.getMessage(), e);
+        }
+        LOG.trace("Resolved source {} to source {}", source, irSource);
 
         // AST carries an accurate identifier, check if it matches the one supplied by the source. If it
         // does not, check how much it differs and emit a warning.
         final var providedId = source.sourceId();
-        final var parsedId = ast.sourceId();
+        final var parsedId = irSource.sourceId();
         final YangTextSource text;
         if (!parsedId.equals(providedId)) {
             if (!parsedId.name().equals(providedId.name())) {
@@ -145,7 +164,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             final var reg = registry.registerSchemaSource(this,
                 PotentialSchemaSource.create(parsedId, YangTextSource.class, Costs.IMMEDIATE.getValue()));
             requiredSources.add(parsedId);
-            cache.schemaSourceEncountered(ast);
+            cache.schemaSourceEncountered(irSource);
             LOG.debug("Added source {} to schema context requirements", parsedId);
             version = new Object();
 

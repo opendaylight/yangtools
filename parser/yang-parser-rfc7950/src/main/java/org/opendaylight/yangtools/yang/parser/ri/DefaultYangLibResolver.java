@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.ri;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Collection;
@@ -17,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -38,24 +41,26 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 @Component
 @MetaInfServices
 public final class DefaultYangLibResolver implements YangLibResolver {
+    private final YangTextToIRSourceTransformer textToIR;
     private final CrossSourceStatementReactor reactor;
 
     /**
      * Default constructor for {@link ServiceLoader} instantiation.
      */
     public DefaultYangLibResolver() {
-        this(ServiceLoader.load(YangXPathParserFactory.class).findFirst()
-            .orElseThrow(() -> new IllegalStateException("No YangXPathParserFactory found")));
-    }
-
-    public DefaultYangLibResolver(final YangXPathParserFactory xpathFactory) {
-        this(xpathFactory,
+        this(
+            ServiceLoader.load(YangXPathParserFactory.class).findFirst()
+                .orElseThrow(() -> new IllegalStateException("No YangXPathParserFactory found")),
+            ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst()
+                .orElseThrow(() -> new IllegalStateException("No YangTextToIRSourceTransformer found")),
             ServiceLoader.load(ParserExtension.class).stream().map(ServiceLoader.Provider::get).toList());
     }
 
     @Activate
     public DefaultYangLibResolver(@Reference final YangXPathParserFactory xpathFactory,
+            @Reference final YangTextToIRSourceTransformer textToIR,
             @Reference(policyOption = ReferencePolicyOption.GREEDY) final Collection<ParserExtension> extensions) {
+        this.textToIR = requireNonNull(textToIR);
         final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, YangParserConfiguration.DEFAULT);
         for (var extension : extensions) {
             builder.addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
@@ -81,11 +86,11 @@ public final class DefaultYangLibResolver implements YangLibResolver {
                 features.add(feat.bindTo(namespace));
             }
 
-            act.addSource(DefaultYangParser.sourceToStatementStream(module.source()));
+            act.addSource(DefaultYangParser.sourceToStatementStream(textToIR, module.source()));
         }
 
         for (var module : moduleSet.importOnlyModules().values()) {
-            act.addLibSource(DefaultYangParser.sourceToStatementStream(module.source()));
+            act.addLibSource(DefaultYangParser.sourceToStatementStream(textToIR, module.source()));
         }
 
         try {

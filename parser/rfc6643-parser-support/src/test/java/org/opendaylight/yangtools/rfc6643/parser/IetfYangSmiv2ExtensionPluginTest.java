@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -41,17 +42,18 @@ class IetfYangSmiv2ExtensionPluginTest {
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc6643Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
-        final var schema = reactor.newBuild()
+        final var transformer = YangTextToIRSourceTransformerModule.provideSourceTransformer();
+        final var context = reactor.newBuild()
             .addSources(
-                YangStatementStreamSource.create(new URLYangTextSource(
-                    IetfYangSmiv2ExtensionPluginTest.class.getResource("/foo.yang"))),
-                YangStatementStreamSource.create(new URLYangTextSource(
-                    IetfYangSmiv2ExtensionPluginTest.class.getResource("/ietf-yang-smiv2.yang"))))
+                YangStatementStreamSource.create(transformer.transformSource(new URLYangTextSource(
+                    IetfYangSmiv2ExtensionPluginTest.class.getResource("/foo.yang")))),
+                YangStatementStreamSource.create(transformer.transformSource(new URLYangTextSource(
+                    IetfYangSmiv2ExtensionPluginTest.class.getResource("/ietf-yang-smiv2.yang")))))
             .buildEffective();
 
-        assertEquals(1, schema.getUnknownSchemaNodes().size());
+        assertEquals(1, context.getUnknownSchemaNodes().size());
         final var aliasExtEffectStmt = assertInstanceOf(AliasSchemaNode.class,
-            schema.getUnknownSchemaNodes().iterator().next());
+            context.getUnknownSchemaNodes().iterator().next());
         assertEquals("ifXTable", aliasExtEffectStmt.getArgument());
         assertEquals(1, aliasExtEffectStmt.getUnknownSchemaNodes().size());
         final var oidExtEffectStmt = assertInstanceOf(OidSchemaNode.class,
@@ -59,7 +61,7 @@ class IetfYangSmiv2ExtensionPluginTest {
         assertEquals("1.3.6.1.2.1.31.1.1", oidExtEffectStmt.getArgument().toString());
 
         final var root = assertInstanceOf(ContainerSchemaNode.class,
-            schema.dataChildByName(QName.create(NS, REV, "root")));
+            context.dataChildByName(QName.create(NS, REV, "root")));
         assertEquals(1, root.getUnknownSchemaNodes().size());
         final var oid = assertInstanceOf(OidSchemaNode.class, root.getUnknownSchemaNodes().iterator().next());
         assertEquals("1", oid.getArgument().toString());

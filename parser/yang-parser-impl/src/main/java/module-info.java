@@ -6,10 +6,12 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 
 /**
  * Reference implementation of YANG parser.
  *
+ * @uses YangTextToIRSourceTransformer
  * @provides SchemaRepository
  */
 module org.opendaylight.yangtools.yang.parser.impl {
@@ -19,6 +21,7 @@ module org.opendaylight.yangtools.yang.parser.impl {
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.yang.parser.impl;
 
+    uses YangTextToIRSourceTransformer;
     provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 
     requires transitive com.google.common;

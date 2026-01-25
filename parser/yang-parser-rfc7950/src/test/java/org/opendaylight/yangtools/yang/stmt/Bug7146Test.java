@@ -8,19 +8,18 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 
 class Bug7146Test {
     @Test
-    void shouldFailOnSyntaxError() {
-        final var cause = assertThrows(IllegalArgumentException.class,
-            () -> StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug7146/foo.yang"))).getCause();
-        assertInstanceOf(YangSyntaxErrorException.class, cause);
-        assertThat(cause.getMessage()).contains("extraneous input '#'");
+    void shouldFailOnSyntaxError() throws Exception {
+        final var ex = assertThrows(SourceSyntaxException.class,
+            () -> TestUtils.assertSchemaSource("/bugs/bug7146/foo.yang"));
+        assertThat(ex.getMessage())
+            .startsWith("extraneous input '#' expecting {'}', SEP, IDENTIFIER} [at ")
+            .endsWith("/foo.yang:7:4]");
     }
 }
