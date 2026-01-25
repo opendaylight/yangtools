@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.ir.IOSupport;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 class IOSupportTest {
@@ -27,7 +26,7 @@ class IOSupportTest {
 
     @BeforeAll
     static void beforeClass() throws Exception {
-        FOO = TextToIRTransformer.transformText(TestUtils.assertSchemaSource("/bugs/YT1089/foo.yang"));
+        FOO = TestUtils.assertSchemaSource("/bugs/YT1089/foo.yang");
     }
 
     @Test
