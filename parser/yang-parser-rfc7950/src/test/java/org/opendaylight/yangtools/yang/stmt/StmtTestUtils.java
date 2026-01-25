@@ -23,9 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -64,12 +62,7 @@ public final class StmtTestUtils {
     }
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {
-        try {
-            return YangStatementStreamSource.create(new URLYangTextSource(
-                StmtTestUtils.class.getResource(resourceName)));
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new IllegalArgumentException("Failed to create source", e);
-        }
+        return YangStatementStreamSource.create(TestUtils.assertSchemaSource(resourceName));
     }
 
     public static EffectiveModelContext parseYangSource(final String yangSourcePath, final Set<QName> supportedFeatures)
@@ -114,7 +107,7 @@ public final class StmtTestUtils {
                 throws ReactorException, IOException, YangSyntaxErrorException {
         final var sources = new ArrayList<YangStatementStreamSource>(files.length);
         for (var file : files) {
-            sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
+            sources.add(YangStatementStreamSource.create(TestUtils.assertSchemaSource(file.toPath())));
         }
         return parseYangSources(config, supportedFeatures, sources);
     }
