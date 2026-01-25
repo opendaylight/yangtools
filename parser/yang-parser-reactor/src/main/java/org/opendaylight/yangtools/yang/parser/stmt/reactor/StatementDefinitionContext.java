@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
@@ -52,14 +53,14 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         return support.adaptArgumentValue(context, targetModule);
     }
 
-    @NonNull StatementDefinition getPublicView() {
+    @NonNull StatementDefinition<A, D, E> getPublicView() {
         return support.getPublicView();
     }
 
-    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final NamespaceStmtCtx parent,
-            final StatementDefinition stmtDef) {
+    @Nullable StatementSupport<?, ?, ?> implicitParentFor(final @NonNull NamespaceStmtCtx parent,
+            final @NonNull StatementDefinition<?, ?, ?> stmtDef) {
         return support instanceof ImplicitParentAwareStatementSupport implicit
-                ? implicit.getImplicitParentFor(parent, stmtDef) : Optional.empty();
+            ? implicit.implicitParentFor(parent, stmtDef) : null;
     }
 
     void onStatementAdded(final @NonNull Mutable<A, D, E> stmt) {

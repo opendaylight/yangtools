@@ -190,12 +190,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition<?, ?, ?> statementDef) {
         substatements = removeStatementFromEffectiveSubstatements(ensureEffectiveSubstatements(), statementDef);
     }
 
     @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition<?, ?, ?> statementDef,
             final String statementArg) {
         substatements = removeStatementFromEffectiveSubstatements(ensureEffectiveSubstatements(), statementDef,
             statementArg);

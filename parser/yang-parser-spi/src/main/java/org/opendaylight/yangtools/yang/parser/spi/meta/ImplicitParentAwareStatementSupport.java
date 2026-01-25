@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * and others.
  */
 @Beta
+@NonNullByDefault
 public interface ImplicitParentAwareStatementSupport {
     /**
      * Returns implicit parent statement support for supplied statement definition, if it is defined. This allows
@@ -25,7 +27,8 @@ public interface ImplicitParentAwareStatementSupport {
      *
      * @param parent parent statement context
      * @param stmtDef statement definition of substatement
-     * @return optional of implicit parent statement support
+     * @return implicit parent statement support or {@code null}
      */
-    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(NamespaceStmtCtx parent, StatementDefinition stmtDef);
+    @Nullable StatementSupport<?, ?, ?> implicitParentFor(NamespaceStmtCtx parent,
+        StatementDefinition<?, ?, ?> stmtDef);
 }

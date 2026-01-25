@@ -71,7 +71,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
         return new YinStatementStreamSource(source.sourceId(), source.getSource().getNode(), source.refProvider());
     }
 
-    private static StatementDefinition getValidDefinition(final Node node, final StatementWriter writer,
+    private static StatementDefinition<?, ?, ?> getValidDefinition(final Node node, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
         final var uri = NS_CACHE.getUnchecked(node.getNamespaceURI());
         final var def = stmtDef.getByNamespaceAndLocalName(uri, node.getLocalName());

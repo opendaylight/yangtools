@@ -83,12 +83,12 @@ abstract sealed class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E exten
     }
 
     @Override
-    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition<?, ?, ?> statementDef) {
         effective = removeStatementFromEffectiveSubstatements(effective, statementDef);
     }
 
     @Override
-    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition<?, ?, ?> statementDef,
             final String statementArg) {
         effective = removeStatementFromEffectiveSubstatements(effective, statementDef, statementArg);
     }

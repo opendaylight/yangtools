@@ -14,7 +14,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -82,9 +81,8 @@ public final class ChoiceStatementSupport
             .addOptional(StatusStatement.DEF)
             .addOptional(WhenStatement.DEF)
             .build();
-    private static final ImmutableSet<StatementDefinition> RFC6020_CASE_SHORTHANDS = ImmutableSet.of(
-        AnyxmlStatement.DEF, ContainerStatement.DEF, LeafStatement.DEF, ListStatement.DEF,
-        LeafListStatement.DEF);
+    private static final ImmutableSet<StatementDefinition<?, ?, ?>> RFC6020_CASE_SHORTHANDS = ImmutableSet.of(
+        AnyxmlStatement.DEF, ContainerStatement.DEF, LeafStatement.DEF, ListStatement.DEF, LeafListStatement.DEF);
     private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(ChoiceStatement.DEF)
             .addAny(AnydataStatement.DEF)
@@ -104,15 +102,14 @@ public final class ChoiceStatementSupport
             .addOptional(StatusStatement.DEF)
             .addOptional(WhenStatement.DEF)
             .build();
-    private static final ImmutableSet<StatementDefinition> RFC7950_CASE_SHORTHANDS = ImmutableSet.of(
-        AnydataStatement.DEF, AnyxmlStatement.DEF, ChoiceStatement.DEF,
-        ContainerStatement.DEF, LeafStatement.DEF, ListStatement.DEF,
-        LeafListStatement.DEF);
+    private static final ImmutableSet<StatementDefinition<?, ?, ?>> RFC7950_CASE_SHORTHANDS = ImmutableSet.of(
+        AnydataStatement.DEF, AnyxmlStatement.DEF, ChoiceStatement.DEF, ContainerStatement.DEF, LeafStatement.DEF,
+        ListStatement.DEF, LeafListStatement.DEF);
 
-    private final ImmutableSet<StatementDefinition> caseShorthands;
+    private final ImmutableSet<StatementDefinition<?, ?, ?>> caseShorthands;
 
     private ChoiceStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
-            final ImmutableSet<StatementDefinition> caseShorthands) {
+            final ImmutableSet<StatementDefinition<?, ?, ?>> caseShorthands) {
         super(ChoiceStatement.DEF, instantiatedPolicy(), config, requireNonNull(validator));
         this.caseShorthands = requireNonNull(caseShorthands);
     }
@@ -126,13 +123,11 @@ public final class ChoiceStatementSupport
     }
 
     @Override
-    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final NamespaceStmtCtx parent,
-            final StatementDefinition stmtDef) {
-        if (!caseShorthands.contains(stmtDef)) {
-            return Optional.empty();
-        }
-        return Optional.of(verifyNotNull(parent.namespaceItem(StatementSupport.NAMESPACE,
-            CaseStatement.DEF.statementName())));
+    public StatementSupport<?, ?, ?> implicitParentFor(final NamespaceStmtCtx parent,
+            final StatementDefinition<?, ?, ?> stmtDef) {
+        return caseShorthands.contains(stmtDef)
+            ? verifyNotNull(parent.namespaceItem(StatementSupport.NAMESPACE, CaseStatement.DEF.statementName()))
+            : null;
     }
 
     @Override

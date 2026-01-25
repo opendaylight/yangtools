@@ -117,12 +117,12 @@ public final class DeviateStatementSupport
             .addOptional(UnitsStatement.DEF)
             .build();
 
-    private static final Set<StatementDefinition> IMPLICIT_STATEMENTS = Set.of(
+    private static final Set<StatementDefinition<?, ?, ?>> IMPLICIT_STATEMENTS = Set.of(
         ConfigStatement.DEF,
         MandatoryStatement.DEF,
         MaxElementsStatement.DEF,
         MinElementsStatement.DEF);
-    private static final Set<StatementDefinition> SINGLETON_STATEMENTS = Set.of(
+    private static final Set<StatementDefinition<?, ?, ?>> SINGLETON_STATEMENTS = Set.of(
         ConfigStatement.DEF,
         MandatoryStatement.DEF,
         MinElementsStatement.DEF,
@@ -308,8 +308,7 @@ public final class DeviateStatementSupport
             final Mutable<?, ?, ?> targetCtx) {
         final var stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
-        if (DefaultStatement.DEF.equals(stmtToBeReplaced)
-                && LeafListStatement.DEF.equals(targetCtx.publicDefinition())) {
+        if (stmtCtxToBeReplaced.producesAnyOf(DefaultStatement.DEF, LeafListStatement.DEF)) {
             LOG.error("""
                 Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can have multiple \
                 default statements. At line: {}""", stmtToBeReplaced.statementName(), targetCtx.argument(),
@@ -336,7 +335,7 @@ public final class DeviateStatementSupport
         // This is a special case when deviate replace of a config/mandatory/max/min-elements substatement targets
         // a node which does not contain an explicitly declared config/mandatory/max/min-elements.
         // However, according to RFC6020/RFC7950, these properties are always implicitly present.
-        if (IMPLICIT_STATEMENTS.contains(stmtToBeReplaced)) {
+        if (stmtCtxToBeReplaced.producesAnyOf(IMPLICIT_STATEMENTS)) {
             addStatement(stmtCtxToBeReplaced, targetCtx);
             return;
         }
@@ -392,8 +391,8 @@ public final class DeviateStatementSupport
         }
     }
 
-    private static boolean statementsAreEqual(final StatementDefinition firstStmtDef, final String firstStmtArg,
-            final StatementDefinition secondStmtDef, final String secondStmtArg) {
+    private static boolean statementsAreEqual(final StatementDefinition<?, ?, ?> firstStmtDef,
+            final String firstStmtArg, final StatementDefinition<?, ?, ?> secondStmtDef, final String secondStmtArg) {
         return firstStmtDef.equals(secondStmtDef) && Objects.equals(firstStmtArg, secondStmtArg);
     }
 

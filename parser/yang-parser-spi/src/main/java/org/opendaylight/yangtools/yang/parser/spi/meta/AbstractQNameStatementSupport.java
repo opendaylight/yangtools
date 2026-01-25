@@ -23,13 +23,13 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
  */
 public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
-    protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractQNameStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
             final StatementPolicy<QName, D> policy, final SubtreePolicy subtreePolicy,
             final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, subtreePolicy, config, validator);
     }
 
-    protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractQNameStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
             final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);

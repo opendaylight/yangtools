@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 final class AugmentInferenceAction implements InferenceAction {
     private static final Logger LOG = LoggerFactory.getLogger(AugmentInferenceAction.class);
-    private static final Set<StatementDefinition> NOCOPY_DEF_SET = Set.of(
+    private static final Set<StatementDefinition<?, ?, ?>> NOCOPY_DEF_SET = Set.of(
         DescriptionStatement.DEF,
         ReferenceStatement.DEF,
         StatusStatement.DEF,
@@ -160,7 +160,7 @@ final class AugmentInferenceAction implements InferenceAction {
             final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
-        if (!NOCOPY_DEF_SET.contains(original.publicDefinition())) {
+        if (!original.producesAnyOf(NOCOPY_DEF_SET)) {
             validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
             final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);

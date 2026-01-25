@@ -22,13 +22,14 @@ public interface ThirdPartyExtensionStatement extends UnknownStatement<String> {
      *
      * @since 15.0.0
      */
-    @NonNull StatementDefinition DEF = StatementDefinition.of(
-        ThirdPartyExtensionStatement.class, ThirdPartyExtensionEffectiveStatement.class,
-        QNameModule.of("urn:opendaylight:yang:extension:third-party", "2016-06-09"),
-        "third-party-extension", "argument-name");
+    @NonNull StatementDefinition<String, @NonNull ThirdPartyExtensionStatement,
+        @NonNull ThirdPartyExtensionEffectiveStatement> DEF = StatementDefinition.of(
+            ThirdPartyExtensionStatement.class, ThirdPartyExtensionEffectiveStatement.class,
+            QNameModule.of("urn:opendaylight:yang:extension:third-party", "2016-06-09"),
+            "third-party-extension", "argument-name");
 
     @Override
-    default StatementDefinition statementDefinition() {
+    default StatementDefinition<String, ? , ?> statementDefinition() {
         return DEF;
     }
 }

@@ -25,5 +25,6 @@ public interface OverrideChildStatementSupport {
      * @return Optional of unknown statement form of a regular YANG statement, or {@code null} if it should not be
      *         overridden.
      */
-    @Nullable StatementSupport<?, ?, ?> statementDefinitionOverrideOf(@NonNull StatementDefinition childDef);
+    // FIXME: propagating definition
+    @Nullable StatementSupport<?, ?, ?> statementDefinitionOverrideOf(@NonNull StatementDefinition<?, ?, ?> childDef);
 }

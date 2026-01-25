@@ -44,13 +44,13 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
                 }
             });
 
-    protected AbstractInternedStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractInternedStatementSupport(final StatementDefinition<A, D, E> publicDefinition,
             final StatementPolicy<A, D> policy, final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, subtreePolicy, config, validator);
     }
 
-    protected AbstractInternedStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractInternedStatementSupport(final StatementDefinition<A, D, E> publicDefinition,
             final StatementPolicy<A, D> policy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);

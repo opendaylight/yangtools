@@ -32,16 +32,17 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     private final SubstatementValidator substatementValidator;
     private final boolean retainDeclarationReference;
 
-    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy,
-            final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
+    protected AbstractStatementSupport(final StatementDefinition<A, D, E> publicDefinition,
+            final StatementPolicy<A, D> policy, final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, subtreePolicy);
         retainDeclarationReference = config.retainDeclarationReferences();
         substatementValidator = validator;
     }
 
-    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy,
-            final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
+    protected AbstractStatementSupport(final StatementDefinition<A, D, E> publicDefinition,
+            final StatementPolicy<A, D> policy, final YangParserConfiguration config,
+            final @Nullable SubstatementValidator validator) {
         this(publicDefinition, policy, SubtreePolicy.normal(), config, validator);
     }
 

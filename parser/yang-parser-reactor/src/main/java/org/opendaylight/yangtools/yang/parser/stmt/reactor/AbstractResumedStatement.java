@@ -100,7 +100,7 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final StatementDefinition getDefinition() {
+    public final StatementDefinition<A, D, E> getDefinition() {
         return publicDefinition();
     }
 
@@ -232,10 +232,10 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
                 "Declared statement cannot be added in effective phase at: %s", sourceReference());
 
         final SubstatementContext<X, Y, Z> ret;
-        final var implicitParent = definition().getImplicitParentFor(this, def.getPublicView());
-        if (implicitParent.isPresent()) {
+        final var implicitParent = definition().implicitParentFor(this, def.getPublicView());
+        if (implicitParent != null) {
             implicitDeclared = true;
-            final var parent = createUndeclared(offset, implicitParent.orElseThrow(), ref, argument);
+            final var parent = createUndeclared(offset, implicitParent, ref, argument);
             ret = new SubstatementContext<>(parent, def, ref, argument);
             parent.addEffectiveSubstatement(ret);
         } else {
@@ -251,9 +251,9 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
             UndeclaredStmtCtx<X, Y, Z> createUndeclared(final int offset, final StatementSupport<X, Y, Z> support,
                 final StatementSourceReference ref, final String argument) {
         final UndeclaredStmtCtx<X, Y, Z> ret;
-        final var implicitParent = definition().getImplicitParentFor(this, support.getPublicView());
-        if (implicitParent.isPresent()) {
-            final var parent = createUndeclared(offset, implicitParent.orElseThrow(), ref, argument);
+        final var implicitParent = definition().implicitParentFor(this, support.getPublicView());
+        if (implicitParent != null) {
+            final var parent = createUndeclared(offset, implicitParent, ref, argument);
             ret = new ImplicitStmtCtx<>(parent, support, argument);
             parent.addEffectiveSubstatement(ret);
         } else {

@@ -277,16 +277,15 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     static final List<ReactorStmtCtx<?, ?, ?>> removeStatementFromEffectiveSubstatements(
-            final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition statementDef) {
+            final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition<?, ?, ?> statementDef) {
         if (effective.isEmpty()) {
             return effective;
         }
 
-        final Iterator<? extends StmtContext<?, ?, ?>> iterator = effective.iterator();
-        while (iterator.hasNext()) {
-            final StmtContext<?, ?, ?> next = iterator.next();
-            if (statementDef.equals(next.publicDefinition())) {
-                iterator.remove();
+        final var it = effective.iterator();
+        while (it.hasNext()) {
+            if (it.next().produces(statementDef)) {
+                it.remove();
             }
         }
 
@@ -294,7 +293,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     static final List<ReactorStmtCtx<?, ?, ?>> removeStatementFromEffectiveSubstatements(
-            final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition statementDef,
+            final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition<?, ?, ?> statementDef,
             final String statementArg) {
         if (statementArg == null) {
             return removeStatementFromEffectiveSubstatements(effective, statementDef);
@@ -764,13 +763,13 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
             final StatementContextBase<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
-        final var implicitParent = definition.getImplicitParentFor(this, original.publicDefinition());
+        final var implicitParent = definition.implicitParentFor(this, original.publicDefinition());
 
         final StatementContextBase<X, Y, Z> result;
         final InferredStatementContext<X, Y, Z> copy;
 
-        if (implicitParent.isPresent()) {
-            result = new UndeclaredStmtCtx(this, implicitParent.orElseThrow(), original, type);
+        if (implicitParent != null) {
+            result = new UndeclaredStmtCtx(this, implicitParent, original, type);
 
             final CopyType childCopyType = switch (type) {
                 case ADDED_BY_AUGMENTATION -> CopyType.ORIGINAL;
@@ -806,12 +805,12 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public final StmtContext<?, ?, ?> wrapWithImplicit(final StmtContext<?, ?, ?> original) {
-        final var optImplicit = definition.getImplicitParentFor(this, original.publicDefinition());
-        if (optImplicit.isEmpty()) {
+        final var implicitParent = definition.implicitParentFor(this, original.publicDefinition());
+        if (implicitParent == null) {
             return original;
         }
         if (original instanceof StatementContextBase<?, ?, ?> origBase) {
-            final var result = new UndeclaredStmtCtx<>(origBase, optImplicit.orElseThrow());
+            final var result = new UndeclaredStmtCtx<>(origBase, implicitParent);
             result.addEffectiveSubstatement(origBase.reparent(result));
             result.setCompletedPhase(original.getCompletedPhase());
             return result;
