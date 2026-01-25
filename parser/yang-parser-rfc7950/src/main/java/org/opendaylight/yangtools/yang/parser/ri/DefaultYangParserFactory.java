@@ -8,13 +8,16 @@
 package org.opendaylight.yangtools.yang.parser.ri;
 
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -40,23 +43,17 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     private final ConcurrentHashMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
         new ConcurrentHashMap<>(2);
     private final Function<YangParserConfiguration, CrossSourceStatementReactor> reactorFactory;
+    private final @NonNull YangTextToIRSourceTransformer textToIR;
 
     /**
      * Default constructor for {@link ServiceLoader} instantiation.
      */
     public DefaultYangParserFactory() {
-        this(ServiceLoader.load(YangXPathParserFactory.class).findFirst()
-            .orElseThrow(() -> new IllegalStateException("No YangXPathParserFactory found")));
-    }
-
-    /**
-     * Utility constructor for partial injection.
-     *
-     * @deprecated Exposed only for InjectYangParserFactory
-     */
-    @Deprecated(since = "14.0.21", forRemoval = true)
-    public DefaultYangParserFactory(final YangXPathParserFactory xpathFactory) {
-        this(xpathFactory,
+        this(
+            ServiceLoader.load(YangXPathParserFactory.class).findFirst()
+                .orElseThrow(() -> new IllegalStateException("No YangXPathParserFactory found")),
+            ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst()
+                .orElseThrow(() -> new IllegalStateException("No YangTextToIRSourceTransformer found")),
             ServiceLoader.load(ParserExtension.class).stream().map(ServiceLoader.Provider::get).toList());
     }
 
@@ -68,7 +65,9 @@ public final class DefaultYangParserFactory implements YangParserFactory {
      */
     @Activate
     public DefaultYangParserFactory(@Reference final YangXPathParserFactory xpathFactory,
+            @Reference final YangTextToIRSourceTransformer textToIR,
             @Reference(policyOption = ReferencePolicyOption.GREEDY) final Collection<ParserExtension> extensions) {
+        this.textToIR = requireNonNull(textToIR);
         reactorFactory = config -> {
             final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, config);
             for (var extension : extensions) {
@@ -92,6 +91,6 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         if (!SUPPORTED_MODES.contains(importMode)) {
             throw new IllegalArgumentException("Unsupported import resolution mode " + importMode);
         }
-        return new DefaultYangParser(reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
+        return new DefaultYangParser(textToIR, reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
     }
 }
