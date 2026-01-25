@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -21,9 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -53,12 +55,12 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
      * @param source YangTextSchemaSource, must not be null
      * @return A new {@link YangStatementStreamSource}
      * @throws IOException When we fail to read the source
-     * @throws YangSyntaxErrorException If the source fails basic parsing
+     * @throws SourceSyntaxException If the source fails basic parsing
      */
-    public static YangStatementStreamSource create(final YangTextSource source)
-            throws IOException, YangSyntaxErrorException {
-        return new YangStatementStreamSource(source.sourceId(), YangTextParser.parseToIR(source),
-            source.symbolicName());
+    @NonNullByDefault
+    public static YangStatementStreamSource create(final YangTextToIRSourceTransformer sourceTransformer,
+                final YangTextSource source) throws ExtractorException, SourceSyntaxException {
+        return create(sourceTransformer.transformSource(source));
     }
 
     /**
