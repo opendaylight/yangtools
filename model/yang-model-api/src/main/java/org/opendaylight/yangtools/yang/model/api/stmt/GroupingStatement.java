@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code grouping} statement.
  */
 public interface GroupingStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
-        NotificationStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName> {
+        DataDefinitionStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName>,
+        GroupingStatementMultipleIn<QName>, ActionStatement.MultipleIn<QName>, NotificationStatement.MultipleIn<QName> {
     /**
      * The definition of {@code grouping} statement.
      *

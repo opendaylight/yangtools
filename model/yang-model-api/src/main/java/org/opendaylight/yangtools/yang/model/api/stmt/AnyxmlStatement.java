@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code anyxml} statement.
  */
-public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
-        MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
+public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatement.OptionalIn<QName>,
+        MandatoryStatement.OptionalIn<QName>, MustStatement.MultipleIn<QName> {
     /**
      * The definition of {@code anyxml} statement.
      *
