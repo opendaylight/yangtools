@@ -17,10 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 /**
  * Declared representation of a {@code refine} statement.
  */
-public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<Descendant>,
-        DocumentedDeclaredStatement<Descendant>, IfFeatureAwareDeclaredStatement<Descendant>,
-        MandatoryStatementAwareDeclaredStatement<Descendant>,
-        MustStatementAwareDeclaredStatement<Descendant> {
+public interface RefineStatement extends DocumentedDeclaredStatement<Descendant>,
+        ConfigStatement.OptionalIn<Descendant>, IfFeatureStatement.MultipleIn<Descendant>,
+        MandatoryStatement.OptionalIn<Descendant>, MustStatement.MultipleIn<Descendant> {
     /**
      * The definition of {@code refine} statement.
      *

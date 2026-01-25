@@ -17,10 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatemen
  * Declared representation of a {@code augment} statement.
  */
 public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
-        DataDefinitionAwareDeclaredStatement<SchemaNodeIdentifier>,
-        NotificationStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
-        ActionStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
-        WhenStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
+        DataDefinitionStatement.MultipleIn<SchemaNodeIdentifier>, ActionStatement.MultipleIn<SchemaNodeIdentifier>,
+        IfFeatureStatement.MultipleIn<SchemaNodeIdentifier>, NotificationStatement.MultipleIn<SchemaNodeIdentifier>,
+        WhenStatement.OptionalIn<SchemaNodeIdentifier> {
     /**
      * The definition of {@code augment} statement.
      *

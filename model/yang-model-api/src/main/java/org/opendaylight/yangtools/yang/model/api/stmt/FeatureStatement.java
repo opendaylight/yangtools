@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code feature} statement.
  */
 public interface FeatureStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        IfFeatureAwareDeclaredStatement<QName> {
+        IfFeatureStatement.MultipleIn<QName> {
     /**
      * The definition of {@code feature} statement.
      *

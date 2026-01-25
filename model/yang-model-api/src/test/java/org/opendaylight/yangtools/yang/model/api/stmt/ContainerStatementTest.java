@@ -13,7 +13,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,23 +20,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement1;
 
 @ExtendWith(MockitoExtension.class)
-class ActionStatementAwareDeclaredStatementTest {
+class ContainerStatementTest {
     @Mock
-    ActionStatementAwareDeclaredStatement<?> stmt;
+    private ContainerStatement stmt;
     @Mock
-    DeclaredStatement1 stmt1;
+    private DeclaredStatement1 stmt1;
     @Mock
-    ActionStatement stmt2;
-
-    @BeforeEach
-    void before() {
-        doReturn(ImmutableList.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
-        doCallRealMethod().when(stmt).declaredSubstatements(any());
-        doCallRealMethod().when(stmt).getActions();
-    }
+    private ActionStatement stmt2;
 
     @Test
-    void testGetActions() {
-        assertEquals(ImmutableList.of(stmt2), ImmutableList.copyOf(stmt.getActions()));
+    void actionStatementsFiltersDeclared() {
+        doReturn(ImmutableList.of(stmt1, stmt2)).when(stmt).declaredSubstatements();
+        doCallRealMethod().when(stmt).declaredSubstatements(any());
+        doCallRealMethod().when(stmt).actionStatements();
+        assertEquals(ImmutableList.of(stmt2), ImmutableList.copyOf(stmt.actionStatements()));
     }
 }

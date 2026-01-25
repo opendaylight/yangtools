@@ -12,11 +12,13 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * Marker interface for SchemaNodes which store simple data, for which we have type information.
  */
+// FIXME: rename to TypeDefinitionAware
 public interface TypeAware {
     /**
      * Returns the type definition of stored data.
      *
      * @return type definition.
      */
+    // FIXME: rename to typeDefinition()
     @NonNull TypeDefinition<? extends TypeDefinition<?>> getType();
 }
