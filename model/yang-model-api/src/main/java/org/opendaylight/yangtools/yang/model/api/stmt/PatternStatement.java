@@ -7,15 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code pattern} statement.
  */
 public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternExpression> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link PatternStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code PatternStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull PatternStatement> patternStatements() {
+            return declaredSubstatements(PatternStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code pattern} statement.
      *

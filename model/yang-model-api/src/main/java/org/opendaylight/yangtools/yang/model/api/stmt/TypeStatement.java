@@ -95,11 +95,9 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     }
 
     // FIXME: 7.0.0: this interface does not have an implementation
-    interface StringRestrictions extends TypeStatement, LengthStatement.OptionalIn<QName> {
-
-        default @NonNull Collection<? extends @NonNull PatternStatement> getPatterns() {
-            return declaredSubstatements(PatternStatement.class);
-        }
+    interface StringRestrictions extends TypeStatement, LengthStatement.OptionalIn<QName>,
+            PatternStatement.MultipleIn<QName> {
+        // Nothing else
     }
 
     interface EnumSpecification extends TypeStatement {
