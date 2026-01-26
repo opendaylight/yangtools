@@ -24,9 +24,4 @@ public interface ConstrainedDocumentedDeclaredStatement<T> extends DocumentedDec
     default @NonNull Optional<ErrorMessageStatement> getErrorMessageStatement() {
         return findFirstDeclaredSubstatement(ErrorMessageStatement.class);
     }
-
-    interface WithStatus<T> extends ConstrainedDocumentedDeclaredStatement<T>, DocumentedDeclaredStatement<T>,
-        StatusStatement.OptionalIn<T> {
-
-    }
 }
