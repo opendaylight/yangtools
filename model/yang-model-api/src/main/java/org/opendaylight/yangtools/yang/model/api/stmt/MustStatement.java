@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 /**
  * Declared representation of a {@code must} statement.
  */
-public interface MustStatement extends ConstrainedDocumentedDeclaredStatement<QualifiedBound> {
+public interface MustStatement extends DocumentedDeclaredStatement<QualifiedBound>,
+        ErrorAppTagStatement.OptionalIn<QualifiedBound>, ErrorMessageStatement.OptionalIn<QualifiedBound> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link MustStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

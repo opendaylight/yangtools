@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code range} statement.
  */
-public interface RangeStatement extends ConstrainedDocumentedDeclaredStatement<ValueRanges> {
+public interface RangeStatement extends DocumentedDeclaredStatement<ValueRanges>,
+        ErrorAppTagStatement.OptionalIn<ValueRanges>, ErrorMessageStatement.OptionalIn<ValueRanges> {
     /**
      * The definition of {@code range} statement.
      *
