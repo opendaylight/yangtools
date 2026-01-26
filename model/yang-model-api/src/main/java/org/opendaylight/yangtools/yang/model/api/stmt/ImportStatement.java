@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -17,6 +21,20 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified>,
         PrefixStatement.OptionalIn<Unqualified>, RevisionDateStatement.OptionalIn<Unqualified> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link ImportStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code ImportStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull ImportStatement> importStatements() {
+            return declaredSubstatements(ImportStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code import} statement.
      *

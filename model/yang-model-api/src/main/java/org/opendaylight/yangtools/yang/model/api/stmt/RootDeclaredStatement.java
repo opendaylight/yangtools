@@ -8,9 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
-import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
 /**
@@ -19,51 +16,15 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
  */
 @Beta
 public sealed interface RootDeclaredStatement
-        extends DocumentedDeclaredStatement<Unqualified>, DataDefinitionStatement.MultipleIn<Unqualified>,
-                AugmentStatement.MultipleIn<Unqualified>, GroupingStatementMultipleIn<Unqualified>,
-                NotificationStatement.MultipleIn<Unqualified>, TypedefStatement.MultipleIn<Unqualified>,
-                YangVersionStatement.OptionalIn<Unqualified>
-        permits ModuleStatement, SubmoduleStatement {
+    extends DocumentedDeclaredStatement<Unqualified>, DataDefinitionStatement.MultipleIn<Unqualified>,
+            AugmentStatement.MultipleIn<Unqualified>, ContactStatement.OptionalIn<Unqualified>,
+            DeviationStatement.MultipleIn<Unqualified>, ExtensionStatement.MultipleIn<Unqualified>,
+            FeatureStatement.MultipleIn<Unqualified>, GroupingStatementMultipleIn<Unqualified>,
+            IdentityStatement.MultipleIn<Unqualified>, ImportStatement.MultipleIn<Unqualified>,
+            IncludeStatement.MultipleIn<Unqualified>, NotificationStatement.MultipleIn<Unqualified>,
+            OrganizationStatement.OptionalIn<Unqualified>, RevisionStatement.MultipleIn<Unqualified>,
+            RpcStatement.MultipleIn<Unqualified>, TypedefStatement.MultipleIn<Unqualified>,
+            YangVersionStatement.OptionalIn<Unqualified> permits ModuleStatement, SubmoduleStatement {
     @Override
     Unqualified argument();
-
-    default Optional<OrganizationStatement> getOrganization() {
-        return findFirstDeclaredSubstatement(OrganizationStatement.class);
-    }
-
-    default Optional<ContactStatement> getContact() {
-        return findFirstDeclaredSubstatement(ContactStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull ImportStatement> getImports() {
-        return declaredSubstatements(ImportStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull IncludeStatement> getIncludes() {
-        return declaredSubstatements(IncludeStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull RevisionStatement> getRevisions() {
-        return declaredSubstatements(RevisionStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull ExtensionStatement> getExtensions() {
-        return declaredSubstatements(ExtensionStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull FeatureStatement> getFeatures() {
-        return declaredSubstatements(FeatureStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull IdentityStatement> getIdentities() {
-        return declaredSubstatements(IdentityStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull RpcStatement> getRpcs() {
-        return declaredSubstatements(RpcStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull DeviationStatement> getDeviations() {
-        return declaredSubstatements(DeviationStatement.class);
-    }
 }
