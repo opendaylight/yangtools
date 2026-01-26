@@ -274,7 +274,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var containerStatementMusts = containerStatement.mustStatements();
         assertEquals(1, containerStatementMusts.size());
 
-        final var containerStatementPresence = containerStatement.getPresence();
+        final var containerStatementPresence = containerStatement.presenceStatement();
         assertNotNull(containerStatementPresence);
         assertNotNull(containerStatementPresence.argument());
 
