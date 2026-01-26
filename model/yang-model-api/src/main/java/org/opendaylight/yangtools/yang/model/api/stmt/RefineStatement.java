@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -19,7 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  */
 public interface RefineStatement extends DocumentedDeclaredStatement<Descendant>,
         ConfigStatement.OptionalIn<Descendant>, IfFeatureStatement.MultipleIn<Descendant>,
-        MandatoryStatement.OptionalIn<Descendant>, MustStatement.MultipleIn<Descendant> {
+        MandatoryStatement.OptionalIn<Descendant>, MaxElementsStatement.OptionalIn<Descendant>,
+        MinElementsStatement.OptionalIn<Descendant>, MustStatement.MultipleIn<Descendant>,
+        PresenceStatement.OptionalIn<Descendant> {
     /**
      * The definition of {@code refine} statement.
      *
@@ -37,23 +38,5 @@ public interface RefineStatement extends DocumentedDeclaredStatement<Descendant>
     // FIXME: document/rename
     default @NonNull Collection<? extends @NonNull DefaultStatement> getDefaults() {
         return declaredSubstatements(DefaultStatement.class);
-    }
-
-    // FIXME: document/rename
-    default @Nullable PresenceStatement getPresence() {
-        final var opt = findFirstDeclaredSubstatement(PresenceStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
-    }
-
-    // FIXME: document/rename
-    default @Nullable MinElementsStatement getMinElements() {
-        final var opt = findFirstDeclaredSubstatement(MinElementsStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
-    }
-
-    // FIXME: document/rename
-    default @Nullable MaxElementsStatement getMaxElements() {
-        final var opt = findFirstDeclaredSubstatement(MaxElementsStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
