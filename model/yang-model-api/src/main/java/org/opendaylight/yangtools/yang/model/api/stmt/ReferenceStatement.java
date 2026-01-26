@@ -67,7 +67,7 @@ public interface ReferenceStatement extends DeclaredHumanTextStatement {
      */
     @NonNull StatementDefinition<String, @NonNull ReferenceStatement, @NonNull ReferenceEffectiveStatement> DEF =
         StatementDefinition.of(ReferenceStatement.class, ReferenceEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "reference", "text", true);
+            YangConstants.RFC6020_YIN_MODULE, "reference", YangArgumentDefinitions.TEXT_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

@@ -24,7 +24,7 @@ public non-sealed interface AnyxmlStatement extends DataDefinitionStatement, Con
      */
     @NonNull StatementDefinition<QName, @NonNull AnyxmlStatement, @NonNull AnyxmlEffectiveStatement> DEF =
         StatementDefinition.of(AnyxmlStatement.class, AnyxmlEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "anyxml", "name");
+            YangConstants.RFC6020_YIN_MODULE, "anyxml", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

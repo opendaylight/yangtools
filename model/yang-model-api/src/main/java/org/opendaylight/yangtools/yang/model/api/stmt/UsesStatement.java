@@ -24,7 +24,7 @@ public non-sealed interface UsesStatement extends DataDefinitionStatement, Augme
      */
     @NonNull StatementDefinition<QName, @NonNull UsesStatement, @NonNull UsesEffectiveStatement> DEF =
         StatementDefinition.of(UsesStatement.class, UsesEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "uses", "name");
+            YangConstants.RFC6020_YIN_MODULE, "uses", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

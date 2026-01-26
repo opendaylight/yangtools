@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -67,7 +68,8 @@ public interface YangVersionStatement extends DeclaredStatement<YangVersion> {
      */
     @NonNull StatementDefinition<YangVersion, @NonNull YangVersionStatement, @NonNull YangVersionEffectiveStatement> DEF
         = StatementDefinition.of(YangVersionStatement.class, YangVersionEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "yang-version", "value");
+            YangConstants.RFC6020_YIN_MODULE, "yang-version",
+            ArgumentDefinition.of(YangVersion.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<YangVersion, ?, ?> statementDefinition() {

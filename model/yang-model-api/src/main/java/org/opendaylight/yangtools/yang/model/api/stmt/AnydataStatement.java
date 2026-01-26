@@ -30,7 +30,7 @@ public non-sealed interface AnydataStatement extends DataDefinitionStatement, Co
      */
     @NonNull StatementDefinition<QName, @NonNull AnydataStatement, @NonNull AnydataEffectiveStatement> DEF =
         StatementDefinition.of(AnydataStatement.class, AnydataEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "anydata", "name");
+            YangConstants.RFC6020_YIN_MODULE, "anydata", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

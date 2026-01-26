@@ -68,7 +68,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
      */
     @NonNull StatementDefinition<QName, @NonNull TypeStatement, @NonNull TypeEffectiveStatement> DEF =
         StatementDefinition.of(TypeStatement.class, TypeEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "type", "name");
+            YangConstants.RFC6020_YIN_MODULE, "type", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

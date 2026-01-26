@@ -68,7 +68,7 @@ public interface WhenStatement extends DeclaredStatement<QualifiedBound>,
      */
     @NonNull StatementDefinition<QualifiedBound, @NonNull WhenStatement, @NonNull WhenEffectiveStatement> DEF =
         StatementDefinition.of(WhenStatement.class, WhenEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "when", "condition");
+            YangConstants.RFC6020_YIN_MODULE, "when", YangArgumentDefinitions.CONDITION_AS_QUALIFIED_BOUND);
 
     @Override
     default StatementDefinition<QualifiedBound, ?, ?> statementDefinition() {
