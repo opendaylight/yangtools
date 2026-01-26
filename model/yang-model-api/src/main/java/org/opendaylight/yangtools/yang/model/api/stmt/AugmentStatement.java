@@ -11,15 +11,14 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
 
 /**
  * Declared representation of a {@code augment} statement.
  */
-public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
+public interface AugmentStatement extends DocumentedDeclaredStatement<SchemaNodeIdentifier>,
         DataDefinitionStatement.MultipleIn<SchemaNodeIdentifier>, ActionStatement.MultipleIn<SchemaNodeIdentifier>,
         IfFeatureStatement.MultipleIn<SchemaNodeIdentifier>, NotificationStatement.MultipleIn<SchemaNodeIdentifier>,
-        WhenStatement.OptionalIn<SchemaNodeIdentifier> {
+        StatusStatement.OptionalIn<SchemaNodeIdentifier>, WhenStatement.OptionalIn<SchemaNodeIdentifier> {
     /**
      * The definition of {@code augment} statement.
      *

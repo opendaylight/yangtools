@@ -61,7 +61,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var configStatement = anyxmlStatement.getConfigStatement();
         assertFalse(configStatement.argument());
 
-        final var statusStatement = anyxmlStatement.getStatus().orElseThrow();
+        final var statusStatement = anyxmlStatement.getStatusStatement();
         final var status = statusStatement.argument();
         assertNotNull(status);
 
@@ -106,7 +106,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals(1, caseStatementIfFeatures.size());
         final var caseStatementDataDefinitions = caseStatement.dataDefinitionStatements();
         assertEquals(1, caseStatementDataDefinitions.size());
-        assertTrue(caseStatement.getStatus().isPresent());
+        assertNotNull(caseStatement.statusStatement());
         assertTrue(caseStatement.getDescription().isPresent());
         assertTrue(caseStatement.getReference().isPresent());
 
@@ -115,7 +115,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var ifFeatureStatements = choiceStatement.ifFeatureStatements();
         assertEquals(1, ifFeatureStatements.size());
 
-        assertTrue(choiceStatement.getStatus().isPresent());
+        assertNotNull(choiceStatement.statusStatement());
         assertTrue(choiceStatement.getDescription().isPresent());
         assertTrue(choiceStatement.getReference().isPresent());
     }
@@ -216,7 +216,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
 
         assertEquals(1, moduleStatement.getExtensions().size());
         final var extensionStatement = moduleStatement.getExtensions().iterator().next();
-        assertEquals(Status.CURRENT, extensionStatement.getStatus().orElseThrow().argument());
+        assertEquals(Status.CURRENT, extensionStatement.getStatusStatement().argument());
         assertEquals("test description", extensionStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", extensionStatement.getReference().orElseThrow().argument());
         final var argumentStatement = extensionStatement.getArgument();
@@ -225,7 +225,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
 
         assertEquals(2, moduleStatement.getFeatures().size());
         final var featureStatement = moduleStatement.getFeatures().iterator().next();
-        assertEquals(Status.CURRENT, featureStatement.getStatus().orElseThrow().argument());
+        assertEquals(Status.CURRENT, featureStatement.getStatusStatement().argument());
         assertEquals("test description", featureStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", featureStatement.getReference().orElseThrow().argument());
         assertEquals("test-feature", featureStatement.argument().getLocalName());
@@ -238,14 +238,14 @@ class DeclaredStatementsTest extends AbstractYangTest {
             .orElseThrow();
 
         assertEquals("test-base-id", identityStatement.getBases().iterator().next().argument().getLocalName());
-        assertEquals(Status.CURRENT, identityStatement.getStatus().orElseThrow().argument());
+        assertEquals(Status.CURRENT, identityStatement.getStatusStatement().argument());
         assertEquals("test description", identityStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", identityStatement.getReference().orElseThrow().argument());
         assertEquals("test-id", identityStatement.argument().getLocalName());
 
         assertEquals(1, moduleStatement.typedefStatements().size());
         final var typedefStatement = moduleStatement.typedefStatements().iterator().next();
-        assertEquals(Status.CURRENT, typedefStatement.getStatus().orElseThrow().argument());
+        assertEquals(Status.CURRENT, typedefStatement.getStatusStatement().argument());
         assertEquals("test description", typedefStatement.getDescription().orElseThrow().argument());
         assertEquals("test reference", typedefStatement.getReference().orElseThrow().argument());
         assertEquals("test-typedef", typedefStatement.argument().getLocalName());
@@ -279,7 +279,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertNotNull(containerStatementPresence.argument());
 
         assertNotNull(containerStatement.configStatement());
-        assertTrue(containerStatement.getStatus().isPresent());
+        assertNotNull(containerStatement.statusStatement());
         assertTrue(containerStatement.getDescription().isPresent());
         assertTrue(containerStatement.getReference().isPresent());
 

@@ -15,8 +15,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Common capture of declared traits shared by {@code action} and {@code rpc} statements.
  */
 public sealed interface DeclaredOperationStatement
-        extends DocumentedDeclaredStatement.WithStatus<QName>, GroupingStatementMultipleIn<QName>,
-                IfFeatureStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName>
+        extends DocumentedDeclaredStatement<QName>, GroupingStatementMultipleIn<QName>,
+                IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName>,
+                TypedefStatement.MultipleIn<QName>
         permits ActionStatement, RpcStatement {
     default @NonNull Optional<InputStatement> getInput() {
         return findFirstDeclaredSubstatement(InputStatement.class);

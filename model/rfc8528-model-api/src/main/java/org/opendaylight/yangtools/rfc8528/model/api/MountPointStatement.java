@@ -11,15 +11,17 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of 'mount-point' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8528">RFC8528</a>.
  */
-public interface MountPointStatement extends UnknownStatement<MountPointLabel>, WithStatus<MountPointLabel>,
-        ConfigStatement.OptionalIn<MountPointLabel> {
+public interface MountPointStatement extends UnknownStatement<MountPointLabel>,
+        DocumentedDeclaredStatement<MountPointLabel>, ConfigStatement.OptionalIn<MountPointLabel>,
+        StatusStatement.OptionalIn<MountPointLabel> {
     /**
      * The definition of {@code yangmnt:mount-point} statement.
      *
