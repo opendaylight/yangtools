@@ -19,9 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code notification} statement.
  */
-public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
+public interface NotificationStatement extends DocumentedDeclaredStatement<QName>,
         DataDefinitionStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName>,
-        GroupingStatementMultipleIn<QName>, IfFeatureStatement.MultipleIn<QName>, MustStatement.MultipleIn<QName> {
+        GroupingStatementMultipleIn<QName>, IfFeatureStatement.MultipleIn<QName>, MustStatement.MultipleIn<QName>,
+        StatusStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link IfFeatureStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

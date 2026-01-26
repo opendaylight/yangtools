@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code extension} statement.
  */
-public interface ExtensionStatement extends DocumentedDeclaredStatement.WithStatus<QName> {
+public interface ExtensionStatement extends DocumentedDeclaredStatement<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * The definition of {@code extension} statement.
      *
