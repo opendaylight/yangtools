@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -20,7 +21,8 @@ public interface SubIdStatement extends UnknownStatement<Uint32> {
      */
     @NonNull StatementDefinition<Uint32, @NonNull SubIdStatement, @NonNull SubIdEffectiveStatement> DEF =
         StatementDefinition.of(SubIdStatement.class, SubIdEffectiveStatement.class,
-            IetfYangSmiv2Constants.RFC6643_MODULE, "subid", "value");
+            IetfYangSmiv2Constants.RFC6643_MODULE, "subid",
+            ArgumentDefinition.of(Uint32.class, IetfYangSmiv2Constants.RFC6643_MODULE, "value"));
 
     @Override
     default StatementDefinition<Uint32, ?, ?> statementDefinition() {

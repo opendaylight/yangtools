@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -40,7 +41,8 @@ public interface IfFeatureStatement extends DeclaredStatement<IfFeatureExpr> {
      */
     @NonNull StatementDefinition<IfFeatureExpr, @NonNull IfFeatureStatement, @NonNull IfFeatureEffectiveStatement> DEF =
         StatementDefinition.of(IfFeatureStatement.class, IfFeatureEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "if-feature", "name");
+            YangConstants.RFC6020_YIN_MODULE, "if-feature",
+            ArgumentDefinition.of(IfFeatureExpr.class, YangConstants.RFC6020_YIN_MODULE, "name"));
 
     @Override
     default StatementDefinition<IfFeatureExpr, ?, ?> statementDefinition() {

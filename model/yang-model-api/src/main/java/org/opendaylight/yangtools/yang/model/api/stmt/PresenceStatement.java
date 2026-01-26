@@ -66,7 +66,7 @@ public interface PresenceStatement extends DeclaredStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull PresenceStatement, @NonNull PresenceEffectiveStatement> DEF =
         StatementDefinition.of(PresenceStatement.class, PresenceEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "presence", "value");
+            YangConstants.RFC6020_YIN_MODULE, "presence", YangArgumentDefinitions.VALUE_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

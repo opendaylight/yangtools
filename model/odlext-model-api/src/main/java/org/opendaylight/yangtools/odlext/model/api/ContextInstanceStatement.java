@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -20,7 +21,8 @@ public interface ContextInstanceStatement extends UnknownStatement<QName> {
      */
     @NonNull StatementDefinition<QName, @NonNull ContextInstanceStatement, @NonNull ContextInstanceEffectiveStatement>
         DEF = StatementDefinition.of(ContextInstanceStatement.class, ContextInstanceEffectiveStatement.class,
-            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-instance", "context-type");
+            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-instance",
+            ArgumentDefinition.of(QName.class, OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-type"));
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

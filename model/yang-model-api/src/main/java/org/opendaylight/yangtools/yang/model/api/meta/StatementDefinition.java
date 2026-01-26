@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -42,7 +44,7 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         @NonNull StatementDefinition<A, D, E> of(final @NonNull Class<? extends D> declaredRepresentation,
             final @NonNull Class<? extends E> effectiveRepresentation, final @NonNull QName statementName,
-            final @Nullable ArgumentDefinition argument) {
+            final @Nullable ArgumentDefinition<A> argument) {
         return new DefaultStatementDefinition<>(statementName, declaredRepresentation, effectiveRepresentation,
             argument);
     }
@@ -78,37 +80,15 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
      * @param effectiveRepresentation effective statement representation class
      * @param module the module defining this statement
      * @param statementName statement name
-     * @param argumentName statement name
+     * @param argument the {@link ArgumentDefinition}
      * @return a {@link StatementDefinition}
      */
     static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         @NonNull StatementDefinition<A, D, E> of(final @NonNull Class<? extends D> declaredRepresentation,
             final @NonNull Class<? extends E> effectiveRepresentation, final @NonNull QNameModule module,
-            final @NonNull String statementName, final @NonNull String argumentName) {
-        return of(declaredRepresentation, effectiveRepresentation, module, statementName, argumentName, false);
-    }
-
-    /**
-     * Convenience method for creating a {@link StatementDefinition} with an argument. Both statement name and argument
-     * name are specified as a combination of a {@link QNameModule} and a {@link String}, which this method combines.
-     *
-     * @param <A> argument type
-     * @param <D> declared statement representation
-     * @param <E> effective statement representation
-     * @param declaredRepresentation declared statement representation class
-     * @param effectiveRepresentation effective statement representation class
-     * @param module the module defining this statement
-     * @param statementName statement name
-     * @param argumentName statement name
-     * @param yinElement P@code true} if the argument is encoded as YIN element
-     * @return a {@link StatementDefinition}
-     */
-    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        @NonNull StatementDefinition<A, D, E> of(final @NonNull Class<? extends D> declaredRepresentation,
-            final @NonNull Class<? extends E> effectiveRepresentation, final @NonNull QNameModule module,
-            final @NonNull String statementName, final @NonNull String argumentName, final boolean yinElement) {
+            final @NonNull String statementName, final @NonNull ArgumentDefinition<@NonNull A> argument) {
         return of(declaredRepresentation, effectiveRepresentation, QName.create(module, statementName).intern(),
-            new ArgumentDefinition(QName.create(module, argumentName).intern(), yinElement));
+            requireNonNull(argument));
     }
 
     /**
@@ -148,13 +128,13 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
     /**
      * {@return {@link ArgumentDefinition} or {@code null}, if statement does not take argument}
      */
-    @Nullable ArgumentDefinition argumentDefinition();
+    @Nullable ArgumentDefinition<A> argumentDefinition();
 
     /**
      * {@return an optional {@link ArgumentDefinition}}
      */
     @SuppressWarnings("null")
-    default @NonNull Optional<ArgumentDefinition> findArgumentDefinition() {
+    default @NonNull Optional<ArgumentDefinition<A>> findArgumentDefinition() {
         return Optional.ofNullable(argumentDefinition());
     }
 
@@ -162,10 +142,10 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
      * {@return {@link ArgumentDefinition}}
      * @throws NoSuchElementException if statement does not take argument
      */
-    default @NonNull ArgumentDefinition getArgumentDefinition() {
+    default @NonNull ArgumentDefinition<A> getArgumentDefinition() {
         final var argDef = argumentDefinition();
         if (argDef == null) {
-            throw new NoSuchElementException(statementName() + " does not take an argument");
+            throw new NoSuchElementException(humanName() + " does not take an argument");
         }
         return argDef;
     }

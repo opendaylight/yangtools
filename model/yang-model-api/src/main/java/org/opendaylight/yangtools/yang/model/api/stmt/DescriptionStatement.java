@@ -67,7 +67,7 @@ public interface DescriptionStatement extends DeclaredHumanTextStatement {
      */
     @NonNull StatementDefinition<String, @NonNull DescriptionStatement, @NonNull DescriptionEffectiveStatement> DEF =
         StatementDefinition.of(DescriptionStatement.class, DescriptionEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "description", "text", true);
+            YangConstants.RFC6020_YIN_MODULE, "description", YangArgumentDefinitions.TEXT_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc8819.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -23,7 +24,8 @@ public interface ModuleTagStatement extends UnknownStatement<Tag> {
      */
     @NonNull StatementDefinition<Tag, @NonNull ModuleTagStatement, @NonNull ModuleTagEffectiveStatement> DEF =
         StatementDefinition.of(ModuleTagStatement.class, ModuleTagEffectiveStatement.class,
-            ModuleTagConstants.RFC8819_MODULE, "module-tag", "tag");
+            ModuleTagConstants.RFC8819_MODULE, "module-tag",
+            ArgumentDefinition.of(Tag.class, ModuleTagConstants.RFC8819_MODULE, "tag"));
 
     @Override
     default StatementDefinition<Tag, ?, ?> statementDefinition() {

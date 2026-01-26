@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -24,7 +25,8 @@ public interface DeviateStatement extends DeclaredStatement<DeviateKind> {
      */
     @NonNull StatementDefinition<DeviateKind, @NonNull DeviateStatement, @NonNull DeviateEffectiveStatement> DEF =
         StatementDefinition.of(DeviateStatement.class, DeviateEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "deviate", "value");
+            YangConstants.RFC6020_YIN_MODULE, "deviate",
+            ArgumentDefinition.of(DeviateKind.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<DeviateKind, ?, ?> statementDefinition() {

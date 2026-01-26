@@ -43,7 +43,7 @@ public interface CaseStatement extends DeclaredStatement<QName>, DataDefinitionS
      */
     @NonNull StatementDefinition<QName, @NonNull CaseStatement, @NonNull CaseEffectiveStatement> DEF =
         StatementDefinition.of(CaseStatement.class, CaseEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "case", "name");
+            YangConstants.RFC6020_YIN_MODULE, "case", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

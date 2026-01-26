@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -19,7 +20,8 @@ public interface ImpliedStatement extends UnknownStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull ImpliedStatement, @NonNull ImpliedEffectiveStatement> DEF =
         StatementDefinition.of(ImpliedStatement.class, ImpliedEffectiveStatement.class,
-            IetfYangSmiv2Constants.RFC6643_MODULE, "implied", "index");
+            IetfYangSmiv2Constants.RFC6643_MODULE, "implied",
+            ArgumentDefinition.of(String.class, IetfYangSmiv2Constants.RFC6643_MODULE, "index"));
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

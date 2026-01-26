@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc7952.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
@@ -32,7 +33,8 @@ public interface AnnotationStatement extends UnknownStatement<AnnotationName>,
      */
     @NonNull StatementDefinition<AnnotationName, @NonNull AnnotationStatement, @NonNull AnnotationEffectiveStatement>
         DEF = StatementDefinition.of(AnnotationStatement.class, AnnotationEffectiveStatement.class,
-            MetadataConstants.RFC7952_MODULE, "annotation", "name");
+            MetadataConstants.RFC7952_MODULE, "annotation",
+            ArgumentDefinition.of(AnnotationName.class,  MetadataConstants.RFC7952_MODULE, "name"));
 
     @Override
     default StatementDefinition<AnnotationName, ?, ?> statementDefinition() {

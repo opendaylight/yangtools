@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc8528.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -30,7 +31,8 @@ public interface MountPointStatement extends UnknownStatement<MountPointLabel>,
      */
     @NonNull StatementDefinition<MountPointLabel, @NonNull MountPointStatement, @NonNull MountPointEffectiveStatement>
         DEF = StatementDefinition.of(MountPointStatement.class, MountPointEffectiveStatement.class,
-            SchemaMountConstants.RFC8528_MODULE, "mount-point", "label");
+            SchemaMountConstants.RFC8528_MODULE, "mount-point",
+            ArgumentDefinition.of(MountPointLabel.class, SchemaMountConstants.RFC8528_MODULE, "label"));
 
     @Override
     default StatementDefinition<MountPointLabel, ?, ?> statementDefinition() {

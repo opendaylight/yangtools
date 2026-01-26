@@ -27,7 +27,7 @@ public interface GroupingStatement extends DeclaredStatement<QName>, DataDefinit
      */
     @NonNull StatementDefinition<QName, @NonNull GroupingStatement, @NonNull GroupingEffectiveStatement> DEF =
         StatementDefinition.of(GroupingStatement.class, GroupingEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "grouping", "name");
+            YangConstants.RFC6020_YIN_MODULE, "grouping", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

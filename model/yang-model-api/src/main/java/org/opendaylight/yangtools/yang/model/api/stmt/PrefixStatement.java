@@ -66,7 +66,7 @@ public interface PrefixStatement extends DeclaredStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull PrefixStatement, @NonNull PrefixEffectiveStatement> DEF =
         StatementDefinition.of(PrefixStatement.class, PrefixEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "prefix", "value");
+            YangConstants.RFC6020_YIN_MODULE, "prefix", YangArgumentDefinitions.VALUE_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

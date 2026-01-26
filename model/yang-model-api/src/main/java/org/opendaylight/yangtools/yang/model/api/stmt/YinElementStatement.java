@@ -66,7 +66,7 @@ public interface YinElementStatement extends DeclaredStatement<Boolean> {
      */
     @NonNull StatementDefinition<Boolean, @NonNull YinElementStatement, @NonNull YinElementEffectiveStatement> DEF =
         StatementDefinition.of(YinElementStatement.class, YinElementEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "yin-element", "value");
+            YangConstants.RFC6020_YIN_MODULE, "yin-element", YangArgumentDefinitions.VALUE_AS_BOOLEAN);
 
     @Override
     default StatementDefinition<Boolean, ?, ?> statementDefinition() {

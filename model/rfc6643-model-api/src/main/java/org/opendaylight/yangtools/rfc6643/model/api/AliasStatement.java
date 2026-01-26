@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -23,7 +24,8 @@ public interface AliasStatement extends UnknownStatement<String>, DescriptionSta
      */
     @NonNull StatementDefinition<String, @NonNull AliasStatement, @NonNull AliasEffectiveStatement> DEF =
         StatementDefinition.of(AliasStatement.class, AliasEffectiveStatement.class,
-            IetfYangSmiv2Constants.RFC6643_MODULE, "alias", "descriptor");
+            IetfYangSmiv2Constants.RFC6643_MODULE, "alias",
+            ArgumentDefinition.of(String.class, IetfYangSmiv2Constants.RFC6643_MODULE, "descriptor"));
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {
