@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -16,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code include} statement.
  */
-public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualified> {
+public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualified>,
+        RevisionDateStatement.OptionalIn<Unqualified> {
     /**
      * The definition of {@code include} statement.
      *
@@ -29,11 +29,5 @@ public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualifie
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: document
-    default @Nullable RevisionDateStatement getRevisionDate() {
-        final var opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }

@@ -37,7 +37,7 @@ public final class ImportEffectiveStatementImpl extends WithSubstatements<Unqual
 
     @Override
     public String getPrefix() {
-        return declared().getPrefix().argument();
+        return declared().getPrefixStatement().argument();
     }
 
     @Override
