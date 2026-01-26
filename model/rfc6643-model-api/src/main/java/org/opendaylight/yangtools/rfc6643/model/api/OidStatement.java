@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -19,7 +20,8 @@ public interface OidStatement extends UnknownStatement<ObjectIdentifier> {
      */
     @NonNull StatementDefinition<ObjectIdentifier, @NonNull OidStatement, @NonNull OidEffectiveStatement> DEF =
         StatementDefinition.of(OidStatement.class, OidEffectiveStatement.class,
-            IetfYangSmiv2Constants.RFC6643_MODULE, "oid", "value");
+            IetfYangSmiv2Constants.RFC6643_MODULE, "oid",
+            ArgumentDefinition.of(ObjectIdentifier.class, IetfYangSmiv2Constants.RFC6643_MODULE, "value"));
 
     @Override
     default StatementDefinition<ObjectIdentifier, ?, ?> statementDefinition() {

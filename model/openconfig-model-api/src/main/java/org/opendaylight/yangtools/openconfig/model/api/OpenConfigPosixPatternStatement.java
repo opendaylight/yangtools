@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.openconfig.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -25,7 +26,8 @@ public interface OpenConfigPosixPatternStatement extends UnknownStatement<String
     @NonNull StatementDefinition<String, @NonNull OpenConfigPosixPatternStatement,
         @NonNull OpenConfigPosixPatternEffectiveStatement> DEF = StatementDefinition.of(
             OpenConfigPosixPatternStatement.class, OpenConfigPosixPatternEffectiveStatement.class,
-            OpenConfigConstants.REGEXP_POSIX_MODULE, "posix-pattern", "pattern");
+            OpenConfigConstants.REGEXP_POSIX_MODULE, "posix-pattern",
+            ArgumentDefinition.of(String.class, OpenConfigConstants.REGEXP_POSIX_MODULE, "pattern"));
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

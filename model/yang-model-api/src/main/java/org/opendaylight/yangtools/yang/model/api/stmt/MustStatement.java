@@ -43,7 +43,7 @@ public interface MustStatement extends DeclaredStatement<QualifiedBound>,
      */
     @NonNull StatementDefinition<QualifiedBound, @NonNull MustStatement, @NonNull MustEffectiveStatement> DEF =
         StatementDefinition.of(MustStatement.class, MustEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "must", "condition");
+            YangConstants.RFC6020_YIN_MODULE, "must", YangArgumentDefinitions.CONDITION_AS_QUALIFIED_BOUND);
 
     @Override
     default StatementDefinition<QualifiedBound, ?, ?> statementDefinition() {

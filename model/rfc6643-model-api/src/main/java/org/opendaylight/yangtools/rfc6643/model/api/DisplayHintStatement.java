@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -19,7 +20,8 @@ public interface DisplayHintStatement extends UnknownStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull DisplayHintStatement, @NonNull DisplayHintEffectiveStatement> DEF =
         StatementDefinition.of(DisplayHintStatement.class, DisplayHintEffectiveStatement.class,
-            IetfYangSmiv2Constants.RFC6643_MODULE, "display-hint", "format");
+            IetfYangSmiv2Constants.RFC6643_MODULE, "display-hint",
+            ArgumentDefinition.of(String.class, IetfYangSmiv2Constants.RFC6643_MODULE, "format"));
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

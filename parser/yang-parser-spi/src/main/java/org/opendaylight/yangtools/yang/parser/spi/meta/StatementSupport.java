@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -639,7 +638,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         return argDef == null ? null : argDef.argumentName();
     }
 
-    public final @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
-        return publicDefinition.findArgumentDefinition();
+    public final @Nullable ArgumentDefinition<A> argumentDefinition() {
+        return publicDefinition.argumentDefinition();
     }
 }

@@ -66,7 +66,7 @@ public interface MandatoryStatement extends DeclaredStatement<Boolean> {
      */
     @NonNull StatementDefinition<Boolean, @NonNull MandatoryStatement, @NonNull MandatoryEffectiveStatement> DEF =
         StatementDefinition.of(MandatoryStatement.class, MandatoryEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "mandatory", "value");
+            YangConstants.RFC6020_YIN_MODULE, "mandatory", YangArgumentDefinitions.VALUE_AS_BOOLEAN);
 
     @Override
     default StatementDefinition<Boolean, ?, ?> statementDefinition() {

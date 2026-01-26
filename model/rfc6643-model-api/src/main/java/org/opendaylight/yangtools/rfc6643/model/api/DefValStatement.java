@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -19,7 +20,8 @@ public interface DefValStatement extends UnknownStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull DefValStatement, @NonNull DefValEffectiveStatement> DEF =
         StatementDefinition.of(DefValStatement.class, DefValEffectiveStatement.class,
-            IetfYangSmiv2Constants.RFC6643_MODULE, "defval", "value");
+            IetfYangSmiv2Constants.RFC6643_MODULE, "defval",
+            ArgumentDefinition.of(String.class, IetfYangSmiv2Constants.RFC6643_MODULE, "value"));
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

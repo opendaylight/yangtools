@@ -27,7 +27,7 @@ public non-sealed interface ListStatement extends DataDefinitionStatement, DataD
      */
     @NonNull StatementDefinition<QName, @NonNull ListStatement, @NonNull ListEffectiveStatement> DEF =
         StatementDefinition.of(ListStatement.class, ListEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "list", "name");
+            YangConstants.RFC6020_YIN_MODULE, "list", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

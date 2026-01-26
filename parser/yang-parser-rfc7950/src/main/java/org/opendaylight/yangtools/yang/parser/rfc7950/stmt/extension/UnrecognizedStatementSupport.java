@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -56,7 +57,7 @@ final class UnrecognizedStatementSupport
         final var statementName = QName.create(statementName(), childDef.statementName().getLocalName());
         return new UnrecognizedStatementSupport(
             StatementDefinition.of(UnrecognizedStatement.class, UnrecognizedEffectiveStatement.class,
-                statementName, childDef.argumentDefinition()),
+                statementName, (ArgumentDefinition) childDef.argumentDefinition()),
             config);
     }
 
