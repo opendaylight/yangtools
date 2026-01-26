@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code enum} statement.
  */
-public interface EnumStatement extends DocumentedDeclaredStatement<String>, IfFeatureStatement.MultipleIn<String>,
+public interface EnumStatement extends DeclaredStatement<String>, DescriptionStatement.OptionalIn<String>,
+        IfFeatureStatement.MultipleIn<String>, ReferenceStatement.OptionalIn<String>,
         StatusStatement.OptionalIn<String> {
     /**
      * The definition of {@code enum} statement.
