@@ -24,7 +24,7 @@ public interface BelongsToStatement extends DeclaredStatement<Unqualified> {
      */
     @NonNull StatementDefinition<Unqualified, @NonNull BelongsToStatement, @NonNull BelongsToEffectiveStatement> DEF =
         StatementDefinition.of(BelongsToStatement.class, BelongsToEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "belongs-to", "module");
+            YangConstants.RFC6020_YIN_MODULE, "belongs-to", YangArgumentDefinitions.MODULE_AS_UNQUALIFIED);
 
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {

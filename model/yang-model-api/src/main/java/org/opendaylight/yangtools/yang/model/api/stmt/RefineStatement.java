@@ -11,6 +11,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
@@ -27,7 +28,8 @@ public interface RefineStatement extends DocumentedDeclaredStatement<Descendant>
      */
     @NonNull StatementDefinition<Descendant, @NonNull RefineStatement, @NonNull RefineEffectiveStatement> DEF =
         StatementDefinition.of(RefineStatement.class, RefineEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "refine", "target-node");
+            YangConstants.RFC6020_YIN_MODULE, "refine",
+            ArgumentDefinition.of(Descendant.class, YangConstants.RFC6020_YIN_MODULE, "target-node"));
 
     @Override
     default StatementDefinition<Descendant, ?, ?> statementDefinition() {

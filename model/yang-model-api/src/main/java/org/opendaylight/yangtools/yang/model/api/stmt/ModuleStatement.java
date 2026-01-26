@@ -24,7 +24,7 @@ public non-sealed interface ModuleStatement extends RootDeclaredStatement {
      */
     @NonNull StatementDefinition<Unqualified, @NonNull ModuleStatement, @NonNull ModuleEffectiveStatement> DEF =
         StatementDefinition.of(ModuleStatement.class, ModuleEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "module", "name");
+            YangConstants.RFC6020_YIN_MODULE, "module", YangArgumentDefinitions.NAME_AS_UNQUALIFIED);
 
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {

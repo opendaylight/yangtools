@@ -24,7 +24,7 @@ public non-sealed interface SubmoduleStatement extends RootDeclaredStatement {
      */
     @NonNull StatementDefinition<Unqualified, @NonNull SubmoduleStatement, @NonNull SubmoduleEffectiveStatement> DEF =
         StatementDefinition.of(SubmoduleStatement.class, SubmoduleEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "submodule", "name");
+            YangConstants.RFC6020_YIN_MODULE, "submodule", YangArgumentDefinitions.NAME_AS_UNQUALIFIED);
 
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {

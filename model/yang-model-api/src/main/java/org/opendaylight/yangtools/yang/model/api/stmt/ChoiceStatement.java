@@ -25,7 +25,7 @@ public non-sealed interface ChoiceStatement extends DataDefinitionStatement, Con
      */
     @NonNull StatementDefinition<QName, @NonNull ChoiceStatement, @NonNull ChoiceEffectiveStatement> DEF =
         StatementDefinition.of(ChoiceStatement.class, ChoiceEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "choice", "name");
+            YangConstants.RFC6020_YIN_MODULE, "choice", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

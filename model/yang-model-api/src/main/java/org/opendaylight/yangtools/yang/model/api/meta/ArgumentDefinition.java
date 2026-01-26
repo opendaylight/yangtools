@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import static java.util.Objects.requireNonNull;
-
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
@@ -20,23 +19,45 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * @param argumentName the name of the argument
  * @param yinElement {@code true} if the argument is a YIN element
  */
-@NonNullByDefault
-public record ArgumentDefinition(QName argumentName, boolean yinElement) implements Immutable {
-    /**
-     * Default constructor.
-     *
-     * @param argumentName the name of the argument
-     * @param yinElement {@code true} if the argument is a YIN element
-     */
-    public ArgumentDefinition {
-        requireNonNull(argumentName);
+public sealed interface ArgumentDefinition<A> extends Immutable permits DefaultArgumentDefinition {
+
+    static <A> @NonNull ArgumentDefinition<A> of(final @NonNull Class<? extends A> declaredRepresentation,
+            final @NonNull QName argumentName, final boolean yinElement) {
+        return new DefaultArgumentDefinition<>(declaredRepresentation, argumentName, yinElement);
     }
+
+    static <A> @NonNull ArgumentDefinition<A> of(final @NonNull Class<? extends A> declaredRepresentation,
+            final @NonNull QNameModule module, final @NonNull String argumentName) {
+        return of(declaredRepresentation, module, argumentName, false);
+    }
+
+    static <A> @NonNull ArgumentDefinition<A> of(final @NonNull Class<? extends A> declaredRepresentation,
+            final @NonNull QNameModule module, final @NonNull String argumentName, final boolean yinElement) {
+        return of(declaredRepresentation, QName.create(module, argumentName).intern(), yinElement);
+    }
+
+    /**
+     * {@return name of the argument}
+     */
+    @NonNull QName argumentName();
+
+    /**
+     * {@return {@code true} if the argument should be encoded as a YIN element, {@code false} if it should be encoded
+     * as a YIN attribute}
+     */
+    boolean yinElement();
+
+    /**
+     * {@return the class representing the declared version of the statement associated with this definition}
+     */
+    @NonNull Class<? extends A> declaredRepresentation();
 
     /**
      * {@return a human-friendly string representation of {link #argumentName()}}
      * @since 15.0.0
      */
-    public String humanName() {
+    default String humanName() {
+        final var argumentName = argumentName();
         return YangConstants.RFC6020_YIN_MODULE.equals(argumentName.getModule()) ? argumentName.getLocalName()
             : argumentName.toString();
     }
@@ -45,7 +66,7 @@ public record ArgumentDefinition(QName argumentName, boolean yinElement) impleme
      * {@return a plain argument name}
      * @since 15.0.0
      */
-    public String simpleName() {
-        return argumentName.getLocalName();
+    default String simpleName() {
+        return argumentName().getLocalName();
     }
 }

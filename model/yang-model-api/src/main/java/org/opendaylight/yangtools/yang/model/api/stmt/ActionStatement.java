@@ -45,7 +45,7 @@ public non-sealed interface ActionStatement extends DeclaredOperationStatement {
      */
     @NonNull StatementDefinition<QName, @NonNull ActionStatement, @NonNull ActionEffectiveStatement> DEF =
         StatementDefinition.of(ActionStatement.class, ActionEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "action", "name");
+            YangConstants.RFC6020_YIN_MODULE, "action", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

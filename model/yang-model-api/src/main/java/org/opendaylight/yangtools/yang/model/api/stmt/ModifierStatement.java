@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
@@ -29,7 +30,8 @@ public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
      */
     @NonNull StatementDefinition<ModifierKind, @NonNull ModifierStatement, @NonNull ModifierEffectiveStatement> DEF =
         StatementDefinition.of(ModifierStatement.class, ModifierEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "modifier", "value");
+            YangConstants.RFC6020_YIN_MODULE, "modifier",
+            ArgumentDefinition.of(ModifierKind.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<ModifierKind, ?, ?> statementDefinition() {

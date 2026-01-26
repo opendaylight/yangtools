@@ -25,7 +25,7 @@ public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, I
      */
     @NonNull StatementDefinition<QName, @NonNull IdentityStatement, @NonNull IdentityEffectiveStatement> DEF =
         StatementDefinition.of(IdentityStatement.class, IdentityEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "identity", "name");
+            YangConstants.RFC6020_YIN_MODULE, "identity", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

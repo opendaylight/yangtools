@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
@@ -41,7 +42,7 @@ public interface MustStatement extends ConstrainedDocumentedDeclaredStatement<Qu
      */
     @NonNull StatementDefinition<QualifiedBound, @NonNull MustStatement, @NonNull MustEffectiveStatement> DEF =
         StatementDefinition.of(MustStatement.class, MustEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "must", "condition");
+            YangConstants.RFC6020_YIN_MODULE, "must", YangArgumentDefinitions.CONDITION_AS_QUALIFIED_BOUND);
 
     @Override
     default StatementDefinition<QualifiedBound, ?, ?> statementDefinition() {

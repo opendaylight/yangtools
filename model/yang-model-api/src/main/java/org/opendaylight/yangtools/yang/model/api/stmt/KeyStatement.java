@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -23,7 +24,8 @@ public interface KeyStatement extends DeclaredStatement<KeyArgument> {
      */
     @NonNull StatementDefinition<KeyArgument, @NonNull KeyStatement, @NonNull KeyEffectiveStatement> DEF =
         StatementDefinition.of(KeyStatement.class, KeyEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "key", "value");
+            YangConstants.RFC6020_YIN_MODULE, "key",
+            ArgumentDefinition.of(KeyArgument.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<KeyArgument, ?, ?> statementDefinition() {

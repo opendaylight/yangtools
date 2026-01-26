@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredHumanTextStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -67,7 +68,8 @@ public interface ErrorMessageStatement extends DeclaredHumanTextStatement {
      */
     @NonNull StatementDefinition<String, @NonNull ErrorMessageStatement, @NonNull ErrorMessageEffectiveStatement> DEF =
         StatementDefinition.of(ErrorMessageStatement.class, ErrorMessageEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "error-message", "value", true);
+            YangConstants.RFC6020_YIN_MODULE, "error-message",
+            ArgumentDefinition.of(String.class, YangConstants.RFC6020_YIN_MODULE, "value", true));
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

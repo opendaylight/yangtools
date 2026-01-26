@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -67,7 +68,8 @@ public interface MinElementsStatement extends DeclaredStatement<MinElementsArgum
     @NonNull StatementDefinition<MinElementsArgument, @NonNull MinElementsStatement,
         @NonNull MinElementsEffectiveStatement> DEF = StatementDefinition.of(
             MinElementsStatement.class, MinElementsEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "min-elements", "value");
+            YangConstants.RFC6020_YIN_MODULE, "min-elements",
+            ArgumentDefinition.of(MinElementsArgument.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<MinElementsArgument, ?, ?> statementDefinition() {

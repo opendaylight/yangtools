@@ -23,7 +23,7 @@ public interface RequireInstanceStatement extends DeclaredStatement<Boolean> {
      */
     @NonNull StatementDefinition<Boolean, @NonNull RequireInstanceStatement, @NonNull RequireInstanceEffectiveStatement>
         DEF = StatementDefinition.of(RequireInstanceStatement.class, RequireInstanceEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "require-instance", "value");
+            YangConstants.RFC6020_YIN_MODULE, "require-instance", YangArgumentDefinitions.VALUE_AS_BOOLEAN);
 
     @Override
     default StatementDefinition<Boolean, ?, ?> statementDefinition() {

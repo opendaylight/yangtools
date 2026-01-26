@@ -66,7 +66,7 @@ public interface LengthStatement extends ConstrainedDocumentedDeclaredStatement<
      */
     @NonNull StatementDefinition<ValueRanges, @NonNull LengthStatement, @NonNull LengthEffectiveStatement> DEF =
         StatementDefinition.of(LengthStatement.class, LengthEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "length", "value");
+            YangConstants.RFC6020_YIN_MODULE, "length", YangArgumentDefinitions.VALUE_AS_VALUE_RANGES);
 
     @Override
     default StatementDefinition<ValueRanges, ?, ?> statementDefinition() {

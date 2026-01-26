@@ -24,7 +24,7 @@ public interface FeatureStatement extends DocumentedDeclaredStatement<QName>, If
      */
     @NonNull StatementDefinition<QName, @NonNull FeatureStatement, @NonNull FeatureEffectiveStatement> DEF =
         StatementDefinition.of(FeatureStatement.class, FeatureEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "feature", "name");
+            YangConstants.RFC6020_YIN_MODULE, "feature", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

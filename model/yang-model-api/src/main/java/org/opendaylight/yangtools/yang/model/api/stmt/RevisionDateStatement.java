@@ -24,7 +24,7 @@ public interface RevisionDateStatement extends DeclaredStatement<Revision> {
      */
     @NonNull StatementDefinition<Revision, @NonNull RevisionDateStatement, @NonNull RevisionDateEffectiveStatement> DEF
         = StatementDefinition.of(RevisionDateStatement.class, RevisionDateEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "revision-date", "date");
+            YangConstants.RFC6020_YIN_MODULE, "revision-date", YangArgumentDefinitions.DATE_AS_REVISION);
 
     @Override
     default StatementDefinition<Revision, ?, ?> statementDefinition() {

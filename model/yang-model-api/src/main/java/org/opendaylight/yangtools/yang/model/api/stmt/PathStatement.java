@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -24,7 +25,8 @@ public interface PathStatement extends DeclaredStatement<PathExpression> {
      */
     @NonNull StatementDefinition<PathExpression, @NonNull PathStatement, @NonNull PathEffectiveStatement> DEF =
         StatementDefinition.of(PathStatement.class, PathEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "path", "value");
+            YangConstants.RFC6020_YIN_MODULE, "path",
+            ArgumentDefinition.of(PathExpression.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<PathExpression, ?, ?> statementDefinition() {

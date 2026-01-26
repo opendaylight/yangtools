@@ -24,7 +24,7 @@ public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified
      */
     @NonNull StatementDefinition<Unqualified, @NonNull ImportStatement, @NonNull ImportEffectiveStatement> DEF =
         StatementDefinition.of(ImportStatement.class, ImportEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "import", "module");
+            YangConstants.RFC6020_YIN_MODULE, "import", YangArgumentDefinitions.MODULE_AS_UNQUALIFIED);
 
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {

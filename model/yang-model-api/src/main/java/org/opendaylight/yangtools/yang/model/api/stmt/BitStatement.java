@@ -24,7 +24,7 @@ public interface BitStatement extends DocumentedDeclaredStatement<String>, IfFea
      */
     @NonNull StatementDefinition<String, @NonNull BitStatement, @NonNull BitEffectiveStatement> DEF =
         StatementDefinition.of(BitStatement.class, BitEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "bit", "name");
+            YangConstants.RFC6020_YIN_MODULE, "bit", YangArgumentDefinitions.NAME_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

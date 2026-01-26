@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -17,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 /**
  * Declared representation of a {@code unique} statement.
  */
-// FIXME: UniqueAargument instead of Set<SchemaNodeIdentifier.Descendant>
+// FIXME: UniqueArgument instead of Set<SchemaNodeIdentifier.Descendant>
 public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Descendant>> {
     /**
      * The definition of {@code unique} statement.
@@ -26,7 +27,8 @@ public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentif
      */
     @NonNull StatementDefinition<Set<Descendant>, @NonNull UniqueStatement, @NonNull UniqueEffectiveStatement> DEF =
         StatementDefinition.of(UniqueStatement.class, UniqueEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "unique", "tag");
+            YangConstants.RFC6020_YIN_MODULE, "unique",
+            ArgumentDefinition.of(Set.class, YangConstants.RFC6020_YIN_MODULE, "tag"));
 
     @Override
     default StatementDefinition<Set<Descendant>, ?, ?> statementDefinition() {

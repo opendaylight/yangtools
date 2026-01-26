@@ -25,7 +25,7 @@ public interface ArgumentStatement extends DeclaredStatement<QName> {
      */
     @NonNull StatementDefinition<QName, @NonNull ArgumentStatement, @NonNull ArgumentEffectiveStatement> DEF =
         StatementDefinition.of(ArgumentStatement.class, ArgumentEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "argument", "name");
+            YangConstants.RFC6020_YIN_MODULE, "argument", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

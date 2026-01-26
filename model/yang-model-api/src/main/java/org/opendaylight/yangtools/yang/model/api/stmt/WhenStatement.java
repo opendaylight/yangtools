@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
@@ -67,7 +68,7 @@ public interface WhenStatement extends DocumentedDeclaredStatement<QualifiedBoun
      */
     @NonNull StatementDefinition<QualifiedBound, @NonNull WhenStatement, @NonNull WhenEffectiveStatement> DEF =
         StatementDefinition.of(WhenStatement.class, WhenEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "when", "condition");
+            YangConstants.RFC6020_YIN_MODULE, "when", YangArgumentDefinitions.CONDITION_AS_QUALIFIED_BOUND);
 
     @Override
     default StatementDefinition<QualifiedBound, ?, ?> statementDefinition() {

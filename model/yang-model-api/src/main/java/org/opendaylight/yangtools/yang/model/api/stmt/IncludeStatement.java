@@ -24,7 +24,7 @@ public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualifie
      */
     @NonNull StatementDefinition<Unqualified, @NonNull IncludeStatement, @NonNull IncludeEffectiveStatement> DEF =
         StatementDefinition.of(IncludeStatement.class, IncludeEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "include", "module");
+            YangConstants.RFC6020_YIN_MODULE, "include", YangArgumentDefinitions.MODULE_AS_UNQUALIFIED);
 
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {

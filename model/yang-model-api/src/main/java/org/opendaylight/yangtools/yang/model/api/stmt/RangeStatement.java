@@ -22,7 +22,7 @@ public interface RangeStatement extends ConstrainedDocumentedDeclaredStatement<V
      */
     @NonNull StatementDefinition<ValueRanges, @NonNull RangeStatement, @NonNull RangeEffectiveStatement> DEF =
         StatementDefinition.of(RangeStatement.class, RangeEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "range", "value");
+            YangConstants.RFC6020_YIN_MODULE, "range", YangArgumentDefinitions.VALUE_AS_VALUE_RANGES);
 
     @Override
     default StatementDefinition<ValueRanges, ?, ?> statementDefinition() {

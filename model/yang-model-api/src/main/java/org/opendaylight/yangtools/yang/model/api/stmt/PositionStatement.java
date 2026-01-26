@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -24,7 +25,8 @@ public interface PositionStatement extends DeclaredStatement<Uint32> {
      */
     @NonNull StatementDefinition<Uint32, @NonNull PositionStatement, @NonNull PositionEffectiveStatement> DEF =
         StatementDefinition.of(PositionStatement.class, PositionEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "position", "value");
+            YangConstants.RFC6020_YIN_MODULE, "position",
+            ArgumentDefinition.of(Uint32.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<Uint32, ?, ?> statementDefinition() {

@@ -27,7 +27,7 @@ public non-sealed interface ContainerStatement extends DataDefinitionStatement,
      */
     @NonNull StatementDefinition<QName, @NonNull ContainerStatement, @NonNull ContainerEffectiveStatement> DEF =
         StatementDefinition.of(ContainerStatement.class, ContainerEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "container", "name");
+            YangConstants.RFC6020_YIN_MODULE, "container", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

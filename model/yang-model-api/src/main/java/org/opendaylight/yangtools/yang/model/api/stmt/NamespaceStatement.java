@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -24,7 +25,8 @@ public interface NamespaceStatement extends DeclaredStatement<XMLNamespace> {
      */
     @NonNull StatementDefinition<XMLNamespace, @NonNull NamespaceStatement, @NonNull NamespaceEffectiveStatement> DEF =
         StatementDefinition.of(NamespaceStatement.class, NamespaceEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "namespace", "uri");
+            YangConstants.RFC6020_YIN_MODULE, "namespace",
+            ArgumentDefinition.of(XMLNamespace.class, YangConstants.RFC6020_YIN_MODULE, "uri"));
 
     @Override
     default StatementDefinition<XMLNamespace, ?, ?> statementDefinition() {
