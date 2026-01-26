@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -17,8 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code leaf-list} statement.
  */
 public non-sealed interface LeafListStatement extends DataDefinitionStatement, ConfigStatement.OptionalIn<QName>,
-        MaxElementsStatement.OptionalIn<QName>, MinElementsStatement.OptionalIn<QName>, MustStatement.MultipleIn<QName>,
-        OrderedByStatement.OptionalIn<QName>, TypeStatement.OptionalIn<QName>, UnitsStatement.OptionalIn<QName> {
+        DefaultStatement.MultipleIn<QName>, MaxElementsStatement.OptionalIn<QName>,
+        MinElementsStatement.OptionalIn<QName>, MustStatement.MultipleIn<QName>, OrderedByStatement.OptionalIn<QName>,
+        TypeStatement.OptionalIn<QName>, UnitsStatement.OptionalIn<QName> {
     /**
      * The definition of {@code leaf-list} statement.
      *
@@ -31,15 +31,5 @@ public non-sealed interface LeafListStatement extends DataDefinitionStatement, C
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    /**
-     * Return default statements defined in this leaf-list. For RFC6020 semantics, this method returns an empty
-     * collection.
-     *
-     * @return collection of default statements
-     */
-    default @NonNull Collection<? extends @NonNull DefaultStatement> getDefaults() {
-        return declaredSubstatements(DefaultStatement.class);
     }
 }

@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code identity} statement.
  */
-public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, IfFeatureStatement.MultipleIn<QName>,
-        StatusStatement.OptionalIn<QName> {
+public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, BaseStatement.MultipleIn<QName>,
+        IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * The definition of {@code identity} statement.
      *

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
+import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -56,6 +57,20 @@ public interface DefaultStatement extends DeclaredStatement<String> {
                 throw new NoSuchElementException("No default statement present in " + this);
             }
             return length;
+        }
+    }
+
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link DefaultStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code DefaultStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull DefaultStatement> defaultStatements() {
+            return declaredSubstatements(DefaultStatement.class);
         }
     }
 
