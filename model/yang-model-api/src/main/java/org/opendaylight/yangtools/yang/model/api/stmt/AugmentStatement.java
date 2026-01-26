@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -17,8 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface AugmentStatement extends DocumentedDeclaredStatement<SchemaNodeIdentifier>,
         DataDefinitionStatement.MultipleIn<SchemaNodeIdentifier>, ActionStatement.MultipleIn<SchemaNodeIdentifier>,
-        IfFeatureStatement.MultipleIn<SchemaNodeIdentifier>, NotificationStatement.MultipleIn<SchemaNodeIdentifier>,
-        StatusStatement.OptionalIn<SchemaNodeIdentifier>, WhenStatement.OptionalIn<SchemaNodeIdentifier> {
+        CaseStatement.MultipleIn<SchemaNodeIdentifier>, IfFeatureStatement.MultipleIn<SchemaNodeIdentifier>,
+        NotificationStatement.MultipleIn<SchemaNodeIdentifier>, StatusStatement.OptionalIn<SchemaNodeIdentifier>,
+        WhenStatement.OptionalIn<SchemaNodeIdentifier> {
     /**
      * The definition of {@code augment} statement.
      *
@@ -31,10 +31,5 @@ public interface AugmentStatement extends DocumentedDeclaredStatement<SchemaNode
     @Override
     default StatementDefinition<SchemaNodeIdentifier, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: 7.0.0: determine the utility of this method
-    default @NonNull Collection<? extends @NonNull CaseStatement> getCases() {
-        return declaredSubstatements(CaseStatement.class);
     }
 }
