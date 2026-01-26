@@ -42,7 +42,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition#getIdentities()}
  *
  * <dt>belongs-to
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement#getBelongsTo()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement#belongsToStatement()}
  *
  * <dt>bit
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit}

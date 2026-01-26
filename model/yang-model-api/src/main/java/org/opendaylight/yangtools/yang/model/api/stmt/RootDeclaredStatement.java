@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 public sealed interface RootDeclaredStatement
         extends DocumentedDeclaredStatement<Unqualified>, DataDefinitionStatement.MultipleIn<Unqualified>,
                 AugmentStatement.MultipleIn<Unqualified>, GroupingStatementMultipleIn<Unqualified>,
-                NotificationStatement.MultipleIn<Unqualified>, TypedefStatement.MultipleIn<Unqualified>
+                NotificationStatement.MultipleIn<Unqualified>, TypedefStatement.MultipleIn<Unqualified>,
+                YangVersionStatement.OptionalIn<Unqualified>
         permits ModuleStatement, SubmoduleStatement {
     @Override
     Unqualified argument();
