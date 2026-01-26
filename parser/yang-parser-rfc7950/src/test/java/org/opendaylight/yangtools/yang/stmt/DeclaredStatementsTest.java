@@ -163,8 +163,9 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertNotNull(moduleStatementPrefix);
         assertNotNull(moduleStatementPrefix.argument());
 
-        assertEquals(1, moduleStatement.getIncludes().size());
-        final var includeStatement = moduleStatement.getIncludes().iterator().next();
+        final var moduleIncludes = moduleStatement.includeStatements();
+        assertEquals(1, moduleIncludes.size());
+        final var includeStatement = moduleIncludes.iterator().next();
         assertEquals(Unqualified.of("child-module-declared-test"), includeStatement.argument());
 
         final var submodules = testModule.getSubmodules();
@@ -196,25 +197,28 @@ class DeclaredStatementsTest extends AbstractYangTest {
 
         final var moduleStatement = testModule.asEffectiveStatement().requireDeclared();
 
-        assertEquals(1, moduleStatement.getImports().size());
-        final var importStatement = moduleStatement.getImports().iterator().next();
+        final var moduleImports = moduleStatement.importStatements();
+        assertEquals(1, moduleImports.size());
+        final var importStatement = moduleImports.iterator().next();
         assertEquals(Unqualified.of("imported-module-declared-test"), importStatement.argument());
         assertEquals("imdt", importStatement.getPrefixStatement().argument());
         assertEquals(revision, importStatement.getRevisionDateStatement().argument());
 
         assertEquals("test description", moduleStatement.getDescriptionStatement().argument());
         assertEquals("test reference", moduleStatement.getReferenceStatement().argument());
-        assertEquals("test organization", moduleStatement.getOrganization().orElseThrow().argument());
-        assertEquals("test contact", moduleStatement.getContact().orElseThrow().argument());
+        assertEquals("test organization", moduleStatement.getOrganizationStatement().argument());
+        assertEquals("test contact", moduleStatement.getContactStatement().argument());
 
-        assertEquals(1, moduleStatement.getRevisions().size());
-        final var revisionStatement = moduleStatement.getRevisions().iterator().next();
+        final var moduleRevisions = moduleStatement.revisionStatements();
+        assertEquals(1, moduleRevisions.size());
+        final var revisionStatement = moduleRevisions.iterator().next();
         assertEquals(revision, revisionStatement.argument());
         assertEquals("test description", revisionStatement.getDescriptionStatement().argument());
         assertEquals("test reference", revisionStatement.getReferenceStatement().argument());
 
-        assertEquals(1, moduleStatement.getExtensions().size());
-        final var extensionStatement = moduleStatement.getExtensions().iterator().next();
+        final var moduleExtensions = moduleStatement.extensionStatements();
+        assertEquals(1, moduleExtensions.size());
+        final var extensionStatement = moduleExtensions.iterator().next();
         assertEquals(Status.CURRENT, extensionStatement.getStatusStatement().argument());
         assertEquals("test description", extensionStatement.getDescriptionStatement().argument());
         assertEquals("test reference", extensionStatement.getReferenceStatement().argument());
@@ -222,16 +226,18 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals("ext-argument", argumentStatement.argument().getLocalName());
         assertTrue(argumentStatement.getYinElement().argument());
 
-        assertEquals(2, moduleStatement.getFeatures().size());
-        final var featureStatement = moduleStatement.getFeatures().iterator().next();
+        final var moduleFeatures = moduleStatement.featureStatements();
+        assertEquals(2, moduleFeatures.size());
+        final var featureStatement = moduleFeatures.iterator().next();
         assertEquals(Status.CURRENT, featureStatement.getStatusStatement().argument());
         assertEquals("test description", featureStatement.getDescriptionStatement().argument());
         assertEquals("test reference", featureStatement.getReferenceStatement().argument());
         assertEquals("test-feature", featureStatement.argument().getLocalName());
         assertEquals(1, featureStatement.ifFeatureStatements().size());
 
-        assertEquals(2, moduleStatement.getIdentities().size());
-        final var identityStatement = moduleStatement.getIdentities().stream()
+        final var moduleIdentities = moduleStatement.identityStatements();
+        assertEquals(2, moduleIdentities.size());
+        final var identityStatement = moduleIdentities.stream()
             .filter(identity -> identity.argument().getLocalName().equals("test-id"))
             .findFirst()
             .orElseThrow();
