@@ -62,7 +62,6 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     }
 
     /**
-    /**
      * The definition of {@code type} statement.
      *
      * @since 15.0.0
@@ -77,21 +76,13 @@ public interface TypeStatement extends DeclaredStatement<QName> {
     }
 
     // FIXME: 7.0.0: this interface does not have an implementation
-    interface NumericalRestrictions extends TypeStatement {
-        default @Nullable RangeStatement getRange() {
-            return findFirstDeclaredSubstatement(RangeStatement.class).orElse(null);
-        }
+    interface NumericalRestrictions extends TypeStatement, RangeStatement.OptionalIn<QName> {
+        // Nothing else
     }
 
-    interface Decimal64Specification extends TypeStatement {
-        default @NonNull FractionDigitsStatement getFractionDigits() {
-            return findFirstDeclaredSubstatement(FractionDigitsStatement.class).orElseThrow();
-        }
-
-        default @Nullable RangeStatement getRange() {
-            final var opt = findFirstDeclaredSubstatement(RangeStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
+    interface Decimal64Specification extends TypeStatement, RangeStatement.OptionalIn<QName>,
+            FractionDigitsStatement.OptionalIn<QName> {
+        // Nothing else
     }
 
     // FIXME: 7.0.0: this interface does not have an implementation
@@ -100,53 +91,32 @@ public interface TypeStatement extends DeclaredStatement<QName> {
         // Nothing else
     }
 
-    interface EnumSpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull EnumStatement> getEnums() {
-            return declaredSubstatements(EnumStatement.class);
-        }
+    interface EnumSpecification extends TypeStatement, EnumStatement.MultipleIn<QName> {
+        // Nothing else
     }
 
-    interface LeafrefSpecification extends TypeStatement {
-        default @NonNull PathStatement getPath() {
-            return findFirstDeclaredSubstatement(PathStatement.class).orElseThrow();
-        }
-
-        /**
-         * Return require-instance statement child, if present. For RFC6020 semantics, this method always returns null.
-         *
-         * @return require-instance statement, if present.
-         */
-        default @Nullable RequireInstanceStatement getRequireInstance() {
-            final var opt = findFirstDeclaredSubstatement(RequireInstanceStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
+    interface LeafrefSpecification extends TypeStatement, PathStatement.OptionalIn<QName>,
+            RequireInstanceStatement.OptionalIn<QName> {
+        // Nothing else
     }
 
-    interface InstanceIdentifierSpecification extends TypeStatement {
-        /**
-         * Return require-instance statement child, if present. For RFC6020 semantics, this method always returns
-         * null.
-         *
-         * @return require-instance statement, if present.
-         */
-        default @Nullable RequireInstanceStatement getRequireInstance() {
-            final var opt = findFirstDeclaredSubstatement(RequireInstanceStatement.class);
-            return opt.isPresent() ? opt.orElseThrow() : null;
-        }
+    interface InstanceIdentifierSpecification extends TypeStatement, RequireInstanceStatement.OptionalIn<QName> {
+        // Nothing else
     }
 
     interface IdentityRefSpecification extends TypeStatement, BaseStatement.MultipleIn<QName> {
         // Nothing else
     }
 
-    interface BitsSpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull BitStatement> getBits() {
-            return declaredSubstatements(BitStatement.class);
-        }
+    interface BitsSpecification extends TypeStatement, BitStatement.MultipleIn<QName> {
+        // Nothing else
     }
 
     interface UnionSpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull TypeStatement> getTypes() {
+        /**
+         * {@return all {@code TypeStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull TypeStatement> typeStatements() {
             return declaredSubstatements(TypeStatement.class);
         }
     }
