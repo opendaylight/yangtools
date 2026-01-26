@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -19,9 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public non-sealed interface ListStatement extends DataDefinitionStatement, DataDefinitionStatement.MultipleIn<QName>,
         ActionStatement.MultipleIn<QName>, ConfigStatement.OptionalIn<QName>, GroupingStatementMultipleIn<QName>,
-        MaxElementsStatement.OptionalIn<QName>, MinElementsStatement.OptionalIn<QName>,
+        KeyStatement.OptionalIn<QName>, MaxElementsStatement.OptionalIn<QName>, MinElementsStatement.OptionalIn<QName>,
         MustStatement.MultipleIn<QName>, NotificationStatement.MultipleIn<QName>, OrderedByStatement.OptionalIn<QName>,
-        TypedefStatement.MultipleIn<QName> {
+        TypedefStatement.MultipleIn<QName>, UniqueStatement.MultipleIn<QName> {
     /**
      * The definition of {@code list} statement.
      *
@@ -34,16 +32,5 @@ public non-sealed interface ListStatement extends DataDefinitionStatement, DataD
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: rename and document
-    default @Nullable KeyStatement getKey() {
-        final var opt = findFirstDeclaredSubstatement(KeyStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
-    }
-
-    // FIXME: rename and document
-    default @NonNull Collection<? extends @NonNull UniqueStatement> getUnique() {
-        return declaredSubstatements(UniqueStatement.class);
     }
 }

@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -19,6 +22,20 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  */
 // FIXME: UniqueAargument instead of Set<SchemaNodeIdentifier.Descendant>
 public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Descendant>> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link UniqueStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code UniqueStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull UniqueStatement> uniqueStatements() {
+            return declaredSubstatements(UniqueStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code unique} statement.
      *
