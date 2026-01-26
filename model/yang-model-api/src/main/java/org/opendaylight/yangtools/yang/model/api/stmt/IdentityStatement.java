@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -17,6 +21,20 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, BaseStatement.MultipleIn<QName>,
         IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link IdentityStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code IdentityStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull IdentityStatement> identityStatements() {
+            return declaredSubstatements(IdentityStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code identity} statement.
      *
