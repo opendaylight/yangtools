@@ -10,15 +10,16 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Common capture of declared traits shared by {@code action} and {@code rpc} statements.
  */
-public sealed interface DeclaredOperationStatement
-        extends DocumentedDeclaredStatement<QName>, GroupingStatementMultipleIn<QName>,
-                IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName>,
-                TypedefStatement.MultipleIn<QName>
-        permits ActionStatement, RpcStatement {
+public sealed interface DeclaredOperationStatement extends DeclaredStatement<QName>,
+        DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
+        GroupingStatementMultipleIn<QName>, ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>,
+        TypedefStatement.MultipleIn<QName> permits ActionStatement, RpcStatement {
+
     default @NonNull Optional<InputStatement> getInput() {
         return findFirstDeclaredSubstatement(InputStatement.class);
     }

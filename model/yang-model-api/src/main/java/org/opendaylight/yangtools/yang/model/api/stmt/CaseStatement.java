@@ -19,8 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code case} statement.
  */
-public interface CaseStatement extends DocumentedDeclaredStatement<QName>, DataDefinitionStatement.MultipleIn<QName>,
-        IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName> {
+public interface CaseStatement extends DeclaredStatement<QName>, DataDefinitionStatement.MultipleIn<QName>,
+        DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
+        ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link CaseStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

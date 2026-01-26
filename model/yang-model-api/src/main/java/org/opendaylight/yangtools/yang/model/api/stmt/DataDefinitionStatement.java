@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * {@code data-def-stmt} ABNF rule.
  */
 public sealed interface DataDefinitionStatement
-        extends DocumentedDeclaredStatement<QName>, IfFeatureStatement.MultipleIn<QName>,
-                StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName>
-        permits AnydataStatement, AnyxmlStatement, ChoiceStatement, ContainerStatement, LeafListStatement,
-                LeafStatement, ListStatement, UsesStatement {
+    extends DeclaredStatement<QName>, DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
+            ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName>
+    permits AnydataStatement, AnyxmlStatement, ChoiceStatement, ContainerStatement, LeafListStatement, LeafStatement,
+            ListStatement, UsesStatement {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link DataDefinitionStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

@@ -19,8 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code pattern} statement.
  */
-public interface PatternStatement extends DocumentedDeclaredStatement<PatternExpression>,
-        ErrorAppTagStatement.OptionalIn<PatternExpression>, ErrorMessageStatement.OptionalIn<PatternExpression> {
+public interface PatternStatement extends DeclaredStatement<PatternExpression>,
+        DescriptionStatement.OptionalIn<PatternExpression>, ErrorAppTagStatement.OptionalIn<PatternExpression>,
+        ErrorMessageStatement.OptionalIn<PatternExpression>, ReferenceStatement.OptionalIn<PatternExpression> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link PatternStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

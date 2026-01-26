@@ -20,8 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code range} statement.
  */
-public interface RangeStatement extends DocumentedDeclaredStatement<ValueRanges>,
-        ErrorAppTagStatement.OptionalIn<ValueRanges>, ErrorMessageStatement.OptionalIn<ValueRanges> {
+public interface RangeStatement extends DeclaredStatement<ValueRanges>, DescriptionStatement.OptionalIn<ValueRanges>,
+        ErrorAppTagStatement.OptionalIn<ValueRanges>, ErrorMessageStatement.OptionalIn<ValueRanges>,
+        ReferenceStatement.OptionalIn<ValueRanges> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link RangeStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

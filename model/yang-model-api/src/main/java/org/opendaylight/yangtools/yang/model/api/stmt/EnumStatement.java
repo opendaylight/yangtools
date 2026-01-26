@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code enum} statement.
  */
-public interface EnumStatement extends DocumentedDeclaredStatement<String>, IfFeatureStatement.MultipleIn<String>,
+public interface EnumStatement extends DeclaredStatement<String>, DescriptionStatement.OptionalIn<String>,
+        IfFeatureStatement.MultipleIn<String>, ReferenceStatement.OptionalIn<String>,
         StatusStatement.OptionalIn<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link EnumStatement}s.
