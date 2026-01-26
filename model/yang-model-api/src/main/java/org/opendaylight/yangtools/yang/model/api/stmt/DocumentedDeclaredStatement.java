@@ -8,30 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Common interface for statements which contain either a description/reference or a description/reference/status combo.
  */
 @Beta
-public interface DocumentedDeclaredStatement<T> extends DeclaredStatement<T> {
-    /**
-     * Return description statement, if available.
-     *
-     * @return description statement
-     */
-    default @NonNull Optional<DescriptionStatement> getDescription() {
-        return findFirstDeclaredSubstatement(DescriptionStatement.class);
-    }
-
-    /**
-     * Return description statement, if available.
-     *
-     * @return description statement
-     */
-    default @NonNull Optional<ReferenceStatement> getReference() {
-        return findFirstDeclaredSubstatement(ReferenceStatement.class);
-    }
+public interface DocumentedDeclaredStatement<T> extends DeclaredStatement<T>, DescriptionStatement.OptionalIn<T>,
+        ReferenceStatement.OptionalIn<T> {
+    // Nothing else
 }
