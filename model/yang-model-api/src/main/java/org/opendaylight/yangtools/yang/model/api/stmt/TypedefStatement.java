@@ -43,7 +43,7 @@ public interface TypedefStatement extends DeclaredStatement<QName>, DefaultState
      */
     @NonNull StatementDefinition<QName, @NonNull TypedefStatement, @NonNull TypedefEffectiveStatement> DEF =
         StatementDefinition.of(TypedefStatement.class, TypedefEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "typedef", "name");
+            YangConstants.RFC6020_YIN_MODULE, "typedef", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

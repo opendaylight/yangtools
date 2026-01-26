@@ -25,7 +25,7 @@ public non-sealed interface LeafStatement extends DataDefinitionStatement, Confi
      */
     @NonNull StatementDefinition<QName, @NonNull LeafStatement, @NonNull LeafEffectiveStatement> DEF =
         StatementDefinition.of(LeafStatement.class, LeafEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "leaf", "name");
+            YangConstants.RFC6020_YIN_MODULE, "leaf", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

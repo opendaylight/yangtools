@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -67,7 +68,8 @@ public interface OrderedByStatement extends DeclaredStatement<Ordering> {
      */
     @NonNull StatementDefinition<Ordering, @NonNull OrderedByStatement, @NonNull OrderedByEffectiveStatement> DEF =
         StatementDefinition.of(OrderedByStatement.class, OrderedByEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "ordered-by", "value");
+            YangConstants.RFC6020_YIN_MODULE, "ordered-by",
+            ArgumentDefinition.of(Ordering.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<Ordering, ?, ?> statementDefinition() {

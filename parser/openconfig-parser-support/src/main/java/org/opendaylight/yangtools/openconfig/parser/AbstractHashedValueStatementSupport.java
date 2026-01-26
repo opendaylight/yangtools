@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractHashedValueStatementSupport
         extends AbstractEmptyStatementSupport<OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> {
-    AbstractHashedValueStatementSupport(final StatementDefinition definition, final YangParserConfiguration config,
+    AbstractHashedValueStatementSupport(final StatementDefinition<Empty, OpenConfigHashedValueStatement,
+            OpenConfigHashedValueEffectiveStatement> definition, final YangParserConfiguration config,
             final SubstatementValidator validator) {
         super(definition, StatementPolicy.contextIndependent(), config, validator);
     }

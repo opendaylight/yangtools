@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -25,8 +26,9 @@ public interface ThirdPartyExtensionStatement extends UnknownStatement<String> {
     @NonNull StatementDefinition<String, @NonNull ThirdPartyExtensionStatement,
         @NonNull ThirdPartyExtensionEffectiveStatement> DEF = StatementDefinition.of(
             ThirdPartyExtensionStatement.class, ThirdPartyExtensionEffectiveStatement.class,
-            QNameModule.of("urn:opendaylight:yang:extension:third-party", "2016-06-09"),
-            "third-party-extension", "argument-name");
+            QNameModule.of("urn:opendaylight:yang:extension:third-party", "2016-06-09"), "third-party-extension",
+            ArgumentDefinition.of(String.class,
+                QNameModule.of("urn:opendaylight:yang:extension:third-party", "2016-06-09"), "argument-name"));
 
     @Override
     default StatementDefinition<String, ? , ?> statementDefinition() {

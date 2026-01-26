@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -19,7 +20,8 @@ public interface MaxAccessStatement extends UnknownStatement<MaxAccess> {
      */
     @NonNull StatementDefinition<MaxAccess, @NonNull MaxAccessStatement, @NonNull MaxAccessEffectiveStatement> DEF =
         StatementDefinition.of(MaxAccessStatement.class, MaxAccessEffectiveStatement.class,
-            IetfYangSmiv2Constants.RFC6643_MODULE, "max-access", "access");
+            IetfYangSmiv2Constants.RFC6643_MODULE, "max-access",
+            ArgumentDefinition.of(MaxAccess.class, IetfYangSmiv2Constants.RFC6643_MODULE, "access"));
 
     @Override
     default StatementDefinition<MaxAccess, ?, ?> statementDefinition() {

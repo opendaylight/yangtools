@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -22,7 +23,8 @@ public interface LegacyAugmentIdentifierStatement extends UnknownStatement<Unqua
     @NonNull StatementDefinition<Unqualified, @NonNull LegacyAugmentIdentifierStatement,
         @NonNull LegacyAugmentIdentifierEffectiveStatement> DEF = StatementDefinition.of(
             LegacyAugmentIdentifierStatement.class, LegacyAugmentIdentifierEffectiveStatement.class,
-            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier", "identifier");
+            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier",
+            ArgumentDefinition.of(Unqualified.class, OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "identifier"));
 
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {

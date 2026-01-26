@@ -664,7 +664,7 @@ public final class DeclaredStatements {
     }
 
     public static UnrecognizedStatement createUnrecognized(final String rawArgument,
-            final StatementDefinition publicDefinition,
+            final StatementDefinition<Object, ?, ?> publicDefinition,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new UnrecognizedStatementImpl(rawArgument, publicDefinition, substatements);
     }

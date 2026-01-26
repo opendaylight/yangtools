@@ -17,16 +17,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawArgument.WithSubstatements;
 
 public final class UnrecognizedStatementImpl extends WithSubstatements<Object> implements UnrecognizedStatement {
-    private final @NonNull StatementDefinition definition;
+    private final @NonNull StatementDefinition<Object, ?, ?> definition;
 
-    public UnrecognizedStatementImpl(final String rawArgument, final @NonNull StatementDefinition definition,
+    public UnrecognizedStatementImpl(final String rawArgument,
+            final @NonNull StatementDefinition<Object, ?, ?> definition,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, substatements);
         this.definition = requireNonNull(definition);
     }
 
     @Override
-    public StatementDefinition statementDefinition() {
+    public StatementDefinition<Object, ?, ?> statementDefinition() {
         return definition;
     }
 }

@@ -67,7 +67,7 @@ public interface ContactStatement extends DeclaredHumanTextStatement {
      */
     @NonNull StatementDefinition<String, @NonNull ContactStatement, @NonNull ContactEffectiveStatement> DEF =
         StatementDefinition.of(ContactStatement.class, ContactEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "contact", "text", true);
+            YangConstants.RFC6020_YIN_MODULE, "contact", YangArgumentDefinitions.TEXT_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

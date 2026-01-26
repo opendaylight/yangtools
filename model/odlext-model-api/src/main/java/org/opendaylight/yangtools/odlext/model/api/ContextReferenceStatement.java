@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -20,7 +21,8 @@ public interface ContextReferenceStatement extends UnknownStatement<QName> {
      */
     @NonNull StatementDefinition<QName, @NonNull ContextReferenceStatement, @NonNull ContextReferenceEffectiveStatement>
         DEF = StatementDefinition.of(ContextReferenceStatement.class, ContextReferenceEffectiveStatement.class,
-            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-reference", "context-type");
+            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-reference",
+            ArgumentDefinition.of(QName.class, OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-type"));
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

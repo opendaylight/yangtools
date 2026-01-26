@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -79,8 +78,8 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         }
     }
 
-    @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
-        return support.getArgumentDefinition();
+    @Nullable ArgumentDefinition<A> argumentDefinition() {
+        return support.argumentDefinition();
     }
 
     @NonNull QName getStatementName() {

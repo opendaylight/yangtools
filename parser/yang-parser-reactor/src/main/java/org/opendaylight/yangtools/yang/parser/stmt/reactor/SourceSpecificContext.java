@@ -166,7 +166,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         if (def == null) {
             throw new InferenceException(ref, "Statement %s does not have type mapping defined.", name);
         }
-        if (def.getArgumentDefinition().isPresent()) {
+        if (def.argumentDefinition() != null) {
             if (argument == null) {
                 throw new SourceException(ref, "Statement %s requires an argument", name);
             }

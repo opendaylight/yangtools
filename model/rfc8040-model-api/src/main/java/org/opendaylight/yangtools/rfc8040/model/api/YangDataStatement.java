@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc8040.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangDataName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -24,7 +25,8 @@ public interface YangDataStatement extends UnknownStatement<YangDataName> {
      */
     @NonNull StatementDefinition<YangDataName, @NonNull YangDataStatement, @NonNull YangDataEffectiveStatement> DEF =
         StatementDefinition.of(YangDataStatement.class, YangDataEffectiveStatement.class,
-            YangDataConstants.RFC8040_MODULE, "yang-data", "name");
+            YangDataConstants.RFC8040_MODULE, "yang-data",
+            ArgumentDefinition.of(YangDataName.class, YangDataConstants.RFC8040_MODULE, "name"));
 
     @Override
     default StatementDefinition<YangDataName, ?, ?> statementDefinition() {

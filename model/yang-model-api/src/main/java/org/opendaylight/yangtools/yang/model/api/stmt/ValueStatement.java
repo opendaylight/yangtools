@@ -66,7 +66,7 @@ public interface ValueStatement extends DeclaredStatement<Integer> {
      */
     @NonNull StatementDefinition<Integer, @NonNull ValueStatement, @NonNull ValueEffectiveStatement> DEF =
         StatementDefinition.of(ValueStatement.class, ValueEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "value", "value");
+            YangConstants.RFC6020_YIN_MODULE, "value", YangArgumentDefinitions.VALUE_AS_INTEGER);
 
     @Override
     default StatementDefinition<Integer, ?, ?> statementDefinition() {

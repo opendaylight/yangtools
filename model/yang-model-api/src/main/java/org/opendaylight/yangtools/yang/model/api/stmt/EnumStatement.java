@@ -42,7 +42,7 @@ public interface EnumStatement extends DeclaredStatement<String>, DescriptionSta
      */
     @NonNull StatementDefinition<String, @NonNull EnumStatement, @NonNull EnumEffectiveStatement> DEF =
         StatementDefinition.of(EnumStatement.class, EnumEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "enum", "name");
+            YangConstants.RFC6020_YIN_MODULE, "enum", YangArgumentDefinitions.NAME_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {
