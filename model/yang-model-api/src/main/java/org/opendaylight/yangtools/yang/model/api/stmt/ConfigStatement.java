@@ -66,7 +66,7 @@ public interface ConfigStatement extends DeclaredStatement<Boolean> {
      */
     @NonNull StatementDefinition<Boolean, @NonNull ConfigStatement, @NonNull ConfigEffectiveStatement> DEF =
         StatementDefinition.of(ConfigStatement.class, ConfigEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "config", "value");
+            YangConstants.RFC6020_YIN_MODULE, "config", YangArgumentDefinitions.VALUE_AS_BOOLEAN);
 
     @Override
     default StatementDefinition<Boolean, ?, ?> statementDefinition() {

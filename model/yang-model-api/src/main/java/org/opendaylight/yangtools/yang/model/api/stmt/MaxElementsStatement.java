@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -67,7 +68,8 @@ public interface MaxElementsStatement extends DeclaredStatement<MaxElementsArgum
     @NonNull StatementDefinition<MaxElementsArgument, @NonNull MaxElementsStatement,
         @NonNull MaxElementsEffectiveStatement> DEF = StatementDefinition.of(
             MaxElementsStatement.class, MaxElementsEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "max-elements", "value");
+            YangConstants.RFC6020_YIN_MODULE, "max-elements",
+            ArgumentDefinition.of(MaxElementsArgument.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<MaxElementsArgument, ?, ?> statementDefinition() {

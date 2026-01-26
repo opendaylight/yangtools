@@ -66,7 +66,7 @@ public interface ErrorAppTagStatement extends DeclaredStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull ErrorAppTagStatement, @NonNull ErrorAppTagEffectiveStatement> DEF =
         StatementDefinition.of(ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "error-app-tag", "value");
+            YangConstants.RFC6020_YIN_MODULE, "error-app-tag", YangArgumentDefinitions.VALUE_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

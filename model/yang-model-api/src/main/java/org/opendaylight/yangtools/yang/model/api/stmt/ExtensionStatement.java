@@ -43,7 +43,7 @@ public interface ExtensionStatement extends DeclaredStatement<QName>, ArgumentSt
      */
     @NonNull StatementDefinition<QName, @NonNull ExtensionStatement, @NonNull ExtensionEffectiveStatement> DEF =
         StatementDefinition.of(ExtensionStatement.class, ExtensionEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "extension", "name");
+            YangConstants.RFC6020_YIN_MODULE, "extension", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

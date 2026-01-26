@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -67,7 +68,8 @@ public interface StatusStatement extends DeclaredStatement<Status> {
      */
     @NonNull StatementDefinition<Status, @NonNull StatusStatement, @NonNull StatusEffectiveStatement> DEF =
         StatementDefinition.of(StatusStatement.class, StatusEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "status", "value");
+            YangConstants.RFC6020_YIN_MODULE, "status",
+            ArgumentDefinition.of(Status.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<Status, ?, ?> statementDefinition() {
