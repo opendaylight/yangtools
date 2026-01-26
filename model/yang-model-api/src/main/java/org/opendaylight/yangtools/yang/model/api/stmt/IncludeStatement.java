@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code include} statement.
  */
-public interface IncludeStatement extends DocumentedDeclaredStatement<Unqualified>,
-        RevisionDateStatement.OptionalIn<Unqualified> {
+public interface IncludeStatement extends DeclaredStatement<Unqualified>, DescriptionStatement.OptionalIn<Unqualified>,
+        ReferenceStatement.OptionalIn<Unqualified>, RevisionDateStatement.OptionalIn<Unqualified> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link IncludeStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

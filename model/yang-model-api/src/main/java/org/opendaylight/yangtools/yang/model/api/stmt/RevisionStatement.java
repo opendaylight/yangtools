@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code revision} statement.
  */
-public interface RevisionStatement extends DocumentedDeclaredStatement<Revision> {
+public interface RevisionStatement extends DeclaredStatement<Revision>, DescriptionStatement.OptionalIn<Revision>,
+        ReferenceStatement.OptionalIn<Revision> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link RevisionStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
