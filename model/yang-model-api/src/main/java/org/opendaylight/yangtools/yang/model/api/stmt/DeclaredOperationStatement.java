@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -16,22 +15,14 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Common capture of declared traits shared by {@code action} and {@code rpc} statements.
  */
 public sealed interface DeclaredOperationStatement
-    extends DocumentedDeclaredStatement.WithStatus<QName>, IfFeatureStatement.MultipleIn<QName>
-    permits ActionStatement, RpcStatement {
-
+        extends DocumentedDeclaredStatement.WithStatus<QName>, GroupingStatementMultipleIn<QName>,
+                IfFeatureStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName>
+        permits ActionStatement, RpcStatement {
     default @NonNull Optional<InputStatement> getInput() {
         return findFirstDeclaredSubstatement(InputStatement.class);
     }
 
     default @NonNull Optional<OutputStatement> getOutput() {
         return findFirstDeclaredSubstatement(OutputStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull TypedefStatement> getTypedefs() {
-        return declaredSubstatements(TypedefStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull GroupingStatement> getGroupings() {
-        return declaredSubstatements(GroupingStatement.class);
     }
 }
