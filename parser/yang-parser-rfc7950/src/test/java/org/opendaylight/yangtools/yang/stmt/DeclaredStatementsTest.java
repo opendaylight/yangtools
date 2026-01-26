@@ -155,7 +155,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertNotNull(moduleStatementYangVersion);
         assertNotNull(moduleStatementYangVersion.argument());
 
-        final var moduleStatementNamspace = moduleStatement.getNamespace();
+        final var moduleStatementNamspace = moduleStatement.namespaceStatement();
         assertNotNull(moduleStatementNamspace);
         assertNotNull(moduleStatementNamspace.argument());
 
@@ -179,7 +179,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var submoduleStatementYangVersion = submoduleStatement.yangVersionStatement();
         assertNotNull(submoduleStatementYangVersion);
 
-        final var belongsToStatement = submoduleStatement.getBelongsTo();
+        final var belongsToStatement = submoduleStatement.belongsToStatement();
         assertNotNull(belongsToStatement);
         assertNotNull(belongsToStatement.argument());
         assertNotNull(belongsToStatement.prefixStatement());
