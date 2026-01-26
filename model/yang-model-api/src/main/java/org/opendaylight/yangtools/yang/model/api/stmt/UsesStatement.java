@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code uses} statement.
  */
-public non-sealed interface UsesStatement extends DataDefinitionStatement {
+public non-sealed interface UsesStatement extends DataDefinitionStatement, AugmentStatement.MultipleIn<QName> {
     /**
      * The definition of {@code uses} statement.
      *
@@ -34,10 +34,5 @@ public non-sealed interface UsesStatement extends DataDefinitionStatement {
     // FIXME: document/rename
     default @NonNull Collection<? extends @NonNull RefineStatement> getRefines() {
         return declaredSubstatements(RefineStatement.class);
-    }
-
-    // FIXME: document/rename
-    default @NonNull Collection<? extends @NonNull AugmentStatement> getAugments() {
-        return declaredSubstatements(AugmentStatement.class);
     }
 }

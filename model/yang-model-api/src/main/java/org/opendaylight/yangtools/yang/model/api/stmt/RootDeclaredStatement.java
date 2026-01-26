@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 @Beta
 public sealed interface RootDeclaredStatement
         extends DocumentedDeclaredStatement<Unqualified>, DataDefinitionStatement.MultipleIn<Unqualified>,
-                GroupingStatementMultipleIn<Unqualified>, NotificationStatement.MultipleIn<Unqualified>,
-                TypedefStatement.MultipleIn<Unqualified>
+                AugmentStatement.MultipleIn<Unqualified>, GroupingStatementMultipleIn<Unqualified>,
+                NotificationStatement.MultipleIn<Unqualified>, TypedefStatement.MultipleIn<Unqualified>
         permits ModuleStatement, SubmoduleStatement {
     @Override
     Unqualified argument();
@@ -56,10 +56,6 @@ public sealed interface RootDeclaredStatement
 
     default @NonNull Collection<? extends @NonNull IdentityStatement> getIdentities() {
         return declaredSubstatements(IdentityStatement.class);
-    }
-
-    default @NonNull Collection<? extends @NonNull AugmentStatement> getAugments() {
-        return declaredSubstatements(AugmentStatement.class);
     }
 
     default @NonNull Collection<? extends @NonNull RpcStatement> getRpcs() {
