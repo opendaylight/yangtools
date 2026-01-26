@@ -68,6 +68,29 @@
       },
       "revId": "098b4934343a7c0bdb37f22a389ed55dc2ffac0e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8cc1ee32_2f431816",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/AbstractYangTest.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-26T11:27:07Z",
+      "side": 1,
+      "message": "why are we losing information here?",
+      "range": {
+        "startLine": 95,
+        "startChar": 29,
+        "endLine": 95,
+        "endChar": 45
+      },
+      "revId": "098b4934343a7c0bdb37f22a389ed55dc2ffac0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
