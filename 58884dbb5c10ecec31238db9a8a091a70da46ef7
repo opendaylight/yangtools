@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f50c6721_c69c9b50",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/ParserNamespaces.java",
+        "patchSetId": 55
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-26T11:31:01Z",
+      "side": 1,
+      "message": "ResolvedSourceInfo really implements a number of namespaces, so this amounts to leaking implementation\n\nThis should not be exposed as a namespace.\nAll users should continue to use individual namespaces.",
+      "range": {
+        "startLine": 100,
+        "startChar": 4,
+        "endLine": 100,
+        "endChar": 91
+      },
+      "revId": "58884dbb5c10ecec31238db9a8a091a70da46ef7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
