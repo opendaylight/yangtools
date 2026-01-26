@@ -135,16 +135,8 @@ public interface TypeStatement extends DeclaredStatement<QName> {
         }
     }
 
-    interface IdentityRefSpecification extends TypeStatement {
-        /**
-         * Returns the base statements.
-         *
-         * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base
-         *         statement (in YANG 1.0 models)
-         */
-        default @NonNull Collection<? extends @NonNull BaseStatement> getBases() {
-            return declaredSubstatements(BaseStatement.class);
-        }
+    interface IdentityRefSpecification extends TypeStatement, BaseStatement.MultipleIn<QName> {
+        // Nothing else
     }
 
     interface BitsSpecification extends TypeStatement {

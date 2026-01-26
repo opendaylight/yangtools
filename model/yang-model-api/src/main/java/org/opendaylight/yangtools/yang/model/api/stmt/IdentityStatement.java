@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -16,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code identity} statement.
  */
-public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, IfFeatureStatement.MultipleIn<QName>,
-        StatusStatement.OptionalIn<QName> {
+public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, BaseStatement.MultipleIn<QName>,
+        IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * The definition of {@code identity} statement.
      *
@@ -30,13 +29,5 @@ public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, I
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    /**
-     * {@return base identities, empty if there are none}
-     */
-    // FIXME: consider renaming?
-    default @NonNull Collection<? extends @NonNull BaseStatement> getBases() {
-        return declaredSubstatements(BaseStatement.class);
     }
 }

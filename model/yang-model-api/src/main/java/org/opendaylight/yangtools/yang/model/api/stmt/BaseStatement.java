@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -17,6 +20,20 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code base} statement.
  */
 public interface BaseStatement extends DeclaredStatement<QName> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link BaseStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code BaseStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull BaseStatement> baseStatements() {
+            return declaredSubstatements(BaseStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code base} statement.
      *

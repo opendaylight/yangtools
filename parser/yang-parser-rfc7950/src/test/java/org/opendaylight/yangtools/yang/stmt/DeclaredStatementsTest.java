@@ -236,7 +236,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
             .findFirst()
             .orElseThrow();
 
-        assertEquals("test-base-id", identityStatement.getBases().iterator().next().argument().getLocalName());
+        assertEquals("test-base-id", identityStatement.baseStatements().iterator().next().argument().getLocalName());
         assertEquals(Status.CURRENT, identityStatement.getStatusStatement().argument());
         assertEquals("test description", identityStatement.getDescriptionStatement().argument());
         assertEquals("test reference", identityStatement.getReferenceStatement().argument());
