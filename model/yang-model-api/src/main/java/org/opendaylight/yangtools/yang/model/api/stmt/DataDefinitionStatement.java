@@ -16,13 +16,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Statement that defines new data nodes. One of container, leaf, leaf-list, list, choice, case, augment, uses, anyxml
- * and anydata.
+ * or anydata.
  *
- * <p>Defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-3">RFC6020, Section 3</a>, as
+ * <p>Defined in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-3">RFC7950, Section 3</a> and in section 12 as
  * {@code data-def-stmt} ABNF rule.
  */
-public interface DataDefinitionStatement extends DocumentedDeclaredStatement<QName>,
-        IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName> {
+public sealed interface DataDefinitionStatement
+        extends DocumentedDeclaredStatement<QName>, IfFeatureStatement.MultipleIn<QName>,
+                StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName>
+        permits AnydataStatement, AnyxmlStatement, ChoiceStatement, ContainerStatement, LeafListStatement,
+                LeafStatement, ListStatement, UsesStatement {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link DataDefinitionStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
