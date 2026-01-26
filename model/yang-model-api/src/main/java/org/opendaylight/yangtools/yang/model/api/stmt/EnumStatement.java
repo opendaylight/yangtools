@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -18,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface EnumStatement extends DeclaredStatement<String>, DescriptionStatement.OptionalIn<String>,
         IfFeatureStatement.MultipleIn<String>, ReferenceStatement.OptionalIn<String>,
-        StatusStatement.OptionalIn<String> {
+        StatusStatement.OptionalIn<String>, ValueStatement.OptionalIn<String> {
     /**
      * The definition of {@code enum} statement.
      *
@@ -31,11 +30,5 @@ public interface EnumStatement extends DeclaredStatement<String>, DescriptionSta
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: document
-    default @Nullable ValueStatement getValue() {
-        final var opt = findFirstDeclaredSubstatement(ValueStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
