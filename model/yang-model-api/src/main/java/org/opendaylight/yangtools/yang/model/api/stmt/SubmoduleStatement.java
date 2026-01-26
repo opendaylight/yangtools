@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -16,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code submodule} statement.
  */
-public non-sealed interface SubmoduleStatement extends RootDeclaredStatement {
+public non-sealed interface SubmoduleStatement extends RootDeclaredStatement,
+        YangVersionStatement.OptionalIn<Unqualified> {
     /**
      * The definition of {@code submodule} statement.
      *
@@ -29,12 +29,6 @@ public non-sealed interface SubmoduleStatement extends RootDeclaredStatement {
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: rename/document and share with ModuleStatement
-    default @Nullable YangVersionStatement getYangVersion() {
-        final var opt = findFirstDeclaredSubstatement(YangVersionStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 
     // FIXME: rename/document

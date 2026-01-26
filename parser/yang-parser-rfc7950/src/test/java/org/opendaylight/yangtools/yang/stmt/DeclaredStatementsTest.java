@@ -151,7 +151,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var moduleStatement = testModule.asEffectiveStatement().requireDeclared();
         assertNotNull(moduleStatement.argument());
 
-        final var moduleStatementYangVersion = moduleStatement.getYangVersion();
+        final var moduleStatementYangVersion = moduleStatement.yangVersionStatement();
         assertNotNull(moduleStatementYangVersion);
         assertNotNull(moduleStatementYangVersion.argument());
 
@@ -176,7 +176,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
 
         assertNotNull(submoduleStatement.argument());
 
-        final var submoduleStatementYangVersion = submoduleStatement.getYangVersion();
+        final var submoduleStatementYangVersion = submoduleStatement.yangVersionStatement();
         assertNotNull(submoduleStatementYangVersion);
 
         final var belongsToStatement = submoduleStatement.getBelongsTo();
