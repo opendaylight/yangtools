@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -19,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface ContainerStatement extends DataDefinitionStatement,
         DataDefinitionStatement.MultipleIn<QName>, ActionStatement.MultipleIn<QName>, ConfigStatement.OptionalIn<QName>,
         GroupingStatementMultipleIn<QName>, MustStatement.MultipleIn<QName>, NotificationStatement.MultipleIn<QName>,
-        TypedefStatement.MultipleIn<QName> {
+        PresenceStatement.OptionalIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * The definition of {@code container} statement.
      *
@@ -32,11 +31,5 @@ public non-sealed interface ContainerStatement extends DataDefinitionStatement,
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: rename/document
-    default @Nullable PresenceStatement getPresence() {
-        final var opt = findFirstDeclaredSubstatement(PresenceStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
