@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -17,14 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  */
 public sealed interface DeclaredOperationStatement extends DeclaredStatement<QName>,
         DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
-        GroupingStatementMultipleIn<QName>, ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>,
-        TypedefStatement.MultipleIn<QName> permits ActionStatement, RpcStatement {
-
-    default @NonNull Optional<InputStatement> getInput() {
-        return findFirstDeclaredSubstatement(InputStatement.class);
-    }
-
-    default @NonNull Optional<OutputStatement> getOutput() {
-        return findFirstDeclaredSubstatement(OutputStatement.class);
-    }
+        GroupingStatementMultipleIn<QName>, InputStatement.OptionalIn<QName>, OutputStatement.OptionalIn<QName>,
+        ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>, TypedefStatement.MultipleIn<QName>
+        permits ActionStatement, RpcStatement {
+    // Nothing else
 }

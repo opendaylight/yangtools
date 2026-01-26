@@ -7,15 +7,59 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code output} statement.
  */
 public non-sealed interface OutputStatement extends DeclaredOperationBodyStatement {
+    /**
+     * A {@link DeclaredStatement} that is a parent of a single {@link OutputStatement}.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface OptionalIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return the {@code OutputStatement} or {@code null} if not present}
+         */
+        default @Nullable OutputStatement outputStatement() {
+            for (var stmt : declaredSubstatements()) {
+                if (stmt instanceof OutputStatement output) {
+                    return output;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * {@return an optional {@code OutputStatement}}
+         */
+        default @NonNull Optional<OutputStatement> findOutputStatement() {
+            return Optional.ofNullable(outputStatement());
+        }
+
+        /**
+         * {@return the {@code OutputStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        default @NonNull OutputStatement getOutputStatement() {
+            final var output = outputStatement();
+            if (output == null) {
+                throw new NoSuchElementException("No output statement present in " + this);
+            }
+            return output;
+        }
+    }
+
     /**
      * The definition of {@code output} statement.
      *
