@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.VerifyException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -38,6 +40,18 @@ public interface CommonStmtCtx {
     /**
      * {@return {@code true} if this context produces a statement corresponding to any of the specified
      * {@link StatementDefinition}s}
+     * @param first the first {@link StatementDefinition}s
+     * @param second the second {@link StatementDefinition}s
+     */
+    default boolean producesAnyOf(final StatementDefinition<?, ?, ?> first, final StatementDefinition<?, ?, ?> second) {
+        requireNonNull(second);
+        final var def = publicDefinition();
+        return first.equals(def) || second.equals(def);
+    }
+
+    /**
+     * {@return {@code true} if this context produces a statement corresponding to any of the specified
+     * {@link StatementDefinition}s}
      * @param defs the {@link StatementDefinition}s
      */
     default boolean producesAnyOf(final StatementDefinition<?, ?, ?>... defs) {
@@ -60,22 +74,20 @@ public interface CommonStmtCtx {
     }
 
     /**
-     * Return true if this context produces specified {@link DeclaredStatement} representation.
-     *
-     * @param <D> Declared Statement representation
-     * @param type DeclaredStatement representation
-     * @return True if this context results in specified {@link DeclaredStatement} representation
+     * {@return {@code true} if this context produces a statement whose declared representation is assignment-compatible
+     * with the specified type}
+     * @param <D> declared statement representation
+     * @param type {@link DeclaredStatement} representation
      */
     default <D extends DeclaredStatement<?>> boolean producesDeclared(final Class<? super D> type) {
         return type.isAssignableFrom(publicDefinition().declaredRepresentation());
     }
 
     /**
-     * Return true if this context produces specified {@link EffectiveStatement} representation.
-     *
-     * @param <E> Effective Statement representation
-     * @param type EffectiveStatement representation
-     * @return True if this context results in specified {@link EffectiveStatement} representation
+     * {@return {@code true} if this context produces a statement whose effective representation is
+     * assignment-compatible with the specified type}
+     * @param <E> effective statement representation
+     * @param type {@link EffectiveStatement} representation
      */
     default <E extends EffectiveStatement<?, ?>> boolean producesEffective(final Class<? super E> type) {
         return type.isAssignableFrom(publicDefinition().effectiveRepresentation());
