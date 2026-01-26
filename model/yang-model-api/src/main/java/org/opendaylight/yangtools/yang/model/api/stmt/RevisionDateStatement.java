@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -17,6 +22,44 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code revision-date} statement.
  */
 public interface RevisionDateStatement extends DeclaredStatement<Revision> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of a single {@link RevisionDateStatement}.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface OptionalIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return the {@code RevisionDateStatement} or {@code null} if not present}
+         */
+        default @Nullable RevisionDateStatement revisionDateStatement() {
+            for (var stmt : declaredSubstatements()) {
+                if (stmt instanceof RevisionDateStatement revisionDate) {
+                    return revisionDate;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * {@return an optional {@code RevisionDateStatement}}
+         */
+        default @NonNull Optional<RevisionDateStatement> findRevisionDateStatement() {
+            return Optional.ofNullable(revisionDateStatement());
+        }
+
+        /**
+         * {@return the {@code RevisionDateStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        default @NonNull RevisionDateStatement getRevisionDateStatement() {
+            final var revisionDate = revisionDateStatement();
+            if (revisionDate == null) {
+                throw new NoSuchElementException("No revision-date statement present in " + this);
+            }
+            return revisionDate;
+        }
+    }
+
     /**
      * The definition of {@code revision-date} statement.
      *
