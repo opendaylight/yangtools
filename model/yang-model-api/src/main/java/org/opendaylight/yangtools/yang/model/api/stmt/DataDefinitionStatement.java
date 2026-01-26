@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * <p>Defined in <a href="https://www.rfc-editor.org/rfc/rfc6020#section-3">RFC6020, Section 3</a>, as
  * {@code data-def-stmt} ABNF rule.
  */
-public interface DataDefinitionStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        IfFeatureStatement.MultipleIn<QName>, WhenStatement.OptionalIn<QName> {
+public interface DataDefinitionStatement extends DocumentedDeclaredStatement<QName>,
+        IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link DataDefinitionStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

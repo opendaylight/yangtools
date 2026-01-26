@@ -34,10 +34,4 @@ public interface DocumentedDeclaredStatement<T> extends DeclaredStatement<T> {
     default @NonNull Optional<ReferenceStatement> getReference() {
         return findFirstDeclaredSubstatement(ReferenceStatement.class);
     }
-
-    interface WithStatus<T> extends DocumentedDeclaredStatement<T> {
-        default @NonNull Optional<StatusStatement> getStatus() {
-            return findFirstDeclaredSubstatement(StatusStatement.class);
-        }
-    }
 }
