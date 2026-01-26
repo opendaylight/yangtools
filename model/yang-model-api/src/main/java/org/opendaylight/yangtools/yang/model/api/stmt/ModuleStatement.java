@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code module} statement.
  */
-public non-sealed interface ModuleStatement extends RootDeclaredStatement,
+public non-sealed interface ModuleStatement extends RootDeclaredStatement, PrefixStatement.OptionalIn<Unqualified>,
         YangVersionStatement.OptionalIn<Unqualified> {
     /**
      * The definition of {@code module} statement.
@@ -34,10 +34,5 @@ public non-sealed interface ModuleStatement extends RootDeclaredStatement,
     // FIXME: rename/document
     default @NonNull NamespaceStatement getNamespace() {
         return findFirstDeclaredSubstatement(NamespaceStatement.class).orElseThrow();
-    }
-
-    // FIXME: rename/document
-    default @NonNull PrefixStatement getPrefix() {
-        return findFirstDeclaredSubstatement(PrefixStatement.class).orElseThrow();
     }
 }
