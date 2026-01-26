@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -21,7 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface PatternStatement extends DeclaredStatement<PatternExpression>,
         DescriptionStatement.OptionalIn<PatternExpression>, ErrorAppTagStatement.OptionalIn<PatternExpression>,
-        ErrorMessageStatement.OptionalIn<PatternExpression>, ReferenceStatement.OptionalIn<PatternExpression> {
+        ErrorMessageStatement.OptionalIn<PatternExpression>, ModifierStatement.OptionalIn<PatternExpression>,
+        ReferenceStatement.OptionalIn<PatternExpression> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link PatternStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -48,17 +48,5 @@ public interface PatternStatement extends DeclaredStatement<PatternExpression>,
     @Override
     default StatementDefinition<PatternExpression, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    /**
-     * Return a modifier statement, if present. In RFC6020 semantics, there are no modifiers and this methods always
-     * returns null.
-     *
-     * @return modifier statement, null if not present.
-     */
-    // FIXME: rename
-    default @Nullable ModifierStatement getModifierStatement() {
-        final var opt = findFirstDeclaredSubstatement(ModifierStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
