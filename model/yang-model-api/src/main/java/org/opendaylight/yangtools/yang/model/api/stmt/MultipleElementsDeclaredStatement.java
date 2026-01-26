@@ -10,17 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 
 @Beta
-public interface MultipleElementsDeclaredStatement extends DataDefinitionStatement {
-    default @NonNull Optional<MinElementsStatement> getMinElements() {
-        return findFirstDeclaredSubstatement(MinElementsStatement.class);
-    }
-
-    default @NonNull Optional<MaxElementsStatement> getMaxElements() {
-        return findFirstDeclaredSubstatement(MaxElementsStatement.class);
-    }
-
+public interface MultipleElementsDeclaredStatement extends DataDefinitionStatement,
+        MaxElementsStatement.OptionalIn<QName>, MinElementsStatement.OptionalIn<QName> {
     default @NonNull Optional<OrderedByStatement> getOrderedBy() {
         return findFirstDeclaredSubstatement(OrderedByStatement.class);
     }
