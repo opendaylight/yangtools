@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -19,6 +23,20 @@ public interface AugmentStatement extends DocumentedDeclaredStatement<SchemaNode
         CaseStatement.MultipleIn<SchemaNodeIdentifier>, IfFeatureStatement.MultipleIn<SchemaNodeIdentifier>,
         NotificationStatement.MultipleIn<SchemaNodeIdentifier>, StatusStatement.OptionalIn<SchemaNodeIdentifier>,
         WhenStatement.OptionalIn<SchemaNodeIdentifier> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of multiple {@link AugmentStatement}s.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface MultipleIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return all {@code AugmentStatement} substatements}
+         */
+        default @NonNull Collection<? extends @NonNull AugmentStatement> augmentStatements() {
+            return declaredSubstatements(AugmentStatement.class);
+        }
+    }
+
     /**
      * The definition of {@code augment} statement.
      *
