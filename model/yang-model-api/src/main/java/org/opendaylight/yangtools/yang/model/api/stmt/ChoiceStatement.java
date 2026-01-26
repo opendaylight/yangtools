@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -16,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code choice} statement.
  */
-public non-sealed interface ChoiceStatement extends DataDefinitionStatement, ConfigStatement.OptionalIn<QName>,
-        DefaultStatement.OptionalIn<QName>, MandatoryStatement.OptionalIn<QName> {
+public non-sealed interface ChoiceStatement extends DataDefinitionStatement, CaseStatement.MultipleIn<QName>,
+        ConfigStatement.OptionalIn<QName>, DefaultStatement.OptionalIn<QName>, MandatoryStatement.OptionalIn<QName> {
     /**
      * The definition of {@code choice} statement.
      *
@@ -30,10 +29,5 @@ public non-sealed interface ChoiceStatement extends DataDefinitionStatement, Con
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: document
-    default @NonNull Collection<? extends @NonNull CaseStatement> getCases() {
-        return declaredSubstatements(CaseStatement.class);
     }
 }
