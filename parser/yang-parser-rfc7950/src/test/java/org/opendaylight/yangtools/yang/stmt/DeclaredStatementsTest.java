@@ -159,7 +159,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertNotNull(moduleStatementNamspace);
         assertNotNull(moduleStatementNamspace.argument());
 
-        final var moduleStatementPrefix = moduleStatement.getPrefix();
+        final var moduleStatementPrefix = moduleStatement.prefixStatement();
         assertNotNull(moduleStatementPrefix);
         assertNotNull(moduleStatementPrefix.argument());
 
@@ -182,7 +182,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         final var belongsToStatement = submoduleStatement.getBelongsTo();
         assertNotNull(belongsToStatement);
         assertNotNull(belongsToStatement.argument());
-        assertNotNull(belongsToStatement.getPrefix());
+        assertNotNull(belongsToStatement.prefixStatement());
     }
 
     @Test
@@ -199,8 +199,8 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals(1, moduleStatement.getImports().size());
         final var importStatement = moduleStatement.getImports().iterator().next();
         assertEquals(Unqualified.of("imported-module-declared-test"), importStatement.argument());
-        assertEquals("imdt", importStatement.getPrefix().argument());
-        assertEquals(revision, importStatement.getRevisionDate().argument());
+        assertEquals("imdt", importStatement.getPrefixStatement().argument());
+        assertEquals(revision, importStatement.getRevisionDateStatement().argument());
 
         assertEquals("test description", moduleStatement.getDescriptionStatement().argument());
         assertEquals("test reference", moduleStatement.getReferenceStatement().argument());
