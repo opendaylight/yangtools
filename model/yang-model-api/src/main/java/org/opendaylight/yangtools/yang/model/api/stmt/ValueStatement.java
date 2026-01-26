@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -16,6 +21,44 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code value} statement.
  */
 public interface ValueStatement extends DeclaredStatement<Integer> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of a single {@link ValueStatement}.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface OptionalIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return the {@code ValueStatement} or {@code null} if not present}
+         */
+        default @Nullable ValueStatement valueStatement() {
+            for (var stmt : declaredSubstatements()) {
+                if (stmt instanceof ValueStatement value) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * {@return an optional {@code ValueStatement}}
+         */
+        default @NonNull Optional<ValueStatement> findValueStatement() {
+            return Optional.ofNullable(valueStatement());
+        }
+
+        /**
+         * {@return the {@code ValueStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        default @NonNull ValueStatement getValueStatement() {
+            final var value = valueStatement();
+            if (value == null) {
+                throw new NoSuchElementException("No value statement present in " + this);
+            }
+            return value;
+        }
+    }
+
     /**
      * The definition of {@code value} statement.
      *

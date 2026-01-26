@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public interface EnumStatement extends DeclaredStatement<String>, DescriptionStatement.OptionalIn<String>,
         IfFeatureStatement.MultipleIn<String>, ReferenceStatement.OptionalIn<String>,
-        StatusStatement.OptionalIn<String> {
+        StatusStatement.OptionalIn<String>, ValueStatement.OptionalIn<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link EnumStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -48,11 +47,5 @@ public interface EnumStatement extends DeclaredStatement<String>, DescriptionSta
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: document
-    default @Nullable ValueStatement getValue() {
-        final var opt = findFirstDeclaredSubstatement(ValueStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
