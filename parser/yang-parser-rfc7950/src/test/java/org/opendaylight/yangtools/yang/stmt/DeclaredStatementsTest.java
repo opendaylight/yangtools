@@ -53,8 +53,8 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals(1, mustStatements.size());
         final var mustStatement = mustStatements.iterator().next();
         assertNotNull(mustStatement.argument());
-        assertTrue(mustStatement.getErrorAppTagStatement().isPresent());
-        assertTrue(mustStatement.getErrorMessageStatement().isPresent());
+        assertNotNull(mustStatement.getErrorAppTagStatement());
+        assertNotNull(mustStatement.getErrorMessageStatement());
         assertNotNull(mustStatement.descriptionStatement());
         assertNotNull(mustStatement.referenceStatement());
 
