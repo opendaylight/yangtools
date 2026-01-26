@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -17,6 +22,44 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code namespace} statement.
  */
 public interface NamespaceStatement extends DeclaredStatement<XMLNamespace> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of a single {@link NamespaceStatement}.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface OptionalIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return the {@code NamespaceStatement} or {@code null} if not present}
+         */
+        default @Nullable NamespaceStatement namespaceStatement() {
+            for (var stmt : declaredSubstatements()) {
+                if (stmt instanceof NamespaceStatement namespace) {
+                    return namespace;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * {@return an optional {@code NamespaceStatement}}
+         */
+        default @NonNull Optional<NamespaceStatement> findNamespaceStatement() {
+            return Optional.ofNullable(namespaceStatement());
+        }
+
+        /**
+         * {@return the {@code NamespaceStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        default @NonNull NamespaceStatement getNamespaceStatement() {
+            final var namespace = namespaceStatement();
+            if (namespace == null) {
+                throw new NoSuchElementException("No namespace statement present in " + this);
+            }
+            return namespace;
+        }
+    }
+
     /**
      * The definition of {@code namespace} statement.
      *

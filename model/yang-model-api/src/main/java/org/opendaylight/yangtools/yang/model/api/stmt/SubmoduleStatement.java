@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code submodule} statement.
  */
 public non-sealed interface SubmoduleStatement extends RootDeclaredStatement,
-        YangVersionStatement.OptionalIn<Unqualified> {
+        BelongsToStatement.OptionalIn<Unqualified> {
     /**
      * The definition of {@code submodule} statement.
      *
@@ -29,10 +29,5 @@ public non-sealed interface SubmoduleStatement extends RootDeclaredStatement,
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: rename/document
-    default @NonNull BelongsToStatement getBelongsTo() {
-        return findFirstDeclaredSubstatement(BelongsToStatement.class).orElseThrow();
     }
 }
