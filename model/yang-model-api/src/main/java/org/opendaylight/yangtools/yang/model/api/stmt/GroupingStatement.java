@@ -10,15 +10,16 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code grouping} statement.
  */
-public interface GroupingStatement extends DocumentedDeclaredStatement<QName>,
-        DataDefinitionStatement.MultipleIn<QName>, ActionStatement.MultipleIn<QName>,
-        GroupingStatementMultipleIn<QName>, NotificationStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName>,
-        TypedefStatement.MultipleIn<QName> {
+public interface GroupingStatement extends DeclaredStatement<QName>, DataDefinitionStatement.MultipleIn<QName>,
+        ActionStatement.MultipleIn<QName>, DescriptionStatement.OptionalIn<QName>, GroupingStatementMultipleIn<QName>,
+        NotificationStatement.MultipleIn<QName>, ReferenceStatement.OptionalIn<QName>,
+        StatusStatement.OptionalIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * The definition of {@code grouping} statement.
      *

@@ -19,8 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code import} statement.
  */
-public interface ImportStatement extends DocumentedDeclaredStatement<Unqualified>,
-        PrefixStatement.OptionalIn<Unqualified>, RevisionDateStatement.OptionalIn<Unqualified> {
+public interface ImportStatement extends DeclaredStatement<Unqualified>, DescriptionStatement.OptionalIn<Unqualified>,
+        PrefixStatement.OptionalIn<Unqualified>, ReferenceStatement.OptionalIn<Unqualified>,
+        RevisionDateStatement.OptionalIn<Unqualified> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link ImportStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

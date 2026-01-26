@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 /**
  * Declared representation of a {@code deviation} statement.
  */
-public interface DeviationStatement extends DocumentedDeclaredStatement<Absolute> {
+public interface DeviationStatement extends DeclaredStatement<Absolute>, DescriptionStatement.OptionalIn<Absolute>,
+        ReferenceStatement.OptionalIn<Absolute> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link DeviationStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

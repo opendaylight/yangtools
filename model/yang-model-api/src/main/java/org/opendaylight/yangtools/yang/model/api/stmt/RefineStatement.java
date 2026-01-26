@@ -9,17 +9,19 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Declared representation of a {@code refine} statement.
  */
-public interface RefineStatement extends DocumentedDeclaredStatement<Descendant>,
-        ConfigStatement.OptionalIn<Descendant>, DefaultStatement.MultipleIn<Descendant>,
+public interface RefineStatement extends DeclaredStatement<Descendant>, ConfigStatement.OptionalIn<Descendant>,
+        DefaultStatement.MultipleIn<Descendant>, DescriptionStatement.OptionalIn<Descendant>,
         IfFeatureStatement.MultipleIn<Descendant>, MandatoryStatement.OptionalIn<Descendant>,
         MaxElementsStatement.OptionalIn<Descendant>, MinElementsStatement.OptionalIn<Descendant>,
-        MustStatement.MultipleIn<Descendant>, PresenceStatement.OptionalIn<Descendant> {
+        MustStatement.MultipleIn<Descendant>, PresenceStatement.OptionalIn<Descendant>,
+        ReferenceStatement.OptionalIn<Descendant> {
     /**
      * The definition of {@code refine} statement.
      *
