@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code choice} statement.
  */
-public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatement.OptionalIn<QName>,
+public non-sealed interface ChoiceStatement extends DataDefinitionStatement, ConfigStatement.OptionalIn<QName>,
         DefaultStatement.OptionalIn<QName>, MandatoryStatement.OptionalIn<QName> {
     /**
      * The definition of {@code choice} statement.

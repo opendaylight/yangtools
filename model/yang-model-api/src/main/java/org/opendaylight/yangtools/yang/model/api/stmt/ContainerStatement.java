@@ -16,9 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code container} statement.
  */
-public interface ContainerStatement extends DataDefinitionStatement, DataDefinitionStatement.MultipleIn<QName>,
-        ActionStatement.MultipleIn<QName>, ConfigStatement.OptionalIn<QName>, GroupingStatementMultipleIn<QName>,
-        MustStatement.MultipleIn<QName>, NotificationStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName> {
+public non-sealed interface ContainerStatement extends DataDefinitionStatement,
+        DataDefinitionStatement.MultipleIn<QName>, ActionStatement.MultipleIn<QName>, ConfigStatement.OptionalIn<QName>,
+        GroupingStatementMultipleIn<QName>, MustStatement.MultipleIn<QName>, NotificationStatement.MultipleIn<QName>,
+        TypedefStatement.MultipleIn<QName> {
     /**
      * The definition of {@code container} statement.
      *

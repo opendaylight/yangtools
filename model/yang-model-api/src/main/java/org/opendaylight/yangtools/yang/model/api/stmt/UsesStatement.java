@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code uses} statement.
  */
-public interface UsesStatement extends DataDefinitionStatement {
+public non-sealed interface UsesStatement extends DataDefinitionStatement {
     /**
      * The definition of {@code uses} statement.
      *
