@@ -161,9 +161,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
         }
     }
 
-    interface BinarySpecification extends TypeStatement {
-        default @NonNull Collection<? extends @NonNull LengthStatement> getLength() {
-            return declaredSubstatements(LengthStatement.class);
-        }
+    interface BinarySpecification extends TypeStatement, LengthStatement.OptionalIn<QName> {
+        // Nothing else
     }
 }
