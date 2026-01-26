@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -17,10 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  * Declared representation of a {@code refine} statement.
  */
 public interface RefineStatement extends DocumentedDeclaredStatement<Descendant>,
-        ConfigStatement.OptionalIn<Descendant>, IfFeatureStatement.MultipleIn<Descendant>,
-        MandatoryStatement.OptionalIn<Descendant>, MaxElementsStatement.OptionalIn<Descendant>,
-        MinElementsStatement.OptionalIn<Descendant>, MustStatement.MultipleIn<Descendant>,
-        PresenceStatement.OptionalIn<Descendant> {
+        ConfigStatement.OptionalIn<Descendant>, DefaultStatement.MultipleIn<Descendant>,
+        IfFeatureStatement.MultipleIn<Descendant>, MandatoryStatement.OptionalIn<Descendant>,
+        MaxElementsStatement.OptionalIn<Descendant>, MinElementsStatement.OptionalIn<Descendant>,
+        MustStatement.MultipleIn<Descendant>, PresenceStatement.OptionalIn<Descendant> {
     /**
      * The definition of {@code refine} statement.
      *
@@ -33,10 +32,5 @@ public interface RefineStatement extends DocumentedDeclaredStatement<Descendant>
     @Override
     default StatementDefinition<Descendant, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    // FIXME: document/rename
-    default @NonNull Collection<? extends @NonNull DefaultStatement> getDefaults() {
-        return declaredSubstatements(DefaultStatement.class);
     }
 }
