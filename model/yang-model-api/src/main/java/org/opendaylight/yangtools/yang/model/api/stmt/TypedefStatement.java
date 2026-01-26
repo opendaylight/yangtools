@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code typedef} statement.
  */
-public interface TypedefStatement extends DocumentedDeclaredStatement<QName>, DefaultStatement.OptionalIn<QName>,
+public interface TypedefStatement extends DeclaredStatement<QName>, DefaultStatement.OptionalIn<QName>,
+        DescriptionStatement.OptionalIn<QName>, ReferenceStatement.OptionalIn<QName>,
         StatusStatement.OptionalIn<QName>, TypeStatement.OptionalIn<QName>, UnitsStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link TypedefStatement}s.

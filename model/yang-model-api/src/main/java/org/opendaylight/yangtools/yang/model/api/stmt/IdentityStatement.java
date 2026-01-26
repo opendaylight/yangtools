@@ -19,8 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code identity} statement.
  */
-public interface IdentityStatement extends DocumentedDeclaredStatement<QName>, BaseStatement.MultipleIn<QName>,
-        IfFeatureStatement.MultipleIn<QName>, StatusStatement.OptionalIn<QName> {
+public interface IdentityStatement extends DeclaredStatement<QName>, BaseStatement.MultipleIn<QName>,
+        DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
+        ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link IdentityStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

@@ -8,15 +8,16 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Declared representation of a {@code bit} statement.
  */
-public interface BitStatement extends DocumentedDeclaredStatement<String>, IfFeatureStatement.MultipleIn<String>,
-        StatusStatement.OptionalIn<String> {
+public interface BitStatement extends DeclaredStatement<String>, DescriptionStatement.OptionalIn<String>,
+        IfFeatureStatement.MultipleIn<String>, PositionStatement.OptionalIn<String>,
+        ReferenceStatement.OptionalIn<String>, StatusStatement.OptionalIn<String> {
     /**
      * The definition of {@code bit} statement.
      *
@@ -29,10 +30,5 @@ public interface BitStatement extends DocumentedDeclaredStatement<String>, IfFea
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    default @Nullable PositionStatement getPosition() {
-        final var opt = findFirstDeclaredSubstatement(PositionStatement.class);
-        return opt.isPresent() ? opt.orElseThrow() : null;
     }
 }
