@@ -95,8 +95,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertNotNull(choiceStatement.configStatement());
         assertNotNull(choiceStatement.mandatoryStatement());
 
-        final var caseStatements = choiceStatement.getCases();
-        assertNotNull(caseStatements);
+        final var caseStatements = choiceStatement.caseStatements();
         assertEquals(3, caseStatements.size());
         final var caseStatement = caseStatements.iterator().next();
         final var caseStatementName = caseStatement.argument();
