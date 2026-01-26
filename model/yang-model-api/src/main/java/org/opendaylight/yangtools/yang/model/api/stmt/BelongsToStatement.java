@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code belongs-to} statement.
  */
-public interface BelongsToStatement extends DeclaredStatement<Unqualified> {
+public interface BelongsToStatement extends DeclaredStatement<Unqualified>, PrefixStatement.OptionalIn<Unqualified> {
     /**
      * The definition of {@code belongs-to} statement.
      *
@@ -29,9 +29,5 @@ public interface BelongsToStatement extends DeclaredStatement<Unqualified> {
     @Override
     default StatementDefinition<Unqualified, ?, ?> statementDefinition() {
         return DEF;
-    }
-
-    default @NonNull PrefixStatement getPrefix() {
-        return findFirstDeclaredSubstatement(PrefixStatement.class).orElseThrow();
     }
 }
