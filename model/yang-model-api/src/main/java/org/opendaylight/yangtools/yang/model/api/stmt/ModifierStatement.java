@@ -8,7 +8,12 @@
 
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,6 +27,44 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
  * that do not match the pattern.
  */
 public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
+    /**
+     * A {@link DeclaredStatement} that is a parent of a single {@link ModifierStatement}.
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     */
+    @Beta
+    interface OptionalIn<A> extends DeclaredStatement<A> {
+        /**
+         * {@return the {@code ModifierStatement} or {@code null} if not present}
+         */
+        default @Nullable ModifierStatement modifierStatement() {
+            for (var stmt : declaredSubstatements()) {
+                if (stmt instanceof ModifierStatement modifier) {
+                    return modifier;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * {@return an optional {@code ModifierStatement}}
+         */
+        default @NonNull Optional<ModifierStatement> findModifierStatement() {
+            return Optional.ofNullable(modifierStatement());
+        }
+
+        /**
+         * {@return the {@code ModifierStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        default @NonNull ModifierStatement getModifierStatement() {
+            final var modifier = modifierStatement();
+            if (modifier == null) {
+                throw new NoSuchElementException("No modifier statement present in " + this);
+            }
+            return modifier;
+        }
+    }
+
     /**
      * The definition of {@code modifier} statement.
      *
