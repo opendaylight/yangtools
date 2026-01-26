@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
@@ -19,7 +20,8 @@ public interface InstanceTargetStatement extends UnknownStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull InstanceTargetStatement, @NonNull InstanceTargetEffectiveStatement>
         DEF = StatementDefinition.of(InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class,
-            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "instance-target", "path");
+            OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "instance-target",
+            ArgumentDefinition.of(String.class, OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "path"));
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

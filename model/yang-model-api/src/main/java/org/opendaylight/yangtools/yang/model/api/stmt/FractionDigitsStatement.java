@@ -67,7 +67,7 @@ public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
      */
     @NonNull StatementDefinition<Integer, @NonNull FractionDigitsStatement, @NonNull FractionDigitsEffectiveStatement>
         DEF = StatementDefinition.of(FractionDigitsStatement.class, FractionDigitsEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "fraction-digits", "value");
+            YangConstants.RFC6020_YIN_MODULE, "fraction-digits", YangArgumentDefinitions.VALUE_AS_INTEGER);
 
     @Override
     default StatementDefinition<Integer, ?, ?> statementDefinition() {

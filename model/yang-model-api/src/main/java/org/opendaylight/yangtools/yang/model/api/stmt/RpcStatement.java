@@ -41,7 +41,7 @@ public non-sealed interface RpcStatement extends DeclaredOperationStatement {
      */
     @NonNull StatementDefinition<QName, @NonNull RpcStatement, @NonNull RpcEffectiveStatement> DEF =
         StatementDefinition.of(RpcStatement.class, RpcEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "rpc", "name");
+            YangConstants.RFC6020_YIN_MODULE, "rpc", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

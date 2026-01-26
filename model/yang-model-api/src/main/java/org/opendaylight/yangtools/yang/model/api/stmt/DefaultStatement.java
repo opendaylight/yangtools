@@ -81,7 +81,7 @@ public interface DefaultStatement extends DeclaredStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull DefaultStatement, @NonNull DefaultEffectiveStatement> DEF =
         StatementDefinition.of(DefaultStatement.class, DefaultEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "default", "value");
+            YangConstants.RFC6020_YIN_MODULE, "default", YangArgumentDefinitions.VALUE_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

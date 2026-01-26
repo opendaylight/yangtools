@@ -41,7 +41,7 @@ public interface BaseStatement extends DeclaredStatement<QName> {
      */
     @NonNull StatementDefinition<QName, @NonNull BaseStatement, @NonNull BaseEffectiveStatement> DEF =
         StatementDefinition.of(BaseStatement.class, BaseEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "base", "name");
+            YangConstants.RFC6020_YIN_MODULE, "base", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {

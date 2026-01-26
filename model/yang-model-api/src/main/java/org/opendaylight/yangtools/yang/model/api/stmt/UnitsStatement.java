@@ -66,7 +66,7 @@ public interface UnitsStatement extends DeclaredStatement<String> {
      */
     @NonNull StatementDefinition<String, @NonNull UnitsStatement, @NonNull UnitsEffectiveStatement> DEF =
         StatementDefinition.of(UnitsStatement.class, UnitsEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "units", "name");
+            YangConstants.RFC6020_YIN_MODULE, "units", YangArgumentDefinitions.NAME_AS_STRING);
 
     @Override
     default StatementDefinition<String, ?, ?> statementDefinition() {

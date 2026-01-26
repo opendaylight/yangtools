@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -45,7 +46,8 @@ public interface AugmentStatement extends DeclaredStatement<SchemaNodeIdentifier
      */
     @NonNull StatementDefinition<SchemaNodeIdentifier, @NonNull AugmentStatement, @NonNull AugmentEffectiveStatement>
         DEF = StatementDefinition.of(AugmentStatement.class, AugmentEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "augment", "target-node");
+            YangConstants.RFC6020_YIN_MODULE, "augment",
+            ArgumentDefinition.of(SchemaNodeIdentifier.class, YangConstants.RFC6020_YIN_MODULE, "target-node"));
 
     @Override
     default StatementDefinition<SchemaNodeIdentifier, ?, ?> statementDefinition() {

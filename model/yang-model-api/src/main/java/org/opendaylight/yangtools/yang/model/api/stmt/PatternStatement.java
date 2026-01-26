@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -43,7 +44,8 @@ public interface PatternStatement extends DeclaredStatement<PatternExpression>,
      */
     @NonNull StatementDefinition<PatternExpression, @NonNull PatternStatement, @NonNull PatternEffectiveStatement> DEF =
         StatementDefinition.of(PatternStatement.class, PatternEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "pattern", "value");
+            YangConstants.RFC6020_YIN_MODULE, "pattern",
+            ArgumentDefinition.of(PatternExpression.class, YangConstants.RFC6020_YIN_MODULE, "value"));
 
     @Override
     default StatementDefinition<PatternExpression, ?, ?> statementDefinition() {

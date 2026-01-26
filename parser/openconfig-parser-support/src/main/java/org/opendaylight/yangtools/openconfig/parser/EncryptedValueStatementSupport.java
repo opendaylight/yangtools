@@ -27,7 +27,7 @@ public final class EncryptedValueStatementSupport extends AbstractHashedValueSta
             OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class,
             OpenConfigConstants.ENCRYPTED_VALUE_MODULE, "openconfig-encrypted-value");
 
-    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(DEF).build();
+    private static final @NonNull SubstatementValidator VALIDATOR = SubstatementValidator.builder(DEF).build();
 
     public EncryptedValueStatementSupport(final @NonNull YangParserConfiguration config) {
         super(DEF, config, VALIDATOR);

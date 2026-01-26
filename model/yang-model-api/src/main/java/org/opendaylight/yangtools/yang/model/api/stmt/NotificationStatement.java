@@ -44,7 +44,7 @@ public interface NotificationStatement extends DeclaredStatement<QName>, DataDef
      */
     @NonNull StatementDefinition<QName, @NonNull NotificationStatement, @NonNull NotificationEffectiveStatement> DEF =
         StatementDefinition.of(NotificationStatement.class, NotificationEffectiveStatement.class,
-            YangConstants.RFC6020_YIN_MODULE, "notification", "name");
+            YangConstants.RFC6020_YIN_MODULE, "notification", YangArgumentDefinitions.NAME_AS_QNAME);
 
     @Override
     default StatementDefinition<QName, ?, ?> statementDefinition() {
