@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with a statement with similar semantics as {@code container} statement.
  */
 public interface ContainerLikeRuntimeType<D extends DeclaredStatement<QName>,
-        E extends DataTreeEffectiveStatement<D> & DataTreeAwareEffectiveStatement<QName, D>>
+        E extends DataTreeEffectiveStatement<D> & DataTreeEffectiveStatement.IndexedIn<QName, D>>
         extends AugmentableRuntimeType, DataRuntimeType {
     @Override
     E statement();

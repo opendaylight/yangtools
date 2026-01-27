@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
 
@@ -32,7 +31,7 @@ public interface OnDemandSchemaTreeStorage extends NamespaceStorage {
      * always returning non-present.
      *
      * <p>The results produced by this method are expected to be consistent with
-     * {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)} and
+     * {@link SchemaTreeEffectiveStatement.IndexedIn#findSchemaTreeNode(QName)} and
      * {@link NamespaceBehaviours#SCHEMA_TREE}'s {@code getFrom(NamespaceStorage, QName)}.
      *
      * @param qname node identifier of the child being requested

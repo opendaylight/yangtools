@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.8">RFC7950</a>.
  */
 public non-sealed interface ListEffectiveStatement extends DataTreeEffectiveStatement<@NonNull ListStatement>,
-        DataTreeAwareEffectiveStatement<QName, @NonNull ListStatement>,
+        DataTreeEffectiveStatement.IndexedIn<QName, @NonNull ListStatement>,
         TypedefEffectiveStatement.MultipleIn<QName, @NonNull ListStatement>,
         OrderedByAwareEffectiveStatement<QName, @NonNull ListStatement> {
     @Override

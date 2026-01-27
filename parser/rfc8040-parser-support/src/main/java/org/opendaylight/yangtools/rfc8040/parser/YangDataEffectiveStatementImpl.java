@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
@@ -69,7 +68,7 @@ final class YangDataEffectiveStatementImpl
         if (child instanceof DataTreeEffectiveStatement<?> dataChild && dataChild.argument().equals(qname)) {
             return Optional.of(dataChild);
         }
-        if (child instanceof DataTreeAwareEffectiveStatement<?, ?> aware) {
+        if (child instanceof DataTreeEffectiveStatement.IndexedIn<?, ?> aware) {
             // A schema tree statement which *has to* know about data tree -- just forward it
             return aware.findDataTreeNode(qname);
         }
@@ -81,7 +80,7 @@ final class YangDataEffectiveStatementImpl
         if (child instanceof DataTreeEffectiveStatement<?> dataChild) {
             return List.of(dataChild);
         }
-        if (child instanceof DataTreeAwareEffectiveStatement<?, ?> aware) {
+        if (child instanceof DataTreeEffectiveStatement.IndexedIn<?, ?> aware) {
             // A schema tree statement which *has to* know about data tree -- just forward it
             return aware.dataTreeNodes();
         }

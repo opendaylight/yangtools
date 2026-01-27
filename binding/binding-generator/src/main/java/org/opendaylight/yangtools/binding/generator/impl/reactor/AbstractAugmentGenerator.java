@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -35,7 +36,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -173,15 +173,16 @@ abstract class AbstractAugmentGenerator
 
     final @NonNull AugmentRuntimeType runtimeTypeIn(final AugmentResolver resolver,
             final EffectiveStatement<?, ?> stmt) {
-        verify(stmt instanceof SchemaTreeAwareEffectiveStatement, "Unexpected target statement %s", stmt);
-        return verifyNotNull(createInternalRuntimeType(resolver,
-            effectiveIn((SchemaTreeAwareEffectiveStatement<?, ?>) stmt)));
+        if (!(stmt instanceof SchemaTreeEffectiveStatement.IndexedIn<?, ?> indexed) ) {
+            throw new VerifyException("Unexpected target statement " + stmt);
+        }
+        return verifyNotNull(createInternalRuntimeType(resolver, effectiveIn(indexed)));
     }
 
-    abstract @NonNull TargetAugmentEffectiveStatement effectiveIn(SchemaTreeAwareEffectiveStatement<?, ?> target);
+    abstract @NonNull TargetAugmentEffectiveStatement effectiveIn(SchemaTreeEffectiveStatement.IndexedIn<?, ?> target);
 
-    final @NonNull TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target,
-            final Function<QName, QName> transform) {
+    final @NonNull TargetAugmentEffectiveStatement effectiveIn(
+            final SchemaTreeEffectiveStatement.IndexedIn<?, ?> target, final Function<QName, QName> transform) {
         final var augment = statement();
         final var stmts = augment.effectiveSubstatements();
         final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());

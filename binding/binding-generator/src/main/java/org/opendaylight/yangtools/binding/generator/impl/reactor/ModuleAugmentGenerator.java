@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * Generator corresponding to a {@code augment} statement used as a child of a {@code module} statement.
@@ -21,7 +21,7 @@ final class ModuleAugmentGenerator extends AbstractAugmentGenerator {
     }
 
     @Override
-    TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target) {
+    TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeEffectiveStatement.IndexedIn<?, ?> target) {
         return effectiveIn(target, Function.identity());
     }
 

@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
@@ -71,11 +70,10 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         this.dataTree = requireNonNull(dataTree);
         if (!dataTree.isEmpty()) {
             final var current = dataTree.currentStatement();
-            if (current instanceof DataTreeAwareEffectiveStatement container) {
-                root = container;
-            } else {
+            if (!(current instanceof DataTreeEffectiveStatement.IndexedIn container)) {
                 throw new IllegalArgumentException("Cannot instantiate on " + current);
             }
+            root = container;
         } else {
             root = dataTree.modelContext();
         }
@@ -214,11 +212,10 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
 
     public void startListItem(final PathArgument name) throws IOException {
         final var parent = currentStatementOrRoot();
-        if (parent instanceof ListEffectiveStatement parentList) {
-            schemaStack.push(parentList);
-        } else {
+        if (!(parent instanceof ListEffectiveStatement parentList)) {
             throw new IllegalArgumentException("List item is not appropriate under " + parent);
         }
+        schemaStack.push(parentList);
     }
 
     public void startLeafNode(final NodeIdentifier name) throws IOException {
@@ -238,7 +235,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         if (parent instanceof LeafListEffectiveStatement leafList) {
             return leafList;
         }
-        if (parent instanceof DataTreeAwareEffectiveStatement parentContainer) {
+        if (parent instanceof DataTreeEffectiveStatement.IndexedIn<?, ?> parentContainer) {
             final var child = parentContainer.findDataTreeNode(qname).orElse(null);
             if (child instanceof LeafListEffectiveStatement childLeafList) {
                 return childLeafList;
@@ -254,10 +251,10 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         schemaStack.push(dataTree.enterChoice(name.getNodeType()));
     }
 
-    public @NonNull DataTreeAwareEffectiveStatement<QName, ?> startContainerNode(final NodeIdentifier name) {
+    public DataTreeEffectiveStatement.@NonNull IndexedIn<QName, ?> startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
 
-        final DataTreeAwareEffectiveStatement<QName, ?> ret;
+        final DataTreeEffectiveStatement.IndexedIn<QName, ?> ret;
         if (schemaStack.isEmpty() && root instanceof NotificationEffectiveStatement notification
             && name.getNodeType().equals(notification.argument())) {
             // Special case for stacks initialized at notification. We pretend the first container is contained within
