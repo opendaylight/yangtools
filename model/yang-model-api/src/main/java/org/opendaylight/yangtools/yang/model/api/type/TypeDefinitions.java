@@ -7,115 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_MODULE;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-@Beta
-public final class TypeDefinitions {
-    /**
-     * Well-known QName of the {@code binary} built-in type.
-     */
-    public static final @NonNull QName BINARY = QName.create(RFC6020_YANG_MODULE, "binary").intern();
-
-    /**
-     * Well-known QName of the {@code bits} built-in type.
-     */
-    public static final @NonNull QName BITS = QName.create(RFC6020_YANG_MODULE, "bits").intern();
-
-    /**
-     * Well-known QName of the {@code boolean} built-in type.
-     */
-    public static final @NonNull QName BOOLEAN = QName.create(RFC6020_YANG_MODULE, "boolean").intern();
-
-    /**
-     * Well-known QName of the {@code decimal64} built-in type.
-     */
-    public static final @NonNull QName DECIMAL64 = QName.create(RFC6020_YANG_MODULE, "decimal64").intern();
-
-    /**
-     * Well-known QName of the {@code empty} built-in type.
-     */
-    public static final @NonNull QName EMPTY = QName.create(RFC6020_YANG_MODULE, "empty").intern();
-
-    /**
-     * Well-known QName of the {@code enumeration} built-in type.
-     */
-    public static final @NonNull QName ENUMERATION = QName.create(RFC6020_YANG_MODULE, "enumeration").intern();
-
-    /**
-     * Well-known QName of the {@code identityref} built-in type.
-     */
-    public static final @NonNull QName IDENTITYREF = QName.create(RFC6020_YANG_MODULE, "identityref").intern();
-
-    /**
-     * Well-known QName of the {@code int8} built-in type.
-     */
-    public static final @NonNull QName INT8 = QName.create(RFC6020_YANG_MODULE, "int8").intern();
-
-    /**
-     * Well-known QName of the {@code int16} built-in type.
-     */
-    public static final @NonNull QName INT16 = QName.create(RFC6020_YANG_MODULE, "int16").intern();
-
-    /**
-     * Well-known QName of the {@code int32} built-in type.
-     */
-    public static final @NonNull QName INT32 = QName.create(RFC6020_YANG_MODULE, "int32").intern();
-
-    /**
-     * Well-known QName of the {@code int64} built-in type.
-     */
-    public static final @NonNull QName INT64 = QName.create(RFC6020_YANG_MODULE, "int64").intern();
-
-    /**
-     * Well-known QName of the {@code string} built-in type.
-     */
-    public static final @NonNull QName STRING = QName.create(RFC6020_YANG_MODULE, "string").intern();
-
-    /**
-     * Well-known QName of the {@code union} built-in type.
-     */
-    public static final @NonNull QName UNION = QName.create(RFC6020_YANG_MODULE, "union").intern();
-
-    /**
-     * Well-known QName of the {@code leafref} built-in type.
-     */
-    public static final @NonNull QName LEAFREF = QName.create(RFC6020_YANG_MODULE, "leafref").intern();
-
-    /**
-     * Well-known QName of the {@code instance-identifier} built-in type.
-     */
-    public static final @NonNull QName INSTANCE_IDENTIFIER = QName.create(RFC6020_YANG_MODULE, "instance-identifier")
-        .intern();
-
-    /**
-     * Well-known QName of the {@code uint8} built-in type.
-     */
-    public static final @NonNull QName UINT8 = QName.create(RFC6020_YANG_MODULE, "uint8").intern();
-
-    /**
-     * Well-known QName of the {@code uint16} built-in type.
-     */
-    public static final @NonNull QName UINT16 = QName.create(RFC6020_YANG_MODULE, "uint16").intern();
-
-    /**
-     * Well-known QName of the {@code uint32} built-in type.
-     */
-    public static final @NonNull QName UINT32 = QName.create(RFC6020_YANG_MODULE, "uint32").intern();
-
-    /**
-     * Well-known QName of the {@code uint64} built-in type.
-     */
-    public static final @NonNull QName UINT64 = QName.create(RFC6020_YANG_MODULE, "uint64").intern();
-
+final class TypeDefinitions {
     private TypeDefinitions() {
         // Hidden on purpose
     }
