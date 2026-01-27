@@ -37,6 +37,7 @@
 
         <!-- YANG file intermediate representation -->
         <module>yang-ir</module>
+        <module>yang-ir-source</module>
 
         <!-- Metamodel statement reactor -->
         <module>yang-parser-spi</module>
