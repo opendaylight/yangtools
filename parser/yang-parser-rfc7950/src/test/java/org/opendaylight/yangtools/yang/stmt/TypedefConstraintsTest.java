@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 class TypedefConstraintsTest extends AbstractYangTest {
     @Test
@@ -58,7 +58,7 @@ class TypedefConstraintsTest extends AbstractYangTest {
         assertEquals(Decimal64.of(4, 55000), range.upperEndpoint());
         assertEquals(4, range.upperEndpoint().scale());
 
-        assertEquals(TypeDefinitions.DECIMAL64.bindTo(leafDecimal.getQName().getModule()), decType.getQName());
+        assertEquals(QName.create(leafDecimal.getQName(), BuiltInType.DECIMAL64.simpleName()), decType.getQName());
         assertNull(decType.getBaseType());
     }
 }
