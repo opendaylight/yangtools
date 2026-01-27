@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -22,8 +21,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     uses YangXPathParserFactory;
     provides YangLibResolver with org.opendaylight.yangtools.yang.parser.ri.DefaultYangLibResolver;
     provides YangParserFactory with org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
-    provides YangTextToIRSourceTransformer
-        with org.opendaylight.yangtools.yang.parser.antlr.DefaultYangTextToIRSourceTransformer;
 
     requires transitive java.xml;
     requires transitive com.google.common;

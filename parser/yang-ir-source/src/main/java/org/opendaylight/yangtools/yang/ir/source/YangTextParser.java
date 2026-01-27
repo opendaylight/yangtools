@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.antlr;
+package org.opendaylight.yangtools.yang.ir.source;
 
 import static java.util.Objects.requireNonNull;
 
@@ -17,12 +17,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.ir.antlr.YangStatementLexer;
+import org.opendaylight.yangtools.yang.ir.antlr.YangStatementParser;
+import org.opendaylight.yangtools.yang.ir.antlr.YangStatementParser.FileContext;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementLexer;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.FileContext;
 
 /**
  * A parser for YANG text files.

@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
 /**
  * A {@link SourceTransformer} capable of turning {@link YangTextSource} into a {@link YangIRSource}.
  */
-@FunctionalInterface
 @NonNullByDefault
 public interface YangTextToIRSourceTransformer extends SourceTransformer<YangTextSource, YangIRSource> {
     @Override
