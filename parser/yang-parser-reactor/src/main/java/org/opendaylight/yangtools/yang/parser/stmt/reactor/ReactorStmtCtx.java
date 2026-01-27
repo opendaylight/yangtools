@@ -241,6 +241,23 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     @SuppressWarnings("unchecked")
+    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            ReactorStmtCtx<X, Y, Z> asDeclaring(final StatementDefinition<X, Y, Z> def) {
+        return produces(def) ? (ReactorStmtCtx<X, Y, Z>) this : null;
+    }
+
+    @Override
+    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            ReactorStmtCtx<X, Y, Z> verifyDeclaring(final StatementDefinition<X, Y, Z> def) {
+        final var cast = asDeclaring(def);
+        if (cast == null) {
+            throw new VerifyException(this + " does not produce + " + def.humanName() + " statement");
+        }
+        return cast;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public final <X, Y extends DeclaredStatement<X>> @Nullable ReactorStmtCtx<X, Y, ?> tryDeclaring(
             final Class<Y> type) {
         return producesDeclared(type) ? (ReactorStmtCtx<X, Y, ?>) this : null;

@@ -106,7 +106,7 @@ public final class UsesStatementSupport
 
                 // Apply any refine statements
                 for (var subStmt : usesNode.mutableDeclaredSubstatements()) {
-                    if (subStmt.producesDeclared(RefineStatement.class) && subStmt.isSupportedToBuildEffective()) {
+                    if (subStmt.produces(RefineStatement.DEF) && subStmt.isSupportedToBuildEffective()) {
                         performRefine(subStmt, targetNodeStmtCtx);
                     }
                 }
@@ -243,7 +243,7 @@ public final class UsesStatementSupport
         if (targetCtx.getParentContext() == null) {
             return targetCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
         }
-        if (targetCtx.producesDeclared(AugmentStatement.class)) {
+        if (targetCtx.produces(AugmentStatement.DEF)) {
             return targetCtx.definingModule();
         }
         if (targetCtx.argument() instanceof QName targetQName && stmtContext.argument() instanceof QName) {
@@ -330,7 +330,6 @@ public final class UsesStatementSupport
         final var supportedRefineTargets = YangValidationBundles.SUPPORTED_REFINE_TARGETS.get(
             refineSubstatementCtx.publicDefinition());
 
-        return supportedRefineTargets == null || supportedRefineTargets.isEmpty()
-                || supportedRefineTargets.contains(refineTargetNodeCtx.publicDefinition());
+        return supportedRefineTargets == null || refineTargetNodeCtx.producesAnyOf(supportedRefineTargets);
     }
 }

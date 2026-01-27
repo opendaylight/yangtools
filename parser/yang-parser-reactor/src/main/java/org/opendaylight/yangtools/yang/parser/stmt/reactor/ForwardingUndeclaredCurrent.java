@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ForwardingObject;
 import java.util.Map;
 import java.util.Optional;
@@ -33,8 +34,26 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public <X, Y extends DeclaredStatement<X>> Current<X, Y> tryDeclaring(final Class<Y> type) {
-        return delegate.tryDeclaring(type);
+    @SuppressWarnings("unchecked")
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            ForwardingUndeclaredCurrent<X, Y> asDeclaring(final StatementDefinition<X, Y, Z> def) {
+        return produces(def) ? (ForwardingUndeclaredCurrent<X, Y>) this : null;
+    }
+
+    @Override
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            ForwardingUndeclaredCurrent<X, Y> verifyDeclaring(final StatementDefinition<X, Y, Z> def) {
+        final var cast = asDeclaring(def);
+        if (cast == null) {
+            throw new VerifyException(this + " does not produce + " + def.humanName() + " statement");
+        }
+        return cast;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <X, Y extends DeclaredStatement<X>> ForwardingUndeclaredCurrent<X, Y> tryDeclaring(final Class<Y> type) {
+        return producesDeclared(type) ? (ForwardingUndeclaredCurrent<X, Y>) this : null;
     }
 
     @Override

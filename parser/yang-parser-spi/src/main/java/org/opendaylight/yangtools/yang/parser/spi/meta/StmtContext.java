@@ -37,6 +37,14 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
     StatementDefinition<A, D, E> publicDefinition();
 
     @Override
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> StmtContext<X, Y, Z> asDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
+    @Override
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> StmtContext<X, Y, Z> verifyDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
+    @Override
     <X, Y extends DeclaredStatement<X>> @Nullable StmtContext<X, Y, ?> tryDeclaring(Class<Y> type);
 
     /**
@@ -192,6 +200,14 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
      */
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {
+        @Override
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> asDeclaring(
+            StatementDefinition<X, Y, Z> def);
+
+        @Override
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> verifyDeclaring(
+            StatementDefinition<X, Y, Z> def);
+
         @Override
         Mutable<?, ?, ?> getParentContext();
 

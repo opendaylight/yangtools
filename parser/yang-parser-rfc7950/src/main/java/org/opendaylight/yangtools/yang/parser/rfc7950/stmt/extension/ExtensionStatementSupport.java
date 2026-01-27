@@ -61,8 +61,8 @@ public final class ExtensionStatementSupport
 
         stmt.addToNs(ParserNamespaces.EXTENSION, stmt.getArgument(), stmt);
 
-        final var argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt, ArgumentStatement.class);
-        final var yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt, YinElementStatement.class);
+        final var argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt, ArgumentStatement.DEF);
+        final var yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt, YinElementStatement.DEF);
 
         final var argDef = argument == null ? null
             : new ArgumentDefinition(argument.getArgument(), yinElement == null ? false : yinElement.getArgument());

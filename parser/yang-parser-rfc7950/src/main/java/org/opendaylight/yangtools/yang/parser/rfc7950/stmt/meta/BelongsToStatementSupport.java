@@ -62,7 +62,7 @@ public final class BelongsToStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 belongsToCtx.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX,
-                    findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getArgument(),
+                    findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.DEF).getArgument(),
                     belongsToPrereq.resolve(ctx));
             }
 

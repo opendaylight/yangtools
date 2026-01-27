@@ -57,7 +57,7 @@ public final class DeviationStatementSupport
         super.onFullDefinitionDeclared(ctx);
 
         StmtContext<?, ?, ?> root = ctx.getRoot();
-        if (root.producesDeclared(SubmoduleStatement.class)) {
+        if (root.produces(SubmoduleStatement.DEF)) {
             // root is submodule, we need to find the module we belong to. We can rely on there being exactly one
             // belongs-to statement, enforced SubmoduleStatementSupport's validator.
             root = Iterables.getOnlyElement(root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX).values());

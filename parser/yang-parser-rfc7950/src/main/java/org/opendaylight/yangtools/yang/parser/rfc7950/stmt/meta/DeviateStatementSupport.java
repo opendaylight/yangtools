@@ -281,14 +281,13 @@ public final class DeviateStatementSupport
 
     private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
         if (!stmtCtxToBeAdded.producesDeclared(UnknownStatement.class)) {
-            final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
-            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || DefaultStatement.DEF.equals(stmtToBeAdded)
-                    && LeafStatement.DEF.equals(targetCtx.publicDefinition())) {
+            if (stmtCtxToBeAdded.producesAnyOf(SINGLETON_STATEMENTS) || stmtCtxToBeAdded.produces(DefaultStatement.DEF)
+                    && targetCtx.produces(LeafStatement.DEF)) {
+                final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
                 for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
-                    InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
-                        stmtCtxToBeAdded, """
-                            Deviation cannot add substatement %s to target node %s because it is already defined in \
-                            target and can appear only once.""", stmtToBeAdded.statementName(), targetCtx.argument());
+                    InferenceException.throwIf(targetCtxSubstatement.produces(stmtToBeAdded), stmtCtxToBeAdded, """
+                        Deviation cannot add substatement %s to target node %s because it is already defined in target \
+                        and can appear only once.""", stmtToBeAdded.statementName(), targetCtx.argument());
                 }
             }
         }
@@ -317,7 +316,7 @@ public final class DeviateStatementSupport
         }
 
         for (var targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
-            if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
+            if (targetCtxSubstatement.produces(stmtToBeReplaced)) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
                 return;
@@ -325,7 +324,7 @@ public final class DeviateStatementSupport
         }
 
         for (var targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
-            if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
+            if (targetCtxSubstatement.produces(stmtToBeReplaced)) {
                 targetCtxSubstatement.setUnsupported();
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
                 return;
@@ -406,16 +405,15 @@ public final class DeviateStatementSupport
 
     private static boolean isSupportedDeviationTarget(final StmtContext<?, ?, ?> deviateSubstatementCtx,
             final StmtContext<?, ?, ?> deviateTargetCtx, final YangVersion yangVersion) {
+        final var deviateSubstatementDef = deviateSubstatementCtx.publicDefinition();
         var supportedDeviationTargets = YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(yangVersion,
-            deviateSubstatementCtx.publicDefinition());
-
+            deviateSubstatementDef);
         if (supportedDeviationTargets == null) {
             supportedDeviationTargets = YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(YangVersion.VERSION_1,
-                    deviateSubstatementCtx.publicDefinition());
+                deviateSubstatementDef);
         }
 
         // if supportedDeviationTargets is null, it means that the deviate substatement is an unknown statement
-        return supportedDeviationTargets == null || supportedDeviationTargets.contains(
-                deviateTargetCtx.publicDefinition());
+        return supportedDeviationTargets == null || deviateTargetCtx.producesAnyOf(supportedDeviationTargets);
     }
 }

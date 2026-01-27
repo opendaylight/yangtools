@@ -24,6 +24,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 @Beta
 public non-sealed interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immutable {
+    @Override
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> EffectiveStmtCtx asDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
+    @Override
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> EffectiveStmtCtx verifyDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
     /**
      * Return parent of this context, if there is one. All statements except for top-level source statements, such as
      * {@code module} and {@code submodule}.
@@ -113,6 +121,14 @@ public non-sealed interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextC
             extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
         @Override
         StatementDefinition<A, D, ?> publicDefinition();
+
+        @Override
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Current<X, Y> asDeclaring(
+            StatementDefinition<X, Y, Z> def);
+
+        @Override
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Current<X, Y> verifyDeclaring(
+            StatementDefinition<X, Y, Z> def);
 
         @Override
         <X, Y extends DeclaredStatement<X>> @Nullable Current<X, Y> tryDeclaring(Class<Y> type);
