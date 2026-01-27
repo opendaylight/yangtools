@@ -61,7 +61,7 @@ public sealed interface KeyArgument extends SizedIterable<QName> permits KeyArgu
 
     /**
      * {@return a {@link KeyArgument} containing specified {@code node-identifier}}
-     * @param nodeIdentifier the {code node-identifier}
+     * @param nodeIdentifier the {@code node-identifier}
      */
     static KeyArgument.OfOne of(final QName nodeIdentifier) {
         return new KeyArgument1(nodeIdentifier);
@@ -69,7 +69,7 @@ public sealed interface KeyArgument extends SizedIterable<QName> permits KeyArgu
 
     /**
      * {@return a {@link KeyArgument} containing specified {@code node-identifier}}s
-     * @param nodeIdentifiers the {code node-identifier}s
+     * @param nodeIdentifiers the {@code node-identifier}s
      */
     static KeyArgument of(final List<QName> nodeIdentifiers) {
         return switch (nodeIdentifiers.size()) {
