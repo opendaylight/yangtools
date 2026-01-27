@@ -33,17 +33,18 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     private final boolean retainDeclarationReference;
 
     protected AbstractStatementSupport(final StatementDefinition<A, D, E> publicDefinition,
-            final StatementPolicy<A, D> policy, final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
+            final ArgumentSupport<A> argumentSupport, final StatementPolicy<A, D> policy,
+            final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
-        super(publicDefinition, policy, subtreePolicy);
+        super(publicDefinition, argumentSupport, policy, subtreePolicy);
         retainDeclarationReference = config.retainDeclarationReferences();
         substatementValidator = validator;
     }
 
     protected AbstractStatementSupport(final StatementDefinition<A, D, E> publicDefinition,
-            final StatementPolicy<A, D> policy, final YangParserConfiguration config,
-            final @Nullable SubstatementValidator validator) {
-        this(publicDefinition, policy, SubtreePolicy.normal(), config, validator);
+            final ArgumentSupport<A> argumentSupport, final StatementPolicy<A, D> policy,
+            final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
+        this(publicDefinition, argumentSupport, policy, SubtreePolicy.normal(), config, validator);
     }
 
     @Override

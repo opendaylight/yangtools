@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Specialization of {@link AbstractStatementSupport} for statements which carry a Boolean argument and are essentially
@@ -37,7 +36,8 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
             final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
             final SubtreePolicy subtreePolicy, final YangParserConfiguration config,
             final @Nullable SubstatementValidator validator) {
-        super(publicDefinition, policy, subtreePolicy, config, validator);
+        super(publicDefinition, ArgumentSupport.explicitBoolean(publicDefinition.getArgumentDefinition()), policy,
+            subtreePolicy, config, validator);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
         this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
         emptyDeclaredFalse = emptyEffectiveFalse.requireDeclared();
@@ -47,31 +47,12 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
     protected AbstractBooleanStatementSupport(final StatementDefinition<Boolean, D, E> publicDefinition,
             final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
             final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
-        super(publicDefinition, policy, config, validator);
+        super(publicDefinition, ArgumentSupport.explicitBoolean(publicDefinition.getArgumentDefinition()), policy,
+            config, validator);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
         this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
         emptyDeclaredFalse = emptyEffectiveFalse.requireDeclared();
         emptyDeclaredTrue = emptyEffectiveTrue.requireDeclared();
-    }
-
-    @Override
-    public final Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return switch (value) {
-            case "false" -> Boolean.FALSE;
-            case "true" -> Boolean.TRUE;
-            case null, default -> throw new SourceException(ctx,
-                "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'", statementName(), argumentName(),
-                value);
-        };
-    }
-
-    @Override
-    public final String internArgument(final String rawArgument) {
-        return switch (rawArgument) {
-            case "false" -> "false";
-            case "true" -> "true";
-            case null, default -> rawArgument;
-        };
     }
 
     @Override
