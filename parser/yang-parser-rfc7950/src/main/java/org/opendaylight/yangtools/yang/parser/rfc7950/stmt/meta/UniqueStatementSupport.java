@@ -19,8 +19,8 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
@@ -53,7 +54,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class UniqueStatementSupport
-        extends AbstractStatementSupport<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> {
+        extends AbstractStatementSupport<UniqueArgument, UniqueStatement, UniqueEffectiveStatement> {
     /**
      * Support 'sep' ABNF rule in RFC7950 section 14. CRLF pattern is used to squash line-break from CRLF to LF form
      * and then we use SEP_SPLITTER, which can operate on single characters.
@@ -73,8 +74,8 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public Set<Descendant> adaptArgumentValue(
-            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
+    public UniqueArgument adaptArgumentValue(
+            final StmtContext<UniqueArgument, UniqueStatement, UniqueEffectiveStatement> ctx,
             final QNameModule targetModule) {
         // Copy operation to a targetNamespace -- this implies rehosting node-identifiers to target namespace. Check
         // if that is needed first, though, so as not to copy things unnecessarily.
@@ -94,7 +95,7 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public ImmutableSet<Descendant> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public UniqueArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final var uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
         SourceException.throwIf(uniqueConstraints.isEmpty(), ctx,
             "Invalid argument value '%s' of unique statement. The value must contains at least one descendant schema "
@@ -103,7 +104,7 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public void onStatementAdded(final Mutable<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> stmt) {
+    public void onStatementAdded(final Mutable<UniqueArgument, UniqueStatement, UniqueEffectiveStatement> stmt) {
         // Check whether this statement is in a list statement and if so ...
         final var list = stmt.coerceParentContext().asDeclaring(ListStatement.DEF);
         if (list != null) {
@@ -118,7 +119,7 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    protected UniqueStatement createDeclared(final BoundStmtCtx<Set<Descendant>> ctx,
+    protected UniqueStatement createDeclared(final BoundStmtCtx<UniqueArgument> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createUnique(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
@@ -130,7 +131,7 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    protected UniqueEffectiveStatement createEffective(final Current<Set<Descendant>, UniqueStatement> stmt,
+    protected UniqueEffectiveStatement createEffective(final Current<UniqueArgument, UniqueStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createUnique(stmt.declared(), substatements);
     }
@@ -139,24 +140,25 @@ public final class UniqueStatementSupport
         return qnames.allMatch(qname -> module.equals(qname.getModule()));
     }
 
-    private static ImmutableSet<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
+    private static @NonNull UniqueArgument parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
         final var binding = ctx.identifierBinding();
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
-        return SEP_SPLITTER.splitToStream(CRLF_PATTERN.matcher(argumentValue).replaceAll("\n"))
+        return UniqueArgument.of(SEP_SPLITTER.splitToStream(CRLF_PATTERN.matcher(argumentValue).replaceAll("\n"))
             .map(uniqueArgToken -> binding.parseDescendantSchemaNodeid(ctx, uniqueArgToken))
-            .collect(ImmutableSet.toImmutableSet());
+            .distinct()
+            .collect(Collectors.toUnmodifiableList()));
     }
 
     /**
      * Inference action to process parent list reaching effective model, i.e. we can tell it is now complete.
      */
     private static final class RequireEffectiveList implements InferenceAction {
-        private final @NonNull StmtContext<Set<Descendant>, UniqueStatement, ?> unique;
+        private final @NonNull StmtContext<UniqueArgument, UniqueStatement, ?> unique;
         private final @NonNull StmtContext<QName, ListStatement, ?> list;
         private final @NonNull Mutable<?, ?, ?> parent;
 
-        RequireEffectiveList(final StmtContext<Set<Descendant>, UniqueStatement, ?> unique,
+        RequireEffectiveList(final StmtContext<UniqueArgument, UniqueStatement, ?> unique,
                 final StmtContext<QName, ListStatement, ?> list, final Mutable<?, ?, ?> parent) {
             this.unique = requireNonNull(unique);
             this.list = requireNonNull(list);
@@ -191,9 +193,9 @@ public final class UniqueStatementSupport
 
     private static final class RequireLeafDescendants implements InferenceAction {
         private final @NonNull Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs;
-        private final @NonNull StmtContext<Set<Descendant>, UniqueStatement, ?> unique;
+        private final @NonNull StmtContext<UniqueArgument, UniqueStatement, ?> unique;
 
-        RequireLeafDescendants(final StmtContext<Set<Descendant>, UniqueStatement, ?> unique,
+        RequireLeafDescendants(final StmtContext<UniqueArgument, UniqueStatement, ?> unique,
                 final Map<Prerequisite<StmtContext<?, ?, ?>>, Descendant> prereqs) {
             this.unique = requireNonNull(unique);
             this.prereqs = requireNonNull(prereqs);

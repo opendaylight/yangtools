@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Interface describing YANG {@code unique} statement.
@@ -21,9 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  * leafs exist (for more information see RFC-6020 section 7.8.3.).
  */
 // FIXME: UniqueArgument instead of Set<Descendant>
-public interface UniqueEffectiveStatement extends EffectiveStatement<Set<Descendant>, @NonNull UniqueStatement> {
+public interface UniqueEffectiveStatement extends EffectiveStatement<UniqueArgument, @NonNull UniqueStatement> {
     @Override
-    default StatementDefinition<Set<Descendant>, @NonNull UniqueStatement, ?> statementDefinition() {
+    default StatementDefinition<UniqueArgument, @NonNull UniqueStatement, ?> statementDefinition() {
         return UniqueStatement.DEF;
     }
 }
