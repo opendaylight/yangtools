@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
 final class BaseUint32Type extends AbstractRangeRestrictedBaseType<Uint32TypeDefinition, Uint32>
@@ -17,7 +17,7 @@ final class BaseUint32Type extends AbstractRangeRestrictedBaseType<Uint32TypeDef
     static final @NonNull BaseUint32Type INSTANCE = new BaseUint32Type();
 
     private BaseUint32Type() {
-        super(TypeDefinitions.UINT32, Uint32.ZERO, Uint32.MAX_VALUE);
+        super(BuiltInType.UINT32.typeName(), Uint32.ZERO, Uint32.MAX_VALUE);
     }
 
     @Override

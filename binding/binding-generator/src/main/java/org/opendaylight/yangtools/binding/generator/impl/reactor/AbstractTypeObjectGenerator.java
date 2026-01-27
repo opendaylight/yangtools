@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
@@ -63,7 +64,6 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,7 +234,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             for (var stmt : union.effectiveSubstatements()) {
                 if (stmt instanceof TypeEffectiveStatement type) {
                     final QName typeName = type.argument();
-                    if (TypeDefinitions.IDENTITYREF.equals(typeName)) {
+                    if (BuiltInType.IDENTITYREF.typeName().equals(typeName)) {
                         if (!identityTypes.containsKey(stmt)) {
                             identityTypes.put(stmt, TypeReference.identityRef(
                                 type.streamEffectiveSubstatements(BaseEffectiveStatement.class)
@@ -242,13 +242,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                                     .map(context::resolveIdentity)
                                     .collect(Collectors.toUnmodifiableList())));
                         }
-                    } else if (TypeDefinitions.LEAFREF.equals(typeName)) {
+                    } else if (BuiltInType.LEAFREF.typeName().equals(typeName)) {
                         if (!leafTypes.containsKey(stmt)) {
                             leafTypes.put(stmt, TypeReference.leafRef(context.resolveLeafref(
                                 type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class)
                                 .orElseThrow())));
                         }
-                    } else if (TypeDefinitions.UNION.equals(typeName)) {
+                    } else if (BuiltInType.UNION.typeName().equals(typeName)) {
                         resolveUnionDependencies(context, type);
                     } else if (!isBuiltinName(typeName) && !baseTypes.containsKey(typeName)) {
                         baseTypes.put(typeName, context.resolveTypedef(typeName));
@@ -260,20 +260,20 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeObjectGenerator.class);
     static final ImmutableMap<QName, Type> SIMPLE_TYPES = ImmutableMap.<QName, Type>builder()
-        .put(TypeDefinitions.BINARY, BaseYangTypes.BINARY_TYPE)
-        .put(TypeDefinitions.BOOLEAN, BaseYangTypes.BOOLEAN_TYPE)
-        .put(TypeDefinitions.DECIMAL64, BaseYangTypes.DECIMAL64_TYPE)
-        .put(TypeDefinitions.EMPTY, BaseYangTypes.EMPTY_TYPE)
-        .put(TypeDefinitions.INSTANCE_IDENTIFIER, BaseYangTypes.INSTANCE_IDENTIFIER)
-        .put(TypeDefinitions.INT8, BaseYangTypes.INT8_TYPE)
-        .put(TypeDefinitions.INT16, BaseYangTypes.INT16_TYPE)
-        .put(TypeDefinitions.INT32, BaseYangTypes.INT32_TYPE)
-        .put(TypeDefinitions.INT64, BaseYangTypes.INT64_TYPE)
-        .put(TypeDefinitions.STRING, BaseYangTypes.STRING_TYPE)
-        .put(TypeDefinitions.UINT8, BaseYangTypes.UINT8_TYPE)
-        .put(TypeDefinitions.UINT16, BaseYangTypes.UINT16_TYPE)
-        .put(TypeDefinitions.UINT32, BaseYangTypes.UINT32_TYPE)
-        .put(TypeDefinitions.UINT64, BaseYangTypes.UINT64_TYPE)
+        .put(BuiltInType.BINARY.typeName(), BaseYangTypes.BINARY_TYPE)
+        .put(BuiltInType.BOOLEAN.typeName(), BaseYangTypes.BOOLEAN_TYPE)
+        .put(BuiltInType.DECIMAL64.typeName(), BaseYangTypes.DECIMAL64_TYPE)
+        .put(BuiltInType.EMPTY.typeName(), BaseYangTypes.EMPTY_TYPE)
+        .put(BuiltInType.INSTANCE_IDENTIFIER.typeName(), BaseYangTypes.INSTANCE_IDENTIFIER)
+        .put(BuiltInType.INT8.typeName(), BaseYangTypes.INT8_TYPE)
+        .put(BuiltInType.INT16.typeName(), BaseYangTypes.INT16_TYPE)
+        .put(BuiltInType.INT32.typeName(), BaseYangTypes.INT32_TYPE)
+        .put(BuiltInType.INT64.typeName(), BaseYangTypes.INT64_TYPE)
+        .put(BuiltInType.STRING.typeName(), BaseYangTypes.STRING_TYPE)
+        .put(BuiltInType.UINT8.typeName(), BaseYangTypes.UINT8_TYPE)
+        .put(BuiltInType.UINT16.typeName(), BaseYangTypes.UINT16_TYPE)
+        .put(BuiltInType.UINT32.typeName(), BaseYangTypes.UINT32_TYPE)
+        .put(BuiltInType.UINT64.typeName(), BaseYangTypes.UINT64_TYPE)
         .build();
 
     private final TypeEffectiveStatement type;
@@ -361,14 +361,14 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         }
 
         final QName arg = type.argument();
-        if (TypeDefinitions.IDENTITYREF.equals(arg)) {
+        if (BuiltInType.IDENTITYREF.typeName().equals(arg)) {
             refType = TypeReference.identityRef(type.streamEffectiveSubstatements(BaseEffectiveStatement.class)
                 .map(BaseEffectiveStatement::argument)
                 .map(context::resolveIdentity)
                 .collect(Collectors.toUnmodifiableList()));
-        } else if (TypeDefinitions.LEAFREF.equals(arg)) {
+        } else if (BuiltInType.LEAFREF.typeName().equals(arg)) {
             refType = resolveLeafref(context);
-        } else if (TypeDefinitions.UNION.equals(arg)) {
+        } else if (BuiltInType.UNION.typeName().equals(arg)) {
             unionDependencies = new UnionDependencies(type, context);
             LOG.trace("Resolved union {} to dependencies {}", type, unionDependencies);
         }
@@ -449,7 +449,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     final boolean isEnumeration() {
-        return baseGen != null ? baseGen.isEnumeration() : TypeDefinitions.ENUMERATION.equals(type.argument());
+        return baseGen != null ? baseGen.isEnumeration() : BuiltInType.ENUMERATION.typeName().equals(type.argument());
     }
 
     final boolean isDerivedEnumeration() {
@@ -595,15 +595,15 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         // FIXME: why do we need this boolean?
         final boolean isTypedef = this instanceof TypedefGenerator;
         final QName arg = type.argument();
-        if (TypeDefinitions.BITS.equals(arg)) {
+        if (BuiltInType.BITS.typeName().equals(arg)) {
             return createBits(builderFactory, statement(), typeName(), currentModule(),
                 (BitsTypeDefinition) extractTypeDefinition(), isTypedef);
         }
-        if (TypeDefinitions.ENUMERATION.equals(arg)) {
+        if (BuiltInType.ENUMERATION.typeName().equals(arg)) {
             return createEnumeration(builderFactory, statement(), typeName(), currentModule(),
                 (EnumTypeDefinition) extractTypeDefinition());
         }
-        if (TypeDefinitions.UNION.equals(arg)) {
+        if (BuiltInType.UNION.typeName().equals(arg)) {
             final List<GeneratedType> tmp = new ArrayList<>(1);
             final GeneratedTransferObject ret = createUnion(tmp, builderFactory, statement(), unionDependencies,
                 typeName(), currentModule(), type, isTypedef, extractTypeDefinition());
@@ -724,7 +724,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
                 String propSource = localName;
                 final Type generatedType;
-                if (TypeDefinitions.UNION.equals(subName)) {
+                if (BuiltInType.UNION.typeName().equals(subName)) {
                     final var subUnionName = typeName.createEnclosed(
                         provideAvailableNameForGenTOBuilder(typeName.simpleName()));
                     final GeneratedTransferObject subUnion = createUnion(auxiliaryGeneratedTypes, builderFactory,
@@ -733,19 +733,19 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                     builder.addEnclosingTransferObject(subUnion);
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
-                } else if (TypeDefinitions.ENUMERATION.equals(subName)) {
+                } else if (BuiltInType.ENUMERATION.typeName().equals(subName)) {
                     final var subEnumeration = createEnumeration(builderFactory, definingStatement,
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
                         (EnumTypeDefinition) subType.getTypeDefinition());
                     builder.addEnumeration(subEnumeration);
                     generatedType = subEnumeration;
-                } else if (TypeDefinitions.BITS.equals(subName)) {
+                } else if (BuiltInType.BITS.typeName().equals(subName)) {
                     final var subBits = createBits(builderFactory, definingStatement,
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
                         (BitsTypeDefinition) subType.getTypeDefinition(), isTypedef);
                     builder.addEnclosingTransferObject(subBits);
                     generatedType = subBits;
-                } else if (TypeDefinitions.IDENTITYREF.equals(subName)) {
+                } else if (BuiltInType.IDENTITYREF.typeName().equals(subName)) {
                     propSource = stmt.findFirstEffectiveSubstatement(BaseEffectiveStatement.class)
                         .orElseThrow(() -> new VerifyException(String.format("Invalid identityref "
                             + "definition %s in %s, missing BASE statement", stmt, definingStatement)))
@@ -753,7 +753,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                     generatedType = verifyNotNull(dependencies.identityTypes.get(stmt),
                         "Cannot resolve identityref %s in %s", stmt, definingStatement)
                         .methodReturnType(builderFactory);
-                } else if (TypeDefinitions.LEAFREF.equals(subName)) {
+                } else if (BuiltInType.LEAFREF.typeName().equals(subName)) {
                     generatedType = verifyNotNull(dependencies.leafTypes.get(stmt),
                         "Cannot resolve leafref %s in %s", stmt, definingStatement)
                         .methodReturnType(builderFactory);
