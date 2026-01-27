@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 final class BaseInstanceIdentifierType extends AbstractBaseType<InstanceIdentifierTypeDefinition>
         implements InstanceIdentifierTypeDefinition {
     static final @NonNull BaseInstanceIdentifierType INSTANCE = new BaseInstanceIdentifierType();
 
     private BaseInstanceIdentifierType() {
-        super(TypeDefinitions.INSTANCE_IDENTIFIER);
+        super(BuiltInType.INSTANCE_IDENTIFIER.typeName());
     }
 
     @Override

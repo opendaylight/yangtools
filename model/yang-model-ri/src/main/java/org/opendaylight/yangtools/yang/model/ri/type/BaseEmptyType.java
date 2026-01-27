@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 final class BaseEmptyType extends AbstractBaseType<EmptyTypeDefinition> implements EmptyTypeDefinition {
     static final @NonNull BaseEmptyType INSTANCE = new BaseEmptyType();
 
     private BaseEmptyType() {
-        super(TypeDefinitions.EMPTY);
+        super(BuiltInType.EMPTY.typeName());
     }
 
     @Override

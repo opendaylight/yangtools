@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 final class BaseBooleanType extends AbstractBaseType<BooleanTypeDefinition> implements BooleanTypeDefinition {
     static final @NonNull BaseBooleanType INSTANCE = new BaseBooleanType();
 
     private BaseBooleanType() {
-        super(TypeDefinitions.BOOLEAN);
+        super(BuiltInType.BOOLEAN.typeName());
     }
 
     @Override
