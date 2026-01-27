@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
@@ -98,8 +99,9 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             ImmutableSet<YangFeature<?, ?>>> moduleToFeatures = MultimapBuilder.hashKeys().arrayListValues().build();
     private @GuardedBy("this") @Nullable ModuleInfoSnapshot currentSnapshot;
 
-    public ModuleInfoSnapshotResolver(final String name, final YangParserFactory parserFactory) {
-        ctxResolver = YangTextSchemaContextResolver.create(name, parserFactory);
+    public ModuleInfoSnapshotResolver(final String name, final YangTextToIRSourceTransformer textToIR,
+            final YangParserFactory parserFactory) {
+        ctxResolver = YangTextSchemaContextResolver.create(name, parserFactory, textToIR);
     }
 
     public synchronized <R extends @NonNull DataRoot<R>> Registration registerModuleFeatures(final Class<R> module,

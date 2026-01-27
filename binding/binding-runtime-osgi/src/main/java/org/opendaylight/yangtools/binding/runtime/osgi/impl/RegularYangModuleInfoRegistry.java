@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.binding.runtime.spi.ModuleInfoSnapshotResolver;
 import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
@@ -44,9 +45,9 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
     private volatile boolean ignoreScanner = true;
 
     RegularYangModuleInfoRegistry(final ComponentFactory<OSGiModuleInfoSnapshotImpl> contextFactory,
-            final YangParserFactory factory) {
+            final YangParserFactory factory, final YangTextToIRSourceTransformer textToIR) {
         this.contextFactory = requireNonNull(contextFactory);
-        resolver = new ModuleInfoSnapshotResolver("dom-schema-osgi", factory);
+        resolver = new ModuleInfoSnapshotResolver("dom-schema-osgi", textToIR, factory);
     }
 
     // Invocation from scanner, we may want to ignore this in order to not process partial updates

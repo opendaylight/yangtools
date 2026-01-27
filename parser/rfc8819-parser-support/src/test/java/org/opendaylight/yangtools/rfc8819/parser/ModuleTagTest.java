@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -32,10 +31,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class ModuleTagTest {
     private static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+        YangIRSourceModule.provideTextToIR();
     private static CrossSourceStatementReactor reactor;
 
     @BeforeAll

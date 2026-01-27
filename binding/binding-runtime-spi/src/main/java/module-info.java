@@ -13,13 +13,13 @@ module org.opendaylight.yangtools.binding.runtime.spi {
     exports org.opendaylight.yangtools.binding.runtime.spi;
 
     requires transitive org.opendaylight.yangtools.binding.runtime.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
     requires org.opendaylight.yangtools.binding.model;
     requires org.opendaylight.yangtools.binding.reflect;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.yang.model.spi;
     requires org.opendaylight.yangtools.yang.parser.impl;
     requires org.slf4j;
 

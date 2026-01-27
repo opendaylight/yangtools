@@ -20,10 +20,9 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
 
     uses ParserExtension;
     uses YangXPathParserFactory;
+    uses YangTextToIRSourceTransformer;
     provides YangLibResolver with org.opendaylight.yangtools.yang.parser.ri.DefaultYangLibResolver;
     provides YangParserFactory with org.opendaylight.yangtools.yang.parser.ri.DefaultYangParserFactory;
-    provides YangTextToIRSourceTransformer
-        with org.opendaylight.yangtools.yang.parser.antlr.DefaultYangTextToIRSourceTransformer;
 
     requires transitive java.xml;
     requires transitive com.google.common;

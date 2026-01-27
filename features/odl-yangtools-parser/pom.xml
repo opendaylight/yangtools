@@ -108,5 +108,9 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-repo-fs</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-source-ir</artifactId>
+        </dependency>
     </dependencies>
 </project>

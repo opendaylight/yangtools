@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ServiceLoader;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -20,9 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.parser.antlr.DefaultYangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 
 class YangIRSourceInfoExtractorTest {
+    private static final YangTextToIRSourceTransformer TRANSFORMER =
+        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
+
     @Test
     void testModuleWithNoImports() throws Exception {
         final var info = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
@@ -114,7 +118,7 @@ class YangIRSourceInfoExtractorTest {
 
     // Utility
     private static SourceInfo forResource(final String resourceName) throws Exception {
-        return new DefaultYangTextToIRSourceTransformer()
+        return TRANSFORMER
             .transformSource(new URLYangTextSource(YangIRSourceInfoExtractorTest.class.getResource(resourceName)))
             .extractSourceInfo();
     }
