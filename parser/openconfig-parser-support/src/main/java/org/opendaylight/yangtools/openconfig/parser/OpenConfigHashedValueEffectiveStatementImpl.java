@@ -21,22 +21,22 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 final class OpenConfigHashedValueEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<Empty, @NonNull OpenConfigHashedValueStatement>
         implements OpenConfigHashedValueEffectiveStatement {
-    private final @NonNull StatementDefinition definition;
+    private final @NonNull StatementDefinition<Empty, OpenConfigHashedValueStatement, ?> definition;
 
     OpenConfigHashedValueEffectiveStatementImpl(final Current<Empty, OpenConfigHashedValueStatement> stmt,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
         definition = stmt.publicDefinition();
     }
 
     @Override
-    public QName getQName() {
-        return definition.statementName();
+    public StatementDefinition<Empty, OpenConfigHashedValueStatement, ?> statementDefinition() {
+        return definition;
     }
 
     @Override
-    public StatementDefinition statementDefinition() {
-        return definition;
+    public QName getQName() {
+        return definition.statementName();
     }
 
     @Override
