@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-public class EmptyUniqueEffectiveStatement extends DefaultArgument<Set<Descendant>, @NonNull UniqueStatement>
+public class EmptyUniqueEffectiveStatement extends DefaultArgument<UniqueArgument, @NonNull UniqueStatement>
         implements UniqueEffectiveStatement {
     public EmptyUniqueEffectiveStatement(final @NonNull UniqueStatement declared) {
         super(declared);

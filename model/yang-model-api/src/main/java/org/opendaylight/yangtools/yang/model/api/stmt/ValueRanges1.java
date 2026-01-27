@@ -9,49 +9,44 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * A {@link KeyArgument} containing three or more {@code node-identifier}s.
+ * A {@link ValueRanges} encompassing a single {@link ValueRange}.
  */
+// FIXME: JEP-401 when available
 @NonNullByDefault
-record KeyArgumentN(ImmutableSet<QName> asSet) implements KeyArgument.OfMore {
-    KeyArgumentN {
-        requireNonNull(asSet);
+record ValueRanges1(ValueRange range) implements ValueRanges {
+    ValueRanges1 {
+        requireNonNull(range);
     }
 
     @Override
-    public Iterator<QName> iterator() {
-        return asSet.iterator();
+    public Iterator<ValueRange> iterator() {
+        return Iterators.singletonIterator(range);
     }
 
     @Override
-    public Stream<QName> stream() {
-        return asSet.stream();
+    public Stream<ValueRange> stream() {
+        return Stream.of(range);
     }
 
     @Override
     public int size() {
-        return asSet.size();
+        return 1;
     }
 
     @Override
-    public boolean contains(final QName nodeIdentifier) {
-        return asSet.contains(requireNonNull(nodeIdentifier));
-    }
-
-    @Override
-    public List<QName> asList() {
-        return asSet.asList();
+    public List<ValueRange> asList() {
+        return List.of(range);
     }
 
     @Override
     public String toString() {
-        return asSet.toString();
+        return "[" + range + "]";
     }
 }

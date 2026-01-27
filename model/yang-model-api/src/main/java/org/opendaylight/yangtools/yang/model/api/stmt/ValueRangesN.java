@@ -9,38 +9,37 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * A {@link ValueRanges} encompassing a single {@link ValueRange}.
+ * A {@link ValueRanges} encompassing more than one {@link ValueRange}.
  */
-// FIXME: JEP-401 when available
 @NonNullByDefault
-record SingleValueRanges(ValueRange range) implements ValueRanges {
-    SingleValueRanges {
-        requireNonNull(range);
+record ValueRangesN(List<ValueRange> ranges) implements ValueRanges {
+    ValueRangesN {
+        requireNonNull(ranges);
     }
 
     @Override
     public Iterator<ValueRange> iterator() {
-        return Iterators.singletonIterator(range);
+        return ranges.iterator();
+    }
+
+    @Override
+    public Stream<ValueRange> stream() {
+        return ranges.stream();
     }
 
     @Override
     public int size() {
-        return 1;
+        return ranges.size();
     }
 
     @Override
     public List<ValueRange> asList() {
-        return List.of(range);
-    }
-
-    @Override
-    public String toString() {
-        return "[" + range + "]";
+        return ranges;
     }
 }

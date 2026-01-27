@@ -9,31 +9,25 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Iterator;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
- * A {@link ValueRanges} encompassing more than one {@link ValueRange}.
+ * A {@link KeyArgument} containing a single {@link Descendant}.
  */
 @NonNullByDefault
-record RegularValueRanges(List<ValueRange> ranges) implements ValueRanges {
-    RegularValueRanges {
-        requireNonNull(ranges);
+record UniqueArgument1(Descendant item) implements UniqueArgument.OfOne {
+    UniqueArgument1 {
+        requireNonNull(item);
     }
 
     @Override
-    public int size() {
-        return ranges.size();
+    public boolean contains(final Descendant descendant) {
+        return descendant.equals(item);
     }
 
     @Override
-    public Iterator<ValueRange> iterator() {
-        return ranges.iterator();
-    }
-
-    @Override
-    public List<ValueRange> asList() {
-        return ranges;
+    public String toString() {
+        return "[" + item + "]";
     }
 }

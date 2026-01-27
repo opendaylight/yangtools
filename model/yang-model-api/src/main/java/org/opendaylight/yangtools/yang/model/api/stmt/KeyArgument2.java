@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -22,6 +23,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 record KeyArgument2(List<QName> asList) implements KeyArgument.OfMore {
     KeyArgument2 {
         requireNonNull(asList);
+    }
+
+    @Override
+    public Iterator<QName> iterator() {
+        return asList.iterator();
+    }
+
+    @Override
+    public Stream<QName> stream() {
+        return asList.stream();
     }
 
     @Override
@@ -37,11 +48,6 @@ record KeyArgument2(List<QName> asList) implements KeyArgument.OfMore {
     @Override
     public Set<QName> asSet() {
         return Set.copyOf(asList);
-    }
-
-    @Override
-    public Iterator<QName> iterator() {
-        return asList.iterator();
     }
 
     @Override
