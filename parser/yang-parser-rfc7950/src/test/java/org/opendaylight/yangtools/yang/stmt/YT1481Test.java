@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 
 class YT1481Test extends AbstractYangTest {
@@ -75,6 +76,6 @@ class YT1481Test extends AbstractYangTest {
         assertEquals(KeyArgument.of(BAZ), baz.argument());
 
         final var qux = bar.findFirstEffectiveSubstatement(UniqueEffectiveStatement.class).orElseThrow();
-        assertEquals(Set.of(Descendant.of(QUX)), qux.argument());
+        assertEquals(UniqueArgument.of(Descendant.of(QUX)), qux.argument());
     }
 }

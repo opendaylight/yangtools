@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @since 15.0.0
  */
 @NonNullByDefault
-public sealed interface ValueRanges extends SizedIterable<ValueRange> permits RegularValueRanges, SingleValueRanges {
+public sealed interface ValueRanges extends SizedIterable<ValueRange> permits ValueRanges1, ValueRangesN {
     /**
      * {@return an equivalent {@code List<ValueRange>}}
      */
@@ -33,7 +33,7 @@ public sealed interface ValueRanges extends SizedIterable<ValueRange> permits Re
      * @return a {@link ValueRanges} instance
      */
     static ValueRanges of(final ValueRange range) {
-        return new SingleValueRanges(range);
+        return new ValueRanges1(range);
     }
 
     /**
@@ -59,8 +59,8 @@ public sealed interface ValueRanges extends SizedIterable<ValueRange> permits Re
         final var copy = ranges.stream().distinct().collect(Collectors.toUnmodifiableList());
         return switch (copy.size()) {
             case 0 -> throw new IllegalArgumentException("empty ranges");
-            case 1 -> new SingleValueRanges(copy.getFirst());
-            default -> new RegularValueRanges(copy);
+            case 1 -> new ValueRanges1(copy.getFirst());
+            default -> new ValueRangesN(copy);
         };
     }
 }
