@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.meta.YangFeatureProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.concepts.Registration;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentFactory;
@@ -21,8 +22,9 @@ import org.osgi.service.component.ComponentFactory;
  */
 abstract class YangModuleInfoRegistry {
     static @NonNull YangModuleInfoRegistry create(final BundleContext ctx,
-            final ComponentFactory<OSGiModuleInfoSnapshotImpl> contextFactory, final YangParserFactory factory) {
-        return KarafFeaturesSupport.wrap(ctx, new RegularYangModuleInfoRegistry(contextFactory, factory));
+            final ComponentFactory<OSGiModuleInfoSnapshotImpl> contextFactory, final YangParserFactory factory,
+            final YangTextToIRSourceTransformer textToIR) {
+        return KarafFeaturesSupport.wrap(ctx, new RegularYangModuleInfoRegistry(contextFactory, factory, textToIR));
     }
 
     // Invocation from scanner, we may want to ignore this in order to not process partial updates

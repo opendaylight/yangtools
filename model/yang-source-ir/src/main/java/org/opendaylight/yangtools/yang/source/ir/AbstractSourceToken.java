@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.antlr;
+package org.opendaylight.yangtools.yang.source.ir;
 
 import static java.util.Objects.requireNonNull;
 
@@ -33,7 +33,7 @@ abstract sealed class AbstractSourceToken extends AbstractToken permits Token121
 
     @Override
     public final String getText() {
-        final CharStream input = getInputStream();
+        final var input = getInputStream();
         if (input == null) {
             return null;
         }

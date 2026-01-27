@@ -118,6 +118,18 @@
             <artifactId>org.osgi.service.component.annotations</artifactId>
         </dependency>
 
+        <!-- YANG text-to-IR support -->
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-source-ir</artifactId>
+        </dependency>
+
+        <!-- XPath reference implementation -->
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-xpath-impl</artifactId>
+        </dependency>
+
         <!-- Base RFC6020/RFC7950 reactor support -->
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -164,12 +176,6 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc8819-parser-support</artifactId>
-        </dependency>
-
-        <!-- XPath reference implementation -->
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-xpath-impl</artifactId>
         </dependency>
     </dependencies>
 

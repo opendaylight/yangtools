@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.antlr;
+package org.opendaylight.yangtools.yang.source.ir;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.yang.ir.IRArgument.Single;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.ArgumentContext;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.FileContext;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.KeywordContext;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementParser.UnquotedStringContext;
+import org.opendaylight.yangtools.yang.source.ir.antlr.YangStatementParser;
+import org.opendaylight.yangtools.yang.source.ir.antlr.YangStatementParser.ArgumentContext;
+import org.opendaylight.yangtools.yang.source.ir.antlr.YangStatementParser.FileContext;
+import org.opendaylight.yangtools.yang.source.ir.antlr.YangStatementParser.KeywordContext;
+import org.opendaylight.yangtools.yang.source.ir.antlr.YangStatementParser.StatementContext;
+import org.opendaylight.yangtools.yang.source.ir.antlr.YangStatementParser.UnquotedStringContext;
 
 final class IRSupport {
     private static final CharMatcher WHITESPACE_MATCHER = CharMatcher.whitespace();
