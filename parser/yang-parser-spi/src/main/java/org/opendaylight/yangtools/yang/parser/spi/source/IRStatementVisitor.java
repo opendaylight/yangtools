@@ -27,16 +27,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 
 class IRStatementVisitor {
-    private final @NonNull QNameToStatementDefinition stmtDef;
+    private final @NonNull StatementDefinitionResolver resolver;
     private final @NonNull StringEscaping escaping;
     private final PrefixResolver prefixes;
     private final @NonNull StatementWriter writer;
     private final String sourceName;
 
     IRStatementVisitor(final String sourceName, final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
-        this.stmtDef = requireNonNull(stmtDef);
+        this.resolver = requireNonNull(resolver);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
         escaping = switch (yangVersion) {
@@ -55,7 +55,7 @@ class IRStatementVisitor {
      * This applies to any declared statement, including unknown statements.
      *
      * @param prefixes collection of all relevant prefix mappings supplied for actual parsing phase
-     * @param stmtDef collection of all relevant statement definition mappings provided for actual parsing phase
+     * @param resolver collection of all relevant statement definition mappings provided for actual parsing phase
      * @param keyword statement keyword text to parse from source
      * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
@@ -65,7 +65,8 @@ class IRStatementVisitor {
         return switch (keyword) {
             case Qualified qualified -> getValidStatementDefinition(qualified, ref);
             case Unqualified unqualified -> {
-                final var def = stmtDef.get(QName.unsafeOf(YangConstants.RFC6020_YIN_MODULE, unqualified.identifier()));
+                final var def = resolver.lookupDef(YangConstants.RFC6020_YIN_NAMESPACE_STRING,
+                    unqualified.identifier());
                 yield def != null ? def.statementName() : null;
             }
         };
@@ -89,7 +90,7 @@ class IRStatementVisitor {
     }
 
     StatementDefinition<?, ?, ?> resolveStatement(final @NonNull QNameModule module, final @NonNull String localName) {
-        return stmtDef.get(QName.unsafeOf(module, localName));
+        return resolver.lookupDef(module, localName);
     }
 
     // Normal entry point, checks for potential resume
