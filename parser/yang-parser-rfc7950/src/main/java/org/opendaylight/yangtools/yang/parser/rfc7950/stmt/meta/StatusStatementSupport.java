@@ -21,37 +21,18 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class StatusStatementSupport
         extends AbstractStatementSupport<Status, StatusStatement, StatusEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(StatusStatement.DEF).build();
+    private static final StatusArgumentSupport ARGUMENT_SUPPORT =
+        new StatusArgumentSupport(StatusStatement.DEF.getArgumentDefinition());
 
     public StatusStatementSupport(final YangParserConfiguration config) {
-        super(StatusStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
-    }
-
-    @Override
-    public Status parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        try {
-            return Status.ofArgument(value);
-        } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e,
-                "Invalid status '%s', must be one of 'current', 'deprecated' or 'obsolete'", value);
-        }
-    }
-
-    @Override
-    public String internArgument(final String rawArgument) {
-        return switch (rawArgument) {
-            case "current" -> "current";
-            case "deprecated" -> "deprecated";
-            case "obsolete" -> "obsolete";
-            default -> rawArgument;
-        };
+        super(StatusStatement.DEF, ARGUMENT_SUPPORT, StatementPolicy.contextIndependent(), config,
+            SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
