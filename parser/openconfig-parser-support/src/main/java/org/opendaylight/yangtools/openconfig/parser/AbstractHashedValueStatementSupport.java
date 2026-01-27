@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.openconfig.parser;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -23,7 +24,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractHashedValueStatementSupport
         extends AbstractEmptyStatementSupport<OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> {
-    AbstractHashedValueStatementSupport(final StatementDefinition definition, final YangParserConfiguration config,
+    AbstractHashedValueStatementSupport(final StatementDefinition<Empty, @NonNull OpenConfigHashedValueStatement,
+            @NonNull OpenConfigHashedValueEffectiveStatement> definition, final YangParserConfiguration config,
             final SubstatementValidator validator) {
         super(definition, StatementPolicy.contextIndependent(), config, validator);
     }

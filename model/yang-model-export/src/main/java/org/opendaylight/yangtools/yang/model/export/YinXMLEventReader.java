@@ -29,9 +29,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 final class YinXMLEventReader implements XMLEventReader {
     private record OpenElement(QName name, Iterator<? extends DeclaredStatement<?>> children) {
@@ -53,9 +51,9 @@ final class YinXMLEventReader implements XMLEventReader {
 
         events.add(eventFactory.createStartDocument(StandardCharsets.UTF_8.name()));
 
-        final StatementDefinition def = root.statementDefinition();
-        final QName name = def.statementName();
-        final ArgumentDefinition arg = def.getArgumentDefinition();
+        final var def = root.statementDefinition();
+        final var name = def.statementName();
+        final var arg = def.getArgumentDefinition();
 
         events.add(eventFactory.createStartElement(XMLConstants.DEFAULT_NS_PREFIX, name.getNamespace().toString(),
             name.getLocalName(), singletonIterator(attribute(arg.argumentName(), root.rawArgument())),
@@ -68,7 +66,7 @@ final class YinXMLEventReader implements XMLEventReader {
 
     @Override
     public XMLEvent next() {
-        XMLEvent event = events.poll();
+        var event = events.poll();
         if (event != null) {
             return event;
         }

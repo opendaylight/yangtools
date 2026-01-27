@@ -12,21 +12,22 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 
 final class OpenConfigHashedValueStatementImpl extends WithSubstatements implements OpenConfigHashedValueStatement {
-    private final @NonNull StatementDefinition definition;
+    private final @NonNull StatementDefinition<Empty, OpenConfigHashedValueStatement, ?> definition;
 
-    OpenConfigHashedValueStatementImpl(final StatementDefinition definition,
+    OpenConfigHashedValueStatementImpl(final StatementDefinition<Empty, OpenConfigHashedValueStatement, ?> definition,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(substatements);
         this.definition = requireNonNull(definition);
     }
 
     @Override
-    public StatementDefinition statementDefinition() {
+    public StatementDefinition<Empty, OpenConfigHashedValueStatement, ?> statementDefinition() {
         return definition;
     }
 }

@@ -142,8 +142,8 @@ class YT1193Test {
         assertFalse(it.hasNext());
     }
 
-    private static void assertReference(final DeclaredStatement<?> foo, final StatementDefinition def, final int line,
-            final int column) {
+    private static void assertReference(final DeclaredStatement<?> foo, final StatementDefinition<?, ?, ?> def,
+            final int line, final int column) {
         assertEquals(def, foo.statementDefinition());
 
         final var inText = assertInstanceOf(DeclarationInText.class, foo.declarationReference().orElseThrow());

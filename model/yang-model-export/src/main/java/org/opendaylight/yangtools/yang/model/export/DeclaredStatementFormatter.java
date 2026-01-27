@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,17 +21,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 
 /**
  * Utility class for formatting {@link DeclaredStatement}s.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 public final class DeclaredStatementFormatter implements Immutable {
-    private static final DeclaredStatementFormatter DEFAULT = new DeclaredStatementFormatter(ImmutableSet.of(), true);
+    private static final DeclaredStatementFormatter DEFAULT = new DeclaredStatementFormatter(Set.of(), true);
 
-    private final Set<StatementDefinition> ignoredStatements;
+    private final Set<StatementDefinition<?, ?, ?>> ignoredStatements;
     private final boolean omitDefaultStatements;
 
-    DeclaredStatementFormatter(final Set<StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
+    private DeclaredStatementFormatter(final Set<StatementDefinition<?, ?, ?>> ignoredStatements,
+            final boolean omitDefaultStatements) {
         this.ignoredStatements = requireNonNull(ignoredStatements);
         this.omitDefaultStatements = omitDefaultStatements;
     }
@@ -80,7 +78,7 @@ public final class DeclaredStatementFormatter implements Immutable {
      * Builder class for instantiation of a customized {@link DeclaredStatementFormatter}.
      */
     public static final class Builder implements Mutable {
-        private final Set<StatementDefinition> ignoredStatements = new HashSet<>(4);
+        private final Set<StatementDefinition<?, ?, ?>> ignoredStatements = new HashSet<>(4);
         private boolean retainDefaultStatements;
 
         private Builder() {
@@ -93,7 +91,7 @@ public final class DeclaredStatementFormatter implements Immutable {
          * @param statementDef Statement to be ignored
          * @return This builder
          */
-        public Builder addIgnoredStatement(final StatementDefinition statementDef) {
+        public Builder addIgnoredStatement(final StatementDefinition<?, ?, ?> statementDef) {
             ignoredStatements.add(requireNonNull(statementDef));
             return this;
         }
@@ -115,7 +113,7 @@ public final class DeclaredStatementFormatter implements Immutable {
          * @return A DeclaredStatementFormatter
          */
         public DeclaredStatementFormatter build() {
-            return new DeclaredStatementFormatter(ImmutableSet.copyOf(ignoredStatements), !retainDefaultStatements);
+            return new DeclaredStatementFormatter(Set.copyOf(ignoredStatements), !retainDefaultStatements);
         }
     }
 }

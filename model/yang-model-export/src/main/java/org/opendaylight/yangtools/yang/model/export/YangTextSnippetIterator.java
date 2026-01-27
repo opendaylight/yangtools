@@ -57,7 +57,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
 
     // Note this happens to match DeclaredHumanTextStatement, but this is actually an IETF best practice
-    private static final Set<StatementDefinition> QUOTE_MULTILINE_STATEMENTS = Set.of(
+    private static final Set<StatementDefinition<?, ?, ?>> QUOTE_MULTILINE_STATEMENTS = Set.of(
         ContactStatement.DEF,
         DescriptionStatement.DEF,
         ErrorMessageStatement.DEF,
@@ -71,7 +71,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      *            are commonly used with the default value, which would make the module
      *            difficult to read if used everywhere they are allowed.
      */
-    private static final Map<StatementDefinition, String> DEFAULT_STATEMENTS = Map.of(
+    private static final Map<StatementDefinition<?, ?, ?>, String> DEFAULT_STATEMENTS = Map.of(
         ConfigStatement.DEF, "true",
         MandatoryStatement.DEF, "true",
         MaxElementsStatement.DEF, "unbounded",
@@ -114,12 +114,12 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
     private final Queue<String> strings = new ArrayDeque<>(8);
     // Let's be modest, 16-level deep constructs are not exactly common.
     private final Deque<Iterator<? extends DeclaredStatement<?>>> stack = new ArrayDeque<>(8);
-    private final Set<StatementDefinition> ignoredStatements;
+    private final Set<StatementDefinition<?, ?, ?>> ignoredStatements;
     private final StatementPrefixResolver resolver;
     private final boolean omitDefaultStatements;
 
     YangTextSnippetIterator(final DeclaredStatement<?> stmt, final StatementPrefixResolver resolver,
-        final Set<StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
+        final Set<StatementDefinition<?, ?, ?>> ignoredStatements, final boolean omitDefaultStatements) {
         this.resolver = requireNonNull(resolver);
         this.ignoredStatements = requireNonNull(ignoredStatements);
         this.omitDefaultStatements = omitDefaultStatements;
@@ -213,7 +213,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         }
     }
 
-    private void addArgument(final StatementDefinition def, final @Nullable String arg) {
+    private void addArgument(final StatementDefinition<?, ?, ?> def, final @Nullable String arg) {
         if (arg == null) {
             // No argument, nothing to do
         } else if (arg.isEmpty()) {
