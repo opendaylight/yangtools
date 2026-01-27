@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfUnion;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-final class RefUnionSpecification extends AbstractRefStatement<QName, UnionSpecification>
-        implements UnionSpecification {
-    RefUnionSpecification(final UnionSpecification delegate, final DeclarationReference ref) {
+final class RefUnionSpecification extends AbstractRefStatement<QName, OfUnion> implements OfUnion {
+    RefUnionSpecification(final OfUnion delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }
 }

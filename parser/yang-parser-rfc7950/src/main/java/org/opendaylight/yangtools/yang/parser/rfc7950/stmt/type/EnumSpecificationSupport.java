@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -34,7 +33,7 @@ final class EnumSpecificationSupport extends AbstractTypeSupport {
     }
 
     @Override
-    protected EnumSpecification createDeclared(final BoundStmtCtx<QName> ctx,
+    protected TypeStatement.OfEnum createDeclared(final BoundStmtCtx<QName> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noEnum(ctx);

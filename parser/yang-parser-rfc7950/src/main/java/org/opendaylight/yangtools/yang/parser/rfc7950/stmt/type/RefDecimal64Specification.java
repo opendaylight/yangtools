@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfDecimal64;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-final class RefDecimal64Specification extends AbstractRefStatement<QName, Decimal64Specification>
-        implements Decimal64Specification {
-    RefDecimal64Specification(final Decimal64Specification delegate, final DeclarationReference ref) {
+final class RefDecimal64Specification extends AbstractRefStatement<QName, OfDecimal64> implements OfDecimal64 {
+    RefDecimal64Specification(final OfDecimal64 delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }
 }

@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfDecimal64;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class Decimal64SpecificationImpl extends WithSubstatements<QName> implements Decimal64Specification {
+final class Decimal64SpecificationImpl extends WithSubstatements<QName> implements OfDecimal64 {
     Decimal64SpecificationImpl(final String rawArgument, final QName argument,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);

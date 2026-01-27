@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfIdentityref;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class IdentityRefSpecificationImpl extends WithSubstatements<QName> implements IdentityRefSpecification {
+final class IdentityRefSpecificationImpl extends WithSubstatements<QName> implements OfIdentityref {
     IdentityRefSpecificationImpl(final String rawArgument, final QName argument,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);

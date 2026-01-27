@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -34,7 +33,7 @@ final class InstanceIdentifierSpecificationSupport extends AbstractTypeSupport {
     }
 
     @Override
-    protected InstanceIdentifierSpecification createDeclared(final BoundStmtCtx<QName> ctx,
+    protected TypeStatement.OfInstanceIdentifier createDeclared(final BoundStmtCtx<QName> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyIdentifierSpecification(ctx.getRawArgument(), ctx.getArgument())
             : new RegularInstanceIdentifierSpecification(ctx.getRawArgument(), ctx.getArgument(), substatements);

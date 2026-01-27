@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfBits;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class BitsSpecificationImpl extends WithSubstatements<QName> implements BitsSpecification {
+final class BitsSpecificationImpl extends WithSubstatements<QName> implements OfBits {
     BitsSpecificationImpl(final String rawArgument, final QName argument,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
