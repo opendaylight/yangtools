@@ -68,7 +68,7 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             if (parent.inStructure()) {
                 throw new SourceException(stmt, "Notification %s is defined within another structure", argument);
             }
-            if (parent.producesDeclared(CaseStatement.class)) {
+            if (parent.produces(CaseStatement.DEF)) {
                 throw new SourceException(stmt, "Notification %s is defined within a case statement", argument);
             }
         }

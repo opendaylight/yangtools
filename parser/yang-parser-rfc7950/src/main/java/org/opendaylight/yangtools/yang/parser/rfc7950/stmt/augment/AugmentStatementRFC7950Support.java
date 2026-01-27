@@ -59,6 +59,6 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
 
     @Override
     boolean allowsMandatory(final StmtContext<?, ?, ?> ctx) {
-        return ctx.producesDeclared(AugmentStatement.class) && ctx.hasSubstatement(WhenEffectiveStatement.class);
+        return ctx.produces(AugmentStatement.DEF) && ctx.hasSubstatement(WhenEffectiveStatement.class);
     }
 }

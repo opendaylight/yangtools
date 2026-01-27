@@ -53,7 +53,7 @@ abstract class AbstractAugmentStatementSupport
         // The argument is either Absolute or Descendant based on whether the statement is declared within a 'uses'
         // statement. The mechanics differs wildly between the two cases, so let's start by ensuring our argument
         // is in the correct domain.
-        return ctx.coerceParentContext().producesDeclared(UsesStatement.class)
+        return ctx.coerceParentContext().produces(UsesStatement.DEF)
             ? ctx.identifierBinding().parseDescendantSchemaNodeidAs("uses-augment-arg", ctx, value)
             : ctx.identifierBinding().parseAbsoluteSchemaNodeidAs("augment-arg", ctx, value);
     }
@@ -123,6 +123,6 @@ abstract class AbstractAugmentStatementSupport
     static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.
         final var parent = augmentContext.coerceParentContext();
-        return parent.producesDeclared(UsesStatement.class) ? parent.getParentContext() : parent;
+        return parent.produces(UsesStatement.DEF) ? parent.getParentContext() : parent;
     }
 }

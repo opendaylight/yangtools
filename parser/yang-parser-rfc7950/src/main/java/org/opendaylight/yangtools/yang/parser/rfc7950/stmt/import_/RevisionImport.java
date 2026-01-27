@@ -85,7 +85,7 @@ final class RevisionImport {
     }
 
     static SourceIdentifier getImportedSourceIdentifier(final StmtContext<Unqualified, ImportStatement, ?> stmt) {
-        final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
+        final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.DEF);
         return new SourceIdentifier(stmt.getArgument(), revision != null ? revision.getArgument() : null);
     }
 }

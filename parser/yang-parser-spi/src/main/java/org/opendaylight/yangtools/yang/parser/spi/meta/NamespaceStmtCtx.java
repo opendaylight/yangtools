@@ -11,12 +11,23 @@ import com.google.common.annotations.Beta;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Support work with namespace content.
  */
 @Beta
 public interface NamespaceStmtCtx extends CommonStmtCtx {
+    @Override
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> NamespaceStmtCtx asDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
+    @Override
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> NamespaceStmtCtx verifyDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
     /**
      * Return the selected namespace.
      *

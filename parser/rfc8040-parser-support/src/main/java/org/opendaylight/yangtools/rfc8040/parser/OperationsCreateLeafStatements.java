@@ -71,7 +71,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
         // Enumerate all RPCs that can be built
         final var qnames = prereqs.stream()
             .flatMap(prereq -> prereq.resolve(ctx).declaredSubstatements().stream())
-            .filter(stmt -> stmt.producesDeclared(RpcStatement.class)
+            .filter(stmt -> stmt.produces(RpcStatement.DEF)
                 && stmt.isSupportedToBuildEffective() && stmt.isSupportedByFeatures())
             .map(stmt -> (QName) stmt.argument())
             // predictable order...

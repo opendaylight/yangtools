@@ -93,6 +93,12 @@ public interface CommonStmtCtx {
         return type.isAssignableFrom(publicDefinition().effectiveRepresentation());
     }
 
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> @Nullable CommonStmtCtx asDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
+    <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> @NonNull CommonStmtCtx verifyDeclaring(
+        StatementDefinition<X, Y, Z> def);
+
     /**
      * Returns a reference to statement source.
      *

@@ -72,14 +72,14 @@ public final class StmtContextUtils {
     }
 
     public static <A, D extends DeclaredStatement<A>> @Nullable A firstSubstatementAttributeOf(
-            final StmtContext<?, ?, ?> ctx, final Class<D> declaredType) {
-        return firstAttributeOf(ctx.allSubstatements(), declaredType);
+            final StmtContext<?, ?, ?> ctx, final StatementDefinition<A, D, ?> def) {
+        return firstAttributeOf(ctx.allSubstatements(), def.declaredRepresentation());
     }
 
     public static <A, D extends DeclaredStatement<A>> @Nullable StmtContext<A, D, ?> findFirstDeclaredSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
+            final StmtContext<?, ?, ?> stmtContext, final StatementDefinition<A, D, ?> def) {
         for (var subStmtContext : stmtContext.declaredSubstatements()) {
-            final var declaring = subStmtContext.tryDeclaring(declaredType);
+            final var declaring = subStmtContext.asDeclaring(def);
             if (declaring != null) {
                 return declaring;
             }
@@ -233,7 +233,7 @@ public final class StmtContextUtils {
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (var stmt : stmtContext.declaredSubstatements()) {
-            final var declaring = stmt.tryDeclaring(IfFeatureStatement.class);
+            final var declaring = stmt.asDeclaring(IfFeatureStatement.DEF);
             if (declaring != null) {
                 containsIfFeature = true;
                 if (!declaring.getArgument().test(supportedFeatures)) {
@@ -285,11 +285,11 @@ public final class StmtContextUtils {
         // FIXME: check for MandatoryStatementAwareDeclaredStatement, renamed to MandatoryStatement.Parent via
         //        producesDeclared()
         if (stmtCtx.producesAnyOf(LeafStatement.DEF, ChoiceStatement.DEF, AnyxmlStatement.DEF)) {
-            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
+            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.DEF));
         }
         // FIXME: check for MultipleElementsDeclaredStatement via producesDeclared()
         if (stmtCtx.producesAnyOf(ListStatement.DEF, LeafListStatement.DEF)) {
-            final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+            final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.DEF);
             return minElements != null && minElements.lowerInt() > -1;
         }
         return false;
@@ -329,7 +329,7 @@ public final class StmtContextUtils {
         var current = stmt.coerceParentContext();
         var parent = current.getParentContext();
         while (parent != null) {
-            if (current.producesDeclared(ListStatement.class)
+            if (current.produces(ListStatement.DEF)
                     && !current.hasSubstatement(KeyEffectiveStatement.class)) {
                 if (ModelProcessingPhase.FULL_DECLARATION.isCompletedBy(current.getCompletedPhase())) {
                     throw new SourceException(stmt, "%s %s is defined within a list that has no key statement", name,
@@ -399,28 +399,28 @@ public final class StmtContextUtils {
         if (parent == null) {
             return;
         }
-        final var listCtx = parent.tryDeclaring(ListStatement.class);
+        final var listCtx = parent.asDeclaring(ListStatement.DEF);
         if (listCtx == null) {
             return;
         }
-        final var keyCtx = findFirstDeclaredSubstatement(listCtx, KeyStatement.class);
+        final var keyCtx = findFirstDeclaredSubstatement(listCtx, KeyStatement.DEF);
         if (keyCtx == null) {
             return;
         }
         final var keyArg = keyCtx.argument();
 
         // deal with the case of a single leaf
-        final var leafCtx = ctx.tryDeclaring(LeafStatement.class);
+        final var leafCtx = ctx.asDeclaring(LeafStatement.DEF);
         if (leafCtx != null) {
             validateIfFeatureOnLeaf(listCtx, keyArg, leafCtx);
             return;
         }
 
         // otherwise deal with the case of a uses statement
-        final var usesCtx = ctx.tryDeclaring(UsesStatement.class);
+        final var usesCtx = ctx.asDeclaring(UsesStatement.DEF);
         if (usesCtx != null) {
             for (var subStmtContext : listCtx.effectiveSubstatements()) {
-                final var declaring = subStmtContext.tryDeclaring(LeafStatement.class);
+                final var declaring = subStmtContext.asDeclaring(LeafStatement.DEF);
                 if (declaring != null) {
                     validateIfFeatureOnLeaf(listCtx, keyArg, declaring);
                 }
@@ -561,7 +561,7 @@ public final class StmtContextUtils {
         }
 
         // This is a submodule, so we also need consult 'belongs-to' mapping
-        if (ctx.producesDeclared(SubmoduleStatement.class)) {
+        if (ctx.produces(SubmoduleStatement.DEF)) {
             return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
                 ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
         }
@@ -572,7 +572,7 @@ public final class StmtContextUtils {
     public static @Nullable Revision latestRevisionIn(final Collection<? extends @NonNull StmtContext<?, ?, ?>> stmts) {
         Revision revision = null;
         for (var subStmt : stmts) {
-            final var revStmt = subStmt.tryDeclaring(RevisionStatement.class);
+            final var revStmt = subStmt.asDeclaring(RevisionStatement.DEF);
             if (revStmt != null) {
                 final var rev = revStmt.argument();
                 if (Revision.compare(rev, revision) > 0) {
