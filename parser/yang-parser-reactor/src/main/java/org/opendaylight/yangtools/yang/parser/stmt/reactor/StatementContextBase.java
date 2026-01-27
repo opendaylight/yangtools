@@ -702,27 +702,20 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private @Nullable ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
-        final StatementSupport<A, D, E> support = definition.support();
-        final CopyPolicy policy = support.copyPolicy();
-        switch (policy) {
-            case EXACT_REPLICA:
-                return replicaAsChildOf(parent);
-            case CONTEXT_INDEPENDENT:
-                if (allSubstatementsContextIndependent()) {
-                    return replicaAsChildOf(parent);
-                }
-
-                // fall through
-            case DECLARED_COPY:
+        final var support = definition.support();
+        return switch (support.copyPolicy()) {
+            case null -> throw new NullPointerException();
+            case CONTEXT_INDEPENDENT -> allSubstatementsContextIndependent() ? replicaAsChildOf(parent)
                 // FIXME: ugly cast
-                return (ReactorStmtCtx<A, D, E>) parent.childCopyOf(this, type, targetModule);
-            case IGNORE:
-                return null;
-            case REJECT:
-                throw new IllegalStateException("Statement " + support.getPublicView() + " should never be copied");
-            default:
-                throw new IllegalStateException("Unhandled policy " + policy);
-        }
+                : (ReactorStmtCtx<A, D, E>) parent.childCopyOf(this, type, targetModule);
+            case DECLARED_COPY ->
+                // FIXME: ugly cast
+                (ReactorStmtCtx<A, D, E>) parent.childCopyOf(this, type, targetModule);
+            case EXACT_REPLICA -> replicaAsChildOf(parent);
+            case IGNORE -> null;
+            case REJECT -> throw new IllegalStateException(
+                "Statement " + support.getPublicView().humanName() + " should never be copied");
+        };
     }
 
     @Override
