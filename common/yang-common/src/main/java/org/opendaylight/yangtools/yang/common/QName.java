@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.DataInput;
@@ -211,8 +210,9 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @param localName Local name part of QName, required to have been validated
      * @return Instance of QName
      * @throws NullPointerException if any of the arguments is null
+     * @deprecated Use {@link #create(QNameModule, String)} instead.
      */
-    @Beta
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull QName unsafeOf(final @NonNull QNameModule qnameModule, final @NonNull String localName) {
         return new QName(qnameModule, localName);
     }

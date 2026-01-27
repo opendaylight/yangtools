@@ -43,12 +43,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +59,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     private static final class SupportedStatements extends NamespaceAccess<QName, StatementSupport<?, ?, ?>> {
-        private final QNameToStatementDefinitionMap statementDefinitions;
+        private final @NonNull ReactorStatementDefinitionResolver statementResolver;
 
-        SupportedStatements(final QNameToStatementDefinitionMap statementDefinitions) {
-            this.statementDefinitions = requireNonNull(statementDefinitions);
+        SupportedStatements(final @NonNull ReactorStatementDefinitionResolver statementResolver) {
+            this.statementResolver = requireNonNull(statementResolver);
         }
 
         @Override
@@ -74,7 +72,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
         @Override
         StatementSupport<?, ?, ?> valueFrom(final NamespaceStorage storage, final QName key) {
-            return statementDefinitions.getSupport(key);
+            return statementResolver.lookupSupport(key);
         }
 
         @Override
@@ -112,8 +110,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     // TODO: consider keying by Byte equivalent of ExecutionOrder
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
-    private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
-    private final @NonNull SupportedStatements statementSupports = new SupportedStatements(qnameToStmtDefMap);
+    private final @NonNull ReactorStatementDefinitionResolver statementResolver =
+        new ReactorStatementDefinitionResolver();
+    private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
     private final HashMapPrefixResolver prefixToModuleMap = new HashMapPrefixResolver();
     private final @NonNull BuildGlobalContext globalContext;
 
@@ -153,7 +152,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         if (def == null) {
             def = globalContext.getModelDefinedStatementDefinition(name);
             if (def == null) {
-                final var extension = qnameToStmtDefMap.getSupport(name);
+                final var extension = statementResolver.lookupSupport(name);
                 if (extension != null) {
                     def = new StatementDefinitionContext<>(extension);
                     globalContext.putModelDefinedStatementDefinition(name, def);
@@ -489,23 +488,22 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return prefixToModuleMap;
     }
 
-    private QNameToStatementDefinition stmtDef() {
+    private StatementDefinitionResolver stmtDef() {
         // regular YANG statements and extension supports added
-        final StatementSupportBundle supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
-        qnameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());
-        qnameToStmtDefMap.putAll(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
+        final var supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
+        statementResolver.addSupports(supportsForPhase.getCommonDefinitions());
+        statementResolver.addSupports(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
 
         // No further actions needed
         if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
-            return qnameToStmtDefMap;
+            return statementResolver;
         }
 
         // We need to any and all extension statements which have been declared in the context
-        final Map<QName, StatementSupport<?, ?, ?>> extensions = globalContext.getNamespace(
-            StatementDefinitions.NAMESPACE);
+        final var extensions = globalContext.getNamespace(StatementDefinitions.NAMESPACE);
         if (extensions != null) {
             extensions.forEach((qname, support) -> {
-                final StatementSupport<?, ?, ?> existing = qnameToStmtDefMap.putIfAbsent(qname, support);
+                final var existing = statementResolver.tryAddSupport(qname, support);
                 if (existing != null) {
                     LOG.debug("Source {} already defines statement {} as {}", source, qname, existing);
                 } else {
@@ -514,7 +512,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             });
         }
 
-        return qnameToStmtDefMap;
+        return statementResolver;
     }
 
     Collection<SourceIdentifier> getRequiredSources() {
