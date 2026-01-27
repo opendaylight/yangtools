@@ -38,33 +38,33 @@ public record YangIRStatementStreamSource(@NonNull YangIRSource source) implemen
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new IRStatementVisitor(symbolicName(), writer, stmtDef, null, YangVersion.VERSION_1)
+    public void writePreLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
+        new IRStatementVisitor(symbolicName(), writer, resolver, null, YangVersion.VERSION_1)
             .visit(source.statement());
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver,
             final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        new IRStatementVisitor(symbolicName(), writer, stmtDef, preLinkagePrefixes, yangVersion) {
+        new IRStatementVisitor(symbolicName(), writer, resolver, preLinkagePrefixes, yangVersion) {
             @Override
             StatementDefinition<?, ?, ?> resolveStatement(final QNameModule module, final String localName) {
-                return stmtDef.getByNamespaceAndLocalName(module.namespace(), localName);
+                return resolver.lookupDef(module, localName);
             }
         }.visit(source.statement());
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new IRStatementVisitor(symbolicName(), writer, stmtDef, prefixes, yangVersion)
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
+        new IRStatementVisitor(symbolicName(), writer, resolver, prefixes, yangVersion)
             .visit(source.statement());
     }
 
     @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    public void writeFull(final StatementWriter writer, final StatementDefinitionResolver resolver,
             final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new IRStatementVisitor(symbolicName(), writer, stmtDef, prefixes, yangVersion) {
+        new IRStatementVisitor(symbolicName(), writer, resolver, prefixes, yangVersion) {
             @Override
             QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
                 final var ret = super.getValidStatementDefinition(keyword, ref);
