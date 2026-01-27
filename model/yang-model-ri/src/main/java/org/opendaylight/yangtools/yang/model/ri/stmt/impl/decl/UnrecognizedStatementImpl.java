@@ -13,21 +13,24 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawArgument.WithSubstatements;
 
 public final class UnrecognizedStatementImpl extends WithSubstatements<Object> implements UnrecognizedStatement {
-    private final @NonNull StatementDefinition<Object, UnrecognizedStatement, ?> definition;
+    private final @NonNull StatementDefinition<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement>
+        definition;
 
     public UnrecognizedStatementImpl(final String rawArgument,
-            final @NonNull StatementDefinition<Object, UnrecognizedStatement, ?> definition,
+            final @NonNull StatementDefinition<Object, UnrecognizedStatement,
+                UnrecognizedEffectiveStatement> definition,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, substatements);
         this.definition = requireNonNull(definition);
     }
 
     @Override
-    public StatementDefinition<Object, UnrecognizedStatement, ?> statementDefinition() {
+    public StatementDefinition<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement> statementDefinition() {
         return definition;
     }
 }
