@@ -19,11 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective view of a {@code module} statement.
  */
-public non-sealed interface ModuleEffectiveStatement
-    extends DataTreeAwareEffectiveStatement<Unqualified, @NonNull ModuleStatement>,
-            RootEffectiveStatement<@NonNull ModuleStatement>,
-            TypedefEffectiveStatement.MultipleIn<Unqualified, @NonNull ModuleStatement>,
-            SchemaTreeRoot {
+public non-sealed interface ModuleEffectiveStatement extends RootEffectiveStatement<@NonNull ModuleStatement>,
+        DataTreeEffectiveStatement.IndexedIn<Unqualified, @NonNull ModuleStatement>,
+        TypedefEffectiveStatement.MultipleIn<Unqualified, @NonNull ModuleStatement>, SchemaTreeRoot {
     /**
      * Conformance type, as defined by <a href="https://www.rfc-editor.org/rfc/rfc7895#page-9">RFC7895</a> and
      * indirectly referenced in <a href="https://www.rfc-editor.org/rfc/rfc7950#section-5.6.4">RFC7950</a>. The NMDA

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.17">RFC7950</a>.
  */
 public interface AugmentEffectiveStatement
-        extends SchemaTreeAwareEffectiveStatement<SchemaNodeIdentifier, @NonNull AugmentStatement> {
+        extends SchemaTreeEffectiveStatement.IndexedIn<SchemaNodeIdentifier, @NonNull AugmentStatement> {
     @Override
     default StatementDefinition<SchemaNodeIdentifier, @NonNull AugmentStatement, ?> statementDefinition() {
         return AugmentStatement.DEF;
