@@ -13,17 +13,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * Compatibility bridge between {@link NotificationNodeContainer#findNotification(QName)} and
- * {@link SchemaTreeAwareEffectiveStatement}.
+ * {@link SchemaTreeEffectiveStatement.IndexedIn}.
  */
 @Beta
 public interface NotificationNodeContainerCompat<A, D extends DeclaredStatement<A>,
-        E extends SchemaTreeAwareEffectiveStatement<A, D>>
-        extends SchemaTreeAwareEffectiveStatement<A, D>, NotificationNodeContainer {
-
+        E extends SchemaTreeEffectiveStatement.IndexedIn<A, D>>
+        extends SchemaTreeEffectiveStatement.IndexedIn<A, D>, NotificationNodeContainer {
     @Override
     default Optional<NotificationDefinition> findNotification(final QName qname) {
         // 'notification' identifier must never collide with another element, hence if we look it up and it ends up

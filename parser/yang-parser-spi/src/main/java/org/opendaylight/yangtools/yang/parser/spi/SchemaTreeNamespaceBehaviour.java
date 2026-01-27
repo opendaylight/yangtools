@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
@@ -34,7 +33,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     /**
      * {@inheritDoc}
      *
-     * <p>This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
+     * <p>This method is analogous to {@link SchemaTreeEffectiveStatement.IndexedIn#findSchemaTreeNode(QName)}.
      */
     @Override
     public StmtContext<QName, D, E> getFrom(final GlobalStorage global, final NamespaceStorage storage,

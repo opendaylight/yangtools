@@ -13,17 +13,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement.IndexedIn;
 
 /**
  * Compatibility bridge between {@link ActionNodeContainer#findAction(QName)} and
- * {@link SchemaTreeAwareEffectiveStatement}.
+ * {@link SchemaTreeEffectiveStatement.IndexedIn}.
  */
 @Beta
-public interface ActionNodeContainerCompat<A, D extends DeclaredStatement<A>,
-        E extends SchemaTreeAwareEffectiveStatement<A, D>>
-        extends SchemaTreeAwareEffectiveStatement<A, D>, ActionNodeContainer {
-
+public interface ActionNodeContainerCompat<A, D extends DeclaredStatement<A>, E extends IndexedIn<A, D>>
+        extends IndexedIn<A, D>, ActionNodeContainer {
     @Override
     default Optional<ActionDefinition> findAction(final QName qname) {
         // 'action' identifier must never collide with another element, hence if we look it up and it ends up being

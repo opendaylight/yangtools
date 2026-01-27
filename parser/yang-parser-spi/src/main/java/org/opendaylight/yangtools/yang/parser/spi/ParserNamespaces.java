@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -234,7 +233,7 @@ public final class ParserNamespaces {
 
     /**
      * Statement local namespace, which holds direct schema node descendants. This corresponds to the contents of the
-     * schema tree as exposed through {@link SchemaTreeAwareEffectiveStatement}.
+     * schema tree as exposed through {@link SchemaTreeEffectiveStatement.IndexedIn}.
      *
      * <p>Unlike all other namespaces this namespaces is polymorphic, hence it is exposed throught this method.
      *

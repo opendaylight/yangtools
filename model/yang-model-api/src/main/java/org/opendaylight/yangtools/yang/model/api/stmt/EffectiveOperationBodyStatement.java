@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Common capture of effective traits shared by {@code input} and {@code output} statements.
  */
 public sealed interface EffectiveOperationBodyStatement<D extends DeclaredOperationBodyStatement>
-    extends DataTreeEffectiveStatement<D>, DataTreeAwareEffectiveStatement<QName, D>,
+    extends DataTreeEffectiveStatement<D>, DataTreeEffectiveStatement.IndexedIn<QName, D>,
             TypedefEffectiveStatement.MultipleIn<QName, D>
     permits InputEffectiveStatement, OutputEffectiveStatement {
     // Nothing else
