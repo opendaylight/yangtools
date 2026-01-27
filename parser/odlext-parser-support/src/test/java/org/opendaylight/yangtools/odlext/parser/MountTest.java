@@ -17,14 +17,13 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class MountTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+    private static final YangTextToIRSourceTransformer TRANSFORMER = YangIRSourceModule.provideTextToIR();
     private static final QNameModule FOO = QNameModule.of("foo");
 
     @Test

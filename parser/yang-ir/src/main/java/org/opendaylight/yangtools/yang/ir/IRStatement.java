@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.PrettyTree;
+import org.opendaylight.yangtools.concepts.PrettyTreeAware;
 
 /**
  * A single YANG statement in its raw string form. A statement is composed of:
@@ -25,7 +27,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * </ul>
  */
 @Beta
-public abstract sealed class IRStatement extends AbstractIRObject {
+public abstract sealed class IRStatement extends AbstractIRObject implements PrettyTreeAware {
     static final class Z22 extends IRStatement {
         private final short startLine;
         private final short startColumn;
@@ -175,7 +177,7 @@ public abstract sealed class IRStatement extends AbstractIRObject {
      *
      * @return This statement's substatements.
      */
-    public @NonNull List<? extends IRStatement> statements() {
+    public @NonNull List<? extends @NonNull IRStatement> statements() {
         return ImmutableList.of();
     }
 
@@ -195,6 +197,17 @@ public abstract sealed class IRStatement extends AbstractIRObject {
      */
     public abstract int startColumn();
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Returned instance will produce a YANG text equivalent of this statement.
+     * @since 15.0.0
+     */
+    @Override
+    public PrettyTree prettyTree() {
+        return new IRStatementPrettyTree(this);
+    }
+
     @Override
     final StringBuilder toYangFragment(final StringBuilder sb) {
         keyword.toYangFragment(sb);
@@ -208,7 +221,7 @@ public abstract sealed class IRStatement extends AbstractIRObject {
         }
 
         sb.append(" {\n");
-        for (IRStatement stmt : statements) {
+        for (var stmt : statements) {
             stmt.toYangFragment(sb).append('\n');
         }
         return sb.append('}');

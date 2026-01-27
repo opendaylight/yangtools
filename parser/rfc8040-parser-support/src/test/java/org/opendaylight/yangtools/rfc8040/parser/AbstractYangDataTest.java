@@ -18,17 +18,16 @@ import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 abstract class AbstractYangDataTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+    private static final YangTextToIRSourceTransformer TRANSFORMER = YangIRSourceModule.provideTextToIR();
     private static final StatementStreamSource IETF_RESTCONF_MODULE =
         sourceForResource("/yang-data-extension-test/ietf-restconf.yang");
 
