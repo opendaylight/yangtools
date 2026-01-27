@@ -12,6 +12,7 @@ import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -34,6 +35,11 @@ public sealed interface KeyArgument extends SizedIterable<QName> permits KeyArgu
         @Override
         default Iterator<QName> iterator() {
             return Iterators.singletonIterator(item());
+        }
+
+        @Override
+        default Stream<QName> stream() {
+            return Stream.of(item());
         }
 
         @Override

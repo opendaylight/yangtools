@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-public final class RegularUniqueStatement extends WithSubstatements<Set<Descendant>> implements UniqueStatement {
-    public RegularUniqueStatement(final String rawArgument, final Set<Descendant> argument,
+public final class RegularUniqueStatement extends WithSubstatements<UniqueArgument> implements UniqueStatement {
+    public RegularUniqueStatement(final String rawArgument, final UniqueArgument argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
     }

@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
-import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefUniqueStatement extends AbstractRefStatement<Set<Descendant>, UniqueStatement>
+public final class RefUniqueStatement extends AbstractRefStatement<UniqueArgument, UniqueStatement>
         implements UniqueStatement {
     public RefUniqueStatement(final UniqueStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);
