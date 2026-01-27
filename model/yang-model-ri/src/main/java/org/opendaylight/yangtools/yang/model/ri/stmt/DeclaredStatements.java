@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -92,6 +91,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -651,7 +651,7 @@ public final class DeclaredStatements {
             : new RegularTypedefStatement(argument, substatements);
     }
 
-    public static UniqueStatement createUnique(final String rawArgument, final Set<Descendant> argument,
+    public static UniqueStatement createUnique(final String rawArgument, final UniqueArgument argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyUniqueStatement(rawArgument, argument)
             : new RegularUniqueStatement(rawArgument, argument, substatements);

@@ -14,24 +14,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
- * A {@link KeyArgument} containing three or more {@code node-identifier}s.
+ * A {@link Descendant} containing three or more {@link Descendant}s.
  */
 @NonNullByDefault
-record KeyArgumentN(ImmutableSet<QName> asSet) implements KeyArgument.OfMore {
-    KeyArgumentN {
+record UniqueArgumentN(ImmutableSet<Descendant> asSet) implements UniqueArgument.OfMore {
+    UniqueArgumentN {
         requireNonNull(asSet);
     }
 
     @Override
-    public Iterator<QName> iterator() {
+    public Iterator<Descendant> iterator() {
         return asSet.iterator();
     }
 
     @Override
-    public Stream<QName> stream() {
+    public Stream<Descendant> stream() {
         return asSet.stream();
     }
 
@@ -41,12 +41,12 @@ record KeyArgumentN(ImmutableSet<QName> asSet) implements KeyArgument.OfMore {
     }
 
     @Override
-    public boolean contains(final QName nodeIdentifier) {
-        return asSet.contains(requireNonNull(nodeIdentifier));
+    public boolean contains(final Descendant descendant) {
+        return asSet.contains(requireNonNull(descendant));
     }
 
     @Override
-    public List<QName> asList() {
+    public List<Descendant> asList() {
         return asSet.asList();
     }
 

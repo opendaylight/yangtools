@@ -32,9 +32,9 @@ class Bug5946Test extends AbstractYangTest {
     private static final QName WITHOUT_UNIQUE = QName.create(NS, REV, "without-unique");
     private static final QName SIMPLE_UNIQUE = QName.create(NS, REV, "simple-unique");
     private static final QName MULTIPLE_UNIQUE = QName.create(NS, REV, "multiple-unique");
-    private static final SchemaNodeIdentifier L1_ID = SchemaNodeIdentifier.Descendant.of(L1);
-    private static final SchemaNodeIdentifier L2_ID = SchemaNodeIdentifier.Descendant.of(L2);
-    private static final SchemaNodeIdentifier C_L3_ID = SchemaNodeIdentifier.Descendant.of(C, L3);
+    private static final SchemaNodeIdentifier.Descendant L1_ID = SchemaNodeIdentifier.Descendant.of(L1);
+    private static final SchemaNodeIdentifier.Descendant L2_ID = SchemaNodeIdentifier.Descendant.of(L2);
+    private static final SchemaNodeIdentifier.Descendant C_L3_ID = SchemaNodeIdentifier.Descendant.of(C, L3);
 
     @Test
     void test() {
