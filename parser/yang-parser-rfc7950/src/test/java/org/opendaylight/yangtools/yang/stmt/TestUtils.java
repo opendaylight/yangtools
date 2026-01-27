@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -29,8 +30,8 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.opendaylight.yangtools.yang.parser.antlr.DefaultYangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
@@ -39,6 +40,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.xml.sax.SAXException;
 
 public final class TestUtils {
+    private static final @NonNull YangTextToIRSourceTransformer TEXT_TO_IR =
+        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
+
     private TestUtils() {
         // Hidden on purpose
     }
@@ -103,13 +107,12 @@ public final class TestUtils {
 
     public static @NonNull YangIRSource assertSchemaSource(final String resourcePath)
             throws ExtractorException, SourceSyntaxException {
-        return new DefaultYangTextToIRSourceTransformer()
-            .transformSource(new URLYangTextSource(TestUtils.class.getResource(resourcePath)));
+        return TEXT_TO_IR.transformSource(new URLYangTextSource(TestUtils.class.getResource(resourcePath)));
     }
 
     public static @NonNull YangIRSource assertSchemaSource(final Path file)
             throws ExtractorException, SourceSyntaxException {
-        return new DefaultYangTextToIRSourceTransformer().transformSource(new FileYangTextSource(file));
+        return TEXT_TO_IR.transformSource(new FileYangTextSource(file));
     }
 
     // FIXME: these remain unaudited
