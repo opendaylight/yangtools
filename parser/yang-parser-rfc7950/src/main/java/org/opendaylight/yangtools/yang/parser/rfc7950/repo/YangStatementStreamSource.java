@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.antlr.YangTextParser;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
@@ -78,31 +78,31 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, null, YangVersion.VERSION_1).visit(rootStatement);
+    public void writePreLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
+        new StatementContextVisitor(sourceName, writer, resolver, null, YangVersion.VERSION_1).visit(rootStatement);
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver,
             final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
+        new StatementContextVisitor(sourceName, writer, resolver, preLinkagePrefixes, yangVersion) {
             @Override
             StatementDefinition<?, ?, ?> resolveStatement(final QNameModule module, final String localName) {
-                return stmtDef.getByNamespaceAndLocalName(module.namespace(), localName);
+                return resolver.lookupDef(module, localName);
             }
         }.visit(rootStatement);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(rootStatement);
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
+        new StatementContextVisitor(sourceName, writer, resolver, prefixes, yangVersion).visit(rootStatement);
     }
 
     @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    public void writeFull(final StatementWriter writer, final StatementDefinitionResolver resolver,
             final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
+        new StatementContextVisitor(sourceName, writer, resolver, prefixes, yangVersion) {
             @Override
             QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
                 final QName ret = super.getValidStatementDefinition(keyword, ref);
