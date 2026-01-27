@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint8;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
 final class BaseUint8Type extends AbstractRangeRestrictedBaseType<Uint8TypeDefinition, Uint8>
@@ -17,7 +17,7 @@ final class BaseUint8Type extends AbstractRangeRestrictedBaseType<Uint8TypeDefin
     static final @NonNull BaseUint8Type INSTANCE = new BaseUint8Type();
 
     private BaseUint8Type() {
-        super(TypeDefinitions.UINT8, Uint8.ZERO, Uint8.MAX_VALUE);
+        super(BuiltInType.UINT8.typeName(), Uint8.ZERO, Uint8.MAX_VALUE);
     }
 
     @Override

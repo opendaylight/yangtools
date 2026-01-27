@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableMap;
 import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
@@ -16,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -31,13 +31,13 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     public TypeStatementRFC7950Support(final YangParserConfiguration config) {
         super(config);
         argumentSpecificSupports = ImmutableMap.of(
-            TypeDefinitions.LEAFREF.getLocalName(), LeafrefSpecificationSupport.rfc7950Instance(config),
-            TypeDefinitions.IDENTITYREF.getLocalName(), IdentityRefSpecificationSupport.rfc7950Instance(config));
+            BuiltInType.LEAFREF.simpleName(), LeafrefSpecificationSupport.rfc7950Instance(config),
+            BuiltInType.IDENTITYREF.simpleName(), IdentityRefSpecificationSupport.rfc7950Instance(config));
     }
 
     @Override
     public boolean hasArgumentSpecificSupports() {
-        return !argumentSpecificSupports.isEmpty() || super.hasArgumentSpecificSupports();
+        return true;
     }
 
     @Override

@@ -10,16 +10,16 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 final class BaseStringType extends AbstractLengthRestrictedBaseType<StringTypeDefinition>
         implements StringTypeDefinition {
     static final @NonNull BaseStringType INSTANCE = new BaseStringType();
 
     private BaseStringType() {
-        super(TypeDefinitions.STRING);
+        super(BuiltInType.STRING.typeName());
     }
 
     @Override
