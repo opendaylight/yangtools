@@ -11,13 +11,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import javax.xml.transform.TransformerException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
@@ -26,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefPr
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.slf4j.Logger;
@@ -43,13 +39,7 @@ import org.w3c.dom.Node;
 @Beta
 public final class YinStatementStreamSource implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
-    private static final LoadingCache<String, XMLNamespace> NS_CACHE = CacheBuilder.newBuilder().weakValues().build(
-        new CacheLoader<String, XMLNamespace>() {
-            @Override
-            public XMLNamespace load(final String key) {
-                return XMLNamespace.of(key).intern();
-            }
-        });
+
     private final @NonNull Node root;
     private final @NonNull SourceRefProvider refProvider;
 
@@ -67,9 +57,8 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     }
 
     private static StatementDefinition<?, ?, ?> getValidDefinition(final Node node, final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
-        final var uri = NS_CACHE.getUnchecked(node.getNamespaceURI());
-        final var def = stmtDef.getByNamespaceAndLocalName(uri, node.getLocalName());
+            final StatementDefinitionResolver resolver, final StatementSourceReference ref) {
+        final var def = resolver.lookupDef(node.getNamespaceURI(), node.getLocalName());
         if (def == null && writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
             throw new SourceException(ref, "%s is not a YIN statement or use of extension.", node.getLocalName());
         }
@@ -77,14 +66,14 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     }
 
     private static boolean processAttribute(final int childId, final Attr attr, final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
+            final StatementDefinitionResolver resolver, final StatementSourceReference ref) {
         final var resumed = writer.resumeStatement(childId);
         if (resumed != null) {
             checkState(resumed.isFullyDefined(), "Statement %s is not fully defined", resumed);
             return true;
         }
 
-        final var def = getValidDefinition(attr, writer, stmtDef, ref);
+        final var def = getValidDefinition(attr, writer, resolver, ref);
         if (def == null) {
             return false;
         }
@@ -115,7 +104,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     }
 
     private boolean processElement(final int childId, final Element element, final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef) {
+            final StatementDefinitionResolver resolver) {
 
         final var resumed = writer.resumeStatement(childId);
         final StatementSourceReference ref;
@@ -141,7 +130,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
             }
         } else {
             ref = refProvider.getRefOf(element);
-            final var def = getValidDefinition(element, writer, stmtDef, ref);
+            final var def = getValidDefinition(element, writer, resolver, ref);
             if (def == null) {
                 LOG.debug("Skipping element {}", element);
                 return false;
@@ -179,7 +168,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
             for (int i = 0, len = attributes.getLength(); i < len; ++i) {
                 final var attr = (Attr) attributes.item(i);
                 if ((allAttrs || !isArgument(argName, attr))
-                        && !processAttribute(childCounter++, attr, writer, stmtDef, ref)) {
+                        && !processAttribute(childCounter++, attr, writer, resolver, ref)) {
                     fullyDefined = false;
                 }
             }
@@ -189,7 +178,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         final var children = element.getChildNodes();
         for (int i = 0, len = children.getLength(); i < len; ++i) {
             if (children.item(i) instanceof Element child && (allElements || !isArgument(argName, child))
-                    && !processElement(childCounter++, child, writer, stmtDef)) {
+                    && !processElement(childCounter++, child, writer, resolver)) {
                 fullyDefined = false;
             }
         }
@@ -203,37 +192,37 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         return argName != null && argName.getLocalName().equals(node.getLocalName()) && node.getPrefix() == null;
     }
 
-    private void walkTree(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
+    private void walkTree(final StatementWriter writer, final StatementDefinitionResolver resolver) {
         final var children = root.getChildNodes();
 
         int childCounter = 0;
         for (int i = 0, len = children.getLength(); i < len; ++i) {
             if (children.item(i) instanceof Element child) {
-                processElement(childCounter++, child, writer, stmtDef);
+                processElement(childCounter++, child, writer, resolver);
             }
         }
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        walkTree(writer, stmtDef);
+    public void writePreLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
+        walkTree(writer, resolver);
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver,
             final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        walkTree(writer, stmtDef);
+        walkTree(writer, resolver);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        walkTree(writer, stmtDef);
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
+        walkTree(writer, resolver);
     }
 
     @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    public void writeFull(final StatementWriter writer, final StatementDefinitionResolver resolver,
             final PrefixResolver prefixes, final YangVersion yangVersion) {
-        walkTree(writer, stmtDef);
+        walkTree(writer, resolver);
     }
 }
