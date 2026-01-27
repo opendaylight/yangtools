@@ -35,7 +35,7 @@ final class OperationsValidateModuleAction implements InferenceAction {
 
     static void applyTo(final @NonNull Mutable<?, ?, ?> module) {
         // Quick checks we can
-        if (module.producesDeclared(ModuleStatement.class) && YangDataConstants.MODULE_NAME.equals(module.argument())) {
+        if (module.produces(ModuleStatement.DEF) && YangDataConstants.MODULE_NAME.equals(module.argument())) {
             // This is 'yang-api' definition within a 'ietf-restconf' module, but we are not certain about revisions
             // and its structure. Next up we require the module to be fully declared, hence an inference action is
             // needed to continue this process.
@@ -65,11 +65,11 @@ final class OperationsValidateModuleAction implements InferenceAction {
         //   }
         //
         for (var moduleSub : moduleCtx.mutableDeclaredSubstatements()) {
-            if (moduleSub.producesDeclared(GroupingStatement.class) && "restconf".equals(moduleSub.rawArgument())) {
+            if (moduleSub.produces(GroupingStatement.DEF) && "restconf".equals(moduleSub.rawArgument())) {
                 for (var grpSub : moduleSub.mutableDeclaredSubstatements()) {
-                    if (grpSub.producesDeclared(ContainerStatement.class) && "restconf".equals(grpSub.rawArgument())) {
+                    if (grpSub.produces(ContainerStatement.DEF) && "restconf".equals(grpSub.rawArgument())) {
                         for (var contSub : grpSub.mutableDeclaredSubstatements()) {
-                            if (contSub.producesDeclared(ContainerStatement.class)
+                            if (contSub.produces(ContainerStatement.DEF)
                                 && "operations".equals(contSub.rawArgument())) {
                                 // Alright, we have a match. Hook the second stage of processing.
                                 OperationsCreateLeafStatements.applyTo(moduleCtx, contSub);

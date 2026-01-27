@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.StatementPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -70,7 +71,7 @@ public final class MountPointStatementSupport
     public void onStatementAdded(
             final Mutable<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> stmt) {
         final var parent = stmt.coerceParentContext();
-        if (!parent.producesDeclared(ContainerStatement.class) && !parent.producesDeclared(ListStatement.class)) {
+        if (!parent.producesAnyOf(ContainerStatement.DEF, ListStatement.DEF)) {
             throw new SourceException(stmt, "Mount points may only be defined at either a container or a list, not %s",
                 parent.publicDefinition().humanName());
         }

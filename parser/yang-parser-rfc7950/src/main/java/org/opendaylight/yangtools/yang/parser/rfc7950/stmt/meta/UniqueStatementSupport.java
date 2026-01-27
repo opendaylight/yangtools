@@ -105,7 +105,7 @@ public final class UniqueStatementSupport
     @Override
     public void onStatementAdded(final Mutable<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> stmt) {
         // Check whether this statement is in a list statement and if so ...
-        final var list = stmt.coerceParentContext().tryDeclaring(ListStatement.class);
+        final var list = stmt.coerceParentContext().asDeclaring(ListStatement.DEF);
         if (list != null) {
             final var listParent = list.coerceParentContext();
             // ... do not allow parent to complete until we have resolved ...
@@ -205,7 +205,7 @@ public final class UniqueStatementSupport
             for (var entry : prereqs.entrySet()) {
                 final var stmt = entry.getKey().resolve(ctx);
                 // ... and if it is not a leaf, report an error
-                if (!stmt.producesDeclared(LeafStatement.class)) {
+                if (!stmt.produces(LeafStatement.DEF)) {
                     throw new SourceException(unique, "Path %s resolved to non-leaf %s", entry.getValue(),
                         stmt.publicDefinition().statementName());
                 }

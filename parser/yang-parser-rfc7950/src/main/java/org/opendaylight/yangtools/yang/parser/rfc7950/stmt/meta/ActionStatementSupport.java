@@ -66,7 +66,7 @@ public final class ActionStatementSupport
             if (parent.inStructure()) {
                 throw new SourceException(stmt, "Action %s is defined within another structure", argument);
             }
-            if (parent.producesDeclared(CaseStatement.class)) {
+            if (parent.produces(CaseStatement.DEF)) {
                 throw new SourceException(stmt, "Action %s is defined within a case statement", argument);
             }
             if (parent.getParentContext() == null) {

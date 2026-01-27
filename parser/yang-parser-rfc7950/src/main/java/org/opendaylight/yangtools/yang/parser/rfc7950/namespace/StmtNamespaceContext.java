@@ -41,7 +41,7 @@ final class StmtNamespaceContext implements YangNamespaceContext {
             for (var entry : imports.entrySet()) {
                 if (!moduleToPrefix.containsValue(entry.getKey())) {
                     var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, entry.getValue());
-                    if (qnameModule == null && ctx.producesDeclared(SubmoduleStatement.class)) {
+                    if (qnameModule == null && ctx.produces(SubmoduleStatement.DEF)) {
                         qnameModule = ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
                             ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, entry.getKey()));
                     }
@@ -52,7 +52,7 @@ final class StmtNamespaceContext implements YangNamespaceContext {
                 }
             }
         }
-        if (ctx.producesDeclared(SubmoduleStatement.class)) {
+        if (ctx.produces(SubmoduleStatement.DEF)) {
             final var belongsTo = ctx.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME);
             if (belongsTo != null) {
                 for (var entry : belongsTo.entrySet()) {
