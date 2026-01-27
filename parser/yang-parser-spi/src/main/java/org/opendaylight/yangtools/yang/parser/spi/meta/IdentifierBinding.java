@@ -7,9 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
@@ -27,22 +33,34 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 @Beta
 @NonNullByDefault
-public final class IdentifierBinding {
-    public AbsoluteSchemaNodeidParser absoluteSchemaNodeid;
-    public DescendantSchemaNodeidParser descendantSchemaNodeid;
-    public NodeIdentifierParser nodeIdentifier;
-    public IdentifierParser identifier;
+public final class IdentifierBinding implements NamespaceBinding {
+    public final AbsoluteSchemaNodeidParser absoluteSchemaNodeid;
+    public final DescendantSchemaNodeidParser descendantSchemaNodeid;
+    public final NodeIdentifierParser nodeIdentifier;
+    public final IdentifierParser identifier;
+    public final NamespaceBinding delegate;
 
     /**
      * Construct an instance backed by a {@link NamespaceBinding}.
      *
-     * @param namespaceBinding the {@link NamespaceBinding}
+     * @param delegate the {@link NamespaceBinding}
      */
-    public IdentifierBinding(final NamespaceBinding namespaceBinding) {
-        identifier = new IdentifierParser(namespaceBinding);
+    public IdentifierBinding(final NamespaceBinding delegate) {
+        this.delegate = requireNonNull(delegate);
+        identifier = new IdentifierParser(delegate);
         nodeIdentifier = new NodeIdentifierParser(identifier);
         descendantSchemaNodeid = new DescendantSchemaNodeidParser(nodeIdentifier);
         absoluteSchemaNodeid = new AbsoluteSchemaNodeidParser(descendantSchemaNodeid);
+    }
+
+    @Override
+    public QNameModule currentModule() {
+        return delegate.currentModule();
+    }
+
+    @Override
+    public @Nullable QNameModule lookupModule(final Unqualified prefix) {
+        return delegate.lookupModule(prefix);
     }
 
     /**
@@ -216,13 +234,19 @@ public final class IdentifierBinding {
      */
     private static SourceException newSourceException(final String qualifier, final CommonStmtCtx stmt,
             final String rawArgument, final ArgumentSyntaxException cause) {
+        return new SourceException(
+            formatMessage(qualifier, stmt.publicDefinition().getArgumentDefinition(), rawArgument, cause), stmt, cause);
+    }
+
+    static String formatMessage(final String qualifier, final ArgumentDefinition<?> def, final String rawArgument,
+            final ArgumentSyntaxException cause) {
         final var sb = new StringBuilder()
             .append('\'').append(rawArgument).append("' is not a valid ").append(qualifier).append(' ')
-            .append(stmt.publicDefinition().getArgumentDefinition().argumentName().getLocalName());
+            .append(def.argumentName().getLocalName());
         final var position = cause.getPosition();
         if (position != 0) {
             sb.append(" on position ").append(position);
         }
-        return new SourceException(sb.append(": ").append(cause.getMessage()).toString(), stmt, cause);
+        return sb.append(": ").append(cause.getMessage()).toString();
     }
 }

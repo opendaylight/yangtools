@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ArgumentSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
@@ -30,48 +31,58 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
-    private final @NonNull StatementSupport<A, D, E> support;
+    private final @NonNull StatementSupport<A, D, E> statementSupport;
+    private final @NonNull ArgumentSupport<A> argumentSupport;
     private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
 
     private Map<StatementDefinitionContext<?, ?, ?>, StatementDefinitionContext<?,?,?>> unknownStmtDefsOfYangStmts;
 
-    StatementDefinitionContext(final StatementSupport<A, D, E> support) {
-        this.support = requireNonNull(support);
-        argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
+    StatementDefinitionContext(final StatementSupport<A, D, E> statementSupport,
+            final ArgumentSupport<A> argumentSupport) {
+        this.statementSupport = requireNonNull(statementSupport);
+        this.argumentSupport = requireNonNull(argumentSupport);
+        argumentSpecificSubDefinitions = statementSupport.hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
     @NonNull StatementFactory<A, D, E> getFactory() {
-        return support;
-    }
-
-    A parseArgumentValue(final @NonNull StmtContext<A, D, E> context, final String value) {
-        return support.parseArgumentValue(context, value);
+        return statementSupport;
     }
 
     A adaptArgumentValue(final @NonNull StmtContext<A, D, E> context, final QNameModule targetModule) {
-        return support.adaptArgumentValue(context, targetModule);
+        return argumentSupport.adaptArgumentValue(context, targetModule);
+    }
+
+    String internArgument(final String rawArgument) {
+        if (argumentSupport instanceof ArgumentSupport.WithDeclared<?> declaredArgument) {
+            return declaredArgument.internRawArgument(rawArgument);
+        }
+        return rawArgument;
+    }
+
+    A parseArgumentValue(final @NonNull StmtContext<A, D, E> context, final String value) {
+        return argumentSupport.parseArgumentValue(context, value);
     }
 
     @NonNull StatementDefinition<A, D, E> getPublicView() {
-        return support.getPublicView();
+        return statementSupport.getPublicView();
     }
 
     @Nullable StatementSupport<?, ?, ?> implicitParentFor(final @NonNull NamespaceStmtCtx parent,
             final @NonNull StatementDefinition<?, ?, ?> stmtDef) {
-        return support instanceof ImplicitParentAwareStatementSupport implicit
+        return statementSupport instanceof ImplicitParentAwareStatementSupport implicit
             ? implicit.implicitParentFor(parent, stmtDef) : null;
     }
 
     void onStatementAdded(final @NonNull Mutable<A, D, E> stmt) {
-        support.onStatementAdded(stmt);
+        statementSupport.onStatementAdded(stmt);
     }
 
     void onDeclarationFinished(final @NonNull Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
-            case SOURCE_PRE_LINKAGE -> support.onPreLinkageDeclared(statement);
-            case SOURCE_LINKAGE -> support.onLinkageDeclared(statement);
-            case STATEMENT_DEFINITION -> support.onStatementDefinitionDeclared(statement);
-            case FULL_DECLARATION -> support.onFullDefinitionDeclared(statement);
+            case SOURCE_PRE_LINKAGE -> statementSupport.onPreLinkageDeclared(statement);
+            case SOURCE_LINKAGE -> statementSupport.onLinkageDeclared(statement);
+            case STATEMENT_DEFINITION -> statementSupport.onStatementDefinitionDeclared(statement);
+            case FULL_DECLARATION -> statementSupport.onFullDefinitionDeclared(statement);
             default -> {
                 // No-op
             }
@@ -79,11 +90,11 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
     }
 
     @Nullable ArgumentDefinition<A> argumentDefinition() {
-        return support.argumentDefinition();
+        return statementSupport.argumentDefinition();
     }
 
     @NonNull QName getStatementName() {
-        return support.statementName();
+        return statementSupport.statementName();
     }
 
     @Override
@@ -98,7 +109,7 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
 
         StatementDefinitionContext<?, ?, ?> potential = argumentSpecificSubDefinitions.get(argument);
         if (potential == null) {
-            final StatementSupport<?, ?, ?> argumentSpecificSupport = support.getSupportSpecificForArgument(argument);
+            final var argumentSpecificSupport = statementSupport.getSupportSpecificForArgument(argument);
             potential = argumentSpecificSupport != null ? new StatementDefinitionContext<>(argumentSpecificSupport)
                     : this;
             argumentSpecificSubDefinitions.put(argument, potential);
@@ -107,17 +118,18 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         return potential;
     }
 
+    // FIXME: argumentSupport()
     StatementSupport<A, D, E> support() {
-        return support;
+        return statementSupport;
     }
 
     boolean hasArgumentSpecificSubDefinitions() {
-        return support.hasArgumentSpecificSupports();
+        return statementSupport.hasArgumentSpecificSupports();
     }
 
     @NonNull StatementDefinitionContext<?, ?, ?> overrideDefinition(
             final @NonNull StatementDefinitionContext<?, ?, ?> def) {
-        if (!(support instanceof OverrideChildStatementSupport overrideSupport)) {
+        if (!(statementSupport instanceof OverrideChildStatementSupport overrideSupport)) {
             return def;
         }
 

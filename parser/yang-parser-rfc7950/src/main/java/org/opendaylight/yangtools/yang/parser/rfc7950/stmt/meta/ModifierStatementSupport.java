@@ -21,28 +21,18 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ModifierStatementSupport
         extends AbstractStatementSupport<ModifierKind, ModifierStatement, ModifierEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(ModifierStatement.DEF).build();
+    private static final ModifierArgumentSupport ARGUMENT_SUPPORT =
+        new ModifierArgumentSupport(ModifierStatement.DEF.getArgumentDefinition());
 
     public ModifierStatementSupport(final YangParserConfiguration config) {
-        super(ModifierStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
-    }
-
-    @Override
-    public ModifierKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.unwrap(ModifierKind.parse(value), ctx,
-            "'%s' is not valid argument of modifier statement", value);
-    }
-
-    @Override
-    public String internArgument(final String rawArgument) {
-        return "invert-match".equals(rawArgument) ? "invert-match" : rawArgument;
+        super(ModifierStatement.DEF, ARGUMENT_SUPPORT, StatementPolicy.contextIndependent(), config,
+            SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
