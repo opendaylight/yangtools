@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
@@ -54,7 +55,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
@@ -103,21 +103,21 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
 
     private static final ImmutableMap<QName, BuiltinEffectiveStatement> STATIC_BUILT_IN_TYPES =
         ImmutableMap.<QName, BuiltinEffectiveStatement>builder()
-            .put(TypeDefinitions.BINARY, BuiltinEffectiveStatement.BINARY)
-            .put(TypeDefinitions.BOOLEAN, BuiltinEffectiveStatement.BOOLEAN)
-            .put(TypeDefinitions.EMPTY, BuiltinEffectiveStatement.EMPTY)
+            .put(BuiltInType.BINARY.typeName(), BuiltinEffectiveStatement.BINARY)
+            .put(BuiltInType.BOOLEAN.typeName(), BuiltinEffectiveStatement.BOOLEAN)
+            .put(BuiltInType.EMPTY.typeName(), BuiltinEffectiveStatement.EMPTY)
             // FIXME: this overlaps with DYNAMIC_BUILT_IN_TYPES. One of these is not needed, but we need to decide
             //        what to do. I think we should gradually use per-statement validators, hence go towards dynamic?
-            .put(TypeDefinitions.INSTANCE_IDENTIFIER, BuiltinEffectiveStatement.INSTANCE_IDENTIFIER)
-            .put(TypeDefinitions.INT8, BuiltinEffectiveStatement.INT8)
-            .put(TypeDefinitions.INT16, BuiltinEffectiveStatement.INT16)
-            .put(TypeDefinitions.INT32, BuiltinEffectiveStatement.INT32)
-            .put(TypeDefinitions.INT64, BuiltinEffectiveStatement.INT64)
-            .put(TypeDefinitions.STRING, BuiltinEffectiveStatement.STRING)
-            .put(TypeDefinitions.UINT8, BuiltinEffectiveStatement.UINT8)
-            .put(TypeDefinitions.UINT16, BuiltinEffectiveStatement.UINT16)
-            .put(TypeDefinitions.UINT32, BuiltinEffectiveStatement.UINT32)
-            .put(TypeDefinitions.UINT64, BuiltinEffectiveStatement.UINT64)
+            .put(BuiltInType.INSTANCE_IDENTIFIER.typeName(), BuiltinEffectiveStatement.INSTANCE_IDENTIFIER)
+            .put(BuiltInType.INT8.typeName(), BuiltinEffectiveStatement.INT8)
+            .put(BuiltInType.INT16.typeName(), BuiltinEffectiveStatement.INT16)
+            .put(BuiltInType.INT32.typeName(), BuiltinEffectiveStatement.INT32)
+            .put(BuiltInType.INT64.typeName(), BuiltinEffectiveStatement.INT64)
+            .put(BuiltInType.STRING.typeName(), BuiltinEffectiveStatement.STRING)
+            .put(BuiltInType.UINT8.typeName(), BuiltinEffectiveStatement.UINT8)
+            .put(BuiltInType.UINT16.typeName(), BuiltinEffectiveStatement.UINT16)
+            .put(BuiltInType.UINT32.typeName(), BuiltinEffectiveStatement.UINT32)
+            .put(BuiltInType.UINT64.typeName(), BuiltinEffectiveStatement.UINT64)
             .build();
 
     private final ImmutableMap<String, StatementSupport<?, ?, ?>> dynamicBuiltInTypes;
@@ -125,13 +125,13 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
     AbstractTypeStatementSupport(final YangParserConfiguration config) {
         super(config, SUBSTATEMENT_VALIDATOR);
         dynamicBuiltInTypes = ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
-            .put(TypeDefinitions.BITS.getLocalName(), new BitsSpecificationSupport(config))
-            .put(TypeDefinitions.DECIMAL64.getLocalName(), new Decimal64SpecificationSupport(config))
-            .put(TypeDefinitions.ENUMERATION.getLocalName(), new EnumSpecificationSupport(config))
-            .put(TypeDefinitions.IDENTITYREF.getLocalName(), IdentityRefSpecificationSupport.rfc6020Instance(config))
-            .put(TypeDefinitions.INSTANCE_IDENTIFIER.getLocalName(), new InstanceIdentifierSpecificationSupport(config))
-            .put(TypeDefinitions.LEAFREF.getLocalName(), LeafrefSpecificationSupport.rfc6020Instance(config))
-            .put(TypeDefinitions.UNION.getLocalName(), new UnionSpecificationSupport(config))
+            .put(BuiltInType.BITS.simpleName(), new BitsSpecificationSupport(config))
+            .put(BuiltInType.DECIMAL64.simpleName(), new Decimal64SpecificationSupport(config))
+            .put(BuiltInType.ENUMERATION.simpleName(), new EnumSpecificationSupport(config))
+            .put(BuiltInType.IDENTITYREF.simpleName(), IdentityRefSpecificationSupport.rfc6020Instance(config))
+            .put(BuiltInType.INSTANCE_IDENTIFIER.simpleName(), new InstanceIdentifierSpecificationSupport(config))
+            .put(BuiltInType.LEAFREF.simpleName(), LeafrefSpecificationSupport.rfc6020Instance(config))
+            .put(BuiltInType.UNION.simpleName(), new UnionSpecificationSupport(config))
             .build();
     }
 

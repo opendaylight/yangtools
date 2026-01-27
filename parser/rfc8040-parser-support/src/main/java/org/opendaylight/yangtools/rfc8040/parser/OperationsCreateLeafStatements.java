@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -86,7 +86,8 @@ final class OperationsCreateLeafStatements implements InferenceAction {
 
             for (var qname : qnames) {
                 final var leaf = operations.createUndeclaredSubstatement(leafSupport, qname);
-                leaf.addEffectiveSubstatement(leaf.createUndeclaredSubstatement(typeSupport, TypeDefinitions.EMPTY));
+                leaf.addEffectiveSubstatement(leaf.createUndeclaredSubstatement(typeSupport,
+                    BuiltInType.EMPTY.typeName()));
                 operations.addEffectiveSubstatement(leaf);
             }
         }
