@@ -25,11 +25,10 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 abstract class AbstractSchemaRepositoryTest {
-    static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+    static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
 
     static @NonNull EffectiveModelContext assertModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
@@ -67,7 +66,7 @@ abstract class AbstractSchemaRepositoryTest {
     }
 
     static final SettableSchemaProvider<YangIRSource> assertYangTextResource(final String resourceName) {
-        return SettableSchemaProvider.createImmediate(assertDoesNotThrow(() -> TRANSFORMER.transformSource(
+        return SettableSchemaProvider.createImmediate(assertDoesNotThrow(() -> TEXT_TO_IR.transformSource(
             new URLYangTextSource(AbstractSchemaRepositoryTest.class.getResource(resourceName)))),
             YangIRSource.class);
     }

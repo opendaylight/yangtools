@@ -27,10 +27,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class IetfYangSmiv2ExtensionPluginTest {
     private static final String NS = "urn:opendaylight:yang:extension:third-party";
@@ -42,12 +42,12 @@ class IetfYangSmiv2ExtensionPluginTest {
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc6643Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
-        final var transformer = YangTextToIRSourceTransformerModule.provideSourceTransformer();
+        final var textToIR = YangIRSourceModule.provideTextToIR();
         final var context = reactor.newBuild()
             .addSources(
-                new YangIRStatementStreamSource(transformer.transformSource(new URLYangTextSource(
+                new YangIRStatementStreamSource(textToIR.transformSource(new URLYangTextSource(
                     IetfYangSmiv2ExtensionPluginTest.class.getResource("/foo.yang")))),
-                new YangIRStatementStreamSource(transformer.transformSource(new URLYangTextSource(
+                new YangIRStatementStreamSource(textToIR.transformSource(new URLYangTextSource(
                     IetfYangSmiv2ExtensionPluginTest.class.getResource("/ietf-yang-smiv2.yang")))))
             .buildEffective();
 

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.osgi.impl;
 
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentFactory;
@@ -26,11 +27,12 @@ public final class OSGiModelRuntime {
 
     @Activate
     public OSGiModelRuntime(@Reference final YangParserFactory parserFactory,
+            @Reference final YangTextToIRSourceTransformer textToIR,
             @Reference(target = "(component.factory=" + OSGiModuleInfoSnapshotImpl.FACTORY_NAME + ")")
             final ComponentFactory<OSGiModuleInfoSnapshotImpl> contextFactory,
             final BundleContext ctx) {
         LOG.info("Model Runtime starting");
-        moduleRegistry = YangModuleInfoRegistry.create(ctx, contextFactory, parserFactory);
+        moduleRegistry = YangModuleInfoRegistry.create(ctx, contextFactory, parserFactory, textToIR);
         bundleTracker = new YangModuleInfoScanner(ctx, moduleRegistry);
         bundleTracker.open();
         moduleRegistry.enableScannerAndUpdate();

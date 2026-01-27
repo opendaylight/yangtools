@@ -20,11 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class DependencyResolverTest {
     private static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangTextToIRSourceTransformerModule.provideSourceTransformer();
+        YangIRSourceModule.provideTextToIR();
 
     @Test
     void testModulesWithoutRevisionAndImport() throws Exception {

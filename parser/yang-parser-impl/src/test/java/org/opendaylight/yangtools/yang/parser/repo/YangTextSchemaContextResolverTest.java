@@ -23,11 +23,15 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class YangTextSchemaContextResolverTest {
+    private static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
+
     @Test
     void testYangTextSchemaContextResolver() throws Exception {
-        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("test-bundle");
+        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("test-bundle", TEXT_TO_IR);
         assertNotNull(yangTextSchemaContextResolver);
 
         final var yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo.yang");
@@ -88,7 +92,8 @@ class YangTextSchemaContextResolverTest {
 
     @Test
     void testFeatureRegistration() throws Exception {
-        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("feature-test-bundle");
+        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("feature-test-bundle",
+            TEXT_TO_IR);
         assertNotNull(yangTextSchemaContextResolver);
         final var yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo-feature.yang");
         assertNotNull(yangFile1);

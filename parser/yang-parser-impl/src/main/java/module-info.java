@@ -42,6 +42,7 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
+    requires org.opendaylight.yangtools.yang.source.ir;
     requires org.opendaylight.yangtools.yang.xpath.impl;
     requires org.slf4j;
 

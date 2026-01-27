@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.dagger.YangTextToIRSourceTransformerModule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class NetconfTest {
     private static final QName FILTER = QName.create(NetconfConstants.RFC6241_MODULE, "filter");
@@ -35,7 +35,7 @@ class NetconfTest {
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc6241Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
-        final var transformer = YangTextToIRSourceTransformerModule.provideSourceTransformer();
+        final var transformer = YangIRSourceModule.provideTextToIR();
         final var context = assertDoesNotThrow(() -> reactor.newBuild()
             .addLibSources(new YangIRStatementStreamSource(transformer.transformSource(
                 new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))))
