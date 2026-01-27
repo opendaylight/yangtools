@@ -44,13 +44,11 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -599,7 +597,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
      * @return Previous statement
      * @throws NoSuchElementException if this stack is empty
      * @throws IllegalStateException if current statement is not a DataTreeEffectiveStatement or if its parent is not
-     *                               a {@link DataTreeAwareEffectiveStatement}
+     *                               a {@link DataTreeEffectiveStatement.IndexedIn}
      */
     public @NonNull DataTreeEffectiveStatement<?> exitToDataTree() {
         final var child = exit();
@@ -613,7 +611,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
             parent = deque.peekLast();
         }
 
-        if (parent == null || parent instanceof DataTreeAwareEffectiveStatement) {
+        if (parent == null || parent instanceof DataTreeEffectiveStatement.IndexedIn) {
             return ret;
         }
         throw new IllegalStateException("Unexpected parent " + parent);
@@ -821,14 +819,14 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
 
     private @NonNull SchemaTreeEffectiveStatement<?> pushSchema(final EffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
-        if (parent instanceof SchemaTreeAwareEffectiveStatement<?, ?> schemaTreeParent) {
+        if (parent instanceof SchemaTreeEffectiveStatement.IndexedIn<?, ?> schemaTreeParent) {
             return pushSchema(schemaTreeParent, nodeIdentifier);
         }
         throw new IllegalStateException("Cannot descend schema tree at " + parent);
     }
 
     private @NonNull SchemaTreeEffectiveStatement<?> pushSchema(
-            final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> parent, final @NonNull QName nodeIdentifier) {
+            final SchemaTreeEffectiveStatement.@NonNull IndexedIn<?, ?> parent, final @NonNull QName nodeIdentifier) {
         final var ret = parent.findSchemaTreeNode(nodeIdentifier)
             .orElseThrow(() -> notPresent(parent, "Schema tree child ", nodeIdentifier));
         deque.addLast(ret);
@@ -849,14 +847,14 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
 
     private @NonNull DataTreeEffectiveStatement<?> pushData(final EffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
-        if (parent instanceof DataTreeAwareEffectiveStatement<?, ?> dataTreeParent) {
+        if (parent instanceof DataTreeEffectiveStatement.IndexedIn<?, ?> dataTreeParent) {
             return pushData(dataTreeParent, nodeIdentifier);
         }
         throw new IllegalStateException("Cannot descend data tree at " + parent);
     }
 
-    private @NonNull DataTreeEffectiveStatement<?> pushData(final @NonNull DataTreeAwareEffectiveStatement<?, ?> parent,
-            final @NonNull QName nodeIdentifier) {
+    private @NonNull DataTreeEffectiveStatement<?> pushData(
+            final DataTreeEffectiveStatement.@NonNull IndexedIn<?, ?> parent, final @NonNull QName nodeIdentifier) {
         final var ret = parent.findDataTreeNode(nodeIdentifier)
             .orElseThrow(() -> notPresent(parent, "Data tree child", nodeIdentifier));
         deque.addLast(ret);
@@ -979,12 +977,13 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
                 resolveDataTreeSteps(module, nodeIdentifier);
                 currentModule = module;
             }
-            case SchemaTreeAwareEffectiveStatement<?, ?> schemaTree -> resolveDataTreeSteps(schemaTree, nodeIdentifier);
+            case SchemaTreeEffectiveStatement.IndexedIn<?, ?> schemaTree ->
+                resolveDataTreeSteps(schemaTree, nodeIdentifier);
             default -> throw new VerifyException("Unexpected parent " + parent);
         }
     }
 
-    private void resolveDataTreeSteps(final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> parent,
+    private void resolveDataTreeSteps(final SchemaTreeEffectiveStatement.@NonNull IndexedIn<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
         // The algebra of identifiers in 'schema tree versus data tree':
         // - data tree parents are always schema tree parents

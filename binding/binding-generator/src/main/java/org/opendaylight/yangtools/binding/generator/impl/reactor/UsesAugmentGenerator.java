@@ -14,7 +14,6 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
@@ -61,7 +60,7 @@ final class UsesAugmentGenerator extends AbstractAugmentGenerator {
     }
 
     @Override
-    TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target) {
+    TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeEffectiveStatement.IndexedIn<?, ?> target) {
         verify(target instanceof SchemaTreeEffectiveStatement, "Unexpected statement %s", target);
         // 'uses'/'augment': our children are binding to target's namespace
 

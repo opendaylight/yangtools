@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
@@ -41,7 +40,7 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     private final @NonNull AugmentationSchemaNode schemaDelegate;
 
     TargetAugmentEffectiveStatement(final AugmentEffectiveStatement augment,
-            final SchemaTreeAwareEffectiveStatement<?, ?> target,
+            final SchemaTreeEffectiveStatement.IndexedIn<?, ?> target,
             final ImmutableList<EffectiveStatement<?, ?>> substatements) {
         delegate = requireNonNull(augment);
         verify(augment instanceof AugmentationSchemaNode, "Unsupported augment implementation %s", augment);
