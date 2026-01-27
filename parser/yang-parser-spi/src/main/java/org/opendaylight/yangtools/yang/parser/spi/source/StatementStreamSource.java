@@ -56,7 +56,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      * @param writer
      *            {@link StatementWriter} which should be used to emit
      *            statements.
-     * @param stmtDef
+     * @param resolver
      *            Map of available statement definitions. Only these statements
      *            may be written to statement writer, source MUST ignore and MUST NOT
      *            emit any other statements.
@@ -64,7 +64,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef);
+    void writePreLinkage(StatementWriter writer, StatementDefinitionResolver resolver);
 
     /**
      * Emits only linkage-related statements to supplied {@code writer} based on specified YANG version.
@@ -73,7 +73,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      * @param writer
      *            {@link StatementWriter} which should be used to emit
      *            statements.
-     * @param stmtDef
+     * @param resolver
      *            Map of available statement definitions. Only these statements
      *            may be written to statement writer, source MUST ignore and
      *            MUST NOT emit any other statements.
@@ -85,7 +85,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef,
+    void writeLinkage(StatementWriter writer, StatementDefinitionResolver resolver,
         PrefixResolver preLinkagePrefixes, YangVersion yangVersion);
 
     /**
@@ -96,7 +96,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      * @param writer
      *            {@link StatementWriter} which should be used to emit
      *            statements.
-     * @param stmtDef
+     * @param resolver
      *            Map of available statement definitions. Only these statements
      *            may be written to statement writer, source MUST ignore and
      *            MUST NOT emit any other statements.
@@ -109,7 +109,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
+    void writeLinkageAndStatementDefinitions(StatementWriter writer, StatementDefinitionResolver resolver,
         PrefixResolver prefixes, YangVersion yangVersion);
 
     /**
@@ -120,7 +120,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      * @param writer
      *            {@link StatementWriter} which should be used to emit
      *            statements.
-     * @param stmtDef
+     * @param resolver
      *            Map of available statement definitions.
      * @param prefixes
      *            Map of source-specific prefixes to namespaces
@@ -130,6 +130,6 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixResolver prefixes,
+    void writeFull(StatementWriter writer, StatementDefinitionResolver resolver, PrefixResolver prefixes,
         YangVersion yangVersion);
 }

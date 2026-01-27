@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 @ExtendWith(MockitoExtension.class)
-class QNameToStatementDefinitionMapTest {
+class ReactorStatementDefinitionResolverTest {
     private static final QName QNAME = QName.create("", "a");
 
-    private final QNameToStatementDefinitionMap map = new QNameToStatementDefinitionMap();
+    private final ReactorStatementDefinitionResolver map = new ReactorStatementDefinitionResolver();
 
     @Mock
     private StatementSupport<?, ?, ?> support;
