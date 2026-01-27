@@ -14,11 +14,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
 /**
  * An {@link Immutable} {@link Iterable} which exposes its {@link #size()}.
  *
+ * @param <T> the type of elements returned by the iterator
  * @since 15.0.0
  */
 @Beta
 @NonNullByDefault
-public sealed interface SizedIterable<T> extends Iterable<T>, Immutable permits KeyArgument, ValueRanges {
+public sealed interface SizedIterable<T> extends Iterable<T>, Immutable
+        permits KeyArgument, UniqueArgument, ValueRanges {
     /**
      * {@return the number of items contained in this iterable, guaranteed to be positive}
      */
