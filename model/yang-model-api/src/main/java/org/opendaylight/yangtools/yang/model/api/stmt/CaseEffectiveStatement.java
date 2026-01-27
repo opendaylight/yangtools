@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Effective representation of a {@code case} statement.
  */
 public non-sealed interface CaseEffectiveStatement extends SchemaTreeEffectiveStatement<@NonNull CaseStatement>,
-        DataTreeAwareEffectiveStatement<QName, @NonNull CaseStatement> {
+        DataTreeEffectiveStatement.IndexedIn<QName, @NonNull CaseStatement> {
     @Override
     default StatementDefinition<QName, @NonNull CaseStatement, ?> statementDefinition() {
         return CaseStatement.DEF;

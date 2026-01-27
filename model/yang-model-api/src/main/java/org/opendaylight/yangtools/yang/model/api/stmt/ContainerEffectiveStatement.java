@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Effective representation of a {@code container} statement.
  */
 public non-sealed interface ContainerEffectiveStatement extends DataTreeEffectiveStatement<@NonNull ContainerStatement>,
-        DataTreeAwareEffectiveStatement<QName, @NonNull ContainerStatement>,
+        DataTreeEffectiveStatement.IndexedIn<QName, @NonNull ContainerStatement>,
         TypedefEffectiveStatement.MultipleIn<QName, @NonNull ContainerStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ContainerStatement, ?> statementDefinition() {
