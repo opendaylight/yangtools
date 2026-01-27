@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -25,6 +26,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +35,31 @@ import org.slf4j.LoggerFactory;
  * A consistent set of {@link StatementSupport}s and {@link ParserNamespace} {@link NamespaceBehaviour}s.
  */
 public final class StatementSupportBundle implements Immutable {
+    /**
+     * A combination of a StatementSupport and its corresponding ArgumentSupport.
+     *
+     * @param <A> Argument type
+     * @param <D> Declared Statement representation
+     * @param <E> Effective Statement representation
+     * @since 15.0.0
+     */
+    @Beta
+    @NonNullByDefault
+    public record SupportTuple<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>(
+            StatementSupport<A, D, E> statement,
+            ArgumentSupport<A> argument) implements Immutable {
+        /**
+         * Default constructor.
+         *
+         * @param statement the {@link StatementSupport}
+         * @param statement the {@link ArgumentSupport}
+         */
+        public SupportTuple {
+            requireNonNull(statement);
+            requireNonNull(argument);
+        }
+    }
+
     /**
      * The set of versions including all versions known as of RFC7950, e.g. {@link YangVersion#VERSION_1}
      * and {@link YangVersion#VERSION_1_1}.
@@ -63,16 +91,16 @@ public final class StatementSupportBundle implements Immutable {
             ImmutableMap.of(), ImmutableMap.of(), ImmutableTable.of());
 
     private final StatementSupportBundle parent;
-    private final @NonNull ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions;
-    private final @NonNull ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions;
+    private final @NonNull ImmutableMap<QName, SupportTuple<?, ?, ?>> commonDefinitions;
+    private final @NonNull ImmutableTable<YangVersion, QName, SupportTuple<?, ?, ?>> versionSpecificDefinitions;
     private final @NonNull ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions;
     private final @NonNull ImmutableSet<YangVersion> supportedVersions;
 
     private StatementSupportBundle(final StatementSupportBundle parent,
             final ImmutableSet<YangVersion> supportedVersions,
-            final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions,
+            final ImmutableMap<QName, SupportTuple<?, ?, ?>> commonDefinitions,
             final ImmutableMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaceDefinitions,
-            final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions) {
+            final ImmutableTable<YangVersion, QName, SupportTuple<?, ?, ?>> versionSpecificDefinitions) {
         this.parent = parent;
         this.supportedVersions = requireNonNull(supportedVersions);
         this.commonDefinitions = requireNonNull(commonDefinitions);
@@ -134,7 +162,7 @@ public final class StatementSupportBundle implements Immutable {
     /**
      * {@return statement definitions common for all versions}
      */
-    public @NonNull ImmutableMap<QName, StatementSupport<?, ?, ?>> getCommonDefinitions() {
+    public @NonNull ImmutableMap<QName, SupportTuple<?, ?, ?>> getCommonDefinitions() {
         return commonDefinitions;
     }
 
@@ -146,7 +174,7 @@ public final class StatementSupportBundle implements Immutable {
      * @return map of statement definitions specific for requested version, it does not include common statement
      *         definitions
      */
-    public ImmutableMap<QName, StatementSupport<?, ?, ?>> getDefinitionsSpecificForVersion(final YangVersion version) {
+    public ImmutableMap<QName, SupportTuple<?, ?, ?>> getDefinitionsSpecificForVersion(final YangVersion version) {
         return versionSpecificDefinitions.row(version);
     }
 
@@ -156,7 +184,7 @@ public final class StatementSupportBundle implements Immutable {
      *
      * @return table of all version specific statement definitions, it does not include common statement definitions
      */
-    public @NonNull ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> getAllVersionSpecificDefinitions() {
+    public @NonNull ImmutableTable<YangVersion, QName, SupportTuple<?, ?, ?>> getAllVersionSpecificDefinitions() {
         return versionSpecificDefinitions;
     }
 
@@ -191,12 +219,12 @@ public final class StatementSupportBundle implements Immutable {
         return parent == null ? false : parent.hasNamespaceBehaviour(namespace);
     }
 
-    public @Nullable StatementSupport<?, ?, ?> getStatementDefinition(final YangVersion version, final QName stmtName) {
+    public @Nullable SupportTuple<?, ?, ?> getStatementDefinition(final YangVersion version, final QName stmtName) {
         final var versionSpecific = getVersionSpecificStatementDefinition(version, stmtName);
         return versionSpecific != null ? versionSpecific : getCommonStatementDefinition(stmtName);
     }
 
-    private @Nullable StatementSupport<?, ?, ?> getCommonStatementDefinition(final QName stmtName) {
+    private @Nullable SupportTuple<?, ?, ?> getCommonStatementDefinition(final QName stmtName) {
         final var potential = commonDefinitions.get(stmtName);
         if (potential != null) {
             return potential;
@@ -204,7 +232,7 @@ public final class StatementSupportBundle implements Immutable {
         return parent == null ? null : parent.getCommonStatementDefinition(stmtName);
     }
 
-    private @Nullable StatementSupport<?, ?, ?> getVersionSpecificStatementDefinition(final YangVersion version,
+    private @Nullable SupportTuple<?, ?, ?> getVersionSpecificStatementDefinition(final YangVersion version,
             final QName stmtName) {
         final var potential = versionSpecificDefinitions.get(version, stmtName);
         if (potential != null) {
@@ -219,8 +247,8 @@ public final class StatementSupportBundle implements Immutable {
     public static final class Builder implements Mutable {
         private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
-        private final HashMap<QName, StatementSupport<?, ?, ?>> commonStatements = new HashMap<>();
-        private final HashBasedTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements =
+        private final HashMap<QName, SupportTuple<?, ?, ?>> commonStatements = new HashMap<>();
+        private final HashBasedTable<YangVersion, QName, SupportTuple<?, ?, ?>> versionSpecificStatements =
             HashBasedTable.create();
         private final HashMap<ParserNamespace<?, ?>, NamespaceBehaviour<?, ?>> namespaces = new HashMap<>();
         private final @NonNull ImmutableSet<YangVersion> supportedVersions;

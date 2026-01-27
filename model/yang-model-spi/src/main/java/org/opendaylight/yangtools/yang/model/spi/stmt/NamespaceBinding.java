@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.model.spi.stmt;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
 
 /**
  * Interface for binding {@code prefix}-based {code identifier} ABNF constructs -- for example as used in
@@ -34,4 +36,25 @@ public interface NamespaceBinding {
      * @param prefix the prefix
      */
     @Nullable QNameModule lookupModule(UnresolvedQName.Unqualified prefix);
+
+    default QName resolveQName(final UnresolvedQName unresolved) throws ArgumentBindingException {
+        return switch (unresolved) {
+            case UnresolvedQName.Qualified qualified -> resolveQName(qualified);
+            case UnresolvedQName.Unqualified unqualified -> resolveQName(unqualified);
+        };
+    }
+
+    default QName resolveQName(final UnresolvedQName.Qualified qualified) throws ArgumentBindingException {
+        final var prefix = qualified.getPrefix();
+        // FIXME: can we side-step checking here?
+        final var module = lookupModule(UnresolvedQName.Unqualified.of(prefix));
+        if (module == null) {
+            throw new ArgumentBindingException("Prefix '" + prefix + "' cannot be resolved", 0);
+        }
+        return qualified.bindTo(module);
+    }
+
+    default QName resolveQName(final UnresolvedQName.Unqualified unqualified) {
+        return unqualified.bindTo(currentModule());
+    }
 }

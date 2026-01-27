@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * Utility forwarding implementation of {@link StatementSupport} contract. This class is useful for implementing
  * wrapped statements.
  *
- * @author Robert Varga
- *
  * @param <A> Argument type
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
@@ -47,11 +45,6 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     @Override
     public E copyEffective(final Current<A, D> stmt, final E original) {
         return delegate.copyEffective(stmt, original);
-    }
-
-    @Override
-    public A parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return delegate.parseArgumentValue(ctx, value);
     }
 
     @Override

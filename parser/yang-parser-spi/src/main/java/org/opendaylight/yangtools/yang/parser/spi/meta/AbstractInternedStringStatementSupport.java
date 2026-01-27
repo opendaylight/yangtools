@@ -34,9 +34,4 @@ public abstract class AbstractInternedStringStatementSupport<D extends DeclaredS
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);
     }
-
-    @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
-    }
 }

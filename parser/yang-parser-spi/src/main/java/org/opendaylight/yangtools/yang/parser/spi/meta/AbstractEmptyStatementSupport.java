@@ -33,12 +33,4 @@ public abstract class AbstractEmptyStatementSupport<D extends DeclaredStatement<
             final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy, config, validator);
     }
-
-    @Override
-    public final Empty parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        if (value != null) {
-            throw new InferenceException("Unexpected argument value " + value, ctx);
-        }
-        return Empty.value();
-    }
 }

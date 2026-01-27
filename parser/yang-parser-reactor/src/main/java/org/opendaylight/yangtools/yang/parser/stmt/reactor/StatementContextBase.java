@@ -518,7 +518,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private void summarizeSubstatementPolicy() {
-        if (definition().support().copyPolicy() == CopyPolicy.EXACT_REPLICA || noSensitiveSubstatements()) {
+        if (definition().statementSupport().copyPolicy() == CopyPolicy.EXACT_REPLICA || noSensitiveSubstatements()) {
             setAllSubstatementsContextIndependent();
         }
     }
@@ -551,7 +551,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                     return false;
                 }
 
-                switch (stmt.definition().support().copyPolicy()) {
+                switch (stmt.definition().statementSupport().copyPolicy()) {
                     case null -> throw new NullPointerException();
                     case CONTEXT_INDEPENDENT, EXACT_REPLICA, IGNORE -> {
                         // No-op
@@ -702,8 +702,8 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private @Nullable ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
-        final var support = definition.support();
-        return switch (support.copyPolicy()) {
+        final var statementSupport = definition.statementSupport();
+        return switch (statementSupport.copyPolicy()) {
             case null -> throw new NullPointerException();
             case CONTEXT_INDEPENDENT -> allSubstatementsContextIndependent() ? replicaAsChildOf(parent)
                 // FIXME: ugly cast
@@ -714,7 +714,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             case EXACT_REPLICA -> replicaAsChildOf(parent);
             case IGNORE -> null;
             case REJECT -> throw new IllegalStateException(
-                "Statement " + support.getPublicView().humanName() + " should never be copied");
+                "Statement " + statementSupport.getPublicView().humanName() + " should never be copied");
         };
     }
 

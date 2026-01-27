@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle.SupportTuple;
 
 final class ReactorStatementDefinitionResolver implements Mutable, StatementDefinitionResolver {
     private record NSKey(String namespace, String localName) {
@@ -36,7 +37,7 @@ final class ReactorStatementDefinitionResolver implements Mutable, StatementDefi
         }
     }
 
-    private final HashMap<QName, StatementSupport<?, ?, ?>> qnameToSupport = new HashMap<>();
+    private final HashMap<QName, SupportTuple<?, ?, ?>> qnameToSupport = new HashMap<>();
     private final HashMap<NSKey, StatementDefinition<?, ?, ?>> norevToDef = new HashMap<>();
     private final HashMap<QNKey, StatementDefinition<?, ?, ?>> revToDef = new HashMap<>();
 
@@ -54,12 +55,12 @@ final class ReactorStatementDefinitionResolver implements Mutable, StatementDefi
      * {@return {@link StatementSupport} with specified {@code QName}}
      * @param identifier {@code QName} of requested statement
      */
-    @Nullable StatementSupport<?, ?, ?> lookupSupport(final @NonNull QName identifier) {
+    @Nullable SupportTuple<?, ?, ?> lookupSupport(final @NonNull QName identifier) {
         return qnameToSupport.get(requireNonNull(identifier));
     }
 
-    @Nullable StatementSupport<?, ?, ?> tryAddSupport(final @NonNull QName identifier,
-            final @NonNull StatementSupport<?, ?, ?> proposed) {
+    @Nullable SupportTuple<?, ?, ?> tryAddSupport(final @NonNull QName identifier,
+            final @NonNull SupportTuple<?, ?, ?> proposed) {
         final var existing = qnameToSupport.putIfAbsent(requireNonNull(identifier), requireNonNull(proposed));
         if (existing == null) {
             addDefinition(identifier, proposed.definition());
@@ -67,14 +68,14 @@ final class ReactorStatementDefinitionResolver implements Mutable, StatementDefi
         return existing;
     }
 
-    void addSupports(final @NonNull Map<QName, StatementSupport<?, ?, ?>> additionalSupports) {
+    void addSupports(final @NonNull Map<QName, SupportTuple<?, ?, ?>> additionalSupports) {
         for (var entry : additionalSupports.entrySet()) {
             addSupport(entry.getKey(), entry.getValue());
         }
     }
 
     @VisibleForTesting
-    void addSupport(final QName qname, final StatementSupport<?, ?, ?> support) {
+    void addSupport(final QName qname, final SupportTuple<?, ?, ?> support) {
         qnameToSupport.put(requireNonNull(qname), requireNonNull(support));
         addDefinition(qname, support.definition());
     }

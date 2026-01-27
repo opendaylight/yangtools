@@ -59,7 +59,7 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
         super(def, ref);
-        this.rawArgument = def.support().internArgument(rawArgument);
+        this.rawArgument = def.internArgument(rawArgument);
     }
 
     @Override

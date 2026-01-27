@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle.SupportTuple;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -58,7 +59,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         FINISHED
     }
 
-    private static final class SupportedStatements extends NamespaceAccess<QName, StatementSupport<?, ?, ?>> {
+    private static final class SupportedStatements extends NamespaceAccess<QName, SupportTuple<?, ?, ?>> {
         private final @NonNull ReactorStatementDefinitionResolver statementResolver;
 
         SupportedStatements(final @NonNull ReactorStatementDefinitionResolver statementResolver) {
@@ -66,38 +67,38 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         }
 
         @Override
-        ParserNamespace<QName, StatementSupport<?, ?, ?>> namespace() {
+        ParserNamespace<QName, SupportTuple<?, ?, ?>> namespace() {
             return StatementSupport.NAMESPACE;
         }
 
         @Override
-        StatementSupport<?, ?, ?> valueFrom(final NamespaceStorage storage, final QName key) {
+        SupportTuple<?, ?, ?> valueFrom(final NamespaceStorage storage, final QName key) {
             return statementResolver.lookupSupport(key);
         }
 
         @Override
-        void valueTo(final NamespaceStorage storage, final QName key, final StatementSupport<?, ?, ?> value) {
+        void valueTo(final NamespaceStorage storage, final QName key, final SupportTuple<?, ?, ?> value) {
             throw uoe();
         }
 
         @Override
-        Map<QName, StatementSupport<?, ?, ?>> allFrom(final NamespaceStorage storage) {
+        Map<QName, SupportTuple<?, ?, ?>> allFrom(final NamespaceStorage storage) {
             throw uoe();
         }
 
         @Override
-        Entry<QName, StatementSupport<?, ?, ?>> entryFrom(final NamespaceStorage storage,
+        Entry<QName, SupportTuple<?, ?, ?>> entryFrom(final NamespaceStorage storage,
                 final NamespaceKeyCriterion<QName> criterion) {
             throw uoe();
         }
 
         @Override
-        void addListener(final QName key, final KeyedValueAddedListener<QName, StatementSupport<?, ?, ?>> listener) {
+        void addListener(final QName key, final KeyedValueAddedListener<QName, SupportTuple<?, ?, ?>> listener) {
             throw uoe();
         }
 
         @Override
-        void addListener(final PredicateValueAddedListener<QName, StatementSupport<?, ?, ?>> listener) {
+        void addListener(final PredicateValueAddedListener<QName, SupportTuple<?, ?, ?>> listener) {
             throw uoe();
         }
 
