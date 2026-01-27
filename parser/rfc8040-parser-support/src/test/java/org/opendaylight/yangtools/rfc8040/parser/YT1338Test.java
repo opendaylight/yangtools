@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 class YT1338Test extends AbstractYangDataTest {
     @Test
@@ -51,7 +51,7 @@ class YT1338Test extends AbstractYangDataTest {
         assertNull(leaf.declared());
 
         final var type = leaf.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
-        assertEquals(TypeDefinitions.EMPTY, type.argument());
+        assertEquals(BuiltInType.EMPTY.typeName(), type.argument());
         assertEquals(StatementOrigin.CONTEXT, type.statementOrigin());
         assertNull(type.declared());
     }

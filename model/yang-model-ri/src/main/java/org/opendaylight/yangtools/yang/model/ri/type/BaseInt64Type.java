@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 final class BaseInt64Type extends AbstractRangeRestrictedBaseType<Int64TypeDefinition, Long>
         implements Int64TypeDefinition {
     static final @NonNull BaseInt64Type INSTANCE = new BaseInt64Type();
 
     private BaseInt64Type() {
-        super(TypeDefinitions.INT64, Long.MIN_VALUE, Long.MAX_VALUE);
+        super(BuiltInType.INT64.typeName(), Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
     @Override
