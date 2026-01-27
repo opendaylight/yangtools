@@ -36,7 +36,7 @@ public final class SubscriptionStateNotificationStatementSupport
     @Override
     public void onStatementAdded(final Mutable<Empty, SubscriptionStateNotificationStatement,
             SubscriptionStateNotificationEffectiveStatement> stmt) {
-        if (!stmt.coerceParentContext().producesDeclared(NotificationStatement.class)) {
+        if (!stmt.coerceParentContext().produces(NotificationStatement.DEF)) {
             throw new SourceException("Only notifications may be marked with subscription-state-notification", stmt);
         }
     }

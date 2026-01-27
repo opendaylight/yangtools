@@ -33,6 +33,18 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Current<X, Y> asDeclaring(
+            final StatementDefinition<X, Y, Z> def) {
+        return delegate.asDeclaring(def);
+    }
+
+    @Override
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Current<X, Y> verifyDeclaring(
+            final StatementDefinition<X, Y, Z> def) {
+        return delegate.verifyDeclaring(def);
+    }
+
+    @Override
     public <X, Y extends DeclaredStatement<X>> Current<X, Y> tryDeclaring(final Class<Y> type) {
         return delegate.tryDeclaring(type);
     }

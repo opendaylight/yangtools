@@ -100,7 +100,7 @@ final class AugmentInferenceAction implements InferenceAction {
     @Override
     public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
         // do not fail, if it is an uses-augment to an unknown node
-        if (augmentNode.coerceParentContext().producesDeclared(UsesStatement.class)) {
+        if (augmentNode.coerceParentContext().produces(UsesStatement.DEF)) {
             if (!augmentNode.isSupportedToBuildEffective()) {
                 // We are not supported, hence the uses is not effective and we should bail
                 return;
@@ -130,7 +130,7 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx) {
-        final var typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
+        final var typeOfCopy = sourceCtx.coerceParentContext().produces(UsesStatement.DEF)
             ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
         /*
          * Since Yang 1.1, if an augmentation is made conditional with a
@@ -167,7 +167,7 @@ final class AugmentInferenceAction implements InferenceAction {
                 copy.setUnsupported();
             }
             buffer.add(copy);
-        } else if (!unsupported && original.producesDeclared(TypedefStatement.class)) {
+        } else if (!unsupported && original.produces(TypedefStatement.DEF)) {
             // FIXME: what is this branch doing, really?
             //        Typedef's policy would imply a replica, hence normal target.childCopyOf(original, typeOfCopy)
             //        would suffice.
@@ -276,7 +276,7 @@ final class AugmentInferenceAction implements InferenceAction {
 
     private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
         var parent = child.coerceParentContext();
-        while (!parent.producesDeclared(AugmentStatement.class)) {
+        while (!parent.produces(AugmentStatement.DEF)) {
             parent = parent.coerceParentContext();
         }
         return parent;
