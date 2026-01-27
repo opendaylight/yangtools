@@ -16,13 +16,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -86,14 +79,14 @@ abstract sealed class AbstractTypeSupport extends AbstractQNameStatementSupport<
     protected final TypeStatement attachDeclarationReference(final TypeStatement stmt,
             final DeclarationReference reference) {
         return switch (stmt) {
-            case BitsSpecification specific -> new RefBitsSpecification(specific, reference);
-            case Decimal64Specification specific ->  new RefDecimal64Specification(specific, reference);
-            case EnumSpecification specific -> new RefEnumSpecification(specific, reference);
-            case IdentityRefSpecification specific -> new RefIdentityRefSpecification(specific, reference);
-            case InstanceIdentifierSpecification specific ->
+            case TypeStatement.OfBits specific -> new RefBitsSpecification(specific, reference);
+            case TypeStatement.OfDecimal64 specific ->  new RefDecimal64Specification(specific, reference);
+            case TypeStatement.OfEnum specific -> new RefEnumSpecification(specific, reference);
+            case TypeStatement.OfIdentityref specific -> new RefIdentityRefSpecification(specific, reference);
+            case TypeStatement.OfInstanceIdentifier specific ->
                 new RefInstanceIdentifierSpecification(specific, reference);
-            case LeafrefSpecification specific -> new RefLeafrefSpecification(specific, reference);
-            case UnionSpecification specific -> new RefUnionSpecification(specific, reference);
+            case TypeStatement.OfLeafref specific -> new RefLeafrefSpecification(specific, reference);
+            case TypeStatement.OfUnion specific -> new RefUnionSpecification(specific, reference);
             default -> DeclaredStatementDecorators.decorateType(stmt, reference);
         };
     }

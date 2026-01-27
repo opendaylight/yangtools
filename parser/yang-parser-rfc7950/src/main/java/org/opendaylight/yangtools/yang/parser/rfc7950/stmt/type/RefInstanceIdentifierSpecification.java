@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-final class RefInstanceIdentifierSpecification extends AbstractRefStatement<QName, InstanceIdentifierSpecification>
-        implements InstanceIdentifierSpecification {
-    RefInstanceIdentifierSpecification(final InstanceIdentifierSpecification delegate, final DeclarationReference ref) {
+final class RefInstanceIdentifierSpecification extends AbstractRefStatement<QName, OfInstanceIdentifier>
+        implements OfInstanceIdentifier {
+    RefInstanceIdentifierSpecification(final OfInstanceIdentifier delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }
 }

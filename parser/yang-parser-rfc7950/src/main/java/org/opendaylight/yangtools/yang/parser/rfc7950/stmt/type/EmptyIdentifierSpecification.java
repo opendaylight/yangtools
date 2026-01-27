@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-final class EmptyIdentifierSpecification extends WithArgument<QName> implements InstanceIdentifierSpecification {
+final class EmptyIdentifierSpecification extends WithArgument<QName> implements OfInstanceIdentifier {
     EmptyIdentifierSpecification(final String rawArgument, final QName argument) {
         super(rawArgument, argument);
     }

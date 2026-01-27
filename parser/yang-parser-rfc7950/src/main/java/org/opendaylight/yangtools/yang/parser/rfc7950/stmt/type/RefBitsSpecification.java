@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.OfBits;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-public final class RefBitsSpecification extends AbstractRefStatement<QName, BitsSpecification>
-        implements BitsSpecification {
-    public RefBitsSpecification(final BitsSpecification delegate, final DeclarationReference ref) {
+public final class RefBitsSpecification extends AbstractRefStatement<QName, OfBits> implements OfBits {
+    public RefBitsSpecification(final OfBits delegate, final DeclarationReference ref) {
         super(delegate, ref);
     }
 }
