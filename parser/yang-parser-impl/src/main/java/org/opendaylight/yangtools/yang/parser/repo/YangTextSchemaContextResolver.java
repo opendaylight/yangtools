@@ -83,25 +83,27 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private volatile Object contextVersion = version;
     private @GuardedBy("this") FeatureSet supportedFeatures = null;
 
-    private YangTextSchemaContextResolver(final SchemaRepository repository, final SchemaSourceRegistry registry) {
+    private YangTextSchemaContextResolver(final YangTextToIRSourceTransformer textToIR,
+            final SchemaRepository repository, final SchemaSourceRegistry registry) {
+        this.textToIR = requireNonNull(textToIR);
         this.repository = requireNonNull(repository);
         this.registry = requireNonNull(registry);
 
-        final var trans = TextToIRTransformer.create(repository, registry);
-        textToIR = trans.textToIR();
-        transReg = registry.registerSchemaSourceListener(trans);
+        transReg = registry.registerSchemaSourceListener(new TextToIRTransformer(repository, registry, textToIR));
         cache = GuavaSchemaSourceCache.createSoftCache(registry, YangIRSource.class, SOURCE_LIFETIME);
     }
 
     @Deprecated(since = "14.0.21", forRemoval = true)
-    public static @NonNull YangTextSchemaContextResolver create(final String name) {
+    public static @NonNull YangTextSchemaContextResolver create(final String name,
+            final YangTextToIRSourceTransformer textToIR) {
         final var sharedRepo = new SharedSchemaRepository(name);
-        return new YangTextSchemaContextResolver(sharedRepo, sharedRepo);
+        return new YangTextSchemaContextResolver(textToIR, sharedRepo, sharedRepo);
     }
 
-    public static @NonNull YangTextSchemaContextResolver create(final String name, final YangParserFactory factory) {
+    public static @NonNull YangTextSchemaContextResolver create(final String name, final YangParserFactory factory,
+            final YangTextToIRSourceTransformer textToIR) {
         final var sharedRepo = new SharedSchemaRepository(name, factory);
-        return new YangTextSchemaContextResolver(sharedRepo, sharedRepo);
+        return new YangTextSchemaContextResolver(textToIR, sharedRepo, sharedRepo);
     }
 
     /**

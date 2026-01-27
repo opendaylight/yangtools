@@ -152,7 +152,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
 
     static SettableSchemaProvider<YangIRSource> getRemoteYangSourceProviderFromResource(final String resourceName)
             throws Exception {
-        return SettableSchemaProvider.createRemote(TRANSFORMER.transformSource(
+        return SettableSchemaProvider.createRemote(TEXT_TO_IR.transformSource(
             new URLYangTextSource(SharedSchemaRepositoryTest.class.getResource(resourceName))),
             YangIRSource.class);
     }

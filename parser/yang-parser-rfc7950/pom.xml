@@ -114,6 +114,11 @@
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-source-ir</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-xpath-impl</artifactId>
             <scope>test</scope>
         </dependency>

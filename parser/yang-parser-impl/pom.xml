@@ -166,6 +166,12 @@
             <artifactId>rfc8819-parser-support</artifactId>
         </dependency>
 
+        <!-- YANG text-to-IR support -->
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-source-ir</artifactId>
+        </dependency>
+
         <!-- XPath reference implementation -->
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>

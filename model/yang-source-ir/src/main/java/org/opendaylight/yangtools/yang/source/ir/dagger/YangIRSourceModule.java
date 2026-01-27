@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.dagger;
+package org.opendaylight.yangtools.yang.source.ir.dagger;
 
 import dagger.Module;
 import dagger.Provides;
 import jakarta.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.parser.antlr.DefaultYangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.source.ir.DefaultYangTextToIRSourceTransformer;
 
 /**
  * A Dagger module providing {@link YangTextToIRSourceTransformer}.
@@ -20,11 +20,12 @@ import org.opendaylight.yangtools.yang.parser.antlr.DefaultYangTextToIRSourceTra
  * @since 15.0.0
  */
 @Module
+@SuppressWarnings("exports")
 @NonNullByDefault
-public interface YangTextToIRSourceTransformerModule {
+public interface YangIRSourceModule {
     @Provides
     @Singleton
-    static YangTextToIRSourceTransformer provideSourceTransformer() {
+    static YangTextToIRSourceTransformer provideTextToIR() {
         return new DefaultYangTextToIRSourceTransformer();
     }
 }
