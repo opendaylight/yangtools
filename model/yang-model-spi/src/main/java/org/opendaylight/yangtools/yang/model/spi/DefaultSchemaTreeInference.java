@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference.WithPath;
 import org.slf4j.LoggerFactory;
@@ -98,7 +97,7 @@ public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffecti
             () -> new IllegalArgumentException("No module for " + first));
 
         final var builder = ImmutableList.<SchemaTreeEffectiveStatement<?>>builderWithExpectedSize(steps.size());
-        SchemaTreeAwareEffectiveStatement<?, ?> parent = module;
+        SchemaTreeEffectiveStatement.IndexedIn<?, ?> parent = module;
         final Iterator<QName> it = steps.iterator();
         while (true) {
             final var qname = it.next();
@@ -109,10 +108,10 @@ public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffecti
             if (!it.hasNext()) {
                 break;
             }
-
-            checkArgument(found instanceof SchemaTreeAwareEffectiveStatement, "Cannot resolve steps %s past %s", steps,
-                found);
-            parent = (SchemaTreeAwareEffectiveStatement<?, ?>) found;
+            if (!(found instanceof SchemaTreeEffectiveStatement.IndexedIn<?, ?> stes)) {
+                throw new IllegalArgumentException("Cannot resolve steps " + steps + " past " + found);
+            }
+            parent = stes;
         }
 
         return builder.build();

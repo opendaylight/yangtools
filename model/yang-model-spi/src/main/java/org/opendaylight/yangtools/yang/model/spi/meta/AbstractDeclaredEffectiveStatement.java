@@ -23,9 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
@@ -58,14 +56,14 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
     }
 
     /**
-     * Base stateless superclass form {@link SchemaTreeAwareEffectiveStatement}s. It maintains the contents of schema
-     * tree namespace based of effective substatements.
+     * Base stateless superclass form {@link SchemaTreeEffectiveStatement.IndexedIn}s. It maintains the contents of
+     * schema tree namespace based of effective substatements.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public abstract static class WithSchemaTree<A, D extends DeclaredStatement<A>>
-            extends AbstractDeclaredEffectiveStatement<A, D> implements SchemaTreeAwareEffectiveStatement<A, D> {
+            extends AbstractDeclaredEffectiveStatement<A, D> implements SchemaTreeEffectiveStatement.IndexedIn<A, D> {
         /**
          * Indexing support for {@link DataNodeContainer#dataChildByName(QName)}.
          */
@@ -77,14 +75,14 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
     }
 
     /**
-     * Base stateless superclass for {@link DataTreeAwareEffectiveStatement}s. It maintains the contents of data tree
-     * namespace based of effective substatements.
+     * Base stateless superclass for {@link DataTreeEffectiveStatement.IndexedIn}s. It maintains the contents of data
+     * tree namespace based of effective substatements.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public abstract static class WithDataTree<A, D extends DeclaredStatement<A>> extends WithSchemaTree<A, D>
-            implements DataTreeAwareEffectiveStatement<A, D> {
+            implements DataTreeEffectiveStatement.IndexedIn<A, D> {
         // Nothing else
     }
 

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.rfc8040.model.api;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement.IndexedIn;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#section-8">RFC 8040</a>.
  */
 public interface YangDataEffectiveStatement extends UnknownEffectiveStatement<YangDataName, @NonNull YangDataStatement>,
-        DataTreeAwareEffectiveStatement<YangDataName, @NonNull YangDataStatement> {
+        IndexedIn<YangDataName, @NonNull YangDataStatement> {
     @Override
     default StatementDefinition<YangDataName, @NonNull YangDataStatement, ?> statementDefinition() {
         return YangDataStatement.DEF;
