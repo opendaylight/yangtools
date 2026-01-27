@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.grammar.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -36,10 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class KeyStatementSupport
         extends AbstractStatementSupport<KeyArgument, KeyStatement, KeyEffectiveStatement> {
     /**
-     * This is equivalent to {@link YangStatementLexer#SEP}'s definition. Currently equivalent to the non-repeating
-     * part of:
-     *
-     * <p>{@code SEP: [ \n\r\t]+ -> type(SEP);}.
+     * This is equivalent to {@code YangStatementLexer.g4}'s {@code SEP} definition. Currently equivalent to the
+     * non-repeating part of {@code SEP: [ \n\r\t]+ -> type(SEP);}.
      */
     private static final CharMatcher SEP = CharMatcher.anyOf(" \n\r\t").precomputed();
 
