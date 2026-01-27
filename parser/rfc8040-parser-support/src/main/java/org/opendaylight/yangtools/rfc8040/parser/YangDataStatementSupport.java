@@ -140,7 +140,7 @@ public final class YangDataStatementSupport
         if (YANG_API.equals(ctx.getArgument())) {
             final var stmts = ctx.declaredSubstatements();
             if (stmts.size() == 1) {
-                final var stmt = stmts.iterator().next().tryDeclaring(UsesStatement.class);
+                final var stmt = stmts.iterator().next().asDeclaring(UsesStatement.DEF);
                 if (stmt != null && "restconf".equals(stmt.rawArgument())) {
                     // The rc:yang-data shape matches, but we are not sure about the module identity, that needs to be
                     // done later multiple stages, the first one being initiated through this call.

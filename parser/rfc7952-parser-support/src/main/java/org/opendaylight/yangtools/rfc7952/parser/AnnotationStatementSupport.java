@@ -63,7 +63,7 @@ public final class AnnotationStatementSupport
     public void onStatementAdded(
             final Mutable<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
         final var parent = stmt.coerceParentContext();
-        if (!parent.producesDeclared(ModuleStatement.class) && !parent.producesDeclared(SubmoduleStatement.class)) {
+        if (!parent.producesAnyOf(ModuleStatement.DEF, SubmoduleStatement.DEF)) {
             throw new SourceException("Annotations may only be defined at root of either a module or a submodule",
                 stmt);
         }

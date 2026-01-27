@@ -76,7 +76,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
             LOG.debug("No parent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (!parent.producesDeclared(AnyxmlStatement.class)) {
+        if (!parent.produces(AnyxmlStatement.DEF)) {
             LOG.debug("Parent is not an anyxml node, ignoring get-filter-element-attributes statement");
             return false;
         }
@@ -90,7 +90,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
             LOG.debug("No grandparent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (!grandParent.producesDeclared(InputStatement.class)) {
+        if (!grandParent.produces(InputStatement.DEF)) {
             LOG.debug("Grandparent is not an input node, ignoring get-filter-element-attributes statement");
             return false;
         }
@@ -100,7 +100,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
             LOG.debug("No grandparent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (!greatGrandParent.producesDeclared(RpcStatement.class)) {
+        if (!greatGrandParent.produces(RpcStatement.DEF)) {
             LOG.debug("Grandparent is not an RPC node, ignoring get-filter-element-attributes statement");
             return false;
         }

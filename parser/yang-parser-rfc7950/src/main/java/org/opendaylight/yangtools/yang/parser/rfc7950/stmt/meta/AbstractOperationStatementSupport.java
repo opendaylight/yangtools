@@ -50,10 +50,10 @@ abstract sealed class AbstractOperationStatementSupport<
         boolean needInput = true;
         boolean needOutput = true;
         for (var sub : stmt.declaredSubstatements()) {
-            if (sub.producesDeclared(InputStatement.class)) {
+            if (sub.produces(InputStatement.DEF)) {
                 needInput = false;
             }
-            if (sub.producesDeclared(OutputStatement.class)) {
+            if (sub.produces(OutputStatement.DEF)) {
                 needOutput = false;
             }
         }

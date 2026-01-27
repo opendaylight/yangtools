@@ -233,7 +233,7 @@ public final class StmtContextUtils {
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (var stmt : stmtContext.declaredSubstatements()) {
-            final var declaring = stmt.tryDeclaring(IfFeatureStatement.class);
+            final var declaring = stmt.asDeclaring(IfFeatureStatement.DEF);
             if (declaring != null) {
                 containsIfFeature = true;
                 if (!declaring.getArgument().test(supportedFeatures)) {
@@ -329,7 +329,7 @@ public final class StmtContextUtils {
         var current = stmt.coerceParentContext();
         var parent = current.getParentContext();
         while (parent != null) {
-            if (current.producesDeclared(ListStatement.class)
+            if (current.produces(ListStatement.DEF)
                     && !current.hasSubstatement(KeyEffectiveStatement.class)) {
                 if (ModelProcessingPhase.FULL_DECLARATION.isCompletedBy(current.getCompletedPhase())) {
                     throw new SourceException(stmt, "%s %s is defined within a list that has no key statement", name,
@@ -399,7 +399,7 @@ public final class StmtContextUtils {
         if (parent == null) {
             return;
         }
-        final var listCtx = parent.tryDeclaring(ListStatement.class);
+        final var listCtx = parent.asDeclaring(ListStatement.DEF);
         if (listCtx == null) {
             return;
         }
@@ -410,17 +410,17 @@ public final class StmtContextUtils {
         final var keyArg = keyCtx.argument();
 
         // deal with the case of a single leaf
-        final var leafCtx = ctx.tryDeclaring(LeafStatement.class);
+        final var leafCtx = ctx.asDeclaring(LeafStatement.DEF);
         if (leafCtx != null) {
             validateIfFeatureOnLeaf(listCtx, keyArg, leafCtx);
             return;
         }
 
         // otherwise deal with the case of a uses statement
-        final var usesCtx = ctx.tryDeclaring(UsesStatement.class);
+        final var usesCtx = ctx.asDeclaring(UsesStatement.DEF);
         if (usesCtx != null) {
             for (var subStmtContext : listCtx.effectiveSubstatements()) {
-                final var declaring = subStmtContext.tryDeclaring(LeafStatement.class);
+                final var declaring = subStmtContext.asDeclaring(LeafStatement.DEF);
                 if (declaring != null) {
                     validateIfFeatureOnLeaf(listCtx, keyArg, declaring);
                 }
@@ -561,7 +561,7 @@ public final class StmtContextUtils {
         }
 
         // This is a submodule, so we also need consult 'belongs-to' mapping
-        if (ctx.producesDeclared(SubmoduleStatement.class)) {
+        if (ctx.produces(SubmoduleStatement.DEF)) {
             return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
                 ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
         }
@@ -572,7 +572,7 @@ public final class StmtContextUtils {
     public static @Nullable Revision latestRevisionIn(final Collection<? extends @NonNull StmtContext<?, ?, ?>> stmts) {
         Revision revision = null;
         for (var subStmt : stmts) {
-            final var revStmt = subStmt.tryDeclaring(RevisionStatement.class);
+            final var revStmt = subStmt.asDeclaring(RevisionStatement.DEF);
             if (revStmt != null) {
                 final var rev = revStmt.argument();
                 if (Revision.compare(rev, revision) > 0) {
