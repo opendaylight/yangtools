@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -81,6 +83,15 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     ImmutableSet<Revision> revisions();
 
     /**
+     * {@return the latest {@link Revision}, or {@code null} if no {@code revision} is present}
+     * @since 15.0.0
+     */
+    default @Nullable Revision latestRevision() {
+        final var it = revisions().iterator();
+        return it.hasNext() ? it.next() : null;
+    }
+
+    /**
      * Return all {@link Import} dependencies.
      *
      * @return all import dependencies
@@ -113,6 +124,15 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             requireNonNull(revisions);
             requireNonNull(imports);
             requireNonNull(includes);
+        }
+
+        /**
+         * {@return the {@code QName} projecting {@link #sourceId()} to the declared {@link #namespace()} and
+         * {@link #latestRevision()}.
+         * @since 15.0.0
+         */
+        public QName moduleName() {
+            return sourceId.name().bindTo(QNameModule.ofRevision(namespace, latestRevision()));
         }
 
         public static Builder builder() {
