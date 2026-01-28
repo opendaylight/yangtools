@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSo
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 class ModuleTagTest {
@@ -87,7 +88,7 @@ class ModuleTagTest {
             .startsWith("Tags may only be defined at root of either a module or a submodule [at ");
     }
 
-    private static YangStatementStreamSource moduleFromResources(final String resourceName) {
+    private static StatementStreamSource moduleFromResources(final String resourceName) {
         try {
             return YangStatementStreamSource.create(new URLYangTextSource(
                 ModuleTagTest.class.getResource(resourceName)));
