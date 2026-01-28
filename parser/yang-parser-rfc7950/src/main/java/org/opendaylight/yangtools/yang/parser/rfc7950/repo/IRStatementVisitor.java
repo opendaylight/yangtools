@@ -30,14 +30,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
-class StatementContextVisitor {
+class IRStatementVisitor {
     private final @NonNull QNameToStatementDefinition stmtDef;
     private final @NonNull StringEscaping escaping;
     private final PrefixResolver prefixes;
     private final @NonNull StatementWriter writer;
     private final String sourceName;
 
-    StatementContextVisitor(final String sourceName, final StatementWriter writer,
+    IRStatementVisitor(final String sourceName, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
@@ -49,7 +49,7 @@ class StatementContextVisitor {
         };
     }
 
-    void visit(final IRStatement stmt) {
+    final void visit(final IRStatement stmt) {
         processStatement(0, stmt);
     }
 

@@ -79,13 +79,13 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
 
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, null, YangVersion.VERSION_1).visit(rootStatement);
+        new IRStatementVisitor(sourceName, writer, stmtDef, null, YangVersion.VERSION_1).visit(rootStatement);
     }
 
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
+        new IRStatementVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
             @Override
             StatementDefinition<?, ?, ?> resolveStatement(final QNameModule module, final String localName) {
                 return stmtDef.getByNamespaceAndLocalName(module.namespace(), localName);
@@ -96,13 +96,13 @@ public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(rootStatement);
+        new IRStatementVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(rootStatement);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
+        new IRStatementVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
             @Override
             QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
                 final QName ret = super.getValidStatementDefinition(keyword, ref);
