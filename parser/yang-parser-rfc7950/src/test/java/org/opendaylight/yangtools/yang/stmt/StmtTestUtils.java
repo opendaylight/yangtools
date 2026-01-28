@@ -63,7 +63,7 @@ public final class StmtTestUtils {
         }
     }
 
-    public static YangStatementStreamSource sourceForResource(final String resourceName) {
+    public static StatementStreamSource sourceForResource(final String resourceName) {
         try {
             return YangStatementStreamSource.create(new URLYangTextSource(
                 StmtTestUtils.class.getResource(resourceName)));
@@ -112,7 +112,7 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final File... files)
                 throws ReactorException, IOException, YangSyntaxErrorException {
-        final var sources = new ArrayList<YangStatementStreamSource>(files.length);
+        final var sources = new ArrayList<StatementStreamSource>(files.length);
         for (var file : files) {
             sources.add(YangStatementStreamSource.create(new FileYangTextSource(file.toPath())));
         }
