@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSo
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.xml.sax.SAXException;
 
@@ -106,7 +107,7 @@ final class DefaultYangParser implements YangParser {
     static StatementStreamSource sourceToStatementStream(final SourceRepresentation source)
             throws IOException, YangSyntaxErrorException {
         return switch (source) {
-            case YangIRSource irSource -> YangStatementStreamSource.create(irSource);
+            case YangIRSource irSource -> new YangIRStatementStreamSource(irSource);
             case YangTextSource yangSource -> YangStatementStreamSource.create(yangSource);
             case YinDomSource yinDom -> YinStatementStreamSource.create(yinDom);
             case YinTextSource yinText -> {
