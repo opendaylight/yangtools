@@ -25,14 +25,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class DeviationStmtTest {
-    private static final YangStatementStreamSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
-    private static final YangStatementStreamSource FOO_IMP_MODULE =
+    private static final StatementStreamSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
+    private static final StatementStreamSource FOO_IMP_MODULE =
         sourceForResource("/deviation-stmt-test/foo-imp.yang");
-    private static final YangStatementStreamSource BAR_MODULE = sourceForResource("/deviation-stmt-test/bar.yang");
-    private static final YangStatementStreamSource BAR_IMP_MODULE =
+    private static final StatementStreamSource BAR_MODULE = sourceForResource("/deviation-stmt-test/bar.yang");
+    private static final StatementStreamSource BAR_IMP_MODULE =
         sourceForResource("/deviation-stmt-test/bar-imp.yang");
 
     @Test
