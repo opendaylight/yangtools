@@ -40,12 +40,10 @@ import org.w3c.dom.Node;
 public final class YinStatementStreamSource implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
 
-    private final @NonNull Node root;
-    private final @NonNull SourceRefProvider refProvider;
+    private final @NonNull YinDomSource source;
 
-    private YinStatementStreamSource(final Node root, final SourceRefProvider refProvider) {
-        this.root = requireNonNull(root);
-        this.refProvider = requireNonNull(refProvider);
+    private YinStatementStreamSource(final YinDomSource source) {
+        this.source = requireNonNull(source);
     }
 
     public static StatementStreamSource create(final YinXmlSource source) throws TransformerException {
@@ -53,7 +51,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     }
 
     public static StatementStreamSource create(final YinDomSource source) {
-        return new YinStatementStreamSource(source.getSource().getNode(), source.refProvider());
+        return new YinStatementStreamSource(source);
     }
 
     private static StatementDefinition<?, ?, ?> getValidDefinition(final Node node, final StatementWriter writer,
@@ -103,8 +101,8 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         return attr.getValue();
     }
 
-    private boolean processElement(final int childId, final Element element, final StatementWriter writer,
-            final StatementDefinitionResolver resolver) {
+    private static boolean processElement(final SourceRefProvider refProvider, final int childId, final Element element,
+            final StatementWriter writer, final StatementDefinitionResolver resolver) {
 
         final var resumed = writer.resumeStatement(childId);
         final StatementSourceReference ref;
@@ -178,7 +176,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         final var children = element.getChildNodes();
         for (int i = 0, len = children.getLength(); i < len; ++i) {
             if (children.item(i) instanceof Element child && (allElements || !isArgument(argName, child))
-                    && !processElement(childCounter++, child, writer, resolver)) {
+                    && !processElement(refProvider, childCounter++, child, writer, resolver)) {
                 fullyDefined = false;
             }
         }
@@ -193,12 +191,10 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     }
 
     private void walkTree(final StatementWriter writer, final StatementDefinitionResolver resolver) {
-        final var children = root.getChildNodes();
-
-        int childCounter = 0;
-        for (int i = 0, len = children.getLength(); i < len; ++i) {
+        final var children = source.getSource().getNode().getChildNodes();
+        for (int childId = 0, i = 0, len = children.getLength(); i < len; ++i) {
             if (children.item(i) instanceof Element child) {
-                processElement(childCounter++, child, writer, resolver);
+                processElement(source.refProvider(), childId++, child, writer, resolver);
             }
         }
     }
