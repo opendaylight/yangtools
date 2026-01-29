@@ -1,6 +1,0 @@
-module malformed-rev-arg {
-    namespace "urn:test:opendaylight-mdsal45-aug";
-    prefix aug;
-
-    revision bad;
-}
