@@ -22,6 +22,30 @@
       },
       "revId": "3c2011a6dcdd40561488147b1aa3c306e5305ddd",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8c4d9f0_db9e87f4",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/Bug7954Test.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-29T13:27:32Z",
+      "side": 0,
+      "message": "Any duplicate Sources are filtered out before the linkage resolution even begins. They won\u0027t cause any exceptions anymore. These tests are no longer useful.",
+      "parentUuid": "1b35c038_4de45d2c",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 17
+      },
+      "revId": "3c2011a6dcdd40561488147b1aa3c306e5305ddd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }

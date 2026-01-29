@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "09b0d24b_9976f667",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-29T13:27:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6a54fc32_dc3ac733",
+      "range": {
+        "startLine": 50,
+        "startChar": 11,
+        "endLine": 50,
+        "endChar": 32
+      },
+      "revId": "098b4934343a7c0bdb37f22a389ed55dc2ffac0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "971a7317_6fcb8725",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-01-26T11:24:28Z",
       "side": 1,
       "message": "why LinkedList?",
+      "range": {
+        "startLine": 67,
+        "startChar": 64,
+        "endLine": 67,
+        "endChar": 74
+      },
+      "revId": "098b4934343a7c0bdb37f22a389ed55dc2ffac0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e1aa3a6c_0ecb43eb",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-29T13:27:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "971a7317_6fcb8725",
       "range": {
         "startLine": 67,
         "startChar": 64,
@@ -70,6 +118,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "be453aff_8e23344a",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-29T13:27:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef1e0cd6_7a5a6858",
+      "range": {
+        "startLine": 122,
+        "startChar": 14,
+        "endLine": 122,
+        "endChar": 60
+      },
+      "revId": "098b4934343a7c0bdb37f22a389ed55dc2ffac0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8cc1ee32_2f431816",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-01-26T11:27:07Z",
       "side": 1,
       "message": "why are we losing information here?",
+      "range": {
+        "startLine": 95,
+        "startChar": 29,
+        "endLine": 95,
+        "endChar": 45
+      },
+      "revId": "098b4934343a7c0bdb37f22a389ed55dc2ffac0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b17c18fc_97bcbaa2",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/AbstractYangTest.java",
+        "patchSetId": 34
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-01-29T13:27:32Z",
+      "side": 1,
+      "message": "The case where a Source imports or includes another Source with incompatible YangVersion is now getting caught in the SourceLinkageResolver. At this stage we don\u0027t have access to the StatementSourceReference and thus cannot throw a StatementSourceException. IllegalStateException is thrown instead and thus we need to accept both types here - as a RuntimeException.",
+      "parentUuid": "8cc1ee32_2f431816",
       "range": {
         "startLine": 95,
         "startChar": 29,
