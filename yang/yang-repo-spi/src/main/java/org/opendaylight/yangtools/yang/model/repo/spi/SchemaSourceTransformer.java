@@ -14,13 +14,12 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
-import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 
-public class SchemaSourceTransformer<S extends SourceRepresentation, D extends SourceRepresentation>
-        implements SchemaSourceListener, SchemaSourceProvider<D> {
+public class SchemaSourceTransformer<I extends SourceRepresentation, O extends SourceRepresentation>
+        implements SchemaSourceListener, SchemaSourceProvider<O> {
     @FunctionalInterface
     public interface Transformation<S extends SourceRepresentation, D extends SourceRepresentation>
             extends AsyncFunction<S, D> {
@@ -28,15 +27,15 @@ public class SchemaSourceTransformer<S extends SourceRepresentation, D extends S
         ListenableFuture<D> apply(S input) throws Exception;
     }
 
-    private final Map<PotentialSchemaSource<?>, RefcountedRegistration> availableSources = new HashMap<>();
+    private final HashMap<PotentialSchemaSource<?>, RefcountedRegistration> availableSources = new HashMap<>();
     private final SchemaSourceRegistry consumer;
     private final SchemaRepository provider;
-    private final AsyncFunction<S, D> function;
-    private final Class<S> srcClass;
-    private final Class<D> dstClass;
+    private final AsyncFunction<I, O> function;
+    private final Class<I> srcClass;
+    private final Class<O> dstClass;
 
-    public SchemaSourceTransformer(final SchemaRepository provider, final Class<S> srcClass,
-            final SchemaSourceRegistry consumer, final Class<D> dstClass, final AsyncFunction<S, D> function) {
+    public SchemaSourceTransformer(final SchemaRepository provider, final Class<I> srcClass,
+            final SchemaSourceRegistry consumer, final Class<O> dstClass, final AsyncFunction<I, O> function) {
         this.provider = requireNonNull(provider);
         this.consumer = requireNonNull(consumer);
         this.function = requireNonNull(function);
@@ -45,7 +44,7 @@ public class SchemaSourceTransformer<S extends SourceRepresentation, D extends S
     }
 
     @Override
-    public final ListenableFuture<D> getSource(final SourceIdentifier sourceIdentifier) {
+    public final ListenableFuture<O> getSource(final SourceIdentifier sourceIdentifier) {
         return Futures.transformAsync(provider.getSchemaSource(sourceIdentifier, srcClass), function,
             MoreExecutors.directExecutor());
     }
@@ -86,7 +85,7 @@ public class SchemaSourceTransformer<S extends SourceRepresentation, D extends S
     }
 
     private void unregisterSource(final PotentialSchemaSource<?> src) {
-        final RefcountedRegistration reg = availableSources.get(src);
+        final var reg = availableSources.get(src);
         if (reg != null && reg.decRef()) {
             availableSources.remove(src);
         }

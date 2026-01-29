@@ -19,8 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
+import org.opendaylight.yangtools.yang.model.repo.spi.SourceInfoSchemaSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class SimpleModuleTest {
     private SharedSchemaRepository schemaRegistry;
@@ -30,7 +31,8 @@ class SimpleModuleTest {
     @BeforeEach
     void init() {
         schemaRegistry = new SharedSchemaRepository("test");
-        final var astTransformer = TextToIRTransformer.create(schemaRegistry, schemaRegistry);
+        final var astTransformer = SourceInfoSchemaSourceTransformer.ofYang(schemaRegistry, schemaRegistry,
+            YangIRSourceModule.provideTextToIR());
         schemaRegistry.registerSchemaSourceListener(astTransformer);
 
         schemaContextFactory = schemaRegistry.createEffectiveModelContextFactory();

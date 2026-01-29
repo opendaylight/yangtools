@@ -17,7 +17,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
 
     // FIXME: audit these, potentially lowering them to their sole user if reasonable
     exports org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
     uses ParserExtension;
     uses YangXPathParserFactory;
@@ -36,8 +35,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires transitive org.opendaylight.yangtools.yang.parser.api;
     requires transitive org.opendaylight.yangtools.yang.parser.reactor;
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
-    requires transitive org.opendaylight.yangtools.yang.repo.spi;
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
 
     requires org.antlr.antlr4.runtime;

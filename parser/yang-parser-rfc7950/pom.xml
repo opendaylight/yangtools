@@ -93,15 +93,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-repo-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-ir</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-repo-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -145,6 +137,19 @@
                     <visitor>false</visitor>
                     <listener>false</listener>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze-declarations</id>
+                        <configuration>
+                            <ignoredNonTestScopedDependencies>
+                                <ignoredNonTestScopedDependencies>org.opendaylight.yangtools:yang-ir</ignoredNonTestScopedDependencies>
+                            </ignoredNonTestScopedDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

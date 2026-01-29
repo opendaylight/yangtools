@@ -15,7 +15,9 @@ import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediate
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -24,11 +26,15 @@ import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceExcepti
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
+import org.opendaylight.yangtools.yang.model.repo.spi.SourceInfoSchemaSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 
 class SharedEffectiveModelContextFactoryTest {
+    private static final @NonNull YangTextToIRSourceTransformer TRANSFORMER =
+        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
+
     private final SharedSchemaRepository repository = new SharedSchemaRepository("test");
     private final SchemaContextFactoryConfiguration config = SchemaContextFactoryConfiguration.getDefault();
 
@@ -42,7 +48,7 @@ class SharedEffectiveModelContextFactoryTest {
         s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
         s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
 
-        final var transformer = TextToIRTransformer.create(repository, repository);
+        final var transformer = SourceInfoSchemaSourceTransformer.ofYang(repository, repository, TRANSFORMER);
         repository.registerSchemaSourceListener(transformer);
 
         repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source1),
