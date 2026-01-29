@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.Futures;
-import java.io.IOException;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.DefaultYinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.xml.sax.SAXException;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 
 /**
  * A {@link SchemaSourceTransformer} which handles translation of models from {@link YinTextSource} representation into
@@ -23,17 +23,16 @@ import org.xml.sax.SAXException;
  */
 @Beta
 public final class YinTextToDomTransformer extends SchemaSourceTransformer<YinTextSource, YinDomSource> {
-    private YinTextToDomTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
-        super(provider, YinTextSource.class, consumer, YinDomSource.class,
-            input -> Futures.immediateFuture(YinDomSource.of(input)));
+    private YinTextToDomTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer,
+            final YinTextToDOMSourceTransformer textToDOM) {
+        super(provider, YinTextSource.class, consumer, YinDomSource.class, input -> {
+            final var output = textToDOM.transformSource(input);
+            return Futures.immediateFuture(YinDomSource.of(
+                output.extractSourceInfo().sourceId(), output.getSource(), output.refProvider(), input.symbolicName()));
+        });
     }
 
     public static YinTextToDomTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
-        return new YinTextToDomTransformer(provider, consumer);
-    }
-
-    @Deprecated(since = "14.0.22", forRemoval = true)
-    public static YinDomSource transformSource(final YinTextSource source) throws SAXException, IOException {
-        return YinDomSource.of(source);
+        return new YinTextToDomTransformer(provider, consumer, new DefaultYinTextToDOMSourceTransformer());
     }
 }

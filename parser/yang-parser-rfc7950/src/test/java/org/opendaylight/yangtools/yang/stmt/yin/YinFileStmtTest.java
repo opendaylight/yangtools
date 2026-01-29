@@ -8,21 +8,19 @@
 package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.spi.source.URLYinTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.xml.sax.SAXException;
+import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 class YinFileStmtTest {
     private static final StatementStreamSource YIN_FILE = createSource("test.yin");
@@ -32,12 +30,8 @@ class YinFileStmtTest {
     private static final StatementStreamSource INVALID_YIN_FILE_2 = createSource("incorrect-bar.yin");
 
     private static StatementStreamSource createSource(final String name) {
-        try {
-            return YinStatementStreamSource.create(YinDomSource.of(new URLYinTextSource(
-                YinFileStmtTest.class.getResource("/semantic-statement-parser/yin/" + name))));
-        } catch (SAXException | IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return assertDoesNotThrow(
+            () -> YinStatementStreamSource.create(TestUtils.assertYinSource("/semantic-statement-parser/yin/" + name)));
     }
 
     @Test
