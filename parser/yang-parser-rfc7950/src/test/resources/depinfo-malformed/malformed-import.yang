@@ -1,5 +1,0 @@
-module malformed-import {
-    namespace "urn:test:foo";
-    prefix aug;
-    import;
-}
