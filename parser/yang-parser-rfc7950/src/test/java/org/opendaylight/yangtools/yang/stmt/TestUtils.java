@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -24,22 +23,25 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.DefaultYinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.URLYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
-import org.xml.sax.SAXException;
 
 public final class TestUtils {
+    private static final @NonNull YinTextToDOMSourceTransformer TEXT_TO_DOM =
+        new DefaultYinTextToDOMSourceTransformer();
     private static final @NonNull YangTextToIRSourceTransformer TEXT_TO_IR =
         ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
 
@@ -105,33 +107,39 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static @NonNull YangIRSource assertSchemaSource(final String resourcePath)
-            throws ExtractorException, SourceSyntaxException {
+    public static @NonNull YangIRSource assertSchemaSource(final String resourcePath) throws SourceSyntaxException {
         return TEXT_TO_IR.transformSource(new URLYangTextSource(TestUtils.class.getResource(resourcePath)));
     }
 
-    public static @NonNull YangIRSource assertSchemaSource(final Path file)
-            throws ExtractorException, SourceSyntaxException {
+    public static @NonNull YangIRSource assertSchemaSource(final Path file) throws SourceSyntaxException {
         return TEXT_TO_IR.transformSource(new FileYangTextSource(file));
+    }
+
+    public static @NonNull YinDomSource assertYinSource(final String resourcePath) throws SourceSyntaxException {
+        return TEXT_TO_DOM.transformSource(new URLYinTextSource(TestUtils.class.getResource(resourcePath)));
+    }
+
+    public static @NonNull YinDomSource assertYinSource(final Path file) throws SourceSyntaxException {
+        return TEXT_TO_DOM.transformSource(new FileYinTextSource(file));
     }
 
     // FIXME: these remain unaudited
 
     public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
-            throws ReactorException, SAXException, IOException {
+            throws ReactorException, SourceSyntaxException {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild();
 
         // FIXME: use Files to list files
         for (var file : Path.of(resourceDirectory).toFile().listFiles()) {
-            reactor.addSource(YinStatementStreamSource.create(YinDomSource.of(new FileYinTextSource(file.toPath()))));
+            reactor.addSource(YinStatementStreamSource.create(assertYinSource(file.toPath())));
         }
 
         return reactor.buildEffective();
     }
 
-    public static Module loadYinModule(final YinTextSource source) throws ReactorException, SAXException, IOException {
+    public static Module loadYinModule(final YinTextSource source) throws ReactorException, SourceSyntaxException {
         return RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(YinStatementStreamSource.create(YinDomSource.of(source)))
+            .addSource(YinStatementStreamSource.create(TEXT_TO_DOM.transformSource(source)))
             .buildEffective()
             .getModules().iterator().next();
     }

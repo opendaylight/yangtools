@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.io.IOException;
 import java.util.NoSuchElementException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -23,12 +22,10 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -39,7 +36,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Utility {@link YinXmlSource} exposing a W3C {@link DOMSource} representation of YIN model.
@@ -247,25 +243,6 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
         }
 
         return new Simple(id, source, refProvider, symbolicName);
-    }
-
-    /**
-     * Create a {@link YinDomSource} by parsing an existing {@link YinTextSource}.
-     *
-     * @param source the {@link YinTextSource}
-     * @return a {@link YinDomSource}
-     * @throws IOException if an I/O error occurs
-     * @throws SAXException if the YIN stream failes to parse
-     */
-    @Beta
-    @NonNullByDefault
-    public static YinDomSource of(final YinTextSource source) throws IOException, SAXException {
-        final var doc = UntrustedXML.newDocumentBuilder().newDocument();
-        final var parser = UntrustedXML.newSAXParser();
-        final var handler = new StatementSourceReferenceHandler(doc, null);
-        parser.parse(source.openStream(), handler);
-        return YinDomSource.of(source.sourceId(), new DOMSource(doc), StatementSourceReferenceHandler.REF_PROVIDER,
-            source.symbolicName());
     }
 
     /**

@@ -25,10 +25,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -40,7 +38,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 public final class StmtTestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(StmtTestUtils.class);
@@ -134,18 +131,18 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath)
-            throws URISyntaxException, SAXException, IOException, ReactorException {
+            throws URISyntaxException, SourceSyntaxException, ReactorException {
         return parseYinSources(yinSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
-            final YangParserConfiguration config)
-                throws URISyntaxException, SAXException, IOException, ReactorException {
+            final YangParserConfiguration config) throws URISyntaxException, ReactorException, SourceSyntaxException {
         final var files = Path.of(StmtTestUtils.class.getResource(yinSourcesDirectoryPath).toURI()).toFile()
             .listFiles(YIN_FILE_FILTER);
         final var sources = new StatementStreamSource[files.length];
+
         for (int i = 0; i < files.length; i++) {
-            sources[i] = YinStatementStreamSource.create(YinDomSource.of(new FileYinTextSource(files[i].toPath())));
+            sources[i] = YinStatementStreamSource.create(TestUtils.assertYinSource(files[i].toPath()));
         }
 
         return parseYinSources(config, sources);
