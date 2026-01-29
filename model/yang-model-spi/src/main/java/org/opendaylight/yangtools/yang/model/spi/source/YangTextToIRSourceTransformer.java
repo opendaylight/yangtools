@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
  * A {@link SourceTransformer} capable of turning {@link YangTextSource} into a {@link YangIRSource}.
@@ -25,12 +24,4 @@ public interface YangTextToIRSourceTransformer extends SourceTransformer<YangTex
     default Class<YangIRSource> outputRepresentation() {
         return YangIRSource.class;
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Returned source will have its {@link YangIRSource#sourceId()} recovered from the source body.
-     */
-    @Override
-    YangIRSource transformSource(YangTextSource source) throws ExtractorException, SourceSyntaxException;
 }

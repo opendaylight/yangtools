@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
  * A synchronous transformation function from one {@link SourceRepresentation} to another.
@@ -35,8 +34,7 @@ public interface SourceTransformer<I extends SourceRepresentation, O extends Sou
     /**
      * {@return an instance output SourceRepresentation}
      * @param input the input {@link SourceRepresentation}
-     * @throws ExtractorException if the input representation violates linkages
      * @throws SourceSyntaxException if the input representation is not syntactically valid
      */
-    O transformSource(I input) throws ExtractorException, SourceSyntaxException;
+    O transformSource(I input) throws SourceSyntaxException;
 }

@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.source.ir;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoExtractors;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
@@ -31,9 +29,8 @@ public final class DefaultYangTextToIRSourceTransformer implements YangTextToIRS
     }
 
     @Override
-    public YangIRSource transformSource(final YangTextSource input) throws ExtractorException, SourceSyntaxException {
-        final var rootStatement = IRSupport.createStatement(YangTextParser.parseSource(input));
-        final var info = SourceInfoExtractors.forIR(rootStatement, input.sourceId()).extractSourceInfo();
-        return YangIRSource.of(info.sourceId(), rootStatement, input.symbolicName());
+    public YangIRSource transformSource(final YangTextSource input) throws SourceSyntaxException {
+        return YangIRSource.of(input.sourceId(), IRSupport.createStatement(YangTextParser.parseSource(input)),
+            input.symbolicName());
     }
 }
