@@ -5,30 +5,36 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.spi.source;
+package org.opendaylight.yangtools.yin.source.dom;
 
 import java.io.IOException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
+import org.osgi.service.component.annotations.Component;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
  * Default implementation of {@link YinTextToDOMSourceTransformer}.
  */
-// FIXME: YANGTOOLS-1707: split this into its own component
+@Component
+@MetaInfServices
 @NonNullByDefault
 public final class DefaultYinTextToDOMSourceTransformer implements YinTextToDOMSourceTransformer {
     @Override
     public YinDomSource transformSource(final YinTextSource input) throws SourceSyntaxException {
         final var doc = UntrustedXML.newDocumentBuilder().newDocument();
         final var parser = UntrustedXML.newSAXParser();
-        final var handler = new StatementSourceReferenceHandler(doc, null);
+        final var handler = new SourceRefHandler(doc, null);
         try {
             parser.parse(input.openStream(), handler);
         } catch (IOException e) {
@@ -38,7 +44,7 @@ public final class DefaultYinTextToDOMSourceTransformer implements YinTextToDOMS
         } catch (SAXException e) {
             throw new SourceSyntaxException("Failed to parse YIN source", e);
         }
-        return YinDomSource.of(input.sourceId(), new DOMSource(doc), StatementSourceReferenceHandler.REF_PROVIDER,
+        return YinDomSource.of(input.sourceId(), new DOMSource(doc), DefaultSourceRefProvider.INSTANCE,
             input.symbolicName());
     }
 

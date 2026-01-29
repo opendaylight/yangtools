@@ -9,11 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.Futures;
+import java.util.NoSuchElementException;
+import java.util.ServiceLoader;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
-import org.opendaylight.yangtools.yang.model.spi.source.DefaultYinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 
@@ -33,6 +34,7 @@ public final class YinTextToDomTransformer extends SchemaSourceTransformer<YinTe
     }
 
     public static YinTextToDomTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
-        return new YinTextToDomTransformer(provider, consumer, new DefaultYinTextToDOMSourceTransformer());
+        return new YinTextToDomTransformer(provider, consumer, ServiceLoader.load(YinTextToDOMSourceTransformer.class)
+            .findFirst().orElseThrow(() -> new NoSuchElementException("No YinTextToDOMSourceTransformer found")));
     }
 }

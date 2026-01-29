@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.DefaultYinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
@@ -41,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSo
 
 public final class TestUtils {
     private static final @NonNull YinTextToDOMSourceTransformer TEXT_TO_DOM =
-        new DefaultYinTextToDOMSourceTransformer();
+        ServiceLoader.load(YinTextToDOMSourceTransformer.class).findFirst().orElseThrow();
     private static final @NonNull YangTextToIRSourceTransformer TEXT_TO_IR =
         ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
 
