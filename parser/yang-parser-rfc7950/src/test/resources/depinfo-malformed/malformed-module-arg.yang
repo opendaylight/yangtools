@@ -1,4 +1,0 @@
-module 0123 {
-    namespace "urn:test:foo";
-    prefix aug;
-}

@@ -1,6 +1,0 @@
-module malformed-import {
-    namespace "urn:test:opendaylight-mdsal45-aug";
-    prefix aug;
-
-    revision;
-}
