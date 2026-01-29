@@ -141,19 +141,6 @@
                     <listener>false</listener>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>analyze-declarations</id>
-                        <configuration>
-                            <ignoredNonTestScopedDependencies>
-                                <ignoredNonTestScopedDependencies>org.opendaylight.yangtools:yang-ir</ignoredNonTestScopedDependencies>
-                            </ignoredNonTestScopedDependencies>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>

@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  */
 @Module
 @NonNullByDefault
+@SuppressWarnings("exports")
 public interface YangLibResolverModule {
     @Provides
     @Singleton

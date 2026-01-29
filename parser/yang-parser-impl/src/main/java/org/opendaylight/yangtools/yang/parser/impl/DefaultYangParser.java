@@ -15,18 +15,14 @@ import java.io.IOException;
 import java.util.List;
 import javax.xml.transform.TransformerException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
@@ -132,10 +128,13 @@ final class DefaultYangParser implements YangParser {
                 final YangIRSource irSource;
                 try {
                     irSource = textToIR.transformSource(yangSource);
-                } catch (ExtractorException e) {
-                    throw newSyntaxErrorException(source, e.sourceRef(), e);
                 } catch (SourceSyntaxException e) {
-                    throw newSyntaxErrorException(source, e.sourceRef(), e);
+                    final var sourceRef = e.sourceRef();
+                    if (sourceRef != null && sourceRef.declarationReference() instanceof DeclarationInText ref) {
+                        throw new YangSyntaxErrorException(source.sourceId(), ref.startLine(), ref.startColumn(),
+                            e.getMessage(), e);
+                    }
+                    throw new YangSyntaxErrorException(source.sourceId(), 0, 0, e.getMessage(), e);
                 }
                 yield new YangIRStatementStreamSource(irSource);
             }
@@ -157,15 +156,5 @@ final class DefaultYangParser implements YangParser {
             }
             default -> throw new IllegalArgumentException("Unsupported source " + source);
         };
-    }
-
-    @NonNullByDefault
-    private static YangSyntaxErrorException newSyntaxErrorException(final SourceRepresentation source,
-            final @Nullable StatementSourceReference sourceRef, final Exception cause) {
-        if (sourceRef != null && sourceRef.declarationReference() instanceof DeclarationInText ref) {
-            return new YangSyntaxErrorException(source.sourceId(), ref.startLine(), ref.startColumn(),
-                cause.getMessage(), cause);
-        }
-        return new YangSyntaxErrorException(source.sourceId(), 0, 0, cause.getMessage(), cause);
     }
 }

@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
@@ -249,11 +250,27 @@ class YangToSourcesProcessor {
         final var parsed = yangFilesInProject.parallelStream()
             .map(file -> {
                 final var textSource = new FileYangTextSource(file.toPath());
+                YangIRSource irSource;
                 try {
-                    return Map.entry(textSource, textToIR.transformSource(textSource));
-                } catch (ExtractorException | SourceSyntaxException e) {
+                    irSource = textToIR.transformSource(textSource);
+                } catch (SourceSyntaxException e) {
                     throw new IllegalArgumentException("Failed to parse " + file, e);
                 }
+
+                // Normalize source identifier
+                SourceInfo sourceInfo;
+                try {
+                    sourceInfo = irSource.extractSourceInfo();
+                } catch (ExtractorException e) {
+                    throw new IllegalArgumentException("Failed to extract info from " + file, e);
+                }
+                final var sourceId = sourceInfo.sourceId();
+                if (!sourceId.equals(irSource.sourceId())) {
+                    irSource = YangIRSource.of(sourceId, irSource.statement(), irSource.symbolicName());
+                }
+
+                return Map.entry(textSource, irSource);
+
             })
             .collect(Collectors.toList());
         LOG.debug("Found project files: {}", yangFilesInProject);

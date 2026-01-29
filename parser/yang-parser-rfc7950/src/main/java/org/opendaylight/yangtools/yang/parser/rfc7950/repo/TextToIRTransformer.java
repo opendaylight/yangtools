@@ -25,8 +25,11 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
     @NonNullByDefault
     public TextToIRTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer,
             final YangTextToIRSourceTransformer textToIR) {
-        super(provider, YangTextSource.class, consumer, YangIRSource.class,
-            input -> Futures.immediateFuture(textToIR.transformSource(input)));
+        super(provider, YangTextSource.class, consumer, YangIRSource.class, input -> {
+            final var output = textToIR.transformSource(input);
+            return Futures.immediateFuture(
+                YangIRSource.of(output.extractSourceInfo().sourceId(), output.statement(), input.symbolicName()));
+        });
     }
 
     @Deprecated(since = "15.0.0", forRemoval = true)

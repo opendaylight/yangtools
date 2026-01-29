@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
@@ -86,8 +87,9 @@ class YangIRSourceInfoExtractorTest {
 
     @Test
     void testMalformedModule() {
-        final var ex = assertEE("/depinfo-malformed/malformed-module.yang");
-        assertEquals("Missing argument to module [at malformed-module:1:1]", ex.getMessage());
+        final var ex = assertThrows(StatementSourceException.class,
+            () -> forResource("/depinfo-malformed/malformed-module.yang"));
+        assertEquals("Root statement does not have an argument [at malformed-module:1:1]", ex.getMessage());
     }
 
     @Test
