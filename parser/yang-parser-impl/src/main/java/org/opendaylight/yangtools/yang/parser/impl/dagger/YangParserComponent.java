@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
 import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule;
+import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
 
 /**
  * A component exposing {@link YangParserFactory} and {@link YangLibResolver}.
@@ -38,6 +39,7 @@ import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule
     modules = {
         YangXPathParserFactoryModule.class,
         YangIRSourceModule.class,
+        YinDOMSourceModule.class,
         YangParserFactoryModule.class,
         YangLibResolverModule.class,
         Rfc6241Module.class,
@@ -53,7 +55,6 @@ import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule
         OpenConfigModule.class,
     })
 @NonNullByDefault
-@SuppressWarnings("exports")
 public interface YangParserComponent {
 
     YangParserFactory parserFactory();

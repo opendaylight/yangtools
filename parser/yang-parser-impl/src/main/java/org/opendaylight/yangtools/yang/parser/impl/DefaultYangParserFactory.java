@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -33,20 +34,24 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         new ConcurrentHashMap<>(2);
     private final Function<YangParserConfiguration, CrossSourceStatementReactor> reactorFactory;
     private final YangTextToIRSourceTransformer textToIR;
+    private final YinTextToDOMSourceTransformer textToDOM;
 
     /**
      * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
      */
-    public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR) {
+    public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR,
+            final YinTextToDOMSourceTransformer textToDOM) {
         this.textToIR = requireNonNull(textToIR);
+        this.textToDOM = requireNonNull(textToDOM);
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(config).build();
         // Make sure default reactor is available
         verifyNotNull(reactorFactory.apply(YangParserConfiguration.DEFAULT));
     }
 
     public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR,
-            final YangXPathParserFactory xpathFactory) {
+            final YinTextToDOMSourceTransformer textToDOM, final YangXPathParserFactory xpathFactory) {
         this.textToIR = requireNonNull(textToIR);
+        this.textToDOM = requireNonNull(textToDOM);
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
     }
 
@@ -61,6 +66,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         if (!SUPPORTED_MODES.contains(importMode)) {
             throw new IllegalArgumentException("Unsupported import resolution mode " + importMode);
         }
-        return new DefaultYangParser(textToIR, reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
+        return new DefaultYangParser(textToIR, textToDOM, reactors.computeIfAbsent(configuration, reactorFactory)
+            .newBuild());
     }
 }

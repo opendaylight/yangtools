@@ -128,6 +128,12 @@
             <artifactId>yang-source-ir</artifactId>
         </dependency>
 
+        <!-- YIN text-to-DOM support -->
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yin-source-dom</artifactId>
+        </dependency>
+
         <!-- XPath reference implementation -->
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>

@@ -7,11 +7,13 @@
  */
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 
 /**
  * Reference implementation of YANG parser.
  *
  * @uses YangTextToIRSourceTransformer
+ * @uses YinTextToDOMSourceTransformer
  * @provides SchemaRepository
  */
 module org.opendaylight.yangtools.yang.parser.impl {
@@ -22,6 +24,7 @@ module org.opendaylight.yangtools.yang.parser.impl {
     exports org.opendaylight.yangtools.yang.parser.impl;
 
     uses YangTextToIRSourceTransformer;
+    uses YinTextToDOMSourceTransformer;
     provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 
     requires transitive com.google.common;
@@ -44,6 +47,7 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires org.opendaylight.yangtools.yang.model.spi;
     requires org.opendaylight.yangtools.yang.source.ir;
     requires org.opendaylight.yangtools.yang.xpath.impl;
+    requires org.opendaylight.yangtools.yin.source.dom;
     requires org.slf4j;
 
     // Annotations

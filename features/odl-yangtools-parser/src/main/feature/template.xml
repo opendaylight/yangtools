@@ -8,6 +8,7 @@
         <feature version="{{semVerRange}}">odl-yangtools-parser-api</feature>
         <feature version="{{semVerRange}}">odl-yangtools-xpath</feature>
         <bundle>mvn:org.opendaylight.yangtools/yang-source-ir/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yin-source-dom/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-ri/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-spi/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-reactor/{{versionAsInProject}}</bundle>

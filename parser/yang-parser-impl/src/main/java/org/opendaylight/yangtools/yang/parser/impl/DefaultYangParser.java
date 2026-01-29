@@ -24,11 +24,11 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.DefaultYinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -51,11 +51,14 @@ final class DefaultYangParser implements YangParser {
         YinTextSource.class);
 
     private final YangTextToIRSourceTransformer textToIR;
+    private final YinTextToDOMSourceTransformer textToDOM;
     private final BuildAction buildAction;
 
     @Deprecated
-    DefaultYangParser(final YangTextToIRSourceTransformer textToIR, final BuildAction buildAction) {
+    DefaultYangParser(final YangTextToIRSourceTransformer textToIR, final YinTextToDOMSourceTransformer textToDOM,
+            final BuildAction buildAction) {
         this.textToIR = requireNonNull(textToIR);
+        this.textToDOM = requireNonNull(textToDOM);
         this.buildAction = requireNonNull(buildAction);
     }
 
@@ -68,14 +71,14 @@ final class DefaultYangParser implements YangParser {
     @Deprecated
     @Override
     public YangParser addSource(final SourceRepresentation source) throws YangSyntaxErrorException {
-        buildAction.addSource(sourceToStatementStream(textToIR, source));
+        buildAction.addSource(sourceToStatementStream(textToIR, textToDOM, source));
         return this;
     }
 
     @Deprecated
     @Override
     public YangParser addLibSource(final SourceRepresentation source) throws YangSyntaxErrorException {
-        buildAction.addLibSource(sourceToStatementStream(textToIR, source));
+        buildAction.addLibSource(sourceToStatementStream(textToIR, textToDOM, source));
         return this;
     }
 
@@ -122,7 +125,8 @@ final class DefaultYangParser implements YangParser {
 
     @Deprecated
     static StatementStreamSource sourceToStatementStream(final YangTextToIRSourceTransformer textToIR,
-            final SourceRepresentation source) throws YangSyntaxErrorException {
+            final YinTextToDOMSourceTransformer textToDOM, final SourceRepresentation source)
+                throws YangSyntaxErrorException {
         return switch (source) {
             case YangIRSource irSource -> new YangIRStatementStreamSource(irSource);
             case YangTextSource yangSource -> {
@@ -138,7 +142,7 @@ final class DefaultYangParser implements YangParser {
             case YinTextSource yinText -> {
                 final YinDomSource yinDom;
                 try {
-                    yinDom = new DefaultYinTextToDOMSourceTransformer().transformSource(yinText);
+                    yinDom = textToDOM.transformSource(yinText);
                 } catch (SourceSyntaxException e) {
                     throw newSyntaxError(source.sourceId(), e);
                 }

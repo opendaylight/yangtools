@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -30,16 +31,20 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 @Deprecated(since = "14.0.21", forRemoval = true)
 public final class DefaultYangLibResolver implements YangLibResolver {
     private final YangTextToIRSourceTransformer textToIR;
+    private final YinTextToDOMSourceTransformer textToDOM;
     private final CrossSourceStatementReactor reactor;
 
-    public DefaultYangLibResolver(final YangTextToIRSourceTransformer textToIR) {
+    public DefaultYangLibResolver(final YangTextToIRSourceTransformer textToIR,
+            final YinTextToDOMSourceTransformer textToDOM) {
         this.textToIR = requireNonNull(textToIR);
+        this.textToDOM = requireNonNull(textToDOM);
         reactor = DefaultReactors.defaultReactorBuilder().build();
     }
 
     public DefaultYangLibResolver(final YangTextToIRSourceTransformer textToIR,
-            final YangXPathParserFactory xpathFactory) {
+            final YinTextToDOMSourceTransformer textToDOM, final YangXPathParserFactory xpathFactory) {
         this.textToIR = requireNonNull(textToIR);
+        this.textToDOM = requireNonNull(textToDOM);
         reactor = DefaultReactors.defaultReactorBuilder(xpathFactory).build();
     }
 
@@ -59,11 +64,11 @@ public final class DefaultYangLibResolver implements YangLibResolver {
                 features.add(feat.bindTo(namespace));
             }
 
-            act.addSource(DefaultYangParser.sourceToStatementStream(textToIR, module.source()));
+            act.addSource(DefaultYangParser.sourceToStatementStream(textToIR, textToDOM, module.source()));
         }
 
         for (var module : moduleSet.importOnlyModules().values()) {
-            act.addLibSource(DefaultYangParser.sourceToStatementStream(textToIR, module.source()));
+            act.addLibSource(DefaultYangParser.sourceToStatementStream(textToIR, textToDOM, module.source()));
         }
 
         try {

@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfig
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaRepository;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 
@@ -56,7 +57,8 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     @Deprecated(since = "14.0.21", forRemoval = true)
     public SharedSchemaRepository(final String id) {
         this(id, new DefaultYangParserFactory(
-            ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow()));
+            ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow(),
+            ServiceLoader.load(YinTextToDOMSourceTransformer.class).findFirst().orElseThrow()));
     }
 
     public SharedSchemaRepository(final String id, final YangParserFactory factory) {
