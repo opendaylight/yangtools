@@ -53,6 +53,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Cost
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
@@ -118,7 +119,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      */
     public @NonNull Registration registerSource(final @NonNull YangTextSource source)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
-        final YangIRSource irSource;
+        YangIRSource irSource;
         try {
             irSource = textToIR.transformSource(source);
         } catch (SourceSyntaxException e) {
@@ -128,15 +129,25 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                     e.getMessage(), e);
             }
             throw new YangSyntaxErrorException(source.sourceId(), 0, 0, e.getMessage(), e);
-        } catch (ExtractorException e) {
-            throw new SchemaSourceException(source.sourceId(), e.getMessage(), e);
         }
         LOG.trace("Resolved source {} to source {}", source, irSource);
 
-        // AST carries an accurate identifier, check if it matches the one supplied by the source. If it
-        // does not, check how much it differs and emit a warning.
+        // Extract accurate SourceIdentifier an adjust IRSource
+        final SourceInfo sourceInfo;
+        try {
+            sourceInfo = irSource.extractSourceInfo();
+        } catch (ExtractorException e) {
+            throw new SchemaSourceException(source.sourceId(), e.getMessage(), e);
+        }
+
+        final var parsedId = sourceInfo.sourceId();
+        if (!parsedId.equals(irSource.sourceId())) {
+            irSource = YangIRSource.of(parsedId, irSource.statement(), irSource.symbolicName());
+        }
+
+        // Check if it matches the one supplied by the source. If it does not, check how much it differs and emit
+        // a warning.
         final var providedId = source.sourceId();
-        final var parsedId = irSource.sourceId();
         final YangTextSource text;
         if (!parsedId.equals(providedId)) {
             if (!parsedId.name().equals(providedId.name())) {

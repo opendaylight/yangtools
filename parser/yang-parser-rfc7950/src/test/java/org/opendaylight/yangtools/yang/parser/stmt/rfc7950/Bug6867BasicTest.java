@@ -8,14 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 class Bug6867BasicTest extends AbstractYangTest {
     @Test
@@ -59,9 +55,8 @@ class Bug6867BasicTest extends AbstractYangTest {
 
     @Test
     void unsupportedVersionTest() {
-        final var ex = assertThrows(ExtractorException.class,
-            () -> TestUtils.parseYangSource("/rfc7950/basic-test/unsupported-version.yang"));
-        assertEquals("Invalid argument to yang-version: Invalid YANG version 2.3 [at unsupported-version:4:5]",
-            ex.getMessage());
+        assertThat(assertSourceException("/rfc7950/basic-test/unsupported-version.yang").getMessage())
+            .startsWith("Unsupported YANG version 2.3 [at ")
+            .endsWith("unsupported-version.yang:4:5]");
     }
 }
