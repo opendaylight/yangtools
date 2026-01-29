@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransf
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public final class TestUtils {
@@ -128,21 +127,19 @@ public final class TestUtils {
 
         // FIXME: use Files to list files
         for (var file : Path.of(resourceDirectory).toFile().listFiles()) {
-            reactor.addSource(YinStatementStreamSource.create(assertYinSource(file.toPath())));
+            reactor.addYinSource(assertYinSource(file.toPath()));
         }
 
         return reactor.buildEffective();
     }
 
     public static Module loadYinModule(final YinTextSource source) throws ReactorException, SourceSyntaxException {
-        return RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(YinStatementStreamSource.create(TEXT_TO_DOM.transformSource(source)))
-            .buildEffective()
+        return RFC7950Reactors.defaultReactor().newBuild().addYinSource(TEXT_TO_DOM, source).buildEffective()
             .getModules().iterator().next();
     }
 
     public static ModuleImport findImport(final Collection<? extends ModuleImport> imports, final String prefix) {
-        for (ModuleImport moduleImport : imports) {
+        for (var moduleImport : imports) {
             if (moduleImport.getPrefix().equals(prefix)) {
                 return moduleImport;
             }
@@ -152,7 +149,7 @@ public final class TestUtils {
 
     public static TypeDefinition<?> findTypedef(final Collection<? extends TypeDefinition<?>> typedefs,
             final String name) {
-        for (TypeDefinition<?> td : typedefs) {
+        for (var td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
                 return td;
             }

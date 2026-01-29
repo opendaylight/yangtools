@@ -9,51 +9,51 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 class YinFileStmtTest {
-    private static final StatementStreamSource YIN_FILE = createSource("test.yin");
-    private static final StatementStreamSource EXT_FILE = createSource("extension.yin");
-    private static final StatementStreamSource EXT_USE_FILE = createSource("extension-use.yin");
-    private static final StatementStreamSource INVALID_YIN_FILE = createSource("incorrect-foo.yin");
-    private static final StatementStreamSource INVALID_YIN_FILE_2 = createSource("incorrect-bar.yin");
-
-    private static StatementStreamSource createSource(final String name) {
-        return assertDoesNotThrow(
-            () -> YinStatementStreamSource.create(TestUtils.assertYinSource("/semantic-statement-parser/yin/" + name)));
-    }
-
     @Test
-    void readAndParseYinFileTestModel() throws ReactorException {
+    void readAndParseYinFileTestModel() throws Exception {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(YIN_FILE).addSource(EXT_FILE).addSource(EXT_USE_FILE)
+            .addYinSource(createSource("test.yin"))
+            .addYinSource(createSource("extension.yin"))
+            .addYinSource(createSource("extension-use.yin"))
             .buildEffective());
     }
 
     // parsing yin file whose import statement references a module which does not exist
     @Test
     void readAndParseInvalidYinFileTest() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(INVALID_YIN_FILE);
-        assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective);
+        var reactor = RFC7950Reactors.defaultReactor().newBuild().addYinSource(createSource("incorrect-foo.yin"));
+        assertEquals("Imported module [baar] was not found. [at <UNKNOWN>:8:27]",
+            assertInstanceOf(InferenceException.class,
+                assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause())
+            .getMessage());
     }
 
     // parsing yin file with duplicate key name in a list statement
     @Test
     void readAndParseInvalidYinFileTest2() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(INVALID_YIN_FILE_2);
-        final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
-        assertInstanceOf(SourceException.class, cause);
+        var reactor = RFC7950Reactors.defaultReactor().newBuild().addYinSource(createSource("incorrect-bar.yin"));
+        final var cause = assertInstanceOf(SourceException.class,
+            assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause());
         assertThat(cause.getMessage()).startsWith("Key argument 'testing-string testing-string' contains duplicates");
+    }
+
+    @NonNullByDefault
+    private static YinDomSource createSource(final String name) {
+        return assertDoesNotThrow(() -> TestUtils.assertYinSource("/semantic-statement-parser/yin/" + name));
     }
 }

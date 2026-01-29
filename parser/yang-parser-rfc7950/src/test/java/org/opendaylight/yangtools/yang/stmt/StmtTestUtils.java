@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.slf4j.Logger;
@@ -132,7 +131,7 @@ public final class StmtTestUtils {
 
         final var build = getReactor(config).newBuild();
         for (var file : files) {
-            build.addSource(YinStatementStreamSource.create(TestUtils.assertYinSource(file.toPath())));
+            build.addYinSource(TestUtils.assertYinSource(file.toPath()));
         }
         return build.buildEffective();
     }

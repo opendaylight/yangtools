@@ -33,10 +33,10 @@ import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.YinDOMStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 @Deprecated(since = "14.0.21", forRemoval = true)
@@ -138,7 +138,7 @@ final class DefaultYangParser implements YangParser {
                 }
                 yield new YangIRStatementStreamSource(irSource);
             }
-            case YinDomSource yinDom -> YinStatementStreamSource.create(yinDom);
+            case YinDomSource yinDom -> new YinDOMStatementStreamSource(yinDom);
             case YinTextSource yinText -> {
                 final YinDomSource yinDom;
                 try {
@@ -146,11 +146,11 @@ final class DefaultYangParser implements YangParser {
                 } catch (SourceSyntaxException e) {
                     throw newSyntaxError(source.sourceId(), e);
                 }
-                yield YinStatementStreamSource.create(yinDom);
+                yield new YinDOMStatementStreamSource(yinDom);
             }
             case YinXmlSource yinXml -> {
                 try {
-                    yield YinStatementStreamSource.create(yinXml);
+                    yield new YinDOMStatementStreamSource(YinDomSource.transform(yinXml));
                 } catch (TransformerException e) {
                     throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
                         "Failed to assemble in-memory representation", e);
