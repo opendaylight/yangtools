@@ -6,7 +6,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
@@ -18,9 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementDefinitionResolver;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -155,6 +152,14 @@ record YinDOMSourceWalker(
         return true;
     }
 
+    private StatementDefinition<?, ?, ?> getValidDefinition(final Node node, final StatementSourceReference ref) {
+        final var def = resolver.lookupDef(node.getNamespaceURI(), node.getLocalName());
+        if (def == null && writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
+            throw new SourceException(ref, "%s is not a YIN statement or use of extension.", node.getLocalName());
+        }
+        return def;
+    }
+
     private static boolean isArgument(final QName argName, final Node node) {
         return argName != null && argName.getLocalName().equals(node.getLocalName()) && node.getPrefix() == null;
     }
@@ -175,13 +180,5 @@ record YinDOMSourceWalker(
         }
 
         return attr.getValue();
-    }
-
-    private StatementDefinition<?, ?, ?> getValidDefinition(final Node node, final StatementSourceReference ref) {
-        final var def = resolver.lookupDef(node.getNamespaceURI(), node.getLocalName());
-        if (def == null && writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
-            throw new SourceException(ref, "%s is not a YIN statement or use of extension.", node.getLocalName());
-        }
-        return def;
     }
 }
