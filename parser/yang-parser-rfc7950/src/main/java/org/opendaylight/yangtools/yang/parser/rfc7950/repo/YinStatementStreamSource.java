@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
@@ -40,12 +39,10 @@ import org.w3c.dom.Node;
 public final class YinStatementStreamSource implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
 
-    private final @NonNull Node root;
-    private final @NonNull SourceRefProvider refProvider;
+    private final @NonNull YinDomSource source;
 
-    private YinStatementStreamSource(final Node root, final SourceRefProvider refProvider) {
-        this.root = requireNonNull(root);
-        this.refProvider = requireNonNull(refProvider);
+    private YinStatementStreamSource(final YinDomSource source) {
+        this.source = requireNonNull(source);
     }
 
     public static StatementStreamSource create(final YinXmlSource source) throws TransformerException {
@@ -53,7 +50,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     }
 
     public static StatementStreamSource create(final YinDomSource source) {
-        return new YinStatementStreamSource(source.getSource().getNode(), source.refProvider());
+        return new YinStatementStreamSource(source);
     }
 
     private static StatementDefinition<?, ?, ?> getValidDefinition(final Node node, final StatementWriter writer,
@@ -129,7 +126,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
                 allElements = false;
             }
         } else {
-            ref = refProvider.getRefOf(element);
+            ref = source.refProvider().getRefOf(element);
             final var def = getValidDefinition(element, writer, resolver, ref);
             if (def == null) {
                 LOG.debug("Skipping element {}", element);
@@ -193,12 +190,10 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     }
 
     private void walkTree(final StatementWriter writer, final StatementDefinitionResolver resolver) {
-        final var children = root.getChildNodes();
-
-        int childCounter = 0;
-        for (int i = 0, len = children.getLength(); i < len; ++i) {
+        final var children = source.getSource().getNode().getChildNodes();
+        for (int childId = 0, i = 0, len = children.getLength(); i < len; ++i) {
             if (children.item(i) instanceof Element child) {
-                processElement(childCounter++, child, writer, resolver);
+                processElement(childId++, child, writer, resolver);
             }
         }
     }
