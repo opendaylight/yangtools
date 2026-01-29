@@ -34,6 +34,7 @@
         <module>yang-model-spi</module>
         <module>yang-model-util</module>
         <module>yang-source-ir</module>
+        <module>yin-source-dom</module>
 
         <!-- Utilities for exporting yang-model-api constructs to YIN/YANG -->
         <module>yang-model-export</module>
