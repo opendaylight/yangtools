@@ -12,18 +12,23 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 
 public final class CrossSourceStatementReactor {
@@ -93,7 +98,34 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Add main source. All main sources are present in resulting SchemaContext.
+         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         *
+         * @param source which should be added into main sources
+         * @return This build action, for fluent use.
+         */
+        @NonNullByDefault
+        public BuildAction addSource(final YangIRSource source) {
+            context.addSource(new YangIRStatementStreamSource(source));
+            return this;
+        }
+
+        /**
+         * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         *
+         * @param <S> source representation type
+         * @param transformer the transformer to {@link YangIRSource}
+         * @param source which should be transformed and added into main sources
+         * @return This build action, for fluent use.
+         * @throws SourceSyntaxException if the source is not syntactically valid
+         */
+        @NonNullByDefault
+        public <S extends SourceRepresentation> BuildAction addSource(
+                final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
+            return addSource(transformer.transformSource(source));
+        }
+
+        /**
+         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
@@ -105,34 +137,44 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Add main sources. All main sources are present in resulting SchemaContext.
+         * Add a library source. Only library sources required by main sources are present in resulting
+         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * reporting.
          *
-         * @param sources which should be added into main sources
+         * <p>Library sources are not supported in semantic version mode currently.
+         *
+         * @param libSource source which should be added into library sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if {@code sources} is null or contains a null element
          */
-        public @NonNull BuildAction addSources(final StatementStreamSource... sources) {
-            addSources(Arrays.asList(sources));
+        @NonNullByDefault
+        public BuildAction addLibSource(final YangIRSource libSource) {
+            context.addLibSource(new YangIRStatementStreamSource(libSource));
             return this;
         }
 
         /**
-         * Add main sources. All main sources are present in resulting SchemaContext.
+         * Add a transformed library source. Only library sources required by main sources are present in resulting
+         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * reporting.
          *
-         * @param sources which should be added into main sources
+         * <p>Library sources are not supported in semantic version mode currently.
+         *
+         * @param <S> source representation type
+         * @param transformer the transformer to {@link YangIRSource}
+         * @param source which should be transformed and added into main sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if {@code sources} is null or contains a null element
+         * @throws SourceSyntaxException if the source is not syntactically valid
          */
-        public @NonNull BuildAction addSources(final @NonNull Collection<? extends StatementStreamSource> sources) {
-            for (final StatementStreamSource source : sources) {
-                context.addSource(requireNonNull(source));
-            }
-            return this;
+        @NonNullByDefault
+        public <S extends SourceRepresentation> BuildAction addLibSource(
+                final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
+            return addLibSource(transformer.transformSource(source));
         }
 
         /**
-         * Add a library source. Only library sources required by main sources are present in resulting SchemaContext.
-         * Any other library sources are ignored and this also applies to error reporting.
+         * Add a library source. Only library sources required by main sources are present in resulting
+         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * reporting.
          *
          * <p>Library sources are not supported in semantic version mode currently.
          *
@@ -142,38 +184,6 @@ public final class CrossSourceStatementReactor {
          */
         public @NonNull BuildAction addLibSource(final StatementStreamSource libSource) {
             context.addLibSource(libSource);
-            return this;
-        }
-
-        /**
-         * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
-         * Any other library sources are ignored and this also applies to error reporting.
-         *
-         * <p>Library sources are not supported in semantic version mode currently.
-         *
-         * @param libSources sources which should be added into library sources
-         * @return This build action, for fluent use.
-         * @throws NullPointerException if {@code libSources} is null or contains a null element
-         */
-        public @NonNull BuildAction addLibSources(final StatementStreamSource... libSources) {
-            addLibSources(Arrays.asList(libSources));
-            return this;
-        }
-
-        /**
-         * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
-         * Any other library sources are ignored and this also applies to error reporting.
-         *
-         * <p>Library sources are not supported in semantic version mode currently.
-         *
-         * @param libSources sources which should be added into library sources
-         * @return This build action, for fluent use.
-         * @throws NullPointerException if {@code libSources} is null or contains a null element
-         */
-        public @NonNull BuildAction addLibSources(final Collection<StatementStreamSource> libSources) {
-            for (final StatementStreamSource libSource : libSources) {
-                context.addLibSource(libSource);
-            }
             return this;
         }
 

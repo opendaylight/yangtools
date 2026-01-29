@@ -12,22 +12,13 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
 class AugmentSimplestTest {
-
-    private static final StatementStreamSource AUGMENTED = sourceForResource(
-        "/semantic-statement-parser/augmented.yang");
-    private static final StatementStreamSource ROOT = sourceForResource("/semantic-statement-parser/root.yang");
-
     @Test
-    void readAndParseYangFileTest() throws SourceException, ReactorException {
-        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(AUGMENTED, ROOT)
-            .build();
-        assertNotNull(result);
+    void readAndParseYangFileTest() throws Exception {
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/semantic-statement-parser/augmented.yang"))
+            .addSource(sourceForResource("/semantic-statement-parser/root.yang"))
+            .build());
     }
 }

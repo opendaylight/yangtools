@@ -16,67 +16,49 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class EffectiveBuildTest {
-    private static final StatementStreamSource SIMPLE_MODULE = sourceForResource(
-        "/stmt-test/effective-build/simple-module.yang");
     private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.of("simple.yang");
-    private static final StatementStreamSource YANG_EXT = sourceForResource("/stmt-test/extensions/yang-ext.yang");
+    private static final YangIRSource SIMPLE_MODULE =
+        sourceForResource("/stmt-test/effective-build/simple-module.yang");
+    private static final YangIRSource YANG_EXT = sourceForResource("/stmt-test/extensions/yang-ext.yang");
 
     @Test
     void effectiveBuildTest() throws ReactorException {
-        var result = RFC7950Reactors.defaultReactor().newBuild().addSources(SIMPLE_MODULE)
-            .buildEffective();
+        var result = RFC7950Reactors.defaultReactor().newBuild().addSource(SIMPLE_MODULE).buildEffective();
 
         assertNotNull(result);
 
-        Module simpleModule = result.findModules("simple-module").iterator().next();
+        var simpleModule = result.findModules("simple-module").iterator().next();
         assertNotNull(simpleModule);
 
-        final QName q1 = QName.create(SIMPLE_MODULE_QNAME, "root-container");
-        final QName q2 = QName.create(SIMPLE_MODULE_QNAME, "sub-container");
-        final QName q3 = QName.create(SIMPLE_MODULE_QNAME, "sub-sub-container");
-        final QName q4 = QName.create(SIMPLE_MODULE_QNAME, "root-container2");
-        final QName q5 = QName.create(SIMPLE_MODULE_QNAME, "sub-container2");
-        final QName q6 = QName.create(SIMPLE_MODULE_QNAME, "sub-sub-container2");
-        final QName q7 = QName.create(SIMPLE_MODULE_QNAME, "grp");
+        final var q1 = QName.create(SIMPLE_MODULE_QNAME, "root-container");
+        final var q2 = QName.create(SIMPLE_MODULE_QNAME, "sub-container");
+        final var q3 = QName.create(SIMPLE_MODULE_QNAME, "sub-sub-container");
+        final var q4 = QName.create(SIMPLE_MODULE_QNAME, "root-container2");
+        final var q5 = QName.create(SIMPLE_MODULE_QNAME, "sub-container2");
+        final var q6 = QName.create(SIMPLE_MODULE_QNAME, "sub-sub-container2");
+        final var q7 = QName.create(SIMPLE_MODULE_QNAME, "grp");
 
-        ContainerSchemaNode rootCon = (ContainerSchemaNode) simpleModule.getDataChildByName(q1);
-        assertNotNull(rootCon);
+        var rootCon = assertInstanceOf(ContainerSchemaNode.class, simpleModule.getDataChildByName(q1));
+        var subCon = assertInstanceOf(ContainerSchemaNode.class, rootCon.getDataChildByName(q2));
+        var subSubCon = assertInstanceOf(ContainerSchemaNode.class, subCon.getDataChildByName(q3));
+        assertEquals(q3, subSubCon.getQName());
+        var rootCon2 = assertInstanceOf(ContainerSchemaNode.class, simpleModule.getDataChildByName(q4));
+        var subCon2 = assertInstanceOf(ContainerSchemaNode.class, rootCon2.getDataChildByName(q5));
+        var subSubCon2 = assertInstanceOf(ContainerSchemaNode.class, subCon2.getDataChildByName(q6));
+        assertEquals(q6, subSubCon2.getQName());
 
-        ContainerSchemaNode subCon = (ContainerSchemaNode) rootCon.getDataChildByName(q2);
-        assertNotNull(subCon);
-
-        ContainerSchemaNode subSubCon = (ContainerSchemaNode) subCon.getDataChildByName(q3);
-        assertNotNull(subSubCon);
-
-        ContainerSchemaNode rootCon2 = (ContainerSchemaNode) simpleModule.getDataChildByName(q4);
-        assertNotNull(rootCon2);
-
-        ContainerSchemaNode subCon2 = (ContainerSchemaNode) rootCon2.getDataChildByName(q5);
-        assertNotNull(subCon2);
-
-        ContainerSchemaNode subSubCon2 = (ContainerSchemaNode) subCon2.getDataChildByName(q6);
-        assertNotNull(subSubCon2);
-
-        GroupingDefinition grp = simpleModule.getGroupings().iterator().next();
+        var grp = simpleModule.getGroupings().iterator().next();
         assertNotNull(grp);
         assertEquals(q7, grp.getQName());
 
-        ContainerSchemaNode grpSubCon2 = (ContainerSchemaNode) grp.getDataChildByName(q5);
-        assertNotNull(grpSubCon2);
-
-        ContainerSchemaNode grpSubSubCon2 = (ContainerSchemaNode) grpSubCon2.getDataChildByName(q6);
-        assertNotNull(grpSubSubCon2);
-
-        assertEquals(q3, subSubCon.getQName());
-        assertEquals(q6, subSubCon2.getQName());
+        var grpSubCon2 = assertInstanceOf(ContainerSchemaNode.class,  grp.getDataChildByName(q5));
+        var grpSubSubCon2 = assertInstanceOf(ContainerSchemaNode.class, grpSubCon2.getDataChildByName(q6));
         assertEquals(q6, grpSubSubCon2.getQName());
     }
 
@@ -93,7 +75,7 @@ class EffectiveBuildTest {
         var childNodes = grp.getChildNodes();
         assertEquals(1, childNodes.size());
 
-        LeafSchemaNode leaf = assertInstanceOf(LeafSchemaNode.class, childNodes.iterator().next());
+        var leaf = assertInstanceOf(LeafSchemaNode.class, childNodes.iterator().next());
 
         assertNotNull(leaf.getType());
     }

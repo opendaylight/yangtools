@@ -37,7 +37,7 @@ class YinFileStmtTest {
     @Test
     void readAndParseYinFileTestModel() throws ReactorException {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE)
+            .addSource(YIN_FILE).addSource(EXT_FILE).addSource(EXT_USE_FILE)
             .buildEffective());
     }
 

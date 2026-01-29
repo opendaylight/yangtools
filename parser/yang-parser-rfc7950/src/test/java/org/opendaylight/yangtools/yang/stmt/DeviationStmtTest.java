@@ -24,21 +24,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class DeviationStmtTest {
-    private static final StatementStreamSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
-    private static final StatementStreamSource FOO_IMP_MODULE =
-        sourceForResource("/deviation-stmt-test/foo-imp.yang");
-    private static final StatementStreamSource BAR_MODULE = sourceForResource("/deviation-stmt-test/bar.yang");
-    private static final StatementStreamSource BAR_IMP_MODULE =
-        sourceForResource("/deviation-stmt-test/bar-imp.yang");
+    private static final YangIRSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
+    private static final YangIRSource FOO_IMP_MODULE = sourceForResource("/deviation-stmt-test/foo-imp.yang");
+    private static final YangIRSource BAR_MODULE = sourceForResource("/deviation-stmt-test/bar.yang");
+    private static final YangIRSource BAR_IMP_MODULE = sourceForResource("/deviation-stmt-test/bar-imp.yang");
 
     @Test
     void testDeviationAndDeviate() throws Exception {
         final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE)
+            .addSource(FOO_MODULE).addSource(FOO_IMP_MODULE).addSource(BAR_MODULE).addSource(BAR_IMP_MODULE)
             .buildEffective();
         assertNotNull(schemaContext);
 

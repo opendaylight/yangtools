@@ -19,6 +19,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.Iterables;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -40,8 +41,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 class YangParserWithContextTest {
     private static final XMLNamespace T1_NS = XMLNamespace.of("urn:simple.demo.test1");
@@ -49,24 +51,29 @@ class YangParserWithContextTest {
     private static final XMLNamespace T3_NS = XMLNamespace.of("urn:simple.demo.test3");
     private static final Revision REV = Revision.of("2013-06-18");
 
-    private static final StatementStreamSource BAR = sourceForResource("/model/bar.yang");
-    private static final StatementStreamSource BAZ = sourceForResource("/model/baz.yang");
-    private static final StatementStreamSource FOO = sourceForResource("/model/foo.yang");
-    private static final StatementStreamSource SUBFOO = sourceForResource("/model/subfoo.yang");
+    private static final YangIRSource BAR = sourceForResource("/model/bar.yang");
+    private static final YangIRSource BAZ = sourceForResource("/model/baz.yang");
+    private static final YangIRSource FOO = sourceForResource("/model/foo.yang");
+    private static final YangIRSource SUBFOO = sourceForResource("/model/subfoo.yang");
 
-    private static final StatementStreamSource[] IETF = new StatementStreamSource[]{
+    private static final List<YangIRSource> IETF = List.of(
         sourceForResource("/ietf/iana-afn-safi@2012-06-04.yang"),
         sourceForResource("/ietf/iana-if-type@2012-06-05.yang"),
         sourceForResource("/ietf/iana-timezones@2012-07-09.yang"),
         sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"),
         sourceForResource("/ietf/ietf-yang-types@2010-09-24.yang"),
         sourceForResource("/ietf/network-topology@2013-07-12.yang"),
-        sourceForResource("/ietf/network-topology@2013-10-21.yang")};
+        sourceForResource("/ietf/network-topology@2013-10-21.yang"));
+
+    private static @NonNull BuildAction newIetfBuild() {
+        final var build = RFC7950Reactors.defaultReactor().newBuild();
+        IETF.forEach(build::addSource);
+        return build;
+    }
 
     @Test
     void testTypeFromContext() throws Exception {
-        final var context = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(IETF)
+        final var context = newIetfBuild()
             .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
             .addSource(sourceForResource("/context-test/test1.yang"))
             .buildEffective();
@@ -99,7 +106,8 @@ class YangParserWithContextTest {
     @Test
     void testUsesFromContext() throws Exception {
         final var context = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
+            .addSource(BAZ).addSource(FOO).addSource(BAR).addSource(SUBFOO)
+            .addSource(sourceForResource("/context-test/test2.yang"))
             .buildEffective();
 
         final var testModule = context.findModule("test2", Revision.of("2013-06-18")).orElseThrow();
@@ -182,7 +190,8 @@ class YangParserWithContextTest {
     @Test
     void testUsesRefineFromContext() throws Exception {
         final var context = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
+            .addSource(BAZ).addSource(FOO).addSource(BAR).addSource(SUBFOO)
+            .addSource(sourceForResource("/context-test/test2.yang"))
             .buildEffective();
 
         final var module = context.findModule("test2", Revision.of("2013-06-18")).orElseThrow();
@@ -241,8 +250,7 @@ class YangParserWithContextTest {
 
     @Test
     void testIdentity() throws Exception {
-        final var context = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(IETF)
+        final var context = newIetfBuild()
             .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
             .addSource(sourceForResource("/context-test/test3.yang"))
             .buildEffective();
@@ -266,8 +274,7 @@ class YangParserWithContextTest {
 
     @Test
     void testUnknownNodes() throws Exception {
-        final var context = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(IETF)
+        final var context = newIetfBuild()
             .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
             .addSource(sourceForResource("/context-test/test3.yang"))
             .buildEffective();

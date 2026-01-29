@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -16,35 +17,34 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
 class AugmentArgumentParsingTest {
 
-    private static final StatementStreamSource IMPORTED = sourceForResource(
+    private static final YangIRSource IMPORTED = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/imported.yang");
-    private static final StatementStreamSource VALID_ARGS = sourceForResource(
+    private static final YangIRSource VALID_ARGS = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/root-valid-aug-args.yang");
-    private static final StatementStreamSource INVALID_REL1 = sourceForResource(
+    private static final YangIRSource INVALID_REL1 = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel1.yang");
-    private static final StatementStreamSource INVALID_REL2 = sourceForResource(
+    private static final YangIRSource INVALID_REL2 = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel2.yang");
-    private static final StatementStreamSource INVALID_ABS = sourceForResource(
+    private static final YangIRSource INVALID_ABS = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs.yang");
-    private static final StatementStreamSource INVALID_ABS_PREFIXED_NO_IMP = sourceForResource(
+    private static final YangIRSource INVALID_ABS_PREFIXED_NO_IMP = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs-no-imp.yang");
-    private static final StatementStreamSource INVALID_EMPTY = sourceForResource(
+    private static final YangIRSource INVALID_EMPTY = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/root-invalid-empty.yang");
-    private static final StatementStreamSource INVALID_XPATH = sourceForResource(
+    private static final YangIRSource INVALID_XPATH = sourceForResource(
         "/semantic-statement-parser/augment-arg-parsing/root-invalid-xpath.yang");
 
     @Test
     void validAugAbsTest() throws ReactorException {
-        final ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(IMPORTED, VALID_ARGS)
+        final var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(IMPORTED).addSource(VALID_ARGS)
             .build();
         assertNotNull(result);
     }
@@ -98,8 +98,8 @@ class AugmentArgumentParsingTest {
         assertEquals(7, ase.getPosition());
     }
 
-    private static ReactorException assertReactorThrows(final StatementStreamSource source) {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(source);
+    private static ReactorException assertReactorThrows(final YangIRSource source) {
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(requireNonNull(source));
         return assertThrows(ReactorException.class, () -> reactor.build());
     }
 

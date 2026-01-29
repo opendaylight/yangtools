@@ -16,19 +16,18 @@ import org.opendaylight.yangtools.rfc8040.parser.dagger.Rfc8040Module;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 abstract class AbstractYangDataTest {
     private static final YangTextToIRSourceTransformer TRANSFORMER = YangIRSourceModule.provideTextToIR();
-    private static final StatementStreamSource IETF_RESTCONF_MODULE =
+    private static final YangIRSource IETF_RESTCONF_MODULE =
         sourceForResource("/yang-data-extension-test/ietf-restconf.yang");
 
     private static CrossSourceStatementReactor REACTOR;
@@ -50,13 +49,13 @@ abstract class AbstractYangDataTest {
         return REACTOR.newBuild().addSource(IETF_RESTCONF_MODULE);
     }
 
-    static final @NonNull StatementStreamSource sourceForYangText(final String yangText) {
-        return assertDoesNotThrow(() -> new YangIRStatementStreamSource(TRANSFORMER.transformSource(
-            new StringYangTextSource(SourceIdentifier.ofYangFileName("dummy.yang"), yangText))));
+    static final @NonNull YangIRSource sourceForYangText(final String yangText) {
+        return assertDoesNotThrow(() -> TRANSFORMER.transformSource(
+            new StringYangTextSource(SourceIdentifier.ofYangFileName("dummy.yang"), yangText)));
     }
 
-    static final @NonNull StatementStreamSource sourceForResource(final String resourceName) {
-        return assertDoesNotThrow(() -> new YangIRStatementStreamSource(TRANSFORMER.transformSource(
-            new URLYangTextSource(AbstractYangDataTest.class.getResource(resourceName)))));
+    static final @NonNull YangIRSource sourceForResource(final String resourceName) {
+        return assertDoesNotThrow(() -> TRANSFORMER.transformSource(
+            new URLYangTextSource(AbstractYangDataTest.class.getResource(resourceName))));
     }
 }

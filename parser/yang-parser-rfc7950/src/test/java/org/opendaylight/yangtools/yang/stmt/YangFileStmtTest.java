@@ -13,27 +13,26 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class YangFileStmtTest extends AbstractYangTest {
-    private static final StatementStreamSource BAR = sourceForResource("/model-new/bar.yang");
-    private static final StatementStreamSource BAZ = sourceForResource("/model-new/baz.yang");
-    private static final StatementStreamSource FOO = sourceForResource("/model-new/foo.yang");
-    private static final StatementStreamSource SUBFOO = sourceForResource("/model-new/subfoo.yang");
-
-    private static final StatementStreamSource BAR2 = sourceForResource("/model/bar.yang");
-    private static final StatementStreamSource BAZ2 = sourceForResource("/model/baz.yang");
-    private static final StatementStreamSource FOO2 = sourceForResource("/model/foo.yang");
-    private static final StatementStreamSource SUBFOO2 = sourceForResource("/model/subfoo.yang");
-
     @Test
     void readAndParseYangFileTestModel() throws ReactorException {
-        assertNotNull(RFC7950Reactors.defaultReactor().newBuild().addSources(BAZ, FOO, BAR, SUBFOO).build());
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/model-new/baz.yang"))
+            .addSource(sourceForResource("/model-new/foo.yang"))
+            .addSource(sourceForResource("/model-new/bar.yang"))
+            .addSource(sourceForResource("/model-new/subfoo.yang"))
+            .build());
     }
 
     @Test
     void readAndParseYangFileTestModel2() throws ReactorException {
-        assertNotNull(RFC7950Reactors.defaultReactor().newBuild().addSources(BAZ2, FOO2, BAR2, SUBFOO2).build());
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/model/baz.yang"))
+            .addSource(sourceForResource("/model/foo.yang"))
+            .addSource(sourceForResource("/model/bar.yang"))
+            .addSource(sourceForResource("/model/subfoo.yang"))
+            .build());
     }
 
     @Test

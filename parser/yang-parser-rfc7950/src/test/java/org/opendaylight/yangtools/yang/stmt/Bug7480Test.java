@@ -61,9 +61,10 @@ class Bug7480Test {
         final var schemaContext =  RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
-            .addLibSources(
+            .addLibSource(
                 StmtTestUtils.sourceForResource(
-                    "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"),
+                    "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
+            .addLibSource(
                 StmtTestUtils.sourceForResource(
                     "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
             .buildEffective();
@@ -77,9 +78,10 @@ class Bug7480Test {
         final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
-            .addLibSources(
+            .addLibSource(
                 StmtTestUtils.sourceForResource(
-                    "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"),
+                    "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
+            .addLibSource(
                 StmtTestUtils.sourceForResource(
                     "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
             .buildEffective();
@@ -88,9 +90,9 @@ class Bug7480Test {
 
     private static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
             final String yangLibsDirectoryPath) throws Exception {
-        return RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(TestUtils.loadSources(yangFilesDirectoryPath))
-            .addLibSources(TestUtils.loadSources(yangLibsDirectoryPath))
-            .buildEffective();
+        final var build = RFC7950Reactors.defaultReactor().newBuild();
+        TestUtils.loadSources(yangFilesDirectoryPath).forEach(build::addSource);
+        TestUtils.loadSources(yangLibsDirectoryPath).forEach(build::addLibSource);
+        return build.buildEffective();
     }
 }

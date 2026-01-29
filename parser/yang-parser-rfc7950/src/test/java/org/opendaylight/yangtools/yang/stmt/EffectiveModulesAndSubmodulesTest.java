@@ -25,30 +25,21 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class EffectiveModulesAndSubmodulesTest {
     private static final Logger LOG = LoggerFactory.getLogger(EffectiveModulesAndSubmodulesTest.class);
-    private static final StatementStreamSource ROOT_MODULE = sourceForResource(
-        "/stmt-test/submodules/root-module.yang");
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
-        "/stmt-test/submodules/imported-module.yang");
-    private static final StatementStreamSource SUBMODULE_1 = sourceForResource(
-        "/stmt-test/submodules/submodule-1.yang");
-    private static final StatementStreamSource SUBMODULE_2 = sourceForResource(
-        "/stmt-test/submodules/submodule-2.yang");
-    private static final StatementStreamSource SUBMODULE_TO_SUBMODULE_1 = sourceForResource(
-        "/stmt-test/submodules/submodule-to-submodule-1.yang");
-
     private static final QNameModule ROOT = QNameModule.of("root-module");
 
     @Test
-    void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
+    void modulesAndSubmodulesSimpleReferencesTest() throws Exception {
         final var result = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1)
+            .addSource(sourceForResource("/stmt-test/submodules/root-module.yang"))
+            .addSource(sourceForResource("/stmt-test/submodules/imported-module.yang"))
+            .addSource(sourceForResource("/stmt-test/submodules/submodule-1.yang"))
+            .addSource(sourceForResource("/stmt-test/submodules/submodule-2.yang"))
+            .addSource(sourceForResource("/stmt-test/submodules/submodule-to-submodule-1.yang"))
             .buildEffective();
 
         assertNotNull(result);

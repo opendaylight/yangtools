@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransf
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class AnnotationTest {
@@ -39,11 +38,10 @@ class AnnotationTest {
                 Rfc7952Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var context = reactor.newBuild()
-            .addSources(
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(
-                    new URLYangTextSource(AnnotationTest.class.getResource("/ietf-yang-metadata@2016-08-05.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(
-                    new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang")))))
+            .addSource(TRANSFORMER, new URLYangTextSource(
+                AnnotationTest.class.getResource("/ietf-yang-metadata@2016-08-05.yang")))
+            .addSource(TRANSFORMER, new URLYangTextSource(
+                AnnotationTest.class.getResource("/example-last-modified.yang")))
             .buildEffective();
 
         final var annotations = AnnotationSchemaNode.findAll(context);

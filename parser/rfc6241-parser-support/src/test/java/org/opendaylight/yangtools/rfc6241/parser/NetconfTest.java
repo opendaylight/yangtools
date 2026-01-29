@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class NetconfTest {
@@ -37,10 +36,10 @@ class NetconfTest {
             .build();
         final var transformer = YangIRSourceModule.provideTextToIR();
         final var context = assertDoesNotThrow(() -> reactor.newBuild()
-            .addLibSources(new YangIRStatementStreamSource(transformer.transformSource(
-                new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))))
-            .addSource(new YangIRStatementStreamSource(transformer.transformSource(
-                new URLYangTextSource(NetconfTest.class.getResource("/ietf-netconf@2011-06-01.yang")))))
+            .addLibSource(transformer,
+                new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
+            .addSource(transformer,
+                new URLYangTextSource(NetconfTest.class.getResource("/ietf-netconf@2011-06-01.yang")))
             .buildEffective());
 
         final var module = context.findModule(NetconfConstants.RFC6241_MODULE).orElseThrow();

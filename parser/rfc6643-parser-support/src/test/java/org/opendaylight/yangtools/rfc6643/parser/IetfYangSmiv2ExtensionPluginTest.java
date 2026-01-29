@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class IetfYangSmiv2ExtensionPluginTest {
@@ -44,11 +43,10 @@ class IetfYangSmiv2ExtensionPluginTest {
             .build();
         final var textToIR = YangIRSourceModule.provideTextToIR();
         final var context = reactor.newBuild()
-            .addSources(
-                new YangIRStatementStreamSource(textToIR.transformSource(new URLYangTextSource(
-                    IetfYangSmiv2ExtensionPluginTest.class.getResource("/foo.yang")))),
-                new YangIRStatementStreamSource(textToIR.transformSource(new URLYangTextSource(
-                    IetfYangSmiv2ExtensionPluginTest.class.getResource("/ietf-yang-smiv2.yang")))))
+            .addSource(textToIR, new URLYangTextSource(
+                IetfYangSmiv2ExtensionPluginTest.class.getResource("/foo.yang")))
+            .addSource(textToIR,new URLYangTextSource(
+                IetfYangSmiv2ExtensionPluginTest.class.getResource("/ietf-yang-smiv2.yang")))
             .buildEffective();
 
         assertEquals(1, context.getUnknownSchemaNodes().size());

@@ -23,26 +23,22 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class YangDataExtensionTest extends AbstractYangDataTest {
-    private static final StatementStreamSource FOO_MODULE = sourceForResource(
-            "/yang-data-extension-test/foo.yang");
-    private static final StatementStreamSource FOO_INVALID_1_MODULE = sourceForResource(
-            "/yang-data-extension-test/foo-invalid-1.yang");
-    private static final StatementStreamSource FOO_INVALID_2_MODULE = sourceForResource(
-            "/yang-data-extension-test/foo-invalid-2.yang");
-    private static final StatementStreamSource FOO_INVALID_3_MODULE = sourceForResource(
-            "/yang-data-extension-test/foo-invalid-3.yang");
-    private static final StatementStreamSource BAR_MODULE = sourceForResource(
-            "/yang-data-extension-test/bar.yang");
-    private static final StatementStreamSource BAZ_MODULE = sourceForResource(
-            "/yang-data-extension-test/baz.yang");
-    private static final StatementStreamSource FOOBAR_MODULE = sourceForResource(
-            "/yang-data-extension-test/foobar.yang");
+    private static final YangIRSource FOO_MODULE = sourceForResource("/yang-data-extension-test/foo.yang");
+    private static final YangIRSource FOO_INVALID_1_MODULE =
+        sourceForResource("/yang-data-extension-test/foo-invalid-1.yang");
+    private static final YangIRSource FOO_INVALID_2_MODULE =
+        sourceForResource("/yang-data-extension-test/foo-invalid-2.yang");
+    private static final YangIRSource FOO_INVALID_3_MODULE =
+        sourceForResource("/yang-data-extension-test/foo-invalid-3.yang");
+    private static final YangIRSource BAR_MODULE = sourceForResource("/yang-data-extension-test/bar.yang");
+    private static final YangIRSource BAZ_MODULE = sourceForResource("/yang-data-extension-test/baz.yang");
+    private static final YangIRSource FOOBAR_MODULE = sourceForResource("/yang-data-extension-test/foobar.yang");
 
     private static final Revision REVISION = Revision.of("2017-06-01");
     private static final QNameModule FOO_QNAMEMODULE = QNameModule.of(XMLNamespace.of("foo"), REVISION);

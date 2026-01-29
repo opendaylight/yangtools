@@ -35,8 +35,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransf
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 
 public final class TestUtils {
     private static final @NonNull YinTextToDOMSourceTransformer TEXT_TO_DOM =
@@ -48,20 +46,20 @@ public final class TestUtils {
         // Hidden on purpose
     }
 
-    public static @NonNull List<StatementStreamSource> loadSources(final String resourceDirectory)
+    public static @NonNull List<YangIRSource> loadSources(final String resourceDirectory)
             throws Exception {
         return loadSources(TestUtils.class, resourceDirectory);
     }
 
-    public static @NonNull List<StatementStreamSource> loadSources(final Class<?> cls, final String resourceDirectory)
+    public static @NonNull List<YangIRSource> loadSources(final Class<?> cls, final String resourceDirectory)
             throws Exception {
         final var files = Path.of(cls.getResource(resourceDirectory).toURI())
             // FIXME: use Files instead
             .toFile().listFiles(StmtTestUtils.YANG_FILE_FILTER);
 
-        final var sources = new ArrayList<StatementStreamSource>(files.length);
+        final var sources = new ArrayList<YangIRSource>(files.length);
         for (var file : files) {
-            sources.add(new YangIRStatementStreamSource(assertSchemaSource(file.toPath())));
+            sources.add(assertYangSource(file.toPath()));
         }
         return sources;
     }
@@ -82,8 +80,8 @@ public final class TestUtils {
 
     public static EffectiveModelContext loadModules(final Class<?> cls, final String resourceDirectory,
             final @Nullable Set<QName> supportedFeatures) throws Exception {
-        final var action = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(loadSources(cls, resourceDirectory));
+        final var action = RFC7950Reactors.defaultReactor().newBuild();
+        loadSources(cls, resourceDirectory).forEach(action::addSource);
         if (supportedFeatures != null) {
             action.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
@@ -98,7 +96,7 @@ public final class TestUtils {
             final @Nullable Set<QName> supportedFeatures) throws Exception {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild();
         for (var resourcePath : yangSourceFilePath) {
-            reactor.addSource(new YangIRStatementStreamSource(assertSchemaSource(resourcePath)));
+            reactor.addSource(assertYangSource(resourcePath));
         }
         if (supportedFeatures != null) {
             reactor.setSupportedFeatures(FeatureSet.of(supportedFeatures));
@@ -106,11 +104,11 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static @NonNull YangIRSource assertSchemaSource(final String resourcePath) throws SourceSyntaxException {
+    public static @NonNull YangIRSource assertYangSource(final String resourcePath) throws SourceSyntaxException {
         return TEXT_TO_IR.transformSource(new URLYangTextSource(TestUtils.class.getResource(resourcePath)));
     }
 
-    public static @NonNull YangIRSource assertSchemaSource(final Path file) throws SourceSyntaxException {
+    public static @NonNull YangIRSource assertYangSource(final Path file) throws SourceSyntaxException {
         return TEXT_TO_IR.transformSource(new FileYangTextSource(file));
     }
 

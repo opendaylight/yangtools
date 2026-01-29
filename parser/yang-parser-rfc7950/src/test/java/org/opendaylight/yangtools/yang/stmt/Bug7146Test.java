@@ -17,7 +17,7 @@ class Bug7146Test {
     @Test
     void shouldFailOnSyntaxError() throws Exception {
         final var ex = assertThrows(SourceSyntaxException.class,
-            () -> TestUtils.assertSchemaSource("/bugs/bug7146/foo.yang"));
+            () -> TestUtils.assertYangSource("/bugs/bug7146/foo.yang"));
         assertThat(ex.getMessage())
             .startsWith("extraneous input '#' expecting {'}', SEP, IDENTIFIER} [at ")
             .endsWith("/foo.yang:7:4]");

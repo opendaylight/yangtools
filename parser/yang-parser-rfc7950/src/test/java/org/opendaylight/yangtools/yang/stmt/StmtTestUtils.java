@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -27,15 +27,13 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +59,9 @@ public final class StmtTestUtils {
         }
     }
 
-    public static StatementStreamSource sourceForResource(final String resourceName) {
-        return new YangIRStatementStreamSource(assertDoesNotThrow(() -> TestUtils.assertSchemaSource(resourceName)));
+    @NonNullByDefault
+    public static YangIRSource sourceForResource(final String resourceName) {
+        return assertDoesNotThrow(() -> TestUtils.assertYangSource(resourceName));
     }
 
     public static EffectiveModelContext parseYangSource(final String yangSourcePath, final Set<QName> supportedFeatures)
@@ -79,20 +78,11 @@ public final class StmtTestUtils {
             Path.of(StmtTestUtils.class.getResource(yangSourcePath).toURI()).toFile());
     }
 
-    public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
-            throws ReactorException {
-        return parseYangSources(YangParserConfiguration.DEFAULT, null, sources);
-    }
-
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
-            final Set<QName> supportedFeatures, final StatementStreamSource... sources) throws ReactorException {
-        return parseYangSources(config, supportedFeatures, Arrays.asList(sources));
-    }
-
-    public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
-            final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
+            final Set<QName> supportedFeatures, final Collection<? extends YangIRSource> sources)
             throws ReactorException {
-        final BuildAction build = getReactor(config).newBuild().addSources(sources);
+        final var build = getReactor(config).newBuild();
+        sources.forEach(build::addSource);
         if (supportedFeatures != null) {
             build.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
@@ -108,9 +98,9 @@ public final class StmtTestUtils {
             final Set<QName> supportedFeatures, final File... files)
                 throws ReactorException, IOException, YangSyntaxErrorException, ExtractorException,
                        SourceSyntaxException {
-        final var sources = new ArrayList<StatementStreamSource>(files.length);
+        final var sources = new ArrayList<YangIRSource>(files.length);
         for (var file : files) {
-            sources.add(new YangIRStatementStreamSource(TestUtils.assertSchemaSource(file.toPath())));
+            sources.add(TestUtils.assertYangSource(file.toPath()));
         }
         return parseYangSources(config, supportedFeatures, sources);
     }
@@ -139,27 +129,18 @@ public final class StmtTestUtils {
             final YangParserConfiguration config) throws URISyntaxException, ReactorException, SourceSyntaxException {
         final var files = Path.of(StmtTestUtils.class.getResource(yinSourcesDirectoryPath).toURI()).toFile()
             .listFiles(YIN_FILE_FILTER);
-        final var sources = new StatementStreamSource[files.length];
 
-        for (int i = 0; i < files.length; i++) {
-            sources[i] = YinStatementStreamSource.create(TestUtils.assertYinSource(files[i].toPath()));
+        final var build = getReactor(config).newBuild();
+        for (var file : files) {
+            build.addSource(YinStatementStreamSource.create(TestUtils.assertYinSource(file.toPath())));
         }
-
-        return parseYinSources(config, sources);
-    }
-
-    public static EffectiveModelContext parseYinSources(final YangParserConfiguration config,
-            final StatementStreamSource... sources) throws ReactorException {
-        return getReactor(config)
-            .newBuild()
-            .addSources(sources)
-            .buildEffective();
+        return build.buildEffective();
     }
 
     public static Module findImportedModule(final SchemaContext context, final Module rootModule,
             final String importedModuleName) {
         ModuleImport requestedModuleImport = null;
-        for (final ModuleImport moduleImport : rootModule.getImports()) {
+        for (var moduleImport : rootModule.getImports()) {
             if (moduleImport.getModuleName().equals(importedModuleName)) {
                 requestedModuleImport = moduleImport;
                 break;
@@ -167,8 +148,7 @@ public final class StmtTestUtils {
         }
 
         return context.findModule(requestedModuleImport.getModuleName().getLocalName(),
-                    requestedModuleImport.getRevision())
-                .orElse(null);
+            requestedModuleImport.getRevision()).orElse(null);
     }
 
     private static CrossSourceStatementReactor getReactor(final YangParserConfiguration config) {

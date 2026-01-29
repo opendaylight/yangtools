@@ -21,48 +21,38 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class IncludeResolutionTest {
-    private static final StatementStreamSource ROOT = sourceForResource(
-        "/semantic-statement-parser/include-arg-parsing/root-module.yang");
-    private static final StatementStreamSource SUBMODULE1 = sourceForResource(
-        "/semantic-statement-parser/include-arg-parsing/submodule-1.yang");
-    private static final StatementStreamSource SUBMODULE2 = sourceForResource(
-        "/semantic-statement-parser/include-arg-parsing/submodule-2.yang");
-    private static final StatementStreamSource ERROR_MODULE = sourceForResource(
-        "/semantic-statement-parser/include-arg-parsing/error-module.yang");
-    private static final StatementStreamSource ERROR_SUBMODULE = sourceForResource(
-        "/semantic-statement-parser/include-arg-parsing/error-submodule.yang");
-    private static final StatementStreamSource ERROR_SUBMODULE_ROOT = sourceForResource(
-        "/semantic-statement-parser/include-arg-parsing/error-submodule-root.yang");
-    private static final StatementStreamSource MISSING_PARENT_MODULE = sourceForResource(
-        "/semantic-statement-parser/include-arg-parsing/missing-parent.yang");
-
     @Test
     void includeTest() throws Exception {
-        var result = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(ROOT, SUBMODULE1, SUBMODULE2)
-            .build();
-        assertNotNull(result);
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/root-module.yang"))
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/submodule-1.yang"))
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/submodule-2.yang"))
+            .build());
     }
 
     @Test
     void missingIncludedSourceTest() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(ERROR_MODULE);
+        var reactor = RFC7950Reactors.defaultReactor()
+            .newBuild()
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-module.yang"));
         assertNull(assertFailedSourceLinkage(reactor::build, "Included submodule 'foo' was not found [at ").getCause());
     }
 
     @Test
     void missingIncludedSourceTest2() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(ERROR_SUBMODULE, ERROR_SUBMODULE_ROOT);
+        var reactor = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule.yang"))
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule-root.yang"));
         var cause = assertFailedSourceLinkage(reactor::build, "Included submodule 'foo' was not found [at ");
         assertNull(cause.getCause());
     }
 
     @Test
     void missingIncludedSourceTest3() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(MISSING_PARENT_MODULE);
+        var reactor = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/missing-parent.yang"));
         assertNull(assertFailedSourceLinkage(reactor::build,
             "Module 'Unqualified{localName=foo}' from belongs-to was not found [at ").getCause());
     }

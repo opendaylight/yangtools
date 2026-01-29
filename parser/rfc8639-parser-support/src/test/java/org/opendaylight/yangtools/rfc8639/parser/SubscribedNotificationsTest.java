@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransf
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class SubscribedNotificationsTest {
@@ -34,26 +33,24 @@ class SubscribedNotificationsTest {
                 .build();
 
         final var context = reactor.newBuild()
-            .addLibSources(
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-interfaces@2018-02-20.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-ip@2018-02-22.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-netconf-acm@2018-02-14.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-network-instance@2019-01-21.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-restconf@2017-01-26.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-yang-schema-mount@2019-01-14.yang")))),
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))))
-            .addSource(
-                new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                    SubscribedNotificationsTest.class.getResource("/ietf-subscribed-notifications@2019-09-09.yang")))))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-interfaces@2018-02-20.yang")))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-ip@2018-02-22.yang")))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-netconf-acm@2018-02-14.yang")))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-network-instance@2019-01-21.yang")))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-restconf@2017-01-26.yang")))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-yang-schema-mount@2019-01-14.yang")))
+            .addLibSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))
+            .addSource(TRANSFORMER, new URLYangTextSource(
+                SubscribedNotificationsTest.class.getResource("/ietf-subscribed-notifications@2019-09-09.yang")))
             .buildEffective();
 
         final var notifications = context.getModuleStatement(SubscribedNotificationsConstants.RFC8639_MODULE)

@@ -20,20 +20,20 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 class Bug6874Test extends AbstractYangTest {
-    private static final StatementStreamSource ROOT_MODULE = sourceForResource(
-        "/rfc7950/include-import-stmt-test/valid-11/root-module.yang");
-    private static final StatementStreamSource CHILD_MODULE = sourceForResource(
-        "/rfc7950/include-import-stmt-test/valid-11/child-module.yang");
-    private static final StatementStreamSource CHILD_MODULE_1 = sourceForResource(
-        "/rfc7950/include-import-stmt-test/valid-11/child-module-1.yang");
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
-        "/rfc7950/include-import-stmt-test/valid-11/imported-module.yang");
+    private static final YangIRSource ROOT_MODULE =
+        sourceForResource("/rfc7950/include-import-stmt-test/valid-11/root-module.yang");
+    private static final YangIRSource CHILD_MODULE =
+        sourceForResource("/rfc7950/include-import-stmt-test/valid-11/child-module.yang");
+    private static final YangIRSource CHILD_MODULE_1 =
+        sourceForResource("/rfc7950/include-import-stmt-test/valid-11/child-module-1.yang");
+    private static final YangIRSource IMPORTED_MODULE =
+        sourceForResource("/rfc7950/include-import-stmt-test/valid-11/imported-module.yang");
 
     @Test
     void valid11Test() {
@@ -67,7 +67,7 @@ class Bug6874Test extends AbstractYangTest {
     @Test
     void descriptionAndReferenceTest11() throws ReactorException {
         RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE)
+            .addSource(ROOT_MODULE).addSource(CHILD_MODULE).addSource(CHILD_MODULE_1).addSource(IMPORTED_MODULE)
             .build()
             .getRootStatements()
             .forEach(stmt -> {

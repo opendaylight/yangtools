@@ -19,19 +19,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class Bug8307Test {
-    private static final StatementStreamSource FOO_MODULE = sourceForResource("/bugs/bug8307/foo.yang");
-    private static final StatementStreamSource BAR_MODULE = sourceForResource("/bugs/bug8307/bar.yang");
-    private static final StatementStreamSource BAZ_MODULE = sourceForResource("/bugs/bug8307/baz.yang");
-    private static final StatementStreamSource FOOBAR_MODULE = sourceForResource("/bugs/bug8307/foobar.yang");
-    private static final StatementStreamSource FOO_INVALID_MODULE = sourceForResource("/bugs/bug8307/foo-invalid.yang");
-    private static final StatementStreamSource BAR_INVALID_MODULE = sourceForResource("/bugs/bug8307/bar-invalid.yang");
-    private static final StatementStreamSource BAZ_INVALID_MODULE = sourceForResource("/bugs/bug8307/baz-invalid.yang");
+    private static final YangIRSource FOO_MODULE = sourceForResource("/bugs/bug8307/foo.yang");
+    private static final YangIRSource BAR_MODULE = sourceForResource("/bugs/bug8307/bar.yang");
+    private static final YangIRSource BAZ_MODULE = sourceForResource("/bugs/bug8307/baz.yang");
+    private static final YangIRSource FOOBAR_MODULE = sourceForResource("/bugs/bug8307/foobar.yang");
+    private static final YangIRSource FOO_INVALID_MODULE = sourceForResource("/bugs/bug8307/foo-invalid.yang");
+    private static final YangIRSource BAR_INVALID_MODULE = sourceForResource("/bugs/bug8307/bar-invalid.yang");
+    private static final YangIRSource BAZ_INVALID_MODULE = sourceForResource("/bugs/bug8307/baz-invalid.yang");
 
     private static final QNameModule FOO = QNameModule.of("foo-ns", "2017-05-16");
     private static final QName MY_FOO_CONT_A = QName.create(FOO, "my-foo-cont-a");
@@ -46,7 +46,7 @@ class Bug8307Test {
     @Test
     void testDeviationsSupportedInSomeModules() throws Exception {
         final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+            .addSource(FOO_MODULE).addSource(BAR_MODULE).addSource(BAZ_MODULE).addSource(FOOBAR_MODULE)
             .setModulesWithSupportedDeviations(ImmutableSetMultimap.<QNameModule, QNameModule>builder()
                 .put(FOO, BAR)
                 .put(FOO, BAZ)
@@ -65,7 +65,7 @@ class Bug8307Test {
     @Test
     void testDeviationsSupportedInAllModules() throws Exception {
         final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+            .addSource(FOO_MODULE).addSource(BAR_MODULE).addSource(BAZ_MODULE).addSource(FOOBAR_MODULE)
             .buildEffective();
         assertNotNull(schemaContext);
 
@@ -79,7 +79,7 @@ class Bug8307Test {
     @Test
     void testDeviationsSupportedInNoModule() throws Exception {
         final var schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+            .addSource(FOO_MODULE).addSource(BAR_MODULE).addSource(BAZ_MODULE).addSource(FOOBAR_MODULE)
             .setModulesWithSupportedDeviations(ImmutableSetMultimap.of())
             .buildEffective();
         assertNotNull(schemaContext);
@@ -93,7 +93,7 @@ class Bug8307Test {
 
     @Test
     void shouldFailOnAttemptToDeviateTheSameModule() {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(FOO_INVALID_MODULE);
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(FOO_INVALID_MODULE);
 
         final var cause = assertInstanceOf(InferenceException.class,
             assertThrows(ReactorException.class, reactor::buildEffective).getCause());
@@ -104,7 +104,7 @@ class Bug8307Test {
     @Test
     void shouldFailOnAttemptToDeviateTheSameModule2() {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(BAR_INVALID_MODULE, BAZ_INVALID_MODULE);
+            .addSource(BAR_INVALID_MODULE).addSource(BAZ_INVALID_MODULE);
 
         final var cause = assertInstanceOf(InferenceException.class,
             assertThrows(ReactorException.class, reactor::buildEffective).getCause());

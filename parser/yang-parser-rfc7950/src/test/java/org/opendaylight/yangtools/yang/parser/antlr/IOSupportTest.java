@@ -26,7 +26,7 @@ class IOSupportTest {
 
     @BeforeAll
     static void beforeClass() throws Exception {
-        FOO = TestUtils.assertSchemaSource("/bugs/YT1089/foo.yang");
+        FOO = TestUtils.assertYangSource("/bugs/YT1089/foo.yang");
     }
 
     @Test

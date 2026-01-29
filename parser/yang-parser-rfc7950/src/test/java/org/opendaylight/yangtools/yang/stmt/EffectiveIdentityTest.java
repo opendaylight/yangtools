@@ -24,23 +24,16 @@ import java.util.Arrays;
 import java.util.Comparator;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class EffectiveIdentityTest {
-    private static final StatementStreamSource IDENTITY_TEST = sourceForResource(
-        "/stmt-test/identity/identity-test.yang");
-    private static final StatementStreamSource CYCLIC_IDENTITY_TEST = sourceForResource(
-        "/stmt-test/identity/cyclic-identity-test.yang");
-
     @Test
     void cyclicDefineTest() {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(CYCLIC_IDENTITY_TEST);
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/stmt-test/identity/cyclic-identity-test.yang"));
         final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
         assertInstanceOf(InferenceException.class, cause);
         assertThat(cause.getMessage()).startsWith("Yang model processing phase STATEMENT_DEFINITION failed [at ");
@@ -72,10 +65,12 @@ class EffectiveIdentityTest {
 
     @Test
     void identityTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(IDENTITY_TEST).buildEffective();
+        final var result = RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/stmt-test/identity/identity-test.yang"))
+            .buildEffective();
         assertNotNull(result);
 
-        Module module = result.findModule("identity-test").orElseThrow();
+        final var module = result.findModule("identity-test").orElseThrow();
         var identities = module.getIdentities();
 
         assertNotNull(identities);
@@ -85,22 +80,19 @@ class EffectiveIdentityTest {
         IdentitySchemaNode child1 = null;
         IdentitySchemaNode child2 = null;
         IdentitySchemaNode child12 = null;
-        for (IdentitySchemaNode identitySchemaNode : identities) {
+        for (var identitySchemaNode : identities) {
             switch (identitySchemaNode.getQName().getLocalName()) {
-                case "root-identity":
+                case "root-identity" ->
                     root = identitySchemaNode;
-                    break;
-                case "child-identity-1":
+                case "child-identity-1" ->
                     child1 = identitySchemaNode;
-                    break;
-                case "child-identity-2":
+                case "child-identity-2" ->
                     child2 = identitySchemaNode;
-                    break;
-                case "child-identity-1-2":
+                case "child-identity-1-2" ->
                     child12 = identitySchemaNode;
-                    break;
-                default:
-                    break;
+                default -> {
+                    // No-op
+                }
             }
         }
 

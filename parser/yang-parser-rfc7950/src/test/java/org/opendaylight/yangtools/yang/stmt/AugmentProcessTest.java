@@ -22,14 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 class AugmentProcessTest extends AbstractYangTest {
-    private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
-    private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
+    private static final YangIRSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
+    private static final YangIRSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
     private static final QNameModule ROOT_QNAME_MODULE = QNameModule.of("root");
     private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.of("aug");
@@ -54,26 +54,25 @@ class AugmentProcessTest extends AbstractYangTest {
     private final QName grpCont22 = QName.create(ROOT_QNAME_MODULE, "grp-cont22");
     private final QName grpAdd = QName.create(ROOT_QNAME_MODULE, "grp-add");
 
-    private static final StatementStreamSource MULTIPLE_AUGMENT = sourceForResource(
-        "/stmt-test/augments/multiple-augment-test.yang");
-
-    private static final StatementStreamSource MULTIPLE_AUGMENT_ROOT = sourceForResource(
-        "/stmt-test/augments/multiple-augment-root.yang");
-    private static final StatementStreamSource MULTIPLE_AUGMENT_IMPORTED = sourceForResource(
-        "/stmt-test/augments/multiple-augment-imported.yang");
-    private static final StatementStreamSource MULTIPLE_AUGMENT_SUBMODULE = sourceForResource(
-        "/stmt-test/augments/multiple-augment-submodule.yang");
-
-    private static final StatementStreamSource MULTIPLE_AUGMENT_INCORRECT = sourceForResource(
-        "/stmt-test/augments/multiple-augment-incorrect.yang");
-
-    private static final StatementStreamSource MULTIPLE_AUGMENT_INCORRECT2 = sourceForResource(
-        "/stmt-test/augments/multiple-augment-incorrect2.yang");
+    private static final YangIRSource MULTIPLE_AUGMENT =
+        sourceForResource("/stmt-test/augments/multiple-augment-test.yang");
+    private static final YangIRSource MULTIPLE_AUGMENT_ROOT =
+        sourceForResource("/stmt-test/augments/multiple-augment-root.yang");
+    private static final YangIRSource MULTIPLE_AUGMENT_IMPORTED =
+        sourceForResource("/stmt-test/augments/multiple-augment-imported.yang");
+    private static final YangIRSource MULTIPLE_AUGMENT_SUBMODULE =
+        sourceForResource("/stmt-test/augments/multiple-augment-submodule.yang");
+    private static final YangIRSource MULTIPLE_AUGMENT_INCORRECT =
+        sourceForResource("/stmt-test/augments/multiple-augment-incorrect.yang");
+    private static final YangIRSource MULTIPLE_AUGMENT_INCORRECT2 =
+        sourceForResource("/stmt-test/augments/multiple-augment-incorrect2.yang");
 
     @Test
     void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
         final var result = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED, MULTIPLE_AUGMENT_SUBMODULE)
+            .addSource(MULTIPLE_AUGMENT_ROOT)
+            .addSource(MULTIPLE_AUGMENT_IMPORTED)
+            .addSource(MULTIPLE_AUGMENT_SUBMODULE)
             .buildEffective();
         assertNotNull(result);
     }
@@ -103,7 +102,7 @@ class AugmentProcessTest extends AbstractYangTest {
     @Test
     void readAndParseYangFileTest() throws ReactorException {
         final var root = RFC7950Reactors.defaultReactor().newBuild()
-            .addSources(AUGMENTED, ROOT)
+            .addSource(AUGMENTED).addSource(ROOT)
             .buildEffective();
         assertNotNull(root);
 
