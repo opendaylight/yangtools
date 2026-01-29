@@ -112,5 +112,9 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-source-ir</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yin-source-dom</artifactId>
+        </dependency>
     </dependencies>
 </project>
