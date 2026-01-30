@@ -241,7 +241,8 @@ public final class CrossSourceStatementReactor {
         @Deprecated(since = "15.0.0")
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addSource(
-                final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
+                final SourceTransformer<S, YangIRSource> transformer, final S source)
+                    throws ExtractorException, SourceSyntaxException {
             return addYangSource(transformer, source);
         }
 
