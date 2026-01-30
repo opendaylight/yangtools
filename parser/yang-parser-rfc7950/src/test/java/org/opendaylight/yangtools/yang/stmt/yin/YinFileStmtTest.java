@@ -27,16 +27,16 @@ class YinFileStmtTest {
     @Test
     void readAndParseYinFileTestModel() throws Exception {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
-            .addYinSource(createSource("test.yin"))
-            .addYinSource(createSource("extension.yin"))
-            .addYinSource(createSource("extension-use.yin"))
+            .addSource(createSource("test.yin"))
+            .addSource(createSource("extension.yin"))
+            .addSource(createSource("extension-use.yin"))
             .buildEffective());
     }
 
     // parsing yin file whose import statement references a module which does not exist
     @Test
     void readAndParseInvalidYinFileTest() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild().addYinSource(createSource("incorrect-foo.yin"));
+        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(createSource("incorrect-foo.yin"));
         assertEquals("Imported module [baar] was not found. [at <UNKNOWN>:8:27]",
             assertInstanceOf(InferenceException.class,
                 assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause())
@@ -46,7 +46,7 @@ class YinFileStmtTest {
     // parsing yin file with duplicate key name in a list statement
     @Test
     void readAndParseInvalidYinFileTest2() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild().addYinSource(createSource("incorrect-bar.yin"));
+        var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(createSource("incorrect-bar.yin"));
         final var cause = assertInstanceOf(SourceException.class,
             assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause());
         assertThat(cause.getMessage()).startsWith("Key argument 'testing-string testing-string' contains duplicates");

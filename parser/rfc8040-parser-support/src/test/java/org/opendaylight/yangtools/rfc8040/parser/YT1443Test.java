@@ -16,7 +16,7 @@ class YT1443Test extends AbstractYangDataTest {
     @Test
     void buildEffectiveModelTest() throws Exception {
         assertNotNull(newBuild()
-            .addYangSource(sourceForYangText("""
+            .addSource(sourceForYangText("""
                 module yt1443 {
                   yang-version 1.1;
                   namespace "yt1443";

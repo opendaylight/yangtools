@@ -40,8 +40,8 @@ class ContextReferenceTest {
             .build();
 
         final var foo = reactor.newBuild(YangIRSourceModule.provideTextToIR())
-            .addYangSource(new URLYangTextSource(ContextReferenceTest.class.getResource("/yang-ext.yang")))
-            .addYangSource(new URLYangTextSource(ContextReferenceTest.class.getResource("/ctxref.yang")))
+            .addSource(new URLYangTextSource(ContextReferenceTest.class.getResource("/yang-ext.yang")))
+            .addSource(new URLYangTextSource(ContextReferenceTest.class.getResource("/ctxref.yang")))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);
