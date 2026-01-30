@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -67,7 +68,7 @@ class YangParserWithContextTest {
 
     private static @NonNull BuildAction newIetfBuild() {
         final var build = RFC7950Reactors.defaultReactor().newBuild();
-        IETF.forEach(build::addSource);
+        IETF.forEach(source -> assertDoesNotThrow(() -> build.addSource(source)));
         return build;
     }
 
