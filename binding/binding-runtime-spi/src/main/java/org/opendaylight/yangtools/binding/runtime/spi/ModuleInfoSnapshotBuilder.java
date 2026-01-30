@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -104,7 +103,7 @@ public final class ModuleInfoSnapshotBuilder {
 
             try {
                 parser.addSource(source);
-            } catch (YangSyntaxErrorException | IOException e) {
+            } catch (YangSyntaxErrorException e) {
                 throw new YangParserException("Failed to add source for " + info, e);
             }
         }
