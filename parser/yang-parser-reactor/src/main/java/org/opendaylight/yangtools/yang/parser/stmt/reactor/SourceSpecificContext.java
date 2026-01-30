@@ -439,15 +439,14 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
                 break;
             case SOURCE_LINKAGE:
                 streamSource.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(),
-                    preLinkagePrefixes(), yangVersion);
+                    preLinkagePrefixes());
                 break;
             case STATEMENT_DEFINITION:
                 streamSource.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase),
-                    stmtDef(), prefixes(), yangVersion);
+                    stmtDef(), prefixes());
                 break;
             case FULL_DECLARATION:
-                streamSource.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
-                    yangVersion);
+                streamSource.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
                 break;
             default:
                 break;
