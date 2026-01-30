@@ -115,19 +115,38 @@ public final class TestUtils {
         return TEXT_TO_IR.transformSource(new FileYangTextSource(file));
     }
 
+<<<<<<< HEAD
     public static @NonNull YinDOMSource assertYinSource(final String resourcePath)
             throws IOException, SourceSyntaxException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+    public static @NonNull YinDomSource assertYinSource(final String resourcePath) throws SourceSyntaxException {
+=======
+    public static @NonNull YinDomSource assertYinSource(final String resourcePath)
+            throws IOException, SourceSyntaxException {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         return TEXT_TO_DOM.transformSource(new URLYinTextSource(TestUtils.class.getResource(resourcePath)));
     }
 
+<<<<<<< HEAD
     public static @NonNull YinDOMSource assertYinSource(final Path file) throws IOException, SourceSyntaxException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+    public static @NonNull YinDomSource assertYinSource(final Path file) throws SourceSyntaxException {
+=======
+    public static @NonNull YinDomSource assertYinSource(final Path file) throws IOException, SourceSyntaxException {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         return TEXT_TO_DOM.transformSource(new FileYinTextSource(file));
     }
 
     // FIXME: these remain unaudited
 
     public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
+<<<<<<< HEAD
             throws IOException, ReactorException, SourceSyntaxException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+            throws ExtractorException, ReactorException, SourceSyntaxException {
+=======
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         final var reactor = RFC7950Reactors.defaultReactor().newBuild();
 
         // FIXME: use Files to list files
@@ -139,7 +158,13 @@ public final class TestUtils {
     }
 
     public static Module loadYinModule(final YinTextSource source)
+<<<<<<< HEAD
             throws IOException, ReactorException, SourceSyntaxException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+            throws ExtractorException, ReactorException, SourceSyntaxException {
+=======
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         return RFC7950Reactors.defaultReactor().newBuild().addYinSource(TEXT_TO_DOM, source).buildEffective()
             .getModules().iterator().next();
     }

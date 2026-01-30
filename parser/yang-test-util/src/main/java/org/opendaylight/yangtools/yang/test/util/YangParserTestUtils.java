@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.test.util;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -352,8 +351,6 @@ public final class YangParserTestUtils {
             parser.addSources(sources);
         } catch (YangSyntaxErrorException e) {
             throw new IllegalArgumentException("Malformed source", e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to read a source", e);
         }
 
         try {

@@ -77,7 +77,13 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final Collection<? extends @NonNull YangIRSource> sources)
+<<<<<<< HEAD
             throws ReactorException, SourceSyntaxException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+            throws ExtractorException, ReactorException {
+=======
+                throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         final var build = getReactor(config).newBuild();
         for (var source : sources) {
             build.addSource(source);
@@ -119,13 +125,25 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath)
+<<<<<<< HEAD
             throws IOException, ReactorException, SourceSyntaxException, URISyntaxException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+            throws ExtractorException, URISyntaxException, SourceSyntaxException, ReactorException {
+=======
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException, URISyntaxException {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         return parseYinSources(yinSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
             final YangParserConfiguration config)
+<<<<<<< HEAD
                 throws IOException, ReactorException, SourceSyntaxException, URISyntaxException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+                throws ExtractorException, ReactorException, SourceSyntaxException, URISyntaxException {
+=======
+                throws ExtractorException, IOException, ReactorException, SourceSyntaxException, URISyntaxException {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         final var files = Path.of(StmtTestUtils.class.getResource(yinSourcesDirectoryPath).toURI()).toFile()
             .listFiles(YIN_FILE_FILTER);
 

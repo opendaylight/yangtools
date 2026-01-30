@@ -11,7 +11,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.FluentFuture;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -95,7 +94,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
         for (var entry : srcs.entrySet()) {
             try {
                 parser.addSource(entry.getValue());
-            } catch (YangSyntaxErrorException | IOException e) {
+            } catch (YangSyntaxErrorException e) {
                 final var sourceId = entry.getKey();
                 return FluentFutures.immediateFailedFluentFuture(
                     new SchemaResolutionException("Failed to add source " + sourceId, sourceId, e));

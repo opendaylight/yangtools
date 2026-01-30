@@ -87,31 +87,67 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
+<<<<<<< HEAD
     public YangParser addLibSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+    public YangParser addLibSource(final YangSourceRepresentation source) throws YangSyntaxErrorException {
+=======
+    public YangParser addLibSource(final YangSourceRepresentation source) {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         switch (source) {
             case YangIRSource irSource -> buildAction.addLibSource(irSource);
-            case YangTextSource yangSource -> {
-                try {
-                    buildAction.addLibSource(yangSource);
-                } catch (SourceSyntaxException e) {
-                    throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
-                }
-            }
+            case YangTextSource yangSource -> buildAction.addLibSource(yangSource);
             default -> throw new IllegalArgumentException("Unsupported YANG source " + source);
         }
         return this;
     }
 
     @Override
+<<<<<<< HEAD
     public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         try {
             switch (source) {
                 case YinDOMSource yinDom -> buildAction.addLibSource(yinDom);
                 case YinTextSource yinText -> buildAction.addLibSource(yinText);
                 default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+    public YangParser addLibSource(final YinSourceRepresentation source) throws YangSyntaxErrorException {
+        try {
+            switch (source) {
+                case YinDomSource yinDom -> buildAction.addLibSource(yinDom);
+                case YinTextSource yinText -> {
+                    buildAction.addLibSource(yinText);
+                }
+                case YinXmlSource yinXml -> {
+                    try {
+                        buildAction.addLibSource(YinDomSource.transform(yinXml));
+                    } catch (TransformerException e) {
+                        final var locator = e.getLocator();
+                        throw new YangSyntaxErrorException(source.sourceId(),
+                            locator != null ? locator.getLineNumber() : 0,
+                                locator != null ? locator.getColumnNumber() : 0,
+                                    "Failed to assemble in-memory representation", e);
+                    }
+                }
+                default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
+=======
+    public YangParser addLibSource(final YinSourceRepresentation source) throws YangSyntaxErrorException {
+        switch (source) {
+            case YinDomSource yinDom -> buildAction.addLibSource(yinDom);
+            case YinTextSource yinText -> buildAction.addLibSource(yinText);
+            case YinXmlSource yinXml -> {
+                try {
+                    buildAction.addLibSource(YinDomSource.transform(yinXml));
+                } catch (TransformerException e) {
+                    final var locator = e.getLocator();
+                    throw new YangSyntaxErrorException(source.sourceId(),
+                        locator != null ? locator.getLineNumber() : 0,
+                            locator != null ? locator.getColumnNumber() : 0,
+                                "Failed to assemble in-memory representation", e);
+                }
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
             }
-        } catch (SourceSyntaxException e) {
-            throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
+            default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
         }
         return this;
     }
@@ -130,20 +166,42 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException {
+    public List<DeclaredStatement<?>> buildDeclaredModel() throws IOException, YangParserException {
         try {
             return buildAction.buildDeclared().getRootStatements();
+<<<<<<< HEAD
         } catch (ReactorException e) {
             throw decodeReactorException(e);
         } catch (SourceSyntaxException e) {
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+        } catch (ReactorException e) {
+            throw decodeReactorException(e);
+        } catch (ExtractorException e) {
+=======
+        } catch (ExtractorException e) {
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
             throw newSyntaxError(null, e.sourceRef(), e);
+        } catch (SourceSyntaxException e) {
+            throw newSyntaxError(null, e.sourceRef(), e);
+        } catch (ReactorException e) {
+            throw decodeReactorException(e);
         }
     }
 
     @Override
-    public EffectiveModelContext buildEffectiveModel() throws YangParserException {
+    public EffectiveModelContext buildEffectiveModel() throws IOException, YangParserException {
         try {
             return buildAction.buildEffective();
+<<<<<<< HEAD
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+        } catch (ExtractorException e) {
+            throw newSyntaxError(null, e.sourceRef(), e);
+=======
+        } catch (ExtractorException e) {
+            throw newSyntaxError(null, e.sourceRef(), e);
+        } catch (SourceSyntaxException e) {
+            throw newSyntaxError(null, e.sourceRef(), e);
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
         } catch (ReactorException e) {
             throw decodeReactorException(e);
         } catch (SourceSyntaxException e) {

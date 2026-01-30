@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -18,6 +19,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -100,12 +103,25 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     @NonNullByDefault
     <S extends SourceRepresentation & SourceInfo.Extractor> void addSource(final S source,
-            final Function<S, StatementStreamSource> streamFactory) throws SourceSyntaxException {
+            final Function<S, StatementStreamSource> streamFactory) throws IOException, SourceSyntaxException {
         final var buildSource = new BuildSource<>(this, source, streamFactory);
         // eagerly initialize required sources
-        buildSource.getSourceContext();
+        try {
+            buildSource.getSourceContext();
+        } catch (SourceSyntaxException e) {
+            // This should never happen
+            throw new VerifyException("Unexpected syntax exception", e);
+        }
         sources.add(buildSource);
     }
+
+    @NonNullByDefault
+    public <I extends SourceRepresentation, O extends SourceRepresentation & SourceInfo.Extractor> void addLibSource(
+            final SourceTransformer<I, O> transformer, final I source,
+            final Function<O, StatementStreamSource> streamFactory) {
+        libSources.add(new BuildSource<>(this, transformer, source, streamFactory));
+    }
+
 
     @NonNullByDefault
     <S extends SourceRepresentation & SourceInfo.Extractor> void addLibSource(final S source,
@@ -165,17 +181,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         modelDefinedStmtDefs.put(name, def);
     }
 
-    @NonNull ReactorDeclaredModel build() throws ReactorException, SourceSyntaxException {
+    @NonNull ReactorDeclaredModel build() throws IOException, ReactorException, SourceSyntaxException {
         executePhases();
         return transform();
     }
 
-    @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
+    @NonNull EffectiveSchemaContext buildEffective() throws IOException, ReactorException, SourceSyntaxException {
         executePhases();
         return transformEffective();
     }
 
-    private void executePhases() throws ReactorException, SourceSyntaxException {
+    private void executePhases() throws IOException, ReactorException, SourceSyntaxException {
         for (var phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
@@ -184,7 +200,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         }
     }
 
-    private @NonNull ReactorDeclaredModel transform() throws SourceSyntaxException {
+    private @NonNull ReactorDeclaredModel transform() throws IOException, SourceSyntaxException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final var rootStatements = new ArrayList<DeclaredStatement<?>>(sources.size());
         for (var source : sources) {
@@ -210,7 +226,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private @NonNull EffectiveSchemaContext transformEffective() throws ReactorException, SourceSyntaxException {
+    private @NonNull EffectiveSchemaContext transformEffective()
+            throws IOException, ReactorException, SourceSyntaxException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final var rootStatements = new ArrayList<DeclaredStatement<?>>(sources.size());
         final var rootEffectiveStatements = new ArrayList<EffectiveStatement<?, ?>>(sources.size());
@@ -229,7 +246,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
     }
 
-    private void startPhase(final ModelProcessingPhase phase) throws SourceSyntaxException {
+    private void startPhase(final ModelProcessingPhase phase) throws IOException, SourceSyntaxException {
         checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
         startPhaseFor(phase, sources);
         startPhaseFor(phase, libSources);
@@ -239,20 +256,21 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     private static void startPhaseFor(final ModelProcessingPhase phase, final Set<BuildSource<?>> sources)
-            throws SourceSyntaxException {
+            throws IOException, SourceSyntaxException {
         for (var source : sources) {
             source.getSourceContext().startPhase(phase);
         }
     }
 
-    private void loadPhaseStatements() throws ReactorException, SourceSyntaxException {
+    private void loadPhaseStatements() throws IOException, ReactorException, SourceSyntaxException {
         checkState(currentPhase != null);
         loadPhaseStatementsFor(sources);
         loadPhaseStatementsFor(libSources);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void loadPhaseStatementsFor(final Set<BuildSource<?>> srcs) throws ReactorException, SourceSyntaxException {
+    private void loadPhaseStatementsFor(final Set<BuildSource<?>> srcs)
+            throws IOException, ReactorException, SourceSyntaxException {
         for (var source : srcs) {
             final var context = source.getSourceContext();
             try {
@@ -264,7 +282,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     private SomeModifiersUnresolvedException addSourceExceptions(final List<BuildSource<?>> sourcesToProgress)
-            throws SourceSyntaxException {
+            throws IOException, SourceSyntaxException {
         boolean addedCause = false;
         SomeModifiersUnresolvedException buildFailure = null;
         for (var buildSource : sourcesToProgress) {
@@ -307,7 +325,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void completePhaseActions() throws ReactorException, SourceSyntaxException {
+    private void completePhaseActions() throws IOException, ReactorException, SourceSyntaxException {
         checkState(currentPhase != null);
         final var sourcesToProgress = new ArrayList<>(sources);
         if (!libSources.isEmpty()) {
@@ -363,7 +381,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         }
     }
 
-    private Set<BuildSource<?>> getRequiredSourcesFromLib() throws SourceSyntaxException {
+    private Set<BuildSource<?>> getRequiredSourcesFromLib() throws IOException, SourceSyntaxException {
         checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
                         + " but current phase was %s", currentPhase);
@@ -387,7 +405,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     private void collectRequiredSourcesFromLib(
             final TreeBasedTable<Unqualified, Optional<Revision>, BuildSource<?>> libSourcesTable,
-            final Set<BuildSource<?>> requiredLibs, final SourceSpecificContext source) throws SourceSyntaxException {
+            final Set<BuildSource<?>> requiredLibs, final SourceSpecificContext source)
+                throws IOException, SourceSyntaxException {
         for (var requiredSource : source.getRequiredSources()) {
             final var libSource = getRequiredLibSource(requiredSource, libSourcesTable);
             if (libSource != null && requiredLibs.add(libSource)) {
@@ -413,7 +432,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     // such situation may occur when using the yang-system-test artifact - if a parent module/submodule is specified
     // as its argument and the same dir is specified as one of the library dirs through -p option).
     private static void removeConflictingLibSources(final SourceSpecificContext source,
-            final Set<BuildSource<?>> requiredLibs) throws SourceSyntaxException {
+            final Set<BuildSource<?>> requiredLibs) throws IOException, SourceSyntaxException {
         final var requiredLibsIter = requiredLibs.iterator();
         while (requiredLibsIter.hasNext()) {
             final var currentReqSource = requiredLibsIter.next().getSourceContext();

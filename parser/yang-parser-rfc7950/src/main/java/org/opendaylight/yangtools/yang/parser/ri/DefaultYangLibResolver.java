@@ -114,6 +114,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
         for (var module : moduleSet.importOnlyModules().values()) {
             final var source = module.source();
+<<<<<<< HEAD
             try {
                 switch (source) {
                     case YangIRSource yangIR -> act.addLibSource(yangIR);
@@ -124,11 +125,32 @@ public final class DefaultYangLibResolver implements YangLibResolver {
                 }
             } catch (SourceSyntaxException e) {
                 throw DefaultYangParser.newSyntaxError(source.sourceId(), e.sourceRef(), e);
+||||||| parent of 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
+            try {
+                switch (source) {
+                    case YangIRSource yangIR -> act.addLibSource(yangIR);
+                    case YangTextSource yangText -> act.addLibSource(yangText);
+                    case YinDomSource yinDOM -> act.addLibSource(yinDOM);
+                    case YinTextSource yinText -> act.addLibSource(yinText);
+                    default -> throw new IllegalArgumentException("Unsupported source " + source);
+                }
+            } catch (SourceSyntaxException e) {
+                throw DefaultYangParser.newSyntaxError(source.sourceId(), e.sourceRef(), e);
+=======
+            switch (source) {
+                case YangIRSource yangIR -> act.addLibSource(yangIR);
+                case YangTextSource yangText -> act.addLibSource(yangText);
+                case YinDomSource yinDOM -> act.addLibSource(yinDOM);
+                case YinTextSource yinText -> act.addLibSource(yinText);
+                default -> throw new IllegalArgumentException("Unsupported source " + source);
+>>>>>>> 9b0dd4c5c04 (WIP: Transform library (Yin,Yang}TextSources lazily)
             }
         }
 
         try {
             return act.setSupportedFeatures(FeatureSet.of(features.build())).buildEffective();
+        } catch (SourceSyntaxException e) {
+            throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
         } catch (SourceSyntaxException e) {
             throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
         } catch (ReactorException e) {
