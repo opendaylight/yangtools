@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <p>Implementations of this interface expected to comply with the {@link Immutable} contract.
  */
 public sealed interface SourceRepresentation extends Immutable
-        permits YangSourceRepresentation, YinSourceRepresentation {
+        permits YangSourceRepresentation, YinSourceRepresentation, TextRepresentation {
     /**
      * The {@link SourceIdentifier} of this source.
      *
@@ -45,6 +45,13 @@ public sealed interface SourceRepresentation extends Immutable
      * @return The type of representation.
      */
     @NonNull Class<? extends SourceRepresentation> getType();
+
+    /**
+     * Return the concrete representation type.
+     *
+     * @return The type of representation.
+     */
+    @NonNull Class<? extends TextRepresentation<?>> textRepresentation();
 
     /**
      * Return the symbolic name, if available. This name has no semantic meaning beyond being useful for debugging

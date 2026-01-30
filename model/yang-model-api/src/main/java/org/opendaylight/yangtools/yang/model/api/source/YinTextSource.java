@@ -17,9 +17,15 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an {@link InputStream}.
  */
 @NonNullByDefault
-public abstract class YinTextSource extends ByteSource implements YinSourceRepresentation {
+public abstract non-sealed class YinTextSource extends ByteSource
+        implements YinSourceRepresentation, TextRepresentation<YinSourceRepresentation> {
     @Override
     public final Class<YinTextSource> getType() {
+        return YinTextSource.class;
+    }
+
+    @Override
+    public final Class<YinTextSource> textRepresentation() {
         return YinTextSource.class;
     }
 
