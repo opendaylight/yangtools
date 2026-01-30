@@ -95,7 +95,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
         for (var entry : srcs.entrySet()) {
             try {
                 parser.addSource(entry.getValue());
-            } catch (YangSyntaxErrorException | IOException e) {
+            } catch (IOException | YangSyntaxErrorException e) {
                 final var sourceId = entry.getKey();
                 return FluentFutures.immediateFailedFluentFuture(
                     new SchemaResolutionException("Failed to add source " + sourceId, sourceId, e));
@@ -105,7 +105,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
         final EffectiveModelContext schemaContext;
         try {
             schemaContext = parser.buildEffectiveModel();
-        } catch (final YangParserException e) {
+        } catch (IOException | YangParserException e) {
             return FluentFutures.immediateFailedFluentFuture(e.getCause() instanceof ReactorException re
                 ? new SchemaResolutionException("Failed to resolve required models", re.getSourceIdentifier(), re) : e);
         }

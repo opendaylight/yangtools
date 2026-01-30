@@ -77,7 +77,7 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final Collection<? extends @NonNull YangIRSource> sources)
-            throws ReactorException, SourceSyntaxException {
+                throws IOException, ReactorException, SourceSyntaxException {
         final var build = getReactor(config).newBuild();
         for (var source : sources) {
             build.addSource(source);

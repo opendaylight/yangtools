@@ -85,9 +85,10 @@ public final class ModuleInfoSnapshotBuilder {
      * Build {@link ModuleInfoSnapshot} from all {@code moduleInfos} in this builder.
      *
      * @return Resulting {@link ModuleInfoSnapshot}
+     * @throws IOException when an I/O error occurs
      * @throws YangParserException if parsing any of the {@link YangModuleInfo} instances fails
      */
-    public @NonNull ModuleInfoSnapshot build() throws YangParserException {
+    public @NonNull ModuleInfoSnapshot build() throws IOException, YangParserException {
         final var parser = parserFactory.createParser();
 
         final var mappedInfos = new HashMap<SourceIdentifier, YangModuleInfo>();

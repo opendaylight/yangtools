@@ -137,8 +137,6 @@ public final class CrossSourceStatementReactor {
              *
              * @param source which should be transformed and added into main sources
              * @return This build action, for fluent use.
-             * @throws IOException if an I/O error occurs
-             * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
             WithYang<S> addSource(S source) throws IOException, SourceSyntaxException;
@@ -152,11 +150,9 @@ public final class CrossSourceStatementReactor {
              *
              * @param source which should be transformed and added into main sources
              * @return This build action, for fluent use.
-             * @throws IOException if an I/O error occurs
-             * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
-            WithYang<S> addLibSource(S source) throws IOException, SourceSyntaxException;
+            WithYang<S> addLibSource(S source);
         }
 
         /**
@@ -187,8 +183,6 @@ public final class CrossSourceStatementReactor {
              *
              * @param libSource source which should be added into library sources
              * @return This build action, for fluent use.
-             * @throws IOException if an I/O error occurs
-             * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
             WithYin<S> addLibSource(S libSource) throws IOException, SourceSyntaxException;
@@ -210,10 +204,10 @@ public final class CrossSourceStatementReactor {
             Full<H, M> addSource(M source) throws IOException, SourceSyntaxException;
 
             @Override
-            Full<H, M> addLibSource(H source) throws IOException, SourceSyntaxException;
+            Full<H, M> addLibSource(H source);
 
             @Override
-            Full<H, M> addLibSource(M source) throws IOException, SourceSyntaxException;
+            Full<H, M> addLibSource(M source);
         }
 
         /**
@@ -221,20 +215,34 @@ public final class CrossSourceStatementReactor {
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
-         * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        BuildAction addSource(YangIRSource source) throws SourceSyntaxException;
+        BuildAction addSource(YangIRSource source) throws IOException, SourceSyntaxException;
 
         /**
          * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
+         */
+        @NonNullByDefault
+        BuildAction addSource(YinDOMSource source) throws IOException, SourceSyntaxException;
+
+        /**
+         * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         *
+         * @param <S> source representation type
+         * @param transformer the transformer to {@link YangIRSource}
+         * @param source which should be transformed and added into main sources
+         * @return This build action, for fluent use.
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        BuildAction addSource(YinDOMSource source) throws SourceSyntaxException;
+        default <S extends SourceRepresentation> BuildAction addSource(
+                final SourceTransformer<S, YangIRSource> transformer, final S source)
+                    throws IOException, SourceSyntaxException {
+            return addYangSource(transformer, source);
+        }
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -307,15 +315,10 @@ public final class CrossSourceStatementReactor {
          * @param transformer the transformer to {@link YangIRSource}
          * @param source which should be transformed and added into main sources
          * @return This build action, for fluent use.
-         * @throws IOException if an I/O error occurs
-         * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        default <S extends SourceRepresentation> BuildAction addLibYangSource(
-                final SourceTransformer<S, YangIRSource> transformer, final S source)
-                    throws IOException, SourceSyntaxException {
-            return addLibSource(transformer.transformSource(source));
-        }
+        <S extends SourceRepresentation> BuildAction addLibYangSource(SourceTransformer<S, YangIRSource> transformer,
+            S source);
 
         /**
          * Add a transformed YIN library source. Only library sources required by main sources are present in resulting
@@ -328,19 +331,14 @@ public final class CrossSourceStatementReactor {
          * @param transformer the transformer to {@link YangIRSource}
          * @param source which should be transformed and added into main sources
          * @return This build action, for fluent use.
-         * @throws IOException if an I/O error occurs
-         * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        default <S extends SourceRepresentation> BuildAction addLibYinSource(
-                final SourceTransformer<S, YinDOMSource> transformer, final S source)
-                    throws IOException, SourceSyntaxException {
-            return addLibSource(transformer.transformSource(source));
-        }
+        <S extends SourceRepresentation> BuildAction addLibYinSource(SourceTransformer<S, YinDOMSource> transformer,
+            S source);
 
         // FIXME: add a SourceLinkage interface which will contain the below methods and add
         //
-        //          SourceLinkage build();
+        //          SourceLinkage build() throws ExtractorException, SourceSyntaxException;
         //
         //        as a partocilar set of consistent sources can be built with any number of features.
 
@@ -375,7 +373,7 @@ public final class CrossSourceStatementReactor {
          * @throws ReactorException if the declared model cannot be built
          * @throws SourceSyntaxException if a source cannot be analyzed
          */
-        @NonNull ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException;
+        @NonNull ReactorDeclaredModel buildDeclared() throws IOException, ReactorException, SourceSyntaxException;
 
         /**
          * Build the {@link EffectiveSchemaContext} view of this action.
@@ -384,6 +382,6 @@ public final class CrossSourceStatementReactor {
          * @throws ReactorException if the effective model cannot be built
          * @throws SourceSyntaxException if a source cannot be analyzed
          */
-        @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException;
+        @NonNull EffectiveSchemaContext buildEffective() throws IOException, ReactorException, SourceSyntaxException;
     }
 }
