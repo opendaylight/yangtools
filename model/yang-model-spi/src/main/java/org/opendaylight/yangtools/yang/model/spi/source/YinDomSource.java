@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import java.util.NoSuchElementException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -33,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -293,9 +295,11 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
     @Override
     public final SourceInfo extractSourceInfo() throws ExtractorException {
         final var root = getSource().getNode();
-        if (!(root instanceof Element element)) {
-            throw new ExtractorException("Root node is not an element");
+        if (!(root instanceof Document document)) {
+            throw new VerifyException("Unexpected root " + root);
         }
+
+        final var element = document.getDocumentElement();
         if (!YinDomSourceInfoExtractor.isYinElement(element)) {
             throw new ExtractorException("Root element does not have YIN namespace", refProvider.refOf(element));
         }

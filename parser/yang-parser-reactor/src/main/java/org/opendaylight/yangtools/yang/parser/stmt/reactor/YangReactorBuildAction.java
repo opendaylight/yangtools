@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
@@ -34,7 +35,7 @@ sealed class YangReactorBuildAction<S extends YangSourceRepresentation> extends 
     }
 
     @Override
-    public WithYang<S> addSource(final S source) throws SourceSyntaxException {
+    public WithYang<S> addSource(final S source) throws ExtractorException, SourceSyntaxException {
         addSource(transformer.transformSource(source));
         return this;
     }

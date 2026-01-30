@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 class EffectiveBuildTest {
     private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.of("simple.yang");
@@ -28,7 +27,7 @@ class EffectiveBuildTest {
     private static final YangIRSource YANG_EXT = sourceForResource("/stmt-test/extensions/yang-ext.yang");
 
     @Test
-    void effectiveBuildTest() throws ReactorException {
+    void effectiveBuildTest() throws Exception {
         var result = RFC7950Reactors.defaultReactor().newBuild().addSource(SIMPLE_MODULE).buildEffective();
 
         assertNotNull(result);
@@ -63,7 +62,7 @@ class EffectiveBuildTest {
     }
 
     @Test
-    void extensionsTest() throws ReactorException {
+    void extensionsTest() throws Exception {
         var result = RFC7950Reactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
 

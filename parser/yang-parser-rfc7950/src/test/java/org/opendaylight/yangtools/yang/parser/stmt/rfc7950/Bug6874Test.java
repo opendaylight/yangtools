@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 class Bug6874Test extends AbstractYangTest {
@@ -65,10 +64,10 @@ class Bug6874Test extends AbstractYangTest {
     }
 
     @Test
-    void descriptionAndReferenceTest11() throws ReactorException {
+    void descriptionAndReferenceTest11() throws Exception {
         RFC7950Reactors.defaultReactor().newBuild()
             .addSource(ROOT_MODULE).addSource(CHILD_MODULE).addSource(CHILD_MODULE_1).addSource(IMPORTED_MODULE)
-            .build()
+            .buildDeclared()
             .getRootStatements()
             .forEach(stmt -> {
                 if (stmt instanceof ModuleStatement module) {

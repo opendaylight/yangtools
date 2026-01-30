@@ -42,11 +42,10 @@ class AugmentArgumentParsingTest {
         "/semantic-statement-parser/augment-arg-parsing/root-invalid-xpath.yang");
 
     @Test
-    void validAugAbsTest() throws ReactorException {
-        final var result = RFC7950Reactors.defaultReactor().newBuild()
+    void validAugAbsTest() throws Exception {
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(IMPORTED).addSource(VALID_ARGS)
-            .build();
-        assertNotNull(result);
+            .buildEffective());
     }
 
     @Test
@@ -99,8 +98,8 @@ class AugmentArgumentParsingTest {
     }
 
     private static ReactorException assertReactorThrows(final YangIRSource source) {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(requireNonNull(source));
-        return assertThrows(ReactorException.class, () -> reactor.build());
+        return assertThrows(ReactorException.class,
+            () -> RFC7950Reactors.defaultReactor().newBuild().addSource(requireNonNull(source)).buildEffective());
     }
 
     private static void assertSourceExceptionCause(final Throwable exception, final String start) {

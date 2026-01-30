@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYinTextSource;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYinTextSource;
@@ -80,7 +81,9 @@ public final class TestUtils {
     public static EffectiveModelContext loadModules(final Class<?> cls, final String resourceDirectory,
             final @Nullable Set<QName> supportedFeatures) throws Exception {
         final var action = RFC7950Reactors.defaultReactor().newBuild();
-        loadSources(cls, resourceDirectory).forEach(action::addSource);
+        for (var source : loadSources(cls, resourceDirectory)) {
+            action.addSource(source);
+        }
         if (supportedFeatures != null) {
             action.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
@@ -122,7 +125,7 @@ public final class TestUtils {
     // FIXME: these remain unaudited
 
     public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
-            throws ReactorException, SourceSyntaxException {
+            throws ExtractorException, ReactorException, SourceSyntaxException {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild();
 
         // FIXME: use Files to list files
@@ -133,7 +136,8 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static Module loadYinModule(final YinTextSource source) throws ReactorException, SourceSyntaxException {
+    public static Module loadYinModule(final YinTextSource source)
+            throws ExtractorException, ReactorException, SourceSyntaxException {
         return RFC7950Reactors.defaultReactor().newBuild().addYinSource(TEXT_TO_DOM, source).buildEffective()
             .getModules().iterator().next();
     }
