@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.ri;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
 import java.io.IOException;
@@ -37,7 +35,8 @@ import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction.Full;
 
 final class DefaultYangParser implements YangParser {
     static final @NonNull ImmutableSet<Class<? extends SourceRepresentation>> REPRESENTATIONS = ImmutableSet.of(
@@ -48,15 +47,13 @@ final class DefaultYangParser implements YangParser {
         YinXmlSource.class,
         YinTextSource.class);
 
-    private final @NonNull YangTextToIRSourceTransformer textToIR;
-    private final @NonNull YinTextToDOMSourceTransformer textToDOM;
-    private final @NonNull BuildAction buildAction;
+    @NonNullByDefault
+    private final @NonNull Full<YangTextSource, YinTextSource> buildAction;
 
+    @NonNullByDefault
     DefaultYangParser(final YangTextToIRSourceTransformer textToIR, final YinTextToDOMSourceTransformer textToDOM,
-            final BuildAction buildAction) {
-        this.textToIR = requireNonNull(textToIR);
-        this.textToDOM = requireNonNull(textToDOM);
-        this.buildAction = requireNonNull(buildAction);
+            final CrossSourceStatementReactor reactor) {
+        buildAction = reactor.newBuild(textToIR, textToDOM);
     }
 
     @Override
@@ -66,25 +63,87 @@ final class DefaultYangParser implements YangParser {
 
     @Override
     public YangParser addSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
-        buildAction.addYangSource(sourceToYangIR(source));
+        switch (source) {
+            case YangIRSource irSource -> buildAction.addYangSource(irSource);
+            case YangTextSource yangSource -> {
+                try {
+                    buildAction.addYangSource(yangSource);
+                } catch (SourceSyntaxException e) {
+                    throw newSyntaxError(source.sourceId(), e);
+                }
+            }
+            default -> throw new IllegalArgumentException("Unsupported YANG source " + source);
+        }
         return this;
     }
 
     @Override
     public YangParser addSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
-        buildAction.addYinSource(sourceToYinDOM(source));
+        switch (source) {
+            case YinDomSource yinDom -> buildAction.addYinSource(yinDom);
+            case YinTextSource yinText -> {
+                try {
+                    buildAction.addYinSource(yinText);
+                } catch (SourceSyntaxException e) {
+                    throw newSyntaxError(source.sourceId(), e);
+                }
+            }
+            case YinXmlSource yinXml -> {
+                try {
+                    buildAction.addYinSource(YinDomSource.transform(yinXml));
+                } catch (TransformerException e) {
+                    final var locator = e.getLocator();
+                    throw new YangSyntaxErrorException(source.sourceId(),
+                        locator != null ? locator.getLineNumber() : 0,
+                        locator != null ? locator.getColumnNumber() : 0,
+                        "Failed to assemble in-memory representation", e);
+                }
+            }
+            default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
+        }
         return this;
     }
 
     @Override
     public YangParser addLibSource(final YangSourceRepresentation source) throws YangSyntaxErrorException {
-        buildAction.addLibYangSource(sourceToYangIR(source));
+        switch (source) {
+            case YangIRSource irSource -> buildAction.addLibYangSource(irSource);
+            case YangTextSource yangSource -> {
+                try {
+                    buildAction.addLibYangSource(yangSource);
+                } catch (SourceSyntaxException e) {
+                    throw newSyntaxError(source.sourceId(), e);
+                }
+            }
+            default -> throw new IllegalArgumentException("Unsupported YANG source " + source);
+        }
         return this;
     }
 
     @Override
     public YangParser addLibSource(final YinSourceRepresentation source) throws YangSyntaxErrorException {
-        buildAction.addLibYinSource(sourceToYinDOM(source));
+        switch (source) {
+            case YinDomSource yinDom -> buildAction.addLibYinSource(yinDom);
+            case YinTextSource yinText -> {
+                try {
+                    buildAction.addLibYinSource(yinText);
+                } catch (SourceSyntaxException e) {
+                    throw newSyntaxError(source.sourceId(), e);
+                }
+            }
+            case YinXmlSource yinXml -> {
+                try {
+                    buildAction.addLibYinSource(YinDomSource.transform(yinXml));
+                } catch (TransformerException e) {
+                    final var locator = e.getLocator();
+                    throw new YangSyntaxErrorException(source.sourceId(),
+                        locator != null ? locator.getLineNumber() : 0,
+                        locator != null ? locator.getColumnNumber() : 0,
+                        "Failed to assemble in-memory representation", e);
+                }
+            }
+            default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
+        }
         return this;
     }
 
@@ -104,7 +163,7 @@ final class DefaultYangParser implements YangParser {
     @Override
     public List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException {
         try {
-            return buildAction.build().getRootStatements();
+            return buildAction.buildDeclared().getRootStatements();
         } catch (ReactorException e) {
             throw decodeReactorException(e);
         }
@@ -122,50 +181,6 @@ final class DefaultYangParser implements YangParser {
     static YangParserException decodeReactorException(final ReactorException reported) {
         // FIXME: map exception in some reasonable manner
         return new YangParserException("Failed to assemble sources", reported);
-    }
-
-    YangIRSource sourceToYangIR(final YangSourceRepresentation source) throws YangSyntaxErrorException {
-        return switch (source) {
-            case YangIRSource irSource -> irSource;
-            case YangTextSource yangSource -> {
-                try {
-                    yield textToIR.transformSource(yangSource);
-                } catch (SourceSyntaxException e) {
-                    throw newSyntaxError(source.sourceId(), e);
-                }
-            }
-            default -> throw new IllegalArgumentException("Unsupported source " + source);
-        };
-    }
-
-    YinDomSource sourceToYinDOM(final YinSourceRepresentation source) throws YangSyntaxErrorException {
-        return sourceToYinDOM(textToDOM, source);
-    }
-
-    static YinDomSource sourceToYinDOM(final YinTextToDOMSourceTransformer textToDOM,
-            final YinSourceRepresentation source) throws YangSyntaxErrorException {
-        return switch (source) {
-            case YinDomSource yinDom -> yinDom;
-            case YinTextSource yinText -> {
-                try {
-                    yield textToDOM.transformSource(yinText);
-                } catch (SourceSyntaxException e) {
-                    throw newSyntaxError(source.sourceId(), e);
-                }
-            }
-            case YinXmlSource yinXml -> {
-                try {
-                    yield YinDomSource.transform(yinXml);
-                } catch (TransformerException e) {
-                    final var locator = e.getLocator();
-                    throw new YangSyntaxErrorException(source.sourceId(),
-                        locator != null ? locator.getLineNumber() : 0,
-                        locator != null ? locator.getColumnNumber() : 0,
-                        "Failed to assemble in-memory representation", e);
-                }
-            }
-            default -> throw new IllegalArgumentException("Unsupported source " + source);
-        };
     }
 
     @NonNullByDefault

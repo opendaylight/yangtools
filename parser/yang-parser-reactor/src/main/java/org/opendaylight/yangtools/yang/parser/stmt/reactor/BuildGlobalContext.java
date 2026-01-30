@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -67,11 +66,11 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     };
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
-    private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
-    private final Map<ParserNamespace<?, ?>, BehaviourNamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
-    private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
+    private final HashMap<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
+    private final HashMap<ParserNamespace<?, ?>, BehaviourNamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
+    private final ArrayList<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
-    private final Set<SourceSpecificContext> sources = new HashSet<>();
+    private final HashSet<SourceSpecificContext> sources = new HashSet<>();
     private final ImmutableSet<YangVersion> supportedVersions;
 
     private Set<SourceSpecificContext> libSources = new HashSet<>();

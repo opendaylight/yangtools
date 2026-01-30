@@ -45,7 +45,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
 
     @Test
     void testYangData() throws Exception {
-        final var schemaContext = newBuild().addSource(FOO_MODULE).buildEffective();
+        final var schemaContext = newBuild().addYangSource(FOO_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
         final var extensions = schemaContext.getExtensions();
@@ -61,7 +61,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
 
     @Test
     void testConfigStatementBeingIgnoredInYangDataBody() throws Exception {
-        final var schemaContext = newBuild().addSource(BAZ_MODULE).buildEffective();
+        final var schemaContext = newBuild().addYangSource(BAZ_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
         final var baz = schemaContext.findModule("baz", REVISION).orElseThrow();
@@ -87,7 +87,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
     void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
         final var schemaContext = newBuild()
             .setSupportedFeatures(FeatureSet.of())
-            .addSource(FOOBAR_MODULE)
+            .addYangSource(FOOBAR_MODULE)
             .buildEffective();
         assertNotNull(schemaContext);
 
@@ -111,7 +111,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
     void testYangDataBeingIgnored() throws Exception {
         // yang-data statement is ignored if it does not appear as a top-level statement
         // i.e., it will not appear in the final SchemaContext
-        final var schemaContext = newBuild().addSource(BAR_MODULE).buildEffective();
+        final var schemaContext = newBuild().addYangSource(BAR_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
         final var bar = schemaContext.findModule("bar", REVISION).orElseThrow();
@@ -127,7 +127,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
 
     @Test
     void testYangDataWithMissingTopLevelContainer() {
-        final var build = newBuild().addSource(FOO_INVALID_1_MODULE);
+        final var build = newBuild().addYangSource(FOO_INVALID_1_MODULE);
         final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final var cause = assertInstanceOf(MissingSubstatementException.class, ex.getCause());
         assertThat(cause.getMessage()).startsWith("yang-data requires at least one substatement [at ");
@@ -135,7 +135,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
 
     @Test
     void testYangDataWithTwoTopLevelContainers() {
-        final var build = newBuild().addSource(FOO_INVALID_2_MODULE);
+        final var build = newBuild().addYangSource(FOO_INVALID_2_MODULE);
         final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final var cause = assertInstanceOf(InvalidSubstatementException.class, ex.getCause());
         assertThat(cause.getMessage())
