@@ -27,7 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -37,7 +39,10 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -93,14 +98,18 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return supports.get(phase);
     }
 
-    void addSource(final StatementStreamSource source) {
-        sources.add(new SourceSpecificContext(this, source));
+    @NonNullByDefault
+    <S extends SourceRepresentation & SourceInfo.Extractor> void addSource(final S source,
+            final Function<S, StatementStreamSource> streamFactory) {
+        sources.add(new SourceSpecificContext(this, new ReactorSource<>(source, streamFactory)));
     }
 
-    void addLibSource(final StatementStreamSource libSource) {
+    @NonNullByDefault
+    <S extends SourceRepresentation & SourceInfo.Extractor> void addLibSource(final S source,
+            final Function<S, StatementStreamSource> streamFactory) {
         checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
-        libSources.add(new SourceSpecificContext(this, libSource));
+        libSources.add(new SourceSpecificContext(this, new ReactorSource<>(source, streamFactory)));
     }
 
     void setSupportedFeatures(final FeatureSet supportedFeatures) {

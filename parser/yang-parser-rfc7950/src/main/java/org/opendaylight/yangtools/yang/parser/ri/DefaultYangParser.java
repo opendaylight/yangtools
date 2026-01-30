@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.ri;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
 import java.io.IOException;
@@ -27,15 +29,12 @@ import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction.Full;
 
 final class DefaultYangParser implements YangParser {
@@ -48,12 +47,11 @@ final class DefaultYangParser implements YangParser {
         YinTextSource.class);
 
     @NonNullByDefault
-    private final @NonNull Full<YangTextSource, YinTextSource> buildAction;
+    private final Full<YangTextSource, YinTextSource> buildAction;
 
     @NonNullByDefault
-    DefaultYangParser(final YangTextToIRSourceTransformer textToIR, final YinTextToDOMSourceTransformer textToDOM,
-            final CrossSourceStatementReactor reactor) {
-        buildAction = reactor.newBuild(textToIR, textToDOM);
+    DefaultYangParser(final Full<YangTextSource, YinTextSource> buildAction) {
+        this.buildAction = requireNonNull(buildAction);
     }
 
     @Override

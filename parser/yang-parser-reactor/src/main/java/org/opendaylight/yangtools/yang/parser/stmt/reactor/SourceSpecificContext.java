@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -117,7 +118,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private final @NonNull BuildGlobalContext globalContext;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
-    private StatementStreamSource source;
+    private StatementStreamSource streamSource;
 
     /*
      * "imported" namespaces in this source -- this points to RootStatementContexts of
@@ -133,9 +134,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     // If not null, do not add anything to modifiers, but record it here.
     private List<Entry<ModelProcessingPhase, ModifierImpl>> delayedModifiers;
 
-    SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
+    SourceSpecificContext(final BuildGlobalContext globalContext, final ReactorSource<?> source) {
         this.globalContext = requireNonNull(globalContext);
-        this.source = requireNonNull(source);
+        streamSource = source.get();
     }
 
     @NonNull BuildGlobalContext globalContext() {
@@ -242,15 +243,15 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     void startPhase(final ModelProcessingPhase phase) {
         final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         verify(Objects.equals(previousPhase, finishedPhase),
-            "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, source,
+            "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, streamSource,
             finishedPhase);
 
         final Collection<ModifierImpl> previousModifiers = modifiers.get(previousPhase);
         checkState(previousModifiers.isEmpty(), "Previous phase %s has unresolved modifiers %s in source %s",
-            previousPhase, previousModifiers, source);
+            previousPhase, previousModifiers, streamSource);
 
         inProgressPhase = phase;
-        LOG.debug("Source {} started phase {}", source, phase);
+        LOG.debug("Source {} started phase {}", streamSource, phase);
     }
 
     private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
@@ -349,11 +350,11 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         // TODO: use executionOrder instead?
         if (phaseCompleted && currentPhaseModifiers.isEmpty()) {
             finishedPhase = phase;
-            LOG.debug("Source {} finished phase {}", source, phase);
+            LOG.debug("Source {} finished phase {}", streamSource, phase);
             if (phase == ModelProcessingPhase.EFFECTIVE_MODEL) {
                 // We have the effective model acquired, which is the final phase of source interaction.
-                LOG.trace("Releasing source {}", source);
-                source = null;
+                LOG.trace("Releasing source {}", streamSource);
+                streamSource = null;
             }
             return PhaseCompletionProgress.FINISHED;
         }
@@ -410,7 +411,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @Override
     public String toString() {
-        return "SourceSpecificContext [source=" + source + ", current=" + inProgressPhase + ", finished="
+        return "SourceSpecificContext [source=" + streamSource + ", current=" + inProgressPhase + ", finished="
                 + finishedPhase + "]";
     }
 
@@ -437,22 +438,22 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     void loadStatements() {
-        LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
+        LOG.trace("Source {} loading statements for phase {}", streamSource, inProgressPhase);
 
         switch (inProgressPhase) {
             case SOURCE_PRE_LINKAGE:
-                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
+                streamSource.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
                 break;
             case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
+                streamSource.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
                     getRootVersion());
                 break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
+                streamSource.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
                     prefixes(), getRootVersion());
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
+                streamSource.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
                     getRootVersion());
                 break;
             default:
@@ -505,9 +506,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             extensions.forEach((qname, support) -> {
                 final var existing = statementResolver.tryAddSupport(qname, support);
                 if (existing != null) {
-                    LOG.debug("Source {} already defines statement {} as {}", source, qname, existing);
+                    LOG.debug("Source {} already defines statement {} as {}", streamSource, qname, existing);
                 } else {
-                    LOG.debug("Source {} defined statement {} as {}", source, qname, support);
+                    LOG.debug("Source {} defined statement {} as {}", streamSource, qname, support);
                 }
             });
         }
