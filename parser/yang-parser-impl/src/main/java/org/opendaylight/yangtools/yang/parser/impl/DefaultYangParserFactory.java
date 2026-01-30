@@ -39,6 +39,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     /**
      * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
      */
+    @Deprecated
     public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR,
             final YinTextToDOMSourceTransformer textToDOM) {
         this.textToIR = requireNonNull(textToIR);
@@ -48,6 +49,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         verifyNotNull(reactorFactory.apply(YangParserConfiguration.DEFAULT));
     }
 
+    @Deprecated
     public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR,
             final YinTextToDOMSourceTransformer textToDOM, final YangXPathParserFactory xpathFactory) {
         this.textToIR = requireNonNull(textToIR);
@@ -55,18 +57,20 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
     }
 
+    @Deprecated
     @Override
     public Collection<ImportResolutionMode> supportedImportResolutionModes() {
         return SUPPORTED_MODES;
     }
 
+    @Deprecated
     @Override
     public YangParser createParser(final YangParserConfiguration configuration) {
         final var importMode = configuration.importResolutionMode();
         if (!SUPPORTED_MODES.contains(importMode)) {
             throw new IllegalArgumentException("Unsupported import resolution mode " + importMode);
         }
-        return new DefaultYangParser(textToIR, textToDOM, reactors.computeIfAbsent(configuration, reactorFactory)
-            .newBuild());
+        return new DefaultYangParser(reactors.computeIfAbsent(configuration, reactorFactory)
+            .newBuild(textToIR, textToDOM));
     }
 }

@@ -225,11 +225,6 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public final void setRootVersion(final YangVersion version) {
-        getRoot().setRootVersionImpl(version);
-    }
-
-    @Override
     public final void addRequiredSource(final SourceIdentifier dependency) {
         getRoot().addRequiredSourceImpl(dependency);
     }

@@ -29,15 +29,13 @@ import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinXmlSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction.Full;
 
 @Deprecated(since = "14.0.21", forRemoval = true)
 final class DefaultYangParser implements YangParser {
@@ -50,15 +48,10 @@ final class DefaultYangParser implements YangParser {
         YinXmlSource.class,
         YinTextSource.class);
 
-    private final YangTextToIRSourceTransformer textToIR;
-    private final YinTextToDOMSourceTransformer textToDOM;
-    private final BuildAction buildAction;
+    private final Full<YangTextSource, YinTextSource> buildAction;
 
     @Deprecated
-    DefaultYangParser(final YangTextToIRSourceTransformer textToIR, final YinTextToDOMSourceTransformer textToDOM,
-            final BuildAction buildAction) {
-        this.textToIR = requireNonNull(textToIR);
-        this.textToDOM = requireNonNull(textToDOM);
+    DefaultYangParser(final Full<YangTextSource, YinTextSource> buildAction) {
         this.buildAction = requireNonNull(buildAction);
     }
 
@@ -75,7 +68,7 @@ final class DefaultYangParser implements YangParser {
             case YangIRSource irSource -> buildAction.addSource(irSource);
             case YangTextSource yangSource -> {
                 try {
-                    buildAction.addYangSource(textToIR, yangSource);
+                    buildAction.addSource(yangSource);
                 } catch (SourceSyntaxException e) {
                     throw newSyntaxError(source.sourceId(), e);
                 }
@@ -92,7 +85,7 @@ final class DefaultYangParser implements YangParser {
             case YinDomSource yinDom -> buildAction.addSource(yinDom);
             case YinTextSource yinText -> {
                 try {
-                    buildAction.addYinSource(textToDOM, yinText);
+                    buildAction.addSource(yinText);
                 } catch (SourceSyntaxException e) {
                     throw newSyntaxError(source.sourceId(), e);
                 }
@@ -117,7 +110,7 @@ final class DefaultYangParser implements YangParser {
             case YangIRSource irSource -> buildAction.addLibSource(irSource);
             case YangTextSource yangSource -> {
                 try {
-                    buildAction.addLibYangSource(textToIR, yangSource);
+                    buildAction.addLibSource(yangSource);
                 } catch (SourceSyntaxException e) {
                     throw newSyntaxError(source.sourceId(), e);
                 }
@@ -134,7 +127,7 @@ final class DefaultYangParser implements YangParser {
             case YinDomSource yinDom -> buildAction.addLibSource(yinDom);
             case YinTextSource yinText -> {
                 try {
-                    buildAction.addLibYinSource(textToDOM, yinText);
+                    buildAction.addLibSource(yinText);
                 } catch (SourceSyntaxException e) {
                     throw newSyntaxError(source.sourceId(), e);
                 }
