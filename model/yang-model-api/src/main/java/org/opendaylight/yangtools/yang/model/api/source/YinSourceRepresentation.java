@@ -7,10 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.source;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * A YIN {@link SourceRepresentation}.
  */
+@NonNullByDefault
 public non-sealed interface YinSourceRepresentation extends SourceRepresentation {
     @Override
     Class<? extends YinSourceRepresentation> getType();
+
+    @Override
+    default Class<YinTextSource> textRepresentation() {
+        return YinTextSource.class;
+    }
 }

@@ -48,10 +48,10 @@ class ModuleTagTest {
     @Test
     void testModuleTagSupportExtension() throws Exception {
         final var moduleTags = reactor.newBuild(YangIRSourceModule.provideTextToIR())
-            .addYangSource(moduleFromResources("/example-tag-module.yang"))
-            .addYangSource(moduleFromResources("/ietf-module-tags.yang"))
-            .addYangSource(moduleFromResources("/ietf-yang-types.yang"))
-            .addYangSource(moduleFromResources("/ietf-module-tags-state.yang"))
+            .addSource(moduleFromResources("/example-tag-module.yang"))
+            .addSource(moduleFromResources("/ietf-module-tags.yang"))
+            .addSource(moduleFromResources("/ietf-yang-types.yang"))
+            .addSource(moduleFromResources("/ietf-module-tags-state.yang"))
             .buildEffective()
             .getModuleStatements().values().stream()
             .flatMap(module -> module.streamEffectiveSubstatements(ModuleTagEffectiveStatement.class))
@@ -72,10 +72,10 @@ class ModuleTagTest {
     @Test
     void throwExceptionWhenTagParentIsNotModuleOrSubmodule() throws Exception {
         final var action = reactor.newBuild(YangIRSourceModule.provideTextToIR())
-            .addYangSource(moduleFromResources("/foo-tag-module.yang"))
-            .addYangSource(moduleFromResources("/ietf-module-tags.yang"))
-            .addYangSource(moduleFromResources("/ietf-yang-types.yang"))
-            .addYangSource(moduleFromResources("/ietf-module-tags-state.yang"));
+            .addSource(moduleFromResources("/foo-tag-module.yang"))
+            .addSource(moduleFromResources("/ietf-module-tags.yang"))
+            .addSource(moduleFromResources("/ietf-yang-types.yang"))
+            .addSource(moduleFromResources("/ietf-module-tags-state.yang"));
 
         final var cause = assertThrows(ReactorException.class, action::buildEffective).getCause();
         assertInstanceOf(SourceException.class, cause);

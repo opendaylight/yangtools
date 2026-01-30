@@ -38,14 +38,12 @@ class MountPointTest {
             .build();
 
         final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())
-            .addLibYangSource(new URLYangTextSource(
-                MountPointTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(MountPointTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
+            .addLibSource(new URLYangTextSource(
                 MountPointTest.class.getResource("/ietf-yang-schema-mount@2019-01-14.yang")))
-            .addLibYangSource(new URLYangTextSource(
-                MountPointTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))
-            .addYangSource(new URLYangTextSource(MountPointTest.class.getResource("/example-grp.yang")))
-            .addYangSource(new URLYangTextSource(MountPointTest.class.getResource("/example-uses.yang")))
+            .addLibSource(new URLYangTextSource(MountPointTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))
+            .addSource(new URLYangTextSource(MountPointTest.class.getResource("/example-grp.yang")))
+            .addSource(new URLYangTextSource(MountPointTest.class.getResource("/example-uses.yang")))
             .buildEffective();
 
         assertEquals(5, context.getModules().size());

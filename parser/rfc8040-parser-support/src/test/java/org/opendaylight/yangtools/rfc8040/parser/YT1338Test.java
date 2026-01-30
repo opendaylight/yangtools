@@ -25,7 +25,7 @@ class YT1338Test extends AbstractYangDataTest {
     @Test
     void testAddedLeaves() throws Exception {
         final var restconf = assertInstanceOf(ContainerEffectiveStatement.class, newBuild()
-            .addYangSource(sourceForYangText("""
+            .addSource(sourceForYangText("""
                 module yt1338 {
                   namespace yt1338;
                   prefix yt1338;

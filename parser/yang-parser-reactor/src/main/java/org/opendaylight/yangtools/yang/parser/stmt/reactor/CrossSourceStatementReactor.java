@@ -138,7 +138,7 @@ public final class CrossSourceStatementReactor {
              * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
-            WithYang<S> addYangSource(S source) throws SourceSyntaxException;
+            WithYang<S> addSource(S source) throws SourceSyntaxException;
 
             /**
              * Add a library YANG source. Only library sources required by main sources are present in resulting
@@ -152,7 +152,7 @@ public final class CrossSourceStatementReactor {
              * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
-            WithYang<S> addLibYangSource(S source) throws SourceSyntaxException;
+            WithYang<S> addLibSource(S source) throws SourceSyntaxException;
         }
 
         /**
@@ -171,7 +171,7 @@ public final class CrossSourceStatementReactor {
              * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
-            WithYin<S> addYinSource(S source) throws SourceSyntaxException;
+            WithYin<S> addSource(S source) throws SourceSyntaxException;
 
             /**
              * Add a library YIN source. Only library sources required by main sources are present in resulting
@@ -184,7 +184,7 @@ public final class CrossSourceStatementReactor {
              * @return This build action, for fluent use.
              */
             @NonNullByDefault
-            WithYin<S> addLibYinSource(S libSource) throws SourceSyntaxException;
+            WithYin<S> addLibSource(S libSource) throws SourceSyntaxException;
         }
 
         /**
@@ -197,16 +197,16 @@ public final class CrossSourceStatementReactor {
         sealed interface Full<H extends YangSourceRepresentation, M extends YinSourceRepresentation>
                 extends WithYang<H>, WithYin<M> permits FullReactorBuildAction {
             @Override
-            Full<H, M> addYangSource(H source) throws SourceSyntaxException;
+            Full<H, M> addSource(H source) throws SourceSyntaxException;
 
             @Override
-            Full<H, M> addYinSource(M source) throws SourceSyntaxException;
+            Full<H, M> addSource(M source) throws SourceSyntaxException;
 
             @Override
-            Full<H, M> addLibYangSource(H source) throws SourceSyntaxException;
+            Full<H, M> addLibSource(H source) throws SourceSyntaxException;
 
             @Override
-            Full<H, M> addLibYinSource(M source) throws SourceSyntaxException;
+            Full<H, M> addLibSource(M source) throws SourceSyntaxException;
         }
 
         /**
@@ -214,13 +214,18 @@ public final class CrossSourceStatementReactor {
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
-         * @deprecated Use {@link #addYangSource(YangIRSource)} instead.
          */
-        @Deprecated(since = "15.0.0")
         @NonNullByDefault
-        default BuildAction addSource(final YangIRSource source) {
-            return addYangSource(source);
-        }
+        BuildAction addSource(YangIRSource source);
+
+        /**
+         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         *
+         * @param source which should be added into main sources
+         * @return This build action, for fluent use.
+         */
+        @NonNullByDefault
+        BuildAction addSource(YinDomSource source);
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -236,17 +241,8 @@ public final class CrossSourceStatementReactor {
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addYangSource(transformer, source);
+            return addSource(transformer, source);
         }
-
-        /**
-         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
-         *
-         * @param source which should be added into main sources
-         * @return This build action, for fluent use.
-         */
-        @NonNullByDefault
-        BuildAction addYangSource(YangIRSource source);
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -260,17 +256,8 @@ public final class CrossSourceStatementReactor {
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addYangSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addYangSource(transformer.transformSource(source));
+            return addSource(transformer.transformSource(source));
         }
-
-        /**
-         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
-         *
-         * @param source which should be added into main sources
-         * @return This build action, for fluent use.
-         */
-        @NonNullByDefault
-        BuildAction addYinSource(YinDomSource source);
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -284,7 +271,7 @@ public final class CrossSourceStatementReactor {
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addYinSource(
                 final SourceTransformer<S, YinDomSource> transformer, final S source) throws SourceSyntaxException {
-            return addYinSource(transformer.transformSource(source));
+            return addSource(transformer.transformSource(source));
         }
 
         /**
@@ -296,13 +283,22 @@ public final class CrossSourceStatementReactor {
          *
          * @param libSource source which should be added into library sources
          * @return This build action, for fluent use.
-         * @deprecated Use {@link #addLibYangSource(YangIRSource)} instead.
          */
-        @Deprecated(since = "15.0.0")
         @NonNullByDefault
-        default BuildAction addLibSource(final YangIRSource libSource) {
-            return addLibYangSource(libSource);
-        }
+        BuildAction addLibSource(YangIRSource libSource);
+
+        /**
+         * Add a library YIN source. Only library sources required by main sources are present in resulting
+         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * reporting.
+         *
+         * <p>Library sources are not supported in semantic version mode currently.
+         *
+         * @param libSource source which should be added into library sources
+         * @return This build action, for fluent use.
+         */
+        @NonNullByDefault
+        BuildAction addLibSource(YinDomSource libSource);
 
         /**
          * Add a transformed library source. Only library sources required by main sources are present in resulting
@@ -322,21 +318,8 @@ public final class CrossSourceStatementReactor {
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addLibSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addLibYangSource(transformer.transformSource(source));
+            return addLibSource(transformer.transformSource(source));
         }
-
-        /**
-         * Add a library YANG source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
-         * reporting.
-         *
-         * <p>Library sources are not supported in semantic version mode currently.
-         *
-         * @param libSource source which should be added into library sources
-         * @return This build action, for fluent use.
-         */
-        @NonNullByDefault
-        BuildAction addLibYangSource(YangIRSource libSource);
 
         /**
          * Add a transformed YANG library source. Only library sources required by main sources are present in resulting
@@ -354,21 +337,8 @@ public final class CrossSourceStatementReactor {
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addLibYangSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addLibYangSource(transformer.transformSource(source));
+            return addLibSource(transformer.transformSource(source));
         }
-
-        /**
-         * Add a library YIN source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
-         * reporting.
-         *
-         * <p>Library sources are not supported in semantic version mode currently.
-         *
-         * @param libSource source which should be added into library sources
-         * @return This build action, for fluent use.
-         */
-        @NonNullByDefault
-        BuildAction addLibYinSource(YinDomSource libSource);
 
         /**
          * Add a transformed YIN library source. Only library sources required by main sources are present in resulting
@@ -386,7 +356,7 @@ public final class CrossSourceStatementReactor {
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addLibYinSource(
                 final SourceTransformer<S, YinDomSource> transformer, final S source) throws SourceSyntaxException {
-            return addLibYinSource(transformer.transformSource(source));
+            return addLibSource(transformer.transformSource(source));
         }
 
         /**
