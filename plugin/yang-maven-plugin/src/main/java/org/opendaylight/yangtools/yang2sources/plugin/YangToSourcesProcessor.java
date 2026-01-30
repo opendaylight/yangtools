@@ -408,7 +408,13 @@ class YangToSourcesProcessor {
             for (var entry : parsed) {
                 final var textSource = entry.getKey();
                 final var astSource = entry.getValue();
-                parser.addSource(astSource);
+                try {
+                    parser.addSource(astSource);
+                } catch (IOException e) {
+                    // FIXME: this should never happen: we should not be talking to YangParserFactory but rather to the
+                    //        BuildAction itself -- which knows about YangIRSource
+                    throw new MojoExecutionException(LOG_PREFIX + " Unexpected failure adding " + astSource, e);
+                }
 
                 if (!astSource.sourceId().equals(textSource.sourceId())) {
                     // AST indicates a different source identifier, make sure we use that
@@ -421,7 +427,7 @@ class YangToSourcesProcessor {
             final var moduleReactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {} with {}", moduleReactor, yangFilesInProject);
             return moduleReactor;
-        } catch (IOException | YangSyntaxErrorException | RuntimeException e) {
+        } catch (YangSyntaxErrorException | RuntimeException e) {
             // MojoExecutionException is thrown since execution cannot continue
             LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
