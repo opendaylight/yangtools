@@ -30,23 +30,23 @@ class SubscribedNotificationsTest {
                 .build();
 
         final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-interfaces@2018-02-20.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-ip@2018-02-22.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-netconf-acm@2018-02-14.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-network-instance@2019-01-21.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-restconf@2017-01-26.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-yang-schema-mount@2019-01-14.yang")))
-            .addLibYangSource(new URLYangTextSource(
+            .addLibSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))
-            .addYangSource(new URLYangTextSource(
+            .addSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-subscribed-notifications@2019-09-09.yang")))
             .buildEffective();
 
