@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransf
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class MountTest {
@@ -33,10 +32,8 @@ class MountTest {
                 YangExtModule.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var foo = reactor.newBuild()
-            .addSource(new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                MountTest.class.getResource("/yang-ext.yang")))))
-            .addSource(new YangIRStatementStreamSource(TRANSFORMER.transformSource(new URLYangTextSource(
-                MountTest.class.getResource("/mount.yang")))))
+            .addYangSource(TRANSFORMER, new URLYangTextSource(MountTest.class.getResource("/yang-ext.yang")))
+            .addYangSource(TRANSFORMER, new URLYangTextSource(MountTest.class.getResource("/mount.yang")))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);
