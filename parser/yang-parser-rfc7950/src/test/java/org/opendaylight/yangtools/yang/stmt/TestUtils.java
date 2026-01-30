@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -106,26 +107,28 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static @NonNull YangIRSource assertYangSource(final String resourcePath) throws SourceSyntaxException {
+    public static @NonNull YangIRSource assertYangSource(final String resourcePath)
+            throws IOException, SourceSyntaxException {
         return TEXT_TO_IR.transformSource(new URLYangTextSource(TestUtils.class.getResource(resourcePath)));
     }
 
-    public static @NonNull YangIRSource assertYangSource(final Path file) throws SourceSyntaxException {
+    public static @NonNull YangIRSource assertYangSource(final Path file) throws IOException, SourceSyntaxException {
         return TEXT_TO_IR.transformSource(new FileYangTextSource(file));
     }
 
-    public static @NonNull YinDomSource assertYinSource(final String resourcePath) throws SourceSyntaxException {
+    public static @NonNull YinDomSource assertYinSource(final String resourcePath)
+            throws IOException, SourceSyntaxException {
         return TEXT_TO_DOM.transformSource(new URLYinTextSource(TestUtils.class.getResource(resourcePath)));
     }
 
-    public static @NonNull YinDomSource assertYinSource(final Path file) throws SourceSyntaxException {
+    public static @NonNull YinDomSource assertYinSource(final Path file) throws IOException, SourceSyntaxException {
         return TEXT_TO_DOM.transformSource(new FileYinTextSource(file));
     }
 
     // FIXME: these remain unaudited
 
     public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
-            throws ExtractorException, ReactorException, SourceSyntaxException {
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
         final var reactor = RFC7950Reactors.defaultReactor().newBuild();
 
         // FIXME: use Files to list files
@@ -137,7 +140,7 @@ public final class TestUtils {
     }
 
     public static Module loadYinModule(final YinTextSource source)
-            throws ExtractorException, ReactorException, SourceSyntaxException {
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
         return RFC7950Reactors.defaultReactor().newBuild().addYinSource(TEXT_TO_DOM, source).buildEffective()
             .getModules().iterator().next();
     }

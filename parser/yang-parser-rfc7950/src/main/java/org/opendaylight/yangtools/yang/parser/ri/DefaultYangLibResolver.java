@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.ri;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNull;
@@ -87,7 +88,8 @@ public final class DefaultYangLibResolver implements YangLibResolver {
     }
 
     @Override
-    public EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet) throws YangParserException {
+    public EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet)
+            throws IOException, YangParserException {
         final var act = reactor.newBuild(textToIR, textToDOM);
         final var features = ImmutableSet.<QName>builder();
 
@@ -115,22 +117,20 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
         for (var module : moduleSet.importOnlyModules().values()) {
             final var source = module.source();
-            try {
-                switch (source) {
-                    case YangIRSource yangIR -> act.addLibSource(yangIR);
-                    case YangTextSource yangText -> act.addLibSource(yangText);
-                    case YinDomSource yinDOM -> act.addLibSource(yinDOM);
-                    case YinTextSource yinText -> act.addLibSource(yinText);
-                    default -> throw new IllegalArgumentException("Unsupported source " + source);
-                }
-            } catch (SourceSyntaxException e) {
-                throw DefaultYangParser.newSyntaxError(source.sourceId(), e.sourceRef(), e);
+            switch (source) {
+                case YangIRSource yangIR -> act.addLibSource(yangIR);
+                case YangTextSource yangText -> act.addLibSource(yangText);
+                case YinDomSource yinDOM -> act.addLibSource(yinDOM);
+                case YinTextSource yinText -> act.addLibSource(yinText);
+                default -> throw new IllegalArgumentException("Unsupported source " + source);
             }
         }
 
         try {
             return act.setSupportedFeatures(FeatureSet.of(features.build())).buildEffective();
         } catch (ExtractorException e) {
+            throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
+        } catch (SourceSyntaxException e) {
             throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
         } catch (ReactorException e) {
             throw DefaultYangParser.decodeReactorException(e);

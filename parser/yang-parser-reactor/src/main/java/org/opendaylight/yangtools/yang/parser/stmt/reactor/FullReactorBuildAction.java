@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
@@ -38,26 +39,26 @@ final class FullReactorBuildAction<H extends YangSourceRepresentation, M extends
     }
 
     @Override
-    public Full<H, M> addSource(final H source) throws ExtractorException, SourceSyntaxException {
+    public Full<H, M> addSource(final H source) throws ExtractorException, IOException, SourceSyntaxException {
         super.addSource(source);
         return this;
     }
 
     @Override
-    public Full<H, M> addSource(final M source) throws ExtractorException, SourceSyntaxException {
+    public Full<H, M> addSource(final M source) throws ExtractorException, IOException, SourceSyntaxException {
         addSource(yinTransformer.transformSource(source));
         return this;
     }
 
     @Override
-    public Full<H, M> addLibSource(final H source) throws SourceSyntaxException {
+    public Full<H, M> addLibSource(final H source) {
         super.addLibSource(source);
         return this;
     }
 
     @Override
-    public Full<H, M> addLibSource(final M libSource) throws SourceSyntaxException {
-        addLibSource(yinTransformer.transformSource(libSource));
+    public Full<H, M> addLibSource(final M libSource) {
+        addLibYinSource(yinTransformer, libSource);
         return this;
     }
 }

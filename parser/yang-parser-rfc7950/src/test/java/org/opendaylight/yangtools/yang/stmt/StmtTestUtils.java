@@ -80,7 +80,7 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final Collection<? extends @NonNull YangIRSource> sources)
-            throws ExtractorException, ReactorException {
+                throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
         final var build = getReactor(config).newBuild();
         for (var source : sources) {
             build.addSource(source);
@@ -123,13 +123,13 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath)
-            throws ExtractorException, URISyntaxException, SourceSyntaxException, ReactorException {
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException, URISyntaxException {
         return parseYinSources(yinSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
             final YangParserConfiguration config)
-                throws ExtractorException, ReactorException, SourceSyntaxException, URISyntaxException {
+                throws ExtractorException, IOException, ReactorException, SourceSyntaxException, URISyntaxException {
         final var files = Path.of(StmtTestUtils.class.getResource(yinSourcesDirectoryPath).toURI()).toFile()
             .listFiles(YIN_FILE_FILTER);
 
