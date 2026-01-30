@@ -115,6 +115,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
     private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
     private final HashMapPrefixResolver prefixToModuleMap = new HashMapPrefixResolver();
     private final @NonNull BuildGlobalContext globalContext;
+    private final @NonNull SourceIdentifier sourceId;
     private final @NonNull YangVersion yangVersion;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
@@ -134,11 +135,17 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
     // If not null, do not add anything to modifiers, but record it here.
     private List<Entry<ModelProcessingPhase, ModifierImpl>> delayedModifiers;
 
-    SourceSpecificContext(final BuildGlobalContext globalContext, final YangVersion yangVersion,
-            final StatementStreamSource streamSource) {
+    SourceSpecificContext(final BuildGlobalContext globalContext, final SourceIdentifier sourceId,
+            final YangVersion yangVersion, final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
+        this.sourceId = requireNonNull(sourceId);
         this.yangVersion = requireNonNull(yangVersion);
         this.streamSource = requireNonNull(streamSource);
+    }
+
+    @Override
+    public SourceIdentifier sourceId() {
+        return sourceId;
     }
 
     @NonNull BuildGlobalContext globalContext() {

@@ -44,7 +44,6 @@ public interface YangParser {
      *
      * @param source which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
     @NonNullByDefault
@@ -60,7 +59,6 @@ public interface YangParser {
      *
      * @param source which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
     @NonNullByDefault
@@ -71,7 +69,6 @@ public interface YangParser {
      *
      * @param source which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
     @NonNullByDefault
@@ -82,7 +79,6 @@ public interface YangParser {
      *
      * @param sources which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
     default @NonNull YangParser addSources(final SourceRepresentation... sources)
@@ -102,7 +98,7 @@ public interface YangParser {
     }
 
     @NonNullByDefault
-    default YangParser addLibSource(final SourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    default YangParser addLibSource(final SourceRepresentation source) {
         return switch (source) {
             case YangSourceRepresentation yangSource -> addLibSource(yangSource);
             case YinSourceRepresentation yinSource -> addLibSource(yinSource);
@@ -110,10 +106,10 @@ public interface YangParser {
     }
 
     @NonNullByDefault
-    YangParser addLibSource(YangSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    YangParser addLibSource(YangSourceRepresentation source);
 
     @NonNullByDefault
-    YangParser addLibSource(YinSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    YangParser addLibSource(YinSourceRepresentation source);
 
     /**
      * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
@@ -122,23 +118,17 @@ public interface YangParser {
      * <p>Note: Library sources are not supported in semantic version mode currently.
      *
      * @param sources YANG sources which should be added into library sources
-     * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    default @NonNull YangParser addLibSources(final SourceRepresentation... sources)
-            throws IOException, YangSyntaxErrorException {
+    default @NonNull YangParser addLibSources(final SourceRepresentation... sources) {
         for (var source : sources) {
             addLibSource(source);
         }
         return this;
     }
 
-    default @NonNull YangParser addLibSources(final Collection<SourceRepresentation> sources)
-            throws IOException, YangSyntaxErrorException {
-        for (var source : sources) {
-            addLibSource(source);
-        }
+    default @NonNull YangParser addLibSources(final Collection<SourceRepresentation> sources)  {
+        sources.forEach(this::addLibSource);
         return this;
     }
 
@@ -166,7 +156,7 @@ public interface YangParser {
      * Build the declared view of a combined view of declared statements.
      *
      * @return Ordered collection of declared statements from requested sources.
-     * @throws YangSyntaxErrorException When a syntactic error is encountered.
+     * @throws YangParserException When a syntactic error is encountered.
      */
     @NonNull List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException;
 
@@ -176,7 +166,7 @@ public interface YangParser {
      * respective parent modules.
      *
      * @return Effective module statements indexed by their QNameModule.
-     * @throws YangSyntaxErrorException When a syntactic error is encountered.
+     * @throws YangParserException When a syntactic error is encountered.
      */
     @NonNull EffectiveModelContext buildEffectiveModel() throws YangParserException;
 }

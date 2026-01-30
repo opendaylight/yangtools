@@ -87,31 +87,21 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public YangParser addLibSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    public YangParser addLibSource(final YangSourceRepresentation source) {
         switch (source) {
             case YangIRSource irSource -> buildAction.addLibSource(irSource);
-            case YangTextSource yangSource -> {
-                try {
-                    buildAction.addLibSource(yangSource);
-                } catch (SourceSyntaxException e) {
-                    throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
-                }
-            }
+            case YangTextSource yangSource -> buildAction.addLibSource(yangSource);
             default -> throw new IllegalArgumentException("Unsupported YANG source " + source);
         }
         return this;
     }
 
     @Override
-    public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
-        try {
-            switch (source) {
-                case YinDOMSource yinDom -> buildAction.addLibSource(yinDom);
-                case YinTextSource yinText -> buildAction.addLibSource(yinText);
-                default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
-            }
-        } catch (SourceSyntaxException e) {
-            throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
+    public YangParser addLibSource(final YinSourceRepresentation source) {
+        switch (source) {
+            case YinDOMSource yinDom -> buildAction.addLibSource(yinDom);
+            case YinTextSource yinText -> buildAction.addLibSource(yinText);
+            default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
         }
         return this;
     }

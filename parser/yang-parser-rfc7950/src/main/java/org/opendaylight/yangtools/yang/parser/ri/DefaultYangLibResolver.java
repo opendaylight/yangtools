@@ -114,25 +114,21 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
         for (var module : moduleSet.importOnlyModules().values()) {
             final var source = module.source();
-            try {
-                switch (source) {
-                    case YangIRSource yangIR -> act.addLibSource(yangIR);
-                    case YangTextSource yangText -> act.addLibSource(yangText);
-                    case YinDOMSource yinDOM -> act.addLibSource(yinDOM);
-                    case YinTextSource yinText -> act.addLibSource(yinText);
-                    default -> throw new IllegalArgumentException("Unsupported source " + source);
-                }
-            } catch (SourceSyntaxException e) {
-                throw DefaultYangParser.newSyntaxError(source.sourceId(), e.sourceRef(), e);
+            switch (source) {
+                case YangIRSource yangIR -> act.addLibSource(yangIR);
+                case YangTextSource yangText -> act.addLibSource(yangText);
+                case YinDOMSource yinDOM -> act.addLibSource(yinDOM);
+                case YinTextSource yinText -> act.addLibSource(yinText);
+                default -> throw new IllegalArgumentException("Unsupported source " + source);
             }
         }
 
         try {
             return act.setSupportedFeatures(FeatureSet.of(features.build())).buildEffective();
-        } catch (SourceSyntaxException e) {
-            throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
         } catch (ReactorException e) {
             throw DefaultYangParser.decodeReactorException(e);
+        } catch (SourceSyntaxException e) {
+            throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
         }
     }
 }
