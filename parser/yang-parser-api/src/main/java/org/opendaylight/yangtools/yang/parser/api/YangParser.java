@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.SetMultimap;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -44,11 +43,10 @@ public interface YangParser {
      *
      * @param source which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
     @NonNullByDefault
-    default YangParser addSource(final SourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    default YangParser addSource(final SourceRepresentation source) throws YangSyntaxErrorException {
         return switch (source) {
             case YangSourceRepresentation yangSource -> addSource(yangSource);
             case YinSourceRepresentation yinSource -> addSource(yinSource);
@@ -60,33 +58,29 @@ public interface YangParser {
      *
      * @param source which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
     @NonNullByDefault
-    YangParser addSource(YangSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    YangParser addSource(YangSourceRepresentation source) throws YangSyntaxErrorException;
 
     /**
      * Add main source. All main sources are present in resulting SchemaContext.
      *
      * @param source which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
     @NonNullByDefault
-    YangParser addSource(YinSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    YangParser addSource(YinSourceRepresentation source) throws YangSyntaxErrorException;
 
     /**
      * Add main sources. All main sources are present in resulting SchemaContext.
      *
      * @param sources which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    default @NonNull YangParser addSources(final SourceRepresentation... sources)
-            throws IOException, YangSyntaxErrorException {
+    default @NonNull YangParser addSources(final SourceRepresentation... sources) throws YangSyntaxErrorException {
         for (var source : sources) {
             addSource(requireNonNull(source));
         }
@@ -94,7 +88,7 @@ public interface YangParser {
     }
 
     default @NonNull YangParser addSources(final Collection<? extends SourceRepresentation> sources)
-            throws IOException, YangSyntaxErrorException {
+            throws YangSyntaxErrorException {
         for (var source : sources) {
             addSource(requireNonNull(source));
         }
@@ -102,7 +96,7 @@ public interface YangParser {
     }
 
     @NonNullByDefault
-    default YangParser addLibSource(final SourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    default YangParser addLibSource(final SourceRepresentation source) throws YangSyntaxErrorException {
         return switch (source) {
             case YangSourceRepresentation yangSource -> addLibSource(yangSource);
             case YinSourceRepresentation yinSource -> addLibSource(yinSource);
@@ -110,10 +104,10 @@ public interface YangParser {
     }
 
     @NonNullByDefault
-    YangParser addLibSource(YangSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    YangParser addLibSource(YangSourceRepresentation source);
 
     @NonNullByDefault
-    YangParser addLibSource(YinSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    YangParser addLibSource(YinSourceRepresentation source) throws YangSyntaxErrorException;
 
     /**
      * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
@@ -123,11 +117,9 @@ public interface YangParser {
      *
      * @param sources YANG sources which should be added into library sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
-     * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    default @NonNull YangParser addLibSources(final SourceRepresentation... sources)
-            throws IOException, YangSyntaxErrorException {
+    default @NonNull YangParser addLibSources(final SourceRepresentation... sources) throws YangSyntaxErrorException {
         for (var source : sources) {
             addLibSource(source);
         }
@@ -135,7 +127,7 @@ public interface YangParser {
     }
 
     default @NonNull YangParser addLibSources(final Collection<SourceRepresentation> sources)
-            throws IOException, YangSyntaxErrorException {
+            throws YangSyntaxErrorException {
         for (var source : sources) {
             addLibSource(source);
         }

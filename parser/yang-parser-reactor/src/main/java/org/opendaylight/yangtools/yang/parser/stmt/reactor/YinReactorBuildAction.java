@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
@@ -34,14 +35,14 @@ final class YinReactorBuildAction<S extends YinSourceRepresentation> extends Rea
     }
 
     @Override
-    public WithYin<S> addSource(final S source) throws ExtractorException, SourceSyntaxException {
+    public WithYin<S> addSource(final S source) throws ExtractorException, IOException, SourceSyntaxException {
         addSource(transformer.transformSource(source));
         return this;
     }
 
     @Override
-    public WithYin<S> addLibSource(final S libSource) throws SourceSyntaxException {
-        addLibSource(transformer.transformSource(libSource));
+    public WithYin<S> addLibSource(final S libSource) {
+        addLibYinSource(transformer, libSource);
         return this;
     }
 }
