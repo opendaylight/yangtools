@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.SetMultimap;
-import java.io.IOException;
 import java.util.List;
 import javax.xml.transform.TransformerException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -66,7 +65,7 @@ final class DefaultYangParser implements YangParser {
 
     @Deprecated
     @Override
-    public YangParser addSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    public YangParser addSource(final YangSourceRepresentation source) throws YangSyntaxErrorException {
         try {
             switch (source) {
                 case YangIRSource irSource -> buildAction.addSource(irSource);
@@ -87,7 +86,7 @@ final class DefaultYangParser implements YangParser {
 
     @Deprecated
     @Override
-    public YangParser addSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    public YangParser addSource(final YinSourceRepresentation source) throws YangSyntaxErrorException {
         try {
             switch (source) {
                 case YinDomSource yinDom -> buildAction.addSource(yinDom);
@@ -116,16 +115,10 @@ final class DefaultYangParser implements YangParser {
 
     @Deprecated
     @Override
-    public YangParser addLibSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    public YangParser addLibSource(final YangSourceRepresentation source) {
         switch (source) {
             case YangIRSource irSource -> buildAction.addLibSource(irSource);
-            case YangTextSource yangSource -> {
-                try {
-                    buildAction.addLibSource(yangSource);
-                } catch (SourceSyntaxException e) {
-                    throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
-                }
-            }
+            case YangTextSource yangSource -> buildAction.addLibSource(yangSource);
             default -> throw new IllegalArgumentException("Unsupported source " + source);
         }
         return this;
@@ -133,16 +126,10 @@ final class DefaultYangParser implements YangParser {
 
     @Deprecated
     @Override
-    public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    public YangParser addLibSource(final YinSourceRepresentation source) throws YangSyntaxErrorException {
         switch (source) {
             case YinDomSource yinDom -> buildAction.addLibSource(yinDom);
-            case YinTextSource yinText -> {
-                try {
-                    buildAction.addLibSource(yinText);
-                } catch (SourceSyntaxException e) {
-                    throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
-                }
-            }
+            case YinTextSource yinText -> buildAction.addLibSource(yinText);
             case YinXmlSource yinXml -> {
                 try {
                     buildAction.addLibSource(YinDomSource.transform(yinXml));
@@ -178,6 +165,8 @@ final class DefaultYangParser implements YangParser {
             return buildAction.buildDeclared().getRootStatements();
         } catch (ExtractorException e) {
             throw newSyntaxError(null, e.sourceRef(), e);
+        } catch (SourceSyntaxException e) {
+            throw newSyntaxError(null, e.sourceRef(), e);
         } catch (ReactorException e) {
             throw decodeReactorException(e);
         }
@@ -189,6 +178,8 @@ final class DefaultYangParser implements YangParser {
         try {
             return buildAction.buildEffective();
         } catch (ExtractorException e) {
+            throw newSyntaxError(null, e.sourceRef(), e);
+        } catch (SourceSyntaxException e) {
             throw newSyntaxError(null, e.sourceRef(), e);
         } catch (ReactorException e) {
             throw decodeReactorException(e);

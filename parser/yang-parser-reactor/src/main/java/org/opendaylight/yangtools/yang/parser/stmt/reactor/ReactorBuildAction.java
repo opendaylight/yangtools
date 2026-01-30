@@ -12,11 +12,16 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
+import java.io.IOException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.source.YangIRStatementStreamSource;
@@ -40,13 +45,13 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public BuildAction addSource(final YangIRSource source) throws ExtractorException {
+    public BuildAction addSource(final YangIRSource source) throws ExtractorException, IOException {
         context.addSource(source, YangIRStatementStreamSource::new);
         return this;
     }
 
     @Override
-    public BuildAction addSource(final YinDomSource source) throws ExtractorException {
+    public BuildAction addSource(final YinDomSource source) throws ExtractorException, IOException {
         context.addSource(source, YinDOMStatementStreamSource::new);
         return this;
     }
@@ -81,12 +86,30 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public final ReactorDeclaredModel buildDeclared() throws ExtractorException, ReactorException {
+    public final ReactorDeclaredModel buildDeclared()
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
         return context.build();
     }
 
     @Override
-    public final EffectiveSchemaContext buildEffective() throws ExtractorException, ReactorException {
+    public final EffectiveSchemaContext buildEffective()
+            throws ExtractorException, IOException, ReactorException, SourceSyntaxException {
         return context.buildEffective();
+    }
+
+    @Override
+    @NonNullByDefault
+    public final <S extends SourceRepresentation> BuildAction addLibYangSource(
+            final SourceTransformer<S, YangIRSource> transformer, final S source) {
+        context.addLibSource(transformer, source, YangIRStatementStreamSource::new);
+        return this;
+    }
+
+    @Override
+    @NonNullByDefault
+    public final <S extends SourceRepresentation> BuildAction addLibYinSource(
+            final SourceTransformer<S, YinDomSource> transformer, final S source) {
+        context.addLibSource(transformer, source, YinDOMStatementStreamSource::new);
+        return this;
     }
 }

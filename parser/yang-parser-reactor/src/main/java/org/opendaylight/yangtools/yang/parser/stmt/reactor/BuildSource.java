@@ -10,13 +10,16 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import java.io.IOException;
 import java.util.function.Function;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Extractor;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 
 /**
@@ -26,44 +29,84 @@ import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
  * @param extractor the {@link SourceInfoExtractor}
  * @param streamSupplier the {@link StatementStreamSource} supplier
  */
+@NonNullByDefault
 final class BuildSource<S extends SourceRepresentation & SourceInfo.Extractor> {
     /**
      * A stage in {@link BuildSource} lifecycle.
      */
-    sealed interface Stage permits SourceSpecificContext, Uninitialized {
+    sealed interface Stage permits Candidate, Extractable, SourceSpecificContext {
         // Just a marker
     }
 
-    @NonNullByDefault
-    private record Uninitialized<S extends SourceRepresentation & SourceInfo.Extractor>(
+    /**
+     * A {@link Stage} when we have only a reference to a source and a transformer to {@link Extractable}.
+     */
+    private record Candidate<I extends SourceRepresentation, O extends SourceRepresentation & SourceInfo.Extractor>(
+            BuildGlobalContext global,
+            SourceTransformer<I, O> transformer,
+            I input,
+            Function<O, StatementStreamSource> streamFactory) implements Stage {
+        Candidate {
+            requireNonNull(global);
+            requireNonNull(transformer);
+            requireNonNull(input);
+            requireNonNull(streamFactory);
+        }
+
+        Extractable<O> toExtractable() throws IOException, SourceSyntaxException {
+            final var source = transformer.transformSource(input);
+            return new Extractable<>(global, source, streamFactory);
+        }
+    }
+
+    /**
+     * A {@link Stage} when we have acquired a representation that is a {@link Extractor}.
+     *
+     * @param <S> the {@link SourceRepresentation}
+     */
+    private record Extractable<S extends SourceRepresentation & SourceInfo.Extractor>(
             BuildGlobalContext global, S source, Function<S, StatementStreamSource> streamFactory) implements Stage {
-        Uninitialized {
+        Extractable {
             requireNonNull(global);
             requireNonNull(source);
             requireNonNull(streamFactory);
         }
 
-        SourceSpecificContext initialize() throws ExtractorException {
+        SourceSpecificContext toSourceContext() throws ExtractorException {
             final var sourceInfo = source.extractSourceInfo();
             return new SourceSpecificContext(global, sourceInfo.yangVersion(), streamFactory.apply(source));
         }
     }
 
-    private @NonNull Stage stage;
+    private Stage stage;
 
     BuildSource(final BuildGlobalContext global, final S source,
             final Function<S, StatementStreamSource> streamFactory) {
-        stage = new Uninitialized<>(global, source, streamFactory);
+        stage = new Extractable<>(global, source, streamFactory);
     }
 
-    SourceSpecificContext getSourceContext() throws ExtractorException {
+    <I extends SourceRepresentation> BuildSource(final BuildGlobalContext global,
+            final SourceTransformer<I, S> transformer, final I input,
+            final Function<S, StatementStreamSource> streamFactory) {
+        stage = new Candidate<>(global, transformer, input, streamFactory);
+    }
+
+    SourceSpecificContext getSourceContext() throws ExtractorException, IOException, SourceSyntaxException {
         return switch (stage) {
-            case Uninitialized<?> unitialized -> {
-                final var context = unitialized.initialize();
+            case Candidate<?, ?> candidate -> {
+                // Note: two stores to free references as soon as possible
+                final var extractable = candidate.toExtractable();
+                stage = extractable;
+                final var context = extractable.toSourceContext();
                 stage = context;
                 yield context;
             }
-            case SourceSpecificContext initialized -> initialized;
+            case Extractable<?> extractable -> {
+                final var context = extractable.toSourceContext();
+                stage = context;
+                yield context;
+            }
+            case SourceSpecificContext sourceContext -> sourceContext;
         };
     }
 
