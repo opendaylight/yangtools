@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.YinDOMStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
@@ -134,19 +133,6 @@ public final class CrossSourceStatementReactor {
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
-         * @throws NullPointerException if {@code source} is null
-         */
-        @Deprecated(since = "15.0.0", forRemoval = true)
-        public @NonNull BuildAction addSource(final StatementStreamSource source) {
-            context.addSource(source);
-            return this;
-        }
-
-        /**
-         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
-         *
-         * @param source which should be added into main sources
-         * @return This build action, for fluent use.
          */
         @NonNullByDefault
         public BuildAction addYangSource(final YangIRSource source) {
@@ -233,23 +219,6 @@ public final class CrossSourceStatementReactor {
         public <S extends SourceRepresentation> BuildAction addLibSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
             return addLibSource(transformer.transformSource(source));
-        }
-
-        /**
-         * Add a library source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
-         * reporting.
-         *
-         * <p>Library sources are not supported in semantic version mode currently.
-         *
-         * @param libSource source which should be added into library sources
-         * @return This build action, for fluent use.
-         * @throws NullPointerException if {@code libSource} is null
-         */
-        @Deprecated(since = "15.0.0", forRemoval = true)
-        public @NonNull BuildAction addLibSource(final StatementStreamSource libSource) {
-            context.addLibSource(libSource);
-            return this;
         }
 
         /**
