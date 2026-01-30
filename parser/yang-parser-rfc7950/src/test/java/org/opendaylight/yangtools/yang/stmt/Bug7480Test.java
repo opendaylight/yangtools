@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,7 +92,9 @@ class Bug7480Test {
     private static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
             final String yangLibsDirectoryPath) throws Exception {
         final var build = RFC7950Reactors.defaultReactor().newBuild();
-        TestUtils.loadSources(yangFilesDirectoryPath).forEach(build::addSource);
+        TestUtils.loadSources(yangFilesDirectoryPath).forEach(source -> {
+            assertDoesNotThrow(() -> build.addSource(source));
+        });
         TestUtils.loadSources(yangLibsDirectoryPath).forEach(build::addLibSource);
         return build.buildEffective();
     }

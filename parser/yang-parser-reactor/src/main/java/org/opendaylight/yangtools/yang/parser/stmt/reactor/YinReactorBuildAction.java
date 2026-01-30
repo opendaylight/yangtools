@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
@@ -33,7 +34,7 @@ final class YinReactorBuildAction<S extends YinSourceRepresentation> extends Rea
     }
 
     @Override
-    public WithYin<S> addSource(final S source) throws SourceSyntaxException {
+    public WithYin<S> addSource(final S source) throws ExtractorException, SourceSyntaxException {
         addSource(transformer.transformSource(source));
         return this;
     }

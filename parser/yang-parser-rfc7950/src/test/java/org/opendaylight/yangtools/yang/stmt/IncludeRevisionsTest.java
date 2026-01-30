@@ -23,15 +23,15 @@ class IncludeRevisionsTest {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/revisions/equal-rev.yang"))
             .addSource(sourceForResource("/revisions/equal-root.yang"))
-            .build());
+            .buildDeclared());
     }
 
     @Test
     void revsUnequalTest() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild()
+        var ex = assertThrows(SomeModifiersUnresolvedException.class, () -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/revisions/unequal-rev.yang"))
-            .addSource(sourceForResource("/revisions/unequal-root.yang"));
-        var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::build);
+            .addSource(sourceForResource("/revisions/unequal-root.yang"))
+            .buildDeclared());
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
     }
 
@@ -40,15 +40,14 @@ class IncludeRevisionsTest {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/revisions/submod-only-rev.yang"))
             .addSource(sourceForResource("/revisions/submod-only-root.yang"))
-            .build());
+            .buildDeclared());
     }
 
     @Test
     void revInModuleOnly() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild()
+        var ex = assertThrows(SomeModifiersUnresolvedException.class, () -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/revisions/mod-only-rev.yang"))
-            .addSource(sourceForResource("/revisions/mod-only-root.yang"));
-        var ex = assertThrows(SomeModifiersUnresolvedException.class, reactor::build);
+            .addSource(sourceForResource("/revisions/mod-only-root.yang")).buildDeclared());
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
     }
 
@@ -57,6 +56,6 @@ class IncludeRevisionsTest {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/revisions/nowhere-rev.yang"))
             .addSource(sourceForResource("/revisions/nowhere-root.yang"))
-            .build());
+            .buildDeclared());
     }
 }

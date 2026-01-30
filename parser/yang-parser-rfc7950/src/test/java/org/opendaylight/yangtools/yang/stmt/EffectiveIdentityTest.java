@@ -26,15 +26,16 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 class EffectiveIdentityTest {
     @Test
     void cyclicDefineTest() {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(sourceForResource("/stmt-test/identity/cyclic-identity-test.yang"));
-        final var cause = assertThrows(SomeModifiersUnresolvedException.class, reactor::buildEffective).getCause();
+        final var cause = assertThrows(SomeModifiersUnresolvedException.class, () ->
+            RFC7950Reactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/stmt-test/identity/cyclic-identity-test.yang"))
+                .buildEffective())
+            .getCause();
         assertInstanceOf(InferenceException.class, cause);
         assertThat(cause.getMessage()).startsWith("Yang model processing phase STATEMENT_DEFINITION failed [at ");
 
@@ -64,7 +65,7 @@ class EffectiveIdentityTest {
     }
 
     @Test
-    void identityTest() throws ReactorException {
+    void identityTest() throws Exception {
         final var result = RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/stmt-test/identity/identity-test.yang"))
             .buildEffective();
