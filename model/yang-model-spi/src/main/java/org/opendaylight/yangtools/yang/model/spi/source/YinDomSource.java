@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -40,7 +41,7 @@ import org.w3c.dom.Element;
 /**
  * Utility {@link YinXmlSource} exposing a W3C {@link DOMSource} representation of YIN model.
  */
-public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Extractor {
+public abstract sealed class YinDomSource implements YinSourceRepresentation, SourceInfo.Extractor {
     /**
      * Interface for extracting {@link StatementSourceReference} from an {@link Element}.
      *
@@ -94,7 +95,7 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
         }
 
         @Override
-        public DOMSource getSource() {
+        public DOMSource domSource() {
             return source;
         }
 
@@ -108,53 +109,6 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
             return toStringHelper.add("source", source);
         }
     }
-
-    private static final class Transforming extends YinDomSource {
-        private final YinXmlSource xmlSchemaSource;
-
-        private volatile DOMSource source;
-
-        Transforming(final YinXmlSource xmlSchemaSource) {
-            super(element -> null);
-            this.xmlSchemaSource = requireNonNull(xmlSchemaSource);
-        }
-
-        @Override
-        public SourceIdentifier sourceId() {
-            return xmlSchemaSource.sourceId();
-        }
-
-        @Override
-        public String symbolicName() {
-            return xmlSchemaSource.symbolicName();
-        }
-
-        @Override
-        public DOMSource getSource() {
-            DOMSource ret = source;
-            if (ret == null) {
-                synchronized (this) {
-                    ret = source;
-                    if (ret == null) {
-                        try {
-                            ret = transformSource(xmlSchemaSource.getSource());
-                        } catch (TransformerException e) {
-                            throw new IllegalStateException("Failed to transform schema source " + xmlSchemaSource, e);
-                        }
-                        source = ret;
-                    }
-                }
-            }
-
-            return ret;
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return toStringHelper.add("xmlSchemaSource", xmlSchemaSource);
-        }
-    }
-
 
     private static final Logger LOG = LoggerFactory.getLogger(YinDomSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
@@ -253,42 +207,15 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
         return new Simple(id, source, refProvider, symbolicName);
     }
 
-    /**
-     * Create a {@link YinDomSource} from a {@link YinXmlSource}. If the argument is already a
-     * YinDomSchemaSource, this method returns the same instance. The source will be translated on first access,
-     * at which point an {@link IllegalStateException} may be raised.
-     *
-     * @param xmlSchemaSource Backing schema source
-     * @return A {@link YinDomSource} instance
-     */
-    public static @NonNull YinDomSource lazyTransform(final YinXmlSource xmlSchemaSource) {
-        final var cast = castSchemaSource(xmlSchemaSource);
-        return cast != null ? cast : new Transforming(xmlSchemaSource);
-    }
-
-    /**
-     * Create a {@link YinDomSource} from a {@link YinXmlSource}. If the argument is already a
-     * YinDomSchemaSource, this method returns the same instance. The source will be translated immediately.
-     *
-     * @param xmlSchemaSource Backing schema source
-     * @return A {@link YinDomSource} instance
-     * @throws TransformerException when the provided source fails to transform
-     */
-    public static @NonNull YinDomSource transform(final YinXmlSource xmlSchemaSource)
-            throws TransformerException {
-        final var cast = castSchemaSource(xmlSchemaSource);
-        return cast != null ? cast :
-            create(xmlSchemaSource.sourceId(), transformSource(xmlSchemaSource.getSource()),
-                xmlSchemaSource.symbolicName());
-    }
-
     @Override
     public final Class<YinDomSource> getType() {
         return YinDomSource.class;
     }
 
-    @Override
-    public abstract DOMSource getSource();
+    /**
+     * {@return the underlying {@link DOMSource}}
+     */
+    public abstract @NonNull DOMSource domSource();
 
     /**
      * {@return the {@link SourceRefProvider} attached to this source}
@@ -300,7 +227,7 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
 
     @Override
     public final SourceInfo extractSourceInfo() throws ExtractorException {
-        final var element = documentElementOf(getSource());
+        final var element = documentElementOf(domSource());
         if (!YinDomSourceInfoExtractor.isYinElement(element)) {
             throw new ExtractorException("Root element does not have YIN namespace", refProvider.refOf(element));
         }
@@ -335,18 +262,6 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
         TRANSFORMER_FACTORY.newTransformer().transform(source, result);
 
         return new DOMSource(result.getNode(), result.getSystemId());
-    }
-
-    private static @Nullable YinDomSource castSchemaSource(final YinXmlSource xmlSchemaSource) {
-        if (xmlSchemaSource instanceof YinDomSource yinDom) {
-            return yinDom;
-        }
-
-        final var source = xmlSchemaSource.getSource();
-        if (source instanceof DOMSource dom) {
-            return create(xmlSchemaSource.sourceId(), dom, xmlSchemaSource.symbolicName());
-        }
-        return null;
     }
 
     @NonNullByDefault
