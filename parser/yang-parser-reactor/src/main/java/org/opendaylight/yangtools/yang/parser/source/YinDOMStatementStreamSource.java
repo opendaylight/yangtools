@@ -11,15 +11,14 @@ package org.opendaylight.yangtools.yang.parser.source;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 
 /**
  * A {@link StatementStreamSource} based on a {@link YinDomSource}.
  */
-public record YinDOMStatementStreamSource(@NonNull YinDomSource source) implements StatementStreamSource {
-    public YinDOMStatementStreamSource {
+record YinDOMStatementStreamSource(@NonNull YinDomSource source) implements StatementStreamSource {
+    YinDOMStatementStreamSource {
         requireNonNull(source);
     }
 
@@ -30,19 +29,19 @@ public record YinDOMStatementStreamSource(@NonNull YinDomSource source) implemen
 
     @Override
     public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
+            final PrefixResolver preLinkagePrefixes) {
         YinDOMSourceWalker.walkSource(source, writer, resolver);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes) {
         YinDOMSourceWalker.walkSource(source, writer, resolver);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final StatementDefinitionResolver resolver,
-            final PrefixResolver prefixes, final YangVersion yangVersion) {
+            final PrefixResolver prefixes) {
         YinDOMSourceWalker.walkSource(source, writer, resolver);
     }
 }
