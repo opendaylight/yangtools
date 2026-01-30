@@ -65,7 +65,7 @@ public final class SourceInfoSchemaSourceTransformer<
             final SchemaRepository provider, final SchemaSourceRegistry consumer,
             final SourceTransformer<I, YinDomSource> transformer) {
         return new SourceInfoSchemaSourceTransformer<>(provider, consumer, transformer,
-            (source, sourceId) -> YinDomSource.of(sourceId, source.getSource(), source.refProvider(),
+            (source, sourceId) -> YinDomSource.of(sourceId, source.domSource(), source.refProvider(),
                 source.symbolicName()));
     }
 }

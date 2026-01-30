@@ -41,7 +41,7 @@ record YinDOMSourceWalker(
     static void walkSource(final YinDomSource source, final StatementWriter writer,
             final StatementDefinitionResolver resolver) {
         new YinDOMSourceWalker(source.refProvider(), writer, resolver)
-            .walkSource(source.getSource().getNode().getChildNodes());
+            .walkSource(source.domSource().getNode().getChildNodes());
     }
 
     private void walkSource(final NodeList children) {
