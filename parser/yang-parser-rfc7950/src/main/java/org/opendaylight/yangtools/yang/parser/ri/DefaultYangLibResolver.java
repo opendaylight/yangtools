@@ -17,7 +17,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
@@ -90,11 +94,37 @@ public final class DefaultYangLibResolver implements YangLibResolver {
                 features.add(feat.bindTo(namespace));
             }
 
-            act.addSource(DefaultYangParser.sourceToStatementStream(textToIR, textToDOM, module.source()));
+            final var source = module.source();
+            switch (source) {
+                case YangIRSource irSource -> act.addYangSource(irSource);
+                case YangTextSource yangSource -> {
+                    try {
+                        act.addYangSource(textToIR, yangSource);
+                    } catch (SourceSyntaxException e) {
+                        throw DefaultYangParser.newSyntaxError(source.sourceId(), e);
+                    }
+                }
+                case YinSourceRepresentation yinSource ->
+                    act.addYinSource(DefaultYangParser.sourceToYinDOM(textToDOM, yinSource));
+                default -> throw new IllegalArgumentException("Unsupported source " + source);
+            }
         }
 
         for (var module : moduleSet.importOnlyModules().values()) {
-            act.addLibSource(DefaultYangParser.sourceToStatementStream(textToIR, textToDOM, module.source()));
+            final var source = module.source();
+            switch (source) {
+                case YangIRSource irSource -> act.addLibYangSource(irSource);
+                case YangTextSource yangSource -> {
+                    try {
+                        act.addLibYangSource(textToIR, yangSource);
+                    } catch (SourceSyntaxException e) {
+                        throw DefaultYangParser.newSyntaxError(yangSource.sourceId(), e);
+                    }
+                }
+                case YinSourceRepresentation yinSource ->
+                    act.addLibYinSource(DefaultYangParser.sourceToYinDOM(textToDOM, yinSource));
+                default -> throw new IllegalArgumentException("Unsupported source " + source);
+            }
         }
 
         try {
