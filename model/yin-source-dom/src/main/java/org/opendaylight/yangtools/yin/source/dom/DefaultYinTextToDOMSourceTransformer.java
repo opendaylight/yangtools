@@ -31,14 +31,12 @@ import org.xml.sax.SAXParseException;
 @NonNullByDefault
 public final class DefaultYinTextToDOMSourceTransformer implements YinTextToDOMSourceTransformer {
     @Override
-    public YinDomSource transformSource(final YinTextSource input) throws SourceSyntaxException {
+    public YinDomSource transformSource(final YinTextSource input) throws IOException, SourceSyntaxException {
         final var doc = UntrustedXML.newDocumentBuilder().newDocument();
         final var parser = UntrustedXML.newSAXParser();
         final var handler = new SourceRefHandler(doc, null);
         try {
             parser.parse(input.openStream(), handler);
-        } catch (IOException e) {
-            throw new SourceSyntaxException("Failed to read YIN source", e);
         } catch (SAXParseException e) {
             throw new SourceSyntaxException("Failed to parse YIN source", e, sourceRefOf(e, input.symbolicName()));
         } catch (SAXException e) {
