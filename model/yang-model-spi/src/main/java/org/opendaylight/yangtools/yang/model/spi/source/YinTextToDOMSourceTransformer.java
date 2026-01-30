@@ -11,17 +11,17 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 
 /**
- * A {@link SourceTransformer} capable of turning {@link YinTextSource} into a {@link YinDomSource}.
+ * A {@link SourceTransformer} capable of turning {@link YinTextSource} into a {@link YinDOMSource}.
  */
 @NonNullByDefault
-public interface YinTextToDOMSourceTransformer extends SourceTransformer<YinTextSource, YinDomSource> {
+public interface YinTextToDOMSourceTransformer extends SourceTransformer<YinTextSource, YinDOMSource> {
     @Override
     default Class<YinTextSource> inputRepresentation() {
         return YinTextSource.class;
     }
 
     @Override
-    default Class<YinDomSource> outputRepresentation() {
-        return YinDomSource.class;
+    default Class<YinDOMSource> outputRepresentation() {
+        return YinDOMSource.class;
     }
 }

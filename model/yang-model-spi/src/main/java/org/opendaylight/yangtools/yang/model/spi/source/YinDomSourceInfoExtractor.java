@@ -30,11 +30,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource.SourceRefProvider;
 import org.w3c.dom.Element;
 
 /**
- * Utility class for extract {@link SourceInfo} from a {@link YinDomSource}.
+ * Utility class for extract {@link SourceInfo} from a {@link YinDOMSource}.
  */
 @NonNullByDefault
 abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor {
