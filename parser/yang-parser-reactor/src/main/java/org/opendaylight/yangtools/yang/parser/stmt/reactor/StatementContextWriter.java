@@ -16,8 +16,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 final class StatementContextWriter implements StatementWriter {
     private final @NonNull ModelProcessingPhase phase;

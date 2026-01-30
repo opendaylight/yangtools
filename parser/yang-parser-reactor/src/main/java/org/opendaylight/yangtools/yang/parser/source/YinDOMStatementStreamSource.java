@@ -6,13 +6,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 
 /**
  * A {@link StatementStreamSource} based on a {@link YinDomSource}.

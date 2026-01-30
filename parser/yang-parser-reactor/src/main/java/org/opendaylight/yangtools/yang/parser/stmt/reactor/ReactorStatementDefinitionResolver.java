@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementDefinitionResolver;
 
 final class ReactorStatementDefinitionResolver implements Mutable, StatementDefinitionResolver {
     private record NSKey(String namespace, String localName) {
