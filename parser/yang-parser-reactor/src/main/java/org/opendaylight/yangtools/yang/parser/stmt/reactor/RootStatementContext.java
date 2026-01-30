@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
@@ -55,8 +54,6 @@ import org.slf4j.LoggerFactory;
  */
 final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends AbstractResumedStatement<A, D, E> implements RootStmtContext.Mutable<A, D, E> {
-    static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
-
     private static final Logger LOG = LoggerFactory.getLogger(RootStatementContext.class);
     // These namespaces are well-known and not needed after the root is cleaned up
     private static final Map<ParserNamespace<?, ?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
@@ -67,7 +64,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     private final @NonNull SourceSpecificContext sourceContext;
     private final A argument;
 
-    private YangVersion rootVersion;
     private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
     private SourceIdentifier rootIdentifier;
     private IdentifierBinding identifierBinding;
@@ -82,14 +78,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         super(def, ref, rawArgument);
         this.sourceContext = requireNonNull(sourceContext);
         argument = def.parseArgumentValue(this, rawArgument());
-    }
-
-    RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
-            final StatementSourceReference ref, final String rawArgument, final YangVersion version,
-            final SourceIdentifier identifier) {
-        this(sourceContext, def, ref, rawArgument);
-        setRootVersion(version);
-        setRootIdentifier(identifier);
     }
 
     @Override
@@ -111,11 +99,10 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     @Override
     public QNameModule definingModule() {
-        final var declaredRepr = publicDefinition().declaredRepresentation();
         final StmtContext<?, ?, ?> module;
-        if (ModuleStatement.class.isAssignableFrom(declaredRepr)) {
+        if (produces(ModuleStatement.DEF)) {
             module = this;
-        } else if (SubmoduleStatement.class.isAssignableFrom(declaredRepr)) {
+        } else if (produces(SubmoduleStatement.DEF)) {
             final var belongsTo = namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
             if (belongsTo == null || belongsTo.isEmpty()) {
                 throw new VerifyException(this + " does not have belongs-to linkage resolved");
@@ -304,15 +291,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @NonNull YangVersion getRootVersionImpl() {
-        return rootVersion == null ? DEFAULT_VERSION : rootVersion;
-    }
-
-    void setRootVersionImpl(final YangVersion version) {
-        checkArgument(sourceContext.globalContext().getSupportedVersions().contains(version),
-                "Unsupported yang version %s in %s", version, sourceReference());
-        checkState(rootVersion == null, "Version of root %s has been already set to %s", argument,
-                rootVersion);
-        rootVersion = requireNonNull(version);
+        return sourceContext.yangVersion();
     }
 
     /**

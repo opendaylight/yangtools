@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -78,10 +79,12 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
-            final Set<QName> supportedFeatures, final Collection<? extends YangIRSource> sources)
-            throws ReactorException {
+            final Set<QName> supportedFeatures, final Collection<? extends @NonNull YangIRSource> sources)
+            throws ExtractorException, ReactorException {
         final var build = getReactor(config).newBuild();
-        sources.forEach(build::addSource);
+        for (var source : sources) {
+            build.addSource(source);
+        }
         if (supportedFeatures != null) {
             build.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
@@ -120,12 +123,13 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath)
-            throws URISyntaxException, SourceSyntaxException, ReactorException {
+            throws ExtractorException, URISyntaxException, SourceSyntaxException, ReactorException {
         return parseYinSources(yinSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
-            final YangParserConfiguration config) throws URISyntaxException, ReactorException, SourceSyntaxException {
+            final YangParserConfiguration config)
+                throws ExtractorException, ReactorException, SourceSyntaxException, URISyntaxException {
         final var files = Path.of(StmtTestUtils.class.getResource(yinSourcesDirectoryPath).toURI()).toFile()
             .listFiles(YIN_FILE_FILTER);
 

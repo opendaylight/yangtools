@@ -45,7 +45,7 @@ abstract class AbstractYangDataTest {
         REACTOR = null;
     }
 
-    static final @NonNull BuildAction newBuild() {
+    static final @NonNull BuildAction newBuild() throws Exception {
         return REACTOR.newBuild().addSource(IETF_RESTCONF_MODULE);
     }
 

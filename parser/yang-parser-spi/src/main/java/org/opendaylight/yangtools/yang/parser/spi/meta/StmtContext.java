@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -293,14 +292,6 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
          * @throws NullPointerException if the specified phase is null
          */
         @NonNull ModelActionBuilder newInferenceAction(@NonNull ModelProcessingPhase phase);
-
-        /**
-         * Set version of root statement context.
-         *
-         * @param version
-         *            of root statement context
-         */
-        void setRootVersion(YangVersion version);
 
         /**
          * Add required module. Based on these dependencies are collected required sources from library sources.
