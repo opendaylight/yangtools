@@ -16,6 +16,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.parser.source.YangIRStatementStreamSource;
@@ -39,26 +40,26 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public BuildAction addSource(final YangIRSource source) {
-        context.addSource(new YangIRStatementStreamSource(source));
+    public BuildAction addSource(final YangIRSource source) throws ExtractorException {
+        context.addSource(source, YangIRStatementStreamSource::new);
         return this;
     }
 
     @Override
-    public BuildAction addSource(final YinDomSource source) {
-        context.addSource(new YinDOMStatementStreamSource(source));
+    public BuildAction addSource(final YinDomSource source) throws ExtractorException {
+        context.addSource(source, YinDOMStatementStreamSource::new);
         return this;
     }
 
     @Override
     public final BuildAction addLibSource(final YangIRSource libSource) {
-        context.addLibSource(new YangIRStatementStreamSource(libSource));
+        context.addLibSource(libSource, YangIRStatementStreamSource::new);
         return this;
     }
 
     @Override
     public final BuildAction addLibSource(final YinDomSource libSource) {
-        context.addLibSource(new YinDOMStatementStreamSource(libSource));
+        context.addLibSource(libSource, YinDOMStatementStreamSource::new);
         return this;
     }
 
@@ -80,12 +81,12 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public final ReactorDeclaredModel buildDeclared() throws ReactorException {
+    public final ReactorDeclaredModel buildDeclared() throws ExtractorException, ReactorException {
         return context.build();
     }
 
     @Override
-    public final EffectiveSchemaContext buildEffective() throws ReactorException {
+    public final EffectiveSchemaContext buildEffective() throws ExtractorException, ReactorException {
         return context.buildEffective();
     }
 }

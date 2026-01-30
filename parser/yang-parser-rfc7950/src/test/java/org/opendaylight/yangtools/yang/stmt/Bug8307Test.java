@@ -93,21 +93,19 @@ class Bug8307Test {
 
     @Test
     void shouldFailOnAttemptToDeviateTheSameModule() {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(FOO_INVALID_MODULE);
-
-        final var cause = assertInstanceOf(InferenceException.class,
-            assertThrows(ReactorException.class, reactor::buildEffective).getCause());
+        final var cause = assertInstanceOf(InferenceException.class, assertThrows(ReactorException.class,
+            () -> RFC7950Reactors.defaultReactor().newBuild().addSource(FOO_INVALID_MODULE).buildEffective())
+            .getCause());
         assertThat(cause.getMessage())
             .startsWith("Deviation must not target the same module as the one it is defined in");
     }
 
     @Test
     void shouldFailOnAttemptToDeviateTheSameModule2() {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(BAR_INVALID_MODULE).addSource(BAZ_INVALID_MODULE);
-
-        final var cause = assertInstanceOf(InferenceException.class,
-            assertThrows(ReactorException.class, reactor::buildEffective).getCause());
+        final var cause = assertInstanceOf(InferenceException.class, assertThrows(ReactorException.class,
+            () -> RFC7950Reactors.defaultReactor().newBuild()
+                .addSource(BAR_INVALID_MODULE).addSource(BAZ_INVALID_MODULE)
+                .buildEffective()).getCause());
         assertThat(cause.getMessage())
             .startsWith("Deviation must not target the same module as the one it is defined in");
     }

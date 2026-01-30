@@ -19,6 +19,6 @@ class AugmentSimplestTest {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/augmented.yang"))
             .addSource(sourceForResource("/semantic-statement-parser/root.yang"))
-            .build());
+            .buildDeclared());
     }
 }

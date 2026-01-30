@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -45,9 +47,16 @@ public final class YangVersionStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(
-            final Mutable<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> stmt) {
-        stmt.setRootVersion(stmt.argument());
+    public void onStatementAdded(final Mutable<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> stmt) {
+        if (!(stmt.coerceParentContext() instanceof RootStmtContext<?, ?, ?> root)) {
+            throw new SourceException(stmt, "Cannot declare yang-version outside of root statement");
+        }
+        final var argVersion = stmt.getArgument();
+        final var rootVersion = root.yangVersion();
+        if (rootVersion != argVersion) {
+            throw new VerifyException(
+                "yang-version mismatch: root says " + rootVersion + " statement says " + argVersion);
+        }
     }
 
     @Override

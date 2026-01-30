@@ -51,7 +51,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SourceSpecificContext implements NamespaceStorage, Mutable {
+final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSource.Stage {
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -115,9 +115,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
     private final HashMapPrefixResolver prefixToModuleMap = new HashMapPrefixResolver();
     private final @NonNull BuildGlobalContext globalContext;
+    private final @NonNull YangVersion yangVersion;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
-    private StatementStreamSource source;
+    private StatementStreamSource streamSource;
 
     /*
      * "imported" namespaces in this source -- this points to RootStatementContexts of
@@ -133,13 +134,19 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     // If not null, do not add anything to modifiers, but record it here.
     private List<Entry<ModelProcessingPhase, ModifierImpl>> delayedModifiers;
 
-    SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
+    SourceSpecificContext(final BuildGlobalContext globalContext, final YangVersion yangVersion,
+            final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
-        this.source = requireNonNull(source);
+        this.yangVersion = requireNonNull(yangVersion);
+        this.streamSource = requireNonNull(streamSource);
     }
 
     @NonNull BuildGlobalContext globalContext() {
         return globalContext;
+    }
+
+    @NonNull YangVersion yangVersion() {
+        return yangVersion;
     }
 
     ModelProcessingPhase getInProgressPhase() {
@@ -148,7 +155,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
             final int childId, final QName name, final String argument, final StatementSourceReference ref) {
-        var def = globalContext.getStatementDefinition(getRootVersion(), name);
+        var def = globalContext.getStatementDefinition(yangVersion, name);
         if (def == null) {
             def = globalContext.getModelDefinedStatementDefinition(name);
             if (def == null) {
@@ -193,10 +200,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          */
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
-        } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
-                && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
-            root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
-                    root.getRootIdentifier());
         } else {
             final var rootStatement = root.definition().getStatementName();
             final var rootArgument = root.rawArgument();
@@ -230,27 +233,18 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return root.buildEffective();
     }
 
-    /**
-     * Return version of root statement context.
-     *
-     * @return version of root statement context
-     */
-    private YangVersion getRootVersion() {
-        return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
-    }
-
     void startPhase(final ModelProcessingPhase phase) {
         final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         verify(Objects.equals(previousPhase, finishedPhase),
-            "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, source,
+            "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, streamSource,
             finishedPhase);
 
         final Collection<ModifierImpl> previousModifiers = modifiers.get(previousPhase);
         checkState(previousModifiers.isEmpty(), "Previous phase %s has unresolved modifiers %s in source %s",
-            previousPhase, previousModifiers, source);
+            previousPhase, previousModifiers, streamSource);
 
         inProgressPhase = phase;
-        LOG.debug("Source {} started phase {}", source, phase);
+        LOG.debug("Source {} started phase {}", streamSource, phase);
     }
 
     private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
@@ -349,11 +343,11 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         // TODO: use executionOrder instead?
         if (phaseCompleted && currentPhaseModifiers.isEmpty()) {
             finishedPhase = phase;
-            LOG.debug("Source {} finished phase {}", source, phase);
+            LOG.debug("Source {} finished phase {}", streamSource, phase);
             if (phase == ModelProcessingPhase.EFFECTIVE_MODEL) {
                 // We have the effective model acquired, which is the final phase of source interaction.
-                LOG.trace("Releasing source {}", source);
-                source = null;
+                LOG.trace("Releasing source {}", streamSource);
+                streamSource = null;
             }
             return PhaseCompletionProgress.FINISHED;
         }
@@ -410,7 +404,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @Override
     public String toString() {
-        return "SourceSpecificContext [source=" + source + ", current=" + inProgressPhase + ", finished="
+        return "SourceSpecificContext [source=" + streamSource + ", current=" + inProgressPhase + ", finished="
                 + finishedPhase + "]";
     }
 
@@ -437,23 +431,23 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     void loadStatements() {
-        LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
+        LOG.trace("Source {} loading statements for phase {}", streamSource, inProgressPhase);
 
         switch (inProgressPhase) {
             case SOURCE_PRE_LINKAGE:
-                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
+                streamSource.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
                 break;
             case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
-                    getRootVersion());
+                streamSource.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(),
+                    preLinkagePrefixes(), yangVersion);
                 break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
-                    prefixes(), getRootVersion());
+                streamSource.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase),
+                    stmtDef(), prefixes(), yangVersion);
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
-                    getRootVersion());
+                streamSource.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
+                    yangVersion);
                 break;
             default:
                 break;
@@ -461,7 +455,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     private PrefixResolver preLinkagePrefixes() {
-        final HashMapPrefixResolver preLinkagePrefixes = new HashMapPrefixResolver();
+        final var preLinkagePrefixes = new HashMapPrefixResolver();
         final var prefixToNamespaceMap = getAllFromLocalStorage(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
         if (prefixToNamespaceMap == null) {
             //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
@@ -492,7 +486,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         // regular YANG statements and extension supports added
         final var supportsForPhase = globalContext.getSupportsForPhase(inProgressPhase);
         statementResolver.addSupports(supportsForPhase.getCommonDefinitions());
-        statementResolver.addSupports(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
+        statementResolver.addSupports(supportsForPhase.getDefinitionsSpecificForVersion(yangVersion));
 
         // No further actions needed
         if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
@@ -505,9 +499,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             extensions.forEach((qname, support) -> {
                 final var existing = statementResolver.tryAddSupport(qname, support);
                 if (existing != null) {
-                    LOG.debug("Source {} already defines statement {} as {}", source, qname, existing);
+                    LOG.debug("Source {} already defines statement {} as {}", streamSource, qname, existing);
                 } else {
-                    LOG.debug("Source {} defined statement {} as {}", source, qname, support);
+                    LOG.debug("Source {} defined statement {} as {}", streamSource, qname, support);
                 }
             });
         }

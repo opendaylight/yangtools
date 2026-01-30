@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 class AugmentProcessTest extends AbstractYangTest {
@@ -68,21 +67,17 @@ class AugmentProcessTest extends AbstractYangTest {
         sourceForResource("/stmt-test/augments/multiple-augment-incorrect2.yang");
 
     @Test
-    void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
-        final var result = RFC7950Reactors.defaultReactor().newBuild()
+    void multipleAugmentsAndMultipleModulesTest() throws Exception {
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(MULTIPLE_AUGMENT_ROOT)
             .addSource(MULTIPLE_AUGMENT_IMPORTED)
             .addSource(MULTIPLE_AUGMENT_SUBMODULE)
-            .buildEffective();
-        assertNotNull(result);
+            .buildEffective());
     }
 
     @Test
-    void multipleAugmentTest() throws ReactorException {
-        final var result = RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(MULTIPLE_AUGMENT)
-            .buildEffective();
-        assertNotNull(result);
+    void multipleAugmentTest() throws Exception {
+        assertNotNull(RFC7950Reactors.defaultReactor().newBuild().addSource(MULTIPLE_AUGMENT).buildEffective());
     }
 
     @Test
@@ -100,7 +95,7 @@ class AugmentProcessTest extends AbstractYangTest {
     }
 
     @Test
-    void readAndParseYangFileTest() throws ReactorException {
+    void readAndParseYangFileTest() throws Exception {
         final var root = RFC7950Reactors.defaultReactor().newBuild()
             .addSource(AUGMENTED).addSource(ROOT)
             .buildEffective();
