@@ -41,8 +41,8 @@ sealed class YangReactorBuildAction<S extends YangSourceRepresentation> extends 
     }
 
     @Override
-    public WithYang<S> addLibSource(final S source) throws SourceSyntaxException {
-        addLibSource(transformer.transformSource(source));
+    public WithYang<S> addLibSource(final S source) {
+        addLibYangSource(transformer, source);
         return this;
     }
 }
