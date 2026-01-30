@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.opendaylight.yangtools.yang.parser.source.YangIRStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.source.YinDOMStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -45,25 +44,25 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
 
     @Override
     public BuildAction addSource(final YangIRSource source) throws ExtractorException {
-        context.addSource(source, YangIRStatementStreamSource::new);
+        context.addSource(source, StatementStreamSource.YANG_IR);
         return this;
     }
 
     @Override
     public BuildAction addSource(final YinDomSource source) throws ExtractorException {
-        context.addSource(source, YinDOMStatementStreamSource::new);
+        context.addSource(source, StatementStreamSource.YIN_DOM);
         return this;
     }
 
     @Override
     public final BuildAction addLibSource(final YangIRSource libSource) {
-        context.addLibSource(libSource, YangIRStatementStreamSource::new);
+        context.addLibSource(libSource, StatementStreamSource.YANG_IR);
         return this;
     }
 
     @Override
     public final BuildAction addLibSource(final YinDomSource libSource) {
-        context.addLibSource(libSource, YinDOMStatementStreamSource::new);
+        context.addLibSource(libSource, StatementStreamSource.YIN_DOM);
         return this;
     }
 
@@ -100,7 +99,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     @NonNullByDefault
     public final <S extends SourceRepresentation> BuildAction addLibYangSource(
             final SourceTransformer<S, YangIRSource> transformer, final S source) {
-        context.addLibSource(transformer, source, YangIRStatementStreamSource::new);
+        context.addLibSource(transformer, source, StatementStreamSource.YANG_IR);
         return this;
     }
 
@@ -108,7 +107,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     @NonNullByDefault
     public final <S extends SourceRepresentation> BuildAction addLibYinSource(
             final SourceTransformer<S, YinDomSource> transformer, final S source) {
-        context.addLibSource(transformer, source, YinDOMStatementStreamSource::new);
+        context.addLibSource(transformer, source, StatementStreamSource.YIN_DOM);
         return this;
     }
 }

@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
@@ -35,16 +34,13 @@ class IRStatementVisitor {
     private final @NonNull StatementWriter writer;
     private final String sourceName;
 
-    IRStatementVisitor(final String sourceName, final StatementWriter writer,
-            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
+    IRStatementVisitor(final StringEscaping escaping, final String sourceName, final StatementWriter writer,
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes) {
+        this.escaping = requireNonNull(escaping);
         this.writer = requireNonNull(writer);
         this.resolver = requireNonNull(resolver);
         this.sourceName = sourceName;
         this.prefixes = prefixes;
-        escaping = switch (yangVersion) {
-            case VERSION_1 -> StringEscaping.RFC6020;
-            case VERSION_1_1 -> StringEscaping.RFC7950;
-        };
     }
 
     final void visit(final IRStatement stmt) {
