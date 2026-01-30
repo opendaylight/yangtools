@@ -41,11 +41,9 @@ class IetfYangSmiv2ExtensionPluginTest {
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc6643Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
-        final var textToIR = YangIRSourceModule.provideTextToIR();
-        final var context = reactor.newBuild()
-            .addSource(textToIR, new URLYangTextSource(
-                IetfYangSmiv2ExtensionPluginTest.class.getResource("/foo.yang")))
-            .addSource(textToIR,new URLYangTextSource(
+        final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addYangSource(new URLYangTextSource(IetfYangSmiv2ExtensionPluginTest.class.getResource("/foo.yang")))
+            .addYangSource(new URLYangTextSource(
                 IetfYangSmiv2ExtensionPluginTest.class.getResource("/ietf-yang-smiv2.yang")))
             .buildEffective();
 

@@ -22,15 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class ContextReferenceTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER = YangIRSourceModule.provideTextToIR();
-
     private static final QNameModule FOO = QNameModule.of("foo");
     private static final QName LEAF_TYPE = QName.create(FOO, "leaf-type");
     private static final QName LIST_TYPE = QName.create(FOO, "list-type");
@@ -42,9 +39,9 @@ class ContextReferenceTest {
                 YangExtModule.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 
-        final var foo = reactor.newBuild()
-            .addYangSource(TRANSFORMER, new URLYangTextSource(ContextReferenceTest.class.getResource("/yang-ext.yang")))
-            .addYangSource(TRANSFORMER, new URLYangTextSource(ContextReferenceTest.class.getResource("/ctxref.yang")))
+        final var foo = reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addYangSource(new URLYangTextSource(ContextReferenceTest.class.getResource("/yang-ext.yang")))
+            .addYangSource(new URLYangTextSource(ContextReferenceTest.class.getResource("/ctxref.yang")))
             .buildEffective()
             .getModuleStatements()
             .get(FOO);

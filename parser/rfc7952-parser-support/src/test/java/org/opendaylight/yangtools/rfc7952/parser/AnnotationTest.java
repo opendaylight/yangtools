@@ -20,14 +20,12 @@ import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class AnnotationTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER = YangIRSourceModule.provideTextToIR();
     private static final AnnotationName LAST_MODIFIED =
         new AnnotationName(QName.create("http://example.org/example-last-modified", "last-modified"));
 
@@ -37,11 +35,10 @@ class AnnotationTest {
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc7952Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
-        final var context = reactor.newBuild()
-            .addSource(TRANSFORMER, new URLYangTextSource(
+        final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addYangSource(new URLYangTextSource(
                 AnnotationTest.class.getResource("/ietf-yang-metadata@2016-08-05.yang")))
-            .addSource(TRANSFORMER, new URLYangTextSource(
-                AnnotationTest.class.getResource("/example-last-modified.yang")))
+            .addYangSource(new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang")))
             .buildEffective();
 
         final var annotations = AnnotationSchemaNode.findAll(context);

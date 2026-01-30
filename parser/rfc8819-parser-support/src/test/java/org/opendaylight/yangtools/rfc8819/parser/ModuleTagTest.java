@@ -33,8 +33,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class ModuleTagTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangIRSourceModule.provideTextToIR();
+    private static final YangTextToIRSourceTransformer TRANSFORMER = YangIRSourceModule.provideTextToIR();
     private static CrossSourceStatementReactor reactor;
 
     @BeforeAll
@@ -53,10 +52,10 @@ class ModuleTagTest {
     @Test
     void testModuleTagSupportExtension() throws ReactorException {
         final var moduleTags = reactor.newBuild()
-            .addSource(moduleFromResources("/example-tag-module.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags.yang"))
-            .addSource(moduleFromResources("/ietf-yang-types.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags-state.yang"))
+            .addYangSource(moduleFromResources("/example-tag-module.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags.yang"))
+            .addYangSource(moduleFromResources("/ietf-yang-types.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags-state.yang"))
             .buildEffective()
             .getModuleStatements().values().stream()
             .flatMap(module -> module.streamEffectiveSubstatements(ModuleTagEffectiveStatement.class))
@@ -77,10 +76,10 @@ class ModuleTagTest {
     @Test
     void throwExceptionWhenTagParentIsNotModuleOrSubmodule() {
         final var action = reactor.newBuild()
-            .addSource(moduleFromResources("/foo-tag-module.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags.yang"))
-            .addSource(moduleFromResources("/ietf-yang-types.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags-state.yang"));
+            .addYangSource(moduleFromResources("/foo-tag-module.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags.yang"))
+            .addYangSource(moduleFromResources("/ietf-yang-types.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags-state.yang"));
 
         final var cause = assertThrows(ReactorException.class, action::buildEffective).getCause();
         assertInstanceOf(SourceException.class, cause);
