@@ -126,7 +126,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
     }
 
     @Test
-    void testYangDataWithMissingTopLevelContainer() {
+    void testYangDataWithMissingTopLevelContainer() throws Exception {
         final var build = newBuild().addSource(FOO_INVALID_1_MODULE);
         final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final var cause = assertInstanceOf(MissingSubstatementException.class, ex.getCause());
@@ -134,7 +134,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
     }
 
     @Test
-    void testYangDataWithTwoTopLevelContainers() {
+    void testYangDataWithTwoTopLevelContainers() throws Exception {
         final var build = newBuild().addSource(FOO_INVALID_2_MODULE);
         final var ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final var cause = assertInstanceOf(InvalidSubstatementException.class, ex.getCause());

@@ -29,32 +29,32 @@ class IncludeResolutionTest {
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/root-module.yang"))
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/submodule-1.yang"))
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/submodule-2.yang"))
-            .build());
+            .buildDeclared());
     }
 
     @Test
     void missingIncludedSourceTest() {
-        var reactor = RFC7950Reactors.defaultReactor()
-            .newBuild()
-            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-module.yang"));
-        assertNull(assertFailedSourceLinkage(reactor::build, "Included submodule 'foo' was not found [at ").getCause());
+        assertNull(assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-module.yang"))
+            .buildDeclared(), "Included submodule 'foo' was not found [at ")
+            .getCause());
     }
 
     @Test
     void missingIncludedSourceTest2() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild()
+        var cause = assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule.yang"))
-            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule-root.yang"));
-        var cause = assertFailedSourceLinkage(reactor::build, "Included submodule 'foo' was not found [at ");
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/error-submodule-root.yang"))
+            .buildDeclared(), "Included submodule 'foo' was not found [at ");
         assertNull(cause.getCause());
     }
 
     @Test
     void missingIncludedSourceTest3() {
-        var reactor = RFC7950Reactors.defaultReactor().newBuild()
-            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/missing-parent.yang"));
-        assertNull(assertFailedSourceLinkage(reactor::build,
-            "Module 'Unqualified{localName=foo}' from belongs-to was not found [at ").getCause());
+        assertNull(assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
+            .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/missing-parent.yang"))
+            .buildDeclared(), "Module 'Unqualified{localName=foo}' from belongs-to was not found [at ")
+            .getCause());
     }
 
     private static InferenceException assertFailedSourceLinkage(final Callable<?> callable, final String startStr) {
