@@ -18,15 +18,12 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class MountPointTest {
-    private static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
-
     private static final QNameModule EXAMPLE_USES = QNameModule.of("http://example.org/example-uses");
     private static final QName EXAMPLE_CONT = QName.create(EXAMPLE_USES, "cont");
     private static final QName EXAMPLE_GRP = QName.create(EXAMPLE_USES, "grp");
@@ -40,15 +37,15 @@ class MountPointTest {
                 Rfc8528Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 
-        final var context = reactor.newBuild()
-            .addLibSource(TEXT_TO_IR, new URLYangTextSource(
+        final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addLibYangSource(new URLYangTextSource(
                 MountPointTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
-            .addLibSource(TEXT_TO_IR, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 MountPointTest.class.getResource("/ietf-yang-schema-mount@2019-01-14.yang")))
-            .addLibSource(TEXT_TO_IR, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 MountPointTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))
-            .addSource(TEXT_TO_IR, new URLYangTextSource(MountPointTest.class.getResource("/example-grp.yang")))
-            .addSource(TEXT_TO_IR, new URLYangTextSource(MountPointTest.class.getResource("/example-uses.yang")))
+            .addYangSource(new URLYangTextSource(MountPointTest.class.getResource("/example-grp.yang")))
+            .addYangSource(new URLYangTextSource(MountPointTest.class.getResource("/example-uses.yang")))
             .buildEffective();
 
         assertEquals(5, context.getModules().size());

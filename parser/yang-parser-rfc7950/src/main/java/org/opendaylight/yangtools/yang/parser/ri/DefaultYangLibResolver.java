@@ -12,17 +12,19 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.ServiceLoader;
+import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
@@ -45,9 +47,9 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 @Component
 @MetaInfServices
 public final class DefaultYangLibResolver implements YangLibResolver {
-    private final YangTextToIRSourceTransformer textToIR;
-    private final YinTextToDOMSourceTransformer textToDOM;
-    private final CrossSourceStatementReactor reactor;
+    private final @NonNull YangTextToIRSourceTransformer textToIR;
+    private final @NonNull YinTextToDOMSourceTransformer textToDOM;
+    private final @NonNull CrossSourceStatementReactor reactor;
 
     /**
      * Default constructor for {@link ServiceLoader} instantiation.
@@ -85,7 +87,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
     @Override
     public EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet) throws YangParserException {
-        final var act = reactor.newBuild();
+        final var act = reactor.newBuild(textToIR, textToDOM);
         final var features = ImmutableSet.<QName>builder();
 
         for (var module : moduleSet.modules().values()) {
@@ -96,16 +98,22 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
             final var source = module.source();
             switch (source) {
-                case YangIRSource irSource -> act.addYangSource(irSource);
-                case YangTextSource yangSource -> {
+                case YangIRSource yangIR -> act.addYangSource(yangIR);
+                case YangTextSource yangText -> {
                     try {
-                        act.addYangSource(textToIR, yangSource);
+                        act.addYangSource(yangText);
                     } catch (SourceSyntaxException e) {
                         throw DefaultYangParser.newSyntaxError(source.sourceId(), e);
                     }
                 }
-                case YinSourceRepresentation yinSource ->
-                    act.addYinSource(DefaultYangParser.sourceToYinDOM(textToDOM, yinSource));
+                case YinDomSource yinDOM -> act.addYinSource(yinDOM);
+                case YinTextSource yinText -> {
+                    try {
+                        act.addYinSource(yinText);
+                    } catch (SourceSyntaxException e) {
+                        throw DefaultYangParser.newSyntaxError(source.sourceId(), e);
+                    }
+                }
                 default -> throw new IllegalArgumentException("Unsupported source " + source);
             }
         }
@@ -113,16 +121,22 @@ public final class DefaultYangLibResolver implements YangLibResolver {
         for (var module : moduleSet.importOnlyModules().values()) {
             final var source = module.source();
             switch (source) {
-                case YangIRSource irSource -> act.addLibYangSource(irSource);
-                case YangTextSource yangSource -> {
+                case YangIRSource yangIR -> act.addLibYangSource(yangIR);
+                case YangTextSource yangText -> {
                     try {
-                        act.addLibYangSource(textToIR, yangSource);
+                        act.addLibYangSource(yangText);
                     } catch (SourceSyntaxException e) {
-                        throw DefaultYangParser.newSyntaxError(yangSource.sourceId(), e);
+                        throw DefaultYangParser.newSyntaxError(yangText.sourceId(), e);
                     }
                 }
-                case YinSourceRepresentation yinSource ->
-                    act.addLibYinSource(DefaultYangParser.sourceToYinDOM(textToDOM, yinSource));
+                case YinDomSource yinDOM -> act.addLibYinSource(yinDOM);
+                case YinTextSource yinText -> {
+                    try {
+                        act.addLibYinSource(yinText);
+                    } catch (SourceSyntaxException e) {
+                        throw DefaultYangParser.newSyntaxError(source.sourceId(), e);
+                    }
+                }
                 default -> throw new IllegalArgumentException("Unsupported source " + source);
             }
         }

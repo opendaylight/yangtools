@@ -30,7 +30,7 @@ class YT1746Test extends AbstractYangDataTest {
 
     @Test
     void featureIndependent() throws Exception {
-        final var bar = newBuild().addSource(sourceForYangText("""
+        final var bar = newBuild().addYangSource(sourceForYangText("""
             module yt1746 {
               namespace yt1746;
               prefix yt1746;
@@ -96,7 +96,7 @@ class YT1746Test extends AbstractYangDataTest {
 
     @Test
     void actionIsRejected() throws Exception {
-        final var builder = newBuild().addSource(sourceForYangText("""
+        final var builder = newBuild().addYangSource(sourceForYangText("""
             module yt1746 {
               yang-version 1.1;
               namespace yt1746;
