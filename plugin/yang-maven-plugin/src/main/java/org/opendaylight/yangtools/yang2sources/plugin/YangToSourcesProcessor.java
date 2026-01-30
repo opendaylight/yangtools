@@ -428,7 +428,7 @@ class YangToSourcesProcessor {
             final var moduleReactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {} with {}", moduleReactor, yangFilesInProject);
             return moduleReactor;
-        } catch (IOException | YangSyntaxErrorException | RuntimeException e) {
+        } catch (YangSyntaxErrorException | RuntimeException e) {
             // MojoExecutionException is thrown since execution cannot continue
             LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
