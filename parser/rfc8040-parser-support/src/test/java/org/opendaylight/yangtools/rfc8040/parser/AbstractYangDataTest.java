@@ -46,7 +46,7 @@ abstract class AbstractYangDataTest {
     }
 
     static final @NonNull BuildAction newBuild() {
-        return REACTOR.newBuild().addYangSource(IETF_RESTCONF_MODULE);
+        return REACTOR.newBuild().addSource(IETF_RESTCONF_MODULE);
     }
 
     static final @NonNull YangIRSource sourceForYangText(final String yangText) {

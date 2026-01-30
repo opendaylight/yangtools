@@ -131,7 +131,7 @@ public final class StmtTestUtils {
 
         final var build = getReactor(config).newBuild();
         for (var file : files) {
-            build.addYinSource(TestUtils.assertYinSource(file.toPath()));
+            build.addSource(TestUtils.assertYinSource(file.toPath()));
         }
         return build.buildEffective();
     }

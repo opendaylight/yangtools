@@ -127,7 +127,7 @@ public final class TestUtils {
 
         // FIXME: use Files to list files
         for (var file : Path.of(resourceDirectory).toFile().listFiles()) {
-            reactor.addYinSource(assertYinSource(file.toPath()));
+            reactor.addSource(assertYinSource(file.toPath()));
         }
 
         return reactor.buildEffective();

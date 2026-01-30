@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 class YT1482Test extends AbstractYangDataTest {
     @Test
     void duplicateNamesAreRejected() {
-        final var action = newBuild().addYangSource(sourceForYangText("""
+        final var action = newBuild().addSource(sourceForYangText("""
             module yt1482 {
               namespace yt1482;
               prefix yt1482;
