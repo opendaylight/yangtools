@@ -6,7 +6,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.parser.source;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -91,8 +92,8 @@ record YinDOMSourceWalker(
 
                 argValue = getArgValue(element, argName, allAttrs);
                 if (argValue == null) {
-                    throw new SourceException(ref, "Statement %s is missing mandatory argument %s",
-                        def.statementName(), argName);
+                    throw new SourceException(ref, "Statement %s is missing mandatory argument %s", def.statementName(),
+                        argName);
                 }
             } else {
                 argName = null;

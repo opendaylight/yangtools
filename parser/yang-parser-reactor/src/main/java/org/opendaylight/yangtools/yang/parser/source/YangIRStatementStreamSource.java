@@ -6,7 +6,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * A {@link StatementStreamSource} operating based on {@link YangIRSource}.

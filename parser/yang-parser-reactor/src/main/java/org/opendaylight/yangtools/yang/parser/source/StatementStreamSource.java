@@ -5,9 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.parser.source;
 
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Statement stream source, which is used for inference of effective model.

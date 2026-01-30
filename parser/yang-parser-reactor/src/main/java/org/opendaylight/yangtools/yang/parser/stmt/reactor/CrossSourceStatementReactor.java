@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.parser.source.YangIRStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.source.YinDOMStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.YinDOMStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
 
 public final class CrossSourceStatementReactor {

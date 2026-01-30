@@ -113,15 +113,43 @@ final class DefaultYangParser implements YangParser {
     @Deprecated
     @Override
     public YangParser addLibSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
-        // TODO Auto-generated method stub
-        return null;
+        switch (source) {
+            case YangIRSource irSource -> buildAction.addLibYangSource(irSource);
+            case YangTextSource yangSource -> {
+                try {
+                    buildAction.addLibYangSource(textToIR, yangSource);
+                } catch (SourceSyntaxException e) {
+                    throw newSyntaxError(source.sourceId(), e);
+                }
+            }
+            default -> throw new IllegalArgumentException("Unsupported source " + source);
+        }
+        return this;
     }
 
     @Deprecated
     @Override
     public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
-        // TODO Auto-generated method stub
-        return null;
+        switch (source) {
+            case YinDomSource yinDom -> buildAction.addLibYinSource(yinDom);
+            case YinTextSource yinText -> {
+                try {
+                    buildAction.addLibYinSource(textToDOM, yinText);
+                } catch (SourceSyntaxException e) {
+                    throw newSyntaxError(source.sourceId(), e);
+                }
+            }
+            case YinXmlSource yinXml -> {
+                try {
+                    buildAction.addLibYinSource(YinDomSource.transform(yinXml));
+                } catch (TransformerException e) {
+                    throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
+                        "Failed to assemble in-memory representation", e);
+                }
+            }
+            default -> throw new IllegalArgumentException("Unsupported source " + source);
+        }
+        return this;
     }
 
     @Deprecated
