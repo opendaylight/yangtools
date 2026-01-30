@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import java.io.IOException;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -51,7 +50,7 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
             BuildGlobalContext global,
             SourceTransformer<I, O> transformer,
             I input,
-            Function<O, StatementStreamSource> streamFactory) implements Stage {
+            StatementStreamSource.Factory<O> streamFactory) implements Stage {
         NeedTransform {
             requireNonNull(global);
             requireNonNull(transformer);
@@ -76,7 +75,7 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
      * @param <S> the {@link SourceRepresentation}
      */
     private record Materialized<S extends SourceRepresentation & SourceInfo.Extractor>(
-            BuildGlobalContext global, S source, Function<S, StatementStreamSource> streamFactory) implements Stage {
+            BuildGlobalContext global, S source, StatementStreamSource.Factory<S> streamFactory) implements Stage {
         Materialized {
             requireNonNull(global);
             requireNonNull(source);
@@ -90,21 +89,21 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
 
         SourceSpecificContext toSourceContext() throws SourceSyntaxException {
             final var sourceInfo = source.extractSourceInfo();
-            return new SourceSpecificContext(global, sourceInfo.sourceId(), sourceInfo.yangVersion(),
-                streamFactory.apply(source));
+            final var yangVersion = source.extractSourceInfo().yangVersion();
+            return new SourceSpecificContext(global, sourceInfo.sourceId(), yangVersion,
+                streamFactory.newStreamSource(source, yangVersion));
         }
     }
 
     private Stage stage;
 
-    BuildSource(final BuildGlobalContext global, final S source,
-            final Function<S, StatementStreamSource> streamFactory) {
+    BuildSource(final BuildGlobalContext global, final S source, final StatementStreamSource.Factory<S> streamFactory) {
         stage = new Materialized<>(global, source, streamFactory);
     }
 
     <I extends SourceRepresentation> BuildSource(final BuildGlobalContext global,
             final SourceTransformer<I, S> transformer, final I input,
-            final Function<S, StatementStreamSource> streamFactory) {
+            final StatementStreamSource.Factory<S> streamFactory) {
         stage = new NeedTransform<>(global, transformer, input, streamFactory);
     }
 

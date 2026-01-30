@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -49,7 +54,39 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 // FIXME: 7.0.0: this is a push parser, essentially traversing the same tree multiple times. Perhaps we should create
 //               a visitor/filter or perform some explicit argument binding?
-public interface StatementStreamSource {
+public sealed interface StatementStreamSource permits YangIRStatementStreamSource, YinDOMStatementStreamSource {
+    /**
+     * A factory for {@link StatementStreamSource}s.
+     *
+     * @param <S> the type of {@link SourceRepresentation}
+     */
+    @NonNullByDefault
+    @FunctionalInterface
+    interface Factory<S extends SourceRepresentation & SourceInfo.Extractor> {
+        /**
+         * {@return a new {@link StatementStreamSource} backed by specified source and version}
+         * @param source the source
+         * @param yangVersion the version
+         */
+        StatementStreamSource newStreamSource(S source, YangVersion yangVersion);
+    }
+
+    /**
+     * The {@link Factory} for {@link YangIRSource}.
+     */
+    @NonNullByDefault
+    static Factory<YangIRSource> forYangIR() {
+        return YangIRStatementStreamSource.FACTORY;
+    }
+
+    /**
+     * The {@link Factory} for {@link YangDomSource}.
+     */
+    @NonNullByDefault
+    static Factory<YinDOMSource> forYInDOM() {
+        return YinDOMStatementStreamSource.FACTORY;
+    }
+
     /**
      * Emits only pre-linkage-related statements to supplied {@code writer}.
      *
@@ -79,14 +116,12 @@ public interface StatementStreamSource {
      *            MUST NOT emit any other statements.
      * @param preLinkagePrefixes
      *            Pre-linkage map of source-specific prefixes to namespaces
-     * @param yangVersion
-     *            yang version.
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
     void writeLinkage(StatementWriter writer, StatementDefinitionResolver resolver,
-        PrefixResolver preLinkagePrefixes, YangVersion yangVersion);
+        PrefixResolver preLinkagePrefixes);
 
     /**
      * Emits only linkage and language extension statements to supplied
@@ -102,15 +137,13 @@ public interface StatementStreamSource {
      *            MUST NOT emit any other statements.
      * @param prefixes
      *            Map of source-specific prefixes to namespaces
-     * @param yangVersion
-     *            YANG version.
      *
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
     void writeLinkageAndStatementDefinitions(StatementWriter writer, StatementDefinitionResolver resolver,
-        PrefixResolver prefixes, YangVersion yangVersion);
+        PrefixResolver prefixes);
 
     /**
      * Emits every statements present in this statement source to supplied
@@ -124,12 +157,9 @@ public interface StatementStreamSource {
      *            Map of available statement definitions.
      * @param prefixes
      *            Map of source-specific prefixes to namespaces
-     * @param yangVersion
-     *            yang version.
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeFull(StatementWriter writer, StatementDefinitionResolver resolver, PrefixResolver prefixes,
-        YangVersion yangVersion);
+    void writeFull(StatementWriter writer, StatementDefinitionResolver resolver, PrefixResolver prefixes);
 }

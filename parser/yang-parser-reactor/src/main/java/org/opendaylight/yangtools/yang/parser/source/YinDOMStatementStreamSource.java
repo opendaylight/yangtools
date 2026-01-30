@@ -11,15 +11,18 @@ package org.opendaylight.yangtools.yang.parser.source;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 
 /**
  * A {@link StatementStreamSource} based on a {@link YinDOMSource}.
  */
-public record YinDOMStatementStreamSource(@NonNull YinDOMSource source) implements StatementStreamSource {
-    public YinDOMStatementStreamSource {
+record YinDOMStatementStreamSource(@NonNull YinDOMSource source) implements StatementStreamSource {
+    @NonNullByDefault
+    static final Factory<YinDOMSource> FACTORY = (source, unused) -> new YinDOMStatementStreamSource(source);
+
+    YinDOMStatementStreamSource {
         requireNonNull(source);
     }
 
@@ -30,19 +33,19 @@ public record YinDOMStatementStreamSource(@NonNull YinDOMSource source) implemen
 
     @Override
     public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
+            final PrefixResolver preLinkagePrefixes) {
         YinDOMSourceWalker.walkSource(source, writer, resolver);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes) {
         YinDOMSourceWalker.walkSource(source, writer, resolver);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final StatementDefinitionResolver resolver,
-            final PrefixResolver prefixes, final YangVersion yangVersion) {
+            final PrefixResolver prefixes) {
         YinDOMSourceWalker.walkSource(source, writer, resolver);
     }
 }
