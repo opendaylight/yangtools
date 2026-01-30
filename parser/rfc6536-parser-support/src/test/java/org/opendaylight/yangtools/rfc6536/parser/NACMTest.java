@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransf
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class NACMTest {
@@ -35,10 +34,10 @@ class NACMTest {
             .build();
 
         final var context = reactor.newBuild()
-            .addSource(new YangIRStatementStreamSource(TRANSFORMER.transformSource(
-                new URLYangTextSource(NACMTest.class.getResource("/ietf-netconf-acm@2012-02-22.yang")))))
-            .addSource(new YangIRStatementStreamSource(TRANSFORMER.transformSource(
-                new URLYangTextSource(NACMTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))))
+            .addYangSource(TRANSFORMER, new URLYangTextSource(NACMTest.class.getResource(
+                "/ietf-netconf-acm@2012-02-22.yang")))
+            .addYangSource(TRANSFORMER, new URLYangTextSource(NACMTest.class.getResource(
+                "/ietf-yang-types@2013-07-15.yang")))
             .buildEffective();
 
         final var module = context.findModule(NACMConstants.RFC6536_MODULE).orElseThrow();

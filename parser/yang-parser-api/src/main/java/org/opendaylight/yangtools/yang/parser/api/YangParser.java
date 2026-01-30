@@ -7,16 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 
 /**
@@ -42,7 +47,35 @@ public interface YangParser {
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    @NonNull YangParser addSource(SourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    @NonNullByDefault
+    default YangParser addSource(final SourceRepresentation source) throws IOException, YangSyntaxErrorException {
+        return switch (source) {
+            case YangSourceRepresentation yangSource -> addSource(yangSource);
+            case YinSourceRepresentation yinSource -> addSource(yinSource);
+        };
+    }
+
+    /**
+     * Add main source. All main sources are present in resulting SchemaContext.
+     *
+     * @param source which should be added into main sources
+     * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
+     * @throws IOException when an IO error occurs
+     * @throws IllegalArgumentException if the representation is not supported
+     */
+    @NonNullByDefault
+    YangParser addSource(YangSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+
+    /**
+     * Add main source. All main sources are present in resulting SchemaContext.
+     *
+     * @param source which should be added into main sources
+     * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
+     * @throws IOException when an IO error occurs
+     * @throws IllegalArgumentException if the representation is not supported
+     */
+    @NonNullByDefault
+    YangParser addSource(YinSourceRepresentation source) throws IOException, YangSyntaxErrorException;
 
     /**
      * Add main sources. All main sources are present in resulting SchemaContext.
@@ -55,7 +88,7 @@ public interface YangParser {
     default @NonNull YangParser addSources(final SourceRepresentation... sources)
             throws IOException, YangSyntaxErrorException {
         for (var source : sources) {
-            addSource(source);
+            addSource(requireNonNull(source));
         }
         return this;
     }
@@ -63,12 +96,24 @@ public interface YangParser {
     default @NonNull YangParser addSources(final Collection<? extends SourceRepresentation> sources)
             throws IOException, YangSyntaxErrorException {
         for (var source : sources) {
-            addSource(source);
+            addSource(requireNonNull(source));
         }
         return this;
     }
 
-    YangParser addLibSource(SourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    @NonNullByDefault
+    default YangParser addLibSource(final SourceRepresentation source) throws IOException, YangSyntaxErrorException {
+        return switch (source) {
+            case YangSourceRepresentation yangSource -> addLibSource(yangSource);
+            case YinSourceRepresentation yinSource -> addLibSource(yinSource);
+        };
+    }
+
+    @NonNullByDefault
+    YangParser addLibSource(YangSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+
+    @NonNullByDefault
+    YangParser addLibSource(YinSourceRepresentation source) throws IOException, YangSyntaxErrorException;
 
     /**
      * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
