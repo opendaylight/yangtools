@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 
 /**
  * A {@code SchemaSourceTransformer} built on top of a {@link SourceTransformer} producing {@link SourceRepresentation}s
@@ -55,17 +55,17 @@ public final class SourceInfoSchemaSourceTransformer<
     }
 
     /**
-     * {@return a {@link SourceInfoSchemaSourceTransformer} resulting in a {@link YinDomSource}}
+     * {@return a {@link SourceInfoSchemaSourceTransformer} resulting in a {@link YinDOMSource}}
      * @param <I> the input {@link SourceRepresentation}
      * @param provider the provider {@link SchemaRepository}
      * @param consumer the consumer {@link SchemaSourceRegistry}
      * @param transformer the {@link SourceTransformer} to use
      */
-    public static <I extends SourceRepresentation> SourceInfoSchemaSourceTransformer<I, YinDomSource> ofYin(
+    public static <I extends SourceRepresentation> SourceInfoSchemaSourceTransformer<I, YinDOMSource> ofYin(
             final SchemaRepository provider, final SchemaSourceRegistry consumer,
-            final SourceTransformer<I, YinDomSource> transformer) {
+            final SourceTransformer<I, YinDOMSource> transformer) {
         return new SourceInfoSchemaSourceTransformer<>(provider, consumer, transformer,
-            (source, sourceId) -> YinDomSource.of(sourceId, source.getSource(), source.refProvider(),
+            (source, sourceId) -> YinDOMSource.of(sourceId, source.domSource(), source.refProvider(),
                 source.symbolicName()));
     }
 }

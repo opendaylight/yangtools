@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -84,7 +84,7 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     /**
      * The {@link Factory} for {@link YangDomSource}.
      */
-    @NonNullByDefault Factory<YinDomSource> YIN_DOM = (source, unused) -> new YinDOMStatementStreamSource(source);
+    @NonNullByDefault Factory<YinDOMSource> YIN_DOM = (source, unused) -> new YinDOMStatementStreamSource(source);
 
     /**
      * Emits only pre-linkage-related statements to supplied {@code writer}.

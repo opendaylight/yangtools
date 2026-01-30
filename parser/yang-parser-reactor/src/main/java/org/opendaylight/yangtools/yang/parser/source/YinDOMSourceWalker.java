@@ -15,8 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 record YinDOMSourceWalker(
-        @NonNull SourceRefProvider refProvider,
+        YinDOMSource.@NonNull SourceRefProvider refProvider,
         @NonNull StatementWriter writer,
         @NonNull StatementDefinitionResolver resolver) {
     private static final Logger LOG = LoggerFactory.getLogger(YinDOMSourceWalker.class);
@@ -38,10 +37,10 @@ record YinDOMSourceWalker(
         requireNonNull(resolver);
     }
 
-    static void walkSource(final YinDomSource source, final StatementWriter writer,
+    static void walkSource(final YinDOMSource source, final StatementWriter writer,
             final StatementDefinitionResolver resolver) {
         new YinDOMSourceWalker(source.refProvider(), writer, resolver)
-            .walkSource(source.getSource().getNode().getChildNodes());
+            .walkSource(source.domSource().getNode().getChildNodes());
     }
 
     private void walkSource(final NodeList children) {
