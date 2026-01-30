@@ -12,27 +12,26 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 class YangFileStmtTest extends AbstractYangTest {
     @Test
-    void readAndParseYangFileTestModel() throws ReactorException {
+    void readAndParseYangFileTestModel() throws Exception {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/model-new/baz.yang"))
             .addSource(sourceForResource("/model-new/foo.yang"))
             .addSource(sourceForResource("/model-new/bar.yang"))
             .addSource(sourceForResource("/model-new/subfoo.yang"))
-            .build());
+            .buildDeclared());
     }
 
     @Test
-    void readAndParseYangFileTestModel2() throws ReactorException {
+    void readAndParseYangFileTestModel2() throws Exception {
         assertNotNull(RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/model/baz.yang"))
             .addSource(sourceForResource("/model/foo.yang"))
             .addSource(sourceForResource("/model/bar.yang"))
             .addSource(sourceForResource("/model/subfoo.yang"))
-            .build());
+            .buildDeclared());
     }
 
     @Test
