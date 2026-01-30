@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import java.util.NoSuchElementException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -32,10 +34,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Utility {@link YinXmlSource} exposing a W3C {@link DOMSource} representation of YIN model.
@@ -161,6 +161,13 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
     private static final QName REVISION_STMT = RevisionStatement.DEF.statementName();
     private static final String MODULE_ARG = ModuleStatement.DEF.getArgumentDefinition().simpleName();
     private static final String REVISION_ARG = RevisionStatement.DEF.getArgumentDefinition().simpleName();
+    private static final String MODULE = "module";
+    private static final String SUBMODULE = "submodule";
+
+    static {
+        verify(MODULE.equals(ModuleStatement.DEF.simpleName()));
+        verify(SUBMODULE.equals(SubmoduleStatement.DEF.simpleName()));
+    }
 
     private final @NonNull SourceRefProvider refProvider;
 
@@ -198,8 +205,8 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
     @NonNullByDefault
     public static YinDomSource of(final SourceIdentifier identifier, final DOMSource source,
             final SourceRefProvider refProvider, final @Nullable String symbolicName) {
-        final Node root = source.getNode().getFirstChild();
-        final String rootNs = root.getNamespaceURI();
+        final var element = documentElementOf(source);
+        final var rootNs = element.getNamespaceURI();
         if (rootNs == null) {
             // Let whoever is using this deal with this
             return new Simple(identifier, source, refProvider, symbolicName);
@@ -210,27 +217,28 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
                 + YangConstants.RFC6020_YIN_NAMESPACE_STRING);
         }
 
-        final var rootName = root.getLocalName();
-        if (!rootName.equals(ModuleStatement.DEF.simpleName())
-            && !rootName.equals(SubmoduleStatement.DEF.simpleName())) {
-            throw new IllegalArgumentException("Root element " + rootName + " is not a module nor a submodule");
+        final var rootName = element.getLocalName();
+        switch (rootName) {
+            case MODULE, SUBMODULE -> {
+                // No-op
+            }
+            default -> throw new IllegalArgumentException(
+                "Root element " + rootName + " is not a module nor a submodule");
         }
 
-        checkArgument(root instanceof Element, "Root node %s is not an element", root);
-        final Element element = (Element)root;
-
-        final Attr nameAttr = element.getAttributeNode(MODULE_ARG);
+        final var nameAttr = element.getAttributeNode(MODULE_ARG);
         checkArgument(nameAttr != null, "No %s name argument found in %s", MODULE_ARG, element.getLocalName());
 
-        final NodeList revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
+        final var revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
             REVISION_STMT.getLocalName());
         if (revisions.getLength() == 0) {
             // FIXME: is module name important (as that may have changed)
             return new Simple(identifier, source, refProvider, symbolicName);
         }
 
-        final Element revisionStmt = (Element) revisions.item(0);
-        final Attr dateAttr = revisionStmt.getAttributeNode(REVISION_ARG);
+        // FIXME: better check
+        final var revisionStmt = (Element) revisions.item(0);
+        final var dateAttr = revisionStmt.getAttributeNode(REVISION_ARG);
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
         final var parsedId = new SourceIdentifier(nameAttr.getValue(), dateAttr.getValue());
@@ -292,10 +300,7 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
 
     @Override
     public final SourceInfo extractSourceInfo() throws ExtractorException {
-        final var root = getSource().getNode();
-        if (!(root instanceof Element element)) {
-            throw new ExtractorException("Root node is not an element");
-        }
+        final var element = documentElementOf(getSource());
         if (!YinDomSourceInfoExtractor.isYinElement(element)) {
             throw new ExtractorException("Root element does not have YIN namespace", refProvider.refOf(element));
         }
@@ -326,7 +331,7 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
     protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
 
     static @NonNull DOMSource transformSource(final Source source) throws TransformerException {
-        final DOMResult result = new DOMResult();
+        final var result = new DOMResult();
         TRANSFORMER_FACTORY.newTransformer().transform(source, result);
 
         return new DOMSource(result.getNode(), result.getSystemId());
@@ -342,5 +347,14 @@ public abstract sealed class YinDomSource implements YinXmlSource, SourceInfo.Ex
             return create(xmlSchemaSource.sourceId(), dom, xmlSchemaSource.symbolicName());
         }
         return null;
+    }
+
+    @NonNullByDefault
+    private static Element documentElementOf(final DOMSource source) {
+        final var node = source.getNode();
+        if (node instanceof Document document) {
+            return document.getDocumentElement();
+        }
+        throw new VerifyException("Unexpected root " + node);
     }
 }
