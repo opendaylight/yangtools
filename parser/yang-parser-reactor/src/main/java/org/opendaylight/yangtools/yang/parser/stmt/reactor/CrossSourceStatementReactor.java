@@ -7,26 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Preconditions.checkState;
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
+import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
-import org.opendaylight.yangtools.yang.parser.source.YangIRStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.source.YinDOMStatementStreamSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -36,8 +36,8 @@ public final class CrossSourceStatementReactor {
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology;
     private final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation;
 
-    CrossSourceStatementReactor(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
-            final Map<ValidationBundleType, Collection<?>> supportedValidation) {
+    CrossSourceStatementReactor(final EnumMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
+            final EnumMap<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supportedTerminology = ImmutableMap.copyOf(supportedTerminology);
         this.supportedValidation = ImmutableMap.copyOf(supportedValidation);
     }
@@ -57,13 +57,44 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      */
     public @NonNull BuildAction newBuild() {
-        return new BuildAction(supportedTerminology, supportedValidation);
+        return new ReactorBuildAction(supportedTerminology, supportedValidation);
+    }
+
+    /**
+     * Start a new reactor build using the default statement parser mode with all features and deviations enabled.
+     *
+     * @return A new {@link BuildAction}.
+     */
+    @NonNullByDefault
+    public BuildAction.WithYang<YangTextSource> newBuild(final YangTextToIRSourceTransformer textToIR) {
+        return new YangReactorBuildAction<>(supportedTerminology, supportedValidation, textToIR);
+    }
+
+    /**
+     * Start a new reactor build using the default statement parser mode with all features and deviations enabled.
+     *
+     * @return A new {@link BuildAction}.
+     */
+    @NonNullByDefault
+    public BuildAction.WithYin<YinTextSource> newBuild(final YinTextToDOMSourceTransformer textToDOM) {
+        return new YinReactorBuildAction<>(supportedTerminology, supportedValidation, textToDOM);
+    }
+
+    /**
+     * Start a new reactor build using the default statement parser mode with all features and deviations enabled.
+     *
+     * @return A new {@link BuildAction}.
+     */
+    @NonNullByDefault
+    public BuildAction.Full<YangTextSource, YinTextSource> newBuild(final YangTextToIRSourceTransformer textToIR,
+            final YinTextToDOMSourceTransformer textToDOM) {
+        return new FullReactorBuildAction<>(supportedTerminology, supportedValidation, textToIR, textToDOM);
     }
 
     public static class Builder implements Mutable {
-        private final Map<ValidationBundleType, Collection<?>> validationBundles =
+        private final EnumMap<ValidationBundleType, Collection<?>> validationBundles =
                 new EnumMap<>(ValidationBundleType.class);
-        private final Map<ModelProcessingPhase, StatementSupportBundle> bundles =
+        private final EnumMap<ModelProcessingPhase, StatementSupportBundle> bundles =
                 new EnumMap<>(ModelProcessingPhase.class);
 
         public @NonNull Builder setBundle(final ModelProcessingPhase phase, final StatementSupportBundle bundle) {
@@ -87,15 +118,95 @@ public final class CrossSourceStatementReactor {
         }
     }
 
-    public static final class BuildAction {
-        private final BuildGlobalContext context;
+    /**
+     * A single attempt at resolving a set of schema sources.
+     */
+    public sealed interface BuildAction permits ReactorBuildAction, BuildAction.WithYang, BuildAction.WithYin {
+        /**
+         * A {@link BuildAction} capable of accepting YANG source representations.
+         *
+         * @param <S> concrete {@link YangSourceRepresentation}
+         * @since 15.0.0
+         */
+        sealed interface WithYang<S extends YangSourceRepresentation> extends BuildAction
+                permits YangReactorBuildAction, Full {
+            /**
+             * Add a YANG source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+             *
+             * @param source which should be transformed and added into main sources
+             * @return This build action, for fluent use.
+             * @throws SourceSyntaxException if the source is not syntactically valid
+             */
+            @NonNullByDefault
+            WithYang<S> addYangSource(S source) throws SourceSyntaxException;
 
-        private boolean supportedFeaturesSet = false;
-        private boolean modulesDeviatedByModulesSet = false;
+            /**
+             * Add a library YANG source. Only library sources required by main sources are present in resulting
+             * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+             * reporting.
+             *
+             * <p>Library sources are not supported in semantic version mode currently.
+             *
+             * @param source which should be transformed and added into main sources
+             * @return This build action, for fluent use.
+             * @throws SourceSyntaxException if the source is not syntactically valid
+             */
+            @NonNullByDefault
+            WithYang<S> addLibYangSource(S source) throws SourceSyntaxException;
+        }
 
-        BuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
-                final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
-            context = new BuildGlobalContext(supportedTerminology, supportedValidation);
+        /**
+         * A {@link BuildAction} capable of accepting YIN source representations.
+         *
+         * @param <S> concrete {@link YinSourceRepresentation}
+         * @since 15.0.0
+         */
+        sealed interface WithYin<S extends YinSourceRepresentation> extends BuildAction
+                permits YinReactorBuildAction, Full {
+            /**
+             * Add a YIN source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+             *
+             * @param source which should be transformed and added into main sources
+             * @return This build action, for fluent use.
+             * @throws SourceSyntaxException if the source is not syntactically valid
+             */
+            @NonNullByDefault
+            WithYin<S> addYinSource(S source) throws SourceSyntaxException;
+
+            /**
+             * Add a library YIN source. Only library sources required by main sources are present in resulting
+             * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+             * reporting.
+             *
+             * <p>Library sources are not supported in semantic version mode currently.
+             *
+             * @param libSource source which should be added into library sources
+             * @return This build action, for fluent use.
+             */
+            @NonNullByDefault
+            WithYin<S> addLibYinSource(S libSource) throws SourceSyntaxException;
+        }
+
+        /**
+         * A {@link BuildAction} capable of accepting YIN source representations.
+         *
+         * @param <H> concrete {@link YangSourceRepresentation}
+         * @param <M> concrete {@link YinSourceRepresentation}
+         * @since 15.0.0
+         */
+        sealed interface Full<H extends YangSourceRepresentation, M extends YinSourceRepresentation>
+                extends WithYang<H>, WithYin<M> permits FullReactorBuildAction {
+            @Override
+            Full<H, M> addYangSource(H source) throws SourceSyntaxException;
+
+            @Override
+            Full<H, M> addYinSource(M source) throws SourceSyntaxException;
+
+            @Override
+            Full<H, M> addLibYangSource(H source) throws SourceSyntaxException;
+
+            @Override
+            Full<H, M> addLibYinSource(M source) throws SourceSyntaxException;
         }
 
         /**
@@ -107,7 +218,7 @@ public final class CrossSourceStatementReactor {
          */
         @Deprecated(since = "15.0.0")
         @NonNullByDefault
-        public BuildAction addSource(final YangIRSource source) {
+        default BuildAction addSource(final YangIRSource source) {
             return addYangSource(source);
         }
 
@@ -123,7 +234,7 @@ public final class CrossSourceStatementReactor {
          */
         @Deprecated(since = "15.0.0")
         @NonNullByDefault
-        public <S extends SourceRepresentation> BuildAction addSource(
+        default <S extends SourceRepresentation> BuildAction addSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
             return addYangSource(transformer, source);
         }
@@ -135,10 +246,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         @NonNullByDefault
-        public BuildAction addYangSource(final YangIRSource source) {
-            context.addSource(new YangIRStatementStreamSource(source));
-            return this;
-        }
+        BuildAction addYangSource(YangIRSource source);
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -150,9 +258,9 @@ public final class CrossSourceStatementReactor {
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        public <S extends SourceRepresentation> BuildAction addYangSource(
+        default <S extends SourceRepresentation> BuildAction addYangSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addSource(transformer.transformSource(source));
+            return addYangSource(transformer.transformSource(source));
         }
 
         /**
@@ -162,10 +270,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         @NonNullByDefault
-        public BuildAction addYinSource(final YinDomSource source) {
-            context.addSource(new YinDOMStatementStreamSource(source));
-            return this;
-        }
+        BuildAction addYinSource(YinDomSource source);
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -177,7 +282,7 @@ public final class CrossSourceStatementReactor {
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        public <S extends SourceRepresentation> BuildAction addYinSource(
+        default <S extends SourceRepresentation> BuildAction addYinSource(
                 final SourceTransformer<S, YinDomSource> transformer, final S source) throws SourceSyntaxException {
             return addYinSource(transformer.transformSource(source));
         }
@@ -195,9 +300,8 @@ public final class CrossSourceStatementReactor {
          */
         @Deprecated(since = "15.0.0")
         @NonNullByDefault
-        public BuildAction addLibSource(final YangIRSource libSource) {
-            context.addLibSource(new YangIRStatementStreamSource(libSource));
-            return this;
+        default BuildAction addLibSource(final YangIRSource libSource) {
+            return addLibYangSource(libSource);
         }
 
         /**
@@ -216,9 +320,9 @@ public final class CrossSourceStatementReactor {
          */
         @Deprecated(since = "15.0.0")
         @NonNullByDefault
-        public <S extends SourceRepresentation> BuildAction addLibSource(
+        default <S extends SourceRepresentation> BuildAction addLibSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addLibSource(transformer.transformSource(source));
+            return addLibYangSource(transformer.transformSource(source));
         }
 
         /**
@@ -232,10 +336,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         @NonNullByDefault
-        public BuildAction addLibYangSource(final YangIRSource libSource) {
-            context.addLibSource(new YangIRStatementStreamSource(libSource));
-            return this;
-        }
+        BuildAction addLibYangSource(YangIRSource libSource);
 
         /**
          * Add a transformed YANG library source. Only library sources required by main sources are present in resulting
@@ -251,9 +352,9 @@ public final class CrossSourceStatementReactor {
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        public <S extends SourceRepresentation> BuildAction addLibYangSource(
+        default <S extends SourceRepresentation> BuildAction addLibYangSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addLibSource(transformer.transformSource(source));
+            return addLibYangSource(transformer.transformSource(source));
         }
 
         /**
@@ -267,10 +368,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         @NonNullByDefault
-        public BuildAction addLibYinSource(final YinDomSource libSource) {
-            context.addLibSource(new YinDOMStatementStreamSource(libSource));
-            return this;
-        }
+        BuildAction addLibYinSource(YinDomSource libSource);
 
         /**
          * Add a transformed YIN library source. Only library sources required by main sources are present in resulting
@@ -286,7 +384,7 @@ public final class CrossSourceStatementReactor {
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        public <S extends SourceRepresentation> BuildAction addLibYinSource(
+        default <S extends SourceRepresentation> BuildAction addLibYinSource(
                 final SourceTransformer<S, YinDomSource> transformer, final S source) throws SourceSyntaxException {
             return addLibYinSource(transformer.transformSource(source));
         }
@@ -300,12 +398,8 @@ public final class CrossSourceStatementReactor {
          *            If the set is empty, no features encountered will be supported.
          * @return This build action, for fluent use.
          */
-        public @NonNull BuildAction setSupportedFeatures(final @NonNull FeatureSet supportedFeatures) {
-            checkState(!supportedFeaturesSet, "Supported features should be set only once.");
-            context.setSupportedFeatures(requireNonNull(supportedFeatures));
-            supportedFeaturesSet = true;
-            return this;
-        }
+        @NonNullByDefault
+        BuildAction setSupportedFeatures(FeatureSet supportedFeatures);
 
         /**
          * Set YANG modules which can be deviated by specified modules during the parsing process.
@@ -316,12 +410,19 @@ public final class CrossSourceStatementReactor {
          *            SchemaContext. If the map is empty, no deviations encountered will be supported.
          * @return This build action, for fluent use.
          */
-        public @NonNull BuildAction setModulesWithSupportedDeviations(
-                final @NonNull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
-            checkState(!modulesDeviatedByModulesSet, "Modules with supported deviations should be set only once.");
-            context.setModulesDeviatedByModules(requireNonNull(modulesDeviatedByModules));
-            modulesDeviatedByModulesSet = true;
-            return this;
+        @NonNull BuildAction setModulesWithSupportedDeviations(
+                @NonNull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules);
+
+        /**
+         * Build the {@link ReactorDeclaredModel} view of this action.
+         *
+         * @return A declared view of selected models.
+         * @throws ReactorException if the declared model cannot be built
+         * @deprecated Use {@link #buildDeclared()} instead.
+         */
+        @Deprecated(since = "15.0.0", forRemoval = true)
+        default @NonNull ReactorDeclaredModel build() throws ReactorException {
+            return buildDeclared();
         }
 
         /**
@@ -330,9 +431,7 @@ public final class CrossSourceStatementReactor {
          * @return A declared view of selected models.
          * @throws ReactorException if the declared model cannot be built
          */
-        public @NonNull ReactorDeclaredModel build() throws ReactorException {
-            return context.build();
-        }
+        @NonNull ReactorDeclaredModel buildDeclared() throws ReactorException;
 
         /**
          * Build the {@link EffectiveSchemaContext} view of this action.
@@ -340,8 +439,6 @@ public final class CrossSourceStatementReactor {
          * @return An effective view of selected models.
          * @throws ReactorException if the effective model cannot be built
          */
-        public @NonNull EffectiveSchemaContext buildEffective() throws ReactorException {
-            return context.buildEffective();
-        }
+        @NonNull EffectiveSchemaContext buildEffective() throws ReactorException;
     }
 }

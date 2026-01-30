@@ -97,7 +97,6 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         if (!SUPPORTED_MODES.contains(importMode)) {
             throw new IllegalArgumentException("Unsupported import resolution mode " + importMode);
         }
-        return new DefaultYangParser(textToIR, textToDOM,
-            reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
+        return new DefaultYangParser(textToIR, textToDOM, reactors.computeIfAbsent(configuration, reactorFactory));
     }
 }
