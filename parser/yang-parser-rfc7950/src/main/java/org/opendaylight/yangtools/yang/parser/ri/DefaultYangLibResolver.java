@@ -98,18 +98,18 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
             final var source = module.source();
             switch (source) {
-                case YangIRSource yangIR -> act.addYangSource(yangIR);
+                case YangIRSource yangIR -> act.addSource(yangIR);
                 case YangTextSource yangText -> {
                     try {
-                        act.addYangSource(yangText);
+                        act.addSource(yangText);
                     } catch (SourceSyntaxException e) {
                         throw DefaultYangParser.newSyntaxError(source.sourceId(), e);
                     }
                 }
-                case YinDomSource yinDOM -> act.addYinSource(yinDOM);
+                case YinDomSource yinDOM -> act.addSource(yinDOM);
                 case YinTextSource yinText -> {
                     try {
-                        act.addYinSource(yinText);
+                        act.addSource(yinText);
                     } catch (SourceSyntaxException e) {
                         throw DefaultYangParser.newSyntaxError(source.sourceId(), e);
                     }
@@ -121,18 +121,18 @@ public final class DefaultYangLibResolver implements YangLibResolver {
         for (var module : moduleSet.importOnlyModules().values()) {
             final var source = module.source();
             switch (source) {
-                case YangIRSource yangIR -> act.addLibYangSource(yangIR);
+                case YangIRSource yangIR -> act.addLibSource(yangIR);
                 case YangTextSource yangText -> {
                     try {
-                        act.addLibYangSource(yangText);
+                        act.addLibSource(yangText);
                     } catch (SourceSyntaxException e) {
                         throw DefaultYangParser.newSyntaxError(yangText.sourceId(), e);
                     }
                 }
-                case YinDomSource yinDOM -> act.addLibYinSource(yinDOM);
+                case YinDomSource yinDOM -> act.addLibSource(yinDOM);
                 case YinTextSource yinText -> {
                     try {
-                        act.addLibYinSource(yinText);
+                        act.addLibSource(yinText);
                     } catch (SourceSyntaxException e) {
                         throw DefaultYangParser.newSyntaxError(source.sourceId(), e);
                     }

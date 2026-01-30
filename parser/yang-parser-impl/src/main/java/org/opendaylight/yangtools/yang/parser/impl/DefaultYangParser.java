@@ -72,7 +72,7 @@ final class DefaultYangParser implements YangParser {
     @Override
     public YangParser addSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         switch (source) {
-            case YangIRSource irSource -> buildAction.addYangSource(irSource);
+            case YangIRSource irSource -> buildAction.addSource(irSource);
             case YangTextSource yangSource -> {
                 try {
                     buildAction.addYangSource(textToIR, yangSource);
@@ -89,7 +89,7 @@ final class DefaultYangParser implements YangParser {
     @Override
     public YangParser addSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         switch (source) {
-            case YinDomSource yinDom -> buildAction.addYinSource(yinDom);
+            case YinDomSource yinDom -> buildAction.addSource(yinDom);
             case YinTextSource yinText -> {
                 try {
                     buildAction.addYinSource(textToDOM, yinText);
@@ -99,7 +99,7 @@ final class DefaultYangParser implements YangParser {
             }
             case YinXmlSource yinXml -> {
                 try {
-                    buildAction.addYinSource(YinDomSource.transform(yinXml));
+                    buildAction.addSource(YinDomSource.transform(yinXml));
                 } catch (TransformerException e) {
                     throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
                         "Failed to assemble in-memory representation", e);
@@ -114,7 +114,7 @@ final class DefaultYangParser implements YangParser {
     @Override
     public YangParser addLibSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         switch (source) {
-            case YangIRSource irSource -> buildAction.addLibYangSource(irSource);
+            case YangIRSource irSource -> buildAction.addLibSource(irSource);
             case YangTextSource yangSource -> {
                 try {
                     buildAction.addLibYangSource(textToIR, yangSource);
@@ -131,7 +131,7 @@ final class DefaultYangParser implements YangParser {
     @Override
     public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         switch (source) {
-            case YinDomSource yinDom -> buildAction.addLibYinSource(yinDom);
+            case YinDomSource yinDom -> buildAction.addLibSource(yinDom);
             case YinTextSource yinText -> {
                 try {
                     buildAction.addLibYinSource(textToDOM, yinText);
@@ -141,7 +141,7 @@ final class DefaultYangParser implements YangParser {
             }
             case YinXmlSource yinXml -> {
                 try {
-                    buildAction.addLibYinSource(YinDomSource.transform(yinXml));
+                    buildAction.addLibSource(YinDomSource.transform(yinXml));
                 } catch (TransformerException e) {
                     throw new YangSyntaxErrorException(source.sourceId(), 0, 0,
                         "Failed to assemble in-memory representation", e);

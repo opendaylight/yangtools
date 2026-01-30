@@ -39,25 +39,25 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public BuildAction addYangSource(final YangIRSource source) {
+    public BuildAction addSource(final YangIRSource source) {
         context.addSource(new YangIRStatementStreamSource(source));
         return this;
     }
 
     @Override
-    public BuildAction addYinSource(final YinDomSource source) {
+    public BuildAction addSource(final YinDomSource source) {
         context.addSource(new YinDOMStatementStreamSource(source));
         return this;
     }
 
     @Override
-    public final BuildAction addLibYangSource(final YangIRSource libSource) {
+    public final BuildAction addLibSource(final YangIRSource libSource) {
         context.addLibSource(new YangIRStatementStreamSource(libSource));
         return this;
     }
 
     @Override
-    public final BuildAction addLibYinSource(final YinDomSource libSource) {
+    public final BuildAction addLibSource(final YinDomSource libSource) {
         context.addLibSource(new YinDOMStatementStreamSource(libSource));
         return this;
     }

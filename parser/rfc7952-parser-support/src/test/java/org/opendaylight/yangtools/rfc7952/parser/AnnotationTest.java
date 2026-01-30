@@ -36,9 +36,8 @@ class AnnotationTest {
                 Rfc7952Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())
-            .addYangSource(new URLYangTextSource(
-                AnnotationTest.class.getResource("/ietf-yang-metadata@2016-08-05.yang")))
-            .addYangSource(new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang")))
+            .addSource(new URLYangTextSource(AnnotationTest.class.getResource("/ietf-yang-metadata@2016-08-05.yang")))
+            .addSource(new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang")))
             .buildEffective();
 
         final var annotations = AnnotationSchemaNode.findAll(context);

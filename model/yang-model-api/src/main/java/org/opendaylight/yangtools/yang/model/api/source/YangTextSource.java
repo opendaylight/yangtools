@@ -17,9 +17,15 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as a {@link Reader}.
  */
 @NonNullByDefault
-public abstract class YangTextSource extends CharSource implements YangSourceRepresentation {
+public abstract non-sealed class YangTextSource extends CharSource
+        implements YangSourceRepresentation, TextRepresentation<YangSourceRepresentation> {
     @Override
     public final Class<YangTextSource> getType() {
+        return YangTextSource.class;
+    }
+
+    @Override
+    public final Class<YangTextSource> textRepresentation() {
         return YangTextSource.class;
     }
 
@@ -38,6 +44,6 @@ public abstract class YangTextSource extends CharSource implements YangSourceRep
      * @return ToStringHelper supplied as input argument.
      */
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("identifier", sourceId());
+        return toStringHelper.add("identifier", sourceId()).add("text", textRepresentation().getName());
     }
 }
