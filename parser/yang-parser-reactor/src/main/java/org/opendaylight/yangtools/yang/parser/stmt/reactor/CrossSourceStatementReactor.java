@@ -235,24 +235,6 @@ public final class CrossSourceStatementReactor {
          * @param transformer the transformer to {@link YangIRSource}
          * @param source which should be transformed and added into main sources
          * @return This build action, for fluent use.
-         * @throws SourceSyntaxException if the source is not syntactically valid
-         * @deprecated Use {@link #addYangSource(SourceTransformer, SourceRepresentation)} instead.
-         */
-        @Deprecated(since = "15.0.0")
-        @NonNullByDefault
-        default <S extends SourceRepresentation> BuildAction addSource(
-                final SourceTransformer<S, YangIRSource> transformer, final S source)
-                    throws ExtractorException, SourceSyntaxException {
-            return addYangSource(transformer, source);
-        }
-
-        /**
-         * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
-         *
-         * @param <S> source representation type
-         * @param transformer the transformer to {@link YangIRSource}
-         * @param source which should be transformed and added into main sources
-         * @return This build action, for fluent use.
          * @throws ExtractorException if the source cannot be analyzed
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
@@ -305,27 +287,6 @@ public final class CrossSourceStatementReactor {
          */
         @NonNullByDefault
         BuildAction addLibSource(YinDOMSource libSource);
-
-        /**
-         * Add a transformed library source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
-         * reporting.
-         *
-         * <p>Library sources are not supported in semantic version mode currently.
-         *
-         * @param <S> source representation type
-         * @param transformer the transformer to {@link YangIRSource}
-         * @param source which should be transformed and added into main sources
-         * @return This build action, for fluent use.
-         * @throws SourceSyntaxException if the source is not syntactically valid
-         * @deprecated Use {@link #addLibYangSource(SourceTransformer, SourceRepresentation)} instead.
-         */
-        @Deprecated(since = "15.0.0")
-        @NonNullByDefault
-        default <S extends SourceRepresentation> BuildAction addLibSource(
-                final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
-            return addLibSource(transformer.transformSource(source));
-        }
 
         /**
          * Add a transformed YANG library source. Only library sources required by main sources are present in resulting
@@ -390,21 +351,6 @@ public final class CrossSourceStatementReactor {
          */
         @NonNull BuildAction setModulesWithSupportedDeviations(
                 @NonNull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules);
-
-        /**
-         * Build the {@link ReactorDeclaredModel} view of this action.
-         *
-         * @return A declared view of selected models.
-         * @throws ExtractorException if a source cannot be analyzed
-         * @throws ReactorException if the declared model cannot be built
-         * @throws SourceSyntaxException if a source is syntactically invalid
-         * @deprecated Use {@link #buildDeclared()} instead.
-         */
-        @Deprecated(since = "15.0.0", forRemoval = true)
-        default @NonNull ReactorDeclaredModel build()
-                throws ExtractorException, ReactorException, SourceSyntaxException {
-            return buildDeclared();
-        }
 
         /**
          * Build the {@link ReactorDeclaredModel} view of this action.
