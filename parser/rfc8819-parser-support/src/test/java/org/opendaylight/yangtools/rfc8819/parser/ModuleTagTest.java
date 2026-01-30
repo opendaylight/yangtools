@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc8819.parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,8 +21,6 @@ import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagEffectiveStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.Tag;
 import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -33,8 +30,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class ModuleTagTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangIRSourceModule.provideTextToIR();
     private static CrossSourceStatementReactor reactor;
 
     @BeforeAll
@@ -51,12 +46,12 @@ class ModuleTagTest {
     }
 
     @Test
-    void testModuleTagSupportExtension() throws ReactorException {
-        final var moduleTags = reactor.newBuild()
-            .addSource(moduleFromResources("/example-tag-module.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags.yang"))
-            .addSource(moduleFromResources("/ietf-yang-types.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags-state.yang"))
+    void testModuleTagSupportExtension() throws Exception {
+        final var moduleTags = reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addYangSource(moduleFromResources("/example-tag-module.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags.yang"))
+            .addYangSource(moduleFromResources("/ietf-yang-types.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags-state.yang"))
             .buildEffective()
             .getModuleStatements().values().stream()
             .flatMap(module -> module.streamEffectiveSubstatements(ModuleTagEffectiveStatement.class))
@@ -75,12 +70,12 @@ class ModuleTagTest {
     }
 
     @Test
-    void throwExceptionWhenTagParentIsNotModuleOrSubmodule() {
-        final var action = reactor.newBuild()
-            .addSource(moduleFromResources("/foo-tag-module.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags.yang"))
-            .addSource(moduleFromResources("/ietf-yang-types.yang"))
-            .addSource(moduleFromResources("/ietf-module-tags-state.yang"));
+    void throwExceptionWhenTagParentIsNotModuleOrSubmodule() throws Exception {
+        final var action = reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addYangSource(moduleFromResources("/foo-tag-module.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags.yang"))
+            .addYangSource(moduleFromResources("/ietf-yang-types.yang"))
+            .addYangSource(moduleFromResources("/ietf-module-tags-state.yang"));
 
         final var cause = assertThrows(ReactorException.class, action::buildEffective).getCause();
         assertInstanceOf(SourceException.class, cause);
@@ -88,8 +83,7 @@ class ModuleTagTest {
             .startsWith("Tags may only be defined at root of either a module or a submodule [at ");
     }
 
-    private static YangIRSource moduleFromResources(final String resourceName) {
-        return assertDoesNotThrow(
-            () -> TRANSFORMER.transformSource(new URLYangTextSource(ModuleTagTest.class.getResource(resourceName))));
+    private static URLYangTextSource moduleFromResources(final String resourceName) {
+        return new URLYangTextSource(ModuleTagTest.class.getResource(resourceName));
     }
 }

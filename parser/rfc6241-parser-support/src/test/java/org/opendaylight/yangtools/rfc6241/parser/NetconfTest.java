@@ -34,12 +34,9 @@ class NetconfTest {
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc6241Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
-        final var transformer = YangIRSourceModule.provideTextToIR();
-        final var context = assertDoesNotThrow(() -> reactor.newBuild()
-            .addLibSource(transformer,
-                new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
-            .addSource(transformer,
-                new URLYangTextSource(NetconfTest.class.getResource("/ietf-netconf@2011-06-01.yang")))
+        final var context = assertDoesNotThrow(() -> reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addLibYangSource(new URLYangTextSource(NetconfTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
+            .addYangSource(new URLYangTextSource(NetconfTest.class.getResource("/ietf-netconf@2011-06-01.yang")))
             .buildEffective());
 
         final var module = context.findModule(NetconfConstants.RFC6241_MODULE).orElseThrow();

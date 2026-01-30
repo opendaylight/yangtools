@@ -16,15 +16,12 @@ import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificatio
 import org.opendaylight.yangtools.rfc8639.parser.dagger.Rfc8639Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class SubscribedNotificationsTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER = YangIRSourceModule.provideTextToIR();
-
     @Test
     void testSubscribedNotifications() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
@@ -32,24 +29,24 @@ class SubscribedNotificationsTest {
                     Rfc8639Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
                 .build();
 
-        final var context = reactor.newBuild()
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+        final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-inet-types@2013-07-15.yang")))
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-interfaces@2018-02-20.yang")))
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-ip@2018-02-22.yang")))
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-netconf-acm@2018-02-14.yang")))
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-network-instance@2019-01-21.yang")))
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-restconf@2017-01-26.yang")))
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-yang-schema-mount@2019-01-14.yang")))
-            .addLibSource(TRANSFORMER, new URLYangTextSource(
+            .addLibYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-yang-types@2013-07-15.yang")))
-            .addSource(TRANSFORMER, new URLYangTextSource(
+            .addYangSource(new URLYangTextSource(
                 SubscribedNotificationsTest.class.getResource("/ietf-subscribed-notifications@2019-09-09.yang")))
             .buildEffective();
 
