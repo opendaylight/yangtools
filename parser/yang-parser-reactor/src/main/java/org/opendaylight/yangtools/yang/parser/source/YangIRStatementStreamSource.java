@@ -13,8 +13,8 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
+import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
@@ -24,8 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 /**
  * A {@link StatementStreamSource} operating based on {@link YangIRSource}.
  */
-public record YangIRStatementStreamSource(@NonNull YangIRSource source) implements StatementStreamSource {
-    public YangIRStatementStreamSource {
+record YangIRStatementStreamSource(
+        @NonNull YangIRSource source,
+        @NonNull StringEscaping escaping) implements StatementStreamSource {
+    YangIRStatementStreamSource {
         requireNonNull(source);
     }
 
@@ -35,14 +37,13 @@ public record YangIRStatementStreamSource(@NonNull YangIRSource source) implemen
 
     @Override
     public void writePreLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
-        new IRStatementVisitor(symbolicName(), writer, resolver, null, YangVersion.VERSION_1)
-            .visit(source.statement());
+        new IRStatementVisitor(escaping, symbolicName(), writer, resolver, null).visit(source.statement());
     }
 
     @Override
     public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver,
-            final PrefixResolver preLinkagePrefixes, final YangVersion yangVersion) {
-        new IRStatementVisitor(symbolicName(), writer, resolver, preLinkagePrefixes, yangVersion) {
+            final PrefixResolver preLinkagePrefixes) {
+        new IRStatementVisitor(escaping, symbolicName(), writer, resolver, preLinkagePrefixes) {
             @Override
             StatementDefinition<?, ?, ?> resolveStatement(final QNameModule module, final String localName) {
                 return resolver.lookupDef(module, localName);
@@ -52,15 +53,14 @@ public record YangIRStatementStreamSource(@NonNull YangIRSource source) implemen
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final StatementDefinitionResolver resolver, final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new IRStatementVisitor(symbolicName(), writer, resolver, prefixes, yangVersion)
-            .visit(source.statement());
+            final StatementDefinitionResolver resolver, final PrefixResolver prefixes) {
+        new IRStatementVisitor(escaping, symbolicName(), writer, resolver, prefixes).visit(source.statement());
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final StatementDefinitionResolver resolver,
-            final PrefixResolver prefixes, final YangVersion yangVersion) {
-        new IRStatementVisitor(symbolicName(), writer, resolver, prefixes, yangVersion) {
+            final PrefixResolver prefixes) {
+        new IRStatementVisitor(escaping, symbolicName(), writer, resolver, prefixes) {
             @Override
             QName getValidStatementDefinition(final IRKeyword keyword, final StatementSourceReference ref) {
                 final var ret = super.getValidStatementDefinition(keyword, ref);

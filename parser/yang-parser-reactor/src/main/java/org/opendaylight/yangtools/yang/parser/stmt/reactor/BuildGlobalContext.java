@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -103,7 +102,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     @NonNullByDefault
     <S extends SourceRepresentation & SourceInfo.Extractor> void addSource(final S source,
-            final Function<S, StatementStreamSource> streamFactory) throws ExtractorException {
+            final StatementStreamSource.Factory<S> streamFactory) throws ExtractorException {
         final var buildSource = new BuildSource<>(this, source, streamFactory);
         // eagerly initialize required sources
         try {
@@ -118,14 +117,14 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     @NonNullByDefault
     public <I extends SourceRepresentation, O extends SourceRepresentation & SourceInfo.Extractor> void addLibSource(
             final SourceTransformer<I, O> transformer, final I source,
-            final Function<O, StatementStreamSource> streamFactory) {
+            final StatementStreamSource.Factory<O> streamFactory) {
         libSources.add(new BuildSource<>(this, transformer, source, streamFactory));
     }
 
 
     @NonNullByDefault
     <S extends SourceRepresentation & SourceInfo.Extractor> void addLibSource(final S source,
-            final Function<S, StatementStreamSource> streamFactory) {
+            final StatementStreamSource.Factory<S> streamFactory) {
         checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         // library sources are lazily initialized

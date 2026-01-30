@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
@@ -44,7 +43,7 @@ final class BuildSource<S extends SourceRepresentation & SourceInfo.Extractor> {
             BuildGlobalContext global,
             SourceTransformer<I, O> transformer,
             I input,
-            Function<O, StatementStreamSource> streamFactory) implements Stage {
+            StatementStreamSource.Factory<O> streamFactory) implements Stage {
         Candidate {
             requireNonNull(global);
             requireNonNull(transformer);
@@ -64,7 +63,7 @@ final class BuildSource<S extends SourceRepresentation & SourceInfo.Extractor> {
      * @param <S> the {@link SourceRepresentation}
      */
     private record Extractable<S extends SourceRepresentation & SourceInfo.Extractor>(
-            BuildGlobalContext global, S source, Function<S, StatementStreamSource> streamFactory) implements Stage {
+            BuildGlobalContext global, S source, StatementStreamSource.Factory<S> streamFactory) implements Stage {
         Extractable {
             requireNonNull(global);
             requireNonNull(source);
@@ -72,21 +71,20 @@ final class BuildSource<S extends SourceRepresentation & SourceInfo.Extractor> {
         }
 
         SourceSpecificContext toSourceContext() throws ExtractorException {
-            final var sourceInfo = source.extractSourceInfo();
-            return new SourceSpecificContext(global, sourceInfo.yangVersion(), streamFactory.apply(source));
+            final var yangVersion = source.extractSourceInfo().yangVersion();
+            return new SourceSpecificContext(global, yangVersion, streamFactory.newStreamSource(source, yangVersion));
         }
     }
 
     private Stage stage;
 
-    BuildSource(final BuildGlobalContext global, final S source,
-            final Function<S, StatementStreamSource> streamFactory) {
+    BuildSource(final BuildGlobalContext global, final S source, final StatementStreamSource.Factory<S> streamFactory) {
         stage = new Extractable<>(global, source, streamFactory);
     }
 
     <I extends SourceRepresentation> BuildSource(final BuildGlobalContext global,
             final SourceTransformer<I, S> transformer, final I input,
-            final Function<S, StatementStreamSource> streamFactory) {
+            final StatementStreamSource.Factory<S> streamFactory) {
         stage = new Candidate<>(global, transformer, input, streamFactory);
     }
 
