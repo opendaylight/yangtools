@@ -110,7 +110,7 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public YangParser addLibSource(final YangSourceRepresentation source) throws YangSyntaxErrorException {
+    public YangParser addLibSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         switch (source) {
             case YangIRSource irSource -> buildAction.addLibSource(irSource);
             case YangTextSource yangSource -> {
@@ -126,7 +126,7 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public YangParser addLibSource(final YinSourceRepresentation source) throws YangSyntaxErrorException {
+    public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         try {
             switch (source) {
                 case YinDomSource yinDom -> buildAction.addLibSource(yinDom);

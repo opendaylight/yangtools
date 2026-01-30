@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.ri;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNull;
@@ -87,7 +88,8 @@ public final class DefaultYangLibResolver implements YangLibResolver {
     }
 
     @Override
-    public EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet) throws YangParserException {
+    public EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet)
+            throws IOException, YangParserException {
         final var act = reactor.newBuild(textToIR, textToDOM);
         final var features = ImmutableSet.<QName>builder();
 
