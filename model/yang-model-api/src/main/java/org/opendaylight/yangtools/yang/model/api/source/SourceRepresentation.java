@@ -47,6 +47,13 @@ public sealed interface SourceRepresentation extends Immutable
     @NonNull Class<? extends SourceRepresentation> getType();
 
     /**
+     * Return the concrete representation type.
+     *
+     * @return The type of representation.
+     */
+    @NonNull Class<? extends TextRepresentation<?>> textRepresentation();
+
+    /**
      * Return the symbolic name, if available. This name has no semantic meaning beyond being useful for debugging
      * by humans.
      *

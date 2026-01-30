@@ -7,10 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.source;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * A YANG {@link SourceRepresentation}.
  */
+@NonNullByDefault
 public non-sealed interface YangSourceRepresentation extends SourceRepresentation {
     @Override
     Class<? extends YangSourceRepresentation> getType();
+
+    @Override
+    default Class<YangTextSource> textRepresentation() {
+        return YangTextSource.class;
+    }
 }
