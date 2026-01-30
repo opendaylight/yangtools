@@ -50,14 +50,14 @@ final class FullReactorBuildAction<H extends YangSourceRepresentation, M extends
     }
 
     @Override
-    public Full<H, M> addLibSource(final H source) throws IOException, SourceSyntaxException {
+    public Full<H, M> addLibSource(final H source) {
         super.addLibSource(source);
         return this;
     }
 
     @Override
-    public Full<H, M> addLibSource(final M libSource) throws IOException, SourceSyntaxException {
-        addLibSource(yinTransformer.transformSource(libSource));
+    public Full<H, M> addLibSource(final M libSource) {
+        addLibYinSource(yinTransformer, libSource);
         return this;
     }
 }

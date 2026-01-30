@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ServiceLoader;
@@ -154,6 +155,10 @@ public final class BindingRuntimeHelpers {
 
     private static @NonNull ModuleInfoSnapshot prepareContext(final YangParserFactory parserFactory,
             final Iterable<? extends YangModuleInfo> moduleInfos) throws YangParserException {
-        return new ModuleInfoSnapshotBuilder(parserFactory).add(moduleInfos).build();
+        try {
+            return new ModuleInfoSnapshotBuilder(parserFactory).add(moduleInfos).build();
+        } catch (IOException e) {
+            throw new YangParserException("Unexpected failure", e);
+        }
     }
 }

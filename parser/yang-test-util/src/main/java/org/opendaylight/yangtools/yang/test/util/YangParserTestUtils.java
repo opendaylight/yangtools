@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
-import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -343,17 +342,15 @@ public final class YangParserTestUtils {
 
     public static @NonNull EffectiveModelContext parseSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final Collection<? extends SourceRepresentation> sources) {
-        final YangParser parser = PARSER_FACTORY.createParser(config);
+        final var parser = PARSER_FACTORY.createParser(config);
         if (supportedFeatures != null) {
             parser.setSupportedFeatures(FeatureSet.of(supportedFeatures));
         }
 
         try {
             parser.addSources(sources);
-        } catch (YangSyntaxErrorException e) {
+        } catch (IOException | YangSyntaxErrorException e) {
             throw new IllegalArgumentException("Malformed source", e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to read a source", e);
         }
 
         try {
