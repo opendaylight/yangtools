@@ -96,7 +96,7 @@ public interface YangParser {
     }
 
     @NonNullByDefault
-    default YangParser addLibSource(final SourceRepresentation source) throws YangSyntaxErrorException {
+    default YangParser addLibSource(final SourceRepresentation source) {
         return switch (source) {
             case YangSourceRepresentation yangSource -> addLibSource(yangSource);
             case YinSourceRepresentation yinSource -> addLibSource(yinSource);
@@ -107,7 +107,7 @@ public interface YangParser {
     YangParser addLibSource(YangSourceRepresentation source);
 
     @NonNullByDefault
-    YangParser addLibSource(YinSourceRepresentation source) throws YangSyntaxErrorException;
+    YangParser addLibSource(YinSourceRepresentation source);
 
     /**
      * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.

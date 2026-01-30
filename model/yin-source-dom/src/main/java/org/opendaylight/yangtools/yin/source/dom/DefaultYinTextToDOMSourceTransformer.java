@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.osgi.service.component.annotations.Component;
 import org.xml.sax.SAXException;
@@ -31,7 +31,7 @@ import org.xml.sax.SAXParseException;
 @NonNullByDefault
 public final class DefaultYinTextToDOMSourceTransformer implements YinTextToDOMSourceTransformer {
     @Override
-    public YinDomSource transformSource(final YinTextSource input) throws SourceSyntaxException {
+    public YinDOMSource transformSource(final YinTextSource input) throws SourceSyntaxException {
         final var doc = UntrustedXML.newDocumentBuilder().newDocument();
         final var parser = UntrustedXML.newSAXParser();
         final var handler = new SourceRefHandler(doc, null);
@@ -44,7 +44,7 @@ public final class DefaultYinTextToDOMSourceTransformer implements YinTextToDOMS
         } catch (SAXException e) {
             throw new SourceSyntaxException("Failed to parse YIN source", e);
         }
-        return YinDomSource.of(input.sourceId(), new DOMSource(doc), DefaultSourceRefProvider.INSTANCE,
+        return YinDOMSource.of(input.sourceId(), new DOMSource(doc), DefaultSourceRefProvider.INSTANCE,
             input.symbolicName());
     }
 

@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -226,7 +226,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         @NonNullByDefault
-        BuildAction addSource(YinDomSource source) throws ExtractorException;
+        BuildAction addSource(YinDOMSource source) throws ExtractorException;
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -275,7 +275,7 @@ public final class CrossSourceStatementReactor {
          */
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addYinSource(
-                final SourceTransformer<S, YinDomSource> transformer, final S source)
+                final SourceTransformer<S, YinDOMSource> transformer, final S source)
                     throws ExtractorException, SourceSyntaxException {
             return addSource(transformer.transformSource(source));
         }
@@ -304,7 +304,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         @NonNullByDefault
-        BuildAction addLibSource(YinDomSource libSource);
+        BuildAction addLibSource(YinDOMSource libSource);
 
         /**
          * Add a transformed library source. Only library sources required by main sources are present in resulting
@@ -358,7 +358,7 @@ public final class CrossSourceStatementReactor {
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        <S extends SourceRepresentation> BuildAction addLibYinSource(SourceTransformer<S, YinDomSource> transformer,
+        <S extends SourceRepresentation> BuildAction addLibYinSource(SourceTransformer<S, YinDOMSource> transformer,
             S source);
 
         // FIXME: add a SourceLinkage interface which will contain the below methods and add

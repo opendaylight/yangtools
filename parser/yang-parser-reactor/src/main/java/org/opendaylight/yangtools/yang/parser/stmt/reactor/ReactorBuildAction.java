@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -49,7 +49,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public BuildAction addSource(final YinDomSource source) throws ExtractorException {
+    public BuildAction addSource(final YinDOMSource source) throws ExtractorException {
         context.addSource(source, StatementStreamSource.YIN_DOM);
         return this;
     }
@@ -61,7 +61,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public final BuildAction addLibSource(final YinDomSource libSource) {
+    public final BuildAction addLibSource(final YinDOMSource libSource) {
         context.addLibSource(libSource, StatementStreamSource.YIN_DOM);
         return this;
     }
@@ -106,7 +106,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     @Override
     @NonNullByDefault
     public final <S extends SourceRepresentation> BuildAction addLibYinSource(
-            final SourceTransformer<S, YinDomSource> transformer, final S source) {
+            final SourceTransformer<S, YinDOMSource> transformer, final S source) {
         context.addLibSource(transformer, source, StatementStreamSource.YIN_DOM);
         return this;
     }

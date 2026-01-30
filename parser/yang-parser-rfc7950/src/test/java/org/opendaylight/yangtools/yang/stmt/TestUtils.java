@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -114,11 +114,11 @@ public final class TestUtils {
         return TEXT_TO_IR.transformSource(new FileYangTextSource(file));
     }
 
-    public static @NonNull YinDomSource assertYinSource(final String resourcePath) throws SourceSyntaxException {
+    public static @NonNull YinDOMSource assertYinSource(final String resourcePath) throws SourceSyntaxException {
         return TEXT_TO_DOM.transformSource(new URLYinTextSource(TestUtils.class.getResource(resourcePath)));
     }
 
-    public static @NonNull YinDomSource assertYinSource(final Path file) throws SourceSyntaxException {
+    public static @NonNull YinDOMSource assertYinSource(final Path file) throws SourceSyntaxException {
         return TEXT_TO_DOM.transformSource(new FileYinTextSource(file));
     }
 
