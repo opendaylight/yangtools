@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a00c9d4e_87cfdaeb",
+        "filename": "model/yang-model-spi/src/main/java/org/opendaylight/yangtools/yang/model/spi/source/YinDomSource.java",
+        "patchSetId": 40
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-01-30T11:06:29Z",
+      "side": 1,
+      "message": "please rebase on top of https://git.opendaylight.org/gerrit/c/yangtools/+/120420 which fixes this problem more broadly.",
+      "range": {
+        "startLine": 318,
+        "startChar": 8,
+        "endLine": 318,
+        "endChar": 63
+      },
+      "revId": "c7eb13ee5a52093ce58e61bb0e47d00d0b5220a6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
