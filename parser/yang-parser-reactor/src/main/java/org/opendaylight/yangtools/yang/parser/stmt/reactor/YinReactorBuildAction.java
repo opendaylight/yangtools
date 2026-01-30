@@ -33,14 +33,14 @@ final class YinReactorBuildAction<S extends YinSourceRepresentation> extends Rea
     }
 
     @Override
-    public WithYin<S> addYinSource(final S source) throws SourceSyntaxException {
-        addYinSource(transformer.transformSource(source));
+    public WithYin<S> addSource(final S source) throws SourceSyntaxException {
+        addSource(transformer.transformSource(source));
         return this;
     }
 
     @Override
-    public WithYin<S> addLibYinSource(final S libSource) throws SourceSyntaxException {
-        addLibYinSource(transformer.transformSource(libSource));
+    public WithYin<S> addLibSource(final S libSource) throws SourceSyntaxException {
+        addLibSource(transformer.transformSource(libSource));
         return this;
     }
 }
