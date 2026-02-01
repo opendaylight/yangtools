@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc8040.parser.impl;
+package org.opendaylight.yangtools.rfc8528.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
-import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -18,26 +17,25 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * Parser support for {@code ietf-restconf.yang}.
+ * Parser support for {@code ietf-yang-schema-mount.yang}.
  *
  * @since 14.0.20
  */
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public final class Rfc8040ParserExtension extends AbstractParserExtension {
+public final class Rfc8528ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
-    public Rfc8040ParserExtension() {
-        super(YangDataStatement.DEF);
+    public Rfc8528ParserExtension() {
+        super(MountPointStatement.DEF);
     }
 
     @Override
     public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
-            .addSupport(new YangDataStatementSupport(config))
-            .addSupport(YangDataStatementSupport.BEHAVIOUR)
+            .addSupport(new MountPointStatementSupport(config))
             .build();
     }
 }

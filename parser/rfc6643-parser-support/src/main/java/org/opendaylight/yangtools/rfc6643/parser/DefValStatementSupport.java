@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
@@ -20,13 +19,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
-public final class DefValStatementSupport
-        extends AbstractStringStatementSupport<DefValStatement, DefValEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(DefValStatement.DEF).build();
+final class DefValStatementSupport extends AbstractStringStatementSupport<DefValStatement, DefValEffectiveStatement> {
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(DefValStatement.DEF).build();
 
-    public DefValStatementSupport(final YangParserConfiguration config) {
+    DefValStatementSupport(final YangParserConfiguration config) {
         super(DefValStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 

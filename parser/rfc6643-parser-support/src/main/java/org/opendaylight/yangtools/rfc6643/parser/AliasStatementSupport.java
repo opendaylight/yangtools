@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
@@ -24,9 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
-public final class AliasStatementSupport
-        extends AbstractStringStatementSupport<AliasStatement, AliasEffectiveStatement> {
+final class AliasStatementSupport extends AbstractStringStatementSupport<AliasStatement, AliasEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AliasStatement.DEF)
         .addOptional(DescriptionStatement.DEF)
         .addOptional(ReferenceStatement.DEF)
@@ -34,7 +31,7 @@ public final class AliasStatementSupport
         .addOptional(OidStatement.DEF)
         .build();
 
-    public AliasStatementSupport(final YangParserConfiguration config) {
+    AliasStatementSupport(final YangParserConfiguration config) {
         super(AliasStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 

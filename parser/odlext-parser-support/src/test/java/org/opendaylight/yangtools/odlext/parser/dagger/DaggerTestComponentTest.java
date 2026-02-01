@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.odlext.parser.dagger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.odlext.parser.impl.OdlCodegenParserExtension;
-import org.opendaylight.yangtools.odlext.parser.impl.YangExtParserExtension;
+import org.opendaylight.yangtools.odlext.parser.OdlCodegenParserExtension;
+import org.opendaylight.yangtools.odlext.parser.YangExtParserExtension;
 
 class DaggerTestComponentTest {
     @Test

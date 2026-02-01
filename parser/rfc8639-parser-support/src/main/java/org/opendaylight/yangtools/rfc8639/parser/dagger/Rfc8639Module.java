@@ -12,7 +12,7 @@ import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import jakarta.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.rfc8639.parser.impl.Rfc8639ParserExtension;
+import org.opendaylight.yangtools.rfc8639.parser.Rfc8639ParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 
 /**
