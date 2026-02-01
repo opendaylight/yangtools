@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc8819.parser.impl;
+package org.opendaylight.yangtools.rfc8040.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagStatement;
-import org.opendaylight.yangtools.rfc8819.parser.ModuleTagStatementSupport;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -18,23 +17,26 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * Parser support for {@code ietf-module-tags.yang}.
+ * Parser support for {@code ietf-restconf.yang}.
  *
  * @since 14.0.20
  */
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public final class Rfc8819ParserExtension extends AbstractParserExtension {
+public final class Rfc8040ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
-    public Rfc8819ParserExtension() {
-        super(ModuleTagStatement.DEF);
+    public Rfc8040ParserExtension() {
+        super(YangDataStatement.DEF);
     }
 
     @Override
     public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
-        return StatementSupportBundle.builder().addSupport(new ModuleTagStatementSupport(config)).build();
+        return StatementSupportBundle.builder()
+            .addSupport(new YangDataStatementSupport(config))
+            .addSupport(YangDataStatementSupport.BEHAVIOUR)
+            .build();
     }
 }

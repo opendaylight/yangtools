@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.rfc6241.parser.dagger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.rfc6241.parser.impl.Rfc6241ParserExtension;
+import org.opendaylight.yangtools.rfc6241.parser.Rfc6241ParserExtension;
 
 class DaggerTestComponentTest {
     @Test

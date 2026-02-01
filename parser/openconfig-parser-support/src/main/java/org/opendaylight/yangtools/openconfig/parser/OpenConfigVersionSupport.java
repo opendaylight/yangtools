@@ -21,12 +21,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class OpenConfigVersionSupport
+final class OpenConfigVersionSupport
         extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(OpenConfigVersionStatement.DEF).build();
 
-    public OpenConfigVersionSupport(final YangParserConfiguration config) {
+    OpenConfigVersionSupport(final YangParserConfiguration config) {
         super(OpenConfigVersionStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 

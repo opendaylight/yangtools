@@ -19,12 +19,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class ImpliedStatementSupport
+final class ImpliedStatementSupport
         extends AbstractStringStatementSupport<ImpliedStatement, ImpliedEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(ImpliedStatement.DEF).build();
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(ImpliedStatement.DEF).build();
 
-    public ImpliedStatementSupport(final YangParserConfiguration config) {
+    ImpliedStatementSupport(final YangParserConfiguration config) {
         super(ImpliedStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
