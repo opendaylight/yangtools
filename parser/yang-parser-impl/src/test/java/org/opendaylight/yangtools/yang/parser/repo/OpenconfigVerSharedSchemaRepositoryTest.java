@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class OpenconfigVerSharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
     @Test
     void testSharedSchemaRepository() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "shared-schema-repo-test");
 
         final var bar = assertYangTextResource("/openconfig-version/shared-schema-repository/bar@2016-01-01.yang");
         bar.register(sharedSchemaRepository);

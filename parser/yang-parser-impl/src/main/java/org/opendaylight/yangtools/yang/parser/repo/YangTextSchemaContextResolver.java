@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
@@ -60,8 +61,10 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,13 +101,15 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     @Deprecated(since = "14.0.21", forRemoval = true)
     public static @NonNull YangTextSchemaContextResolver create(final String name,
             final YangTextToIRSourceTransformer textToIR) {
-        final var sharedRepo = new SharedSchemaRepository(name);
+        final var sharedRepo = new SharedSchemaRepository(new DefaultYangParserFactory(
+            ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow(),
+            ServiceLoader.load(YinTextToDOMSourceTransformer.class).findFirst().orElseThrow()), name);
         return new YangTextSchemaContextResolver(textToIR, sharedRepo, sharedRepo);
     }
 
     public static @NonNull YangTextSchemaContextResolver create(final String name, final YangParserFactory factory,
             final YangTextToIRSourceTransformer textToIR) {
-        final var sharedRepo = new SharedSchemaRepository(name, factory);
+        final var sharedRepo = new SharedSchemaRepository(factory, name);
         return new YangTextSchemaContextResolver(textToIR, sharedRepo, sharedRepo);
     }
 
