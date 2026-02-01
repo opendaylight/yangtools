@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.common.collect.ImmutableMultimap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ServiceLoader;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -21,15 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class DependencyResolverTest {
-    private static final YangTextToIRSourceTransformer TEXT_TO_IR =
-        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
+    private static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
 
     @Test
     void testModulesWithoutRevisionAndImport() throws Exception {
-        final var resolved = resolveResources("/no-revision/imported.yang", "/no-revision/imported@2012-12-12.yang",
-            "/no-revision/top@2012-10-10.yang");
+        final var resolved = resolveResources("/imported.yang", "/imported@2012-12-12.yang", "/top@2012-10-10.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("top", "2012-10-10"),
             new SourceIdentifier("imported"),
@@ -41,7 +39,7 @@ class DependencyResolverTest {
     @Test
     void testSubmoduleNoModule() throws Exception {
         // Subfoo does not have parent in reactor
-        final var resolved = resolveResources("/model/subfoo.yang", "/model/bar.yang", "/model/baz.yang");
+        final var resolved = resolveResources("/subfoo.yang", "/bar.yang", "/baz.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("bar", "2013-07-03"),
             new SourceIdentifier("baz", "2013-02-27"));
@@ -55,8 +53,7 @@ class DependencyResolverTest {
 
     @Test
     void testSubmodule() throws Exception {
-        final var resolved = resolveResources("/model/subfoo.yang", "/model/foo.yang", "/model/bar.yang",
-            "/model/baz.yang");
+        final var resolved = resolveResources("/subfoo.yang", "/foo.yang", "/bar.yang", "/baz.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("bar", "2013-07-03"),
             new SourceIdentifier("baz", "2013-02-27"),
@@ -66,7 +63,7 @@ class DependencyResolverTest {
         assertEquals(ImmutableMultimap.of(), resolved.unsatisfiedImports());
     }
 
-    private static RevisionDependencyResolver resolveResources(final String... resourceNames) throws Exception {
+    private static RevisionSourceLinkage resolveResources(final String... resourceNames) throws Exception {
         final var map = new HashMap<SourceIdentifier, SourceInfo>();
         for (var resourceName : resourceNames) {
             final var info = TEXT_TO_IR.transformSource(
@@ -74,6 +71,6 @@ class DependencyResolverTest {
                 .extractSourceInfo();
             map.put(info.sourceId(), info);
         }
-        return new RevisionDependencyResolver(map);
+        return new RevisionSourceLinkage(map);
     }
 }
