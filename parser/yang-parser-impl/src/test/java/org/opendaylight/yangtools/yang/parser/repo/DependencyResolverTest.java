@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.common.collect.ImmutableMultimap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ServiceLoader;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -20,11 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class DependencyResolverTest {
-    private static final YangTextToIRSourceTransformer TRANSFORMER =
-        YangIRSourceModule.provideTextToIR();
+    private static final YangTextToIRSourceTransformer TEXT_TO_IR =
+        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
 
     @Test
     void testModulesWithoutRevisionAndImport() throws Exception {
@@ -69,7 +69,7 @@ class DependencyResolverTest {
     private static RevisionDependencyResolver resolveResources(final String... resourceNames) throws Exception {
         final var map = new HashMap<SourceIdentifier, SourceInfo>();
         for (var resourceName : resourceNames) {
-            final var info = TRANSFORMER.transformSource(
+            final var info = TEXT_TO_IR.transformSource(
                 new URLYangTextSource(DependencyResolverTest.class.getResource(resourceName)))
                 .extractSourceInfo();
             map.put(info.sourceId(), info);

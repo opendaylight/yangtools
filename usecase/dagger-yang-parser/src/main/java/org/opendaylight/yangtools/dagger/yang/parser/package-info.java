@@ -13,4 +13,4 @@
  *
  * @since 14.0.21
  */
-package org.opendaylight.yangtools.yang.parser.impl.dagger;
+package org.opendaylight.yangtools.dagger.yang.parser;
