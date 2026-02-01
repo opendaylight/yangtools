@@ -13,7 +13,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 
 /**
  * A {@link YinDOMSource} representing a {@code submodule}.
@@ -33,7 +33,7 @@ public final class YinDOMSubmoduleSource extends YinDOMSource {
     }
 
     @Override
-    public SourceInfo.Submodule extractSourceInfo() throws ExtractorException {
+    public SourceInfo.Submodule extractSourceInfo() throws SourceSyntaxException {
         return new YinDOMSourceInfoExtractor.ForSubmodule(statement(), refProvider()).extractSourceInfo();
     }
 

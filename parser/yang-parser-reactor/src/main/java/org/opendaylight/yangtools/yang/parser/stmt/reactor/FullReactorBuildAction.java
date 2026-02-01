@@ -12,10 +12,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
@@ -38,13 +37,13 @@ final class FullReactorBuildAction<H extends YangSourceRepresentation, M extends
     }
 
     @Override
-    public Full<H, M> addSource(final H source) throws ExtractorException, SourceSyntaxException {
+    public Full<H, M> addSource(final H source) throws SourceSyntaxException {
         super.addSource(source);
         return this;
     }
 
     @Override
-    public Full<H, M> addSource(final M source) throws ExtractorException, SourceSyntaxException {
+    public Full<H, M> addSource(final M source) throws SourceSyntaxException {
         addSource(yinTransformer.transformSource(source));
         return this;
     }

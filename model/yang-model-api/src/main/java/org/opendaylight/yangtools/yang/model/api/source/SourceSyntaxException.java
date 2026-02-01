@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.spi.source;
+package org.opendaylight.yangtools.yang.model.api.source;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -17,12 +16,10 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
  * An exception thrown when a {@link SourceRepresentation} is found to contain syntax errors.
  */
-@Beta
 public final class SourceSyntaxException extends Exception {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
@@ -35,6 +32,10 @@ public final class SourceSyntaxException extends Exception {
 
     public SourceSyntaxException(final String message, final @Nullable Throwable cause) {
         this(message, cause, null);
+    }
+
+    public SourceSyntaxException(final String message, final @Nullable StatementSourceReference sourceRef) {
+        this(message, null, sourceRef);
     }
 
     public SourceSyntaxException(final String message, final @Nullable Throwable cause,

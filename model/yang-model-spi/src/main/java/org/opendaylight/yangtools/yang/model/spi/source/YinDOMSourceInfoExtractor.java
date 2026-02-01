@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
@@ -29,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource.SourceRefProvider;
 import org.w3c.dom.Element;
 
@@ -47,7 +47,7 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         }
 
         @Override
-        public SourceInfo.Module extractSourceInfo() throws ExtractorException {
+        public SourceInfo.Module extractSourceInfo() throws SourceSyntaxException {
             final var builder = SourceInfo.Module.builder();
             fillCommon(builder);
 
@@ -76,7 +76,7 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         }
 
         @Override
-        public SourceInfo.Submodule extractSourceInfo() throws ExtractorException {
+        public SourceInfo.Submodule extractSourceInfo() throws SourceSyntaxException {
             final var builder = SourceInfo.Submodule.builder();
             fillCommon(builder);
 
@@ -126,7 +126,7 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         this.refProvider = requireNonNull(refProvider);
     }
 
-    final void fillCommon(final SourceInfo.Builder<?, ?> builder) throws ExtractorException {
+    final void fillCommon(final SourceInfo.Builder<?, ?> builder) throws SourceSyntaxException {
         builder.setName(getElementArgumentIdentifier(root, NAME)).setYangVersion(extractYangVersion());
 
         final var childNodes = root.getChildNodes();
@@ -148,16 +148,16 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         }
     }
 
-    final Unqualified extractPrefix(final Element parent) throws ExtractorException {
+    final Unqualified extractPrefix(final Element parent) throws SourceSyntaxException {
         return getElementArgumentIdentifier(getFirstElement(parent, PREFIX), PREFIX_ARG);
     }
 
-    private @Nullable Revision extractRevisionDate(final Element parent) throws ExtractorException {
+    private @Nullable Revision extractRevisionDate(final Element parent) throws SourceSyntaxException {
         final var element = firstElement(parent, REVISION_DATE);
         return element == null ? null : getElementArgumentRevision(element, REVISION_DATE_ARG);
     }
 
-    private YangVersion extractYangVersion() throws ExtractorException {
+    private YangVersion extractYangVersion() throws SourceSyntaxException {
         final var element = firstElement(root, YANG_VERSION);
         if (element == null) {
             return YangVersion.VERSION_1;
@@ -181,7 +181,7 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         return null;
     }
 
-    final Element getFirstElement(final Element parent, final String keyword) throws ExtractorException {
+    final Element getFirstElement(final Element parent, final String keyword) throws SourceSyntaxException {
         final var element = firstElement(parent, keyword);
         if (element == null) {
             throw newMissingSubstatement(parent, keyword);
@@ -190,7 +190,7 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     final Unqualified getElementArgumentIdentifier(final Element element, final String argument)
-            throws ExtractorException {
+            throws SourceSyntaxException {
         final var arg = getElementArgumentString(element, argument);
         try {
             return Unqualified.of(arg);
@@ -200,7 +200,7 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     private Revision getElementArgumentRevision(final Element element, final String argument)
-            throws ExtractorException {
+            throws SourceSyntaxException {
         final var arg = getElementArgumentString(element, argument);
         try {
             return Revision.of(arg);
@@ -209,21 +209,22 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         }
     }
 
-    final String getElementArgumentString(final Element element, final String argument) throws ExtractorException {
+    final String getElementArgumentString(final Element element, final String argument) throws SourceSyntaxException {
         final var arg = element.getAttributeNodeNS(null, argument);
         if (arg == null || !arg.getSpecified()) {
-            throw new ExtractorException("Missing argument to " + element.getLocalName(), refProvider.refOf(element));
+            throw new SourceSyntaxException("Missing argument to " + element.getLocalName(),
+                refProvider.refOf(element));
         }
         return arg.getValue();
     }
 
-    final ExtractorException newInvalidArgument(final Element stmt, final Exception cause) {
-        return new ExtractorException(
+    final SourceSyntaxException newInvalidArgument(final Element stmt, final Exception cause) {
+        return new SourceSyntaxException(
             "Invalid argument to " + stmt.getLocalName() + ": " + cause.getMessage(), cause, refProvider.refOf(stmt));
     }
 
-    private ExtractorException newMissingSubstatement(final Element parent, final String keyword) {
-        return new ExtractorException("Missing " + keyword + " substatement", refProvider.refOf(parent));
+    private SourceSyntaxException newMissingSubstatement(final Element parent, final String keyword) {
+        return new SourceSyntaxException("Missing " + keyword + " substatement", refProvider.refOf(parent));
     }
 
     static boolean isYinElement(final Element element) {

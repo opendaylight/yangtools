@@ -18,10 +18,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -59,7 +59,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
             final SourceInfo info;
             try {
                 info = entry.getValue().extractSourceInfo();
-            } catch (ExtractorException e) {
+            } catch (SourceSyntaxException e) {
                 LOG.debug("Cannot extract dependency information from {}", src, e);
                 return FluentFutures.immediateFailedFluentFuture(new SchemaResolutionException(
                     "Failed to extract dependency information", src, e));

@@ -16,13 +16,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
@@ -140,7 +139,7 @@ public final class CrossSourceStatementReactor {
              * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
-            WithYang<S> addSource(S source) throws ExtractorException, SourceSyntaxException;
+            WithYang<S> addSource(S source) throws SourceSyntaxException;
 
             /**
              * Add a library YANG source. Only library sources required by main sources are present in resulting
@@ -173,7 +172,7 @@ public final class CrossSourceStatementReactor {
              * @throws SourceSyntaxException if the source is not syntactically valid
              */
             @NonNullByDefault
-            WithYin<S> addSource(S source) throws ExtractorException, SourceSyntaxException;
+            WithYin<S> addSource(S source) throws SourceSyntaxException;
 
             /**
              * Add a library YIN source. Only library sources required by main sources are present in resulting
@@ -199,10 +198,10 @@ public final class CrossSourceStatementReactor {
         sealed interface Full<H extends YangSourceRepresentation, M extends YinSourceRepresentation>
                 extends WithYang<H>, WithYin<M> permits FullReactorBuildAction {
             @Override
-            Full<H, M> addSource(H source) throws ExtractorException, SourceSyntaxException;
+            Full<H, M> addSource(H source) throws SourceSyntaxException;
 
             @Override
-            Full<H, M> addSource(M source) throws ExtractorException, SourceSyntaxException;
+            Full<H, M> addSource(M source) throws SourceSyntaxException;
 
             @Override
             Full<H, M> addLibSource(H source) throws SourceSyntaxException;
@@ -216,18 +215,20 @@ public final class CrossSourceStatementReactor {
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
+         * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        BuildAction addSource(YangIRSource source) throws ExtractorException;
+        BuildAction addSource(YangIRSource source) throws SourceSyntaxException;
 
         /**
          * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
+         * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        BuildAction addSource(YinDOMSource source) throws ExtractorException;
+        BuildAction addSource(YinDOMSource source) throws SourceSyntaxException;
 
         /**
          * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
@@ -236,13 +237,11 @@ public final class CrossSourceStatementReactor {
          * @param transformer the transformer to {@link YangIRSource}
          * @param source which should be transformed and added into main sources
          * @return This build action, for fluent use.
-         * @throws ExtractorException if the source cannot be analyzed
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addYangSource(
-                final SourceTransformer<S, YangIRSource> transformer, final S source)
-                    throws ExtractorException, SourceSyntaxException {
+                final SourceTransformer<S, YangIRSource> transformer, final S source) throws SourceSyntaxException {
             return addSource(transformer.transformSource(source));
         }
 
@@ -253,13 +252,11 @@ public final class CrossSourceStatementReactor {
          * @param transformer the transformer to {@link YangIRSource}
          * @param source which should be transformed and added into main sources
          * @return This build action, for fluent use.
-         * @throws ExtractorException if the source cannot be analyzed
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addYinSource(
-                final SourceTransformer<S, YinDOMSource> transformer, final S source)
-                    throws ExtractorException, SourceSyntaxException {
+                final SourceTransformer<S, YinDOMSource> transformer, final S source) throws SourceSyntaxException {
             return addSource(transformer.transformSource(source));
         }
 
@@ -361,18 +358,18 @@ public final class CrossSourceStatementReactor {
          * Build the {@link ReactorDeclaredModel} view of this action.
          *
          * @return A declared view of selected models.
-         * @throws ExtractorException if a source cannot be analyzed
          * @throws ReactorException if the declared model cannot be built
+         * @throws SourceSyntaxException if a source cannot be analyzed
          */
-        @NonNull ReactorDeclaredModel buildDeclared() throws ExtractorException, ReactorException;
+        @NonNull ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException;
 
         /**
          * Build the {@link EffectiveSchemaContext} view of this action.
          *
          * @return An effective view of selected models.
-         * @throws ExtractorException if a source cannot be analyzed
          * @throws ReactorException if the effective model cannot be built
+         * @throws SourceSyntaxException if a source cannot be analyzed
          */
-        @NonNull EffectiveSchemaContext buildEffective() throws ExtractorException, ReactorException;
+        @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException;
     }
 }

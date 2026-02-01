@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Belongs
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
@@ -36,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
  * Utility class for extract {@link SourceInfo} from a {@link YangIRSource}.
@@ -46,12 +46,12 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         private static final @NonNull String NAMESPACE = NamespaceStatement.DEF.simpleName();
 
         @NonNullByDefault
-        ForModule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
+        ForModule(final SourceIdentifier sourceId, final IRStatement root) throws SourceSyntaxException {
             super(sourceId, root);
         }
 
         @Override
-        public SourceInfo.Module extractSourceInfo() throws ExtractorException {
+        public SourceInfo.Module extractSourceInfo() throws SourceSyntaxException {
             final var builder = SourceInfo.Module.builder();
             fillBuilder(builder);
             return builder
@@ -60,7 +60,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
                 .build();
         }
 
-        private @NonNull XMLNamespace extractNamespace() throws ExtractorException {
+        private @NonNull XMLNamespace extractNamespace() throws SourceSyntaxException {
             final var stmt = getFirstStatement(root, NAMESPACE);
             final var arg = stringArgument(stmt);
             try {
@@ -75,12 +75,12 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         private static final @NonNull String BELONGS_TO = BelongsToStatement.DEF.simpleName();
 
         @NonNullByDefault
-        ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
+        ForSubmodule(final SourceIdentifier sourceId, final IRStatement root) throws SourceSyntaxException {
             super(sourceId, root);
         }
 
         @Override
-        public SourceInfo.Submodule extractSourceInfo() throws ExtractorException {
+        public SourceInfo.Submodule extractSourceInfo() throws SourceSyntaxException {
             final var builder = SourceInfo.Submodule.builder();
             fillBuilder(builder);
             return builder
@@ -88,7 +88,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
                 .build();
         }
 
-        private @NonNull BelongsTo extractBelongsTo() throws ExtractorException {
+        private @NonNull BelongsTo extractBelongsTo() throws SourceSyntaxException {
             final var stmt = getFirstStatement(root, BELONGS_TO);
             return new BelongsTo(unqualifiedArgument(stmt), extractPrefix(stmt));
         }
@@ -114,7 +114,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     final @NonNull IRStatement root;
 
     @NonNullByDefault
-    YangIRSourceInfoExtractor(final SourceIdentifier sourceId, final IRStatement root) throws ExtractorException {
+    YangIRSourceInfoExtractor(final SourceIdentifier sourceId, final IRStatement root) throws SourceSyntaxException {
         this.sourceId = requireNonNull(sourceId);
         this.root = requireNonNull(root);
         version = determineVersion();
@@ -124,7 +124,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
         };
     }
 
-    private @NonNull YangVersion determineVersion() throws ExtractorException {
+    private @NonNull YangVersion determineVersion() throws SourceSyntaxException {
         final var stmt = firstStatement(root, YANG_VERSION);
         if (stmt == null) {
             return YangVersion.VERSION_1;
@@ -140,7 +140,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    final void fillBuilder(final SourceInfo.Builder<?, ?> builder) throws ExtractorException {
+    final void fillBuilder(final SourceInfo.Builder<?, ?> builder) throws SourceSyntaxException {
         builder.setYangVersion(version).setName(unqualifiedArgument(root));
 
         for (var stmt : root.statements()) {
@@ -160,11 +160,11 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    final Unqualified extractPrefix(final IRStatement parent) throws ExtractorException {
+    final Unqualified extractPrefix(final IRStatement parent) throws SourceSyntaxException {
         return unqualifiedArgument(getFirstStatement(parent, PREFIX));
     }
 
-    private @Nullable Revision extractRevisionDate(final @NonNull IRStatement parent) throws ExtractorException {
+    private @Nullable Revision extractRevisionDate(final @NonNull IRStatement parent) throws SourceSyntaxException {
         final var stmt = firstStatement(parent, REVISION_DATE);
         return stmt == null ? null : revisionArgument(stmt);
     }
@@ -180,16 +180,16 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    final IRStatement getFirstStatement(final IRStatement parent, final String keyword) throws ExtractorException {
+    final IRStatement getFirstStatement(final IRStatement parent, final String keyword) throws SourceSyntaxException {
         final var stmt = firstStatement(parent, keyword);
         if (stmt == null) {
-            throw new ExtractorException("Missing " + keyword + " substatement", refOf(parent));
+            throw new SourceSyntaxException("Missing " + keyword + " substatement", refOf(parent));
         }
         return stmt;
     }
 
     @NonNullByDefault
-    private Revision revisionArgument(final IRStatement stmt) throws ExtractorException {
+    private Revision revisionArgument(final IRStatement stmt) throws SourceSyntaxException {
         final var arg = stringArgument(stmt);
         try {
             return Revision.of(arg);
@@ -199,28 +199,29 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    final String stringArgument(final IRStatement stmt) throws ExtractorException {
+    final String stringArgument(final IRStatement stmt) throws SourceSyntaxException {
         return stringArgument(stmt, escaping);
     }
 
     @NonNullByDefault
-    private String stringArgument(final IRStatement stmt, final StringEscaping argEscaping) throws ExtractorException {
+    private String stringArgument(final IRStatement stmt, final StringEscaping argEscaping)
+            throws SourceSyntaxException {
         final var arg = stmt.argument();
         if (arg == null) {
-            throw new ExtractorException("Missing argument to " + stmt.keyword().asStringDeclaration(), refOf(stmt));
+            throw new SourceSyntaxException("Missing argument to " + stmt.keyword().asStringDeclaration(), refOf(stmt));
         }
 
         try {
             return arg.asString(argEscaping);
         } catch (ParseException e) {
-            throw new ExtractorException(
+            throw new SourceSyntaxException(
                 "Malformed argument to " + stmt.keyword().asStringDeclaration() + ": " + e.getMessage(), e,
                 refOf(stmt));
         }
     }
 
     @NonNullByDefault
-    final Unqualified unqualifiedArgument(final IRStatement stmt) throws ExtractorException {
+    final Unqualified unqualifiedArgument(final IRStatement stmt) throws SourceSyntaxException {
         final var arg = stringArgument(stmt);
         try {
             return Unqualified.of(arg);
@@ -230,8 +231,8 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    final ExtractorException newInvalidArgument(final IRStatement stmt, final Exception cause) {
-        return new ExtractorException(
+    final SourceSyntaxException newInvalidArgument(final IRStatement stmt, final Exception cause) {
+        return new SourceSyntaxException(
             "Invalid argument to " + stmt.keyword().asStringDeclaration() + ": " + cause.getMessage(), cause,
             refOf(stmt));
     }

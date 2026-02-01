@@ -18,11 +18,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
@@ -106,8 +105,6 @@ public final class DefaultYangLibResolver implements YangLibResolver {
                     case YinTextSource yinText -> act.addSource(yinText);
                     default -> throw new IllegalArgumentException("Unsupported source " + source);
                 }
-            } catch (ExtractorException e) {
-                throw DefaultYangParser.newSyntaxError(source.sourceId(), e.sourceRef(), e);
             } catch (SourceSyntaxException e) {
                 throw DefaultYangParser.newSyntaxError(source.sourceId(), e.sourceRef(), e);
             }
@@ -130,7 +127,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
 
         try {
             return act.setSupportedFeatures(FeatureSet.of(features.build())).buildEffective();
-        } catch (ExtractorException e) {
+        } catch (SourceSyntaxException e) {
             throw DefaultYangParser.newSyntaxError(null, e.sourceRef(), e);
         } catch (ReactorException e) {
             throw DefaultYangParser.decodeReactorException(e);

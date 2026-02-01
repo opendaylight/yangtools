@@ -15,8 +15,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 
 /**
@@ -43,7 +43,7 @@ final class BuildSource<S extends SourceRepresentation & SourceInfo.Extractor> {
             requireNonNull(streamFactory);
         }
 
-        SourceSpecificContext initialize() throws ExtractorException {
+        SourceSpecificContext initialize() throws SourceSyntaxException {
             final var sourceInfo = source.extractSourceInfo();
             return new SourceSpecificContext(global, sourceInfo.yangVersion(), streamFactory.apply(source));
         }
@@ -56,7 +56,7 @@ final class BuildSource<S extends SourceRepresentation & SourceInfo.Extractor> {
         stage = new Uninitialized<>(global, source, streamFactory);
     }
 
-    SourceSpecificContext getSourceContext() throws ExtractorException {
+    SourceSpecificContext getSourceContext() throws SourceSyntaxException {
         return switch (stage) {
             case Uninitialized<?> unitialized -> {
                 final var context = unitialized.initialize();

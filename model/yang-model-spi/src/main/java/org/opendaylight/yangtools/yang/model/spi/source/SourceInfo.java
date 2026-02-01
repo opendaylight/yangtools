@@ -11,11 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -26,13 +21,12 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementException;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
@@ -285,95 +279,8 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     interface Extractor {
         /**
          * {@return extracted {@link SourceInfo}}
-         * @throws ExtractorException if the {@link SourceInfo} cannot be extracted
+         * @throws SourceSyntaxException if the {@link SourceInfo} cannot be extracted
          */
-        SourceInfo extractSourceInfo() throws ExtractorException;
-    }
-
-    /**
-     * A {@link StatementException} reported by when the {@link SourceInfo} cannot be extracted. Instances of this
-     * exception are not serializable.
-     *
-     * @since 14.0.22
-     */
-    final class ExtractorException extends Exception {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
-        private final @Nullable StatementSourceReference sourceRef;
-
-        /**
-         * Construct an instance with specified message and optional {@link StatementSourceReference}.
-         *
-         * @param message the message
-         */
-        public ExtractorException(final String message) {
-            this(message, null, null);
-        }
-
-        /**
-         * Construct an instance with specified message and optional {@link StatementSourceReference}.
-         *
-         * @param message the message
-         * @param sourceRef the {@link StatementSourceReference}, potentially {@code null}
-         */
-        public ExtractorException(final String message, final @Nullable StatementSourceReference sourceRef) {
-            this(message, null, sourceRef);
-        }
-
-        /**
-         * Construct an instance with specified message and optional cause.
-         *
-         * @param message the message
-         * @param cause the cause, potentially {@code null}
-         */
-        public ExtractorException(final String message, final @Nullable Throwable cause) {
-            this(message, cause, null);
-        }
-
-        /**
-         * Construct an instance with specified message and optional cause as well as optional
-         * {@link StatementSourceReference}.
-         *
-         * @param message the message
-         * @param cause the cause, potentially {@code null}
-         * @param sourceRef the {@link StatementSourceReference}, potentially {@code null}
-         */
-        public ExtractorException(final String message, final @Nullable Throwable cause,
-                final @Nullable StatementSourceReference sourceRef) {
-            super(createMessage(requireNonNull(message), sourceRef), cause);
-            this.sourceRef = sourceRef;
-        }
-
-        private static String createMessage(final String message, final @Nullable StatementSourceReference sourceRef) {
-            return sourceRef == null ? message : message + " [at " + sourceRef + ']';
-        }
-
-        /**
-         * {@return the {@link StatementSourceReference} to the statement causing this exception, or {@code null} when
-         * not available}
-         */
-        public @Nullable StatementSourceReference sourceRef() {
-            return sourceRef;
-        }
-
-        @java.io.Serial
-        private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-            throwNSE();
-        }
-
-        @java.io.Serial
-        private void readObjectNoData() throws ObjectStreamException {
-            throwNSE();
-        }
-
-        @java.io.Serial
-        private void writeObject(final ObjectOutputStream stream) throws IOException {
-            throwNSE();
-        }
-
-        private static void throwNSE() throws NotSerializableException {
-            throw new NotSerializableException(ExtractorException.class.getName());
-        }
+        SourceInfo extractSourceInfo() throws SourceSyntaxException;
     }
 }

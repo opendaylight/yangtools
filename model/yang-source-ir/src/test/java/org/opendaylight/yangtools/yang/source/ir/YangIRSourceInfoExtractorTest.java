@@ -16,12 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
@@ -63,7 +62,7 @@ class YangIRSourceInfoExtractorTest {
 
     @Test
     void testMalformedImport() {
-        assertEE("Missing argument to import [at dummy:4:3]", """
+        assertSSE("Missing argument to import [at dummy:4:3]", """
             module malformed-import {
               namespace "urn:test:foo";
               prefix aug;
@@ -73,7 +72,7 @@ class YangIRSourceInfoExtractorTest {
 
     @Test
     void testMalformedImportRev() {
-        assertEE("Missing argument to revision-date [at dummy:4:16]", """
+        assertSSE("Missing argument to revision-date [at dummy:4:16]", """
             module malformed-import-rev {
               namespace "urn:test:foo";
               prefix aug;
@@ -84,7 +83,7 @@ class YangIRSourceInfoExtractorTest {
     @Test
     void testMalformedModule() {
         assertEquals("Root statement does not have an argument [at dummy:1:1]",
-            assertThrows(StatementSourceException.class, () -> forText("""
+            assertThrows(SourceSyntaxException.class, () -> forText("""
                 module {
                   namespace "urn:test:foo";
                   prefix aug;
@@ -93,7 +92,7 @@ class YangIRSourceInfoExtractorTest {
 
     @Test
     void testMalformedModuleArg() {
-        assertEE("Invalid argument to module: String '0123' is not a valid identifier [at dummy:1:1]", """
+        assertSSE("Invalid argument to module: String '0123' is not a valid identifier [at dummy:1:1]", """
             module 0123 {
               namespace "urn:test:foo";
               prefix aug;
@@ -102,7 +101,7 @@ class YangIRSourceInfoExtractorTest {
 
     @Test
     void testMalformedRev() {
-        assertEE("Missing argument to revision [at dummy:5:3]", """
+        assertSSE("Missing argument to revision [at dummy:5:3]", """
             module malformed-import {
               namespace "urn:test:opendaylight-mdsal45-aug";
               prefix aug;
@@ -113,7 +112,7 @@ class YangIRSourceInfoExtractorTest {
 
     @Test
     void testMalformedRevArg() {
-        assertEE("Invalid argument to revision: Text 'bad' could not be parsed at index 0 [at dummy:5:3]",
+        assertSSE("Invalid argument to revision: Text 'bad' could not be parsed at index 0 [at dummy:5:3]",
             """
             module malformed-rev-arg {
               namespace "urn:test:opendaylight-mdsal45-aug";
@@ -142,8 +141,8 @@ class YangIRSourceInfoExtractorTest {
         assertEquals(Set.of(), info.includes());
     }
 
-    private static void assertEE(final String message, final String text) {
-        assertEquals(message, assertThrows(ExtractorException.class, () -> forText(text)).getMessage());
+    private static void assertSSE(final String message, final String text) {
+        assertEquals(message, assertThrows(SourceSyntaxException.class, () -> forText(text)).getMessage());
     }
 
     // Utility

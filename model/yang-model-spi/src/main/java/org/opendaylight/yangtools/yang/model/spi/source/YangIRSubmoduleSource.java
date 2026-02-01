@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.ir.IRArgument;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 
 /**
  * A {@link YangIRSource} representing a {@code submodule}.
@@ -34,7 +34,7 @@ public final class YangIRSubmoduleSource extends YangIRSource {
     }
 
     @Override
-    public SourceInfo.Submodule extractSourceInfo() throws ExtractorException {
+    public SourceInfo.Submodule extractSourceInfo() throws SourceSyntaxException {
         return new YangIRSourceInfoExtractor.ForSubmodule(sourceId(), statement()).extractSourceInfo();
     }
 

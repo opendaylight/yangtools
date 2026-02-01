@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 
 /**
  * A {@link SourceRepresentation} that is fully materialized and is its own {@link SourceInfo.Extractor}. It also allows
@@ -41,7 +41,7 @@ public interface MaterializedSourceRepresentation<R extends SourceRepresentation
     /**
      * {@return this source with {@link SourceIdentifier} adjusted to the one extracted from this source}
      */
-    default R withExtractedSourceId() throws ExtractorException {
+    default R withExtractedSourceId() throws SourceSyntaxException {
         return withSourceId(extractSourceInfo().sourceId());
     }
 }

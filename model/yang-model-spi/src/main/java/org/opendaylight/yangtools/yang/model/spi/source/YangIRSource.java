@@ -15,8 +15,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 
@@ -45,25 +45,25 @@ public abstract sealed class YangIRSource
      * @param statement the root {@link IRStatement}
      * @param symbolicName optional symbolic name
      * @return A {@link YangIRSource}
-     * @throws StatementSourceException if the {@code statement} is not a valid root
+     * @throws SourceSyntaxException if the {@code statement} is not a valid root
      */
     public static YangIRSource of(final SourceIdentifier sourceId, final IRStatement statement,
-            final @Nullable String symbolicName) {
+            final @Nullable String symbolicName) throws SourceSyntaxException {
         final var keyword = statement.keyword();
         if (!(keyword instanceof IRKeyword.Unqualified unqualified)) {
-            throw new StatementSourceException(refOf(sourceId, statement),
-                "Root statement has invalid keyword " + keyword);
+            throw new SourceSyntaxException("Root statement has invalid keyword " + keyword,
+                refOf(sourceId, statement));
         }
         if (statement.argument() == null) {
-            throw new StatementSourceException(refOf(sourceId, statement), "Root statement does not have an argument");
+            throw new SourceSyntaxException("Root statement does not have an argument", refOf(sourceId, statement));
         }
 
         final var rootName = unqualified.identifier();
         return switch (rootName) {
             case "module" -> new YangIRModuleSource(sourceId, statement, symbolicName);
             case "submodule" -> new YangIRSubmoduleSource(sourceId, statement, symbolicName);
-            default -> throw new StatementSourceException(refOf(sourceId, statement),
-                "Invalid root statement keyword " + rootName);
+            default -> throw new SourceSyntaxException("Invalid root statement keyword " + rootName,
+                refOf(sourceId, statement));
         };
     }
 

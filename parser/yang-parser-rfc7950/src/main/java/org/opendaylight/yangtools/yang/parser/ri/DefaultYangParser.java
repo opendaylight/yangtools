@@ -23,13 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
@@ -69,8 +68,6 @@ final class DefaultYangParser implements YangParser {
                 }
                 default -> throw new IllegalArgumentException("Unsupported YANG source " + source);
             }
-        } catch (ExtractorException e) {
-            throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
         } catch (SourceSyntaxException e) {
             throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
         }
@@ -87,8 +84,6 @@ final class DefaultYangParser implements YangParser {
                 }
                 default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
             }
-        } catch (ExtractorException e) {
-            throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
         } catch (SourceSyntaxException e) {
             throw newSyntaxError(source.sourceId(), e.sourceRef(), e);
         }
@@ -146,7 +141,7 @@ final class DefaultYangParser implements YangParser {
             return buildAction.buildDeclared().getRootStatements();
         } catch (ReactorException e) {
             throw decodeReactorException(e);
-        } catch (ExtractorException e) {
+        } catch (SourceSyntaxException e) {
             throw newSyntaxError(null, e.sourceRef(), e);
         }
     }
@@ -155,10 +150,10 @@ final class DefaultYangParser implements YangParser {
     public EffectiveModelContext buildEffectiveModel() throws YangParserException {
         try {
             return buildAction.buildEffective();
-        } catch (ExtractorException e) {
-            throw newSyntaxError(null, e.sourceRef(), e);
         } catch (ReactorException e) {
             throw decodeReactorException(e);
+        } catch (SourceSyntaxException e) {
+            throw newSyntaxError(null, e.sourceRef(), e);
         }
     }
 
