@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
@@ -31,13 +32,17 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.model.repo.spi.SourceInfoSchemaSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.StringYangTextSource;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class FilesystemSchemaSourceCacheIntegrationTest {
+    private static final YangParserFactory PARSER_FACTORY =
+        DaggerVanillaYangParserFactoryComponent.create().parserFactory();
+
     @Test
     void testWithCacheStartup() throws IOException {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         class CountingSchemaListener implements SchemaSourceListener {
             List<PotentialSchemaSource<?>> registeredSources = new ArrayList<>();
@@ -83,7 +88,7 @@ class FilesystemSchemaSourceCacheIntegrationTest {
 
     @Test
     void testWithCacheRunning() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         final var storageDir = Files.createTempDirectory("with-cache-running");
 

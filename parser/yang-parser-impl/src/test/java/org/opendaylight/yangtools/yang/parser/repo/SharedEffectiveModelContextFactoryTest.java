@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -30,12 +31,14 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SourceInfoSchemaSourceTran
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 
 class SharedEffectiveModelContextFactoryTest {
     private static final @NonNull YangTextToIRSourceTransformer TRANSFORMER =
         ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
-
-    private final SharedSchemaRepository repository = new SharedSchemaRepository("test");
+    private static final @NonNull YangParserFactory PARSER_FACTORY =
+        DaggerVanillaYangParserFactoryComponent.create().parserFactory();
+    private final SharedSchemaRepository repository = new SharedSchemaRepository(PARSER_FACTORY, "test");
     private final SchemaContextFactoryConfiguration config = SchemaContextFactoryConfiguration.getDefault();
 
     private SourceIdentifier s1;

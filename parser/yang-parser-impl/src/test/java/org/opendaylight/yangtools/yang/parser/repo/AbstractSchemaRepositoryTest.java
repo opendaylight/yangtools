@@ -52,7 +52,7 @@ abstract class AbstractSchemaRepositoryTest {
 
     static ListenableFuture<EffectiveModelContext> createModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
-        final var sharedSchemaRepository = new SharedSchemaRepository("test", PARSER_FACTORY);
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "test");
         final var requiredSources = Arrays.stream(resources)
             .map(resource -> {
                 final var yangSource = assertYangTextResource(resource);

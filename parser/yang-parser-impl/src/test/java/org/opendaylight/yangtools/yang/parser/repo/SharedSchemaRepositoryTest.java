@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
     @Test
     void testSourceWithAndWithoutRevision() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         final var idNoRevision = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported.yang");
         final var id2 = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported@2012-12-12.yang");
@@ -49,7 +49,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
 
     @Test
     void testSimpleSchemaContext() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         final var remoteInetTypesYang = assertYangTextResource("/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
@@ -82,7 +82,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
 
     @Test
     void testTwoSchemaContextsSharingSource() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         final var remoteInetTypesYang = assertYangTextResource("/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
@@ -110,7 +110,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
 
     @Test
     void testFailedSchemaContext() {
-        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         final var remoteInetTypesYang = assertYangTextResource("/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
@@ -129,7 +129,7 @@ class SharedSchemaRepositoryTest extends AbstractSchemaRepositoryTest {
 
     @Test
     void testDifferentCosts() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         final var immediateInetTypesYang = spy(assertYangTextResource("/ietf/ietf-inet-types@2010-09-24.yang"));
         immediateInetTypesYang.register(sharedSchemaRepository);
