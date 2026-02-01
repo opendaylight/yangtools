@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.osgi.service.component.annotations.Activate;
@@ -19,8 +20,8 @@ import org.osgi.service.component.annotations.Component;
 /**
  * An ANTLR-based {@link YangTextToIRSourceTransformer}.
  */
-@Component
-@MetaInfServices
+@Component(service = { SourceTransformer.class, YangTextToIRSourceTransformer.class })
+@MetaInfServices(value = { SourceTransformer.class, YangTextToIRSourceTransformer.class })
 @NonNullByDefault
 public final class DefaultYangTextToIRSourceTransformer implements YangTextToIRSourceTransformer {
     @Activate

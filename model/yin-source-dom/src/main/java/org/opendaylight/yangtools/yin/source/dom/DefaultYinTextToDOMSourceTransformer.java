@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.osgi.service.component.annotations.Component;
@@ -26,8 +27,8 @@ import org.xml.sax.SAXParseException;
 /**
  * Default implementation of {@link YinTextToDOMSourceTransformer}.
  */
-@Component
-@MetaInfServices
+@Component(service = { SourceTransformer.class, YinTextToDOMSourceTransformer.class })
+@MetaInfServices(value = { SourceTransformer.class, YinTextToDOMSourceTransformer.class })
 @NonNullByDefault
 public final class DefaultYinTextToDOMSourceTransformer implements YinTextToDOMSourceTransformer {
     @Override
