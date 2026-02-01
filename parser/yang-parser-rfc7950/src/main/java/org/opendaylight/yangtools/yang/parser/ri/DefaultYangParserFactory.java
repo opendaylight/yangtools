@@ -57,7 +57,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
             ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst()
                 .orElseThrow(() -> new IllegalStateException("No YangTextToIRSourceTransformer found")),
             ServiceLoader.load(YinTextToDOMSourceTransformer.class).findFirst()
-                .orElseThrow(() -> new IllegalStateException("No YangTextToIRSourceTransformer found")),
+                .orElseThrow(() -> new IllegalStateException("No YinTextToDOMSourceTransformer found")),
             ServiceLoader.load(ParserExtension.class).stream().map(ServiceLoader.Provider::get).toList());
     }
 

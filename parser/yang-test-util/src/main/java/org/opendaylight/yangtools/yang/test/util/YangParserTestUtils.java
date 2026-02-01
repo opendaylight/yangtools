@@ -17,9 +17,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.ServiceLoader;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -48,9 +48,8 @@ public final class YangParserTestUtils {
         return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
     };
 
-    private static final @NonNull YangParserFactory PARSER_FACTORY = ServiceLoader.load(YangParserFactory.class)
-        .findFirst()
-        .orElseThrow(() -> new IllegalStateException("No YangParserFactory found"));
+    private static final @NonNull YangParserFactory PARSER_FACTORY =
+        DaggerDefaultYangParserComponent.create().parserFactory();
 
     private YangParserTestUtils() {
         // Hidden on purpose
