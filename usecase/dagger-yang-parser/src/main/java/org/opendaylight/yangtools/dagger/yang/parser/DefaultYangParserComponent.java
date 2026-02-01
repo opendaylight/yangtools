@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.impl.dagger;
+package org.opendaylight.yangtools.dagger.yang.parser;
 
 import dagger.Component;
 import jakarta.inject.Singleton;
@@ -30,18 +30,18 @@ import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule
 import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
 
 /**
- * A component exposing {@link YangParserFactory} and {@link YangLibResolver}.
+ * A component exposing {@link YangParserFactory} and {@link YangLibResolver} with default set of supported extensions.
  *
- * @since 14.0.21
+ * @since 15.0.0
  */
 @Singleton
 @Component(
     modules = {
-        YangXPathParserFactoryModule.class,
         YangIRSourceModule.class,
         YinDOMSourceModule.class,
-        YangParserFactoryModule.class,
+        YangXPathParserFactoryModule.class,
         YangLibResolverModule.class,
+        YangParserFactoryModule.class,
         Rfc6241Module.class,
         Rfc6536Module.class,
         Rfc6643Module.class,
@@ -55,9 +55,14 @@ import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
         OpenConfigModule.class,
     })
 @NonNullByDefault
-public interface YangParserComponent {
-
-    YangParserFactory parserFactory();
-
+public interface DefaultYangParserComponent {
+    /**
+     * {@return the YangLibResolver}
+     */
     YangLibResolver yangLibResolver();
+
+    /**
+     * {@return the YangParserFactory}
+     */
+    YangParserFactory parserFactory();
 }
