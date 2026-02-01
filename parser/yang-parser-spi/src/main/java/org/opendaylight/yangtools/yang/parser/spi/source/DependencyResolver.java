@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
@@ -30,7 +32,8 @@ import org.slf4j.LoggerFactory;
 // FIXME: improve this class to track and expose how wildcard imports were resolved.
 //        That information will allow us to track "damage" to dependency resolution
 //        as new models are added to a schema context.
-abstract class DependencyResolver {
+@Beta
+public abstract sealed class DependencyResolver permits RevisionDependencyResolver {
     private static final Logger LOG = LoggerFactory.getLogger(DependencyResolver.class);
 
     private final ImmutableList<SourceIdentifier> resolvedSources;
@@ -103,16 +106,16 @@ abstract class DependencyResolver {
     }
 
     /**
-     * Collection of sources which have been resolved.
+     * {@return collection of sources which have been resolved}
      */
-    final ImmutableList<SourceIdentifier> resolvedSources() {
+    public final ImmutableList<SourceIdentifier> resolvedSources() {
         return resolvedSources;
     }
 
     /**
-     * Collection of sources which have not been resolved due to missing dependencies.
+     * {@core collection of sources which have not been resolved due to missing dependencies}
      */
-    final ImmutableList<SourceIdentifier> unresolvedSources() {
+    public final ImmutableList<SourceIdentifier> unresolvedSources() {
         return unresolvedSources;
     }
 
@@ -128,7 +131,7 @@ abstract class DependencyResolver {
      *       reported</li>
      * </ul>
      */
-    final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports() {
+    public final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports() {
         return unsatisfiedImports;
     }
 
@@ -150,5 +153,5 @@ abstract class DependencyResolver {
 
     abstract boolean isKnown(Collection<SourceIdentifier> haystack, SourceDependency dependency);
 
-    abstract YangParserConfiguration parserConfig();
+    public abstract @NonNull YangParserConfiguration parserConfig();
 }

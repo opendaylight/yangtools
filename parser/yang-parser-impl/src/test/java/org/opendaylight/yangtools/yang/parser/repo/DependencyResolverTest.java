@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.spi.source.RevisionDependencyResolver;
 
 class DependencyResolverTest {
     private static final YangTextToIRSourceTransformer TEXT_TO_IR =
