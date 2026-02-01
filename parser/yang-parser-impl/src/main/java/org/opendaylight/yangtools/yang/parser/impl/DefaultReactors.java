@@ -45,41 +45,9 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.
  */
 @Deprecated(since = "14.0.21", forRemoval = true)
-public final class DefaultReactors {
-    private static final class DefaultReactor {
-        // Thread-safe lazy init
-        static final @NonNull CrossSourceStatementReactor INSTANCE = defaultReactorBuilder().build();
-    }
-
+final class DefaultReactors {
     private DefaultReactors() {
         // Hidden on purpose
-    }
-
-    /**
-     * Get a shared default-configured reactor instance. This instance is configured to handle both RFC6020 and RFC7950,
-     * as well as
-     * <ul>
-     * <li>RFC6536's default-deny-{all,write} extensions</li>
-     * <li>RFC7952's annotation extension</li>
-     * <li>RFC8040's yang-data extension</li>
-     * <li>OpenConfig extensions</li>
-     * <li>OpenDaylight extensions</li>
-     * </ul>
-     *
-     * @return a shared default-configured reactor instance.
-     */
-    public static @NonNull CrossSourceStatementReactor defaultReactor() {
-        return DefaultReactor.INSTANCE;
-    }
-
-    /**
-     * Return a baseline CrossSourceStatementReactor {@link Builder}. The builder is initialized to the equivalent
-     * of the reactor returned via {@link #defaultReactor()}, but can be further customized before use.
-     *
-     * @return A populated CrossSourceStatementReactor builder.
-     */
-    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
-        return defaultReactorBuilder(YangParserConfiguration.DEFAULT);
     }
 
     /**
@@ -89,7 +57,8 @@ public final class DefaultReactors {
      * @param config parser configuration
      * @return A populated CrossSourceStatementReactor builder.
      */
-    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
+    @Deprecated
+    static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangParserConfiguration config) {
         return addExtensions(RFC7950Reactors.defaultReactorBuilder(config), config);
     }
@@ -100,7 +69,8 @@ public final class DefaultReactors {
      *
      * @return A populated CrossSourceStatementReactor builder.
      */
-    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
+    @Deprecated
+    static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangXPathParserFactory xpathFactory) {
         return defaultReactorBuilder(xpathFactory, YangParserConfiguration.DEFAULT);
     }
@@ -112,7 +82,8 @@ public final class DefaultReactors {
      * @param config parser configuration
      * @return A populated CrossSourceStatementReactor builder.
      */
-    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
+    @Deprecated
+    static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangXPathParserFactory xpathFactory, final YangParserConfiguration config) {
         return addExtensions(RFC7950Reactors.defaultReactorBuilder(xpathFactory, config), config);
     }
