@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,38 +9,37 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.ir.IRArgument;
-import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
- * A {@link YangIRSource} representing a {@code submodule}.
+ * A {@link YinDomSource} representing a {@code submodule}.
  */
 @NonNullByDefault
-public final class YangIRSubmoduleSource extends YangIRSource {
-    YangIRSubmoduleSource(final SourceIdentifier sourceId, final IRStatement statement,
+public final class YinDOMSubmoduleSource extends YinDomSource {
+    YinDOMSubmoduleSource(final SourceIdentifier sourceId, final DOMSource source, final SourceRefProvider refProvider,
             final @Nullable String symbolicName) {
-        super(sourceId, statement, symbolicName);
+        super(sourceId, source, refProvider, symbolicName);
     }
 
     /**
      * {@return the {@code submodule} name}
      */
-    public IRArgument submoduleName() {
-        return verifyNotNull(statement().argument());
+    public String submoduleName() {
+        return verifyNotNull(statement().getLocalName());
     }
 
     @Override
     public SourceInfo.Submodule extractSourceInfo() throws ExtractorException {
-        return new YangIRSourceInfoExtractor.ForSubmodule(sourceId(), statement()).extractSourceInfo();
+        return new YinDomSourceInfoExtractor.ForSubmodule(statement(), refProvider()).extractSourceInfo();
     }
 
     @Override
-    public YangIRSubmoduleSource withSourceId(final SourceIdentifier newSourceId) {
-        return newSourceId.equals(sourceId()) ? this :
-            new YangIRSubmoduleSource(newSourceId, statement(), symbolicName());
+    public YinDOMSubmoduleSource withSourceId(final SourceIdentifier newSourceId) {
+        return newSourceId.equals(sourceId()) ? this
+            : new YinDOMSubmoduleSource(newSourceId, domSource(), refProvider(), symbolicName());
     }
 }

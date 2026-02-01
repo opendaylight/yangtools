@@ -7,44 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import java.util.NoSuchElementException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Utility {@link YinSourceRepresentation} exposing a W3C {@link DOMSource} representation of YIN model.
  */
-public final class YinDomSource implements YinSourceRepresentation, SourceInfo.Extractor {
+@NonNullByDefault
+public abstract sealed class YinDomSource
+        implements YinSourceRepresentation, MaterializedSourceRepresentation<YinDomSource, Element>
+        permits YinDOMModuleSource, YinDOMSubmoduleSource {
     /**
      * Interface for extracting {@link StatementSourceReference} from an {@link Element}.
      *
      * @since 14.0.22
      */
-    @Beta
-    @NonNullByDefault
     @FunctionalInterface
     public interface SourceRefProvider {
         /**
@@ -71,11 +63,7 @@ public final class YinDomSource implements YinSourceRepresentation, SourceInfo.E
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(YinDomSource.class);
-    private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-    private static final QName REVISION_STMT = RevisionStatement.DEF.statementName();
     private static final String MODULE_ARG = ModuleStatement.DEF.getArgumentDefinition().simpleName();
-    private static final String REVISION_ARG = RevisionStatement.DEF.getArgumentDefinition().simpleName();
     private static final String MODULE = "module";
     private static final String SUBMODULE = "submodule";
 
@@ -84,16 +72,15 @@ public final class YinDomSource implements YinSourceRepresentation, SourceInfo.E
         verify(SUBMODULE.equals(SubmoduleStatement.DEF.simpleName()));
     }
 
-    private final @NonNull SourceRefProvider refProvider;
-    private final @NonNull SourceIdentifier sourceId;
-    private final @NonNull DOMSource domSource;
-    private final String symbolicName;
+    private final SourceRefProvider refProvider;
+    private final SourceIdentifier sourceId;
+    private final DOMSource domSource;
+    private final @Nullable String symbolicName;
 
-    @NonNullByDefault
-    YinDomSource(final SourceIdentifier sourceId, final DOMSource source, final SourceRefProvider refProvider,
+    YinDomSource(final SourceIdentifier sourceId, final DOMSource domSource, final SourceRefProvider refProvider,
             final @Nullable String symbolicName) {
         this.sourceId = requireNonNull(sourceId);
-        domSource = requireNonNull(source);
+        this.domSource = requireNonNull(domSource);
         this.refProvider = requireNonNull(refProvider);
         this.symbolicName = symbolicName;
     }
@@ -102,82 +89,59 @@ public final class YinDomSource implements YinSourceRepresentation, SourceInfo.E
      * Create a new {@link YinDomSource} using an identifier and a source.
      *
      * @param identifier Schema source identifier
-     * @param source W3C DOM source
+     * @param domSource W3C DOM source
      * @param refProvider the {@link SourceRefProvider}
      * @param symbolicName Source symbolic name
-     * @return A new {@link YinDomSource} instance.
+     * @return A new {@link YinDomSource} instance
      * @since 14.0.22
      */
-    @NonNullByDefault
-    public static YinDomSource of(final SourceIdentifier identifier, final DOMSource source,
+    public static final YinDomSource of(final SourceIdentifier identifier, final DOMSource domSource,
             final SourceRefProvider refProvider, final @Nullable String symbolicName) {
-        final var element = documentElementOf(source);
+        final var element = documentElementOf(domSource);
         final var rootNs = element.getNamespaceURI();
-        if (rootNs == null) {
-            // Let whoever is using this deal with this
-            return new YinDomSource(identifier, source, refProvider, symbolicName);
-        }
-
         if (!YangConstants.RFC6020_YIN_NAMESPACE_STRING.equals(rootNs)) {
-            throw new IllegalArgumentException("Root node namepsace " + rootNs + " does not match "
-                + YangConstants.RFC6020_YIN_NAMESPACE_STRING);
+            throw new IllegalArgumentException(
+                "Root node namepsace " + rootNs + " does not match " + YangConstants.RFC6020_YIN_NAMESPACE_STRING);
         }
 
         final var rootName = element.getLocalName();
-        switch (rootName) {
-            case MODULE, SUBMODULE -> {
-                // No-op
-            }
+        final var nameAttr = element.getAttributeNode(MODULE_ARG);
+        if (nameAttr == null) {
+            throw new IllegalArgumentException("No " + MODULE_ARG + " name argument found in " + rootName);
+        }
+
+        return switch (rootName) {
+            case MODULE -> new YinDOMModuleSource(identifier, domSource, refProvider, symbolicName);
+            case SUBMODULE -> new YinDOMSubmoduleSource(identifier, domSource, refProvider, symbolicName);
             default -> throw new IllegalArgumentException(
                 "Root element " + rootName + " is not a module nor a submodule");
-        }
-
-        final var nameAttr = element.getAttributeNode(MODULE_ARG);
-        checkArgument(nameAttr != null, "No %s name argument found in %s", MODULE_ARG, element.getLocalName());
-
-        final var revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
-            REVISION_STMT.getLocalName());
-        if (revisions.getLength() == 0) {
-            // FIXME: is module name important (as that may have changed)
-            return new YinDomSource(identifier, source, refProvider, symbolicName);
-        }
-
-        // FIXME: better check
-        final var revisionStmt = (Element) revisions.item(0);
-        final var dateAttr = revisionStmt.getAttributeNode(REVISION_ARG);
-        checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
-
-        final var parsedId = new SourceIdentifier(nameAttr.getValue(), dateAttr.getValue());
-        final SourceIdentifier id;
-        if (!parsedId.equals(identifier)) {
-            LOG.debug("Changed identifier from {} to {}", identifier, parsedId);
-            id = parsedId;
-        } else {
-            id = identifier;
-        }
-
-        return new YinDomSource(id, source, refProvider, symbolicName);
+        };
     }
 
     @Override
-    public Class<YinDomSource> getType() {
+    public final Class<YinDomSource> getType() {
         return YinDomSource.class;
     }
 
     @Override
-    public SourceIdentifier sourceId() {
+    public final SourceIdentifier sourceId() {
         return sourceId;
     }
 
     @Override
-    public String symbolicName() {
+    public final @Nullable String symbolicName() {
         return symbolicName;
+    }
+
+    @Override
+    public final Element statement() {
+        return documentElementOf(domSource);
     }
 
     /**
      * {@return the underlying {@link DOMSource}}
      */
-    public @NonNull DOMSource domSource() {
+    public final DOMSource domSource() {
         return domSource;
     }
 
@@ -185,34 +149,17 @@ public final class YinDomSource implements YinSourceRepresentation, SourceInfo.E
      * {@return the {@link SourceRefProvider} attached to this source}
      * @since 14.0.22
      */
-    public @NonNull SourceRefProvider refProvider() {
+    public final SourceRefProvider refProvider() {
         return refProvider;
     }
 
     @Override
-    public SourceInfo extractSourceInfo() throws ExtractorException {
-        final var element = documentElementOf(domSource());
-        if (!YinDomSourceInfoExtractor.isYinElement(element)) {
-            throw new ExtractorException("Root element does not have YIN namespace", refProvider.refOf(element));
-        }
-
-        final var extractor = switch (element.getLocalName()) {
-            case MODULE -> new YinDomSourceInfoExtractor.ForModule(element, refProvider);
-            case SUBMODULE -> new YinDomSourceInfoExtractor.ForSubmodule(element, refProvider);
-            default -> throw new ExtractorException("Root element needs to be a module or submodule",
-                refProvider.refOf(element));
-        };
-        return extractor.extractSourceInfo();
-    }
-
-    @Override
-    public String toString() {
+    public final String toString() {
         return MoreObjects.toStringHelper(this).add("sourceId", sourceId()).add("domSource", domSource).toString();
     }
 
-    @NonNullByDefault
-    private static Element documentElementOf(final DOMSource source) {
-        final var node = source.getNode();
+    private static Element documentElementOf(final DOMSource domSource) {
+        final var node = domSource.getNode();
         if (node instanceof Document document) {
             return document.getDocumentElement();
         }

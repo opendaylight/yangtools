@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
  * A {@link YangSourceRepresentation} backed by an {@link IRStatement}.
  */
 @NonNullByDefault
-public abstract sealed class YangIRSource implements YangSourceRepresentation, SourceInfo.Extractor
+public abstract sealed class YangIRSource
+        implements YangSourceRepresentation, MaterializedSourceRepresentation<YangIRSource, IRStatement>
         permits YangIRModuleSource, YangIRSubmoduleSource {
     private final SourceIdentifier sourceId;
     private final IRStatement statement;
@@ -66,13 +67,6 @@ public abstract sealed class YangIRSource implements YangSourceRepresentation, S
         };
     }
 
-    /**
-     * {@return the root statement of this source}
-     */
-    public final IRStatement statement() {
-        return statement;
-    }
-
     @Override
     public final SourceIdentifier sourceId() {
         return sourceId;
@@ -86,6 +80,11 @@ public abstract sealed class YangIRSource implements YangSourceRepresentation, S
     @Override
     public final Class<YangIRSource> getType() {
         return YangIRSource.class;
+    }
+
+    @Override
+    public final IRStatement statement() {
+        return statement;
     }
 
     @Override

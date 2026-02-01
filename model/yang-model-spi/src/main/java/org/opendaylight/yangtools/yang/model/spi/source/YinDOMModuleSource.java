@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,37 +9,37 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.ir.IRArgument;
-import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
- * A {@link YangIRSource} representing a {@code module}.
+ * A {@link YinDomSource} representing a {@code module}.
  */
 @NonNullByDefault
-public final class YangIRModuleSource extends YangIRSource {
-    YangIRModuleSource(final SourceIdentifier sourceId, final IRStatement statement,
+public final class YinDOMModuleSource extends YinDomSource {
+    YinDOMModuleSource(final SourceIdentifier sourceId, final DOMSource source, final SourceRefProvider refProvider,
             final @Nullable String symbolicName) {
-        super(sourceId, statement, symbolicName);
+        super(sourceId, source, refProvider, symbolicName);
     }
 
     /**
      * {@return the {@code module} name}
      */
-    public IRArgument moduleName() {
-        return verifyNotNull(statement().argument());
+    public String moduleName() {
+        return verifyNotNull(statement().getLocalName());
     }
 
     @Override
     public SourceInfo.Module extractSourceInfo() throws ExtractorException {
-        return new YangIRSourceInfoExtractor.ForModule(sourceId(), statement()).extractSourceInfo();
+        return new YinDomSourceInfoExtractor.ForModule(statement(), refProvider()).extractSourceInfo();
     }
 
     @Override
-    public YangIRModuleSource withSourceId(final SourceIdentifier newSourceId) {
-        return newSourceId.equals(sourceId()) ? this : new YangIRModuleSource(newSourceId, statement(), symbolicName());
+    public YinDOMModuleSource withSourceId(final SourceIdentifier newSourceId) {
+        return newSourceId.equals(sourceId()) ? this
+            : new YinDOMModuleSource(newSourceId, domSource(), refProvider(), symbolicName());
     }
 }

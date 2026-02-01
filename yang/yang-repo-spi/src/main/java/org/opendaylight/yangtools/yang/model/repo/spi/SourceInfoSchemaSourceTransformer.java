@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.util.concurrent.Futures;
-import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
+import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
@@ -29,15 +28,11 @@ import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
 @NonNullByDefault
 public final class SourceInfoSchemaSourceTransformer<
         I extends SourceRepresentation,
-        O extends SourceRepresentation & SourceInfo.Extractor> extends SchemaSourceTransformer<I, O> {
+        O extends SourceRepresentation & MaterializedSourceRepresentation<O, ?>> extends SchemaSourceTransformer<I, O> {
     public SourceInfoSchemaSourceTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer,
-            final SourceTransformer<I, O> transformer, final BiFunction<O, SourceIdentifier, O> rebind) {
-        super(provider, transformer.inputRepresentation(), consumer, transformer.outputRepresentation(), input -> {
-            final O output = transformer.transformSource(input);
-            final var sourceId = output.extractSourceInfo().sourceId();
-            return Futures.immediateFuture(sourceId.equals(output.sourceId()) ? output
-                : rebind.apply(output, sourceId));
-        });
+            final SourceTransformer<I, O> transformer) {
+        super(provider, transformer.inputRepresentation(), consumer, transformer.outputRepresentation(),
+            input -> Futures.immediateFuture(transformer.transformSource(input).withExtractedSourceId()));
     }
 
     /**
@@ -50,8 +45,7 @@ public final class SourceInfoSchemaSourceTransformer<
     public static <I extends SourceRepresentation> SourceInfoSchemaSourceTransformer<I, YangIRSource> ofYang(
             final SchemaRepository provider, final SchemaSourceRegistry consumer,
             final SourceTransformer<I, YangIRSource> transformer) {
-        return new SourceInfoSchemaSourceTransformer<>(provider, consumer, transformer,
-            (source, sourceId) -> YangIRSource.of(sourceId, source.statement(), source.symbolicName()));
+        return new SourceInfoSchemaSourceTransformer<>(provider, consumer, transformer);
     }
 
     /**
@@ -64,8 +58,6 @@ public final class SourceInfoSchemaSourceTransformer<
     public static <I extends SourceRepresentation> SourceInfoSchemaSourceTransformer<I, YinDomSource> ofYin(
             final SchemaRepository provider, final SchemaSourceRegistry consumer,
             final SourceTransformer<I, YinDomSource> transformer) {
-        return new SourceInfoSchemaSourceTransformer<>(provider, consumer, transformer,
-            (source, sourceId) -> YinDomSource.of(sourceId, source.domSource(), source.refProvider(),
-                source.symbolicName()));
+        return new SourceInfoSchemaSourceTransformer<>(provider, consumer, transformer);
     }
 }
