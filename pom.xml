@@ -35,6 +35,7 @@
         <module>artifacts</module>
         <module>docs</module>
         <module>features</module>
+        <module>usecase</module>
 
         <module>benchmarks</module>
         <module>binding</module>
@@ -52,16 +53,6 @@
     </modules>
 
     <profiles>
-        <profile>
-            <id>karaf</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-
-            <modules>
-                <module>karaf</module>
-            </modules>
-        </profile>
         <profile>
             <id>sonar-jacoco-aggregate</id>
             <activation>
