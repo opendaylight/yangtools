@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.impl;
+package org.opendaylight.yangtools.yang.parser.ri;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -49,12 +48,11 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 class YT1193Test {
     @Test
     void testDeclarationReference() throws Exception {
-        final var declaredRoots = DaggerDefaultYangParserComponent.create()
-            .parserFactory()
+        final var declaredRoots = new DefaultYangParserFactory()
             .createParser(YangParserConfiguration.builder().retainDeclarationReferences(true).build())
-            .addSource(new URLYangTextSource(YT1193Test.class.getResource("/yt1193/foo.yang")))
-            .addSource(new URLYangTextSource(YT1193Test.class.getResource("/yt1193/bar.yang")))
-            .addSource(new URLYangTextSource(YT1193Test.class.getResource("/yt1193/baz.yang")))
+            .addSource(new URLYangTextSource(YT1193Test.class.getResource("/bugs/yt1193/foo.yang")))
+            .addSource(new URLYangTextSource(YT1193Test.class.getResource("/bugs/yt1193/bar.yang")))
+            .addSource(new URLYangTextSource(YT1193Test.class.getResource("/bugs/yt1193/baz.yang")))
             .buildDeclaredModel();
         assertEquals(3, declaredRoots.size());
 
