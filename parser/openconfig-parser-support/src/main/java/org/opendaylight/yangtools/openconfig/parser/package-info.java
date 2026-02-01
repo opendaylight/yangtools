@@ -14,5 +14,4 @@
  * add support for this extension, or wire it through
  * {@link org.opendaylight.yangtools.yang.parser.spi.ParserExtension}.
  */
-@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.openconfig.parser;

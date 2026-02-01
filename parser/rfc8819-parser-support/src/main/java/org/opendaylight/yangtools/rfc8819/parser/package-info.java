@@ -8,5 +8,4 @@
 /**
  * YANG parser support for metamodel extensions defined in <a href="https://www.rfc-editor.org/rfc/rfc8819">RFC8819</a>.
  */
-@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc8819.parser;

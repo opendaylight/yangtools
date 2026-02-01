@@ -25,13 +25,12 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.StatementPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class MountPointStatementSupport
+final class MountPointStatementSupport
         extends AbstractStatementSupport<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(MountPointStatement.DEF)
@@ -41,7 +40,7 @@ public final class MountPointStatementSupport
             .addOptional(StatusStatement.DEF)
             .build();
 
-    public MountPointStatementSupport(final YangParserConfiguration config) {
+    MountPointStatementSupport(final YangParserConfiguration config) {
         super(MountPointStatement.DEF, StatementPolicy.copyDeclared((copy, current, substatements) ->
             copy.getArgument().equals(current.getArgument())
             // Implied by UnknownSchemaNode

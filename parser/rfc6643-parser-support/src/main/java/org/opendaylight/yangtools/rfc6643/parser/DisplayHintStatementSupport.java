@@ -19,12 +19,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class DisplayHintStatementSupport
+final class DisplayHintStatementSupport
         extends AbstractStringStatementSupport<DisplayHintStatement, DisplayHintEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(DisplayHintStatement.DEF).build();
+        SubstatementValidator.builder(DisplayHintStatement.DEF).build();
 
-    public DisplayHintStatementSupport(final YangParserConfiguration config) {
+    DisplayHintStatementSupport(final YangParserConfiguration config) {
         super(DisplayHintStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 

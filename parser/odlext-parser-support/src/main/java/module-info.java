@@ -16,12 +16,9 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 module org.opendaylight.yangtools.odlext.parser.support {
     exports org.opendaylight.yangtools.odlext.parser.dagger;
 
-    // FIXME: do not export this package
-    exports org.opendaylight.yangtools.odlext.parser;
-
     provides ParserExtension with
-        org.opendaylight.yangtools.odlext.parser.impl.OdlCodegenParserExtension,
-        org.opendaylight.yangtools.odlext.parser.impl.YangExtParserExtension;
+        org.opendaylight.yangtools.odlext.parser.OdlCodegenParserExtension,
+        org.opendaylight.yangtools.odlext.parser.YangExtParserExtension;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;

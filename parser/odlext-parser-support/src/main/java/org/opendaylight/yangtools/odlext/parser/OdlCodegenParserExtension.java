@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc8528.parser.impl;
+package org.opendaylight.yangtools.odlext.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
-import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
+import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -18,25 +17,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * Parser support for {@code ietf-yang-schema-mount.yang}.
+ * Parser support for {@code odl-codegen-extensions.yang}.
  *
  * @since 14.0.20
  */
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public final class Rfc8528ParserExtension extends AbstractParserExtension {
+public final class OdlCodegenParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
-    public Rfc8528ParserExtension() {
-        super(MountPointStatement.DEF);
+    public OdlCodegenParserExtension() {
+        super(AugmentIdentifierStatement.DEF);
     }
 
     @Override
     public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
-        return StatementSupportBundle.builder()
-            .addSupport(new MountPointStatementSupport(config))
-            .build();
+        return StatementSupportBundle.builder().addSupport(new AugmentIdentifierStatementSupport(config)).build();
     }
 }
