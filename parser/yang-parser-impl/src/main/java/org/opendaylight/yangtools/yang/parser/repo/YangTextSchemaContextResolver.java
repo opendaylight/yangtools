@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -56,7 +57,6 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SourceInfoSchemaSourceTran
 import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
@@ -142,7 +142,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
         final var parsedId = sourceInfo.sourceId();
         if (!parsedId.equals(irSource.sourceId())) {
-            irSource = YangIRSource.of(parsedId, irSource.statement(), irSource.symbolicName());
+            irSource = irSource.withSourceId(parsedId);
         }
 
         // Check if it matches the one supplied by the source. If it does not, check how much it differs and emit

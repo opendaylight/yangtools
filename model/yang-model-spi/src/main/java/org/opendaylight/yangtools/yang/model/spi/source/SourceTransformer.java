@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.spi.source;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 
 /**
  * A synchronous transformation function from one {@link SourceRepresentation} to another.

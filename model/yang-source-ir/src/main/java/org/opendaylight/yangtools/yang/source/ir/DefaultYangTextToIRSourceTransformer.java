@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.source.ir;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;

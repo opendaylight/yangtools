@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -93,28 +94,31 @@ public abstract sealed class YinDOMSource
      * @param refProvider the {@link SourceRefProvider}
      * @param symbolicName Source symbolic name
      * @return A new {@link YinDOMSource} instance
+     * @throws SourceSyntaxException if the {@code domSource} is not a valid root
      * @since 14.0.22
      */
     public static final YinDOMSource of(final SourceIdentifier identifier, final DOMSource domSource,
-            final SourceRefProvider refProvider, final @Nullable String symbolicName) {
+            final SourceRefProvider refProvider, final @Nullable String symbolicName) throws SourceSyntaxException {
         final var element = documentElementOf(domSource);
         final var rootNs = element.getNamespaceURI();
         if (!YangConstants.RFC6020_YIN_NAMESPACE_STRING.equals(rootNs)) {
-            throw new IllegalArgumentException(
-                "Root node namepsace " + rootNs + " does not match " + YangConstants.RFC6020_YIN_NAMESPACE_STRING);
+            throw new SourceSyntaxException(
+                "Root node namepsace " + rootNs + " does not match " + YangConstants.RFC6020_YIN_NAMESPACE_STRING,
+                refProvider.refOf(element));
         }
 
         final var rootName = element.getLocalName();
         final var nameAttr = element.getAttributeNode(MODULE_ARG);
         if (nameAttr == null) {
-            throw new IllegalArgumentException("No " + MODULE_ARG + " name argument found in " + rootName);
+            throw new SourceSyntaxException("No " + MODULE_ARG + " name argument found in " + rootName,
+                refProvider.refOf(element));
         }
 
         return switch (rootName) {
             case MODULE -> new YinDOMModuleSource(identifier, domSource, refProvider, symbolicName);
             case SUBMODULE -> new YinDOMSubmoduleSource(identifier, domSource, refProvider, symbolicName);
-            default -> throw new IllegalArgumentException(
-                "Root element " + rootName + " is not a module nor a submodule");
+            default -> throw new SourceSyntaxException("Root element " + rootName + " is not a module nor a submodule",
+                refProvider.refOf(element));
         };
     }
 

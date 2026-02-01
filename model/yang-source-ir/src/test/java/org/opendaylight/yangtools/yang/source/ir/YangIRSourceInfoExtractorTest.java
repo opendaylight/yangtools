@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
@@ -84,7 +84,7 @@ class YangIRSourceInfoExtractorTest {
     @Test
     void testMalformedModule() {
         assertEquals("Root statement does not have an argument [at dummy:1:1]",
-            assertThrows(StatementSourceException.class, () -> forText("""
+            assertThrows(SourceSyntaxException.class, () -> forText("""
                 module {
                   namespace "urn:test:foo";
                   prefix aug;
