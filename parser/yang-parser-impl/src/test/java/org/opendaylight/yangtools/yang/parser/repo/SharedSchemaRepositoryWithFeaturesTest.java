@@ -25,7 +25,8 @@ class SharedSchemaRepositoryWithFeaturesTest extends AbstractSchemaRepositoryTes
     void testSharedSchemaRepositoryWithSomeFeaturesSupported() throws Exception {
         final var supportedFeatures = FeatureSet.of(QName.create("foobar-namespace", "test-feature-1"));
 
-        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY,
+            "shared-schema-repo-with-features-test");
 
         final var foobar = assertYangTextResource("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
@@ -56,7 +57,8 @@ class SharedSchemaRepositoryWithFeaturesTest extends AbstractSchemaRepositoryTes
 
     @Test
     void testSharedSchemaRepositoryWithAllFeaturesSupported() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY,
+            "shared-schema-repo-with-features-test");
 
         final var foobar = assertYangTextResource("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
@@ -89,7 +91,8 @@ class SharedSchemaRepositoryWithFeaturesTest extends AbstractSchemaRepositoryTes
 
     @Test
     void testSharedSchemaRepositoryWithNoFeaturesSupported() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-with-features-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY,
+            "shared-schema-repo-with-features-test");
 
         final var foobar = assertYangTextResource("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);

@@ -18,20 +18,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class YangTextSchemaContextResolverTest {
+    private static final YangParserFactory PARSER_FACTORY =
+        DaggerVanillaYangParserFactoryComponent.create().parserFactory();
     private static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
 
     @Test
     void testYangTextSchemaContextResolver() throws Exception {
-        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("test-bundle", TEXT_TO_IR);
+        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.of(TEXT_TO_IR, PARSER_FACTORY,
+            "test-bundle");
         assertNotNull(yangTextSchemaContextResolver);
 
         final var yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo.yang");
@@ -92,8 +97,8 @@ class YangTextSchemaContextResolverTest {
 
     @Test
     void testFeatureRegistration() throws Exception {
-        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.create("feature-test-bundle",
-            TEXT_TO_IR);
+        final var yangTextSchemaContextResolver = YangTextSchemaContextResolver.of(TEXT_TO_IR, PARSER_FACTORY,
+            "feature-test-bundle");
         assertNotNull(yangTextSchemaContextResolver);
         final var yangFile1 = getClass().getResource("/yang-text-schema-context-resolver-test/foo-feature.yang");
         assertNotNull(yangFile1);
