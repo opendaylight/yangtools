@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierStatement;
@@ -21,14 +20,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
-public final class LegacyAugmentIdentifierStatementSupport
+final class LegacyAugmentIdentifierStatementSupport
         extends AbstractUnqualifiedStatementSupport<LegacyAugmentIdentifierStatement,
             LegacyAugmentIdentifierEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(LegacyAugmentIdentifierStatement.DEF).build();
 
-    public LegacyAugmentIdentifierStatementSupport(final YangParserConfiguration config) {
+    LegacyAugmentIdentifierStatementSupport(final YangParserConfiguration config) {
         super(LegacyAugmentIdentifierStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 

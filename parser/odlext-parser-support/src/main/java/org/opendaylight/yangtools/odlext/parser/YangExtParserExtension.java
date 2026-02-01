@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.odlext.parser.impl;
+package org.opendaylight.yangtools.odlext.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
@@ -15,12 +15,6 @@ import org.opendaylight.yangtools.odlext.model.api.InstanceTargetStatement;
 import org.opendaylight.yangtools.odlext.model.api.LegacyAugmentIdentifierStatement;
 import org.opendaylight.yangtools.odlext.model.api.MountStatement;
 import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceStatement;
-import org.opendaylight.yangtools.odlext.parser.ContextInstanceStatementSupport;
-import org.opendaylight.yangtools.odlext.parser.ContextReferenceStatementSupport;
-import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
-import org.opendaylight.yangtools.odlext.parser.LegacyAugmentIdentifierStatementSupport;
-import org.opendaylight.yangtools.odlext.parser.MountStatementSupport;
-import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.MountEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.MountStatement;
@@ -21,13 +20,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
-public final class MountStatementSupport
-        extends AbstractEmptyStatementSupport<MountStatement, MountEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(MountStatement.DEF).build();
+final class MountStatementSupport extends AbstractEmptyStatementSupport<MountStatement, MountEffectiveStatement> {
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(MountStatement.DEF).build();
 
-    public MountStatementSupport(final YangParserConfiguration config) {
+    MountStatementSupport(final YangParserConfiguration config) {
         super(MountStatement.DEF, StatementPolicy.exactReplica(), config, VALIDATOR);
     }
 

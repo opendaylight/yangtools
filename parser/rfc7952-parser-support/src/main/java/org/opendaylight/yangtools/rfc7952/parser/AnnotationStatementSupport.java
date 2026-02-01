@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class AnnotationStatementSupport
+final class AnnotationStatementSupport
          extends AbstractStatementSupport<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(AnnotationStatement.DEF)
         .addMandatory(TypeStatement.DEF)
@@ -43,7 +43,7 @@ public final class AnnotationStatementSupport
         .addOptional(UnitsStatement.DEF)
         .build();
 
-    public AnnotationStatementSupport(final YangParserConfiguration config) {
+    AnnotationStatementSupport(final YangParserConfiguration config) {
         super(AnnotationStatement.DEF, StatementPolicy.reject(), config, VALIDATOR);
     }
 

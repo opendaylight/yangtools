@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class EncryptedValueStatementSupport extends AbstractHashedValueStatementSupport {
+final class EncryptedValueStatementSupport extends AbstractHashedValueStatementSupport {
     /**
      * The definition of {@code oc-ext:openconfig-encrypted-value} statement.
      *
@@ -29,7 +29,7 @@ public final class EncryptedValueStatementSupport extends AbstractHashedValueSta
 
     private static final @NonNull SubstatementValidator VALIDATOR = SubstatementValidator.builder(DEF).build();
 
-    public EncryptedValueStatementSupport(final @NonNull YangParserConfiguration config) {
+    EncryptedValueStatementSupport(final @NonNull YangParserConfiguration config) {
         super(DEF, config, VALIDATOR);
     }
 }

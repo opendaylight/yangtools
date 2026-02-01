@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidEffectiveStatement;
@@ -23,13 +22,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-@Beta
-public final class OidStatementSupport
+final class OidStatementSupport
         extends AbstractStatementSupport<ObjectIdentifier, OidStatement, OidEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(OidStatement.DEF).build();
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(OidStatement.DEF).build();
 
-    public OidStatementSupport(final YangParserConfiguration config) {
+    OidStatementSupport(final YangParserConfiguration config) {
         super(OidStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 

@@ -5,14 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc6536.parser.impl;
+package org.opendaylight.yangtools.rfc8639.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
-import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
-import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
-import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
-import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
+import org.opendaylight.yangtools.rfc8639.model.api.SubscriptionStateNotificationStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
@@ -20,26 +17,25 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * Parser support for {@code ietf-netconf-acm.yang}.
+ * Parser support for {@code ietf-subscribed-notifications.yang}.
  *
  * @since 14.0.20
  */
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public final class Rfc6536ParserExtension extends AbstractParserExtension {
+public final class Rfc8639ParserExtension extends AbstractParserExtension {
     /**
      * Default constructor.
      */
-    public Rfc6536ParserExtension() {
-        super(DefaultDenyAllStatement.DEF, DefaultDenyWriteStatement.DEF);
+    public Rfc8639ParserExtension() {
+        super(SubscriptionStateNotificationStatement.DEF);
     }
 
     @Override
     public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
-            .addSupport(new DefaultDenyAllStatementSupport(config))
-            .addSupport(new DefaultDenyWriteStatementSupport(config))
+            .addSupport(new SubscriptionStateNotificationStatementSupport(config))
             .build();
     }
 }

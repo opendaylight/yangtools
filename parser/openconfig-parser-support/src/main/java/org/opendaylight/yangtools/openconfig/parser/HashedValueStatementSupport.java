@@ -13,11 +13,11 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @NonNullByDefault
-public final class HashedValueStatementSupport extends AbstractHashedValueStatementSupport {
+final class HashedValueStatementSupport extends AbstractHashedValueStatementSupport {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(OpenConfigHashedValueStatement.DEF).build();
 
-    public HashedValueStatementSupport(final YangParserConfiguration config) {
+    HashedValueStatementSupport(final YangParserConfiguration config) {
         super(OpenConfigHashedValueStatement.DEF, config, VALIDATOR);
     }
 }
