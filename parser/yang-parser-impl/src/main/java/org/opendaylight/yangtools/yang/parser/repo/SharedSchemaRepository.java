@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -22,10 +21,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFacto
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaRepository;
-import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 
 /**
  * A {@link SchemaRepository} which allows sharing of {@link SchemaContext} as long as their specification is the same.
@@ -35,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 @Beta
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
     private final LoadingCache<SchemaContextFactoryConfiguration, EffectiveModelContextFactory> cacheByConfig =
-            CacheBuilder.newBuilder().softValues()
+        CacheBuilder.newBuilder().softValues()
             .build(new CacheLoader<SchemaContextFactoryConfiguration, EffectiveModelContextFactory>() {
                 @Override
                 public EffectiveModelContextFactory load(final SchemaContextFactoryConfiguration key) {
@@ -43,19 +39,12 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
                 }
             });
 
-    private final @NonNull String id;
     private final @NonNull YangParserFactory factory;
+    private final @NonNull String id;
 
-    @Deprecated(since = "14.0.21", forRemoval = true)
-    public SharedSchemaRepository(final String id) {
-        this(id, new DefaultYangParserFactory(
-            ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow(),
-            ServiceLoader.load(YinTextToDOMSourceTransformer.class).findFirst().orElseThrow()));
-    }
-
-    public SharedSchemaRepository(final String id, final YangParserFactory factory) {
-        this.id = requireNonNull(id);
+    public SharedSchemaRepository(final YangParserFactory factory, final String id) {
         this.factory = requireNonNull(factory);
+        this.id = requireNonNull(id);
     }
 
     @Override

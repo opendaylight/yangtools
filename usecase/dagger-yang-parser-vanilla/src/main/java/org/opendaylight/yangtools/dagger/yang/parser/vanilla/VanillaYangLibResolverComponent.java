@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
         EmptyParserExtensionsModule.class,
     })
 @NonNullByDefault
+@SuppressWarnings("exports")
 public interface VanillaYangLibResolverComponent {
     /**
      * {@return YangLibResolver}

@@ -29,7 +29,8 @@ class MultipleRevImportBug6875Test extends AbstractSchemaRepositoryTest {
 
     @Test
     void testYang11() throws Exception {
-        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-multiple-rev-import-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY,
+            "shared-schema-repo-multiple-rev-import-test");
 
         final var foo = assertYangTextResource("/rfc7950/bug6875/yang1-1/foo.yang");
         final var bar1 = assertYangTextResource("/rfc7950/bug6875/yang1-1/bar@1999-01-01.yang");
@@ -67,7 +68,8 @@ class MultipleRevImportBug6875Test extends AbstractSchemaRepositoryTest {
 
     @Test
     void testYang10() {
-        final var sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-multiple-rev-import-test");
+        final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY,
+            "shared-schema-repo-multiple-rev-import-test");
 
         final var foo = assertYangTextResource("/rfc7950/bug6875/yang1-0/foo.yang");
         final var bar1 = assertYangTextResource("/rfc7950/bug6875/yang1-0/bar@1999-01-01.yang");
