@@ -251,7 +251,7 @@ class YangToSourcesProcessor {
                 YangIRSource irSource;
                 try {
                     irSource = textToIR.transformSource(textSource);
-                } catch (SourceSyntaxException e) {
+                } catch (IOException | SourceSyntaxException e) {
                     throw new IllegalArgumentException("Failed to parse " + file, e);
                 }
 

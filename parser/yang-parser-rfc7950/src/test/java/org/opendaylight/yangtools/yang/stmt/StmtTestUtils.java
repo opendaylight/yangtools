@@ -119,12 +119,13 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath)
-            throws URISyntaxException, SourceSyntaxException, ReactorException {
+            throws IOException, ReactorException, SourceSyntaxException, URISyntaxException {
         return parseYinSources(yinSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
     }
 
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
-            final YangParserConfiguration config) throws ReactorException, SourceSyntaxException, URISyntaxException {
+            final YangParserConfiguration config)
+                throws IOException, ReactorException, SourceSyntaxException, URISyntaxException {
         final var files = Path.of(StmtTestUtils.class.getResource(yinSourcesDirectoryPath).toURI()).toFile()
             .listFiles(YIN_FILE_FILTER);
 

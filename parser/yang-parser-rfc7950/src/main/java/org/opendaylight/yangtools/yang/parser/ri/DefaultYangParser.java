@@ -63,9 +63,7 @@ final class DefaultYangParser implements YangParser {
         try {
             switch (source) {
                 case YangIRSource irSource -> buildAction.addSource(irSource);
-                case YangTextSource yangSource -> {
-                    buildAction.addSource(yangSource);
-                }
+                case YangTextSource yangSource -> buildAction.addSource(yangSource);
                 default -> throw new IllegalArgumentException("Unsupported YANG source " + source);
             }
         } catch (SourceSyntaxException e) {
@@ -79,9 +77,7 @@ final class DefaultYangParser implements YangParser {
         try {
             switch (source) {
                 case YinDOMSource yinDom -> buildAction.addSource(yinDom);
-                case YinTextSource yinText -> {
-                    buildAction.addSource(yinText);
-                }
+                case YinTextSource yinText -> buildAction.addSource(yinText);
                 default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
             }
         } catch (SourceSyntaxException e) {
@@ -91,7 +87,7 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public YangParser addLibSource(final YangSourceRepresentation source) throws YangSyntaxErrorException {
+    public YangParser addLibSource(final YangSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         switch (source) {
             case YangIRSource irSource -> buildAction.addLibSource(irSource);
             case YangTextSource yangSource -> {
@@ -107,13 +103,11 @@ final class DefaultYangParser implements YangParser {
     }
 
     @Override
-    public YangParser addLibSource(final YinSourceRepresentation source) throws YangSyntaxErrorException {
+    public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         try {
             switch (source) {
                 case YinDOMSource yinDom -> buildAction.addLibSource(yinDom);
-                case YinTextSource yinText -> {
-                    buildAction.addLibSource(yinText);
-                }
+                case YinTextSource yinText -> buildAction.addLibSource(yinText);
                 default -> throw new IllegalArgumentException("Unsupported YIN source " + source);
             }
         } catch (SourceSyntaxException e) {

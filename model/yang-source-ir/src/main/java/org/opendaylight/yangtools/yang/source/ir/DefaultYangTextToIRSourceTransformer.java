@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.source.ir;
 
+import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
@@ -30,7 +31,7 @@ public final class DefaultYangTextToIRSourceTransformer implements YangTextToIRS
     }
 
     @Override
-    public YangIRSource transformSource(final YangTextSource input) throws SourceSyntaxException {
+    public YangIRSource transformSource(final YangTextSource input) throws IOException, SourceSyntaxException {
         return YangIRSource.of(input.sourceId(), IRSupport.createStatement(YangTextParser.parseSource(input)),
             input.symbolicName());
     }

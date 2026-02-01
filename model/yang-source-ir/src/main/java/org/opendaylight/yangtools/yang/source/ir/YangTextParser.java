@@ -35,13 +35,13 @@ final class YangTextParser extends BaseErrorListener {
         this.fileName = requireNonNull(fileName);
     }
 
-    static FileContext parseSource(final YangTextSource source) throws SourceSyntaxException {
+    static FileContext parseSource(final YangTextSource source) throws IOException, SourceSyntaxException {
         final var symbolicName = source.symbolicName();
         return new YangTextParser(symbolicName != null ? symbolicName : source.sourceId().toYangFilename())
             .parseToTree(source);
     }
 
-    private FileContext parseToTree(final YangTextSource source) throws SourceSyntaxException {
+    private FileContext parseToTree(final YangTextSource source) throws IOException, SourceSyntaxException {
         final FileContext file;
         try (var reader = source.openStream()) {
             final var lexer = new YangStatementLexer(CharStreams.fromReader(reader));
@@ -56,8 +56,6 @@ final class YangTextParser extends BaseErrorListener {
             parser.addErrorListener(this);
 
             file = parser.file();
-        } catch (IOException e) {
-            throw new SourceSyntaxException("Failed to read source text", e);
         }
 
         final var it = exceptions.iterator();

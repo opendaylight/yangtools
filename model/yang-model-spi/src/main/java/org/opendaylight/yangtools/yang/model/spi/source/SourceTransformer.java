@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.spi.source;
 
 import com.google.common.annotations.Beta;
+import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
@@ -35,7 +36,8 @@ public interface SourceTransformer<I extends SourceRepresentation, O extends Sou
     /**
      * {@return an instance output SourceRepresentation}
      * @param input the input {@link SourceRepresentation}
+     * @throws IOException if an I/O error occurs
      * @throws SourceSyntaxException if the input representation is not syntactically valid
      */
-    O transformSource(I input) throws SourceSyntaxException;
+    O transformSource(I input) throws IOException, SourceSyntaxException;
 }
