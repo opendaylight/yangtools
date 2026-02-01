@@ -11,8 +11,10 @@ import dagger.Component;
 import jakarta.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.dagger.EmptyParserExtensionsModule;
 import org.opendaylight.yangtools.yang.parser.dagger.YangLibResolverModule;
+import org.opendaylight.yangtools.yang.parser.dagger.YangParserFactoryModule;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule;
 import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
@@ -28,12 +30,18 @@ import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
         YinDOMSourceModule.class,
         YangXPathParserFactoryModule.class,
         YangLibResolverModule.class,
+        YangParserFactoryModule.class,
         EmptyParserExtensionsModule.class,
     })
 @NonNullByDefault
-public interface VanillaYangLibResolverComponent {
+public interface VanillaYangParserComponent {
     /**
-     * {@return YangLibResolver}
+     * {@return the YangLibResolver}
      */
-    YangLibResolver libResolver();
+    YangLibResolver yangLibResolver();
+
+    /**
+     * {@return the YangParserFactory}
+     */
+    YangParserFactory parserFactory();
 }

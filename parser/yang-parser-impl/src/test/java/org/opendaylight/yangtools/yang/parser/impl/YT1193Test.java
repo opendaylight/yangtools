@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -44,12 +45,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.impl.dagger.DaggerYangParserComponent;
 
 class YT1193Test {
     @Test
     void testDeclarationReference() throws Exception {
-        final var declaredRoots = DaggerYangParserComponent.create()
+        final var declaredRoots = DaggerDefaultYangParserComponent.create()
             .parserFactory()
             .createParser(YangParserConfiguration.builder().retainDeclarationReferences(true).build())
             .addSource(new URLYangTextSource(YT1193Test.class.getResource("/yt1193/foo.yang")))
