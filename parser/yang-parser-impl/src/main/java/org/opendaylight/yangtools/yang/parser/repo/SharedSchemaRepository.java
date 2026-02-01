@@ -15,7 +15,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNull;
-import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -35,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
  */
 // FIXME: do no provide via ServiceLoader
 @Beta
-@MetaInfServices(value = SchemaRepository.class)
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
     private final LoadingCache<SchemaContextFactoryConfiguration, EffectiveModelContextFactory> cacheByConfig =
             CacheBuilder.newBuilder().softValues()
@@ -48,11 +46,6 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
 
     private final @NonNull String id;
     private final @NonNull YangParserFactory factory;
-
-    @Deprecated(since = "14.0.21", forRemoval = true)
-    public SharedSchemaRepository() {
-        this("unnamed");
-    }
 
     @Deprecated(since = "14.0.21", forRemoval = true)
     public SharedSchemaRepository(final String id) {

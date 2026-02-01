@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 
@@ -14,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransf
  *
  * @uses YangTextToIRSourceTransformer
  * @uses YinTextToDOMSourceTransformer
- * @provides SchemaRepository
  */
 module org.opendaylight.yangtools.yang.parser.impl {
     exports org.opendaylight.yangtools.yang.parser.repo;
@@ -25,7 +23,6 @@ module org.opendaylight.yangtools.yang.parser.impl {
 
     uses YangTextToIRSourceTransformer;
     uses YinTextToDOMSourceTransformer;
-    provides SchemaRepository with org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
@@ -61,6 +58,5 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires static javax.inject;
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;
-    requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
 }
