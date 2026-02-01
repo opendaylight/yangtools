@@ -15,10 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent;
+import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserComponent;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -26,12 +27,11 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class YangTextSchemaContextResolverTest {
-    private static final YangParserFactory PARSER_FACTORY =
-        DaggerVanillaYangParserFactoryComponent.create().parserFactory();
-    private static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
+    private static final YangParserFactory PARSER_FACTORY = DaggerVanillaYangParserComponent.create().parserFactory();
+    private static final YangTextToIRSourceTransformer TEXT_TO_IR =
+        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
 
     @Test
     void testYangTextSchemaContextResolver() throws Exception {
