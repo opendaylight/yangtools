@@ -19,10 +19,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent;
+import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserComponent;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
@@ -37,25 +36,23 @@ import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class FilesystemSchemaSourceCacheIntegrationTest {
-    private static final YangParserFactory PARSER_FACTORY =
-        DaggerVanillaYangParserFactoryComponent.create().parserFactory();
+    private static final YangParserFactory PARSER_FACTORY = DaggerVanillaYangParserComponent.create().parserFactory();
 
     @Test
     void testWithCacheStartup() throws IOException {
         final var sharedSchemaRepository = new SharedSchemaRepository(PARSER_FACTORY, "netconf-mounts");
 
         class CountingSchemaListener implements SchemaSourceListener {
-            List<PotentialSchemaSource<?>> registeredSources = new ArrayList<>();
+            final ArrayList<PotentialSchemaSource<?>> registeredSources = new ArrayList<>();
 
             @Override
             public void schemaSourceEncountered(final SourceRepresentation source) {
+                // no-op
             }
 
             @Override
             public void schemaSourceRegistered(final Iterable<PotentialSchemaSource<?>> sources) {
-                for (final PotentialSchemaSource<?> source : sources) {
-                    registeredSources.add(source);
-                }
+                sources.forEach(registeredSources::add);
             }
 
             @Override

@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent;
+import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserComponent;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
@@ -31,8 +31,7 @@ class SimpleModuleTest {
 
     @BeforeEach
     void init() {
-        schemaRegistry = new SharedSchemaRepository(
-            DaggerVanillaYangParserFactoryComponent.create().parserFactory(), "test");
+        schemaRegistry = new SharedSchemaRepository(DaggerVanillaYangParserComponent.create().parserFactory(), "test");
         final var astTransformer = SourceInfoSchemaSourceTransformer.ofYang(schemaRegistry, schemaRegistry,
             YangIRSourceModule.provideTextToIR());
         schemaRegistry.registerSchemaSourceListener(astTransformer);

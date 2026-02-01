@@ -99,91 +99,18 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-reactor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-repo-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-repo-spi</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-xpath-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.service.component.annotations</artifactId>
-        </dependency>
 
-        <!-- YANG text-to-IR support -->
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-source-ir</artifactId>
+            <artifactId>dagger-yang-parser</artifactId>
+            <scope>test</scope>
         </dependency>
-
-        <!-- YIN text-to-DOM support -->
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yin-source-dom</artifactId>
-        </dependency>
-
-        <!-- XPath reference implementation -->
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-xpath-impl</artifactId>
-        </dependency>
-
-        <!-- Base RFC6020/RFC7950 reactor support -->
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-rfc7950</artifactId>
-        </dependency>
-
-        <!-- Various extension reactor supports -->
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odlext-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>openconfig-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc6241-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc6536-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc6643-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc7952-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc8040-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc8528-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc8639-parser-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>rfc8819-parser-support</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>dagger-yang-parser-vanilla</artifactId>
