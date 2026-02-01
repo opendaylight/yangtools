@@ -27,6 +27,7 @@
     </properties>
 
     <modules>
+        <module>dagger-yang-parser</module>
         <module>dagger-yang-parser-vanilla</module>
     </modules>
 

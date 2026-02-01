@@ -16,17 +16,17 @@
         <relativePath>../../bnd-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>dagger-yang-parser-vanilla</artifactId>
+    <artifactId>dagger-yang-parser</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    <description>Dagger component exposing a YANG parser with no extensions</description>
+    <description>Dagger component exposing a YANG parser with default extensions</description>
 
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
         <spotbugs.onlyAnalyze>
-                !org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangLibResolverComponent$VanillaYangLibResolverComponentImpl,
-                !org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent$VanillaYangParserFactoryComponentImpl
+                !org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangLibResolverComponent$DefaultYangLibResolverComponentImpl,
+                !org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserFactoryComponent$DefaultYangParserFactoryComponentImpl
         </spotbugs.onlyAnalyze>
     </properties>
 
@@ -53,6 +53,46 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odlext-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>openconfig-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc6241-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc6536-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc6643-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc7952-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8040-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8528-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8639-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8819-parser-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
