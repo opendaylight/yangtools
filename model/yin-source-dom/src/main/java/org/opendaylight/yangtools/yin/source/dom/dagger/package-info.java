@@ -7,7 +7,7 @@
  */
 /**
  * Dagger module exposing integration between {@link org.opendaylight.yangtools.yang.model.api.source.YinTextSource}
- * and {@link org.opendaylight.yangtools.yang.model.spi.source.YinDomSource}. The sole module exposed from here is
+ * and {@link org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource}. The sole module exposed from here is
  * {@link YinDOMSourceModule}, which provide static factory for various services. These methods can be used to build
  * bindings to other injection frameworks, like Guice or Spring Framework.
  *

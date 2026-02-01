@@ -30,15 +30,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource.SourceRefProvider;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource.SourceRefProvider;
 import org.w3c.dom.Element;
 
 /**
- * Utility class for extract {@link SourceInfo} from a {@link YinDomSource}.
+ * Utility class for extract {@link SourceInfo} from a {@link YinDOMSource}.
  */
 @NonNullByDefault
-abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor {
-    static final class ForModule extends YinDomSourceInfoExtractor {
+abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor {
+    static final class ForModule extends YinDOMSourceInfoExtractor {
         private static final String NAMESPACE = NamespaceStatement.DEF.simpleName();
         private static final String NAMESPACE_ARG = NamespaceStatement.DEF.getArgumentDefinition().simpleName();
 
@@ -67,7 +67,7 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
         }
     }
 
-    static final class ForSubmodule extends YinDomSourceInfoExtractor {
+    static final class ForSubmodule extends YinDOMSourceInfoExtractor {
         private static final String BELONGS_TO = BelongsToStatement.DEF.simpleName();
         private static final String BELONGS_TO_ARG = BelongsToStatement.DEF.getArgumentDefinition().simpleName();
 
@@ -121,7 +121,7 @@ abstract sealed class YinDomSourceInfoExtractor implements SourceInfo.Extractor 
     private final SourceRefProvider refProvider;
     final Element root;
 
-    YinDomSourceInfoExtractor(final Element root, final SourceRefProvider refProvider) {
+    YinDOMSourceInfoExtractor(final Element root, final SourceRefProvider refProvider) {
         this.root = requireNonNull(root);
         this.refProvider = requireNonNull(refProvider);
     }

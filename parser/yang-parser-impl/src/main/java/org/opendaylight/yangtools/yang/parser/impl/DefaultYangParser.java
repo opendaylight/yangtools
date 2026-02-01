@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -45,7 +45,7 @@ final class DefaultYangParser implements YangParser {
         // In order of preference
         YangIRSource.class,
         YangTextSource.class,
-        YinDomSource.class,
+        YinDOMSource.class,
         YinTextSource.class);
 
     private final Full<YangTextSource, YinTextSource> buildAction;
@@ -87,7 +87,7 @@ final class DefaultYangParser implements YangParser {
     public YangParser addSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         try {
             switch (source) {
-                case YinDomSource yinDom -> buildAction.addSource(yinDom);
+                case YinDOMSource yinDom -> buildAction.addSource(yinDom);
                 case YinTextSource yinText -> {
                     try {
                         buildAction.addSource(yinText);
@@ -124,7 +124,7 @@ final class DefaultYangParser implements YangParser {
     @Override
     public YangParser addLibSource(final YinSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         switch (source) {
-            case YinDomSource yinDom -> buildAction.addLibSource(yinDom);
+            case YinDOMSource yinDom -> buildAction.addLibSource(yinDom);
             case YinTextSource yinText -> {
                 try {
                     buildAction.addLibSource(yinText);

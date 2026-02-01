@@ -7,6 +7,6 @@
  */
 /**
  * Reactor-internal binding to {@link org.opendaylight.yangtools.yang.model.spi.source.YangIRSource} and
- * {@link org.opendaylight.yangtools.yang.model.spi.source.YinDomSource}.
+ * {@link org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource}.
  */
 package org.opendaylight.yangtools.yang.parser.source;

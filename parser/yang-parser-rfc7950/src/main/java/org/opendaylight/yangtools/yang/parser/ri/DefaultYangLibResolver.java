@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinTextToDOMSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
@@ -102,7 +102,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
                 switch (source) {
                     case YangIRSource yangIR -> act.addSource(yangIR);
                     case YangTextSource yangText -> act.addSource(yangText);
-                    case YinDomSource yinDOM -> act.addSource(yinDOM);
+                    case YinDOMSource yinDOM -> act.addSource(yinDOM);
                     case YinTextSource yinText -> act.addSource(yinText);
                     default -> throw new IllegalArgumentException("Unsupported source " + source);
                 }
@@ -119,7 +119,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
                 switch (source) {
                     case YangIRSource yangIR -> act.addLibSource(yangIR);
                     case YangTextSource yangText -> act.addLibSource(yangText);
-                    case YinDomSource yinDOM -> act.addLibSource(yinDOM);
+                    case YinDOMSource yinDOM -> act.addLibSource(yinDOM);
                     case YinTextSource yinText -> act.addLibSource(yinText);
                     default -> throw new IllegalArgumentException("Unsupported source " + source);
                 }

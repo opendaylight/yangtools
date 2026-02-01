@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorExce
 import org.opendaylight.yangtools.yang.model.spi.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.ValidationBundleType;
@@ -27,12 +27,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 @NonNullByDefault
 final class FullReactorBuildAction<H extends YangSourceRepresentation, M extends YinSourceRepresentation>
         extends YangReactorBuildAction<H> implements Full<H, M> {
-    private final SourceTransformer<M, YinDomSource> yinTransformer;
+    private final SourceTransformer<M, YinDOMSource> yinTransformer;
 
     FullReactorBuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
             final SourceTransformer<H, YangIRSource> yangTransformer,
-            final SourceTransformer<M, YinDomSource> yinTransformer) {
+            final SourceTransformer<M, YinDOMSource> yinTransformer) {
         super(supportedTerminology, supportedValidation, yangTransformer);
         this.yinTransformer = requireNonNull(yinTransformer);
     }

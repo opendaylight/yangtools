@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.source.YangIRStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.source.YinDOMStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -46,7 +46,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public BuildAction addSource(final YinDomSource source) throws ExtractorException {
+    public BuildAction addSource(final YinDOMSource source) throws ExtractorException {
         context.addSource(source, YinDOMStatementStreamSource::new);
         return this;
     }
@@ -58,7 +58,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public final BuildAction addLibSource(final YinDomSource libSource) {
+    public final BuildAction addLibSource(final YinDOMSource libSource) {
         context.addLibSource(libSource, YinDOMStatementStreamSource::new);
         return this;
     }

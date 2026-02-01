@@ -12,13 +12,13 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 
 /**
- * A {@link StatementStreamSource} based on a {@link YinDomSource}.
+ * A {@link StatementStreamSource} based on a {@link YinDOMSource}.
  */
-public record YinDOMStatementStreamSource(@NonNull YinDomSource source) implements StatementStreamSource {
+public record YinDOMStatementStreamSource(@NonNull YinDOMSource source) implements StatementStreamSource {
     public YinDOMStatementStreamSource {
         requireNonNull(source);
     }

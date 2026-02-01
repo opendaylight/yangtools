@@ -26,12 +26,12 @@ import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFacto
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 
 @ExtendWith(MockitoExtension.class)
 class SchemaSourceTransformerTest {
     public static final Class<YangSourceRepresentation> SRC_CLASS = YangSourceRepresentation.class;
-    public static final Class<YinDomSource> DST_CLASS = YinDomSource.class;
+    public static final Class<YinDOMSource> DST_CLASS = YinDOMSource.class;
 
     @Mock
     public SchemaRepository provider;
@@ -40,9 +40,9 @@ class SchemaSourceTransformerTest {
     public SchemaSourceRegistry consumer;
 
     @Mock
-    public AsyncFunction<YangSourceRepresentation, YinDomSource> function;
+    public AsyncFunction<YangSourceRepresentation, YinDOMSource> function;
 
-    public SchemaSourceTransformer<YangSourceRepresentation, YinDomSource> schema;
+    public SchemaSourceTransformer<YangSourceRepresentation, YinDOMSource> schema;
 
     @Test
     void schemaSourceTransformerTest() {

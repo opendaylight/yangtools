@@ -16,10 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 
 /**
- * A {@link YinDomSource} representing a {@code submodule}.
+ * A {@link YinDOMSource} representing a {@code submodule}.
  */
 @NonNullByDefault
-public final class YinDOMSubmoduleSource extends YinDomSource {
+public final class YinDOMSubmoduleSource extends YinDOMSource {
     YinDOMSubmoduleSource(final SourceIdentifier sourceId, final DOMSource source, final SourceRefProvider refProvider,
             final @Nullable String symbolicName) {
         super(sourceId, source, refProvider, symbolicName);
@@ -34,7 +34,7 @@ public final class YinDOMSubmoduleSource extends YinDomSource {
 
     @Override
     public SourceInfo.Submodule extractSourceInfo() throws ExtractorException {
-        return new YinDomSourceInfoExtractor.ForSubmodule(statement(), refProvider()).extractSourceInfo();
+        return new YinDOMSourceInfoExtractor.ForSubmodule(statement(), refProvider()).extractSourceInfo();
     }
 
     @Override

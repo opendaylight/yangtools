@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.spi.source.YinDomSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -57,7 +57,7 @@ class YinFileStmtTest {
     }
 
     @NonNullByDefault
-    private static YinDomSource createSource(final String name) {
+    private static YinDOMSource createSource(final String name) {
         return assertDoesNotThrow(() -> TestUtils.assertYinSource("/semantic-statement-parser/yin/" + name));
     }
 }

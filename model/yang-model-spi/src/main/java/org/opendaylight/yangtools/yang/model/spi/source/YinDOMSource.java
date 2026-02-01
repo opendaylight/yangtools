@@ -29,8 +29,8 @@ import org.w3c.dom.Element;
  * Utility {@link YinSourceRepresentation} exposing a W3C {@link DOMSource} representation of YIN model.
  */
 @NonNullByDefault
-public abstract sealed class YinDomSource
-        implements YinSourceRepresentation, MaterializedSourceRepresentation<YinDomSource, Element>
+public abstract sealed class YinDOMSource
+        implements YinSourceRepresentation, MaterializedSourceRepresentation<YinDOMSource, Element>
         permits YinDOMModuleSource, YinDOMSubmoduleSource {
     /**
      * Interface for extracting {@link StatementSourceReference} from an {@link Element}.
@@ -77,7 +77,7 @@ public abstract sealed class YinDomSource
     private final DOMSource domSource;
     private final @Nullable String symbolicName;
 
-    YinDomSource(final SourceIdentifier sourceId, final DOMSource domSource, final SourceRefProvider refProvider,
+    YinDOMSource(final SourceIdentifier sourceId, final DOMSource domSource, final SourceRefProvider refProvider,
             final @Nullable String symbolicName) {
         this.sourceId = requireNonNull(sourceId);
         this.domSource = requireNonNull(domSource);
@@ -86,16 +86,16 @@ public abstract sealed class YinDomSource
     }
 
     /**
-     * Create a new {@link YinDomSource} using an identifier and a source.
+     * Create a new {@link YinDOMSource} using an identifier and a source.
      *
      * @param identifier Schema source identifier
      * @param domSource W3C DOM source
      * @param refProvider the {@link SourceRefProvider}
      * @param symbolicName Source symbolic name
-     * @return A new {@link YinDomSource} instance
+     * @return A new {@link YinDOMSource} instance
      * @since 14.0.22
      */
-    public static final YinDomSource of(final SourceIdentifier identifier, final DOMSource domSource,
+    public static final YinDOMSource of(final SourceIdentifier identifier, final DOMSource domSource,
             final SourceRefProvider refProvider, final @Nullable String symbolicName) {
         final var element = documentElementOf(domSource);
         final var rootNs = element.getNamespaceURI();
@@ -119,8 +119,8 @@ public abstract sealed class YinDomSource
     }
 
     @Override
-    public final Class<YinDomSource> getType() {
-        return YinDomSource.class;
+    public final Class<YinDOMSource> getType() {
+        return YinDOMSource.class;
     }
 
     @Override
