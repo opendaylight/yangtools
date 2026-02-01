@@ -26,6 +26,10 @@
         <maven.install.skip>true</maven.install.skip>
     </properties>
 
+    <modules>
+        <module>dagger-yang-parser-vanilla</module>
+    </modules>
+
     <profiles>
         <profile>
             <id>karaf</id>

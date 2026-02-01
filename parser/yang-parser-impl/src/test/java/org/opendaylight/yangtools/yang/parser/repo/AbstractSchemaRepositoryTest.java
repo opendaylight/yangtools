@@ -19,16 +19,20 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserFactoryComponent;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 abstract class AbstractSchemaRepositoryTest {
-    static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
+    static final @NonNull YangParserFactory PARSER_FACTORY =
+        DaggerVanillaYangParserFactoryComponent.create().parserFactory();
+    static final @NonNull YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
 
     static @NonNull EffectiveModelContext assertModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
@@ -48,7 +52,7 @@ abstract class AbstractSchemaRepositoryTest {
 
     static ListenableFuture<EffectiveModelContext> createModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
-        final var sharedSchemaRepository = new SharedSchemaRepository();
+        final var sharedSchemaRepository = new SharedSchemaRepository("test", PARSER_FACTORY);
         final var requiredSources = Arrays.stream(resources)
             .map(resource -> {
                 final var yangSource = assertYangTextResource(resource);
