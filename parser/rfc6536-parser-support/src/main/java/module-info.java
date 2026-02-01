@@ -16,10 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 module org.opendaylight.yangtools.rfc6536.parser.support {
     exports org.opendaylight.yangtools.rfc6536.parser.dagger;
 
-    // FIXME: do not export this package
-    exports org.opendaylight.yangtools.rfc6536.parser;
-
-    provides ParserExtension with org.opendaylight.yangtools.rfc6536.parser.impl.Rfc6536ParserExtension;
+    provides ParserExtension with org.opendaylight.yangtools.rfc6536.parser.Rfc6536ParserExtension;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;

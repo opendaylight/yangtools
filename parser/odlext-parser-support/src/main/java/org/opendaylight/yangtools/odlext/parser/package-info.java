@@ -9,6 +9,4 @@
  * YANG parser support for OpenDaylight extensions as defined in {@code yang-ext.yang} and
  * {@code odl-codegen-extensions.yang}.
  */
-// FIXME: do not export this package
-@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.odlext.parser;

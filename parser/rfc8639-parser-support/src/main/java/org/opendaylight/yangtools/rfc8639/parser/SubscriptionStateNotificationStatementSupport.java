@@ -23,13 +23,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class SubscriptionStateNotificationStatementSupport
+final class SubscriptionStateNotificationStatementSupport
         extends AbstractEmptyStatementSupport<SubscriptionStateNotificationStatement,
             SubscriptionStateNotificationEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(SubscriptionStateNotificationStatement.DEF).build();
 
-    public SubscriptionStateNotificationStatementSupport(final YangParserConfiguration config) {
+    SubscriptionStateNotificationStatementSupport(final YangParserConfiguration config) {
         super(SubscriptionStateNotificationStatement.DEF, StatementPolicy.exactReplica(), config, VALIDATOR);
     }
 
