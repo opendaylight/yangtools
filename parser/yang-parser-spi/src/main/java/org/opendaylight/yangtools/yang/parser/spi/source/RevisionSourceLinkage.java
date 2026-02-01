@@ -5,23 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.util.Collection;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
-final class RevisionDependencyResolver extends DependencyResolver {
-    RevisionDependencyResolver(final Map<SourceIdentifier, SourceInfo> depInfo) {
+final class RevisionSourceLinkage extends SourceLinkage {
+    RevisionSourceLinkage(final Map<SourceIdentifier, SourceInfo> depInfo) {
         super(depInfo);
-    }
-
-    @Override
-    YangParserConfiguration parserConfig() {
-        return YangParserConfiguration.DEFAULT;
     }
 
     @Override

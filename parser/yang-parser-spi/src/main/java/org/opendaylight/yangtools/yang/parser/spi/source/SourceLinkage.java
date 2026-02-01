@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import java.util.ArrayList;
@@ -14,30 +15,32 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
-import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Inter-module dependency resolved. Given a set of schema source identifiers and their corresponding dependency
- * information, the {@link #create(Map)} method creates a a view of how consistent the dependencies are. In particular,
- * this detects whether any import/include/belongs-to statements are unsatisfied.
+ * The result of a single resolution attempt. Given a set of schema source identifiers and their corresponding
+ * dependency information, the {@link #of(ImportResolutionMode, Map)} method creates a view of how consistent
+ * the dependencies are. In particular, this detects whether any import/include/belongs-to statements are unsatisfied.
  */
 // FIXME: improve this class to track and expose how wildcard imports were resolved.
 //        That information will allow us to track "damage" to dependency resolution
 //        as new models are added to a schema context.
-abstract class DependencyResolver {
-    private static final Logger LOG = LoggerFactory.getLogger(DependencyResolver.class);
+@Beta
+public abstract sealed class SourceLinkage permits RevisionSourceLinkage {
+    private static final Logger LOG = LoggerFactory.getLogger(SourceLinkage.class);
 
     private final ImmutableList<SourceIdentifier> resolvedSources;
     private final ImmutableList<SourceIdentifier> unresolvedSources;
     private final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports;
 
-    DependencyResolver(final Map<SourceIdentifier, SourceInfo> depInfo) {
+    SourceLinkage(final Map<SourceIdentifier, SourceInfo> depInfo) {
         final var resolved = HashSet.<SourceIdentifier>newHashSet(depInfo.size());
         final var pending = new HashMap<>(depInfo);
         final var submodules = new ArrayList<Submodule>();
@@ -102,17 +105,25 @@ abstract class DependencyResolver {
         unsatisfiedImports = unstatisfied.build();
     }
 
+    @NonNullByDefault
+    public static final SourceLinkage of(final ImportResolutionMode resolutionMode,
+            final Map<SourceIdentifier, SourceInfo> depInfo) {
+        return switch (resolutionMode) {
+            case DEFAULT -> new RevisionSourceLinkage(depInfo);
+        };
+    }
+
     /**
-     * Collection of sources which have been resolved.
+     * {@return collection of sources which have been resolved}
      */
-    final ImmutableList<SourceIdentifier> resolvedSources() {
+    public final ImmutableList<SourceIdentifier> resolvedSources() {
         return resolvedSources;
     }
 
     /**
-     * Collection of sources which have not been resolved due to missing dependencies.
+     * {@return core collection of sources which have not been resolved due to missing dependencies}
      */
-    final ImmutableList<SourceIdentifier> unresolvedSources() {
+    public final ImmutableList<SourceIdentifier> unresolvedSources() {
         return unresolvedSources;
     }
 
@@ -128,7 +139,7 @@ abstract class DependencyResolver {
      *       reported</li>
      * </ul>
      */
-    final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports() {
+    public final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports() {
         return unsatisfiedImports;
     }
 
@@ -149,6 +160,4 @@ abstract class DependencyResolver {
     }
 
     abstract boolean isKnown(Collection<SourceIdentifier> haystack, SourceDependency dependency);
-
-    abstract YangParserConfiguration parserConfig();
 }
