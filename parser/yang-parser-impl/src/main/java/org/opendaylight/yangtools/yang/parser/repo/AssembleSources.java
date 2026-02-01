@@ -23,10 +23,13 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.ExtractorException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceLinkage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +69,16 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
         }
 
         LOG.debug("Resolving dependency reactor {}", deps);
-        final var res = switch (config.getStatementParserMode()) {
-            case DEFAULT_MODE -> new RevisionDependencyResolver(deps);
-        };
+        final YangParserConfiguration parserConfig;
+        final SourceLinkage res;
+        final var parserMode = config.getStatementParserMode();
+        switch (parserMode) {
+            case null -> throw new NullPointerException();
+            case DEFAULT_MODE -> {
+                res = SourceLinkage.of(ImportResolutionMode.DEFAULT, deps);
+                parserConfig = YangParserConfiguration.DEFAULT;
+            }
+        }
 
         final var unresolved = res.unresolvedSources();
         if (!unresolved.isEmpty()) {
@@ -78,7 +88,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
                     res.resolvedSources(), res.unsatisfiedImports()));
         }
 
-        final var parser = parserFactory.createParser(res.parserConfig());
+        final var parser = parserFactory.createParser(parserConfig);
         config.getSupportedFeatures().ifPresent(parser::setSupportedFeatures);
         config.getModulesDeviatedByModules().ifPresent(parser::setModulesWithSupportedDeviations);
 
