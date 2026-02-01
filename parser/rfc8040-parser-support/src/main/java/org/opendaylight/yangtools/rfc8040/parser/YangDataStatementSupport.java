@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class YangDataStatementSupport
+final class YangDataStatementSupport
         extends AbstractStatementSupport<YangDataName, YangDataStatement, YangDataEffectiveStatement> {
     private static final ParserNamespace<YangDataName,
         StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> NAMESPACE =
@@ -84,7 +84,7 @@ public final class YangDataStatementSupport
     @VisibleForTesting
     static final YangDataName YANG_API = new YangDataName(YangDataConstants.RFC8040_MODULE, "yang-api");
 
-    public YangDataStatementSupport(final YangParserConfiguration config) {
+    YangDataStatementSupport(final YangParserConfiguration config) {
         super(YangDataStatement.DEF, StatementPolicy.reject(), SubtreePolicy.structure(true), config, VALIDATOR);
     }
 

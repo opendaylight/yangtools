@@ -11,6 +11,4 @@
  * add support for this extension, or wire it through
  * {@link org.opendaylight.yangtools.yang.parser.spi.ParserExtension}.
  */
-// FIXME: 15.0.0: do not export this package
-@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc6241.parser;

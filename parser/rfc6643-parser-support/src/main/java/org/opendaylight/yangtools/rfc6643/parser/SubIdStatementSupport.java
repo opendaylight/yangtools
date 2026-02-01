@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
@@ -22,13 +21,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-@Beta
-public final class SubIdStatementSupport
-        extends AbstractStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
-    private static final SubstatementValidator VALIDATOR =
-            SubstatementValidator.builder(SubIdStatement.DEF).build();
+final class SubIdStatementSupport extends AbstractStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(SubIdStatement.DEF).build();
 
-    public SubIdStatementSupport(final YangParserConfiguration config) {
+    SubIdStatementSupport(final YangParserConfiguration config) {
         super(SubIdStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
