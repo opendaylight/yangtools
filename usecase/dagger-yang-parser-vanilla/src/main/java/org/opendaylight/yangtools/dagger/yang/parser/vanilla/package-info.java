@@ -6,7 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Vanilla YANG Parser Dagger components: {@link VanillaYangLibResolverComponent}
- * and {@link VanillaYangParserFactoryComponent}.
+ * Vanilla YANG Parser Dagger component: {@link VanillaYangParserComponent}.
  */
 package org.opendaylight.yangtools.dagger.yang.parser.vanilla;
