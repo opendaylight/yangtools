@@ -37,7 +37,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     private final YinTextToDOMSourceTransformer textToDOM;
 
     /**
-     * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
+     * Construct a new {@link YangParserFactory} backed the default reactor.
      */
     @Deprecated
     public DefaultYangParserFactory(final YangTextToIRSourceTransformer textToIR,
