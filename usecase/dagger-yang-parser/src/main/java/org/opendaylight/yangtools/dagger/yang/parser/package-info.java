@@ -6,11 +6,11 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Dagger components, specifically {@link YangParserComponent}, which combines the two modules with the reference XPath
- * parser implementation and all production-ready parser extensions defined in YANGTOOLS.
+ * Dagger components, specifically {@link DefaultYangParserComponent}, which combines the two modules with the reference
+ * XPath parser implementation and all production-ready parser extensions defined in YANGTOOLS.
  *
  * <p>This package is not exposed to OSGi runtime.
  *
- * @since 14.0.21
+ * @since 15.0.0
  */
-package org.opendaylight.yangtools.yang.parser.impl.dagger;
+package org.opendaylight.yangtools.dagger.yang.parser;
