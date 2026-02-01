@@ -30,8 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Support for {@link GetFilterElementAttributesStatement} and its effective view.
  */
-// FIXME: 15:0.0: hide this class
-public final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStatementSupport<
+final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStatementSupport<
         GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
     private static final SubstatementValidator VALIDATOR =

@@ -16,10 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 module org.opendaylight.yangtools.openconfig.parser.support {
     exports org.opendaylight.yangtools.openconfig.parser.dagger;
 
-    // FIXME: do not export this package
-    exports org.opendaylight.yangtools.openconfig.parser;
-
-    provides ParserExtension with org.opendaylight.yangtools.openconfig.parser.impl.OpenConfigParserExtension;
+    provides ParserExtension with org.opendaylight.yangtools.openconfig.parser.OpenConfigParserExtension;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.parser.api;
@@ -40,4 +37,3 @@ module org.opendaylight.yangtools.openconfig.parser.support {
     requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
 }
-

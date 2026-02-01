@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.openconfig.parser.dagger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.openconfig.parser.impl.OpenConfigParserExtension;
+import org.opendaylight.yangtools.openconfig.parser.OpenConfigParserExtension;
 
 class DaggerTestComponentTest {
     @Test

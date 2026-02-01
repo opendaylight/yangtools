@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc6643.parser.impl;
+package org.opendaylight.yangtools.rfc6643.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
@@ -16,13 +16,6 @@ import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
-import org.opendaylight.yangtools.rfc6643.parser.AliasStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.DefValStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.DisplayHintStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.ImpliedStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.MaxAccessStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.OidStatementSupport;
-import org.opendaylight.yangtools.rfc6643.parser.SubIdStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.AbstractParserExtension;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;

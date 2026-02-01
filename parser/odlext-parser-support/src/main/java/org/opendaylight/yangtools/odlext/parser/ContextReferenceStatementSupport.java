@@ -19,12 +19,12 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class ContextReferenceStatementSupport
+final class ContextReferenceStatementSupport
         extends AbstractIdentityAwareStatementSupport<ContextReferenceStatement, ContextReferenceEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(ContextReferenceStatement.DEF).build();
 
-    public ContextReferenceStatementSupport(final YangParserConfiguration config) {
+    ContextReferenceStatementSupport(final YangParserConfiguration config) {
         super(ContextReferenceStatement.DEF, config, VALIDATOR);
     }
 
