@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.Ordering;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 
 /**
  * Common interface for {@link DataSchemaNode}s which can have an {@code ordered-by} substatement.
@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveSta
  * @param <E> Effective representation of the underlying YANG statement
  */
 @Beta
-public interface UserOrderedAware<E extends OrderedByAwareEffectiveStatement<?, ?>>
+public interface UserOrderedAware<E extends OrderedByEffectiveStatement.OptionalIn<?, ?>>
         extends EffectiveStatementEquivalent<E> {
     /**
      * YANG {@code ordered-by} statement. It defines whether the order of entries within this node are determined by the

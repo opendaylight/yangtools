@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -266,7 +266,7 @@ public final class EffectiveStatementMixins {
     // FIXME: 9.0.0: remove this mixin once we have a properly-cached DataTree and JSON/XML codec tree and the speed
     //               of isUserOrdered() is not really critical.
     public interface UserOrderedAwareMixin<A, D extends DeclaredStatement<A>,
-            E extends OrderedByAwareEffectiveStatement<A, D>>
+            E extends OrderedByEffectiveStatement.OptionalIn<A, D>>
             extends EffectiveStatementWithFlags<A, D>, UserOrderedAware<E> {
         @Override
         default boolean isUserOrdered() {
