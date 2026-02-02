@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
- * Declared statement representation of 'get-filter-element-attributes' extension defined in
+ * Declared statement representation of {@code extension get-filter-element-attributes} defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
 public interface GetFilterElementAttributesStatement extends UnknownStatement<Empty> {

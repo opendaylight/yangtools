@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
- * Declared statement representation of 'default-deny-all' extension defined in
+ * Declared statement representation of {@code extension default-deny-all} defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  */
 public interface DefaultDenyAllStatement extends UnknownStatement<Empty> {

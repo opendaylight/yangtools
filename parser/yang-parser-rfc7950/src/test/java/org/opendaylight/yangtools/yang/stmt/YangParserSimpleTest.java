@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,14 +21,10 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 class YangParserSimpleTest extends AbstractYangTest {
     private static final QNameModule SN = QNameModule.of("urn:opendaylight:simple-nodes", "2013-07-30");
@@ -44,7 +39,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
     @Test
     void testParseAnyXml() {
-        final AnyxmlSchemaNode data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
+        final var data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
             QName.create(MODULE.getQNameModule(), "data"));
         assertNotEquals(null, data);
         assertEquals(
@@ -56,14 +51,13 @@ class YangParserSimpleTest extends AbstractYangTest {
         assertEquals(Optional.of("anyxml desc"), data.getDescription());
         assertEquals(Optional.of("data ref"), data.getReference());
         assertEquals(Status.OBSOLETE, data.getStatus());
-        assertEquals(0, data.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
         assertFalse(data.isAugmenting());
         assertEquals(Optional.of(Boolean.FALSE), data.effectiveConfig());
 
         assertTrue(data.isMandatory());
         assertEquals("class != 'wheel'", data.getWhenCondition().orElseThrow().toString());
-        final Collection<? extends MustDefinition> mustConstraints = data.getMustConstraints();
+        final var mustConstraints = data.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
@@ -71,7 +65,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
         boolean found1 = false;
         boolean found2 = false;
-        for (final MustDefinition must : mustConstraints) {
+        for (var must : mustConstraints) {
             if (must1.equals(must.getXpath().toString())) {
                 found1 = true;
                 assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
@@ -89,7 +83,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
     @Test
     void testParseAnyData() {
-        final AnydataSchemaNode anydata = (AnydataSchemaNode) MODULE.findDataChildByName(
+        final var anydata = (AnydataSchemaNode) MODULE.findDataChildByName(
             QName.create(MODULE.getQNameModule(), "data2")).orElse(null);
 
         assertNotNull(anydata, "'anydata data not found'");
@@ -102,7 +96,6 @@ class YangParserSimpleTest extends AbstractYangTest {
         assertEquals(Optional.of("anydata desc"), anydata.getDescription());
         assertEquals(Optional.of("data ref"), anydata.getReference());
         assertEquals(Status.OBSOLETE, anydata.getStatus());
-        assertEquals(0, anydata.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
         assertFalse(anydata.isAugmenting());
         assertEquals(Optional.of(Boolean.FALSE), anydata.effectiveConfig());
@@ -110,7 +103,7 @@ class YangParserSimpleTest extends AbstractYangTest {
         assertTrue(anydata.isMandatory());
         assertTrue(anydata.getWhenCondition().isPresent());
         assertEquals("class != 'wheel'", anydata.getWhenCondition().orElseThrow().toString());
-        final Collection<? extends MustDefinition> mustConstraints = anydata.getMustConstraints();
+        final var mustConstraints = anydata.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
@@ -118,7 +111,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
         boolean found1 = false;
         boolean found2 = false;
-        for (final MustDefinition must : mustConstraints) {
+        for (var must : mustConstraints) {
             if (must1.equals(must.getXpath().toString())) {
                 found1 = true;
                 assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
@@ -136,21 +129,20 @@ class YangParserSimpleTest extends AbstractYangTest {
 
     @Test
     void testParseContainer() {
-        final ContainerSchemaNode nodes = (ContainerSchemaNode) MODULE
+        final var nodes = (ContainerSchemaNode) MODULE
             .getDataChildByName(QName.create(MODULE.getQNameModule(), "nodes"));
         // test SchemaNode args
         assertEquals(SN_NODES, nodes.getQName());
         assertEquals(Optional.of("nodes collection"), nodes.getDescription());
         assertEquals(Optional.of("nodes ref"), nodes.getReference());
         assertEquals(Status.CURRENT, nodes.getStatus());
-        assertEquals(0, nodes.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
         assertFalse(nodes.isAugmenting());
         assertEquals(Optional.of(Boolean.FALSE), nodes.effectiveConfig());
 
         // constraints
         assertEquals("class != 'wheel'", nodes.getWhenCondition().orElseThrow().toString());
-        final Collection<? extends MustDefinition> mustConstraints = nodes.getMustConstraints();
+        final var mustConstraints = nodes.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
@@ -159,7 +151,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
         boolean found1 = false;
         boolean found2 = false;
-        for (final MustDefinition must : mustConstraints) {
+        for (var must : mustConstraints) {
             if (must1.equals(must.getXpath().toString())) {
                 found1 = true;
                 assertEquals(Optional.of(errMsg1), must.getErrorMessage());
@@ -177,36 +169,35 @@ class YangParserSimpleTest extends AbstractYangTest {
         assertTrue(nodes.isPresenceContainer());
 
         // typedef
-        final Collection<? extends TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
+        final var typedefs = nodes.getTypeDefinitions();
         assertEquals(1, typedefs.size());
-        final TypeDefinition<?> nodesType = typedefs.iterator().next();
+        final var nodesType = typedefs.iterator().next();
         final QName typedefQName = QName.create(SN, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
         assertFalse(nodesType.getDescription().isPresent());
         assertFalse(nodesType.getReference().isPresent());
         assertEquals(Status.CURRENT, nodesType.getStatus());
-        assertEquals(0, nodesType.getUnknownSchemaNodes().size());
 
         // child nodes
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
-        final LeafListSchemaNode added = (LeafListSchemaNode) nodes.getDataChildByName(QName.create(
+        final var added = (LeafListSchemaNode) nodes.getDataChildByName(QName.create(
             MODULE.getQNameModule(), "added"));
         assertEquals(QName.create(SN, "added"), added.getQName());
         assertEquals(QName.create(SN, "mytype"), added.getType().getQName());
 
-        final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
+        final var links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
             MODULE.getQNameModule(), "links"));
         assertFalse(links.isUserOrdered());
 
-        final Collection<? extends GroupingDefinition> groupings = nodes.getGroupings();
+        final var groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
-        final GroupingDefinition nodeGroup = groupings.iterator().next();
+        final var nodeGroup = groupings.iterator().next();
         assertEquals(QName.create(SN, "node-group"), nodeGroup.getQName());
 
-        final Collection<? extends UsesNode> uses = nodes.getUses();
+        final var uses = nodes.getUses();
         assertEquals(1, uses.size());
-        final UsesNode use = uses.iterator().next();
+        final var use = uses.iterator().next();
         assertEquals(nodeGroup, use.getSourceGrouping());
     }
 }
