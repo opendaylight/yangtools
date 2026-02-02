@@ -116,6 +116,17 @@ public final class IdentifierBinding {
         }
     }
 
+    @Beta
+    public QName createNodeIdentifier(final CommonStmtCtx stmt, final String prefix, final String identifier) {
+        try {
+            return nodeIdentifier.createNodeIdentifier(prefix, identifier);
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(e.getMessage(), stmt, e);
+        } catch (ArgumentSyntaxException e) {
+            throw newSourceException(stmt, prefix + ":" + identifier, e);
+        }
+    }
+
     /**
      * Parse a statement argument as an {@code absolute-schema-nodeid}.
      *
