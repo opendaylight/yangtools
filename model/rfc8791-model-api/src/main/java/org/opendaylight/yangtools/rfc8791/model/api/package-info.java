@@ -6,8 +6,8 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG metamodel extensions to support YANG Data Structure Extensions, as defined in
- * <a href="https://www.rfc-editor.org/rfc/rfc8791">RFC8791</a>.
+ * YANG metamodel extensions to support YANG Data Structure Extensions, {@link StructureStatement} and
+ * {@link AugmentStructureStatement}, as defined in <a href="https://www.rfc-editor.org/rfc/rfc8791">RFC8791</a>.
  *
  * @since 14.0.21
  */

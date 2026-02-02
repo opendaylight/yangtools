@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG metamodel extensions to support RESTCONF, as defined in
+ * YANG metamodel extensions to support RESTCONF, {@link YangDataStatement}, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8040">RFC8040</a>.
  */
 @org.osgi.annotation.bundle.Export

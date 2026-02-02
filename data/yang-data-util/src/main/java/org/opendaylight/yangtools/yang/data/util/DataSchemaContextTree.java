@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.CheckedValue;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -110,13 +110,13 @@ public final class DataSchemaContextTree {
 
     // Split out to aid inlining
     private DataSchemaContext.@Nullable Composite loadYangData(final @NonNull YangDataName name) {
-        final var optModule = modelContext.findModule(name.module());
+        final var optModule = modelContext.findModuleStatement(name.module());
         if (optModule.isEmpty()) {
             return null;
         }
 
-        for (var unknownSchema : optModule.orElseThrow().getUnknownSchemaNodes()) {
-            if (unknownSchema instanceof YangDataSchemaNode schema && name.equals(schema.name())) {
+        for (var unknownSchema : optModule.orElseThrow().effectiveSubstatements()) {
+            if (unknownSchema instanceof YangDataEffectiveStatement schema && name.equals(schema.argument())) {
                 final var created = new YangDataContext(schema);
                 final var raced = yangData.putIfAbsent(name, created);
                 return raced != null ? raced : created;
