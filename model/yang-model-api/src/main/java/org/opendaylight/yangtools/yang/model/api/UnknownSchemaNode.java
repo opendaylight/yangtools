@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 /**
  * Contains the methods for getting the details about the unknown node.
  */
+@Deprecated(since = "14.0.23", forRemoval = true)
 public interface UnknownSchemaNode extends SchemaNode, CopyableNode,
         EffectiveStatementEquivalent<UnknownEffectiveStatement<?, ?>> {
     /**
@@ -22,6 +23,7 @@ public interface UnknownSchemaNode extends SchemaNode, CopyableNode,
      *
      * @return QName with name the name of the unknown node.
      */
+    @Deprecated
     @NonNull QName getNodeType();
 
     /**
@@ -29,5 +31,6 @@ public interface UnknownSchemaNode extends SchemaNode, CopyableNode,
      *
      * @return string with the name of unknown node.
      */
+    @Deprecated
     String getNodeParameter();
 }
