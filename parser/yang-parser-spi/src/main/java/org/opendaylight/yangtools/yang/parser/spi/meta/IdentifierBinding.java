@@ -117,6 +117,27 @@ public final class IdentifierBinding {
     }
 
     /**
+     * Create a {@code node-identifier} from its {@code prefix} and {@code identifier}.
+     *
+     * @param stmt the statement
+     * @param prefix the prefix
+     * @param localName the identifier
+     * @return An interned QName
+     * @throws SourceException if the string is not a valid YANG node identifier
+     * @throws InferenceException if YANG node identifier's module cannot be resolved
+     */
+    @Beta
+    public QName createNodeIdentifier(final CommonStmtCtx stmt, final String prefix, final String localName) {
+        try {
+            return nodeIdentifier.createNodeIdentifier(prefix, localName);
+        } catch (ArgumentBindingException e) {
+            throw new InferenceException(e.getMessage(), stmt, e);
+        } catch (ArgumentSyntaxException e) {
+            throw newSourceException(stmt, prefix + ":" + identifier, e);
+        }
+    }
+
+    /**
      * Parse a statement argument as an {@code absolute-schema-nodeid}.
      *
      * @param stmt the statement
