@@ -22,8 +22,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
@@ -67,25 +65,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 public final class EffectiveStatementMixins {
     // Marker interface requiring all mixins to be derived from EffectiveStatement.
     private interface Mixin<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
-        @SuppressWarnings("unchecked")
-        default <T> @NonNull Collection<? extends @NonNull T> filterEffectiveStatements(final Class<T> type) {
-            // Yeah, this is not nice, but saves one transformation
-            return (Collection<? extends T>) Collections2.filter(effectiveSubstatements(), type::isInstance);
-        }
-    }
-
-    /**
-     * Bridge between {@link EffectiveStatement} and {@link AugmentationTarget}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface AugmentationTargetMixin<A, D extends DeclaredStatement<A>>
-            extends Mixin<A, D>, AugmentationTarget {
-        @Override
-        default Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
-            return filterEffectiveStatements(AugmentationSchemaNode.class);
-        }
+        // Nothing else
     }
 
     /**
@@ -364,8 +344,8 @@ public final class EffectiveStatementMixins {
      */
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
-                    MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
-                    SchemaNodeMixin<D>, CopyableMixin<QName, D> {
+                    MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, SchemaNodeMixin<D>,
+                    CopyableMixin<QName, D> {
         @Override
         default Optional<ActionDefinition> findAction(final QName qname) {
             return Optional.empty();

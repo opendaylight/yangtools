@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.meta;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -128,5 +129,12 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
     default <Z extends EffectiveStatement<?, ?>> @NonNull Collection<Z> collectEffectiveSubstatements(
             final @NonNull Class<Z> stmt) {
         return streamEffectiveSubstatements(stmt).collect(Collectors.toUnmodifiableList());
+    }
+
+    @Beta
+    @SuppressWarnings("unchecked")
+    default <T> @NonNull Collection<? extends @NonNull T> filterEffectiveStatements(final Class<T> type) {
+        // Yeah, this is not nice, but saves one transformation
+        return (Collection<? extends T>) Collections2.filter(effectiveSubstatements(), type::isInstance);
     }
 }

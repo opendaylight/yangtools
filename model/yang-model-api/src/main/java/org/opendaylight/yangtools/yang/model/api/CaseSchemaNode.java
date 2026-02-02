@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 /**
  * The CaseSchemaNode interface is used to define branches of the ChoiceSchemaNode.
  */
-public interface CaseSchemaNode extends DataSchemaNode, DataNodeContainer, AugmentationTarget,
-        EffectiveStatementEquivalent<CaseEffectiveStatement> {
-
+public interface CaseSchemaNode extends DataSchemaNode, DataNodeContainer,
+    AugmentationTarget.Mixin<CaseEffectiveStatement> {
+    // Nothing else
 }

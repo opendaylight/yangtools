@@ -18,13 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
 
 public abstract class AbstractChoiceEffectiveStatement extends DefaultWithDataTree<QName, @NonNull ChoiceStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DataSchemaNodeMixin<@NonNull ChoiceStatement>,
-            AugmentationTargetMixin<QName, @NonNull ChoiceStatement>, MandatoryMixin<QName, @NonNull ChoiceStatement> {
+            MandatoryMixin<QName, @NonNull ChoiceStatement> {
     private final int flags;
 
     AbstractChoiceEffectiveStatement(final @NonNull ChoiceStatement declared,

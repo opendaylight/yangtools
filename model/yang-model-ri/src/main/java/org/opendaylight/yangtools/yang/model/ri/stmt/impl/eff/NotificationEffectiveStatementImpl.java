@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.CopyableMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
@@ -29,7 +28,6 @@ public final class NotificationEffectiveStatementImpl
         implements NotificationDefinition, NotificationEffectiveStatement,
                    SchemaNodeMixin<@NonNull NotificationStatement>,
                    DataNodeContainerMixin<QName, @NonNull NotificationStatement>,
-                   AugmentationTargetMixin<QName, @NonNull NotificationStatement>,
                    CopyableMixin<QName, @NonNull NotificationStatement>,
                    MustConstraintMixin<QName, @NonNull NotificationStatement> {
 
