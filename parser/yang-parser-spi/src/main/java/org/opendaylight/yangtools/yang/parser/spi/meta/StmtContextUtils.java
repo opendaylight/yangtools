@@ -443,22 +443,6 @@ public final class StmtContextUtils {
             leafCtx.argument(), listCtx.argument(), offender.publicDefinition().humanName());
     }
 
-    /**
-     * Parse a YANG identifier string in context of a statement.
-     *
-     * @param ctx Statement context
-     * @param str String to be parsed
-     * @return An interned QName
-     * @throws NullPointerException if any of the arguments are null
-     * @throws SourceException if the string is not a valid YANG identifier
-     * @deprecated Use {@link StmtContext#identifierBinding()} instead
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static @NonNull QName parseIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
-        return internedQName(ctx, str);
-    }
-
     @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
@@ -466,37 +450,6 @@ public final class StmtContextUtils {
             InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
                 "Cannot resolve QNameModule for '%s'", prefix),
             localName);
-    }
-
-    /**
-     * Parse a YANG node identifier string in context of a statement.
-     *
-     * @param ctx Statement context
-     * @param str String to be parsed
-     * @return An interned QName
-     * @throws NullPointerException if any of the arguments are null
-     * @throws SourceException if the string is not a valid YANG node identifier
-     * @deprecated Use {@link StmtContext#identifierBinding()} instead
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(str.isEmpty(), ctx, "Node identifier may not be an empty string");
-
-        final int colon = str.indexOf(':');
-        if (colon == -1) {
-            return internedQName(ctx, str);
-        }
-
-        final var prefix = str.substring(0, colon);
-        SourceException.throwIf(prefix.isEmpty(), ctx, "String '%s' has an empty prefix", str);
-        final var localName = str.substring(colon + 1);
-        SourceException.throwIf(localName.isEmpty(), ctx, "String '%s' has an empty identifier", str);
-
-        return parseNodeIdentifier(ctx, prefix, localName);
-    }
-
-    private static @NonNull QName internedQName(final @NonNull StmtContext<?, ?, ?> ctx, final String localName) {
-        return internedQName(ctx, ctx.definingModule(), localName);
     }
 
     @Beta
