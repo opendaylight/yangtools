@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
+package org.opendaylight.yangtools.rfc6020.parser;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -46,7 +46,7 @@ class PathExpressionParserTest {
     @Mock
     public StatementSourceReference ref;
 
-    private final PathExpressionParser parser = new PathExpressionParser();
+    private final PathArgumentParser parser = new PathArgumentParser();
 
     @BeforeEach
     void before() {

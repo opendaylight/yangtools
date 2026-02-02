@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
+package org.opendaylight.yangtools.rfc6020.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
@@ -29,7 +29,7 @@ public final class PathStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(PathStatement.DEF).build();
 
-    private final PathExpressionParser parser = new PathExpressionParser();
+    private final PathArgumentParser parser = new PathArgumentParser();
 
     public PathStatementSupport(final YangParserConfiguration config) {
         // TODO: can 'path' really be copied?

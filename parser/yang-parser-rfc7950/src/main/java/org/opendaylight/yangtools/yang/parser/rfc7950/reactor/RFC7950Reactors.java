@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc6020.parser.PathStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
@@ -84,7 +85,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.ModuleStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.QNameModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC7950Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path.PathStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern.PatternStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule.SubmoduleStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.BaseTypeNamespace;

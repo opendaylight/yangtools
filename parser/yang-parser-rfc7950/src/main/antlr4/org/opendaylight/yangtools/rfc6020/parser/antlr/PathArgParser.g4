@@ -1,7 +1,7 @@
-parser grammar LeafRefPathParser;
+parser grammar PathArgParser;
 
 options {
-    tokenVocab = LeafRefPathLexer;
+    tokenVocab = PathArgLexer;
 }
 
 path_arg : (deref_expr | path_str) EOF;
