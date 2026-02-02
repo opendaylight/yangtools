@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -31,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
@@ -295,44 +292,6 @@ public final class StmtContextUtils {
         return new SourceException(leafCtx,
             "leaf statement %s is a key in list statement %s: it cannot be conditional on %s statement",
             leafCtx.argument(), listCtx.argument(), offender.publicDefinition().humanName());
-    }
-
-    @Beta
-    public static @NonNull QName internedQName(final @NonNull CommonStmtCtx ctx, final QNameModule module,
-            final String localName) {
-        final QName template;
-        try {
-            template = QName.create(module, localName);
-        } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid identifier '%s'", localName);
-        }
-        return template.intern();
-    }
-
-    /**
-     * Return the {@link QNameModule} corresponding to a prefix in the specified {@link RootStmtContext}. The lookup
-     * consults {@code import} and {@code belongs-to} statements.
-     *
-     * @param ctx the {@link RootStmtContext}
-     * @param prefix the prefix
-     * @return the {@link QNameModule}, or {@code null} if not found
-     */
-    // FIXME: 15.0.0: hide/relocate this method?
-    public static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull RootStmtContext<?, ?, ?> ctx,
-            final String prefix) {
-        final var importedModule = ctx.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
-        final var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
-        if (qnameModule != null) {
-            return qnameModule;
-        }
-
-        // This is a submodule, so we also need consult 'belongs-to' mapping
-        if (ctx.produces(SubmoduleStatement.DEF)) {
-            return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-                ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
-        }
-
-        return null;
     }
 
     public static @Nullable Revision latestRevisionIn(final Collection<? extends @NonNull StmtContext<?, ?, ?>> stmts) {
