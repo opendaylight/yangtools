@@ -52,14 +52,13 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
             return true;
         }
 
-        final EnumTypeDefinition other = TypeDefinitions.castIfEquals(EnumTypeDefinition.class, type, obj);
+        final var other = TypeDefinitions.castIfEquals(EnumTypeDefinition.class, type, obj);
         return other != null && type.getValues().equals(other.getValues());
     }
 
     static int hashCode(final @NonNull EnumTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null),
-            type.getDefaultValue(), type.getValues());
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null), type.getDefaultValue(),
+            type.getValues());
     }
 
     static String toString(final @NonNull EnumTypeDefinition type) {

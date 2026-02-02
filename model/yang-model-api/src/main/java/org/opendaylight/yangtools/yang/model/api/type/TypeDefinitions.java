@@ -20,13 +20,13 @@ final class TypeDefinitions {
     }
 
     static int basicHashCode(final @NonNull TypeDefinition<?> type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null));
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null));
     }
 
     static int hashCode(final @NonNull RangeRestrictedTypeDefinition<?, ?> type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
     }
 
     static <T extends RangeRestrictedTypeDefinition<T, ?>> boolean equals(final @NonNull Class<T> clazz,
@@ -35,7 +35,7 @@ final class TypeDefinitions {
             return true;
         }
 
-        final @Nullable T other = castIfEquals(clazz, type, obj);
+        final var other = castIfEquals(clazz, type, obj);
         return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
     }
 
@@ -49,11 +49,10 @@ final class TypeDefinitions {
             return null;
         }
 
-        final @NonNull T other = clazz.cast(obj);
+        final var other = clazz.cast(obj);
         return Objects.equals(type.getQName(), other.getQName())
                 && Objects.equals(type.getBaseType(), other.getBaseType())
                 && Objects.equals(type.getDefaultValue(), other.getDefaultValue())
-                && Objects.equals(type.getUnknownSchemaNodes(), other.getUnknownSchemaNodes())
                 && Objects.equals(type.getUnits(), other.getUnits()) ? other : null;
     }
 

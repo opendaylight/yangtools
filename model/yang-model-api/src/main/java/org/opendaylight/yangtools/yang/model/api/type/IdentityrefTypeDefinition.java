@@ -27,8 +27,8 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
     @NonNull Set<? extends @NonNull IdentitySchemaNode> getIdentities();
 
     static int hashCode(final @NonNull IdentityrefTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getIdentities());
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null), type.getIdentities());
     }
 
     static boolean equals(final @NonNull IdentityrefTypeDefinition type, final @Nullable Object obj) {
@@ -36,8 +36,7 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
             return true;
         }
 
-        final IdentityrefTypeDefinition other = TypeDefinitions.castIfEquals(IdentityrefTypeDefinition.class, type,
-            obj);
+        final var other = TypeDefinitions.castIfEquals(IdentityrefTypeDefinition.class, type, obj);
         return other != null && type.getIdentities().equals(other.getIdentities());
     }
 
