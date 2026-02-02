@@ -10,16 +10,21 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class RegularRevisionEffectiveStatement extends WithSubstatements<Revision, @NonNull RevisionStatement>
-        implements RevisionEffectiveStatement, DocumentedNodeMixin<Revision, @NonNull RevisionStatement> {
+        implements RevisionEffectiveStatement, DocumentedNode.Mixin<RevisionEffectiveStatement> {
     public RegularRevisionEffectiveStatement(final @NonNull RevisionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
+    }
+
+    @Override
+    public RevisionEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 }
