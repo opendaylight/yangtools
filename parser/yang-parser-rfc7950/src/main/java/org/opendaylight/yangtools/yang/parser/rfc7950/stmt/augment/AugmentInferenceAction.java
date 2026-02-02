@@ -19,12 +19,19 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -197,7 +204,7 @@ final class AugmentInferenceAction implements InferenceAction {
     }
 
     private static void checkForMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx) {
-        if (StmtContextUtils.isNonPresenceContainer(sourceCtx)) {
+        if (isNonPresenceContainer(sourceCtx)) {
             /*
              * We need to iterate over both declared and effective sub-statements,
              * because a mandatory node can be:
@@ -208,7 +215,7 @@ final class AugmentInferenceAction implements InferenceAction {
             sourceCtx.allSubstatementsStream().forEach(AugmentInferenceAction::checkForMandatoryNodes);
         }
 
-        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx), sourceCtx,
+        InferenceException.throwIf(isMandatoryNode(sourceCtx), sourceCtx,
             "An augment cannot add node '%s' because it is mandatory and in module different than target",
             sourceCtx.rawArgument());
     }
@@ -244,9 +251,8 @@ final class AugmentInferenceAction implements InferenceAction {
              * return false and skip mandatory nodes validation, because these nodes
              * are not mandatory node containers according to RFC 6020 section 3.1.
              */
-            if (StmtContextUtils.isPresenceContainer(targetCtx)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ChoiceStatement.DEF)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, ListStatement.DEF)) {
+            if (isPresenceContainer(targetCtx) || isNotMandatoryNodeOfType(targetCtx, ChoiceStatement.DEF)
+                || isNotMandatoryNodeOfType(targetCtx, ListStatement.DEF)) {
                 return false;
             }
 
@@ -273,6 +279,73 @@ final class AugmentInferenceAction implements InferenceAction {
          */
         return false;
     }
+
+    /**
+     * Checks whether statement context is a presence container or not.
+     *
+     * @param stmtCtx
+     *            statement context
+     * @return true if it is a presence container
+     */
+    private static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
+        return stmtCtx.produces(ContainerStatement.DEF) && containsPresenceSubStmt(stmtCtx);
+    }
+
+    /**
+     * Checks whether statement context is a non-presence container or not.
+     *
+     * @param stmtCtx
+     *            statement context
+     * @return true if it is a non-presence container
+     */
+    private static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
+        return stmtCtx.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmtCtx);
+    }
+
+    private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
+        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
+    }
+
+    /**
+     * Checks whether statement context is a mandatory leaf, choice, anyxml,
+     * list or leaf-list according to RFC6020 or not.
+     *
+     * @param stmtCtx statement context
+     * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list
+     *         according to RFC6020.
+     */
+    private static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
+        // FIXME: check for MandatoryStatementAwareDeclaredStatement, renamed to MandatoryStatement.Parent via
+        //        producesDeclared()
+        if (stmtCtx.producesAnyOf(LeafStatement.DEF, ChoiceStatement.DEF, AnyxmlStatement.DEF)) {
+            return Boolean.TRUE.equals(StmtContextUtils.firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.DEF));
+        }
+        // FIXME: check for MultipleElementsDeclaredStatement via producesDeclared()
+        if (stmtCtx.producesAnyOf(ListStatement.DEF, LeafListStatement.DEF)) {
+            final var minElements = StmtContextUtils.firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.DEF);
+            return minElements != null && minElements.lowerInt() > -1;
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether a statement context is a statement of supplied statement
+     * definition and whether it is not mandatory leaf, choice, anyxml, list or
+     * leaf-list according to RFC6020.
+     *
+     * @param stmtCtx
+     *            statement context
+     * @param stmtDef
+     *            statement definition
+     * @return true if supplied statement context is a statement of supplied
+     *         statement definition and if it is not mandatory leaf, choice,
+     *         anyxml, list or leaf-list according to RFC6020
+     */
+    private static boolean isNotMandatoryNodeOfType(final StmtContext<?, ?, ?> stmtCtx,
+            final StatementDefinition<?, ?, ?> stmtDef) {
+        return stmtCtx.produces(stmtDef) && !isMandatoryNode(stmtCtx);
+    }
+
 
     private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
         var parent = child.coerceParentContext();

@@ -23,20 +23,13 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -245,72 +238,6 @@ public final class StmtContextUtils {
         }
 
         return !containsIfFeature || isSupported;
-    }
-
-    /**
-     * Checks whether statement context is a presence container or not.
-     *
-     * @param stmtCtx
-     *            statement context
-     * @return true if it is a presence container
-     */
-    public static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.produces(ContainerStatement.DEF) && containsPresenceSubStmt(stmtCtx);
-    }
-
-    /**
-     * Checks whether statement context is a non-presence container or not.
-     *
-     * @param stmtCtx
-     *            statement context
-     * @return true if it is a non-presence container
-     */
-    public static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmtCtx);
-    }
-
-    private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
-    }
-
-    /**
-     * Checks whether statement context is a mandatory leaf, choice, anyxml,
-     * list or leaf-list according to RFC6020 or not.
-     *
-     * @param stmtCtx statement context
-     * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list
-     *         according to RFC6020.
-     */
-    public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
-        // FIXME: check for MandatoryStatementAwareDeclaredStatement, renamed to MandatoryStatement.Parent via
-        //        producesDeclared()
-        if (stmtCtx.producesAnyOf(LeafStatement.DEF, ChoiceStatement.DEF, AnyxmlStatement.DEF)) {
-            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.DEF));
-        }
-        // FIXME: check for MultipleElementsDeclaredStatement via producesDeclared()
-        if (stmtCtx.producesAnyOf(ListStatement.DEF, LeafListStatement.DEF)) {
-            final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.DEF);
-            return minElements != null && minElements.lowerInt() > -1;
-        }
-        return false;
-    }
-
-    /**
-     * Checks whether a statement context is a statement of supplied statement
-     * definition and whether it is not mandatory leaf, choice, anyxml, list or
-     * leaf-list according to RFC6020.
-     *
-     * @param stmtCtx
-     *            statement context
-     * @param stmtDef
-     *            statement definition
-     * @return true if supplied statement context is a statement of supplied
-     *         statement definition and if it is not mandatory leaf, choice,
-     *         anyxml, list or leaf-list according to RFC6020
-     */
-    public static boolean isNotMandatoryNodeOfType(final StmtContext<?, ?, ?> stmtCtx,
-            final StatementDefinition<?, ?, ?> stmtDef) {
-        return stmtCtx.produces(stmtDef) && !isMandatoryNode(stmtCtx);
     }
 
     /**
