@@ -32,8 +32,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -42,13 +45,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Normal;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Structure;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Template;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -694,7 +697,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                 final var root = ctx.getRoot();
                 final var prefix = namesParts[0];
                 localName = namesParts[1];
-                qnameModule = StmtContextUtils.getModuleQNameByPrefix(root, prefix);
+                qnameModule = getModuleQNameByPrefix(root, prefix);
                 // in case of unknown statement argument, we're not going to parse it
                 if (qnameModule == null && ctx.producesDeclared(UnknownStatement.class)) {
                     localName = value;
@@ -702,13 +705,49 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                 }
                 if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                     ctx = ctx.getOriginalCtx().orElseThrow();
-                    qnameModule = StmtContextUtils.getModuleQNameByPrefix(root, prefix);
+                    qnameModule = getModuleQNameByPrefix(root, prefix);
                 }
             }
         }
 
-        return StmtContextUtils.internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx,
+        return internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx,
             "Cannot resolve QNameModule for '%s'", value), localName);
+    }
+
+    private static @NonNull QName internedQName(final @NonNull CommonStmtCtx ctx, final QNameModule module,
+            final String localName) {
+        final QName template;
+        try {
+            template = QName.create(module, localName);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx, e, "Invalid identifier '%s'", localName);
+        }
+        return template.intern();
+    }
+
+    /**
+     * Return the {@link QNameModule} corresponding to a prefix in the specified {@link RootStmtContext}. The lookup
+     * consults {@code import} and {@code belongs-to} statements.
+     *
+     * @param ctx the {@link RootStmtContext}
+     * @param prefix the prefix
+     * @return the {@link QNameModule}, or {@code null} if not found
+     */
+    private static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull RootStmtContext<?, ?, ?> ctx,
+            final String prefix) {
+        final var importedModule = ctx.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
+        final var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
+        if (qnameModule != null) {
+            return qnameModule;
+        }
+
+        // This is a submodule, so we also need consult 'belongs-to' mapping
+        if (ctx.produces(SubmoduleStatement.DEF)) {
+            return ctx.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
+                ctx.namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
+        }
+
+        return null;
     }
 
     private ReactorStmtCtx<?, ?, ?> coerceParent() {
