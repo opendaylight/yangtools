@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.rfc6241.parser;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
+import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfConstants;
 import org.opendaylight.yangtools.rfc6241.parser.dagger.Rfc6241Module;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -56,11 +56,14 @@ class NetconfTest {
     }
 
     private static void assertExtension(final boolean expected, final RpcDefinition def) {
-        final var optFilter = def.getInput().findDataTreeChild(FILTER);
-        assertEquals(expected, optFilter.isPresent());
-        optFilter.ifPresent(filter -> {
-            final var anyxmlFilter = assertInstanceOf(AnyxmlSchemaNode.class, filter);
-            assertTrue(GetFilterElementAttributesSchemaNode.findIn(anyxmlFilter).isPresent());
-        });
+        final var optFilter = def.asEffectiveStatement().inputStatement()
+            .findDataTreeNode(AnyxmlEffectiveStatement.class, FILTER);
+        if (expected) {
+            assertThat(optFilter).isPresent().map(
+                filter -> filter.findFirstEffectiveSubstatement(GetFilterElementAttributesEffectiveStatement.class))
+                .isPresent();
+        } else {
+            assertEquals(Optional.empty(), optFilter);
+        }
     }
 }

@@ -41,7 +41,6 @@ class Bug4623Test extends AbstractYangTest {
         assertNotNull(type);
 
         // here are no effective extensions
-        assertEquals(0, type.getUnknownSchemaNodes().size());
         assertExtension(leaf);
 
         final var lengthConstraint = ((StringTypeDefinition) type).getLengthConstraint().orElseThrow();
@@ -71,7 +70,6 @@ class Bug4623Test extends AbstractYangTest {
 
         final var type = leaf.getType();
         assertNotNull(type);
-        assertEquals(0, type.getUnknownSchemaNodes().size());
         assertExtension(leaf);
 
         final var lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().orElseThrow();
@@ -99,7 +97,6 @@ class Bug4623Test extends AbstractYangTest {
         // then
         final var type = leaf.getType();
         assertNotNull(type);
-        assertEquals(0, type.getUnknownSchemaNodes().size());
         assertExtension(leaf);
 
         final var lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().orElseThrow();

@@ -12,7 +12,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
@@ -25,22 +24,12 @@ final class OpenConfigHashedValueEffectiveStatementImpl
 
     OpenConfigHashedValueEffectiveStatementImpl(final Current<Empty, OpenConfigHashedValueStatement> stmt,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.getArgument(), substatements);
         definition = stmt.publicDefinition();
     }
 
     @Override
     public StatementDefinition<Empty, OpenConfigHashedValueStatement, ?> statementDefinition() {
         return definition;
-    }
-
-    @Override
-    public QName getQName() {
-        return definition.statementName();
-    }
-
-    @Override
-    public OpenConfigHashedValueEffectiveStatement asEffectiveStatement() {
-        return this;
     }
 }
