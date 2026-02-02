@@ -7,18 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 final class DerivedEnumerationType extends AbstractDerivedType<EnumTypeDefinition> implements EnumTypeDefinition {
     DerivedEnumerationType(final EnumTypeDefinition baseType, final QName qname, final Object defaultValue,
-            final String description, final String reference, final Status status, final String units,
-            final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
-        super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemNodes);
+            final String description, final String reference, final Status status, final String units) {
+        super(baseType, qname, defaultValue, description, reference, status, units);
     }
 
     @Override

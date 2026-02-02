@@ -15,7 +15,6 @@ import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
@@ -97,10 +96,6 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
                     // No-op
                 }
                 case UnitsEffectiveStatement units -> builder.setUnits(units.argument());
-                case UnknownSchemaNode unknown -> {
-                    // FIXME: should not directly implement, I think
-                    builder.addUnknownSchemaNode(unknown);
-                }
                 default -> LOG.debug("Ignoring statement {}", stmt);
             }
         });
