@@ -25,4 +25,5 @@ module org.opendaylight.yangtools.yang.data.util {
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static org.osgi.annotation.bundle;
+    requires org.opendaylight.yangtools.rfc8040.model.api;
 }
