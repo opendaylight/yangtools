@@ -8,18 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code length} statement.
  */
-public interface LengthEffectiveStatement extends EffectiveStatement<ValueRanges, @NonNull LengthStatement>,
-        // FIXME: 11.0.0: reconsider this interface extension
-        // FIXME: 11.0.0: if we are keeping it, consider a default implementation (shared with others effective
-        //               statements)
-        ConstraintMetaDefinition {
+public interface LengthEffectiveStatement extends EffectiveStatement<ValueRanges, @NonNull LengthStatement> {
     @Override
     default StatementDefinition<ValueRanges, @NonNull LengthStatement, ?> statementDefinition() {
         return LengthStatement.DEF;
