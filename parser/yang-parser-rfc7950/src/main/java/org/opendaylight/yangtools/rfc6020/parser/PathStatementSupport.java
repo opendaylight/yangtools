@@ -29,8 +29,6 @@ public final class PathStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(PathStatement.DEF).build();
 
-    private final PathArgumentParser parser = new PathArgumentParser();
-
     public PathStatementSupport(final YangParserConfiguration config) {
         // TODO: can 'path' really be copied?
         super(PathStatement.DEF, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
@@ -38,7 +36,7 @@ public final class PathStatementSupport
 
     @Override
     public PathExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return parser.parseExpression(ctx, value);
+        return PathArgumentParser.parseExpression(ctx, value);
     }
 
     @Override

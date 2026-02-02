@@ -46,8 +46,6 @@ class PathExpressionParserTest {
     @Mock
     public StatementSourceReference ref;
 
-    private final PathArgumentParser parser = new PathArgumentParser();
-
     @BeforeEach
     void before() {
         doReturn(ref).when(ctx).sourceReference();
@@ -57,7 +55,7 @@ class PathExpressionParserTest {
     void testDerefPath() {
         // deref() is not valid as per RFC7950, but we tolarate it.
         final var deref = assertInstanceOf(PathExpression.Deref.class,
-            parser.parseExpression(ctx, "deref(../id)/../type"));
+            PathArgumentParser.parseExpression(ctx, "deref(../id)/../type"));
 
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
             YangXPathAxis.CHILD.asStep(Unqualified.of("type"))), deref.relativePath());
@@ -67,7 +65,7 @@ class PathExpressionParserTest {
 
     @Test
     void testInvalidLeftParent() {
-        final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo("));
+        final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo("));
         assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), allOf(
             startsWith("extraneous input '(' expecting "),
@@ -76,7 +74,7 @@ class PathExpressionParserTest {
 
     @Test
     void testInvalidRightParent() {
-        final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo)"));
+        final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo)"));
         assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), allOf(
             startsWith("extraneous input ')' expecting "),
@@ -85,7 +83,7 @@ class PathExpressionParserTest {
 
     @Test
     void testInvalidIdentifier() {
-        final var ex = assertThrows(SourceException.class, () -> parser.parseExpression(ctx, "foo%"));
+        final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo%"));
         assertSame(ref, ex.sourceRef());
         assertThat(ex.getMessage(), startsWith("token recognition error at: '%' at 1:3 [at "));
     }
@@ -93,7 +91,7 @@ class PathExpressionParserTest {
     @Test
     void testCurrentPredicateParsing() {
         final var path = assertInstanceOf(PathExpression.LocationPath.class,
-            parser.parseExpression(ctx, "/device_types/device_type[type = current()/../type_text]/desc"))
+            PathArgumentParser.parseExpression(ctx, "/device_types/device_type[type = current()/../type_text]/desc"))
             .locationPath();
         assertTrue(path.isAbsolute());
 
