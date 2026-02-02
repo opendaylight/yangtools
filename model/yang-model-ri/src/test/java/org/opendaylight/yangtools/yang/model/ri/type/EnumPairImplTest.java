@@ -11,46 +11,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 @ExtendWith(MockitoExtension.class)
 class EnumPairImplTest {
-    @Mock
-    private UnknownSchemaNode mockedUnknownSchemaNodeA;
-    @Mock
-    private UnknownSchemaNode mockedUnknownSchemaNodeB;
-
     @Test
     void testEnumPairImpl() {
-        final var unknownSchemaNodes = List.of(mockedUnknownSchemaNodeA, mockedUnknownSchemaNodeB);
-
         final var enumPair = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)
                 .setDescription("enum description").setReference("enum reference")
-                .setUnknownSchemaNodes(unknownSchemaNodes).build();
+                .build();
 
         assertNotNull(enumPair);
-        assertEquals(unknownSchemaNodes, enumPair.getUnknownSchemaNodes());
         assertEquals(Optional.of("enum description"), enumPair.getDescription());
         assertEquals(Optional.of("enum reference"), enumPair.getReference());
         assertEquals(Status.DEPRECATED, enumPair.getStatus());
 
         final var enumPair2 = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)
                 .setDescription("enum description").setReference("enum reference")
-                .setUnknownSchemaNodes(unknownSchemaNodes).build();
+                .build();
 
         assertEquals(enumPair.hashCode(), enumPair2.hashCode());
         assertEquals(enumPair, enumPair2);
 
         final var enumPair3 = EnumPairBuilder.create("enum-one", 1).setStatus(Status.DEPRECATED)
                 .setDescription("enum description").setReference("enum reference")
-                .setUnknownSchemaNodes(unknownSchemaNodes).build();
+                .build();
 
         assertNotEquals(enumPair2, enumPair3);
 

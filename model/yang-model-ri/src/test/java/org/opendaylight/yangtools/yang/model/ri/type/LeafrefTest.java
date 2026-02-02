@@ -42,8 +42,6 @@ class LeafrefTest {
         assertEquals(Optional.empty(), leafref.getDescription());
         assertEquals(Optional.empty(), leafref.getReference());
         assertEquals(Status.CURRENT, leafref.getStatus(), "Status of 'leafref' is current.");
-        assertTrue(leafref.getUnknownSchemaNodes().isEmpty(),
-                "Object 'leafref' shouldn't have any unknown schema nodes.");
         assertEquals(expression, leafref.getPathStatement(),
                 "Revision aware XPath of 'leafref' should be '/test:Cont1/test:List1'.");
         assertNotNull(leafref.toString(), "String representation of 'leafref' shouldn't be null.");

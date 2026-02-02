@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Optional;
@@ -35,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UserOrderedAware;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -177,11 +175,6 @@ public final class EffectiveStatementMixins {
         default Optional<String> getReference() {
             return findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class);
         }
-
-        @Override
-        default Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-            return filterEffectiveStatements(UnknownSchemaNode.class);
-        }
     }
 
     /**
@@ -239,20 +232,6 @@ public final class EffectiveStatementMixins {
         @Override
         default QName getQName() {
             return argument();
-        }
-    }
-
-    /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link UnknownSchemaNode}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface UnknownSchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends DocumentedNodeMixin.WithStatus<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
-        @Override
-        default String getNodeParameter() {
-            return Strings.nullToEmpty(requireDeclared().rawArgument());
         }
     }
 

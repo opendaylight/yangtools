@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * The declared representation of {@code subscription-state-notification} extension.
+ */
 public interface SubscriptionStateNotificationStatement extends DeclaredStatement<Empty> {
     /**
      * The definition of {@code sn:subscription-state-notification} statement.

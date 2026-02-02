@@ -64,7 +64,6 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(1, leafMustConstraints.size());
         final var leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
-        assertEquals(0, refineLeaf.getUnknownSchemaNodes().size());
         assertEquals(1, usesNode.asEffectiveStatement()
             .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
@@ -181,7 +180,6 @@ class GroupingTest extends AbstractModelTest {
         final var grouping_g = groupings_g.iterator().next();
         assertIsAddedByUses(grouping_g, false);
 
-        assertEquals(0, destination.getUnknownSchemaNodes().size());
         assertEquals(1, grouping.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
     }
@@ -263,7 +261,6 @@ class GroupingTest extends AbstractModelTest {
         final var grouping_g = groupings_g.iterator().next();
         assertIsAddedByUses(grouping_g, false);
 
-        assertEquals(0, grouping.getUnknownSchemaNodes().size());
         assertEquals(1, grouping.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
 
