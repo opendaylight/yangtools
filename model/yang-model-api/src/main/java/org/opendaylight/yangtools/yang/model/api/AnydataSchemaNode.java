@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
  * of this document.
  */
 public interface AnydataSchemaNode extends DataSchemaNode, MandatoryAware,
-        MustConstraintAware.Mixin<AnydataEffectiveStatement> {
+        MustConstraintAware.Mixin<AnydataEffectiveStatement>, WhenConditionAware.Mixin<AnydataEffectiveStatement> {
     /**
      * Schema of data.
      *

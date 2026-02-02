@@ -126,7 +126,7 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     }
 
     @Override
-    public Optional<? extends QualifiedBound> getWhenCondition() {
+    public Optional<QualifiedBound> getWhenCondition() {
         return schemaDelegate.getWhenCondition();
     }
 
