@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc6020.parser;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -49,39 +50,46 @@ final class PathArgumentParser {
     private static final YangFunctionCallExpr CURRENT_CALL =
         YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier());
 
-    PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
-        final var path = SourceExceptionParser.parseString(PathArgLexer::new, PathArgParser::new,
-            PathArgParser::path_arg, ctx.sourceReference(), pathArg);
+    private final StmtContext<?, ?, ?> ctx;
 
+    private PathArgumentParser(final StmtContext<?, ?, ?> ctx) {
+        this.ctx = requireNonNull(ctx);
+    }
+
+    static PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
+        final var pathArgChild = SourceExceptionParser.parseString(PathArgLexer::new, PathArgParser::new,
+            PathArgParser::path_arg, ctx.sourceReference(), pathArg).getChild(0);
+
+        return switch (pathArgChild) {
+            case Path_strContext str -> new PathExpression.LocationPath(pathArg,
+                new PathArgumentParser(ctx).parsePathStr(str));
+            case Deref_exprContext deref -> {
+                final var parser = new PathArgumentParser(ctx);
+                yield new PathExpression.Deref(pathArg,
+                    parser.parseRelative(getChild(deref, 0, Deref_function_invocationContext.class)
+                        .getChild(Relative_pathContext.class, 0)),
+                    parser.parseRelative(getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
+            }
+            default -> throw new IllegalStateException("Unsupported child " + pathArgChild);
+        };
+    }
+
+    private YangLocationPath parsePathStr(final Path_strContext path) {
         final var childPath = path.getChild(0);
         return switch (childPath) {
-            case Path_strContext str -> new PathExpression.LocationPath(pathArg, parsePathStr(ctx, pathArg, str));
-            case Deref_exprContext deref -> new PathExpression.Deref(pathArg, parseRelative(ctx, pathArg,
-                getChild(deref, 0, Deref_function_invocationContext.class).getChild(Relative_pathContext.class, 0)),
-                parseRelative(ctx, pathArg, getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
+            case Absolute_pathContext absolute -> parseAbsolute(absolute);
+            case Relative_pathContext relative -> parseRelative(relative);
             default -> throw new IllegalStateException("Unsupported child " + childPath);
         };
     }
 
-    private static YangLocationPath parsePathStr(final StmtContext<?, ?, ?> ctx, final String pathArg,
-            final Path_strContext path) {
-        final var childPath = path.getChild(0);
-        return switch (childPath) {
-            case Absolute_pathContext absolute -> parseAbsolute(ctx, pathArg, absolute);
-            case Relative_pathContext relative -> parseRelative(ctx, pathArg, relative);
-            default -> throw new IllegalStateException("Unsupported child " + childPath);
-        };
-    }
-
-    private static Absolute parseAbsolute(final StmtContext<?, ?, ?> ctx, final String pathArg,
-            final Absolute_pathContext absolute) {
+    private Absolute parseAbsolute(final Absolute_pathContext absolute) {
         final var steps = new ArrayList<Step>();
-        fillSteps(ctx, pathArg, absolute, steps);
+        fillSteps(absolute, steps);
         return YangLocationPath.absolute(steps);
     }
 
-    private static Relative parseRelative(final StmtContext<?, ?, ?> ctx, final String pathArg,
-            final Relative_pathContext relative) {
+    private Relative parseRelative(final Relative_pathContext relative) {
         final int relativeChildren = relative.getChildCount();
         verify(relativeChildren % 2 != 0, "Unexpected child count %s", relativeChildren);
 
@@ -90,11 +98,10 @@ final class PathArgumentParser {
         for (int i = 0; i < stepCount; ++i) {
             steps.add(YangXPathAxis.PARENT.asStep());
         }
-        return parseRelative(ctx, pathArg, relative, steps);
+        return parseRelative(relative, steps);
     }
 
-    private static Relative parseRelative(final StmtContext<?, ?, ?> ctx, final String pathArg,
-            final Relative_pathContext relative, final List<Step> steps) {
+    private Relative parseRelative(final Relative_pathContext relative, final List<Step> steps) {
         final int relativeChildren = relative.getChildCount();
         final var descendant = getChild(relative, relativeChildren - 1, Descendant_pathContext.class);
         final var qname = getChild(descendant, 0, Node_identifierContext.class);
@@ -102,19 +109,18 @@ final class PathArgumentParser {
         if (descandantChildren > 1) {
             final var predicates = new ArrayList<YangExpr>(descandantChildren);
             for (int i = 1; i < descandantChildren - 1; ++i) {
-                predicates.add(parsePathPredicate(ctx, getChild(descendant, i, Path_predicateContext.class)));
+                predicates.add(parsePathPredicate(getChild(descendant, i, Path_predicateContext.class)));
             }
-            steps.add(createChildStep(ctx, qname, predicates));
-            fillSteps(ctx, pathArg, getChild(descendant, descandantChildren - 1, Absolute_pathContext.class), steps);
+            steps.add(createChildStep(qname, predicates));
+            fillSteps(getChild(descendant, descandantChildren - 1, Absolute_pathContext.class), steps);
         } else {
-            steps.add(createChildStep(ctx, qname, ImmutableList.of()));
+            steps.add(createChildStep(qname, ImmutableList.of()));
         }
 
         return YangLocationPath.relative(steps);
     }
 
-    private static void fillSteps(final StmtContext<?, ?, ?> ctx, final String pathArg,
-            final Absolute_pathContext absolute, final List<Step> output) {
+    private void fillSteps(final Absolute_pathContext absolute, final List<Step> output) {
         final var predicates = new ArrayList<YangExpr>();
         var qname = getChild(absolute, 1, Node_identifierContext.class);
 
@@ -122,18 +128,18 @@ final class PathArgumentParser {
         for (int i = 2; i < children; ++i) {
             switch (absolute.getChild(i)) {
                 case Node_identifierContext identifier -> {
-                    output.add(createChildStep(ctx, qname, predicates));
+                    output.add(createChildStep(qname, predicates));
                     predicates.clear();
                     qname = identifier;
                 }
-                case Path_predicateContext predicate -> predicates.add(parsePathPredicate(ctx, predicate));
+                case Path_predicateContext predicate -> predicates.add(parsePathPredicate(predicate));
                 default -> {
                     // No-op
                 }
             }
         }
 
-        output.add(createChildStep(ctx, qname, predicates));
+        output.add(createChildStep(qname, predicates));
     }
 
     private static <T> T getChild(final ParseTree parent, final int offset, final Class<T> clazz) {
@@ -143,15 +149,14 @@ final class PathArgumentParser {
         return clazz.cast(child);
     }
 
-    private static YangBinaryExpr parsePathPredicate(final StmtContext<?, ?, ?> ctx,
-            final Path_predicateContext predicate) {
+    private YangBinaryExpr parsePathPredicate(final Path_predicateContext predicate) {
         final var eqExpr = verifyNotNull(predicate.path_equality_expr());
         return YangBinaryOperator.EQUALS.exprWith(
-            createChildExpr(ctx, getChild(eqExpr, 0, Node_identifierContext.class)),
-            parsePathKeyExpr(ctx, verifyNotNull(eqExpr.path_key_expr())));
+            createChildExpr(getChild(eqExpr, 0, Node_identifierContext.class)),
+            parsePathKeyExpr(verifyNotNull(eqExpr.path_key_expr())));
     }
 
-    private static YangExpr parsePathKeyExpr(final StmtContext<?, ?, ?> ctx, final Path_key_exprContext expr) {
+    private YangExpr parsePathKeyExpr(final Path_key_exprContext expr) {
         final var relPath = verifyNotNull(expr.rel_path_keyexpr());
         final int children = relPath.getChildCount();
 
@@ -173,7 +178,7 @@ final class PathArgumentParser {
         // Process node identifiers
         while (offset < children) {
             if (relPath.getChild(offset) instanceof Node_identifierContext identifier) {
-                steps.add(createChildStep(ctx, identifier, ImmutableList.of()));
+                steps.add(createChildStep(identifier, ImmutableList.of()));
             }
             ++offset;
         }
@@ -181,24 +186,24 @@ final class PathArgumentParser {
         return steps.isEmpty() ? CURRENT_CALL : YangPathExpr.of(CURRENT_CALL, YangLocationPath.relative(steps));
     }
 
-    private static YangQNameExpr createChildExpr(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
+    private YangQNameExpr createChildExpr(final Node_identifierContext qname) {
         return switch (qname.getChildCount()) {
             case 1 -> YangQNameExpr.of(Unqualified.of(qname.getText()).intern());
-            case 3 -> YangQNameExpr.of(parseQName(ctx, qname));
+            case 3 -> YangQNameExpr.of(parseQName(qname));
             default -> throw new IllegalStateException("Unexpected shape " + qname.getText());
         };
     }
 
-    private static QNameStep createChildStep(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname,
+    private QNameStep createChildStep(final Node_identifierContext qname,
             final List<YangExpr> predicates) {
         return switch (qname.getChildCount()) {
             case 1 -> YangXPathAxis.CHILD.asStep(Unqualified.of(qname.getText()).intern(), predicates);
-            case 3 -> YangXPathAxis.CHILD.asStep(parseQName(ctx, qname), predicates);
+            case 3 -> YangXPathAxis.CHILD.asStep(parseQName(qname), predicates);
             default -> throw new IllegalStateException("Unexpected shape " + qname.getText());
         };
     }
 
-    private static @NonNull QName parseQName(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
+    private @NonNull QName parseQName(final Node_identifierContext qname) {
         return ctx.identifierBinding()
             .createNodeIdentifier(ctx, qname.getChild(0).getText(), qname.getChild(2).getText());
     }
