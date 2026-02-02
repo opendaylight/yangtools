@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaRepository;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 
 /**

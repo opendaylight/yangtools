@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +16,6 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
-import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -28,11 +27,11 @@ import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 abstract class AbstractSchemaRepositoryTest {
     static final @NonNull YangParserFactory PARSER_FACTORY = DaggerVanillaYangParserComponent.create().parserFactory();
-    static final @NonNull YangTextToIRSourceTransformer TEXT_TO_IR =
-        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
+    static final @NonNull YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
 
     static @NonNull EffectiveModelContext assertModelContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources) {
