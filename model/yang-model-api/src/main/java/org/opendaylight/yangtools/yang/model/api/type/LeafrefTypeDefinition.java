@@ -29,8 +29,8 @@ public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefi
     boolean requireInstance();
 
     static int hashCode(final @NonNull LeafrefTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getPathStatement());
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null), type.getPathStatement());
     }
 
     static boolean equals(final @NonNull LeafrefTypeDefinition type, final @Nullable Object obj) {
@@ -38,7 +38,7 @@ public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefi
             return true;
         }
 
-        final LeafrefTypeDefinition other = TypeDefinitions.castIfEquals(LeafrefTypeDefinition.class, type, obj);
+        final var other = TypeDefinitions.castIfEquals(LeafrefTypeDefinition.class, type, obj);
         return other != null && type.getPathStatement().equals(other.getPathStatement());
     }
 

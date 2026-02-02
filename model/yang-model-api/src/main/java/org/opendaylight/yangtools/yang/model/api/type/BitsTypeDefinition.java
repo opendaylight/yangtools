@@ -27,8 +27,8 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
     @NonNull Collection<? extends @NonNull Bit> getBits();
 
     static int hashCode(final @NonNull BitsTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getBits());
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null), type.getBits());
     }
 
     static boolean equals(final @NonNull BitsTypeDefinition type, final @Nullable Object obj) {
@@ -36,7 +36,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
             return true;
         }
 
-        final BitsTypeDefinition other = TypeDefinitions.castIfEquals(BitsTypeDefinition.class, type, obj);
+        final var other = TypeDefinitions.castIfEquals(BitsTypeDefinition.class, type, obj);
         return other != null && type.getBits().equals(other.getBits());
     }
 

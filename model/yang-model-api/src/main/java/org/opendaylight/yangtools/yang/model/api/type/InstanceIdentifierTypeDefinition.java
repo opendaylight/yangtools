@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.Nullable;
 public interface InstanceIdentifierTypeDefinition
         extends RequireInstanceRestrictedTypeDefinition<InstanceIdentifierTypeDefinition> {
     static int hashCode(final @NonNull InstanceIdentifierTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.requireInstance());
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null), type.requireInstance());
     }
 
     static boolean equals(final @NonNull InstanceIdentifierTypeDefinition type, final @Nullable Object obj) {
@@ -26,8 +26,7 @@ public interface InstanceIdentifierTypeDefinition
             return true;
         }
 
-        final InstanceIdentifierTypeDefinition other = TypeDefinitions.castIfEquals(
-            InstanceIdentifierTypeDefinition.class, type, obj);
+        final var other = TypeDefinitions.castIfEquals(InstanceIdentifierTypeDefinition.class, type, obj);
         return other != null && type.requireInstance() == other.requireInstance();
     }
 

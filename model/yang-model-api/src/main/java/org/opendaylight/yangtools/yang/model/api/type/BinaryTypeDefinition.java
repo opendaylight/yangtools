@@ -26,8 +26,8 @@ public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<Bin
     }
 
     static int hashCode(final @NonNull BinaryTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null));
+        return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null));
     }
 
     static boolean equals(final @NonNull BinaryTypeDefinition type, final @Nullable Object obj) {
@@ -35,7 +35,7 @@ public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<Bin
             return true;
         }
 
-        final BinaryTypeDefinition other = TypeDefinitions.castIfEquals(BinaryTypeDefinition.class, type, obj);
+        final var other = TypeDefinitions.castIfEquals(BinaryTypeDefinition.class, type, obj);
         return other != null && type.getLengthConstraint().equals(other.getLengthConstraint());
     }
 }
