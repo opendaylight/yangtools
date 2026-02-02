@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
@@ -29,7 +28,6 @@ public abstract class AbstractContainerEffectiveStatement
         extends WithTypedefNamespace<QName, @NonNull ContainerStatement>
         implements ContainerEffectiveStatement, ContainerSchemaNode, DataSchemaNodeMixin<@NonNull ContainerStatement>,
             DataNodeContainerMixin<QName, @NonNull ContainerStatement>,
-            ActionNodeContainerMixin<QName, @NonNull ContainerStatement>,
             ActionNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
             NotificationNodeContainerMixin<QName, @NonNull ContainerStatement>,
             NotificationNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,

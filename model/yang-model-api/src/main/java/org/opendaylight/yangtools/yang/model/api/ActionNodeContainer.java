@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Node which can contain {@link ActionDefinition}.
@@ -40,5 +41,18 @@ public interface ActionNodeContainer {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatement} and {@link ActionNodeContainer}.
+     *
+     * @param <E> Type of equivalent {@link EffectiveStatement}.
+     * @since 15.0.0
+     */
+    interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, ActionNodeContainer {
+        @Override
+        default Collection<? extends ActionDefinition> getActions() {
+            return asEffectiveStatement().filterEffectiveStatements(ActionDefinition.class);
+        }
     }
 }

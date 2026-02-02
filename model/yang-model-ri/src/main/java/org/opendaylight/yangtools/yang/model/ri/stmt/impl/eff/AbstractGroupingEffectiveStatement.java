@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AddedByUsesMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.S
 public abstract class AbstractGroupingEffectiveStatement extends WithTypedefNamespace<QName, @NonNull GroupingStatement>
         implements GroupingDefinition, GroupingEffectiveStatement,
             DataNodeContainerMixin<QName, @NonNull GroupingStatement>, SchemaNodeMixin<@NonNull GroupingStatement>,
-            ActionNodeContainerMixin<QName, @NonNull GroupingStatement>,
             NotificationNodeContainerMixin<QName, @NonNull GroupingStatement>,
             AddedByUsesMixin<QName, @NonNull GroupingStatement> {
     private final int flags;
