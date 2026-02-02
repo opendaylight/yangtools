@@ -297,15 +297,6 @@ public final class StmtContextUtils {
             leafCtx.argument(), listCtx.argument(), offender.publicDefinition().humanName());
     }
 
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
-            final String localName) {
-        return internedQName(ctx,
-            InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
-                "Cannot resolve QNameModule for '%s'", prefix),
-            localName);
-    }
-
     @Beta
     public static @NonNull QName internedQName(final @NonNull CommonStmtCtx ctx, final QNameModule module,
             final String localName) {
@@ -316,19 +307,6 @@ public final class StmtContextUtils {
             throw new SourceException(ctx, e, "Invalid identifier '%s'", localName);
         }
         return template.intern();
-    }
-
-    /**
-     * Return the {@link QNameModule} corresponding to a prefix in the specified {@link StmtContext}. The lookup
-     * consults {@code import} and {@code belongs-to} statements.
-     *
-     * @param ctx the {@link StmtContext}
-     * @param prefix the prefix
-     * @return the {@link QNameModule}, or {@code null} if not found
-     */
-    private static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull StmtContext<?, ?, ?> ctx,
-            final String prefix) {
-        return getModuleQNameByPrefix(ctx.getRoot(), prefix);
     }
 
     /**

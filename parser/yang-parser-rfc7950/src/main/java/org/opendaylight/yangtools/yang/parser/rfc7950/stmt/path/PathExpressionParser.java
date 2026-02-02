@@ -16,7 +16,9 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.parser.antlr.SourceExceptionParser;
@@ -31,6 +33,7 @@ import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_key
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_predicateContext;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_strContext;
 import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Relative_pathContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
@@ -201,6 +204,27 @@ final class PathExpressionParser {
     }
 
     private static @NonNull QName parseQName(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
-        return StmtContextUtils.parseNodeIdentifier(ctx, qname.getChild(0).getText(), qname.getChild(2).getText());
+        return parseNodeIdentifier(ctx, qname.getChild(0).getText(), qname.getChild(2).getText());
+    }
+
+    private static @NonNull QName parseNodeIdentifier(final @NonNull StmtContext<?, ?, ?> ctx, final String prefix,
+            final String localName) {
+        return StmtContextUtils.internedQName(ctx,
+            InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
+                "Cannot resolve QNameModule for '%s'", prefix),
+            localName);
+    }
+
+    /**
+     * Return the {@link QNameModule} corresponding to a prefix in the specified {@link StmtContext}. The lookup
+     * consults {@code import} and {@code belongs-to} statements.
+     *
+     * @param ctx the {@link StmtContext}
+     * @param prefix the prefix
+     * @return the {@link QNameModule}, or {@code null} if not found
+     */
+    private static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull StmtContext<?, ?, ?> ctx,
+            final String prefix) {
+        return StmtContextUtils.getModuleQNameByPrefix(ctx.getRoot(), prefix);
     }
 }
