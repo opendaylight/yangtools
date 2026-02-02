@@ -92,8 +92,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Optional<StmtContext<A, D, E>> getOriginalCtx() {
-        return source.getOriginalCtx();
+    public ReactorStmtCtx<A, D, E> originalCtx() {
+        return source.originalCtx();
     }
 
     @Override
@@ -165,7 +165,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
+    public StmtContext<A, D, E> previousCopyCtx() {
         throw new UnsupportedOperationException();
     }
 

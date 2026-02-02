@@ -484,6 +484,14 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     abstract @NonNull ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource();
 
     @Override
+    public abstract ReactorStmtCtx<A, D, E> originalCtx();
+
+    final @NonNull ReactorStmtCtx<A, D, E> originalOrSelf() {
+        final var orig = originalCtx();
+        return orig != null ? orig : this;
+    }
+
+    @Override
     public final ModelProcessingPhase getCompletedPhase() {
         return ModelProcessingPhase.ofExecutionOrder(executionOrder());
     }
@@ -648,7 +656,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final QName argumentAsTypeQName() {
-        return qnameFromArgument(getOriginalCtx().orElse(this), getRawArgument());
+        return qnameFromArgument(originalOrSelf(), getRawArgument());
     }
 
     @Override
@@ -665,7 +673,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             return qname.getModule();
         }
         if (argument instanceof String str) {
-            return qnameFromArgument(getOriginalCtx().orElse(this), str).getModule();
+            return qnameFromArgument(originalOrSelf(), str).getModule();
         }
         if (argument instanceof SchemaNodeIdentifier sni
                 && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
@@ -704,7 +712,13 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                     qnameModule = ctx.definingModule();
                 }
                 if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                    ctx = ctx.getOriginalCtx().orElseThrow();
+                    final var origCtx = ctx.originalCtx();
+                    if (origCtx == null)  {
+                        throw new VerifyException(
+                            ctx + " indicates it was added by augmentation, but does not have a original context");
+                    }
+
+                    ctx = origCtx;
                     qnameModule = getModuleQNameByPrefix(root, prefix);
                 }
             }

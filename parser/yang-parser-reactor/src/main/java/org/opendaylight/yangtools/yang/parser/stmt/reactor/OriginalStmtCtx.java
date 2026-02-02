@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -68,13 +67,13 @@ abstract sealed class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E exten
     }
 
     @Override
-    public final Optional<StmtContext<A, D, E>> getOriginalCtx() {
-        return Optional.empty();
+    public final ReactorStmtCtx<A, D, E> originalCtx() {
+        return null;
     }
 
     @Override
-    public final Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
-        return Optional.empty();
+    public final StmtContext<A, D, E> previousCopyCtx() {
+        return null;
     }
 
     @Override

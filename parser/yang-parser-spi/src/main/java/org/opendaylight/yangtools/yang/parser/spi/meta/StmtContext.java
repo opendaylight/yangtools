@@ -151,7 +151,7 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
      *
      * @return Original definition, if this statement was copied.
      */
-    Optional<StmtContext<A, D, E>> getOriginalCtx();
+    @Nullable StmtContext<A, D, E> originalCtx();
 
     /**
      * Return the context of the previous copy of this statement -- effectively walking towards the source origin
@@ -159,7 +159,7 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
      *
      * @return Context of the previous copy of this statement, if this statement has been copied.
      */
-    Optional<StmtContext<A, D, E>> getPreviousCopyCtx();
+    @Nullable StmtContext<A, D, E> previousCopyCtx();
 
     /**
      * Create a replica of this statement as a substatement of specified {@code parent}. The replica must not be
