@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 // FIXME: rename to EffectiveSchemaTreeStatement to prevent confusion with a hypothetical 'data-tree' extension
 public sealed interface DataTreeEffectiveStatement<D extends DeclaredStatement<QName>>
     extends SchemaTreeEffectiveStatement<D>
-    permits EffectiveOperationBodyStatement, AnydataEffectiveStatement, AnyxmlEffectiveStatement,
-            ContainerEffectiveStatement, LeafEffectiveStatement, LeafListEffectiveStatement, ListEffectiveStatement {
+    permits AnydataEffectiveStatement, AnyxmlEffectiveStatement, ContainerEffectiveStatement, InputEffectiveStatement,
+            LeafEffectiveStatement, LeafListEffectiveStatement, ListEffectiveStatement, OutputEffectiveStatement {
     // Nothing else
 }

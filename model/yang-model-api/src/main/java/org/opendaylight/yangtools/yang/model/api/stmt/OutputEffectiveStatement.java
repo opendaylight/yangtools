@@ -14,7 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code output} statement.
  */
-public non-sealed interface OutputEffectiveStatement extends EffectiveOperationBodyStatement<@NonNull OutputStatement> {
+public non-sealed interface OutputEffectiveStatement extends DataTreeEffectiveStatement<@NonNull OutputStatement>,
+        DataTreeAwareEffectiveStatement<QName, @NonNull OutputStatement>,
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull OutputStatement> {
     @Override
     default StatementDefinition<QName, @NonNull OutputStatement, ?> statementDefinition() {
         return OutputStatement.DEF;

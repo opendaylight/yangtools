@@ -14,7 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code input} statement.
  */
-public non-sealed interface InputEffectiveStatement extends EffectiveOperationBodyStatement<@NonNull InputStatement> {
+public non-sealed interface InputEffectiveStatement extends DataTreeEffectiveStatement<@NonNull InputStatement>,
+        DataTreeAwareEffectiveStatement<QName, @NonNull InputStatement>,
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull InputStatement> {
     @Override
     default StatementDefinition<QName, @NonNull InputStatement, ?> statementDefinition() {
         return InputStatement.DEF;
