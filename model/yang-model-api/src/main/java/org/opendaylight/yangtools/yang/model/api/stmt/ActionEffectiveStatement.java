@@ -15,7 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Effective representation of a {@code action} statement. The effective view always defines an {@code input} and an
  * {@code output} substatement, both of which are available through {@link #input()} and {@link #output()} methods.
  */
-public non-sealed interface ActionEffectiveStatement extends EffectiveOperationStatement<@NonNull ActionStatement> {
+public non-sealed interface ActionEffectiveStatement extends SchemaTreeEffectiveStatement<@NonNull ActionStatement>,
+        DataTreeAwareEffectiveStatement<QName, @NonNull ActionStatement>,
+        InputEffectiveStatement.MandatoryIn<QName, @NonNull ActionStatement>,
+        OutputEffectiveStatement.MandatoryIn<QName, @NonNull ActionStatement>,
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull ActionStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ActionStatement, ?> statementDefinition() {
         return ActionStatement.DEF;

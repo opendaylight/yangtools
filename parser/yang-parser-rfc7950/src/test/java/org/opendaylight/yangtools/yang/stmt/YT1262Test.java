@@ -40,8 +40,8 @@ class YT1262Test extends AbstractYangTest {
 
         final var action = container.findFirstEffectiveSubstatement(ActionEffectiveStatement.class).orElseThrow();
         assertTypedef(action, "adef");
-        assertTypedef(action.input(), "idef");
-        assertTypedef(action.output(), "odef");
+        assertTypedef(action.inputStatement(), "idef");
+        assertTypedef(action.outputStatement(), "odef");
     }
 
     private static void assertTypedef(final EffectiveStatement<?, ?> parent, final String typedefName) {
