@@ -12,7 +12,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -22,16 +21,6 @@ final class OpenConfigVersionEffectiveStatementImpl
         implements OpenConfigVersionEffectiveStatement {
     OpenConfigVersionEffectiveStatementImpl(final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
-    }
-
-    @Override
-    public QName getQName() {
-        return getNodeType();
-    }
-
-    @Override
-    public OpenConfigVersionEffectiveStatement asEffectiveStatement() {
-        return this;
+        super(stmt.declared(), stmt.getArgument(), substatements);
     }
 }
