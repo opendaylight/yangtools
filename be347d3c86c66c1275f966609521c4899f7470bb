@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e670302c_3413e4dc",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ReactorStmtCtx.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-02T19:50:22Z",
+      "side": 1,
+      "message": "utility method for this",
+      "range": {
+        "startLine": 666,
+        "startChar": 37,
+        "endLine": 666,
+        "endChar": 63
+      },
+      "revId": "be347d3c86c66c1275f966609521c4899f7470bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
