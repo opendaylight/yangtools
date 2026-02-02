@@ -11,28 +11,16 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidEffectiveStatement;
-import org.opendaylight.yangtools.rfc6643.model.api.OidSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class OidEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<ObjectIdentifier, @NonNull OidStatement>
-        implements OidEffectiveStatement, OidSchemaNode {
+        implements OidEffectiveStatement {
     OidEffectiveStatementImpl(final Current<ObjectIdentifier, OidStatement> stmt,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
-    }
-
-    @Override
-    public QName getQName() {
-        return getNodeType();
-    }
-
-    @Override
-    public OidEffectiveStatement asEffectiveStatement() {
-        return this;
+        super(stmt.declared(), stmt.getArgument(), substatements);
     }
 }
