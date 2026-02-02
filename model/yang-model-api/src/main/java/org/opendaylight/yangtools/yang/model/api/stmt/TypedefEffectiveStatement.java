@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface TypedefEffectiveStatement
         extends EffectiveStatement<QName, @NonNull TypedefStatement>, TypeDefinitionAware {
     /**
-     * A {@link DeclaredStatement} that is a parent of multiple {@link TypedefEffectiveStatement}s.
+     * An {@link EffectiveStatement} that is a parent of multiple {@link TypedefEffectiveStatement}s.
      *
      * <p>This constitutes the statament's contribution to the following in accordance with RFC7950 section 6.2.1:
      * <pre>
