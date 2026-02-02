@@ -10,13 +10,14 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Common capture of effective traits shared by {@code action} and {@code rpc} statements. The effective view always
  * defines an {@code input} and an {@code output} substatement, both of which are available through {@link #input()}
  * and {@link #output()} methods respectively.
  */
-public sealed interface EffectiveOperationStatement<D extends DeclaredOperationStatement>
+public sealed interface EffectiveOperationStatement<D extends DeclaredStatement<QName>>
     extends SchemaTreeEffectiveStatement<D>, DataTreeAwareEffectiveStatement<QName, D>,
             TypedefEffectiveStatement.MultipleIn<QName, D>
     permits ActionEffectiveStatement, RpcEffectiveStatement {

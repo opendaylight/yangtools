@@ -19,7 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code rpc} statement.
  */
-public non-sealed interface RpcStatement extends DeclaredOperationStatement {
+public interface RpcStatement extends DeclaredStatement<QName>, DescriptionStatement.OptionalIn<QName>,
+        IfFeatureStatement.MultipleIn<QName>, GroupingStatementMultipleIn<QName>, InputStatement.OptionalIn<QName>,
+        OutputStatement.OptionalIn<QName>, ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>,
+        TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link RpcStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

@@ -12,9 +12,9 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeclaredOperationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EffectiveOperationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <E> Effective Statement representation
  */
 abstract sealed class AbstractOperationStatementSupport<
-        D extends DeclaredOperationStatement, E extends EffectiveOperationStatement<D>>
+        D extends DeclaredStatement<QName>, E extends EffectiveOperationStatement<D>>
         extends AbstractSchemaTreeStatementSupport<D, E>
         permits ActionStatementSupport, RpcStatementSupport {
     AbstractOperationStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
