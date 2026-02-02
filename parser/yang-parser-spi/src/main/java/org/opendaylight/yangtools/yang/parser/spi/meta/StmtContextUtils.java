@@ -123,50 +123,6 @@ public final class StmtContextUtils {
             .build();
     }
 
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, D, ?> findFirstEffectiveSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
-        for (var subStmtContext : stmtContext.effectiveSubstatements()) {
-            final var declaring = subStmtContext.tryDeclaring(declaredType);
-            if (declaring != null) {
-                return declaring;
-            }
-        }
-        return null;
-    }
-
-    public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
-            final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType, int sublevel) {
-        for (var subStmtContext : stmtContext.declaredSubstatements()) {
-            if (sublevel == 1 && subStmtContext.producesDeclared(declaredType)) {
-                return subStmtContext;
-            }
-            if (sublevel > 1) {
-                final var result = findFirstDeclaredSubstatementOnSublevel(subStmtContext, declaredType, --sublevel);
-                if (result != null) {
-                    return result;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findDeepFirstDeclaredSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<? super D> declaredType) {
-        for (final var subStmtContext : stmtContext.declaredSubstatements()) {
-            if (subStmtContext.producesDeclared(declaredType)) {
-                return subStmtContext;
-            }
-
-            final var result = findDeepFirstDeclaredSubstatement(subStmtContext, declaredType);
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
-    }
-
     // FIXME: 8.0.0: This method goes back as far as YANGTOOLS-365, when we were build EffectiveStatements for
     //               unsupported YANG extensions. We are not doing that anymore, do we still need this method? Also, it
     //               is only used in augment support to disable mechanics on unknown nodes.
