@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 /**
  * An {@link InputSchemaNode} defines outputs of an {@link RpcDefinition} or an {@link ActionDefinition}.
  */
-public interface OutputSchemaNode extends ContainerLike, AugmentationTarget.Mixin<OutputEffectiveStatement> {
+public interface OutputSchemaNode extends ContainerLike, AugmentationTarget.Mixin<OutputEffectiveStatement>,
+        MustConstraintAware.Mixin<OutputEffectiveStatement> {
     @Override
     default Collection<? extends ActionDefinition> getActions() {
         return List.of();

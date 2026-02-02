@@ -22,12 +22,11 @@ import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
 public abstract class AbstractLeafEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, @NonNull LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<@NonNull LeafStatement>,
-            MandatoryMixin<QName, @NonNull LeafStatement>, MustConstraintMixin<QName, @NonNull LeafStatement> {
+            MandatoryMixin<QName, @NonNull LeafStatement> {
     private static final VarHandle TYPE;
 
     static {

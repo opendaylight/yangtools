@@ -29,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
-import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
@@ -79,19 +77,6 @@ public final class EffectiveStatementMixins {
         @Deprecated(since = "7.0.9", forRemoval = true)
         default boolean isAddedByUses() {
             return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
-        }
-    }
-
-    /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link MustConstraintAware}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface MustConstraintMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, MustConstraintAware {
-        @Override
-        default Collection<? extends @NonNull MustDefinition> getMustConstraints() {
-            return filterEffectiveStatements(MustDefinition.class);
         }
     }
 
@@ -313,8 +298,7 @@ public final class EffectiveStatementMixins {
      */
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
-                    MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, SchemaNodeMixin<D>,
-                    CopyableMixin<QName, D> {
+                    WhenConditionMixin<QName, D>, SchemaNodeMixin<D>, CopyableMixin<QName, D> {
         @Override
         default Optional<ActionDefinition> findAction(final QName qname) {
             return Optional.empty();
@@ -338,7 +322,7 @@ public final class EffectiveStatementMixins {
      */
     public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>>
             extends DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>, MandatoryMixin<QName, D>,
-                    MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D> {
+                    WhenConditionMixin<QName, D> {
         @Override
         default QName getQName() {
             return argument();

@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeCon
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.PresenceMixin;
 
 public abstract class AbstractContainerEffectiveStatement
@@ -29,7 +28,7 @@ public abstract class AbstractContainerEffectiveStatement
             DataNodeContainerMixin<QName, @NonNull ContainerStatement>,
             ActionNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
             NotificationNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
-            MustConstraintMixin<QName, @NonNull ContainerStatement>, PresenceMixin<QName, @NonNull ContainerStatement> {
+            PresenceMixin<QName, @NonNull ContainerStatement> {
     private final int flags;
 
     AbstractContainerEffectiveStatement(final @NonNull ContainerStatement declared,

@@ -21,14 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 
 abstract class AbstractLeafListEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, @NonNull LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode,
             UserOrderedAwareMixin<QName, @NonNull LeafListStatement, LeafListEffectiveStatement>,
-            DataSchemaNodeMixin<@NonNull LeafListStatement>, MustConstraintMixin<QName, @NonNull LeafListStatement> {
+            DataSchemaNodeMixin<@NonNull LeafListStatement> {
     private static final VarHandle TYPE;
 
     static {

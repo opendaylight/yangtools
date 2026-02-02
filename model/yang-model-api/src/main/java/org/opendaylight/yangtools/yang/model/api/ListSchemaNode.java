@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
  * identified by the values of the list's keys, if defined.
  */
 public interface ListSchemaNode extends DataNodeContainer, DataSchemaNode, ElementCountConstraintAware,
-        MustConstraintAware, ActionNodeContainer.Mixin<ListEffectiveStatement>,
+        MustConstraintAware.Mixin<ListEffectiveStatement>, ActionNodeContainer.Mixin<ListEffectiveStatement>,
         AugmentationTarget.Mixin<ListEffectiveStatement>, NotificationNodeContainer.Mixin<ListEffectiveStatement>,
         UserOrderedAware<ListEffectiveStatement> {
     /**

@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Mix-in interface for nodes which can define must constraints.
- *
- * @author Robert Varga
  */
 public interface MustConstraintAware {
     /**
@@ -21,5 +20,18 @@ public interface MustConstraintAware {
      *
      * @return collection of {@code MustDefinition} (XPath) instances which represents the concrete data constraints
      */
-    Collection<? extends @NonNull MustDefinition> getMustConstraints();
+    @NonNull Collection<? extends @NonNull MustDefinition> getMustConstraints();
+
+    /**
+     * Bridge between {@link EffectiveStatement} and {@link ActionNodeContainer}.
+     *
+     * @param <E> Type of equivalent {@link EffectiveStatement}.
+     * @since 15.0.0
+     */
+    interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, MustConstraintAware {
+        @Override
+        default Collection<? extends MustDefinition> getMustConstraints() {
+            return asEffectiveStatement().filterEffectiveStatements(MustDefinition.class);
+        }
+    }
 }
