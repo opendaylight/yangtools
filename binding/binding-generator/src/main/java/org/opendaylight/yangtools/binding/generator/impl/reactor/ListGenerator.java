@@ -97,7 +97,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         final var generatedType = super.methodReturnType(builderFactory);
         // We are wrapping the generated type in either a List or a Map based on presence of the key
         final var local = keyGen;
-        if (local != null && statement().ordering() == Ordering.SYSTEM) {
+        if (local != null && statement().effectiveOrdering() == Ordering.SYSTEM) {
             return Types.mapTypeFor(local.getGeneratedType(builderFactory), generatedType);
         }
 

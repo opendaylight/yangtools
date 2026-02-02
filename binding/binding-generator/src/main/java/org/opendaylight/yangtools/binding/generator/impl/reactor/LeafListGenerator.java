@@ -36,7 +36,7 @@ final class LeafListGenerator
         final Type type = super.methodReturnType(builderFactory);
         final boolean isObject = Types.objectType().equals(type);
 
-        if (statement().ordering() == Ordering.SYSTEM) {
+        if (statement().effectiveOrdering() == Ordering.SYSTEM) {
             return isObject ? Types.setTypeWildcard() : Types.setTypeFor(type);
         }
         return isObject ? Types.listTypeWildcard() : Types.listTypeFor(type);
