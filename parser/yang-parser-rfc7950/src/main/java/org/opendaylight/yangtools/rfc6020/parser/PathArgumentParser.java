@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
+package org.opendaylight.yangtools.rfc6020.parser;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
@@ -17,22 +17,21 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgLexer;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Absolute_pathContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Deref_exprContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Deref_function_invocationContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Descendant_pathContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Node_identifierContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Path_key_exprContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Path_predicateContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Path_strContext;
+import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Relative_pathContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.parser.antlr.SourceExceptionParser;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathLexer;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Absolute_pathContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Deref_exprContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Deref_function_invocationContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Descendant_pathContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Node_identifierContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_key_exprContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_predicateContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Path_strContext;
-import org.opendaylight.yangtools.yang.parser.grammar.LeafRefPathParser.Relative_pathContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -50,13 +49,13 @@ import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
-final class PathExpressionParser {
+final class PathArgumentParser {
     private static final YangFunctionCallExpr CURRENT_CALL =
         YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier());
 
     PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
-        final var path = SourceExceptionParser.parseString(LeafRefPathLexer::new, LeafRefPathParser::new,
-            LeafRefPathParser::path_arg, ctx.sourceReference(), pathArg);
+        final var path = SourceExceptionParser.parseString(PathArgLexer::new, PathArgParser::new,
+            PathArgParser::path_arg, ctx.sourceReference(), pathArg);
 
         final var childPath = path.getChild(0);
         return switch (childPath) {
@@ -168,7 +167,7 @@ final class PathExpressionParser {
             if (child instanceof Node_identifierContext) {
                 break;
             }
-            if (child instanceof TerminalNode terminal && terminal.getSymbol().getType() == LeafRefPathLexer.DOTS) {
+            if (child instanceof TerminalNode terminal && terminal.getSymbol().getType() == PathArgLexer.DOTS) {
                 steps.add(YangXPathAxis.PARENT.asStep());
             }
 

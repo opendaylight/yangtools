@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.rfc6020.parser.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionLexer;
 import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser;

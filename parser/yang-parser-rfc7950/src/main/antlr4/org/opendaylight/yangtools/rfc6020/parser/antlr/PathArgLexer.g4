@@ -1,4 +1,4 @@
-lexer grammar LeafRefPathLexer;
+lexer grammar PathArgLexer;
 
 COLON : ':' ;
 SLASH : '/' ;
