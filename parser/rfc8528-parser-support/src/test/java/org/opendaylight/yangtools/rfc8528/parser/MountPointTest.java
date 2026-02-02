@@ -11,8 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.parser.dagger.Rfc8528Module;
+import org.opendaylight.yangtools.yang.common.MountPointLabel;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -48,20 +49,25 @@ class MountPointTest {
 
         assertEquals(5, context.getModules().size());
 
-        var child = context.findDataTreeChild(EXAMPLE_CONT).orElseThrow();
-        var mps = MountPointSchemaNode.streamAll(assertInstanceOf(ContainerSchemaNode.class, child)).toList();
-        assertEquals(2, mps.size());
-        assertEquals(EXAMPLE_CONT, mps.get(0).getQName());
-        assertEquals(EXAMPLE_CONT, mps.get(1).getQName());
+        var cont = assertInstanceOf(ContainerSchemaNode.class, context.findDataTreeChild(EXAMPLE_CONT).orElseThrow())
+            .asEffectiveStatement().streamEffectiveSubstatements(MountPointEffectiveStatement.class)
+            .toList();
+        assertEquals(2, cont.size());
+        final var contLabel = new MountPointLabel(EXAMPLE_CONT);
+        assertEquals(contLabel, cont.get(0).argument());
+        assertEquals(contLabel, cont.get(1).argument());
 
-        child = context.findDataTreeChild(EXAMPLE_GRP_CONT).orElseThrow();
-        mps = MountPointSchemaNode.streamAll(assertInstanceOf(ContainerSchemaNode.class, child)).toList();
-        assertEquals(1, mps.size());
-        assertEquals(EXAMPLE_GRP, mps.get(0).getQName());
+        var grpCont = assertInstanceOf(ContainerSchemaNode.class,
+            context.findDataTreeChild(EXAMPLE_GRP_CONT).orElseThrow())
+            .asEffectiveStatement().streamEffectiveSubstatements(MountPointEffectiveStatement.class)
+            .toList();
+        assertEquals(1, grpCont.size());
+        assertEquals(new MountPointLabel(EXAMPLE_GRP), grpCont.getFirst().argument());
 
-        child = context.findDataTreeChild(EXAMPLE_LIST).orElseThrow();
-        mps = MountPointSchemaNode.streamAll(assertInstanceOf(ListSchemaNode.class, child)).toList();
-        assertEquals(1, mps.size());
-        assertEquals(EXAMPLE_LIST, mps.get(0).getQName());
+        var list = assertInstanceOf(ListSchemaNode.class, context.findDataTreeChild(EXAMPLE_LIST).orElseThrow())
+            .asEffectiveStatement().streamEffectiveSubstatements(MountPointEffectiveStatement.class)
+            .toList();
+        assertEquals(1, list.size());
+        assertEquals(new MountPointLabel(EXAMPLE_LIST), list.getFirst().argument());
     }
 }

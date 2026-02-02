@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 public abstract class AbstractSchemaContext implements SchemaContext {
     /**
@@ -85,7 +84,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     // Accessed via DERIVED_IDENTITIES
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> derivedIdentities = null;
 
@@ -170,15 +168,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     @Override
     public Collection<? extends Module> findModules(final String name) {
         return getNameToModules().get(name);
-    }
-
-    @Override
-    public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-        final List<UnknownSchemaNode> result = new ArrayList<>();
-        for (Module module : getModules()) {
-            result.addAll(module.getUnknownSchemaNodes());
-        }
-        return Collections.unmodifiableList(result);
     }
 
     @Override

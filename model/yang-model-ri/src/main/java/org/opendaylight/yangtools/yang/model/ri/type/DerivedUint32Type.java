@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
 final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32TypeDefinition, Uint32>
         implements Uint32TypeDefinition {
     DerivedUint32Type(final Uint32TypeDefinition baseType, final QName qname, final Object defaultValue,
-            final String description, final String reference, final Status status, final String units,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
+            final String description, final String reference, final Status status, final String units) {
+        super(baseType, qname, defaultValue, description, reference, status, units);
     }
 
     @Override

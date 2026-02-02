@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -29,17 +27,6 @@ public interface DocumentedNode {
      * @return string with reference to some other document, or empty if reference was not provided.
      */
     Optional<String> getReference();
-
-    /**
-     * Returns unknown schema nodes which belongs to this instance. Default implementation returns an empty collection.
-     *
-     * @return collection of unknown schema nodes defined under this node.
-     * @deprecated Use {@link EffectiveStatementEquivalent#asEffectiveStatement()} view for accurate statement view.
-     */
-    @Deprecated(since = "14.0.23", forRemoval = true)
-    default @NonNull Collection<? extends @NonNull UnknownSchemaNode> getUnknownSchemaNodes() {
-        return ImmutableList.of();
-    }
 
     interface WithStatus extends DocumentedNode {
         /**

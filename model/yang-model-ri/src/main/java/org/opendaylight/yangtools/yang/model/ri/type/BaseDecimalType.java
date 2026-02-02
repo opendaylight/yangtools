@@ -12,12 +12,10 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
-import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
@@ -63,9 +61,8 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
 
     private final int fractionDigits;
 
-    BaseDecimalType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
-            final int fractionDigits, final RangeConstraint<Decimal64> rangeConstraint) {
-        super(qname, unknownSchemaNodes, rangeConstraint);
+    BaseDecimalType(final QName qname, final int fractionDigits, final RangeConstraint<Decimal64> rangeConstraint) {
+        super(qname, rangeConstraint);
         this.fractionDigits = fractionDigits;
     }
 
