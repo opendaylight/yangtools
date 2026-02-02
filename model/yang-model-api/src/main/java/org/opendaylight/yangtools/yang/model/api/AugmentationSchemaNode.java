@@ -16,8 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
  * to the schema tree defined in an external module, or the current module and its submodules, and to add to the nodes
  * from a grouping in a "uses" statement.
  */
-public interface AugmentationSchemaNode extends DataNodeContainer, NotificationNodeContainer,
-        WhenConditionAware, WithStatus, ActionNodeContainer.Mixin<AugmentEffectiveStatement> {
+public interface AugmentationSchemaNode extends DataNodeContainer, WhenConditionAware, WithStatus,
+        ActionNodeContainer.Mixin<AugmentEffectiveStatement>,
+        NotificationNodeContainer.Mixin<AugmentEffectiveStatement> {
     /**
      * Returns augmentation target path.
      *

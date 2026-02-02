@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.spi.meta;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
 import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -81,20 +79,6 @@ public final class EffectiveStatementMixins {
         @Deprecated(since = "7.0.9", forRemoval = true)
         default boolean isAddedByUses() {
             return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
-        }
-    }
-
-    /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link NotificationNodeContainer}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface NotificationNodeContainerMixin<A, D extends DeclaredStatement<A>>
-            extends Mixin<A, D>, NotificationNodeContainer {
-        @Override
-        default Collection<? extends NotificationDefinition> getNotifications() {
-            return filterEffectiveStatements(NotificationDefinition.class);
         }
     }
 
@@ -339,11 +323,6 @@ public final class EffectiveStatementMixins {
         @Override
         default Optional<NotificationDefinition> findNotification(final QName qname) {
             return Optional.empty();
-        }
-
-        @Override
-        default Collection<? extends NotificationDefinition> getNotifications() {
-            return ImmutableSet.of();
         }
 
         @Override

@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 public interface NotificationNodeContainer {
     /**
@@ -40,5 +41,19 @@ public interface NotificationNodeContainer {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatement} and {@link NotificationNodeContainer}.
+     *
+     * @param <E> Type of equivalent {@link EffectiveStatement}.
+     * @since 15.0.0
+     */
+    interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>,
+            NotificationNodeContainer {
+        @Override
+        default Collection<? extends NotificationDefinition> getNotifications() {
+            return asEffectiveStatement().filterEffectiveStatements(NotificationDefinition.class);
+        }
     }
 }

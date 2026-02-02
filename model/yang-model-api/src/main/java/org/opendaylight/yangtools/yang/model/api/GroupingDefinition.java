@@ -20,7 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
  * which are data schema node, but those really are instantiated and typically differ in {@link #getQName()}'s
  * namespace.
  */
-public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer,
-    ActionNodeContainer.Mixin<GroupingEffectiveStatement>, AddedByUsesAware {
+public interface GroupingDefinition extends DataNodeContainer, SchemaNode,
+    ActionNodeContainer.Mixin<GroupingEffectiveStatement>, NotificationNodeContainer.Mixin<GroupingEffectiveStatement>,
+    AddedByUsesAware {
     // Nothing else
 }

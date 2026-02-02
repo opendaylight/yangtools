@@ -19,4 +19,9 @@ public interface OutputSchemaNode extends ContainerLike, AugmentationTarget.Mixi
     default Collection<? extends ActionDefinition> getActions() {
         return List.of();
     }
+
+    @Override
+    default Collection<? extends NotificationDefinition> getNotifications() {
+        return List.of();
+    }
 }
