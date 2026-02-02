@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -86,6 +87,12 @@ public final class NodeIdentifierParser extends AbstractArgumentParser<QName> {
         return IdentifierParser.lexIdentifier(str.substring(identifierIndex, endIndex), identifierIndex)
             .bindTo(module)
             .intern();
+    }
+
+    @Beta
+    public QName createNodeIdentifier(final String prefix, final String identifier)
+            throws ArgumentSyntaxException, ArgumentBindingException {
+        return IdentifierParser.lexIdentifier(identifier, 0).bindTo(parsePrefix(prefix, 0)).intern();
     }
 
     private QNameModule parsePrefix(final String str, final int beginIndex)
