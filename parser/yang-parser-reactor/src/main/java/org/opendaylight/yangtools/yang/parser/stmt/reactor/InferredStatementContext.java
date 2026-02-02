@@ -129,10 +129,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         argument = targetModule == null ? prototype.argument()
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.targetModule = targetModule;
-
-        final var origCtx = prototype.getOriginalCtx().orElse(prototype);
-        verify(origCtx instanceof ReactorStmtCtx, "Unexpected original %s", origCtx);
-        originalCtx = (ReactorStmtCtx<A, D, E>) origCtx;
+        originalCtx = prototype.originalOrSelf();
 
         // Mark prototype as blocking statement cleanup
         prototype.incRef();
@@ -171,13 +168,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public Optional<StmtContext<A, D, E>> getOriginalCtx() {
-        return Optional.of(originalCtx);
+    ReactorStmtCtx<A, D, E> originalCtx() {
+        return originalCtx;
     }
 
     @Override
-    public Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
-        return Optional.of(prototype);
+    public ReactorStmtCtx<A, D, E> previousCopyCtx() {
+        return prototype;
     }
 
     @Override

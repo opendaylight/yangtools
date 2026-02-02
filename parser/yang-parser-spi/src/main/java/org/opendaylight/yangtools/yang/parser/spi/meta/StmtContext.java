@@ -133,33 +133,13 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
 
     Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
 
-    /*
-     * FIXME: YANGTOOLS-784: the next three methods are closely related to the copy process:
-     *        - copyHistory() is a brief summary of what went on
-     *        - getOriginalContext() points to the CopyHistory.ORIGINAL
-     *        - getPreviousCopyCtx() points to the immediate predecessor forming a singly-linked list terminated
-     *          at getOriginalContext()
-     *
-     *        When implementing YANGTOOLS-784, this needs to be taken into account and properly forwarded through
-     *        intermediate MutableTrees. Also note this closely relates to current namespace context, as taken into
-     *        account when creating the argument. At least parts of this are only needed during buildEffective()
-     *        and hence should become arguments to that method.
-     */
-
-    /**
-     * Return the statement context of the original definition, if this statement is an instantiated copy.
-     *
-     * @return Original definition, if this statement was copied.
-     */
-    Optional<StmtContext<A, D, E>> getOriginalCtx();
-
     /**
      * Return the context of the previous copy of this statement -- effectively walking towards the source origin
      * of this statement.
      *
      * @return Context of the previous copy of this statement, if this statement has been copied.
      */
-    Optional<StmtContext<A, D, E>> getPreviousCopyCtx();
+    @Nullable StmtContext<A, D, E> previousCopyCtx();
 
     /**
      * Create a replica of this statement as a substatement of specified {@code parent}. The replica must not be
