@@ -212,7 +212,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     protected final void appendPrefixes(final Current<?, ?> stmt,
             final Builder<String, ModuleEffectiveStatement> builder) {
         streamEffectiveSubstatements(ImportEffectiveStatement.class)
-            .map(imp -> imp.prefix().argument())
+            .map(imp -> imp.prefixStatement().argument())
             .forEach(pfx -> {
                 final var importedCtx =
                     verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),

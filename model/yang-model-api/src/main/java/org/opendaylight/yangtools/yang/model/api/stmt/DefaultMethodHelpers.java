@@ -24,10 +24,6 @@ final class DefaultMethodHelpers {
         return optional.filter(type::isInstance).map(type::cast);
     }
 
-    static @NonNull PrefixEffectiveStatement verifyPrefixSubstatement(final EffectiveStatement<?, ?> stmt) {
-        return verifySubstatement(stmt, PrefixEffectiveStatement.class);
-    }
-
     static <T extends EffectiveStatement<?, ?>> @NonNull T verifySubstatement(final EffectiveStatement<?, ?> stmt,
             final Class<T> type) {
         return stmt.findFirstEffectiveSubstatement(type).orElseThrow(

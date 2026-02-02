@@ -70,7 +70,7 @@ abstract sealed class PreferredPrefixes {
 
             final var modules = modelContext.findModuleStatements(namespace).iterator();
             // Note: we are not caching anything if we do not find the module
-            return modules.hasNext() ? loadPrefix(namespace, modules.next().prefix().argument()) : null;
+            return modules.hasNext() ? loadPrefix(namespace, modules.next().prefixStatement().argument()) : null;
         }
 
         @Override
@@ -110,7 +110,7 @@ abstract sealed class PreferredPrefixes {
 
         private Stream<ModuleEffectiveStatement> modulesForPrefix(final String prefix) {
             return modelContext.getModuleStatements().values().stream()
-                .filter(module -> prefix.equals(module.prefix().argument()));
+                .filter(module -> prefix.equals(module.prefixStatement().argument()));
         }
 
         // https://www.w3.org/TR/xml-names/#xmlReserved
