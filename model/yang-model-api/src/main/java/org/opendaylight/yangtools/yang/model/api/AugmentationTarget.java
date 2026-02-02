@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Interface for all nodes which are possible targets of augmentation. The
@@ -22,4 +23,17 @@ public interface AugmentationTarget {
      * @return set of augmentations targeting this element.
      */
     @NonNull Collection<? extends @NonNull AugmentationSchemaNode> getAvailableAugmentations();
+
+    /**
+     * Bridge between {@link EffectiveStatement} and {@link AugmentationTarget}.
+     *
+     * @param <E> Type of equivalent {@link EffectiveStatement}.
+     * @since 15.0.0
+     */
+    interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, AugmentationTarget {
+        @Override
+        default Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
+            return asEffectiveStatement().filterEffectiveStatements(AugmentationSchemaNode.class);
+        }
+    }
 }

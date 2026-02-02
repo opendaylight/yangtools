@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
  * A ChoiceSchemaNode defines a set of alternatives. It consists of a number of branches defined as
  * {@link CaseSchemaNode} objects.
  */
-public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, MandatoryAware,
-        EffectiveStatementEquivalent<ChoiceEffectiveStatement> {
+public interface ChoiceSchemaNode extends DataSchemaNode, MandatoryAware,
+        AugmentationTarget.Mixin<ChoiceEffectiveStatement> {
     /**
      * Returns cases of choice, keyed by their {@link SchemaNode#getQName()}. Returned map does not contain null keys
      * nor values.
