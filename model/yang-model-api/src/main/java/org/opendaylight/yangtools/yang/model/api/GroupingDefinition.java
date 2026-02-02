@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
  * namespace.
  */
 public interface GroupingDefinition extends DataNodeContainer, SchemaNode,
-    ActionNodeContainer.Mixin<GroupingEffectiveStatement>, NotificationNodeContainer.Mixin<GroupingEffectiveStatement>,
+    ActionNodeContainer.Mixin<GroupingEffectiveStatement>, DocumentedNode.Mixin<GroupingEffectiveStatement>,
+    NotificationNodeContainer.Mixin<GroupingEffectiveStatement>,
     AddedByUsesAware {
     // Nothing else
 }

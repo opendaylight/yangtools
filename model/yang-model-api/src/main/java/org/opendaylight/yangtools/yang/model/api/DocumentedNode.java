@@ -11,6 +11,9 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 
 /**
  * Node which can have documentation assigned.
@@ -37,6 +40,29 @@ public interface DocumentedNode {
      */
     default @NonNull Collection<? extends @NonNull UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatement} and {@link DocumentedNode}.
+     *
+     * @param <E> Type of equivalent {@link EffectiveStatement}.
+     * @since 15.0.0
+     */
+    interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, DocumentedNode {
+        @Override
+        default Optional<String> getDescription() {
+            return asEffectiveStatement().findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
+        }
+
+        @Override
+        default Optional<String> getReference() {
+            return asEffectiveStatement().findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class);
+        }
+
+        @Override
+        default Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
+            return asEffectiveStatement().filterEffectiveStatements(UnknownSchemaNode.class);
+        }
     }
 
     interface WithStatus extends DocumentedNode {

@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
@@ -19,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 /**
  * Contains the methods for getting data and checking properties of the YANG <code>uses</code> substatement.
  */
-public interface UsesNode extends WithStatus, CopyableNode, WhenConditionAware.Mixin<UsesEffectiveStatement> {
+public interface UsesNode extends DocumentedNode.WithStatus, CopyableNode, DocumentedNode.Mixin<UsesEffectiveStatement>,
+        WhenConditionAware.Mixin<UsesEffectiveStatement> {
     /**
      * Returns the {code grouping} which this node acted upon.
      *

@@ -13,11 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class EmptyRangeEffectiveStatement extends DefaultArgument<ValueRanges, @NonNull RangeStatement>
-        implements RangeEffectiveStatement, ConstraintMetaDefinition.Mixin<RangeEffectiveStatement>,
-                   DocumentedNodeMixin<ValueRanges, @NonNull RangeStatement> {
+        implements RangeEffectiveStatement, ConstraintMetaDefinition.Mixin<RangeEffectiveStatement> {
     public EmptyRangeEffectiveStatement(final @NonNull RangeStatement declared) {
         super(declared);
     }

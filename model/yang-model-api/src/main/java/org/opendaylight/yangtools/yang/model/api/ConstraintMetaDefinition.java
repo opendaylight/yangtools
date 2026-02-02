@@ -38,7 +38,7 @@ public interface ConstraintMetaDefinition extends DocumentedNode {
      * @since 15.0.0
      */
     interface Mixin<E extends EffectiveStatement<?, ?>>
-            extends EffectiveStatementEquivalent<E>, ConstraintMetaDefinition {
+            extends EffectiveStatementEquivalent<E>, DocumentedNode.Mixin<E>, ConstraintMetaDefinition {
         @Override
         default Optional<String> getErrorAppTag() {
             return asEffectiveStatement().findFirstEffectiveSubstatementArgument(ErrorAppTagEffectiveStatement.class);

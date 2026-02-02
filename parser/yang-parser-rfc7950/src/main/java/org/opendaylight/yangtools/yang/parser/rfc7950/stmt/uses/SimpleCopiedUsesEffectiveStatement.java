@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.CopyableMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin.WithStatus;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WithStatusMixin;
 
 /**
  * A simple case of a copied statement. The key difference here is that the argument does not match the declared
@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
  */
 class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstatements<QName, @NonNull UsesStatement>
         implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, @NonNull UsesStatement>,
-                   WithStatus<QName, @NonNull UsesStatement> {
+                   WithStatusMixin<QName, @NonNull UsesStatement> {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final int flags;
 

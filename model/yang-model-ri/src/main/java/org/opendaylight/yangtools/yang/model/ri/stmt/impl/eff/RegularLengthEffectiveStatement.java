@@ -15,11 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class RegularLengthEffectiveStatement extends WithSubstatements<ValueRanges, @NonNull LengthStatement>
-        implements LengthEffectiveStatement, ConstraintMetaDefinition.Mixin<LengthEffectiveStatement>,
-                   DocumentedNodeMixin<ValueRanges, @NonNull LengthStatement> {
+        implements LengthEffectiveStatement, ConstraintMetaDefinition.Mixin<LengthEffectiveStatement> {
     public RegularLengthEffectiveStatement(final @NonNull LengthStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);

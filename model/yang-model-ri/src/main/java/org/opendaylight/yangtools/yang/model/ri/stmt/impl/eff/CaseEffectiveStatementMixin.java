@@ -14,11 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 interface CaseEffectiveStatementMixin extends CaseEffectiveStatement, CaseSchemaNode,
-        DataSchemaNodeMixin<@NonNull CaseStatement>, DocumentedNodeMixin.WithStatus<QName, @NonNull CaseStatement>,
-        DataNodeContainerMixin<QName, @NonNull CaseStatement> {
+        DataSchemaNodeMixin<@NonNull CaseStatement>, DataNodeContainerMixin<QName, @NonNull CaseStatement> {
     @Override
     default QName getQName() {
         return argument();

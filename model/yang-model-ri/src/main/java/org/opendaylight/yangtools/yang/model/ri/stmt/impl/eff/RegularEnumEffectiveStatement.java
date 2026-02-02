@@ -9,20 +9,24 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class RegularEnumEffectiveStatement extends WithSubstatements<String, @NonNull EnumStatement>
-        implements EnumEffectiveStatement, DocumentedNodeMixin<String, @NonNull EnumStatement>, WithStatus {
+        implements EnumEffectiveStatement, DocumentedNode.Mixin<EnumEffectiveStatement>, DocumentedNode.WithStatus {
     public  RegularEnumEffectiveStatement(final @NonNull EnumStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
+    }
+
+    @Override
+    public EnumEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

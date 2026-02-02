@@ -21,15 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 /**
  * A declared {@link AbstractDeclaredEffectiveStatement} with {@link UnknownSchemaNode}.
  */
 @Beta
 public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownStatement<A>>
-        extends AbstractDeclaredEffectiveStatement<A, D>
-        implements DocumentedNodeMixin<A, D>, UnknownSchemaNode {
+        extends AbstractDeclaredEffectiveStatement<A, D> implements UnknownSchemaNode {
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
     private final @NonNull D declared;
     private final @NonNull A argument;

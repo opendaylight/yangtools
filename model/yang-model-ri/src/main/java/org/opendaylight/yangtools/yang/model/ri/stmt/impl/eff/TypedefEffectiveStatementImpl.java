@@ -14,6 +14,7 @@ import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -33,7 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName, @NonNull TypedefStatement>
-        implements TypedefEffectiveStatement, SchemaNodeMixin<@NonNull TypedefStatement> {
+        implements TypedefEffectiveStatement, DocumentedNode.Mixin<TypedefEffectiveStatement>,
+                   SchemaNodeMixin<@NonNull TypedefStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(TypedefEffectiveStatementImpl.class);
 
     private static final VarHandle TYPE_DEFINITION;
@@ -64,6 +66,11 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
         this.flags = flags;
+    }
+
+    @Override
+    public TypedefEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

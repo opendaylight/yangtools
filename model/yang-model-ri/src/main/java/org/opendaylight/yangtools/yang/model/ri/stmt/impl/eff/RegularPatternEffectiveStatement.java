@@ -15,12 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class RegularPatternEffectiveStatement
         extends WithSubstatements<PatternExpression, @NonNull PatternStatement>
-        implements PatternEffectiveStatement, ConstraintMetaDefinition.Mixin<PatternEffectiveStatement>,
-                   DocumentedNodeMixin<PatternExpression, @NonNull PatternStatement> {
+        implements PatternEffectiveStatement, ConstraintMetaDefinition.Mixin<PatternEffectiveStatement> {
     public RegularPatternEffectiveStatement(final @NonNull PatternStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);

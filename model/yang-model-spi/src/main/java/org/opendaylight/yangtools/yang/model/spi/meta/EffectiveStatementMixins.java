@@ -39,11 +39,9 @@ import org.opendaylight.yangtools.yang.model.api.UserOrderedAware;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
@@ -138,46 +136,23 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link DocumentedNode}.
+     * Bridge between {@link EffectiveStatementWithFlags} and
+     * {@link org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus}.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public interface DocumentedNodeMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, DocumentedNode {
-        /**
-         * Bridge between {@link EffectiveStatementWithFlags} and
-         * {@link org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus}.
-         *
-         * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-         * @param <D> Class representing declared version of this statement.
-         */
-        interface WithStatus<A, D extends DeclaredStatement<A>>
-                extends EffectiveStatementWithFlags<A, D>, DocumentedNodeMixin<A, D>, DocumentedNode.WithStatus {
-            @Override
-            default Status getStatus() {
-                final int status = flags() & FlagsBuilder.MASK_STATUS;
-                return switch (status) {
-                    case FlagsBuilder.STATUS_CURRENT -> Status.CURRENT;
-                    case FlagsBuilder.STATUS_DEPRECATED -> Status.DEPRECATED;
-                    case FlagsBuilder.STATUS_OBSOLETE -> Status.OBSOLETE;
-                    default -> throw new IllegalStateException("Illegal status " + status);
-                };
-            }
-        }
-
+    public interface WithStatusMixin<A, D extends DeclaredStatement<A>>
+             extends EffectiveStatementWithFlags<A, D>, DocumentedNode.WithStatus {
         @Override
-        default Optional<String> getDescription() {
-            return findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
-        }
-
-        @Override
-        default Optional<String> getReference() {
-            return findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class);
-        }
-
-        @Override
-        default Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-            return filterEffectiveStatements(UnknownSchemaNode.class);
+        default Status getStatus() {
+            final int status = flags() & FlagsBuilder.MASK_STATUS;
+            return switch (status) {
+                case FlagsBuilder.STATUS_CURRENT -> Status.CURRENT;
+                case FlagsBuilder.STATUS_DEPRECATED -> Status.DEPRECATED;
+                case FlagsBuilder.STATUS_OBSOLETE -> Status.OBSOLETE;
+                default -> throw new IllegalStateException("Illegal status " + status);
+            };
         }
     }
 
@@ -212,8 +187,7 @@ public final class EffectiveStatementMixins {
      *
      * @param <D> Class representing declared version of this statement.
      */
-    public interface SchemaNodeMixin<D extends DeclaredStatement<QName>>
-            extends DocumentedNodeMixin.WithStatus<QName, D>, SchemaNode {
+    public interface SchemaNodeMixin<D extends DeclaredStatement<QName>> extends WithStatusMixin<QName, D>, SchemaNode {
         @Override
         default QName getQName() {
             return argument();
@@ -227,7 +201,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface UnknownSchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends DocumentedNodeMixin.WithStatus<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
+            extends WithStatusMixin<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
         @Override
         default String getNodeParameter() {
             return Strings.nullToEmpty(requireDeclared().rawArgument());
@@ -258,7 +232,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
-            extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
+            extends ContainerLike, WithStatusMixin<QName, D>, DataNodeContainerMixin<QName, D>,
                     CopyableMixin<QName, D> {
         @Override
         default Optional<ActionDefinition> findAction(final QName qname) {
@@ -282,7 +256,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>>
-            extends DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>, MandatoryMixin<QName, D> {
+            extends DataSchemaNodeMixin<D>, WithStatusMixin<QName, D>, MandatoryMixin<QName, D> {
         @Override
         default QName getQName() {
             return argument();

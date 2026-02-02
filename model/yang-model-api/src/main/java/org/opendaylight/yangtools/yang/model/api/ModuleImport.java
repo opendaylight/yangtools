@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 //               contribute only a prefix/QNameModule mapping to the effective world and hence should be mapped that
 //               way:
 //               - Module exposes String->QNameModule mapping
-public interface ModuleImport extends DocumentedNode, EffectiveStatementEquivalent<ImportEffectiveStatement> {
+public interface ModuleImport extends DocumentedNode.Mixin<ImportEffectiveStatement> {
     /**
      * Returns the name of the module to import.
      *

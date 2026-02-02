@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  * configuration has an explicit meaning.
  */
 public interface ContainerSchemaNode extends ContainerLike, ActionNodeContainer.Mixin<ContainerEffectiveStatement>,
-        AugmentationTarget.Mixin<ContainerEffectiveStatement>, MustConstraintAware.Mixin<ContainerEffectiveStatement>,
+        AugmentationTarget.Mixin<ContainerEffectiveStatement>, DocumentedNode.Mixin<ContainerEffectiveStatement>,
+        MustConstraintAware.Mixin<ContainerEffectiveStatement>,
         NotificationNodeContainer.Mixin<ContainerEffectiveStatement>,
         WhenConditionAware.Mixin<ContainerEffectiveStatement> {
     /**
