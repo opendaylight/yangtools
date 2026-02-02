@@ -8,17 +8,21 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class EmptyEnumEffectiveStatement extends DefaultArgument<String, @NonNull EnumStatement>
-        implements EnumEffectiveStatement, DocumentedNodeMixin<String, @NonNull EnumStatement>, WithStatus {
+        implements EnumEffectiveStatement, DocumentedNode.Mixin<EnumEffectiveStatement>, DocumentedNode.WithStatus {
     public EmptyEnumEffectiveStatement(final @NonNull EnumStatement declared) {
         super(declared);
+    }
+
+    @Override
+    public EnumEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
@@ -17,9 +18,15 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 public final class RegularLengthEffectiveStatement extends WithSubstatements<ValueRanges, @NonNull LengthStatement>
-        implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, @NonNull LengthStatement> {
+        implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, @NonNull LengthStatement>,
+                   DocumentedNode.Mixin<LengthEffectiveStatement> {
     public RegularLengthEffectiveStatement(final @NonNull LengthStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
+    }
+
+    @Override
+    public LengthEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 }

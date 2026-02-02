@@ -8,18 +8,22 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public class EmptyBitEffectiveStatement extends DefaultArgument<String, @NonNull BitStatement>
-        implements BitEffectiveStatement, DocumentedNodeMixin<String, @NonNull BitStatement>, WithStatus {
+        implements BitEffectiveStatement, DocumentedNode.Mixin<BitEffectiveStatement>, DocumentedNode.WithStatus {
     public EmptyBitEffectiveStatement(final @NonNull BitStatement declared) {
         super(declared);
+    }
+
+    @Override
+    public BitEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

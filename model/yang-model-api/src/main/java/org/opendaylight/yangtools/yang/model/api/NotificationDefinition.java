@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * {@link #toContainerLike()} to get a {@link ContainerLike}, which can serve as a bridge.
  */
 public interface NotificationDefinition extends SchemaNode, DataNodeContainer, CopyableNode,
-        AugmentationTarget.Mixin<NotificationEffectiveStatement>,
+        AugmentationTarget.Mixin<NotificationEffectiveStatement>, DocumentedNode.Mixin<NotificationEffectiveStatement>,
         MustConstraintAware.Mixin<NotificationEffectiveStatement> {
     /**
      * Return a {@link ContainerLike} backed by this definition's {@link #getChildNodes()}.

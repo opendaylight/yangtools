@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
@@ -15,8 +16,14 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 public final class EmptyLengthEffectiveStatement extends DefaultArgument<ValueRanges, @NonNull LengthStatement>
-        implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, @NonNull LengthStatement> {
+        implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, @NonNull LengthStatement>,
+                   DocumentedNode.Mixin<LengthEffectiveStatement> {
     public EmptyLengthEffectiveStatement(final @NonNull LengthStatement declared) {
         super(declared);
+    }
+
+    @Override
+    public LengthEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 }

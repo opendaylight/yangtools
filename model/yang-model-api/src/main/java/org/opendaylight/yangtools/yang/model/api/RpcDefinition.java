@@ -13,6 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
  * Interface describing YANG 'rpc' statement. The rpc statement defines an rpc node in the schema tree. Under the rpc
  * node, a schema node with the name 'input', and a schema node with the name 'output' are also defined.
  */
-public interface RpcDefinition extends OperationDefinition, EffectiveStatementEquivalent<RpcEffectiveStatement> {
-
+public interface RpcDefinition extends OperationDefinition, DocumentedNode.Mixin<RpcEffectiveStatement> {
+    // Nothing else
 }

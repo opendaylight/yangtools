@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
  * {@link CaseSchemaNode} objects.
  */
 public interface ChoiceSchemaNode extends DataSchemaNode, MandatoryAware,
-        AugmentationTarget.Mixin<ChoiceEffectiveStatement>, WhenConditionAware.Mixin<ChoiceEffectiveStatement> {
+        DocumentedNode.Mixin<ChoiceEffectiveStatement>, AugmentationTarget.Mixin<ChoiceEffectiveStatement>,
+        WhenConditionAware.Mixin<ChoiceEffectiveStatement> {
     /**
      * Returns cases of choice, keyed by their {@link SchemaNode#getQName()}. Returned map does not contain null keys
      * nor values.
