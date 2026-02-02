@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -50,7 +51,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Normal;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Structure;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Template;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -402,6 +402,35 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     abstract @Nullable ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(StatementContextBase<?, ?, ?> parent, CopyType type,
         QNameModule targetModule);
 
+    // FIXME: YANGTOOLS-784: the next three methods are closely related to the copy process:
+    //        - history() is a brief summary of what went on
+    //        - originalCtx() points to the CopyHistory.ORIGINAL
+    //        - previousCopyCtx() points to the immediate predecessor forming a singly-linked list terminated
+    //          at getOriginalContext()
+    //
+    //        When implementing YANGTOOLS-784, this needs to be taken into account and properly forwarded through
+    //        intermediate MutableTrees. Also note this closely relates to current namespace context, as taken into
+    //        account when creating the argument. At least parts of this are only needed during buildEffective()
+    //        and hence should become arguments to that method.
+
+    @Override
+    public abstract CopyHistory history();
+
+    /**
+     * Return the statement context of the original definition, if this statement is an instantiated copy.
+     *
+     * @return Original definition, if this statement was copied.
+     */
+    abstract @Nullable ReactorStmtCtx<A, D, E> originalCtx();
+
+    final @NonNull ReactorStmtCtx<A, D, E> originalOrSelf() {
+        final var orig = originalCtx();
+        return orig != null ? orig : this;
+    }
+
+    @Override
+    public abstract ReactorStmtCtx<A, D, E> previousCopyCtx();
+
     @Override
     public final ReplicaStatementContext<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
         checkArgument(parent instanceof StatementContextBase, "Unsupported parent %s", parent);
@@ -454,7 +483,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     /**
      * Attach an effective copy of this statement. This essentially acts as a map, where we make a few assumptions:
      * <ul>
-     *   <li>{@code copy} and {@code this} statement share {@link #getOriginalCtx()} if it exists</li>
+     *   <li>{@code copy} and {@code this} statement share {@link #originalCtx()} if it exists</li>
      *   <li>{@code copy} did not modify any statements relative to {@code this}</li>
      * </ul>
      *
@@ -648,7 +677,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final QName argumentAsTypeQName() {
-        return qnameFromArgument(getOriginalCtx().orElse(this), getRawArgument());
+        return qnameFromArgument(originalOrSelf(), getRawArgument());
     }
 
     @Override
@@ -665,7 +694,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             return qname.getModule();
         }
         if (argument instanceof String str) {
-            return qnameFromArgument(getOriginalCtx().orElse(this), str).getModule();
+            return qnameFromArgument(originalOrSelf(), str).getModule();
         }
         if (argument instanceof SchemaNodeIdentifier sni
                 && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
@@ -680,7 +709,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     // FIXME: document the intent here (and rename accordingly)
     // FIXME: this looks like an attempt to default to IdentifierBinding.parseIdentifierRefArg(), so we should refactor
     //        this code to work without StmtContextUtils
-    private static @NonNull QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
+    private static @NonNull QName qnameFromArgument(ReactorStmtCtx<?, ?, ?> ctx, final String value) {
         if (Strings.isNullOrEmpty(value)) {
             return ctx.publicDefinition().statementName();
         }
@@ -704,7 +733,13 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                     qnameModule = ctx.definingModule();
                 }
                 if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                    ctx = ctx.getOriginalCtx().orElseThrow();
+                    final var origCtx = ctx.originalCtx();
+                    if (origCtx == null)  {
+                        throw new VerifyException(
+                            ctx + " indicates it was added by augmentation, but does not have a original context");
+                    }
+
+                    ctx = origCtx;
                     qnameModule = getModuleQNameByPrefix(root, prefix);
                 }
             }
@@ -733,7 +768,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
      * @param prefix the prefix
      * @return the {@link QNameModule}, or {@code null} if not found
      */
-    private static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull RootStmtContext<?, ?, ?> ctx,
+    private static @Nullable QNameModule getModuleQNameByPrefix(final @NonNull RootStatementContext<?, ?, ?> ctx,
             final String prefix) {
         final var importedModule = ctx.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
         final var qnameModule = ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
