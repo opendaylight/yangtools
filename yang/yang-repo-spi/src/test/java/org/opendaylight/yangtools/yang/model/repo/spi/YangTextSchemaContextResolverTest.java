@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
@@ -27,11 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class YangTextSchemaContextResolverTest {
     private static final YangParserFactory PARSER_FACTORY = DaggerVanillaYangParserComponent.create().parserFactory();
-    private static final YangTextToIRSourceTransformer TEXT_TO_IR =
-        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
+    private static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
 
     @Test
     void testYangTextSchemaContextResolver() throws Exception {

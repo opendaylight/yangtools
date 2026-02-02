@@ -10,14 +10,18 @@ module org.opendaylight.yangtools.yang.repo.spi {
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
     requires transitive org.opendaylight.yangtools.yang.model.spi;
+    requires transitive org.opendaylight.yangtools.yang.parser.api;
+    requires transitive org.opendaylight.yangtools.yang.repo.api;
 
     requires org.opendaylight.yangtools.util;
+    requires org.opendaylight.yangtools.yang.parser.spi;
     requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
+    requires static org.gaul.modernizer_maven_annotations;
     requires static org.osgi.annotation.bundle;
 }

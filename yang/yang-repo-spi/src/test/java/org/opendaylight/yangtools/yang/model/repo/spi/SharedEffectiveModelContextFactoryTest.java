@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.repo;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -15,9 +15,7 @@ import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediate
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
-import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserComponent;
@@ -25,19 +23,15 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
-import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.repo.spi.SourceInfoSchemaSourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class SharedEffectiveModelContextFactoryTest {
-    private static final @NonNull YangTextToIRSourceTransformer TRANSFORMER =
-        ServiceLoader.load(YangTextToIRSourceTransformer.class).findFirst().orElseThrow();
-    private static final @NonNull YangParserFactory PARSER_FACTORY =
-        DaggerVanillaYangParserComponent.create().parserFactory();
+    private static final YangParserFactory PARSER_FACTORY = DaggerVanillaYangParserComponent.create().parserFactory();
+    private static final YangTextToIRSourceTransformer TEXT_TO_IR = YangIRSourceModule.provideTextToIR();
     private final SharedSchemaRepository repository = new SharedSchemaRepository(PARSER_FACTORY, "test");
     private final SchemaContextFactoryConfiguration config = SchemaContextFactoryConfiguration.getDefault();
 
@@ -51,7 +45,7 @@ class SharedEffectiveModelContextFactoryTest {
         s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
         s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
 
-        final var transformer = SourceInfoSchemaSourceTransformer.ofYang(repository, repository, TRANSFORMER);
+        final var transformer = SourceInfoSchemaSourceTransformer.ofYang(repository, repository, TEXT_TO_IR);
         repository.registerSchemaSourceListener(transformer);
 
         repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source1),
