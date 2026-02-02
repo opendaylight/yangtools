@@ -5,9 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import java.util.ArrayList;
@@ -32,8 +31,7 @@ import org.slf4j.LoggerFactory;
 // FIXME: improve this class to track and expose how wildcard imports were resolved.
 //        That information will allow us to track "damage" to dependency resolution
 //        as new models are added to a schema context.
-@Beta
-public abstract sealed class SourceLinkage permits RevisionSourceLinkage {
+abstract sealed class SourceLinkage permits RevisionSourceLinkage {
     private static final Logger LOG = LoggerFactory.getLogger(SourceLinkage.class);
 
     private final ImmutableList<SourceIdentifier> resolvedSources;
@@ -106,7 +104,7 @@ public abstract sealed class SourceLinkage permits RevisionSourceLinkage {
     }
 
     @NonNullByDefault
-    public static final SourceLinkage of(final ImportResolutionMode resolutionMode,
+    static final SourceLinkage of(final ImportResolutionMode resolutionMode,
             final Map<SourceIdentifier, SourceInfo> depInfo) {
         return switch (resolutionMode) {
             case DEFAULT -> new RevisionSourceLinkage(depInfo);
@@ -116,14 +114,14 @@ public abstract sealed class SourceLinkage permits RevisionSourceLinkage {
     /**
      * {@return collection of sources which have been resolved}
      */
-    public final ImmutableList<SourceIdentifier> resolvedSources() {
+    final ImmutableList<SourceIdentifier> resolvedSources() {
         return resolvedSources;
     }
 
     /**
      * {@return core collection of sources which have not been resolved due to missing dependencies}
      */
-    public final ImmutableList<SourceIdentifier> unresolvedSources() {
+    final ImmutableList<SourceIdentifier> unresolvedSources() {
         return unresolvedSources;
     }
 
@@ -139,7 +137,7 @@ public abstract sealed class SourceLinkage permits RevisionSourceLinkage {
      *       reported</li>
      * </ul>
      */
-    public final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports() {
+    final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports() {
         return unsatisfiedImports;
     }
 

@@ -21,6 +21,7 @@
         <bundle>mvn:org.opendaylight.yangtools/yang-ir/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/{{versionAsInProject}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-spi/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-repo-api/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-repo-spi/{{versionAsInProject}}</bundle>
     </feature>

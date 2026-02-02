@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +29,8 @@ class DependencyResolverTest {
 
     @Test
     void testModulesWithoutRevisionAndImport() throws Exception {
-        final var resolved = resolveResources("/imported.yang", "/imported@2012-12-12.yang", "/top@2012-10-10.yang");
+        final var resolved = resolveResources("/no-revision/imported.yang", "/no-revision/imported@2012-12-12.yang",
+            "/no-revision/top@2012-10-10.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("top", "2012-10-10"),
             new SourceIdentifier("imported"),
@@ -41,7 +42,7 @@ class DependencyResolverTest {
     @Test
     void testSubmoduleNoModule() throws Exception {
         // Subfoo does not have parent in reactor
-        final var resolved = resolveResources("/subfoo.yang", "/bar.yang", "/baz.yang");
+        final var resolved = resolveResources("/dep/subfoo.yang", "/dep/bar.yang", "/dep/baz.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("bar", "2013-07-03"),
             new SourceIdentifier("baz", "2013-02-27"));
@@ -65,7 +66,7 @@ class DependencyResolverTest {
 
     @Test
     void testSubmodule() throws Exception {
-        final var resolved = resolveResources("/subfoo.yang", "/foo.yang", "/bar.yang", "/baz.yang");
+        final var resolved = resolveResources("/dep/subfoo.yang", "/dep/foo.yang", "/dep/bar.yang", "/dep/baz.yang");
         assertThat(resolved.resolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("bar", "2013-07-03"),
             new SourceIdentifier("baz", "2013-02-27"),
