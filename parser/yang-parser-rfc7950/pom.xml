@@ -26,7 +26,7 @@
         <doclint>all,-missing</doclint>
         <spotbugs.onlyAnalyze>
             !org.opendaylight.yangtools.rfc6020.parser.antlr.-,
-            !org.opendaylight.yangtools.yang.parser.grammar.-
+            !org.opendaylight.yangtools.rfc7950.parser.antlr.-
         </spotbugs.onlyAnalyze>
     </properties>
 

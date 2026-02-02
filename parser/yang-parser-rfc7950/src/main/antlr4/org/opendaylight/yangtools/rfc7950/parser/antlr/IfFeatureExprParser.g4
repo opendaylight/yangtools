@@ -5,10 +5,10 @@
 // terms of the Eclipse Public License v1.0 which accompanies this distribution,
 // and is available at http://www.eclipse.org/legal/epl-v10.html
 //
-parser grammar IfFeatureExpressionParser;
+parser grammar IfFeatureExprParser;
 
 options {
-    tokenVocab = IfFeatureExpressionLexer;
+    tokenVocab = IfFeatureExprLexer;
 }
 
 if_feature_expr: if_feature_term (SEP OR SEP if_feature_term)*;
