@@ -10,26 +10,20 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 /**
  * Utility builder for {@link Bit} instances.
- *
- * @author Robert Varga
  */
 @Beta
 public final class BitBuilder implements Mutable {
     private final String name;
     private final Uint32 position;
 
-    private ImmutableList<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.of();
     private Status status = Status.CURRENT;
     private String description;
     private String reference;
@@ -58,22 +52,12 @@ public final class BitBuilder implements Mutable {
         return this;
     }
 
-    public @NonNull BitBuilder setUnknownSchemaNodes(final Collection<UnknownSchemaNode> unknownSchemaNodes) {
-        this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
-        return this;
-    }
-
-    public @NonNull BitBuilder setUnknownSchemaNodes(final UnknownSchemaNode... unknownSchemaNodes) {
-        this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
-        return this;
-    }
-
     /**
      * Return the {@link Bit} corresponding to current builder state.
      *
      * @return A Bit
      */
     public @NonNull Bit build() {
-        return new BitImpl(name, position, description, reference, status, unknownSchemaNodes);
+        return new BitImpl(name, position, description, reference, status);
     }
 }

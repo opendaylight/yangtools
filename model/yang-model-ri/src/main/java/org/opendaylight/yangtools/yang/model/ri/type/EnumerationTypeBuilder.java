@@ -70,7 +70,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
             }
         }
 
-        return getBaseType() == null ? new BaseEnumerationType(getQName(), getUnknownSchemaNodes(), byName.values())
-                : new RestrictedEnumerationType(getBaseType(), getQName(), getUnknownSchemaNodes(), byName.values());
+        return getBaseType() == null ? new BaseEnumerationType(getQName(), byName.values())
+                : new RestrictedEnumerationType(getBaseType(), getQName(), byName.values());
     }
 }

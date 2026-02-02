@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG metamodel extensions to support NETCONF, filters as defined in
+ * YANG metamodel extensions to support NETCONF, {@link GetFilterElementAttributesStatement}, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
 @org.osgi.annotation.bundle.Export

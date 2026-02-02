@@ -32,6 +32,6 @@ public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDef
         final var identities = builder.build();
         final var qname = getQName();
         checkState(!identities.isEmpty(), "No identities specified in %s, at least one is required", qname);
-        return new BaseIdentityrefType(qname, getUnknownSchemaNodes(), identities);
+        return new BaseIdentityrefType(qname, identities);
     }
 }
