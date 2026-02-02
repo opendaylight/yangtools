@@ -39,7 +39,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
     @Test
     void testParseAnyXml() {
-        final AnyxmlSchemaNode data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
+        final var data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
             QName.create(MODULE.getQNameModule(), "data"));
         assertNotEquals(null, data);
         assertEquals(
@@ -83,7 +83,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
     @Test
     void testParseAnyData() {
-        final AnydataSchemaNode anydata = (AnydataSchemaNode) MODULE.findDataChildByName(
+        final var anydata = (AnydataSchemaNode) MODULE.findDataChildByName(
             QName.create(MODULE.getQNameModule(), "data2")).orElse(null);
 
         assertNotNull(anydata, "'anydata data not found'");
@@ -129,7 +129,7 @@ class YangParserSimpleTest extends AbstractYangTest {
 
     @Test
     void testParseContainer() {
-        final ContainerSchemaNode nodes = (ContainerSchemaNode) MODULE
+        final var nodes = (ContainerSchemaNode) MODULE
             .getDataChildByName(QName.create(MODULE.getQNameModule(), "nodes"));
         // test SchemaNode args
         assertEquals(SN_NODES, nodes.getQName());
@@ -181,12 +181,12 @@ class YangParserSimpleTest extends AbstractYangTest {
         // child nodes
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
-        final LeafListSchemaNode added = (LeafListSchemaNode) nodes.getDataChildByName(QName.create(
+        final var added = (LeafListSchemaNode) nodes.getDataChildByName(QName.create(
             MODULE.getQNameModule(), "added"));
         assertEquals(QName.create(SN, "added"), added.getQName());
         assertEquals(QName.create(SN, "mytype"), added.getType().getQName());
 
-        final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
+        final var links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
             MODULE.getQNameModule(), "links"));
         assertFalse(links.isUserOrdered());
 

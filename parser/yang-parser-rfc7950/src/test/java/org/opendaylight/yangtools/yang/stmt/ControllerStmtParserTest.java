@@ -112,7 +112,6 @@ class ControllerStmtParserTest extends AbstractYangTest {
                 .requireDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, typeUnknownSchemaNodes.size());
 
-
         final var typeUnknownSchemaNode = typeUnknownSchemaNodes.iterator().next();
         assertEquals("sal:schema-service", typeUnknownSchemaNode.argument());
         assertEquals(QName.create(groupingQName, "required-identity"),
