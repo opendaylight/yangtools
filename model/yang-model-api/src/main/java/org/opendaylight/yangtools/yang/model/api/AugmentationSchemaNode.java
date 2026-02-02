@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
@@ -16,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
  * to the schema tree defined in an external module, or the current module and its submodules, and to add to the nodes
  * from a grouping in a "uses" statement.
  */
-public interface AugmentationSchemaNode extends DataNodeContainer, WithStatus,
-        ActionNodeContainer.Mixin<AugmentEffectiveStatement>,
+public interface AugmentationSchemaNode extends DataNodeContainer, DocumentedNode.WithStatus,
+        ActionNodeContainer.Mixin<AugmentEffectiveStatement>, DocumentedNode.Mixin<AugmentEffectiveStatement>,
         NotificationNodeContainer.Mixin<AugmentEffectiveStatement>,
         WhenConditionAware.Mixin<AugmentEffectiveStatement> {
     /**

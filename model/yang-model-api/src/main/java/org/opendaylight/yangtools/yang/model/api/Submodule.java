@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 /**
  * This interface contains the methods for getting the data from the YANG submodule.
  */
-public interface Submodule extends ModuleLike, NotificationNodeContainer.Mixin<SubmoduleEffectiveStatement> {
+public interface Submodule extends ModuleLike, DocumentedNode.Mixin<SubmoduleEffectiveStatement>,
+    NotificationNodeContainer.Mixin<SubmoduleEffectiveStatement> {
     // Nothing else
 }
