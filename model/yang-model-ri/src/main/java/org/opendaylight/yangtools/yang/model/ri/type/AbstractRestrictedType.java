@@ -9,20 +9,17 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     private final @NonNull T baseType;
 
-    AbstractRestrictedType(final T baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(qname, unknownSchemaNodes);
+    AbstractRestrictedType(final T baseType, final QName qname) {
+        super(qname);
         this.baseType = requireNonNull(baseType);
     }
 

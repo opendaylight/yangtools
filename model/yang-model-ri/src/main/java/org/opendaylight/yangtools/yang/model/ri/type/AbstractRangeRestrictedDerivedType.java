@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
@@ -21,8 +19,8 @@ abstract class AbstractRangeRestrictedDerivedType<T extends RangeRestrictedTypeD
 
     AbstractRangeRestrictedDerivedType(final T baseType, final QName qname,
             final Object defaultValue, final String description, final String reference, final Status status,
-            final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
+            final String units) {
+        super(baseType, qname, defaultValue, description, reference, status, units);
     }
 
     @Override

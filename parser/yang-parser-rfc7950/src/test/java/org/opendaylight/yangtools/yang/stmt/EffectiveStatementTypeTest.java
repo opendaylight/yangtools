@@ -74,7 +74,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals("binary", binaryEff.getQName().getLocalName());
         assertEquals(Optional.empty(), binaryEff.getLengthConstraint());
         assertEquals(Status.CURRENT, binaryEff.getStatus());
-        assertNotNull(binaryEff.getUnknownSchemaNodes());
         assertEquals(Optional.empty(), binaryEff.getDescription());
         assertEquals(Optional.empty(), binaryEff.getReference());
     }
@@ -95,7 +94,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertNull(bitsEff.getBaseType());
         assertNotNull(bitsEff.getQName());
         assertEquals("bits", bitsEff.getQName().getLocalName());
-        assertNotNull(bitsEff.getUnknownSchemaNodes());
         assertEquals(Optional.empty(), bitsEff.getDescription());
         assertEquals(Optional.empty(), bitsEff.getReference());
         assertEquals(Status.CURRENT, bitsEff.getStatus());
@@ -108,7 +106,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(3, bitsEff.getBits().size());
         assertEquals(Optional.empty(), bitsEff.getDefaultValue());
 
-        assertNotNull(bitEff.getUnknownSchemaNodes());
         assertEquals(Optional.of("test bit"), bitEff.getDescription());
         assertEquals(Optional.of("test bit ref"), bitEff.getReference());
         assertEquals(Status.CURRENT, bitEff.getStatus());
@@ -134,7 +131,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(Optional.empty(), booleanEff.getUnits());
         assertEquals(Optional.empty(), booleanEff.getDefaultValue());
         assertEquals("boolean", booleanEff.getQName().getLocalName());
-        assertNotNull(booleanEff.getUnknownSchemaNodes());
         assertEquals(Optional.empty(), booleanEff.getDescription());
         assertEquals(Optional.empty(), booleanEff.getReference());
         assertEquals(Status.CURRENT, booleanEff.getStatus());
@@ -153,7 +149,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(Optional.empty(), decimal64Eff.getUnits());
         assertEquals(Optional.empty(), decimal64Eff.getDefaultValue());
         assertEquals("decimal64", decimal64Eff.getQName().getLocalName());
-        assertNotNull(decimal64Eff.getUnknownSchemaNodes());
 
         // FIXME: The yang model api is wrong: description/reference/status are not allowed under 'type', how come we
         //        parse it?
@@ -183,7 +178,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(Optional.empty(), emptyEff.getDefaultValue());
         assertNull(emptyEff.getBaseType());
         assertEquals("empty", emptyEff.getQName().getLocalName());
-        assertNotNull(emptyEff.getUnknownSchemaNodes());
         assertEquals(Optional.empty(), emptyEff.getDescription());
         assertEquals(Optional.empty(), emptyEff.getReference());
         assertEquals("CURRENT", emptyEff.getStatus().toString());
@@ -205,7 +199,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(Optional.empty(), enumSpecEff.getDefaultValue());
         assertEquals(3, enumSpecEff.getValues().size());
         assertNull(enumSpecEff.getBaseType());
-        assertNotNull(enumSpecEff.getUnknownSchemaNodes());
         assertEquals(Status.CURRENT, enumSpecEff.getStatus());
         assertEquals(Optional.empty(), enumSpecEff.getDescription());
         assertEquals(Optional.empty(), enumSpecEff.getReference());
@@ -217,7 +210,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(enumSpecEff, enumSpecEff);
 
         assertEquals("zero", enumEff.getName());
-        assertNotNull(enumEff.getUnknownSchemaNodes());
         assertEquals(Optional.of("test enum"), enumEff.getDescription());
         assertEquals(Optional.of("test enum ref"), enumEff.getReference());
         assertEquals(Status.CURRENT, enumEff.getStatus());
@@ -237,7 +229,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(Optional.empty(), identityRefEff.getDefaultValue());
         assertEquals("identityref", identityRefEff.getQName().getLocalName());
         assertNull(identityRefEff.getBaseType());
-        assertNotNull(identityRefEff.getUnknownSchemaNodes());
         assertEquals(Status.CURRENT, identityRefEff.getStatus());
         assertEquals("test-identity", identityRefEff.getIdentities().iterator().next().getQName().getLocalName());
         assertEquals(Optional.empty(), identityRefEff.getDescription());
@@ -263,7 +254,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals("instance-identifier", instanceIdentEff.getQName().getLocalName());
         assertNull(instanceIdentEff.getBaseType());
         assertEquals(Optional.empty(), instanceIdentEff.getDefaultValue());
-        assertNotNull(instanceIdentEff.getUnknownSchemaNodes());
         assertEquals(Optional.empty(), instanceIdentEff.getDescription());
         assertEquals(Optional.empty(), instanceIdentEff.getReference());
         assertEquals(Optional.empty(), instanceIdentEff.getUnits());
@@ -292,7 +282,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertNotNull(leafrefEff.toString());
         assertEquals("leafref", leafrefEff.getQName().getLocalName());
         assertEquals(Status.CURRENT, leafrefEff.getStatus());
-        assertNotNull(leafrefEff.getUnknownSchemaNodes());
         assertEquals(Optional.empty(), leafrefEff.getDescription());
         assertEquals(Optional.empty(), leafrefEff.getReference());
         assertNotNull(leafrefEff.hashCode());
@@ -319,7 +308,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertNotNull(leafrefEff.toString());
         assertEquals("leafref", leafrefEff.getQName().getLocalName());
         assertEquals(Status.CURRENT, leafrefEff.getStatus());
-        assertNotNull(leafrefEff.getUnknownSchemaNodes());
         assertEquals(Optional.empty(), leafrefEff.getDescription());
         assertEquals(Optional.empty(), leafrefEff.getReference());
         assertNotNull(leafrefEff.hashCode());
@@ -398,7 +386,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(2, unionEff.getTypes().size());
         assertEquals("union", unionEff.getQName().getLocalName());
         assertEquals("CURRENT", unionEff.getStatus().toString());
-        assertNotNull(unionEff.getUnknownSchemaNodes());
         assertNull(unionEff.getBaseType());
         assertEquals(Optional.empty(), unionEff.getUnits());
         assertEquals(Optional.empty(), unionEff.getDefaultValue());
@@ -482,7 +469,6 @@ class EffectiveStatementTypeTest extends AbstractYangTest {
         assertEquals(Status.CURRENT, stringEff.getStatus());
         assertEquals(Optional.empty(), stringEff.getUnits());
         assertEquals(Optional.empty(), stringEff.getDefaultValue());
-        assertNotNull(stringEff.getUnknownSchemaNodes());
         assertNull(stringEff.getBaseType());
         assertEquals(Optional.empty(), stringEff.getDescription());
         assertEquals(Optional.empty(), stringEff.getReference());
