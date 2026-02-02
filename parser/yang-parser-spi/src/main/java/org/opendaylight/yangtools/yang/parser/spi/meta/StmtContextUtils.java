@@ -123,30 +123,6 @@ public final class StmtContextUtils {
             .build();
     }
 
-    // FIXME: 8.0.0: This method goes back as far as YANGTOOLS-365, when we were build EffectiveStatements for
-    //               unsupported YANG extensions. We are not doing that anymore, do we still need this method? Also, it
-    //               is only used in augment support to disable mechanics on unknown nodes.
-    //
-    //               It would seem we can move this method to AbstractAugmentStatementSupport at the very least, but
-    //               also: augments are defined to operate on schema tree nodes, hence even if we have an
-    //               UnknownStatement, but its EffectiveStatement projection supports SchemaTreeAwareEffectiveStatement
-    //               we should operate normally -- the StatementSupport exposing such semantics is responsible for
-    //               arranging the backend details.
-    public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
-        var current = stmtCtx;
-
-        while (true) {
-            final var parent = current.coerceParentContext();
-            if (parent.getParentContext() == null) {
-                return false;
-            }
-            if (parent.producesDeclared(UnknownStatement.class)) {
-                return true;
-            }
-            current = parent;
-        }
-    }
-
     /**
      * Returns true if supplied statement context represents unknown statement, otherwise returns false.
      *

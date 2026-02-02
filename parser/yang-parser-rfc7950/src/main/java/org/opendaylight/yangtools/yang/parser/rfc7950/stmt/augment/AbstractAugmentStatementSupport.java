@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -32,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -68,7 +68,7 @@ abstract class AbstractAugmentStatementSupport
 
         super.onFullDefinitionDeclared(augmentNode);
 
-        if (StmtContextUtils.isInExtensionBody(augmentNode)) {
+        if (isInExtensionBody(augmentNode)) {
             return;
         }
 
@@ -120,9 +120,33 @@ abstract class AbstractAugmentStatementSupport
 
     abstract boolean allowsMandatory(StmtContext<?, ?, ?> ctx);
 
-    static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
+    static final StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.
         final var parent = augmentContext.coerceParentContext();
         return parent.produces(UsesStatement.DEF) ? parent.getParentContext() : parent;
+    }
+
+    // FIXME: 8.0.0: This method goes back as far as YANGTOOLS-365, when we were build EffectiveStatements for
+    //               unsupported YANG extensions. We are not doing that anymore, do we still need this method? Also, it
+    //               is only used in augment support to disable mechanics on unknown nodes.
+    //
+    //               It would seem we can move this method to AbstractAugmentStatementSupport at the very least, but
+    //               also: augments are defined to operate on schema tree nodes, hence even if we have an
+    //               UnknownStatement, but its EffectiveStatement projection supports SchemaTreeAwareEffectiveStatement
+    //               we should operate normally -- the StatementSupport exposing such semantics is responsible for
+    //               arranging the backend details.
+    static final boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
+        var current = stmtCtx;
+
+        while (true) {
+            final var parent = current.coerceParentContext();
+            if (parent.getParentContext() == null) {
+                return false;
+            }
+            if (parent.producesDeclared(UnknownStatement.class)) {
+                return true;
+            }
+            current = parent;
+        }
     }
 }

@@ -91,7 +91,8 @@ final class AugmentInferenceAction implements InferenceAction {
         }
 
         final var augmentTargetCtx = target.resolve(ctx);
-        if (!isSupportedAugmentTarget(augmentTargetCtx) || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
+        if (!isSupportedAugmentTarget(augmentTargetCtx)
+            || AbstractAugmentStatementSupport.isInExtensionBody(augmentTargetCtx)) {
             augmentNode.setUnsupported();
             return;
         }
