@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.antlr;
+package org.opendaylight.yangtools.rfc7950.parser;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,13 +14,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6020.parser.SourceExceptionParser;
+import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprLexer;
+import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser;
+import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser.Identifier_ref_argContext;
+import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser.If_feature_exprContext;
+import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser.If_feature_factorContext;
+import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser.If_feature_termContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
-import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionLexer;
-import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser;
-import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser.Identifier_ref_argContext;
-import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser.If_feature_exprContext;
-import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser.If_feature_factorContext;
-import org.opendaylight.yangtools.yang.parser.grammar.IfFeatureExpressionParser.If_feature_termContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -33,8 +33,8 @@ final class IfFeaturePredicateParser {
     }
 
     static IfFeatureExpr parseIfFeatureExpression(final StmtContext<?, ?, ?> stmt, final String value) {
-        final var expr = SourceExceptionParser.parseString(IfFeatureExpressionLexer::new,
-            IfFeatureExpressionParser::new, IfFeatureExpressionParser::if_feature_expr, stmt.sourceReference(), value);
+        final var expr = SourceExceptionParser.parseString(IfFeatureExprLexer::new,
+            IfFeatureExprParser::new, IfFeatureExprParser::if_feature_expr, stmt.sourceReference(), value);
         return new IfFeaturePredicateParser(stmt).parseIfFeatureExpr(expr);
     }
 
@@ -65,9 +65,8 @@ final class IfFeaturePredicateParser {
                 IfFeatureExpr.isPresent(stmt.identifierBinding().parseIdentifierRefArg(stmt, refArg.getText()));
             case TerminalNode terminal ->
                 switch (terminal.getSymbol().getType()) {
-                    case IfFeatureExpressionParser.LP ->
-                        parseIfFeatureExpr(factor.getChild(If_feature_exprContext.class, 0));
-                    case IfFeatureExpressionParser.NOT ->
+                    case IfFeatureExprParser.LP -> parseIfFeatureExpr(factor.getChild(If_feature_exprContext.class, 0));
+                    case IfFeatureExprParser.NOT ->
                         parseIfFeatureFactor(getChild(factor, 2, If_feature_factorContext.class)).negate();
                     default ->
                         throw new SourceException(stmt, "Unexpected terminal %s in sub-expression at %s",

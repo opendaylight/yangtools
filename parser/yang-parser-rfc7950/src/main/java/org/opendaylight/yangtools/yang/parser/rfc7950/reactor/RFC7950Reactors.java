@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6020.parser.PathStatementSupport;
+import org.opendaylight.yangtools.rfc7950.parser.IfFeatureStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
@@ -45,7 +46,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.FeatureStatement
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.FractionDigitsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.GroupingStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IdentityStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IfFeatureStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IncludeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.KeyStatementSupport;
