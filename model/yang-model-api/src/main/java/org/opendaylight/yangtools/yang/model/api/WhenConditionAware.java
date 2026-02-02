@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -26,4 +28,17 @@ public interface WhenConditionAware {
      * @return XPath condition
      */
     Optional<? extends QualifiedBound> getWhenCondition();
+
+    /**
+     * Bridge between {@link EffectiveStatement} and {@link WhenConditionAware}.
+     *
+     * @param <E> Type of equivalent {@link EffectiveStatement}.
+     * @since 15.0.0
+     */
+    interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, WhenConditionAware {
+        @Override
+        default Optional<? extends QualifiedBound> getWhenCondition() {
+            return asEffectiveStatement().findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class);
+        }
+    }
 }

@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UserOrderedAware;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.WhenConditionAware;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
@@ -49,8 +48,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByAwareEffectiveSta
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
  * Mix-in interfaces providing services required by SchemaNode et al. These interfaces provide implementations, or
@@ -130,7 +127,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface DataSchemaNodeMixin<D extends DeclaredStatement<QName>>
-            extends DataSchemaNode, CopyableMixin<QName, D>, SchemaNodeMixin<D>, WhenConditionMixin<QName, D> {
+            extends DataSchemaNode, CopyableMixin<QName, D>, SchemaNodeMixin<D> {
         @Override
         default Optional<Boolean> effectiveConfig() {
             final int fl = flags() & FlagsBuilder.MASK_CONFIG;
@@ -278,27 +275,13 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Helper used to locate the effective {@code when} statement and exposing its argument as per
-     * {@link WhenConditionAware}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface WhenConditionMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, WhenConditionAware {
-        @Override
-        default Optional<QualifiedBound> getWhenCondition() {
-            return findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class);
-        }
-    }
-
-    /**
      * Helper bridge for operation containers ({@code input} and {@code output}).
      *
      * @param <D> Class representing declared version of this statement.
      */
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
-                    WhenConditionMixin<QName, D>, SchemaNodeMixin<D>, CopyableMixin<QName, D> {
+                    CopyableMixin<QName, D> {
         @Override
         default Optional<ActionDefinition> findAction(final QName qname) {
             return Optional.empty();
@@ -321,8 +304,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>>
-            extends DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>, MandatoryMixin<QName, D>,
-                    WhenConditionMixin<QName, D> {
+            extends DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>, MandatoryMixin<QName, D> {
         @Override
         default QName getQName() {
             return argument();
