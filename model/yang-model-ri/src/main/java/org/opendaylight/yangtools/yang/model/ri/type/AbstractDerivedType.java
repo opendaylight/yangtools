@@ -10,13 +10,11 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     private final @NonNull T baseType;
@@ -27,9 +25,8 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     private final String units;
 
     AbstractDerivedType(final T baseType, final QName qname, final Object defaultValue, final String description,
-            final String reference, final Status status, final String units,
-            final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
-        super(qname, unknownSchemNodes);
+            final String reference, final Status status, final String units) {
+        super(qname);
         this.baseType = requireNonNull(baseType);
         this.status = requireNonNull(status);
         this.defaultValue = defaultValue;
