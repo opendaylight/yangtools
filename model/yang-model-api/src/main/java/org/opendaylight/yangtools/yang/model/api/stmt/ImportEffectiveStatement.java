@@ -7,30 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code import} statement.
  */
-public interface ImportEffectiveStatement extends EffectiveStatement<Unqualified, @NonNull ImportStatement> {
+public interface ImportEffectiveStatement
+        extends PrefixEffectiveStatement.MandatoryIn<Unqualified, @NonNull ImportStatement> {
     @Override
     default StatementDefinition<Unqualified, @NonNull ImportStatement, ?> statementDefinition() {
         return ImportStatement.DEF;
-    }
-
-    /**
-     * Return this statement's {@code prefix} substatement.
-     *
-     * @implSpec
-     *      Default implementation uses {@link #findFirstEffectiveSubstatement(Class)} and throws a
-     *      {@link VerifyException} if a matching substatement is not found.
-     * @return A {@link PrefixEffectiveStatement}
-     */
-    default @NonNull PrefixEffectiveStatement prefix() {
-        return DefaultMethodHelpers.verifyPrefixSubstatement(this);
     }
 }

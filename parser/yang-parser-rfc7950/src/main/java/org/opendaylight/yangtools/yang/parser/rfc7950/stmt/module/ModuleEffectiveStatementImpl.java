@@ -53,7 +53,7 @@ final class ModuleEffectiveStatementImpl
         this.qnameModule = requireNonNull(qnameModule);
         this.submodules = ImmutableList.copyOf(submodules);
 
-        final String localPrefix = prefix().argument();
+        final String localPrefix = prefixStatement().argument();
         final var prefixToModuleBuilder = ImmutableMap.<String, ModuleEffectiveStatement>builder();
         prefixToModuleBuilder.put(localPrefix, this);
         appendPrefixes(stmt, prefixToModuleBuilder);
