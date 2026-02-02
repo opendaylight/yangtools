@@ -19,12 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code augment} statement.
  */
-public interface AugmentStatement extends DeclaredStatement<SchemaNodeIdentifier>,
-        DataDefinitionStatement.MultipleIn<SchemaNodeIdentifier>, ActionStatement.MultipleIn<SchemaNodeIdentifier>,
-        CaseStatement.MultipleIn<SchemaNodeIdentifier>, DescriptionStatement.OptionalIn<SchemaNodeIdentifier>,
-        IfFeatureStatement.MultipleIn<SchemaNodeIdentifier>, NotificationStatement.MultipleIn<SchemaNodeIdentifier>,
-        ReferenceStatement.OptionalIn<SchemaNodeIdentifier>, StatusStatement.OptionalIn<SchemaNodeIdentifier>,
-        WhenStatement.OptionalIn<SchemaNodeIdentifier> {
+public interface AugmentStatement extends DataDefinitionStatement.MultipleIn<SchemaNodeIdentifier>,
+        ActionStatement.MultipleIn<SchemaNodeIdentifier>, CaseStatement.MultipleIn<SchemaNodeIdentifier>,
+        DescriptionStatement.OptionalIn<SchemaNodeIdentifier>, IfFeatureStatement.MultipleIn<SchemaNodeIdentifier>,
+        NotificationStatement.MultipleIn<SchemaNodeIdentifier>, ReferenceStatement.OptionalIn<SchemaNodeIdentifier>,
+        StatusStatement.OptionalIn<SchemaNodeIdentifier>, WhenStatement.OptionalIn<SchemaNodeIdentifier> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link AugmentStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

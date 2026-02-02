@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 /**
  * Declared representation of a {@code when} statement.
  */
-public interface WhenStatement extends DeclaredStatement<QualifiedBound>,
-        DescriptionStatement.OptionalIn<QualifiedBound>, ReferenceStatement.OptionalIn<QualifiedBound> {
+public interface WhenStatement extends DescriptionStatement.OptionalIn<QualifiedBound>,
+        ReferenceStatement.OptionalIn<QualifiedBound> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link WhenStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

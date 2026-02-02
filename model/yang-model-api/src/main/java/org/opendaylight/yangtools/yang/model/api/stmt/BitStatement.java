@@ -18,9 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code bit} statement.
  */
-public interface BitStatement extends DeclaredStatement<String>, DescriptionStatement.OptionalIn<String>,
-        IfFeatureStatement.MultipleIn<String>, PositionStatement.OptionalIn<String>,
-        ReferenceStatement.OptionalIn<String>, StatusStatement.OptionalIn<String> {
+public interface BitStatement extends DescriptionStatement.OptionalIn<String>, IfFeatureStatement.MultipleIn<String>,
+        PositionStatement.OptionalIn<String>, ReferenceStatement.OptionalIn<String>,
+        StatusStatement.OptionalIn<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link BitStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code revision} statement.
  */
-public interface RevisionStatement extends DeclaredStatement<Revision>, DescriptionStatement.OptionalIn<Revision>,
+public interface RevisionStatement extends DescriptionStatement.OptionalIn<Revision>,
         ReferenceStatement.OptionalIn<Revision> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link RevisionStatement}s.

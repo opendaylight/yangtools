@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code output} statement.
  */
-public interface OutputStatement extends DeclaredStatement<QName>, DataDefinitionStatement.MultipleIn<QName>,
-        GroupingStatementMultipleIn<QName>, MustStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName> {
+public interface OutputStatement extends DataDefinitionStatement.MultipleIn<QName>, GroupingStatementMultipleIn<QName>,
+        MustStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link OutputStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
