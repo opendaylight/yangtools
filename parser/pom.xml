@@ -32,9 +32,6 @@
         <module>yang-parser-api</module>
         <module>yang-test-util</module>
 
-        <!-- YANG parser reference implementation -->
-        <module>yang-parser-impl</module>
-
         <!-- YANG file intermediate representation -->
         <module>yang-ir</module>
 
