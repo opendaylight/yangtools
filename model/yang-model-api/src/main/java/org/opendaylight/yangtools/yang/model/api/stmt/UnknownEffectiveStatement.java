@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Effective counterpart to {@link UnknownStatement}. This interface exists only for the purposes of providing a bridge
- * from {@link UnknownSchemaNode} to {@link EffectiveStatement} via {@link UnknownSchemaNode#asEffectiveStatement()}.
+ * from {@code UnknownSchemaNode} to {@link EffectiveStatement} via {@code UnknownSchemaNode#asEffectiveStatement()}.
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.

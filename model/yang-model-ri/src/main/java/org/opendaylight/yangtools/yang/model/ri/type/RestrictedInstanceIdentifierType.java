@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
 final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<InstanceIdentifierTypeDefinition>
@@ -17,8 +15,8 @@ final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<Inst
     private final boolean requireInstance;
 
     RestrictedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
-        super(baseType, qname, unknownSchemaNodes);
+            final boolean requireInstance) {
+        super(baseType, qname);
         this.requireInstance = requireInstance;
     }
 

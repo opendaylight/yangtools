@@ -13,15 +13,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
@@ -51,11 +54,12 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         final var extensions = modelContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final var unknownSchemaNodes = modelContext.findModule(FOO_QNAMEMODULE).orElseThrow().getUnknownSchemaNodes();
-        assertEquals(2, unknownSchemaNodes.size());
-        final var it = unknownSchemaNodes.iterator();
-        assertEquals("my-yang-data-a", assertInstanceOf(YangDataSchemaNode.class, it.next()).getNodeParameter());
-        assertEquals("my-yang-data-b", assertInstanceOf(YangDataSchemaNode.class, it.next()).getNodeParameter());
+        final var yangDatas = modelContext.findModuleStatement(FOO_QNAMEMODULE).orElseThrow()
+            .collectEffectiveSubstatements(YangDataEffectiveStatement.class);
+        assertEquals(2, yangDatas.size());
+        final var it = yangDatas.iterator();
+        assertEquals("my-yang-data-a", it.next().argument().name());
+        assertEquals("my-yang-data-b", it.next().argument().name());
         assertFalse(it.hasNext());
     }
 
@@ -64,22 +68,20 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         final var modelContext = newBuild().addSource(BAZ_MODULE).buildEffective();
         assertNotNull(modelContext);
 
-        final var baz = modelContext.findModule("baz", REVISION).orElseThrow();
-        final var unknownSchemaNodes = baz.getUnknownSchemaNodes();
-        assertEquals(1, unknownSchemaNodes.size());
+        final var baz = modelContext.findModule("baz", REVISION).orElseThrow().asEffectiveStatement();
+        final var yangDatas = baz.collectEffectiveSubstatements(YangDataEffectiveStatement.class);
+        assertEquals(1, yangDatas.size());
 
-        final var myYangDataNode = assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNodes.iterator().next());
-
-        final var yangDataChildren = myYangDataNode.getChildNodes();
+        final var yangDataChildren = yangDatas.iterator().next().effectiveSubstatements();
         assertEquals(1, yangDataChildren.size());
 
-        final var contInYangData = assertInstanceOf(ContainerSchemaNode.class, yangDataChildren.iterator().next());
+        final var contInYangData = assertInstanceOf(ContainerSchemaNode.class, yangDataChildren.getFirst());
         assertEquals(Optional.empty(), contInYangData.effectiveConfig());
         final var innerCont = assertInstanceOf(ContainerSchemaNode.class,
-            contInYangData.dataChildByName(QName.create(baz.getQNameModule(), "inner-cont")));
+            contInYangData.dataChildByName(QName.create(baz.localQNameModule(), "inner-cont")));
         assertEquals(Optional.empty(), innerCont.effectiveConfig());
         final var grpCont = assertInstanceOf(ContainerSchemaNode.class,
-            contInYangData.dataChildByName(QName.create(baz.getQNameModule(), "grp-cont")));
+            contInYangData.dataChildByName(QName.create(baz.localQNameModule(), "grp-cont")));
         assertEquals(Optional.empty(), grpCont.effectiveConfig());
     }
 
@@ -92,25 +94,34 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         assertNotNull(modelContext);
 
         final var foobar = modelContext.findModule("foobar", REVISION).orElseThrow();
-        final var unknownSchemaNodes = foobar.getUnknownSchemaNodes();
-        assertEquals(1, unknownSchemaNodes.size());
+        final var myYangDataNode = foobar.asEffectiveStatement()
+            .findFirstEffectiveSubstatement(YangDataEffectiveStatement.class)
+            .orElseThrow();
 
-        final var myYangDataNode = assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNodes.iterator().next());
 
-        final var yangDataChildren = myYangDataNode.getChildNodes();
+
+        final var yangDataChildren = myYangDataNode.effectiveSubstatements();
         assertEquals(1, yangDataChildren.size());
 
-        final var contInYangData = assertInstanceOf(ContainerSchemaNode.class, yangDataChildren.iterator().next());
-        assertInstanceOf(ContainerSchemaNode.class,
-            contInYangData.dataChildByName(QName.create(foobar.getQNameModule(), "inner-cont")));
-        assertInstanceOf(ContainerSchemaNode.class,
-            contInYangData.dataChildByName(QName.create(foobar.getQNameModule(), "grp-cont")));
+        final var contInYangData = assertInstanceOf(ContainerEffectiveStatement.class, yangDataChildren.getFirst());
+        final var containers = contInYangData.collectEffectiveSubstatements(ContainerEffectiveStatement.class)
+            .iterator();
+
+        assertTrue(containers.hasNext());
+        assertEquals(QName.create(foobar.getQNameModule(), "inner-cont"),
+            assertInstanceOf(ContainerEffectiveStatement.class, containers.next()).argument());
+
+        assertTrue(containers.hasNext());
+        assertEquals(QName.create(foobar.getQNameModule(), "grp-cont"),
+            assertInstanceOf(ContainerEffectiveStatement.class, containers.next()).argument());
+
+        assertFalse(containers.hasNext());
     }
 
     @Test
     void testYangDataBeingIgnored() throws Exception {
         // yang-data statement is ignored if it does not appear as a top-level statement
-        // i.e., it will not appear in the final SchemaContext
+        // i.e., it will not appear in the final EffectiveModelContext
         final var modelContext = newBuild().addSource(BAR_MODULE).buildEffective();
         assertNotNull(modelContext);
 
@@ -121,8 +132,7 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         final var extensions = modelContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final var unknownSchemaNodes = cont.getUnknownSchemaNodes();
-        assertEquals(0, unknownSchemaNodes.size());
+        assertEquals(List.of(), cont.asEffectiveStatement().effectiveSubstatements());
     }
 
     @Test

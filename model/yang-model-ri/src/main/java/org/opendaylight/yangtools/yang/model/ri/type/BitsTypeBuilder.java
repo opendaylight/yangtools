@@ -70,7 +70,7 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
             }
         }
 
-        return getBaseType() == null ? new BaseBitsType(getQName(), getUnknownSchemaNodes(), positionMap.values())
-                : new RestrictedBitsType(getBaseType(), getQName(), getUnknownSchemaNodes(), positionMap.values());
+        return getBaseType() == null ? new BaseBitsType(getQName(), positionMap.values())
+                : new RestrictedBitsType(getBaseType(), getQName(), positionMap.values());
     }
 }
