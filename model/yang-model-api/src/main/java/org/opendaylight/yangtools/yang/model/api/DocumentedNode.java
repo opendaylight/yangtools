@@ -34,9 +34,7 @@ public interface DocumentedNode {
      * Returns unknown schema nodes which belongs to this instance. Default implementation returns an empty collection.
      *
      * @return collection of unknown schema nodes defined under this node.
-     * @deprecated Use {@link EffectiveStatementEquivalent#asEffectiveStatement()} view for accurate statement view.
      */
-    @Deprecated(since = "14.0.23", forRemoval = true)
     default @NonNull Collection<? extends @NonNull UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
     }
