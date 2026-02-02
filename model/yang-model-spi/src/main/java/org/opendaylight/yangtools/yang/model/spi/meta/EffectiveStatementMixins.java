@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -82,20 +81,6 @@ public final class EffectiveStatementMixins {
         @Deprecated(since = "7.0.9", forRemoval = true)
         default boolean isAddedByUses() {
             return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
-        }
-    }
-
-    /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link ActionNodeContainer}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface ActionNodeContainerMixin<A, D extends DeclaredStatement<A>>
-            extends Mixin<A, D>, ActionNodeContainer {
-        @Override
-        default Collection<? extends ActionDefinition> getActions() {
-            return filterEffectiveStatements(ActionDefinition.class);
         }
     }
 
@@ -354,11 +339,6 @@ public final class EffectiveStatementMixins {
         @Override
         default Optional<NotificationDefinition> findNotification(final QName qname) {
             return Optional.empty();
-        }
-
-        @Override
-        default Collection<? extends ActionDefinition> getActions() {
-            return ImmutableSet.of();
         }
 
         @Override

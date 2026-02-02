@@ -7,11 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Collection;
+import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 /**
  * An {@link InputSchemaNode} defines outputs of an {@link RpcDefinition} or an {@link ActionDefinition}.
  */
 public interface OutputSchemaNode extends ContainerLike, AugmentationTarget.Mixin<OutputEffectiveStatement> {
-    // Nothing else
+    @Override
+    default Collection<? extends ActionDefinition> getActions() {
+        return List.of();
+    }
 }

@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  * containers, those that exist only for organizing the hierarchy of data nodes, and those whose presence in the
  * configuration has an explicit meaning.
  */
-public interface ContainerSchemaNode extends ContainerLike, AugmentationTarget.Mixin<ContainerEffectiveStatement> {
+public interface ContainerSchemaNode extends ContainerLike, ActionNodeContainer.Mixin<ContainerEffectiveStatement>,
+        AugmentationTarget.Mixin<ContainerEffectiveStatement> {
     /**
      * Returns true if this container is marked as presence.
      *
