@@ -39,7 +39,7 @@ final class EffectiveTypeUtil {
         final var node = verifyWithStatus(stmt);
 
         final var builder = EnumPairBuilder.create(stmt.requireDeclared().rawArgument(), effectiveValue)
-                .setStatus(node.getStatus()).setUnknownSchemaNodes(node.getUnknownSchemaNodes());
+                .setStatus(node.getStatus());
         node.getDescription().ifPresent(builder::setDescription);
         node.getReference().ifPresent(builder::setReference);
 

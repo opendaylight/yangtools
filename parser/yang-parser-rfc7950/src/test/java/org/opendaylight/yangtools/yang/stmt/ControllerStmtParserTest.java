@@ -48,8 +48,7 @@ class ControllerStmtParserTest extends AbstractYangTest {
                 final var dataNode2 = caseNode.dataChildByName(
                     QName.create(module.getQNameModule(), "async-data-broker"));
                 if (dataNode2 instanceof ContainerSchemaNode containerNode) {
-                    final var leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
-                    assertEquals(0, leaf.getUnknownSchemaNodes().size());
+                    assertNotNull(containerNode.dataChildByName(QName.create(module.getQNameModule(), "type")));
 
                     final var unknownSchemaNodes = containerNode.asEffectiveStatement()
                             .findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow()
@@ -90,8 +89,7 @@ class ControllerStmtParserTest extends AbstractYangTest {
             QName.create(module.getQNameModule(), "async-data-broker"));
         final var containerNode = assertInstanceOf(ContainerSchemaNode.class, dataNode2);
 
-        final var leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
-        assertEquals(0, leaf.getUnknownSchemaNodes().size());
+        assertNotNull(containerNode.dataChildByName(QName.create(module.getQNameModule(), "type")));
 
         final var domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator().next();
 
@@ -107,15 +105,13 @@ class ControllerStmtParserTest extends AbstractYangTest {
         assertEquals(groupingQName, uses.getSourceGrouping().getQName());
         assertEquals(0, getChildNodeSizeWithoutUses(schemaServiceContainer));
 
-        final var type = schemaServiceContainer.getDataChildByName(QName.create(module.getQNameModule(), "type"));
-        assertEquals(0, type.getUnknownSchemaNodes().size());
+        assertNotNull(schemaServiceContainer.dataChildByName(QName.create(module.getQNameModule(), "type")));
 
         final var typeUnknownSchemaNodes = schemaServiceContainer.asEffectiveStatement()
                 .findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow()
                 .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow()
                 .requireDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, typeUnknownSchemaNodes.size());
-
 
         final var typeUnknownSchemaNode = typeUnknownSchemaNodes.iterator().next();
         assertEquals("sal:schema-service", typeUnknownSchemaNode.argument());

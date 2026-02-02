@@ -125,8 +125,8 @@ class DeviationResolutionTest extends AbstractYangTest {
         final var myChoice = assertInstanceOf(ChoiceSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-choice")));
         assertFalse(myChoice.isMandatory());
-        // FIXME: we need a supported extension to properly test this
-        assertEquals(0, myChoice.getUnknownSchemaNodes().size());
+        // FIXME: we need a supported extension to properly test this (via EffectiveStatement)
+        //        assertEquals(0, myChoice.getUnknownSchemaNodes().size());
 
         final var myCont = assertInstanceOf(ContainerSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-cont")));
@@ -137,16 +137,16 @@ class DeviationResolutionTest extends AbstractYangTest {
         assertInstanceOf(Uint32TypeDefinition.class, myAugLeaf.getType());
         assertEquals(Optional.of("seconds"), myAugLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myAugLeaf.getType().getDefaultValue());
-        // FIXME: we need a supported extension to properly test this
-        assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
+        // FIXME: we need a supported extension to properly test this (via EffectiveStatement)
+        //        assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
         final var myUsedLeaf = assertInstanceOf(LeafSchemaNode.class,
             myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-used-leaf")));
         assertInstanceOf(Uint32TypeDefinition.class, myUsedLeaf.getType());
         assertEquals(Optional.of("weeks"), myUsedLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myUsedLeaf.getType().getDefaultValue());
-        // FIXME: we need a supported extension to properly test this
-        assertEquals(0, myUsedLeaf.getUnknownSchemaNodes().size());
+        // FIXME: we need a supported extension to properly test this (via EffectiveStatement)
+        //        assertEquals(0, myUsedLeaf.getUnknownSchemaNodes().size());
     }
 
     @Test
@@ -161,7 +161,6 @@ class DeviationResolutionTest extends AbstractYangTest {
 
         assertEquals(Optional.empty(), myLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myLeaf.getType().getUnits());
-        assertEquals(0, myLeaf.getUnknownSchemaNodes().size());
 
         final var myLeafList = assertInstanceOf(LeafListSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf-list")));
@@ -171,7 +170,6 @@ class DeviationResolutionTest extends AbstractYangTest {
         final var myList = assertInstanceOf(ListSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-list")));
         assertEquals(0, myList.getUniqueConstraints().size());
-        assertEquals(0, myList.getUnknownSchemaNodes().size());
 
         final var myCont = assertInstanceOf(ContainerSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-cont")));
@@ -180,7 +178,6 @@ class DeviationResolutionTest extends AbstractYangTest {
         assertEquals(Optional.empty(), myAugLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myAugLeaf.getType().getUnits());
         assertEquals(0, myAugLeaf.getMustConstraints().size());
-        assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
         final var myUsedLeaf = assertInstanceOf(LeafSchemaNode.class,
             myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-used-leaf")));
@@ -188,7 +185,6 @@ class DeviationResolutionTest extends AbstractYangTest {
         assertEquals(Optional.empty(), myUsedLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myUsedLeaf.getType().getUnits());
         assertEquals(0, myUsedLeaf.getMustConstraints().size());
-        assertEquals(0, myUsedLeaf.getUnknownSchemaNodes().size());
     }
 
     @Test
