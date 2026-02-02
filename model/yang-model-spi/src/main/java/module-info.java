@@ -17,7 +17,6 @@ module org.opendaylight.yangtools.yang.model.spi {
     requires transitive org.opendaylight.yangtools.yang.ir;
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
-    requires transitive org.opendaylight.yangtools.rfc7952.model.api;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 

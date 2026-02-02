@@ -135,7 +135,6 @@ class DeviationStmtTest {
             }
         }
 
-        assertEquals(0, deviation1.getUnknownSchemaNodes().size());
         assertEquals(1, deviation1.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
 
