@@ -24,14 +24,6 @@ final class DefaultMethodHelpers {
         return optional.filter(type::isInstance).map(type::cast);
     }
 
-    static @NonNull InputEffectiveStatement verifyInputSubstatement(final EffectiveStatement<?, ?> stmt) {
-        return verifySubstatement(stmt, InputEffectiveStatement.class);
-    }
-
-    static @NonNull OutputEffectiveStatement verifyOutputSubstatement(final EffectiveStatement<?, ?> stmt) {
-        return verifySubstatement(stmt, OutputEffectiveStatement.class);
-    }
-
     static @NonNull PrefixEffectiveStatement verifyPrefixSubstatement(final EffectiveStatement<?, ?> stmt) {
         return verifySubstatement(stmt, PrefixEffectiveStatement.class);
     }

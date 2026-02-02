@@ -156,8 +156,8 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
         final var input = switch (stmt) {
-            case RpcEffectiveStatement rpc -> rpc.input();
-            case ActionEffectiveStatement action -> action.input();
+            case RpcEffectiveStatement rpc -> rpc.inputStatement();
+            case ActionEffectiveStatement action -> action.inputStatement();
             default -> throw invalidStatement(stmt);
         };
         return parseInputOutput(stream, stack, input.argument());
@@ -169,8 +169,8 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         final var stack = checkInferenceNotEmpty(inference);
         final var stmt = stack.currentStatement();
         final var output = switch (stmt) {
-            case RpcEffectiveStatement rpc -> rpc.output();
-            case ActionEffectiveStatement action -> action.output();
+            case RpcEffectiveStatement rpc -> rpc.outputStatement();
+            case ActionEffectiveStatement action -> action.outputStatement();
             default -> throw invalidStatement(stmt);
         };
         return parseInputOutput(stream, stack, output.argument());

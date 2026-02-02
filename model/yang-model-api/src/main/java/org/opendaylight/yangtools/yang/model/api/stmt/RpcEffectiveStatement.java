@@ -14,7 +14,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code rpc} statement.
  */
-public non-sealed interface RpcEffectiveStatement extends EffectiveOperationStatement<@NonNull RpcStatement> {
+public non-sealed interface RpcEffectiveStatement extends SchemaTreeEffectiveStatement<@NonNull RpcStatement>,
+        DataTreeAwareEffectiveStatement<QName, @NonNull RpcStatement>,
+        InputEffectiveStatement.MandatoryIn<QName, @NonNull RpcStatement>,
+        OutputEffectiveStatement.MandatoryIn<QName, @NonNull RpcStatement>,
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull RpcStatement> {
     @Override
     default StatementDefinition<QName, @NonNull RpcStatement, ?> statementDefinition() {
         return RpcStatement.DEF;
