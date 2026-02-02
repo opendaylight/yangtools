@@ -262,9 +262,8 @@ final class AugmentInferenceAction implements InferenceAction {
             // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
             // conditional -- in which case we do not run further checks
             if (targetCtx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                final var optPrevCopy = targetCtx.getPreviousCopyCtx();
-                if (optPrevCopy.isPresent()) {
-                    final var original = optPrevCopy.orElseThrow();
+                final var original = targetCtx.previousCopyCtx();
+                if (original != null) {
                     final var origArg = original.getArgument();
                     verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
 

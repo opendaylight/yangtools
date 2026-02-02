@@ -16,6 +16,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -645,7 +646,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final QName argumentAsTypeQName() {
-        return qnameFromArgument(getOriginalCtx().orElse(this), getRawArgument());
+        return qnameFromArgument(Objects.requireNonNullElse(originalCtx(), this), getRawArgument());
     }
 
     @Override
@@ -662,7 +663,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             return qname.getModule();
         }
         if (argument instanceof String str) {
-            return qnameFromArgument(getOriginalCtx().orElse(this), str).getModule();
+            return qnameFromArgument(Objects.requireNonNullElse(originalCtx(), this), str).getModule();
         }
         if (argument instanceof SchemaNodeIdentifier sni
                 && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
@@ -701,7 +702,13 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                     qnameModule = ctx.definingModule();
                 }
                 if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                    ctx = ctx.getOriginalCtx().orElseThrow();
+                    final var origCtx = ctx.originalCtx();
+                    if (origCtx == null)  {
+                        throw new VerifyException(
+                            ctx + " indicates it was added by augmentation, but does not have a original context");
+                    }
+
+                    ctx = origCtx;
                     qnameModule = StmtContextUtils.getModuleQNameByPrefix(root, prefix);
                 }
             }

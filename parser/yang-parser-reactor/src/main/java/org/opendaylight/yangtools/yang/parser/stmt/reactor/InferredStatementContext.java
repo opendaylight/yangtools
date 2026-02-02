@@ -130,7 +130,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.targetModule = targetModule;
 
-        final var origCtx = prototype.getOriginalCtx().orElse(prototype);
+        var origCtx = prototype.originalCtx();
+        if (origCtx == null) {
+            origCtx = prototype;
+        }
         verify(origCtx instanceof ReactorStmtCtx, "Unexpected original %s", origCtx);
         originalCtx = (ReactorStmtCtx<A, D, E>) origCtx;
 
@@ -171,13 +174,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public Optional<StmtContext<A, D, E>> getOriginalCtx() {
-        return Optional.of(originalCtx);
+    public StmtContext<A, D, E> originalCtx() {
+        return originalCtx;
     }
 
     @Override
-    public Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
-        return Optional.of(prototype);
+    public StmtContext<A, D, E> previousCopyCtx() {
+        return prototype;
     }
 
     @Override
