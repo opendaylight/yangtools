@@ -53,7 +53,7 @@ public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering
          * {@return the {@code OrderedByEffectiveStatement}}
          * @throws NoSuchElementException if not present
          */
-        default @NonNull OrderedByEffectiveStatement getOrderdByStatement() {
+        default @NonNull OrderedByEffectiveStatement getOrderedByStatement() {
             final var orderedBy = orderedByStatement();
             if (orderedBy == null) {
                 throw new NoSuchElementException("No ordered-by statement present in " + this);
@@ -64,7 +64,7 @@ public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering
         /**
          * {@return the effective {@link Ordering} of this statement}
          */
-        default @NonNull Ordering ordering() {
+        default @NonNull Ordering effectiveOrdering() {
             final var orderedBy = orderedByStatement();
             return orderedBy != null ? orderedBy.argument() : Ordering.SYSTEM;
         }
