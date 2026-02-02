@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
@@ -20,9 +18,8 @@ abstract class AbstractLengthRestrictedType<T extends LengthRestrictedTypeDefini
     private final @Nullable LengthConstraint lengthConstraint;
 
     AbstractLengthRestrictedType(final T baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable LengthConstraint lengthConstraint) {
-        super(baseType, qname, unknownSchemaNodes);
+        super(baseType, qname);
         this.lengthConstraint = lengthConstraint;
     }
 

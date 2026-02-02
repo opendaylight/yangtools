@@ -17,7 +17,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -32,36 +31,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class YangDataEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<YangDataName, @NonNull YangDataStatement>
-        implements YangDataEffectiveStatement, YangDataSchemaNode,
-                   DataNodeContainerMixin<YangDataName, @NonNull YangDataStatement> {
+        implements YangDataEffectiveStatement, DataNodeContainerMixin<YangDataName, @NonNull YangDataStatement> {
     private final DataSchemaNode child;
 
     YangDataEffectiveStatementImpl(final Current<YangDataName, YangDataStatement> stmt,
              final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
              final DataSchemaNode child) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
+        super(stmt.declared(), stmt.getArgument(), substatements);
         this.child = requireNonNull(child);
-    }
-
-    @Override
-    public YangDataName name() {
-        return argument();
-    }
-
-    @Override
-    public QName getQName() {
-        return child.getQName();
     }
 
     @Override
     public @Nullable DataSchemaNode dataChildByName(final @Nullable QName name) {
         // FIXME: dataChildByName() should be fixed
         return requireNonNull(name).equals(child.getQName()) ? child : null;
-    }
-
-    @Override
-    public YangDataEffectiveStatement asEffectiveStatement() {
-        return this;
     }
 
     @Override
