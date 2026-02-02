@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveSt
 public interface ActionNodeContainerCompat<A, D extends DeclaredStatement<A>,
         E extends SchemaTreeAwareEffectiveStatement<A, D>>
         extends SchemaTreeAwareEffectiveStatement<A, D>, ActionNodeContainer {
-
     @Override
     default Optional<ActionDefinition> findAction(final QName qname) {
         // 'action' identifier must never collide with another element, hence if we look it up and it ends up being
