@@ -21,11 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, @NonNull ExtensionStatement>
-        implements ExtensionDefinition, ExtensionEffectiveStatement,
-                   DocumentedNodeMixin<QName, @NonNull ExtensionStatement> {
+        implements ExtensionDefinition, ExtensionEffectiveStatement {
     private final Object substatements;
 
     public ExtensionEffectiveStatementImpl(final @NonNull ExtensionStatement declared,

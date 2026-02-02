@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  */
 @Deprecated(since = "14.0.23", forRemoval = true)
 public interface UnknownSchemaNode extends SchemaNode, CopyableNode,
-        EffectiveStatementEquivalent<UnknownEffectiveStatement<?, ?>> {
+        DocumentedNode.Mixin<UnknownEffectiveStatement<?, ?>> {
     /**
      * Returns QName instance with the name of the unknown node. This corresponds to
      * {@link ExtensionDefinition#getQName()} of the {@code extension} statement which defined it.

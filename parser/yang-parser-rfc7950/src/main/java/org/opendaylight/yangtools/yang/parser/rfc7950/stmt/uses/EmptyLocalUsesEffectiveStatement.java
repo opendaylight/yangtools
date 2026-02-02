@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.CopyableMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin.WithStatus;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WithStatusMixin;
 
 /**
  * Empty {@link UsesEffectiveStatement}, at its very simplest form. This is appropriate when all of these are true:
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
  */
 class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, @NonNull UsesStatement>
         implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, @NonNull UsesStatement>,
-                   WithStatus<QName, @NonNull UsesStatement> {
+                   WithStatusMixin<QName, @NonNull UsesStatement> {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final int flags;
 

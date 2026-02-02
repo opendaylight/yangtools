@@ -17,10 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 public final class DeviationEffectiveStatementImpl extends WithSubstatements<Absolute, @NonNull DeviationStatement>
-        implements DeviationEffectiveStatement, Deviation, DocumentedNodeMixin<Absolute, @NonNull DeviationStatement> {
+        implements DeviationEffectiveStatement, Deviation {
     public DeviationEffectiveStatementImpl(final @NonNull DeviationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
