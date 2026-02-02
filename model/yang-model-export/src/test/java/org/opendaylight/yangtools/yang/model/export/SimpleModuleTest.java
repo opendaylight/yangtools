@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
+import org.opendaylight.yangtools.yang.model.repo.spi.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.spi.SourceInfoSchemaSourceTransformer;
-import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class SimpleModuleTest {

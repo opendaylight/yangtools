@@ -25,6 +25,5 @@
         <bundle>mvn:org.opendaylight.yangtools/rfc8528-parser-support/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/rfc8639-parser-support/{{versionAsInProject}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/rfc8819-parser-support/{{versionAsInProject}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/{{versionAsInProject}}</bundle>
     </feature>
 </features>

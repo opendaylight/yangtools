@@ -20,7 +20,7 @@ module org.opendaylight.yangtools.binding.runtime.spi {
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.yang.parser.impl;
+    requires org.opendaylight.yangtools.yang.repo.spi;
     requires org.slf4j;
 
     uses org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
