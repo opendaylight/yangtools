@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code input} statement.
  */
-public non-sealed interface InputStatement extends DeclaredOperationBodyStatement {
+public interface InputStatement extends DeclaredStatement<QName>, DataDefinitionStatement.MultipleIn<QName>,
+        GroupingStatementMultipleIn<QName>, MustStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link InputStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

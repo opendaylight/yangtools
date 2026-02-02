@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Common capture of effective traits shared by {@code input} and {@code output} statements.
  */
-public sealed interface EffectiveOperationBodyStatement<D extends DeclaredOperationBodyStatement>
+public sealed interface EffectiveOperationBodyStatement<D extends DeclaredStatement<QName>>
     extends DataTreeEffectiveStatement<D>, DataTreeAwareEffectiveStatement<QName, D>,
             TypedefEffectiveStatement.MultipleIn<QName, D>
     permits InputEffectiveStatement, OutputEffectiveStatement {
