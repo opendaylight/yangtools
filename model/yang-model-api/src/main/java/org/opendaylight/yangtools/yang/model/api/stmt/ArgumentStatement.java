@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code argument} statement.
  */
-public interface ArgumentStatement extends DeclaredStatement<QName>, YinElementStatement.OptionalIn<QName> {
+public interface ArgumentStatement extends YinElementStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link ArgumentStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

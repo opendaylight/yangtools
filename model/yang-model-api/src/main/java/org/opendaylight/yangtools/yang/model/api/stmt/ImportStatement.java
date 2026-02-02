@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code import} statement.
  */
-public interface ImportStatement extends DeclaredStatement<Unqualified>, DescriptionStatement.OptionalIn<Unqualified>,
+public interface ImportStatement extends DescriptionStatement.OptionalIn<Unqualified>,
         PrefixStatement.OptionalIn<Unqualified>, ReferenceStatement.OptionalIn<Unqualified>,
         RevisionDateStatement.OptionalIn<Unqualified> {
     /**

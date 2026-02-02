@@ -23,10 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * takes one argument, which is an identifier, followed by a block of substatements that holds detailed action
  * information. The argument is the name of the action.
  */
-public interface ActionStatement extends DeclaredStatement<QName>, DescriptionStatement.OptionalIn<QName>,
-        IfFeatureStatement.MultipleIn<QName>, GroupingStatementMultipleIn<QName>, InputStatement.OptionalIn<QName>,
-        OutputStatement.OptionalIn<QName>, ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>,
-        TypedefStatement.MultipleIn<QName> {
+public interface ActionStatement extends DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
+        GroupingStatementMultipleIn<QName>, InputStatement.OptionalIn<QName>, OutputStatement.OptionalIn<QName>,
+        ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link ActionStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

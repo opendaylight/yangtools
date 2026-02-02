@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code case} statement.
  */
-public interface CaseStatement extends DeclaredStatement<QName>, DataDefinitionStatement.MultipleIn<QName>,
+public interface CaseStatement extends DataDefinitionStatement.MultipleIn<QName>,
         DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
         ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName> {
     /**

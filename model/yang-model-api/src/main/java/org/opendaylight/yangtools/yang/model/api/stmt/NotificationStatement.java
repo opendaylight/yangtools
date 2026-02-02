@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code notification} statement.
  */
-public interface NotificationStatement extends DeclaredStatement<QName>, DataDefinitionStatement.MultipleIn<QName>,
+public interface NotificationStatement extends DataDefinitionStatement.MultipleIn<QName>,
         DescriptionStatement.OptionalIn<QName>, GroupingStatementMultipleIn<QName>,
         IfFeatureStatement.MultipleIn<QName>, MustStatement.MultipleIn<QName>, ReferenceStatement.OptionalIn<QName>,
         StatusStatement.OptionalIn<QName>, TypedefStatement.MultipleIn<QName> {

@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code feature} statement.
  */
-public interface FeatureStatement extends DeclaredStatement<QName>, DescriptionStatement.OptionalIn<QName>,
-        IfFeatureStatement.MultipleIn<QName>, ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName> {
+public interface FeatureStatement extends DescriptionStatement.OptionalIn<QName>, IfFeatureStatement.MultipleIn<QName>,
+        ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link FeatureStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

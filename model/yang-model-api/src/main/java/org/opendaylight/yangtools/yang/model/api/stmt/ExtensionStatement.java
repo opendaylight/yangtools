@@ -19,9 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code extension} statement.
  */
-public interface ExtensionStatement extends DeclaredStatement<QName>, ArgumentStatement.OptionalIn<QName>,
-        DescriptionStatement.OptionalIn<QName>, ReferenceStatement.OptionalIn<QName>,
-        StatusStatement.OptionalIn<QName> {
+public interface ExtensionStatement extends ArgumentStatement.OptionalIn<QName>, DescriptionStatement.OptionalIn<QName>,
+        ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link ExtensionStatement}s.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
