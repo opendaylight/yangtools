@@ -11,15 +11,13 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 final class BaseBitsType extends AbstractBaseType<BitsTypeDefinition> implements BitsTypeDefinition {
     private final @NonNull ImmutableList<Bit> bits;
 
-    BaseBitsType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
-            final Collection<Bit> bits) {
-        super(qname, unknownSchemaNodes);
+    BaseBitsType(final QName qname, final Collection<Bit> bits) {
+        super(qname);
         this.bits = ImmutableList.copyOf(bits);
     }
 
