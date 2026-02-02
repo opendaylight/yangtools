@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.AbstractSchemaContext;
 import org.opendaylight.yangtools.yang.model.util.FilteringSchemaContextProxy.ModuleId;
@@ -432,19 +431,6 @@ class SchemaContextProxyTest {
 
         final var schemaContextProxyExtensions = filteringSchemaContextProxy.getExtensions();
         assertTrue(schemaContextProxyExtensions.contains(mockedExtension));
-    }
-
-    @Test
-    void testGetUnknownSchemaNodes() {
-        final var moduleConfig = mockModule(CONFIG_NAME);
-        final var schemaContext = mockSchema(moduleConfig);
-        final var filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Set.of(), moduleConfig);
-
-        final var mockedUnknownSchemaNode = mock(UnknownSchemaNode.class);
-        doReturn(List.of(mockedUnknownSchemaNode)).when(moduleConfig).getUnknownSchemaNodes();
-
-        final var schemaContextProxyUnknownSchemaNodes = filteringSchemaContextProxy.getUnknownSchemaNodes();
-        assertTrue(schemaContextProxyUnknownSchemaNodes.contains(mockedUnknownSchemaNode));
     }
 
     @Test

@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefinition>
         implements LeafrefTypeDefinition {
     private final boolean requireInstance;
 
-    RestrictedLeafrefType(final LeafrefTypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
-        super(baseType, qname, unknownSchemaNodes);
+    RestrictedLeafrefType(final LeafrefTypeDefinition baseType, final QName qname, final boolean requireInstance) {
+        super(baseType, qname);
         this.requireInstance = requireInstance;
     }
 

@@ -120,7 +120,7 @@ public final class ConcreteTypes {
             @Override
             public BinaryTypeDefinition buildType() {
                 return new DerivedBinaryType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -131,7 +131,7 @@ public final class ConcreteTypes {
             @Override
             public BitsTypeDefinition buildType() {
                 return new DerivedBitsType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -142,7 +142,7 @@ public final class ConcreteTypes {
             @Override
             public BooleanTypeDefinition buildType() {
                 return new DerivedBooleanType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -153,7 +153,7 @@ public final class ConcreteTypes {
             @Override
             public DecimalTypeDefinition buildType() {
                 return new DerivedDecimalType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -164,7 +164,7 @@ public final class ConcreteTypes {
             @Override
             public EmptyTypeDefinition buildType() {
                 return new DerivedEmptyType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -175,7 +175,7 @@ public final class ConcreteTypes {
             @Override
             public EnumTypeDefinition buildType() {
                 return new DerivedEnumerationType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -186,7 +186,7 @@ public final class ConcreteTypes {
             @Override
             public IdentityrefTypeDefinition buildType() {
                 return new DerivedIdentityrefType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -197,7 +197,7 @@ public final class ConcreteTypes {
             @Override
             public InstanceIdentifierTypeDefinition buildType() {
                 return new DerivedInstanceIdentifierType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes(), baseType.requireInstance());
+                        getReference(), getStatus(), getUnits(), baseType.requireInstance());
             }
         };
     }
@@ -208,7 +208,7 @@ public final class ConcreteTypes {
             @Override
             public Int8TypeDefinition buildType() {
                 return new DerivedInt8Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -219,7 +219,7 @@ public final class ConcreteTypes {
             @Override
             public Int16TypeDefinition buildType() {
                 return new DerivedInt16Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -230,7 +230,7 @@ public final class ConcreteTypes {
             @Override
             public Int32TypeDefinition buildType() {
                 return new DerivedInt32Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -241,7 +241,7 @@ public final class ConcreteTypes {
             @Override
             public Int64TypeDefinition buildType() {
                 return new DerivedInt64Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -252,7 +252,7 @@ public final class ConcreteTypes {
             @Override
             public LeafrefTypeDefinition buildType() {
                 return new DerivedLeafrefType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -263,7 +263,7 @@ public final class ConcreteTypes {
             @Override
             public StringTypeDefinition buildType() {
                 return new DerivedStringType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -274,7 +274,7 @@ public final class ConcreteTypes {
             @Override
             public DerivedUnionType buildType() {
                 return new DerivedUnionType(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -285,7 +285,7 @@ public final class ConcreteTypes {
             @Override
             public Uint8TypeDefinition buildType() {
                 return new DerivedUint8Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -296,7 +296,7 @@ public final class ConcreteTypes {
             @Override
             public Uint16TypeDefinition buildType() {
                 return new DerivedUint16Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -307,7 +307,7 @@ public final class ConcreteTypes {
             @Override
             public Uint32TypeDefinition buildType() {
                 return new DerivedUint32Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }
@@ -318,7 +318,7 @@ public final class ConcreteTypes {
             @Override
             public Uint64TypeDefinition buildType() {
                 return new DerivedUint64Type(getBaseType(), getQName(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                        getReference(), getStatus(), getUnits());
             }
         };
     }

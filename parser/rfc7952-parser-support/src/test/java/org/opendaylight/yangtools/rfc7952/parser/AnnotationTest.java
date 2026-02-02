@@ -7,17 +7,16 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.parser.dagger.Rfc7952Module;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -40,18 +39,15 @@ class AnnotationTest {
             .addSource(new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang")))
             .buildEffective();
 
-        final var annotations = AnnotationSchemaNode.findAll(context);
-        assertEquals(1, annotations.size());
-        final var annotation = annotations.get(LAST_MODIFIED);
-        assertNotNull(annotation);
-
-        final var findAnnotation = AnnotationSchemaNode.find(context, LAST_MODIFIED);
-        assertTrue(findAnnotation.isPresent());
-        assertSame(annotation, findAnnotation.orElseThrow());
-
-        assertEquals(BaseTypes.stringType(), annotation.getType());
-        assertEquals(Optional.empty(), annotation.getReference());
-        assertEquals(Optional.of("This annotation contains the date and time when the\n"
-                + "annotated instance was last modified (or created)."), annotation.getDescription());
+        assertThat(context.getModuleStatements().values().stream()
+            .flatMap(module -> module.streamEffectiveSubstatements(AnnotationEffectiveStatement.class))
+            .toList()).hasSize(1).first().satisfies(annotation -> {
+                assertEquals(LAST_MODIFIED, annotation.argument());
+                assertEquals(BaseTypes.stringType(), annotation.getTypeDefinition());
+                assertEquals(Optional.of("""
+                    This annotation contains the date and time when the
+                    annotated instance was last modified (or created)."""),
+                    annotation.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class));
+            });
     }
 }
