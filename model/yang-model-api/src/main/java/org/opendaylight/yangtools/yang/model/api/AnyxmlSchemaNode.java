@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
  * <a href="https://www.rfc-editor.org/rfc/rfc6020#section-7.10">[RFC-6020] The anyxml Statement</a>
  */
 public interface AnyxmlSchemaNode extends DataSchemaNode, MandatoryAware,
-    MustConstraintAware.Mixin<AnyxmlEffectiveStatement> {
+    MustConstraintAware.Mixin<AnyxmlEffectiveStatement>, WhenConditionAware.Mixin<AnyxmlEffectiveStatement> {
     // Nothing else
 }
