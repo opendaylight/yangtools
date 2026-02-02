@@ -70,7 +70,7 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D,
         final var type = prototype.runtimeType();
         final var codec = prototype.contextFactory().getPathArgumentCodec(bindingClass, type);
 
-        return type.statement().ordering() == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
+        return type.statement().effectiveOrdering() == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
             : new Ordered<>(prototype, keyMethod, codec);
     }
 

@@ -26,6 +26,6 @@ public interface UserOrderedAware<E extends OrderedByEffectiveStatement.Optional
      * @return true if ordered-by argument is {@code user}, false otherwise
      */
     default boolean isUserOrdered() {
-        return asEffectiveStatement().ordering() == Ordering.USER;
+        return asEffectiveStatement().effectiveOrdering() == Ordering.USER;
     }
 }
