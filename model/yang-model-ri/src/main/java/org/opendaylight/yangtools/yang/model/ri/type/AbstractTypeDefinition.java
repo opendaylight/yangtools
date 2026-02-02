@@ -9,31 +9,21 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Immutable, TypeDefinition<T> {
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
     private final @NonNull QName qname;
 
-    AbstractTypeDefinition(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
+    AbstractTypeDefinition(final QName qname) {
         this.qname = requireNonNull(qname);
-        this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
     }
 
     @Override
     public final QName getQName() {
         return qname;
-    }
-
-    @Override
-    public final Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownSchemaNodes;
     }
 
     @Override

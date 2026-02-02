@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -51,11 +51,12 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         final var extensions = modelContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final var unknownSchemaNodes = modelContext.findModule(FOO_QNAMEMODULE).orElseThrow().getUnknownSchemaNodes();
-        assertEquals(2, unknownSchemaNodes.size());
-        final var it = unknownSchemaNodes.iterator();
-        assertEquals("my-yang-data-a", assertInstanceOf(YangDataSchemaNode.class, it.next()).getNodeParameter());
-        assertEquals("my-yang-data-b", assertInstanceOf(YangDataSchemaNode.class, it.next()).getNodeParameter());
+        final var yangDatas = modelContext.findModuleStatement(FOO_QNAMEMODULE).orElseThrow()
+            .collectEffectiveSubstatements(YangDataEffectiveStatement.class);
+        assertEquals(2, yangDatas.size());
+        final var it = yangDatas.iterator();
+        assertEquals("my-yang-data-a", it.next().argument().name());
+        assertEquals("my-yang-data-b", it.next().argument().name());
         assertFalse(it.hasNext());
     }
 
@@ -64,22 +65,20 @@ class YangDataExtensionTest extends AbstractYangDataTest {
         final var modelContext = newBuild().addSource(BAZ_MODULE).buildEffective();
         assertNotNull(modelContext);
 
-        final var baz = modelContext.findModule("baz", REVISION).orElseThrow();
-        final var unknownSchemaNodes = baz.getUnknownSchemaNodes();
-        assertEquals(1, unknownSchemaNodes.size());
+        final var baz = modelContext.findModule("baz", REVISION).orElseThrow().asEffectiveStatement();
+        final var yangDatas = baz.collectEffectiveSubstatements(YangDataEffectiveStatement.class);
+        assertEquals(1, yangDatas.size());
 
-        final var myYangDataNode = assertInstanceOf(YangDataSchemaNode.class, unknownSchemaNodes.iterator().next());
-
-        final var yangDataChildren = myYangDataNode.getChildNodes();
+        final var yangDataChildren = yangDatas.iterator().next().effectiveSubstatements();
         assertEquals(1, yangDataChildren.size());
 
-        final var contInYangData = assertInstanceOf(ContainerSchemaNode.class, yangDataChildren.iterator().next());
+        final var contInYangData = assertInstanceOf(ContainerSchemaNode.class, yangDataChildren.getFirst());
         assertEquals(Optional.empty(), contInYangData.effectiveConfig());
         final var innerCont = assertInstanceOf(ContainerSchemaNode.class,
-            contInYangData.dataChildByName(QName.create(baz.getQNameModule(), "inner-cont")));
+            contInYangData.dataChildByName(QName.create(baz.localQNameModule(), "inner-cont")));
         assertEquals(Optional.empty(), innerCont.effectiveConfig());
         final var grpCont = assertInstanceOf(ContainerSchemaNode.class,
-            contInYangData.dataChildByName(QName.create(baz.getQNameModule(), "grp-cont")));
+            contInYangData.dataChildByName(QName.create(baz.localQNameModule(), "grp-cont")));
         assertEquals(Optional.empty(), grpCont.effectiveConfig());
     }
 
