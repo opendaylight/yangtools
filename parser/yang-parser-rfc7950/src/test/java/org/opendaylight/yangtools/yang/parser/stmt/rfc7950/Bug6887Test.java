@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -25,6 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.ri.type.BitBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumPairBuilder;
+import org.opendaylight.yangtools.yang.model.ri.type.InvalidBitDefinitionException;
+import org.opendaylight.yangtools.yang.model.ri.type.InvalidEnumDefinitionException;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 class Bug6887Test extends AbstractYangTest {
@@ -194,6 +199,23 @@ class Bug6887Test extends AbstractYangTest {
     void testInvalidYang10RestrictedBits2() {
         assertSourceException(startsWith("Restricted bits type is not allowed in YANG version 1 [at "),
             "/rfc7950/bug6887/bar10-invalid-2.yang");
+    }
+
+    private static @NonNull InvalidBitDefinitionException assertInvalidBitDefinitionException(
+            final Matcher<String> matcher, final String... yangResourceName) {
+        return assertArgumentException(InvalidBitDefinitionException.class, matcher, yangResourceName);
+    }
+
+    private static @NonNull InvalidEnumDefinitionException assertInvalidEnumDefinitionException(
+            final Matcher<String> matcher, final String... yangResourceName) {
+        return assertArgumentException(InvalidEnumDefinitionException.class, matcher, yangResourceName);
+    }
+
+    private static <E extends IllegalArgumentException> @NonNull E assertArgumentException(final Class<E> cause,
+            final Matcher<String> matcher, final String... yangResourceName) {
+        final var ret = assertException(cause, yangResourceName);
+        assertThat(ret.getMessage(), matcher);
+        return ret;
     }
 
     private static EnumPair createEnumPair(final String name, final int value) {
