@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.ImmutableMultimap;
 import java.util.HashMap;
@@ -46,9 +48,19 @@ class DependencyResolverTest {
         assertThat(resolved.unresolvedSources()).containsExactlyInAnyOrder(
             new SourceIdentifier("subfoo", "2013-02-27"));
 
-        assertEquals(ImmutableMultimap.of(
-            new SourceIdentifier("subfoo", "2013-02-27"), new BelongsTo(Unqualified.of("foo"), Unqualified.of("f"))),
-            resolved.unsatisfiedImports());
+        final var unsatisfied = resolved.unsatisfiedImports();
+        assertEquals(1, unsatisfied.size());
+
+        assertThat(unsatisfied.get(new SourceIdentifier("subfoo", "2013-02-27")))
+            .hasSize(1)
+            .first().satisfies(item -> {
+                final var belongsTo = assertInstanceOf(BelongsTo.class, item);
+                assertEquals(Unqualified.of("foo"), belongsTo.name());
+                assertEquals(Unqualified.of("f"), belongsTo.prefix());
+                final var sourceRef = belongsTo.sourceRef();
+                assertNotNull(sourceRef);
+                assertEquals("subfoo:4:5", sourceRef.toString());
+            });
     }
 
     @Test

@@ -32,11 +32,15 @@ record DBTv1(
     }
 
     DBTv1(final BelongsTo obj) {
-        this(obj.name(), obj.prefix(), null);
+        this(obj.name(), obj.prefix(), serializableRef(obj.sourceRef()));
     }
 
     @java.io.Serial
     Object readResolve() {
-        return new BelongsTo(name, prefix);
+        return new BelongsTo(name, prefix, sourceRef);
+    }
+
+    static @Nullable StatementSourceReference serializableRef(final @Nullable StatementSourceReference sourceRef) {
+        return sourceRef instanceof Serializable ? sourceRef : null;
     }
 }

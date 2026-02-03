@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.source.ir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Set;
@@ -16,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
@@ -42,9 +44,29 @@ class YangIRSourceInfoExtractorTest {
         assertEquals(new SourceIdentifier("m2", "2013-09-30"), info.sourceId());
         assertEquals(YangVersion.VERSION_1, info.yangVersion());
         assertEquals(Set.of(Revision.of("2013-09-30")), info.revisions());
-        assertEquals(Set.of(
-            new Import(Unqualified.of("m4"), Unqualified.of("m4")),
-            new Import(Unqualified.of("m5"), Unqualified.of("m5"))), info.imports());
+
+        final var imports = info.imports();
+        assertEquals(2, imports.size());
+        for (var imp : imports) {
+            switch (imp.name().getLocalName()) {
+                case "m4" -> {
+                    assertEquals(Unqualified.of("m4"), imp.prefix());
+                    assertNull(imp.revision());
+                    final var sourceRef = imp.sourceRef();
+                    assertNotNull(sourceRef);
+                    assertEquals("m2:7:5", sourceRef.toString());
+                }
+                case "m5" -> {
+                    assertEquals(Unqualified.of("m5"), imp.prefix());
+                    assertNull(imp.revision());
+                    final var sourceRef = imp.sourceRef();
+                    assertNotNull(sourceRef);
+                    assertEquals("m2:10:5", sourceRef.toString());
+                }
+                default -> throw new AssertionError();
+            }
+        }
+
         assertEquals(Set.of(), info.includes());
     }
 
@@ -54,9 +76,17 @@ class YangIRSourceInfoExtractorTest {
         assertEquals(new SourceIdentifier("module-without-revision"), info.sourceId());
         assertEquals(YangVersion.VERSION_1, info.yangVersion());
         assertEquals(Set.of(), info.revisions());
-        assertEquals(Set.of(
-            new Import(Unqualified.of("ietf-inet-types"), Unqualified.of("inet"), Revision.of("2010-09-24"))),
-            info.imports());
+
+        final var imports = info.imports();
+        assertThat(imports).hasSize(1).first().satisfies(imp -> {
+            assertEquals(Unqualified.of("ietf-inet-types"), imp.name());
+            assertEquals(Unqualified.of("inet"), imp.prefix());
+            assertEquals(Revision.of("2010-09-24"), imp.revision());
+            final var sourceRef = imp.sourceRef();
+            assertNotNull(sourceRef);
+            assertEquals("module-without-revision:7:5", sourceRef.toString());
+        });
+
         assertEquals(Set.of(), info.includes());
     }
 

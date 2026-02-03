@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.model.api.source;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
+import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
@@ -46,6 +48,13 @@ public sealed interface SourceDependency extends Serializable
     @Nullable Revision revision();
 
     /**
+     * {@return the {@code StatementSourceReference} to the statement causing this dependency, or {@code null} if not
+     * available}
+     * @since 15.0.0
+     */
+    @Nullable StatementSourceReference sourceRef();
+
+    /**
      * Check if a given {@link SourceIdentifier} satisfies the needs of this dependency.
      *
      * @param sourceId given {@link SourceIdentifier}
@@ -65,7 +74,10 @@ public sealed interface SourceDependency extends Serializable
     /**
      * A dependency created by a {@link BelongsToStatement}.
      */
-    record BelongsTo(Unqualified name, Unqualified prefix) implements SourceDependency {
+    record BelongsTo(
+            Unqualified name,
+            Unqualified prefix,
+            @Nullable StatementSourceReference sourceRef) implements SourceDependency {
         @java.io.Serial
         private static final long serialVersionUID = 0L;
 
@@ -80,17 +92,37 @@ public sealed interface SourceDependency extends Serializable
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(name, prefix);
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return obj == this || obj instanceof BelongsTo other && name.equals(other.name)
+                && prefix.equals(other.prefix);
+        }
+
+        @Override
         public String toString() {
             return new StringBuilder().append("BelongsTo[name=").append(name.getLocalName())
                 .append(", prefix=").append(prefix.getLocalName())
                 .append(']').toString();
+        }
+
+        @java.io.Serial
+        Object writeReplace() {
+            return new DBTv1(this);
         }
     }
 
     /**
      * A dependency created by an {@link ImportStatement}.
      */
-    record Import(Unqualified name, Unqualified prefix, @Nullable Revision revision) implements SourceDependency {
+    record Import(
+            Unqualified name,
+            Unqualified prefix,
+            @Nullable Revision revision,
+            @Nullable StatementSourceReference sourceRef) implements SourceDependency {
         @java.io.Serial
         private static final long serialVersionUID = 0L;
 
@@ -99,8 +131,20 @@ public sealed interface SourceDependency extends Serializable
             requireNonNull(prefix);
         }
 
-        public Import(final Unqualified name, final Unqualified prefix) {
-            this(name, prefix, null);
+        public Import(final Unqualified name, final Unqualified prefix,
+                final @Nullable StatementSourceReference sourceRef) {
+            this(name, prefix, null, sourceRef);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, prefix, revision);
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return obj == this || obj instanceof Import other && name.equals(other.name) && prefix.equals(other.prefix)
+                && Objects.equals(revision, other.revision);
         }
 
         @Override
@@ -113,12 +157,20 @@ public sealed interface SourceDependency extends Serializable
             }
             return sb.append(']').toString();
         }
+
+        @java.io.Serial
+        Object writeReplace() {
+            return new DIMv1(this);
+        }
     }
 
     /**
      * A dependency created by an {@link IncludeStatement}.
      */
-    record Include(Unqualified name, @Nullable Revision revision) implements SourceDependency {
+    record Include(
+            Unqualified name,
+            @Nullable Revision revision,
+            @Nullable StatementSourceReference sourceRef) implements SourceDependency {
         @java.io.Serial
         private static final long serialVersionUID = 0L;
 
@@ -126,8 +178,19 @@ public sealed interface SourceDependency extends Serializable
             requireNonNull(name);
         }
 
-        public Include(final Unqualified name) {
-            this(name, null);
+        public Include(final Unqualified name, final @Nullable StatementSourceReference sourceRef) {
+            this(name, null, sourceRef);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, revision);
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return obj == this || obj instanceof Include other && name.equals(other.name)
+                && Objects.equals(revision, other.revision);
         }
 
         @Override
@@ -138,6 +201,11 @@ public sealed interface SourceDependency extends Serializable
                 sb.append(", revision=").append(revision);
             }
             return sb.append(']').toString();
+        }
+
+        @java.io.Serial
+        Object writeReplace() {
+            return new DINv1(this);
         }
     }
 }

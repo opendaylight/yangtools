@@ -34,11 +34,11 @@ record DIMv1(
     }
 
     DIMv1(final Import obj) {
-        this(obj.name(), obj.prefix(), obj.revision(), null);
+        this(obj.name(), obj.prefix(), obj.revision(), DBTv1.serializableRef(obj.sourceRef()));
     }
 
     @java.io.Serial
     Object readResolve() {
-        return new Import(name, prefix, revision);
+        return new Import(name, prefix, revision, sourceRef);
     }
 }

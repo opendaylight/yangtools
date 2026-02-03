@@ -10,28 +10,36 @@ package org.opendaylight.yangtools.yang.model.api.source;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 
+@ExtendWith(MockitoExtension.class)
 class SourceDependencyTest {
+    @Mock
+    private StatementSourceReference sourceRef;
+
     @Test
     void belongsToToString() {
         assertEquals("BelongsTo[name=foo, prefix=bar]",
-            new BelongsTo(Unqualified.of("foo"), Unqualified.of("bar")).toString());
+            new BelongsTo(Unqualified.of("foo"), Unqualified.of("bar"), sourceRef).toString());
     }
 
     @Test
     void importToToString() {
         assertEquals("Import[name=foo, prefix=bar, revision=2026-02-03]",
-            new Import(Unqualified.of("foo"), Unqualified.of("bar"), Revision.of("2026-02-03")).toString());
+            new Import(Unqualified.of("foo"), Unqualified.of("bar"), Revision.of("2026-02-03"), sourceRef).toString());
     }
 
     @Test
     void includeToToString() {
         assertEquals("Include[name=foo, revision=2026-02-03]",
-            new Include(Unqualified.of("foo"), Revision.of("2026-02-03")).toString());
+            new Include(Unqualified.of("foo"), Revision.of("2026-02-03"), sourceRef).toString());
     }
 }

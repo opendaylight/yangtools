@@ -32,11 +32,11 @@ record DINv1(
     }
 
     DINv1(final Include obj) {
-        this(obj.name(), obj.revision(), null);
+        this(obj.name(), obj.revision(), DBTv1.serializableRef(obj.sourceRef()));
     }
 
     @java.io.Serial
     Object readResolve() {
-        return new Include(name, revision);
+        return new Include(name, revision, sourceRef);
     }
 }
