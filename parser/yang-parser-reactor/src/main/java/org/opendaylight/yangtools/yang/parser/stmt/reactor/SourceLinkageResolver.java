@@ -18,9 +18,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -98,7 +99,8 @@ public final class SourceLinkageResolver {
     /**
      * Map of submodules which include other submodules of the same parent module.
      */
-    private final Map<ResolvedSourceBuilder, Set<SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
+    // FIXME: would a HashTable work better?
+    private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     private SourceLinkageResolver(
             final @NonNull Collection<ReactorSource<?>> withMainSources,
@@ -173,7 +175,7 @@ public final class SourceLinkageResolver {
 
             // all resolved imports
             for (var dep : resolved.imports()) {
-                putPrefix(prefixToModule, dep.prefix(), dep.qname());
+                putPrefix(prefixToModule, dep.source().prefix(), dep.qname());
             }
 
             // the prefix under which the module is known
@@ -192,7 +194,7 @@ public final class SourceLinkageResolver {
     }
 
     // FIXME: this smells of a builder for ImmutablePrefixResolver or similar
-    private static void putPrefix(HashMap<Unqualified, QNameModule> prefixToModule, final Unqualified prefix,
+    private static void putPrefix(final HashMap<Unqualified, QNameModule> prefixToModule, final Unqualified prefix,
             final QNameModule module) {
         final var prev = prefixToModule.putIfAbsent(requireNonNull(prefix), requireNonNull(module));
         if (prev != null) {
@@ -302,7 +304,7 @@ public final class SourceLinkageResolver {
             final var dependencies = getDependenciesOf(current);
             final var resolvedDependencies = new HashMap<SourceDependency, Unqualified>();
             final var unresolvedDependencies = new ArrayList<SourceIdentifier>();
-            final var includedSiblings = new LinkedList<SourceIdentifier>();
+            final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
             boolean allResolved = true;
 
             for (var dependency : dependencies) {
@@ -330,10 +332,11 @@ public final class SourceLinkageResolver {
                     continue;
                 }
 
-                if (isIncludedSibling(current, dependency, match)) {
+                final var includedSibling = asIncludedSibling(current, dependency, match);
+                if (includedSibling != null) {
                     // If this is an include of a sibling submodule, don't add it as unresolved dependency.
                     // It will be resolved later in a different way.
-                    includedSiblings.add(match);
+                    includedSiblings.put(includedSibling, match);
                     continue;
                 }
 
@@ -355,32 +358,39 @@ public final class SourceLinkageResolver {
                     final var currentVersion = newResolved.yangVersion();
                     final var dependencyVersion = depModule.yangVersion();
 
-                    if (dep instanceof Import importedDep) {
-                        // Version 1 sources must not import-by-revision Version 1.1 modules
-                        if (importedDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
-                            if (dependencyVersion != YangVersion.VERSION_1) {
-                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                    new YangVersionLinkageException(refOf(current, importedDep.sourceRef()),
-                                        "Cannot import by revision version %s module %s", dependencyVersion,
-                                            resolvedDep.getValue().getLocalName()));
+                    switch (dep) {
+                        case Import importDep -> {
+                            // Version 1 sources must not import-by-revision Version 1.1 modules
+                            if (importDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
+                                if (dependencyVersion != YangVersion.VERSION_1) {
+                                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE,
+                                        current,
+                                        new YangVersionLinkageException(refOf(current, importDep.sourceRef()),
+                                            "Cannot import by revision version %s module %s", dependencyVersion,
+                                                resolvedDep.getValue().getLocalName()));
+                                }
                             }
+                            newResolved.resolveImport(importDep, depModule);
                         }
-                        newResolved.addImport(importedDep.prefix(), depModule);
-                    } else {
-                        if (currentVersion != dependencyVersion) {
-                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                new YangVersionLinkageException(refOf(current, dep.sourceRef()),
-                                    "Cannot include a version %s submodule %s in a version %s module %s",
-                                    dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
-                                    current.name().getLocalName()));
+                        case Include includeDep -> {
+                            if (currentVersion != dependencyVersion) {
+                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                                    new YangVersionLinkageException(refOf(current, dep.sourceRef()),
+                                        "Cannot include a version %s submodule %s in a version %s module %s",
+                                        dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
+                                        current.name().getLocalName()));
+                            }
+                            newResolved.resolveInclude(includeDep, depModule);
                         }
-                        newResolved.addInclude(depModule);
+                        case BelongsTo belongsToDep -> {
+                            // FIXME: verify() this never happens or document
+                        }
                     }
                 }
 
                 if (!includedSiblings.isEmpty()) {
                     // map all the included siblings of this submodule
-                    mapSiblings(newResolved, includedSiblings);
+                    unresolvedSiblingsMap.computeIfAbsent(newResolved, k -> new HashMap<>()).putAll(includedSiblings);
                 }
                 // Current was fully processed
                 inProgress.remove(current);
@@ -434,9 +444,10 @@ public final class SourceLinkageResolver {
 
             // FIXME: better message and/or better exception
             //double-check that the parent does satisfy this belongs-to
-            verify(submoduleInfo.belongsTo().isSatisfiedBy(parentId));
+            final var belongsTo = submoduleInfo.belongsTo();
+            verify(belongsTo.isSatisfiedBy(parentId));
 
-            resolvedSubmodule.setBelongsTo(submoduleInfo.belongsTo().prefix(), resolvedParent);
+            resolvedSubmodule.resolveBelongsTo(belongsTo, resolvedParent);
         }
     }
 
@@ -448,18 +459,19 @@ public final class SourceLinkageResolver {
         final var iterator = unresolvedSiblingsMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            final Map.Entry<ResolvedSourceBuilder, Set<SourceIdentifier>> entry = iterator.next();
+            final Entry<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> entry = iterator.next();
             final ResolvedSourceBuilder resolvedSource = entry.getKey();
-            final Set<SourceIdentifier> siblings = entry.getValue();
+            final Map<Include, SourceIdentifier> siblings = entry.getValue();
 
-            for (final SourceIdentifier sibling : siblings) {
+            for (var includeEntry : siblings.entrySet()) {
+                final var sibling = includeEntry.getValue();
                 final var resolvedSibling = involvedSourcesMap.get(sibling);
                 if (resolvedSibling == null) {
                     final var sourceId = resolvedSource.reactorSource().sourceId();
                     throw new InferenceException(new SourceStatementDeclaration(sourceId),
                         "Included submodule %s of module %s was not resolved", sibling, sourceId);
                 }
-                resolvedSource.addInclude(resolvedSibling);
+                resolvedSource.resolveInclude(includeEntry.getKey(), resolvedSibling);
             }
             iterator.remove();
         }
@@ -487,22 +499,17 @@ public final class SourceLinkageResolver {
         return newResolvedBuilder;
     }
 
-    private void mapSiblings(final ResolvedSourceBuilder newResolved, final List<SourceIdentifier> includedSiblings) {
-        final var siblings = unresolvedSiblingsMap.computeIfAbsent(newResolved, k -> new HashSet<>());
-        siblings.addAll(includedSiblings);
-    }
-
-    private boolean isIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
+    private Include asIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
             final SourceIdentifier dependencyId) {
-        if (!(dependency instanceof Include)) {
-            return false;
+        if (!(dependency instanceof Include sibling)) {
+            return null;
         }
 
         final var currentParent = findSatisfyingParentForSubmodule(current);
         // FIXME: not needed if currentParent == null?
         final var theirParent = findSatisfyingParentForSubmodule(dependencyId);
 
-        return currentParent != null && currentParent.equals(theirParent);
+        return currentParent != null && currentParent.equals(theirParent) ? sibling : null;
     }
 
     private @NonNull Set<SourceIdentifier> findAmongResolved(final Unqualified name) {
