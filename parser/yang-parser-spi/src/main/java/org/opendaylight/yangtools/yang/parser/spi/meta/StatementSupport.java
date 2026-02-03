@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -36,8 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        implements StatementFactory<A, D, E> {
+public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        implements ArgumentFactory<A>, StatementFactory<A, D, E> {
     /**
      * Statement context copy policy, indicating how should reactor handle statement copy operations. Every statement
      * copied by the reactor is subject to this policy.
@@ -498,28 +497,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     }
 
     /**
-     * Parses textual representation of argument in object representation.
-     *
-     * @param ctx Context, which may be used to access source-specific namespaces required for parsing.
-     * @param value String representation of value, as was present in text source.
-     * @return Parsed value
-     * @throws SourceException when an inconsistency is detected.
-     */
-    public abstract A parseArgumentValue(@NonNull StmtContext<?, ?, ?> ctx, String value);
-
-    /**
-     * Adapts the argument value to match a new module. Default implementation returns original value stored in context,
-     * which is appropriate for most implementations.
-     *
-     * @param ctx Context, which may be used to access source-specific namespaces required for parsing.
-     * @param targetModule Target module, may not be null.
-     * @return Adapted argument value.
-     */
-    public A adaptArgumentValue(final @NonNull StmtContext<A, D, E> ctx, final @NonNull QNameModule targetModule) {
-        return ctx.argument();
-    }
-
-    /**
      * Invoked when a statement supported by this instance is added to build context. This allows implementations
      * of this interface to start tracking the statement and perform any modifications to the build context hierarchy,
      * accessible via {@link StmtContext#getParentContext()}. One such use is populating the parent's namespaces to
@@ -616,17 +593,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     public @Nullable StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         // Most of statement supports don't have any argument specific supports, so return null.
         return null;
-    }
-
-    /**
-     * Given a raw string representation of an argument, try to use a shared representation. Default implementation
-     * does nothing.
-     *
-     * @param rawArgument Argument string
-     * @return A potentially-shard instance
-     */
-    public String internArgument(final String rawArgument) {
-        return rawArgument;
     }
 
     public final @NonNull QName statementName() {

@@ -53,8 +53,7 @@ final class AnnotationStatementSupport
     }
 
     @Override
-    public AnnotationName adaptArgumentValue(
-            final StmtContext<AnnotationName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
+    public AnnotationName adaptArgumentValue(final StmtContext<AnnotationName, ?, ?> ctx,
             final QNameModule targetModule) {
         return new AnnotationName(ctx.getArgument().qname().bindTo(targetModule)).intern();
     }
