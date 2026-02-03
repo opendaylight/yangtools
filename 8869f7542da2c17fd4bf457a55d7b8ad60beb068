@@ -93,6 +93,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "994e70f8_4193f0ea",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/IncludeResolutionTest.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T20:50:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "abb1e376_61227a28",
+      "range": {
+        "startLine": 48,
+        "startChar": 50,
+        "endLine": 48,
+        "endChar": 51
+      },
+      "revId": "8869f7542da2c17fd4bf457a55d7b8ad60beb068",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "377d42c0_de8347bb",
@@ -106,6 +130,30 @@
       "writtenOn": "2026-02-03T19:12:22Z",
       "side": 1,
       "message": "let\u0027s keep a reference to SOURCE_LINKAGE -- that is accurate",
+      "range": {
+        "startLine": 61,
+        "startChar": 42,
+        "endLine": 61,
+        "endChar": 46
+      },
+      "revId": "8869f7542da2c17fd4bf457a55d7b8ad60beb068",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f790c7a_7ba0432f",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/IncludeResolutionTest.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T20:50:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "377d42c0_de8347bb",
       "range": {
         "startLine": 61,
         "startChar": 42,
