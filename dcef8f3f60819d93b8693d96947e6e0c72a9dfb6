@@ -22,6 +22,30 @@
       },
       "revId": "dcef8f3f60819d93b8693d96947e6e0c72a9dfb6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "53771df4_3ce21b73",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 43
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T20:28:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e8131941_70602710",
+      "range": {
+        "startLine": 351,
+        "startChar": 24,
+        "endLine": 351,
+        "endChar": 56
+      },
+      "revId": "dcef8f3f60819d93b8693d96947e6e0c72a9dfb6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
