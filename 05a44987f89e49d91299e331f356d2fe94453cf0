@@ -45,6 +45,29 @@
       },
       "revId": "05a44987f89e49d91299e331f356d2fe94453cf0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9814a27_81c7a07a",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 51
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T19:35:36Z",
+      "side": 1,
+      "message": "ugh... how about saying simply\n\n    return resolvedMatchingQName !\u003d null ? resolvedMatchingQName : Set.of();\n\n?",
+      "range": {
+        "startLine": 465,
+        "startChar": 15,
+        "endLine": 465,
+        "endChar": 77
+      },
+      "revId": "05a44987f89e49d91299e331f356d2fe94453cf0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
