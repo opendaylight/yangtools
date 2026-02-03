@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "37830275_f866ba99",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/ri/DefaultYangLibResolver.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T20:51:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a5d739a_e10e27ec",
+      "range": {
+        "startLine": 129,
+        "startChar": 36,
+        "endLine": 129,
+        "endChar": 51
+      },
+      "revId": "8869f7542da2c17fd4bf457a55d7b8ad60beb068",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5b80ca2c_29fb37f0",
@@ -47,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cb51ed61_57696b3b",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/ri/DefaultYangParser.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T20:51:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5b80ca2c_29fb37f0",
+      "range": {
+        "startLine": 137,
+        "startChar": 34,
+        "endLine": 137,
+        "endChar": 47
+      },
+      "revId": "8869f7542da2c17fd4bf457a55d7b8ad60beb068",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7f6cfd40_527f5549",
@@ -60,6 +108,30 @@
       "writtenOn": "2026-02-03T19:12:22Z",
       "side": 1,
       "message": "we should not be using such a generic exception",
+      "range": {
+        "startLine": 120,
+        "startChar": 31,
+        "endLine": 120,
+        "endChar": 52
+      },
+      "revId": "8869f7542da2c17fd4bf457a55d7b8ad60beb068",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00fef15e_f2aeb1e5",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/AbstractYangTest.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T20:51:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f6cfd40_527f5549",
       "range": {
         "startLine": 120,
         "startChar": 31,
@@ -177,6 +249,30 @@
       "writtenOn": "2026-02-03T19:12:22Z",
       "side": 1,
       "message": "needs to be documented",
+      "range": {
+        "startLine": 14,
+        "startChar": 13,
+        "endLine": 14,
+        "endChar": 39
+      },
+      "revId": "8869f7542da2c17fd4bf457a55d7b8ad60beb068",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ca778e4_fcd8e865",
+        "filename": "parser/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/MissingSourceInfoException.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T20:51:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f70fdaa5_88d71bbc",
       "range": {
         "startLine": 14,
         "startChar": 13,
