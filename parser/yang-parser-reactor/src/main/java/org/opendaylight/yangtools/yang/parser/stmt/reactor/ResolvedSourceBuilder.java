@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ResolvedBelongsTo;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ResolvedImport;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ResolvedInclude;
 
 /**
  * Constructs a {@link ResolvedSourceInfo} of a Source containing the linkage details about imports, includes,
@@ -138,7 +138,7 @@ final class ResolvedSourceBuilder {
     private List<ResolvedInclude> resolveIncludes() {
         return includes.build()
             .stream()
-            .map(builder -> new ResolvedInclude(builder.sourceId(), builder.resolveQnameModule()))
+            .map(builder -> new ResolvedInclude(builder.source(), builder.resolveQnameModule()))
             .toList();
     }
 
