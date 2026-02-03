@@ -127,7 +127,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         initParent(parent);
         this.prototype = requireNonNull(prototype);
         argument = targetModule == null ? prototype.argument()
-                : prototype.definition().adaptArgumentValue(prototype, targetModule);
+                : prototype.definition().argumentFactory().adaptArgumentValue(prototype, targetModule);
         this.targetModule = targetModule;
         originalCtx = prototype.originalOrSelf();
 

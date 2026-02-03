@@ -31,7 +31,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         super(def, ref, rawArgument);
         this.parent = requireNonNull(parent);
         initParent(parent);
-        argument = def.parseArgumentValue(this, rawArgument());
+        argument = def.argumentFactory().parseArgumentValue(this, rawArgument());
     }
 
     @Override

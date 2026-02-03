@@ -59,7 +59,8 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
         super(def, ref);
-        this.rawArgument = def.support().internArgument(rawArgument);
+        // FIXME: reconcile nulls with ArgumentDefinition presence
+        this.rawArgument = def.argumentFactory().internArgument(rawArgument);
     }
 
     @Override
@@ -82,7 +83,7 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
         final var phase = getCompletedPhase();
         return switch (phase) {
             case FULL_DECLARATION, EFFECTIVE_MODEL ->
-                declaredInstance = definition().getFactory().createDeclared(this, substatementsAsDeclared());
+                declaredInstance = definition().statementFactory().createDeclared(this, substatementsAsDeclared());
             default -> throw new IllegalStateException("Cannot build declared instance after phase " + phase);
         };
     }
@@ -232,7 +233,7 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
                 "Declared statement cannot be added in effective phase at: %s", sourceReference());
 
         final SubstatementContext<X, Y, Z> ret;
-        final var implicitParent = definition().implicitParentFor(this, def.getPublicView());
+        final var implicitParent = definition().implicitParentFor(this, def.publicView());
         if (implicitParent != null) {
             implicitDeclared = true;
             final var parent = createUndeclared(offset, implicitParent, ref, argument);

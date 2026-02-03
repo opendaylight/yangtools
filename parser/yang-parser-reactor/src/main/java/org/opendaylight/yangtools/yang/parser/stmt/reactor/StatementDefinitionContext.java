@@ -15,18 +15,17 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ArgumentFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
@@ -40,20 +39,28 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
-    @NonNull StatementFactory<A, D, E> getFactory() {
+    @Nullable ArgumentDefinition<A> argumentDefinition() {
+        return support.argumentDefinition();
+    }
+
+    @NonNull QName statementName() {
+        return support.statementName();
+    }
+
+    @NonNull StatementDefinition<A, D, E> publicView() {
+        return support.getPublicView();
+    }
+
+    @NonNull ArgumentFactory<A> argumentFactory() {
         return support;
     }
 
-    A parseArgumentValue(final @NonNull StmtContext<A, D, E> context, final String value) {
-        return support.parseArgumentValue(context, value);
+    @NonNull StatementFactory<A, D, E> statementFactory() {
+        return support;
     }
 
-    A adaptArgumentValue(final @NonNull StmtContext<A, D, E> context, final QNameModule targetModule) {
-        return support.adaptArgumentValue(context, targetModule);
-    }
-
-    @NonNull StatementDefinition<A, D, E> getPublicView() {
-        return support.getPublicView();
+    @NonNull StatementSupport<A, D, E> support() {
+        return support;
     }
 
     @Nullable StatementSupport<?, ?, ?> implicitParentFor(final @NonNull NamespaceStmtCtx parent,
@@ -78,37 +85,20 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         }
     }
 
-    @Nullable ArgumentDefinition<A> argumentDefinition() {
-        return support.argumentDefinition();
-    }
-
-    @NonNull QName getStatementName() {
-        return support.statementName();
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("statement", getStatementName()).toString();
-    }
-
     @NonNull StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
         if (!hasArgumentSpecificSubDefinitions()) {
             return this;
         }
 
-        StatementDefinitionContext<?, ?, ?> potential = argumentSpecificSubDefinitions.get(argument);
+        var potential = argumentSpecificSubDefinitions.get(argument);
         if (potential == null) {
-            final StatementSupport<?, ?, ?> argumentSpecificSupport = support.getSupportSpecificForArgument(argument);
+            final var argumentSpecificSupport = support.getSupportSpecificForArgument(argument);
             potential = argumentSpecificSupport != null ? new StatementDefinitionContext<>(argumentSpecificSupport)
                     : this;
             argumentSpecificSubDefinitions.put(argument, potential);
         }
 
         return potential;
-    }
-
-    StatementSupport<A, D, E> support() {
-        return support;
     }
 
     boolean hasArgumentSpecificSubDefinitions() {
@@ -122,7 +112,7 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         }
 
         if (unknownStmtDefsOfYangStmts != null) {
-            final StatementDefinitionContext<?, ?, ?> existing = unknownStmtDefsOfYangStmts.get(def);
+            final var existing = unknownStmtDefsOfYangStmts.get(def);
             if (existing != null) {
                 return existing;
             }
@@ -130,14 +120,14 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
             unknownStmtDefsOfYangStmts = new HashMap<>(4);
         }
 
-        final var override = overrideSupport.statementDefinitionOverrideOf(def.getPublicView());
-        final StatementDefinitionContext<?, ?, ?> ret;
-        if (override != null) {
-            ret = new StatementDefinitionContext<>(override);
-        } else {
-            ret = def;
-        }
+        final var override = overrideSupport.statementDefinitionOverrideOf(def.publicView());
+        final var ret = override == null ? def : new StatementDefinitionContext<>(override);
         unknownStmtDefsOfYangStmts.put(def, ret);
         return ret;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("statement", statementName()).toString();
     }
 }
