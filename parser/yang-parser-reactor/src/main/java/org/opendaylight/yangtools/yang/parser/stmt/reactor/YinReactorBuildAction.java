@@ -24,24 +24,24 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 
 @NonNullByDefault
 final class YinReactorBuildAction<S extends YinSourceRepresentation> extends ReactorBuildAction implements WithYin<S> {
-    private final SourceTransformer<S, YinDOMSource> transformer;
+    private final SourceTransformer<S, YinDOMSource> yinTransformer;
 
     YinReactorBuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
             final SourceTransformer<S, YinDOMSource> transformer) {
         super(supportedTerminology, supportedValidation);
-        this.transformer = requireNonNull(transformer);
+        this.yinTransformer = requireNonNull(transformer);
     }
 
     @Override
     public WithYin<S> addSource(final S source) throws IOException, SourceSyntaxException {
-        addSource(transformer.transformSource(source));
+        addYinSource(yinTransformer, source);
         return this;
     }
 
     @Override
     public WithYin<S> addLibSource(final S libSource) throws IOException, SourceSyntaxException {
-        addLibSource(transformer.transformSource(libSource));
+        addLibYinSource(yinTransformer, libSource);
         return this;
     }
 }

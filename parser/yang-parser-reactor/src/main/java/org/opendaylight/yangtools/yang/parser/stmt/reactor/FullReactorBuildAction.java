@@ -45,7 +45,7 @@ final class FullReactorBuildAction<H extends YangSourceRepresentation, M extends
 
     @Override
     public Full<H, M> addSource(final M source) throws IOException, SourceSyntaxException {
-        addSource(yinTransformer.transformSource(source));
+        addYinSource(yinTransformer, source);
         return this;
     }
 

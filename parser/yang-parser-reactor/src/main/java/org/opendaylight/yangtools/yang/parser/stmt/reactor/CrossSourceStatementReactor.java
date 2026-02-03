@@ -247,23 +247,6 @@ public final class CrossSourceStatementReactor {
          * @throws SourceSyntaxException if the source is not syntactically valid
          */
         @NonNullByDefault
-        default <S extends SourceRepresentation> BuildAction addSource(
-                final SourceTransformer<S, YangIRSource> transformer, final S source)
-                    throws IOException, SourceSyntaxException {
-            return addYangSource(transformer, source);
-        }
-
-        /**
-         * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
-         *
-         * @param <S> source representation type
-         * @param transformer the transformer to {@link YangIRSource}
-         * @param source which should be transformed and added into main sources
-         * @return This build action, for fluent use.
-         * @throws IOException if an I/O error occurs
-         * @throws SourceSyntaxException if the source is not syntactically valid
-         */
-        @NonNullByDefault
         default <S extends SourceRepresentation> BuildAction addYangSource(
                 final SourceTransformer<S, YangIRSource> transformer, final S source)
                     throws IOException, SourceSyntaxException {
