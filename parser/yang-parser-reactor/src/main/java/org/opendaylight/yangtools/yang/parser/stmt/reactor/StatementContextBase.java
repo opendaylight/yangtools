@@ -518,7 +518,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private void summarizeSubstatementPolicy() {
-        if (definition().support().copyPolicy() == CopyPolicy.EXACT_REPLICA || noSensitiveSubstatements()) {
+        if (definition().statementSupport().copyPolicy() == CopyPolicy.EXACT_REPLICA || noSensitiveSubstatements()) {
             setAllSubstatementsContextIndependent();
         }
     }
@@ -551,7 +551,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                     return false;
                 }
 
-                switch (stmt.definition().support().copyPolicy()) {
+                switch (stmt.definition().statementSupport().copyPolicy()) {
                     case null -> throw new NullPointerException();
                     case CONTEXT_INDEPENDENT, EXACT_REPLICA, IGNORE -> {
                         // No-op
@@ -702,7 +702,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private @Nullable ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
-        final var support = definition.support();
+        final var support = definition.statementSupport();
         return switch (support.copyPolicy()) {
             case null -> throw new NullPointerException();
             case CONTEXT_INDEPENDENT -> allSubstatementsContextIndependent() ? replicaAsChildOf(parent)

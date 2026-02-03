@@ -36,7 +36,7 @@ final class ReactorStatementDefinitionResolver implements Mutable, StatementDefi
         }
     }
 
-    private final HashMap<QName, StatementSupport<?, ?, ?>> qnameToSupport = new HashMap<>();
+    private final HashMap<QName, ReactorSupport<?, ?, ?>> qnameToSupport = new HashMap<>();
     private final HashMap<NSKey, StatementDefinition<?, ?, ?>> norevToDef = new HashMap<>();
     private final HashMap<QNKey, StatementDefinition<?, ?, ?>> revToDef = new HashMap<>();
 
@@ -51,20 +51,32 @@ final class ReactorStatementDefinitionResolver implements Mutable, StatementDefi
     }
 
     /**
+     * {@return {@link ReactorSupport} with specified {@code QName}}
+     * @param identifier {@code QName} of requested statement
+     */
+    @Nullable ReactorSupport<?, ?, ?> lookupSupport(final @NonNull QName identifier) {
+        return qnameToSupport.get(requireNonNull(identifier));
+    }
+
+    /**
      * {@return {@link StatementSupport} with specified {@code QName}}
      * @param identifier {@code QName} of requested statement
      */
-    @Nullable StatementSupport<?, ?, ?> lookupSupport(final @NonNull QName identifier) {
-        return qnameToSupport.get(requireNonNull(identifier));
+    @Nullable StatementSupport<?, ?, ?> lookupStatementSupport(final @NonNull QName identifier) {
+        final var support = lookupSupport(identifier);
+        return support == null ? null : support.statementSupport();
     }
 
     @Nullable StatementSupport<?, ?, ?> tryAddSupport(final @NonNull QName identifier,
             final @NonNull StatementSupport<?, ?, ?> proposed) {
-        final var existing = qnameToSupport.putIfAbsent(requireNonNull(identifier), requireNonNull(proposed));
-        if (existing == null) {
-            addDefinition(identifier, proposed.definition());
+        final var created = new ReactorSupport<>(proposed);
+        final var existing = qnameToSupport.putIfAbsent(requireNonNull(identifier), created);
+        if (existing != null) {
+            return existing.statementSupport();
         }
-        return existing;
+
+        addDefinition(identifier, proposed.definition());
+        return null;
     }
 
     void addSupports(final @NonNull Map<QName, StatementSupport<?, ?, ?>> additionalSupports) {
@@ -75,7 +87,7 @@ final class ReactorStatementDefinitionResolver implements Mutable, StatementDefi
 
     @VisibleForTesting
     void addSupport(final QName qname, final StatementSupport<?, ?, ?> support) {
-        qnameToSupport.put(requireNonNull(qname), requireNonNull(support));
+        qnameToSupport.put(requireNonNull(qname), new ReactorSupport<>(support));
         addDefinition(qname, support.definition());
     }
 

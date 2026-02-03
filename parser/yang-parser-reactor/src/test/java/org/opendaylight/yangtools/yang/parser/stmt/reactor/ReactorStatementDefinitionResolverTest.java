@@ -50,6 +50,6 @@ class ReactorStatementDefinitionResolverTest {
 
         resolver.addSupports(Map.of(QNAME, support));
         assertSame(TypeStatement.DEF, resolver.lookupDef(QNAME.getModule(), QNAME.getLocalName()));
-        assertSame(support, resolver.lookupSupport(QNAME));
+        assertSame(support, resolver.lookupStatementSupport(QNAME));
     }
 }
