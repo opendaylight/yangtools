@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -298,7 +299,8 @@ public final class SourceLinkageResolver {
                     continue;
                 }
 
-                if (isIncludedSibling(current, dependency, match)) {
+                final var includedSibling = asIncludedSibling(current, dependency, match);
+                if (includedSibling != null) {
                     // If this is an include of a sibling submodule, don't add it as unresolved dependency.
                     // It will be resolved later in a different way.
                     includedSiblings.add(match);
@@ -323,26 +325,33 @@ public final class SourceLinkageResolver {
                     final var currentVersion = newResolved.yangVersion();
                     final var dependencyVersion = depModule.yangVersion();
 
-                    if (dep instanceof Import importedDep) {
-                        // Version 1 sources must not import-by-revision Version 1.1 modules
-                        if (importedDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
-                            if (dependencyVersion != YangVersion.VERSION_1) {
-                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                    new YangVersionLinkageException(refOf(current, importedDep.sourceRef()),
-                                        "Cannot import by revision version %s module %s", dependencyVersion,
-                                            resolvedDep.getValue().getLocalName()));
+                    switch (dep) {
+                        case Import importedDep -> {
+                            // Version 1 sources must not import-by-revision Version 1.1 modules
+                            if (importedDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
+                                if (dependencyVersion != YangVersion.VERSION_1) {
+                                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE,
+                                        current,
+                                        new YangVersionLinkageException(refOf(current, importedDep.sourceRef()),
+                                            "Cannot import by revision version %s module %s", dependencyVersion,
+                                                resolvedDep.getValue().getLocalName()));
+                                }
                             }
+                            newResolved.resolveImport(importedDep, depModule);
                         }
-                        newResolved.addImport(importedDep.prefix(), depModule);
-                    } else {
-                        if (currentVersion != dependencyVersion) {
-                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                new YangVersionLinkageException(refOf(current, dep.sourceRef()),
-                                    "Cannot include a version %s submodule %s in a version %s module %s",
-                                    dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
-                                    current.name().getLocalName()));
+                        case Include includedDep -> {
+                            if (currentVersion != dependencyVersion) {
+                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                                    new YangVersionLinkageException(refOf(current, dep.sourceRef()),
+                                        "Cannot include a version %s submodule %s in a version %s module %s",
+                                        dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
+                                        current.name().getLocalName()));
+                            }
+                            newResolved.resolveInclude(depModule);
                         }
-                        newResolved.addInclude(depModule);
+                        case BelongsTo belongsToDep -> {
+                            // FIXME: verify() this never happens or document
+                        }
                     }
                 }
 
@@ -402,9 +411,10 @@ public final class SourceLinkageResolver {
 
             // FIXME: better message and/or better exception
             //double-check that the parent does satisfy this belongs-to
-            verify(submoduleInfo.belongsTo().isSatisfiedBy(parentId));
+            final var belongsTo = submoduleInfo.belongsTo();
+            verify(belongsTo.isSatisfiedBy(parentId));
 
-            resolvedSubmodule.setBelongsTo(submoduleInfo.belongsTo().prefix(), resolvedParent);
+            resolvedSubmodule.resolveBelongsTo(belongsTo, resolvedParent);
         }
     }
 
@@ -427,7 +437,7 @@ public final class SourceLinkageResolver {
                     throw new InferenceException(new SourceStatementDeclaration(sourceId),
                         "Included submodule %s of module %s was not resolved", sibling, sourceId);
                 }
-                resolvedSource.addInclude(resolvedSibling);
+                resolvedSource.resolveInclude(resolvedSibling);
             }
             iterator.remove();
         }
@@ -460,17 +470,17 @@ public final class SourceLinkageResolver {
         siblings.addAll(includedSiblings);
     }
 
-    private boolean isIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
+    private Include asIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
             final SourceIdentifier dependencyId) {
-        if (!(dependency instanceof Include)) {
-            return false;
+        if (!(dependency instanceof Include sibling)) {
+            return null;
         }
 
         final var currentParent = findSatisfyingParentForSubmodule(current);
         // FIXME: not needed if currentParent == null?
         final var theirParent = findSatisfyingParentForSubmodule(dependencyId);
 
-        return currentParent != null && currentParent.equals(theirParent);
+        return currentParent != null && currentParent.equals(theirParent) ? sibling : null;
     }
 
     private @NonNull Set<SourceIdentifier> findAmongResolved(final Unqualified name) {
