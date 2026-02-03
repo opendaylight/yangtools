@@ -22,6 +22,30 @@
       },
       "revId": "3d11fa0e1d83a16255de726a64c3aa11fd2d87c4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1d7178f8_a1d25409",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/Bug7954Test.java",
+        "patchSetId": 49
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T22:45:35Z",
+      "side": 0,
+      "message": "no longer applicable. commit message updated to reflect that.",
+      "parentUuid": "0e9ea002_7c7ab1a0",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 17
+      },
+      "revId": "3d11fa0e1d83a16255de726a64c3aa11fd2d87c4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
