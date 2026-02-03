@@ -50,7 +50,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
         super(new StatementDefinitionContext<>(support), ImplicitSubstatement.of(parent.sourceReference()));
         this.parent = requireNonNull(parent);
         initParent(parent);
-        this.argument = argument != null ? argument : definition().parseArgumentValue(this, null);
+        this.argument = argument != null ? argument : definition().argumentFactory().parseArgumentValue(this, null);
     }
 
     // Exposed for StatementContextBase.wrapWithImplicit()
@@ -77,7 +77,7 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
         super(new StatementDefinitionContext<>(support), ImplicitSubstatement.of(parent.sourceReference()));
         this.parent = requireNonNull(parent);
         initParent(parent);
-        argument = definition().parseArgumentValue(this, rawArgument);
+        argument = definition().argumentFactory().parseArgumentValue(this, rawArgument);
     }
 
     // FIXME: this assumes original's argument type matches this type... which is true for the only case we

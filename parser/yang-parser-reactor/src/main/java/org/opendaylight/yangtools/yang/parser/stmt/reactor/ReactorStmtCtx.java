@@ -236,7 +236,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final StatementDefinition<A, D, E> publicDefinition() {
-        return definition().getPublicView();
+        return definition().publicView();
     }
 
     @Override

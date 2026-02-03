@@ -75,7 +75,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
             final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.sourceContext = requireNonNull(sourceContext);
-        argument = def.parseArgumentValue(this, rawArgument());
+        argument = def.argumentFactory().parseArgumentValue(this, rawArgument());
     }
 
     @Override

@@ -206,10 +206,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
         } else {
-            final var rootStatement = root.definition().getStatementName();
+            final var rootStatement = root.definition().statementName();
             final var rootArgument = root.rawArgument();
 
-            checkState(Objects.equals(def.getStatementName(), rootStatement) && Objects.equals(argument, rootArgument),
+            checkState(Objects.equals(def.statementName(), rootStatement) && Objects.equals(argument, rootArgument),
                 "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
         }
         return root;
