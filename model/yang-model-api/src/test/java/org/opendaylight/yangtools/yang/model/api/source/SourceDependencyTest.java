@@ -19,19 +19,19 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
 class SourceDependencyTest {
     @Test
     void belongsToToString() {
-        assertEquals("BelongsTo[name=Unqualified{localName=foo}, prefix=Unqualified{localName=bar}]",
+        assertEquals("BelongsTo[name=foo, prefix=bar]",
             new BelongsTo(Unqualified.of("foo"), Unqualified.of("bar")).toString());
     }
 
     @Test
     void importToToString() {
-        assertEquals("Import[name=Unqualified{localName=foo}, prefix=Unqualified{localName=bar}, revision=2026-02-03]",
+        assertEquals("Import[name=foo, prefix=bar, revision=2026-02-03]",
             new Import(Unqualified.of("foo"), Unqualified.of("bar"), Revision.of("2026-02-03")).toString());
     }
 
     @Test
     void includeToToString() {
-        assertEquals("Include[name=Unqualified{localName=foo}, revision=2026-02-03]",
+        assertEquals("Include[name=foo, revision=2026-02-03]",
             new Include(Unqualified.of("foo"), Revision.of("2026-02-03")).toString());
     }
 }

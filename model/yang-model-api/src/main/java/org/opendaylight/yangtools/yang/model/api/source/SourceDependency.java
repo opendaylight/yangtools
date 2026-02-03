@@ -78,6 +78,13 @@ public sealed interface SourceDependency extends Serializable
         public @Nullable Revision revision() {
             return null;
         }
+
+        @Override
+        public String toString() {
+            return new StringBuilder().append("BelongsTo[name=").append(name.getLocalName())
+                .append(", prefix=").append(prefix.getLocalName())
+                .append(']').toString();
+        }
     }
 
     /**
@@ -95,6 +102,17 @@ public sealed interface SourceDependency extends Serializable
         public Import(final Unqualified name, final Unqualified prefix) {
             this(name, prefix, null);
         }
+
+        @Override
+        public String toString() {
+            final var sb = new StringBuilder().append("Import[name=").append(name.getLocalName())
+                .append(", prefix=").append(prefix.getLocalName());
+            final var rev = revision;
+            if (rev != null) {
+                sb.append(", revision=").append(revision);
+            }
+            return sb.append(']').toString();
+        }
     }
 
     /**
@@ -110,6 +128,16 @@ public sealed interface SourceDependency extends Serializable
 
         public Include(final Unqualified name) {
             this(name, null);
+        }
+
+        @Override
+        public String toString() {
+            final var sb = new StringBuilder().append("Include[name=").append(name.getLocalName());
+            final var rev = revision;
+            if (rev != null) {
+                sb.append(", revision=").append(revision);
+            }
+            return sb.append(']').toString();
         }
     }
 }
