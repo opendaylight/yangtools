@@ -27,27 +27,26 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  *
  * <p>Steps (in order of invocation) are:
  * <ol>
- * <li>{@link #writePreLinkage(StatementWriter, QNameToStatementDefinition)} -
+ * <li>{@link #writePreLinkage(StatementWriter, StatementDefinitionResolver)} -
  * Source MUST emit only statements related in pre-linkage, which are present in
  * supplied statement definition map. This step is used as preparatory cross-source
  * relationship resolution phase which collects available module names and namespaces.
  * It is necessary in order to correct resolution of unknown statements used by linkage
  * phase (e.g. semantic version of yang modules).
  * </li>
- * <li>{@link #writeLinkage(StatementWriter, QNameToStatementDefinition, PrefixResolver, YangVersion)} -
+ * <li>{@link #writeLinkage(StatementWriter, StatementDefinitionResolver, PrefixResolver)} -
  * Source MUST emit only statements related in linkage, which are present in
  * supplied statement definition map. This step is used to build cross-source
  * linkage and visibility relationship, and to determine XMl namespaces and
  * prefixes.</li>
  * <li>
- * {@link #writeLinkageAndStatementDefinitions(StatementWriter, QNameToStatementDefinition, PrefixResolver,
- * YangVersion)}
+ * {@link #writeLinkageAndStatementDefinitions(StatementWriter, StatementDefinitionResolver, PrefixResolver)}
  * - Source MUST emit only statements related to linkage and language extensions
  * definitions, which are present in supplied statement definition map. This
  * step is used to build statement definitions in order to fully processed
  * source.</li>
  * <li>
- * {@link #writeFull(StatementWriter, QNameToStatementDefinition, PrefixResolver, YangVersion)}
+ * {@link #writeFull(StatementWriter, StatementDefinitionResolver, PrefixResolver)}
  * - Source MUST emit all statements present in source. This step is used to
  * build full declared statement model of source.</li>
  * </ol>
@@ -80,7 +79,7 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     }
 
     /**
-     * The {@link Factory} for {@link YangDomSource}.
+     * The {@link Factory} for {@link YinDOMSource}.
      */
     @NonNullByDefault
     static Factory<YinDOMSource> forYInDOM() {
