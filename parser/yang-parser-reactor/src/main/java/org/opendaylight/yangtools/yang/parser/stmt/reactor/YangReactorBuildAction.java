@@ -25,24 +25,24 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 @NonNullByDefault
 sealed class YangReactorBuildAction<S extends YangSourceRepresentation> extends ReactorBuildAction
         implements WithYang<S> permits FullReactorBuildAction {
-    private final SourceTransformer<S, YangIRSource> transformer;
+    private final SourceTransformer<S, YangIRSource> yangTransformer;
 
     YangReactorBuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
             final SourceTransformer<S, YangIRSource> transformer) {
         super(supportedTerminology, supportedValidation);
-        this.transformer = requireNonNull(transformer);
+        yangTransformer = requireNonNull(transformer);
     }
 
     @Override
     public WithYang<S> addSource(final S source) throws IOException, SourceSyntaxException {
-        addSource(transformer.transformSource(source));
+        addYangSource(yangTransformer, source);
         return this;
     }
 
     @Override
     public WithYang<S> addLibSource(final S source) {
-        addLibYangSource(transformer, source);
+        addLibYangSource(yangTransformer, source);
         return this;
     }
 }
