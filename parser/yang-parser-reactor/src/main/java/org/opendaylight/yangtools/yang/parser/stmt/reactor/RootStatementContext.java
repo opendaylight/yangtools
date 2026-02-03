@@ -184,6 +184,29 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         return new ImmutableNamespaceBinding(moduleName(), Map.copyOf(prefixToModule));
     }
 
+    /**
+     * Return the {@link QNameModule} corresponding to a prefix The lookup consults {@code import} and
+     * {@code belongs-to} statements.
+     *
+     * @param prefix the prefix
+     * @return the {@link QNameModule}, or {@code null} if not found
+     */
+    @Nullable QNameModule getModuleQNameByPrefix(final String prefix) {
+        final var importedModule = namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix);
+        final var qnameModule = namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule);
+        if (qnameModule != null) {
+            return qnameModule;
+        }
+
+        // This is a submodule, so we also need consult 'belongs-to' mapping
+        if (produces(SubmoduleStatement.DEF)) {
+            return namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
+                namespaceItem(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix));
+        }
+
+        return null;
+    }
+
     @NonNull SourceSpecificContext getSourceContext() {
         return sourceContext;
     }
