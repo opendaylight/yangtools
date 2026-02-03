@@ -16,6 +16,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 
 /**
  * DTO containing all the linkage information which needs to be supplied to a RootStatementContext. This info will be
@@ -36,34 +39,5 @@ public record ResolvedSourceInfo(
         requireNonNull(qnameModule);
         imports = List.copyOf(imports);
         includes = List.copyOf(includes);
-    }
-
-    @NonNullByDefault
-    public record ResolvedBelongsTo(Unqualified prefix, QNameModule parentModuleQname) {
-        public ResolvedBelongsTo {
-            requireNonNull(prefix);
-            requireNonNull(parentModuleQname);
-        }
-    }
-
-    @NonNullByDefault
-    public record ResolvedInclude(SourceIdentifier sourceId, QNameModule qname) {
-        public ResolvedInclude {
-            requireNonNull(sourceId);
-            requireNonNull(qname);
-        }
-    }
-
-    @NonNullByDefault
-    public record ResolvedImport(Unqualified prefix, SourceIdentifier sourceId, QNameModule qname) {
-        public ResolvedImport {
-            requireNonNull(prefix);
-            requireNonNull(sourceId);
-            requireNonNull(qname);
-        }
-
-        public ResolvedImport(final Unqualified prefix, final ResolvedSourceInfo importedSource) {
-            this(prefix, importedSource.sourceId, importedSource.qnameModule);
-        }
     }
 }
