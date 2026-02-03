@@ -416,7 +416,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     final E createEffective() {
-        final E result = createEffective(definition.getFactory());
+        final E result = createEffective(definition.statementFactory());
         if (result instanceof MutableStatement mutable) {
             getRoot().addMutableStmtToSeal(mutable);
         }
@@ -739,7 +739,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private boolean canReuseCurrent(final @NonNull ReactorStmtCtx<A, D, E> copy) {
         // Defer to statement factory to see if we can reuse this object. If we can and have only context-independent
         // substatements we can reuse the object. More complex cases are handled indirectly via the copy.
-        return definition.getFactory().canReuseCurrent(copy, this, buildEffective().effectiveSubstatements())
+        return definition.statementFactory().canReuseCurrent(copy, this, buildEffective().effectiveSubstatements())
             && allSubstatementsContextIndependent();
     }
 
@@ -793,7 +793,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public final boolean hasImplicitParentSupport() {
-        return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
+        return definition.statementFactory() instanceof ImplicitParentAwareStatementSupport;
     }
 
     @Override
