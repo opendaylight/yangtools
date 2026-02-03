@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6e021f1b_f171adad",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 51
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T19:29:47Z",
+      "side": 1,
+      "message": "pesky: we do not want to throw NPE",
+      "range": {
+        "startLine": 415,
+        "startChar": 62,
+        "endLine": 415,
+        "endChar": 76
+      },
+      "revId": "05a44987f89e49d91299e331f356d2fe94453cf0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "babeb20c_1577270c",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 51
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T19:29:47Z",
+      "side": 1,
+      "message": "eager string instantiation: this string is formatted on every access.\n\ncoupled with the above, a good ol\u0027 null check/throw will do miracles here",
+      "range": {
+        "startLine": 416,
+        "startChar": 20,
+        "endLine": 416,
+        "endChar": 33
+      },
+      "revId": "05a44987f89e49d91299e331f356d2fe94453cf0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
