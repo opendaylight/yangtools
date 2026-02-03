@@ -60,8 +60,7 @@ final class MountPointStatementSupport
     }
 
     @Override
-    public MountPointLabel adaptArgumentValue(
-            final StmtContext<MountPointLabel, MountPointStatement, MountPointEffectiveStatement> ctx,
+    public MountPointLabel adaptArgumentValue(final StmtContext<MountPointLabel, ?, ?> ctx,
             final QNameModule targetModule) {
         return new MountPointLabel(ctx.getArgument().qname().bindTo(targetModule)).intern();
     }

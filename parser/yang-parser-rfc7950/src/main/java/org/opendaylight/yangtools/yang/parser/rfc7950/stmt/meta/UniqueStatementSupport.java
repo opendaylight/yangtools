@@ -75,8 +75,7 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public UniqueArgument adaptArgumentValue(
-            final StmtContext<UniqueArgument, UniqueStatement, UniqueEffectiveStatement> ctx,
+    public UniqueArgument adaptArgumentValue(final StmtContext<UniqueArgument, ?, ?> ctx,
             final QNameModule targetModule) {
         // Copy operation to a targetNamespace -- this implies rehosting node-identifiers to target namespace. Check
         // if that is needed first, though, so as not to copy things unnecessarily.

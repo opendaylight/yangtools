@@ -73,8 +73,7 @@ public final class KeyStatementSupport
     }
 
     @Override
-    public KeyArgument adaptArgumentValue(final StmtContext<KeyArgument, KeyStatement, KeyEffectiveStatement> ctx,
-            final QNameModule targetModule) {
+    public KeyArgument adaptArgumentValue(final StmtContext<KeyArgument, ?, ?> ctx, final QNameModule targetModule) {
         final var original = ctx.getArgument();
         final var adapted = new ArrayList<QName>(original.size());
         boolean canReuse = true;

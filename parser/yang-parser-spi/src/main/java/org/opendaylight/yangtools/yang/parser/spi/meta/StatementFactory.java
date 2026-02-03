@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+public sealed interface StatementFactory<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        permits StatementSupport {
     /**
      * Create a {@link DeclaredStatement} for specified context.
      *
