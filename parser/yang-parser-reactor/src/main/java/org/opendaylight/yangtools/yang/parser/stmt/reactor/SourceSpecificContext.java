@@ -72,7 +72,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
 
         @Override
         StatementSupport<?, ?, ?> valueFrom(final NamespaceStorage storage, final QName key) {
-            return statementResolver.lookupSupport(key);
+            return statementResolver.lookupStatementSupport(key);
         }
 
         @Override
