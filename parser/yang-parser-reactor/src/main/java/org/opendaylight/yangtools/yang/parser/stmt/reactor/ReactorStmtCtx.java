@@ -180,7 +180,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     private void initSubtree(final StatementDefinitionContext<?, ?, ?> def) {
-        final var subtreePolicy = def.support().subtreePolicy();
+        final var subtreePolicy = def.statementSupport().subtreePolicy();
         switch (subtreePolicy) {
             case null -> throw new NullPointerException();
             case Normal normal -> {

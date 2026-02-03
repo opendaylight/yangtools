@@ -29,56 +29,56 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
-    private final @NonNull StatementSupport<A, D, E> support;
     private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
+    private final @NonNull ReactorSupport<A, D, E> support;
 
     private Map<StatementDefinitionContext<?, ?, ?>, StatementDefinitionContext<?,?,?>> unknownStmtDefsOfYangStmts;
 
-    StatementDefinitionContext(final StatementSupport<A, D, E> support) {
+    StatementDefinitionContext(final ReactorSupport<A, D, E> support) {
         this.support = requireNonNull(support);
-        argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
+        argumentSpecificSubDefinitions = statementSupport().hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
     @Nullable ArgumentDefinition<A> argumentDefinition() {
-        return support.argumentDefinition();
+        return statementSupport().argumentDefinition();
     }
 
     @NonNull QName statementName() {
-        return support.statementName();
+        return statementSupport().statementName();
     }
 
     @NonNull StatementDefinition<A, D, E> publicView() {
-        return support.getPublicView();
+        return statementSupport().getPublicView();
     }
 
     @NonNull ArgumentFactory<A> argumentFactory() {
-        return support;
+        return support.argumentFactory();
     }
 
     @NonNull StatementFactory<A, D, E> statementFactory() {
-        return support;
+        return support.statementSupport();
     }
 
-    @NonNull StatementSupport<A, D, E> support() {
-        return support;
+    @NonNull StatementSupport<A, D, E> statementSupport() {
+        return support.statementSupport();
     }
 
     @Nullable StatementSupport<?, ?, ?> implicitParentFor(final @NonNull NamespaceStmtCtx parent,
             final @NonNull StatementDefinition<?, ?, ?> stmtDef) {
-        return support instanceof ImplicitParentAwareStatementSupport implicit
+        return statementSupport() instanceof ImplicitParentAwareStatementSupport implicit
             ? implicit.implicitParentFor(parent, stmtDef) : null;
     }
 
     void onStatementAdded(final @NonNull Mutable<A, D, E> stmt) {
-        support.onStatementAdded(stmt);
+        statementSupport().onStatementAdded(stmt);
     }
 
     void onDeclarationFinished(final @NonNull Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
-            case SOURCE_PRE_LINKAGE -> support.onPreLinkageDeclared(statement);
-            case SOURCE_LINKAGE -> support.onLinkageDeclared(statement);
-            case STATEMENT_DEFINITION -> support.onStatementDefinitionDeclared(statement);
-            case FULL_DECLARATION -> support.onFullDefinitionDeclared(statement);
+            case SOURCE_PRE_LINKAGE -> statementSupport().onPreLinkageDeclared(statement);
+            case SOURCE_LINKAGE -> statementSupport().onLinkageDeclared(statement);
+            case STATEMENT_DEFINITION -> statementSupport().onStatementDefinitionDeclared(statement);
+            case FULL_DECLARATION -> statementSupport().onFullDefinitionDeclared(statement);
             default -> {
                 // No-op
             }
