@@ -90,7 +90,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
 
         private @NonNull BelongsTo extractBelongsTo() throws SourceSyntaxException {
             final var stmt = getFirstStatement(root, BELONGS_TO);
-            return new BelongsTo(unqualifiedArgument(stmt), extractPrefix(stmt));
+            return new BelongsTo(unqualifiedArgument(stmt), extractPrefix(stmt), refOf(stmt));
         }
     }
 
@@ -147,9 +147,9 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
             if (stmt.keyword() instanceof IRKeyword.Unqualified keyword) {
                 switch (keyword.identifier()) {
                     case IMPORT -> builder.addImport(new Import(unqualifiedArgument(stmt), extractPrefix(stmt),
-                        extractRevisionDate(stmt)));
+                        extractRevisionDate(stmt), refOf(stmt)));
                     case INCLUDE -> builder.addInclude(new Include(unqualifiedArgument(stmt),
-                        extractRevisionDate(stmt)));
+                        extractRevisionDate(stmt), refOf(stmt)));
                     case REVISION -> builder.addRevision(revisionArgument(stmt));
                     default -> {
                         // No-op
@@ -238,7 +238,7 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     }
 
     @NonNullByDefault
-    private StatementDeclaration.InText refOf(final IRStatement stmt) {
+    final StatementDeclaration.InText refOf(final IRStatement stmt) {
         return YangIRSource.refOf(sourceId, stmt);
     }
 }
