@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -83,7 +84,7 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
             final var belongsTo = getFirstElement(root, BELONGS_TO);
             return builder
                 .setBelongsTo(new SourceDependency.BelongsTo(getElementArgumentIdentifier(belongsTo, BELONGS_TO_ARG),
-                    extractPrefix(belongsTo)))
+                    extractPrefix(belongsTo), refOf(belongsTo)))
                 .build();
         }
     }
@@ -135,10 +136,10 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
                 switch (element.getLocalName()) {
                     case IMPORT -> builder.addImport(new SourceDependency.Import(
                             getElementArgumentIdentifier(element, IMPORT_ARG),
-                            extractPrefix(element), extractRevisionDate(element)));
+                            extractPrefix(element), extractRevisionDate(element), refOf(element)));
                     case INCLUDE -> builder.addInclude(new SourceDependency.Include(
                             getElementArgumentIdentifier(element, INCLUDE_ARG),
-                            extractRevisionDate(element)));
+                            extractRevisionDate(element), refOf(element)));
                     case REVISION -> builder.addRevision(getElementArgumentRevision(element, REVISION_ARG));
                     case null, default -> {
                         // No-op
@@ -220,11 +221,15 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
 
     final SourceSyntaxException newInvalidArgument(final Element stmt, final Exception cause) {
         return new SourceSyntaxException(
-            "Invalid argument to " + stmt.getLocalName() + ": " + cause.getMessage(), cause, refProvider.refOf(stmt));
+            "Invalid argument to " + stmt.getLocalName() + ": " + cause.getMessage(), cause, refOf(stmt));
     }
 
     private SourceSyntaxException newMissingSubstatement(final Element parent, final String keyword) {
-        return new SourceSyntaxException("Missing " + keyword + " substatement", refProvider.refOf(parent));
+        return new SourceSyntaxException("Missing " + keyword + " substatement", refOf(parent));
+    }
+
+    final @Nullable StatementSourceReference refOf(final Element element) {
+        return refProvider.refOf(element);
     }
 
     static boolean isYinElement(final Element element) {
