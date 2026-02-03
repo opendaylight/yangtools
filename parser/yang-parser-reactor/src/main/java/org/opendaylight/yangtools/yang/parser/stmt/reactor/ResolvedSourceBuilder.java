@@ -12,29 +12,32 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ResolvedBelongsTo;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ResolvedImport;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ResolvedInclude;
 
 /**
  * Constructs a {@link ResolvedSourceInfo} of a Source containing the linkage details about imports, includes,
  * belongsTo.
  */
 final class ResolvedSourceBuilder {
-    private final ImmutableMap.Builder<Unqualified, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
-    private final ImmutableSet.Builder<ResolvedSourceBuilder> includes = new ImmutableSet.Builder<>();
+    // these retain insertion order
+    private final ImmutableMap.Builder<Include, ResolvedSourceBuilder> includes = new ImmutableMap.Builder<>();
+    private final ImmutableMap.Builder<Import, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
     private final SourceSpecificContext sourceContext;
     private final SourceInfo sourceInfo;
 
@@ -57,14 +60,14 @@ final class ResolvedSourceBuilder {
     /**
      * Adds a {@link ResolvedSourceBuilder} of an imported module.
      *
-     * @param prefix String prefix defined in the import statement
+     * @param dependency the import dependency being satisfied
      * @param importedModule ResolvedSourceBuilder of the imported module.
      * @return this instance.
      */
-    ResolvedSourceBuilder addImport(final @NonNull Unqualified prefix,
-            final @NonNull ResolvedSourceBuilder importedModule) {
+    @NonNullByDefault
+    ResolvedSourceBuilder resolveImport(final Import dependency, final ResolvedSourceBuilder importedModule) {
         ensureBuilderOpened();
-        imports.put(prefix, importedModule);
+        imports.put(dependency, importedModule);
         return this;
     }
 
@@ -74,23 +77,24 @@ final class ResolvedSourceBuilder {
      * @param includedSubmodule ResolvedSourceBuilder of the included submodule.
      * @return this instance.
      */
-    ResolvedSourceBuilder addInclude(final @NonNull ResolvedSourceBuilder includedSubmodule) {
+    @NonNullByDefault
+    ResolvedSourceBuilder resolveInclude(final Include dependency, final ResolvedSourceBuilder includedSubmodule) {
         ensureBuilderOpened();
-        includes.add(includedSubmodule);
+        includes.put(dependency, includedSubmodule);
         return this;
     }
 
     /**
      * Adds a {@link ResolvedSourceBuilder} of the parent module this submodule belongs to.
      *
-     * @param prefix String prefix defined in the belongs-to statement
-     * @param belongsToModule ResolvedSourceBuilder of the parent module.
+     * @param dependency the {@link BelongsTo}
+     * @param belongsToModule {@link ResolvedSourceBuilder} of the parent module.
      * @return this instance.
      */
     @NonNullByDefault
-    ResolvedSourceBuilder setBelongsTo(final Unqualified prefix, final ResolvedSourceBuilder belongsToModule) {
+    ResolvedSourceBuilder resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder belongsToModule) {
         ensureBuilderOpened();
-        belongsTo = new ResolvedBelongsTo(prefix, belongsToModule.resolveQnameModule());
+        belongsTo = new ResolvedBelongsTo(dependency, belongsToModule.resolveQnameModule());
         return this;
     }
 
@@ -119,31 +123,41 @@ final class ResolvedSourceBuilder {
         return sourceInfo.sourceId();
     }
 
-    private List<ResolvedImport> resolveImports(
-            final Map<SourceSpecificContext, ResolvedSourceInfo> allResolved) {
-        return imports.build().entrySet().stream()
-            .map(prefixedImport -> {
-                final var impContext = prefixedImport.getValue().context();
-                // FIXME: containsKey + get -> should be get() and null check
-                if (!allResolved.containsKey(impContext)) {
-                    // FIXME: better exception
-                    throw new IllegalStateException("Unresolved import %s of module %s".formatted(
-                        prefixedImport.getValue().sourceId(), sourceId()));
-                }
-                return new ResolvedImport(prefixedImport.getKey(), allResolved.get(impContext));
-            })
-            .toList();
+    private List<ResolvedImport> resolveImports(final Map<SourceSpecificContext, ResolvedSourceInfo> allResolved) {
+        final var map = imports.build();
+        final var result = new ArrayList<ResolvedImport>(map.size());
+
+        for (var entry : map.entrySet()) {
+            final var importedModule = entry.getValue();
+
+            final var impContext = importedModule.context();
+            final var resolved = allResolved.get(impContext);
+            if (resolved == null) {
+                // FIXME: better exception
+                throw new IllegalStateException("Unresolved import %s of module %s".formatted(
+                    importedModule.sourceId(), sourceId()));
+            }
+            result.add(new ResolvedImport(entry.getKey(), resolved.sourceInfo().sourceId(), resolved.qnameModule()));
+        }
+
+        return result;
     }
 
     private List<ResolvedInclude> resolveIncludes() {
-        return includes.build()
-            .stream()
-            .map(builder -> new ResolvedInclude(builder.sourceId(), builder.resolveQnameModule()))
-            .toList();
+        final var map = includes.build();
+        final var result = new ArrayList<ResolvedInclude>(map.size());
+
+        for (var entry : map.entrySet()) {
+            final var builder = entry.getValue();
+            result.add(new ResolvedInclude(entry.getKey(), builder.sourceId(), builder.resolveQnameModule()));
+        }
+
+        return result;
     }
 
     private QNameModule resolveQnameModule() {
         if (sourceInfo instanceof SourceInfo.Module moduleInfo) {
+            // FIXME: separate subclass with eager instantiation and interned
             return QNameModule.ofRevision(moduleInfo.namespace(), latestRevision());
         }
         // Submodule's QNameModule is composed of parents Namespace + its own Revision (or null, if absent)
