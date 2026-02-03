@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9ad8af8_fe018f0c",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/yin/YinFileStmtTest.java",
+        "patchSetId": 43
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-03T01:48:31Z",
+      "side": 0,
+      "message": "this should not change, but for that we need an improvement",
+      "range": {
+        "startLine": 40,
+        "startChar": 28,
+        "endLine": 40,
+        "endChar": 53
+      },
+      "revId": "420ca2b88c6f05a737618d13cf40e2238fc16656",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
