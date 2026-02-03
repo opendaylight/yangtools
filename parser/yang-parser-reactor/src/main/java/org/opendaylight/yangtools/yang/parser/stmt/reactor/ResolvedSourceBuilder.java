@@ -16,8 +16,10 @@ import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
@@ -31,21 +33,21 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.Resolved
  * belongsTo.
  */
 final class ResolvedSourceBuilder {
-    private final SourceInfo sourceInfo;
-    private final SourceSpecificContext context;
-    private final ImmutableMap.Builder<String, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
+    private final ImmutableMap.Builder<Unqualified, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
     private final ImmutableSet.Builder<ResolvedSourceBuilder> includes = new ImmutableSet.Builder<>();
+    private final SourceSpecificContext sourceContext;
+    private final SourceInfo sourceInfo;
 
     private ResolvedBelongsTo belongsTo;
     private ResolvedSourceInfo buildFinished;
 
     ResolvedSourceBuilder(final @NonNull SourceSpecificContext sourceContext, final @NonNull SourceInfo sourceInfo) {
-        context = requireNonNull(sourceContext);
+        this.sourceContext = requireNonNull(sourceContext);
         this.sourceInfo = requireNonNull(sourceInfo);
     }
 
     SourceSpecificContext context() {
-        return context;
+        return sourceContext;
     }
 
     YangVersion yangVersion() {
@@ -59,7 +61,7 @@ final class ResolvedSourceBuilder {
      * @param importedModule ResolvedSourceBuilder of the imported module.
      * @return this instance.
      */
-    ResolvedSourceBuilder addImport(final @NonNull String prefix,
+    ResolvedSourceBuilder addImport(final @NonNull Unqualified prefix,
             final @NonNull ResolvedSourceBuilder importedModule) {
         ensureBuilderOpened();
         imports.put(prefix, importedModule);
@@ -85,11 +87,10 @@ final class ResolvedSourceBuilder {
      * @param belongsToModule ResolvedSourceBuilder of the parent module.
      * @return this instance.
      */
-    ResolvedSourceBuilder setBelongsTo(final @NonNull String prefix,
-            final @NonNull ResolvedSourceBuilder belongsToModule) {
+    @NonNullByDefault
+    ResolvedSourceBuilder setBelongsTo(final Unqualified prefix, final ResolvedSourceBuilder belongsToModule) {
         ensureBuilderOpened();
-        belongsTo = new ResolvedBelongsTo(requireNonNull(prefix),
-            requireNonNull(belongsToModule).resolveQnameModule());
+        belongsTo = new ResolvedBelongsTo(prefix, belongsToModule.resolveQnameModule());
         return this;
     }
 
@@ -106,7 +107,8 @@ final class ResolvedSourceBuilder {
             return buildFinished;
         }
 
-        final var prefix = sourceInfo instanceof SourceInfo.Module module ? module.prefix().getLocalName() : null;
+        // TODO: for submodules this should be the 'belongsTo' prefix
+        final var prefix = sourceInfo instanceof SourceInfo.Module module ? module.prefix() : null;
 
         buildFinished = new ResolvedSourceInfo(sourceInfo.sourceId(), resolveQnameModule(),
             resolveImports(allResolved), resolveIncludes(), prefix, belongsTo);
@@ -122,11 +124,13 @@ final class ResolvedSourceBuilder {
         return imports.build().entrySet().stream()
             .map(prefixedImport -> {
                 final var impContext = prefixedImport.getValue().context();
+                // FIXME: containsKey + get -> should be get() and null check
                 if (!allResolved.containsKey(impContext)) {
-                    throw new IllegalStateException(String.format("Unresolved import %s of module %s",
+                    // FIXME: better exception
+                    throw new IllegalStateException("Unresolved import %s of module %s".formatted(
                         prefixedImport.getValue().sourceId(), sourceId()));
                 }
-                return ResolvedImport.of(prefixedImport.getKey(), allResolved.get(impContext));
+                return new ResolvedImport(prefixedImport.getKey(), allResolved.get(impContext));
             })
             .toList();
     }

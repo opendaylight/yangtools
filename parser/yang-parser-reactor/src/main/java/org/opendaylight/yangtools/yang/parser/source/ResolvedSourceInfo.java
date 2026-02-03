@@ -9,11 +9,12 @@ package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
@@ -25,42 +26,44 @@ public record ResolvedSourceInfo(
         @NonNull QNameModule qnameModule,
         @NonNull List<ResolvedImport> imports,
         @NonNull List<ResolvedInclude> includes,
-        @Nullable String prefix,
+        // FIXME: should never be null
+        @Nullable Unqualified prefix,
         @Nullable ResolvedBelongsTo belongsTo) {
 
-    public record ResolvedBelongsTo(@NonNull String prefix, @NonNull QNameModule parentModuleQname) {
+    @NonNullByDefault
+    public ResolvedSourceInfo {
+        requireNonNull(sourceId);
+        requireNonNull(qnameModule);
+        imports = List.copyOf(imports);
+        includes = List.copyOf(includes);
+    }
+
+    @NonNullByDefault
+    public record ResolvedBelongsTo(Unqualified prefix, QNameModule parentModuleQname) {
         public ResolvedBelongsTo {
             requireNonNull(prefix);
             requireNonNull(parentModuleQname);
         }
     }
 
-    public record ResolvedInclude(@NonNull SourceIdentifier sourceId, @NonNull QNameModule qname) {
+    @NonNullByDefault
+    public record ResolvedInclude(SourceIdentifier sourceId, QNameModule qname) {
         public ResolvedInclude {
             requireNonNull(sourceId);
             requireNonNull(qname);
         }
     }
 
-    public record ResolvedImport(@NonNull String prefix, @NonNull SourceIdentifier sourceId,
-            @NonNull QNameModule qname) {
+    @NonNullByDefault
+    public record ResolvedImport(Unqualified prefix, SourceIdentifier sourceId, QNameModule qname) {
         public ResolvedImport {
             requireNonNull(prefix);
             requireNonNull(sourceId);
             requireNonNull(qname);
         }
 
-        public static ResolvedImport of(final @NonNull String prefix,
-                final @NonNull ResolvedSourceInfo importedSource) {
-            final var imported = requireNonNull(importedSource);
-            return new ResolvedImport(requireNonNull(prefix), imported.sourceId, imported.qnameModule);
+        public ResolvedImport(final Unqualified prefix, final ResolvedSourceInfo importedSource) {
+            this(prefix, importedSource.sourceId, importedSource.qnameModule);
         }
-    }
-
-    public ResolvedSourceInfo {
-        requireNonNull(sourceId);
-        requireNonNull(qnameModule);
-        imports = ImmutableList.copyOf(requireNonNull(imports));
-        includes = ImmutableList.copyOf(requireNonNull(includes));
     }
 }

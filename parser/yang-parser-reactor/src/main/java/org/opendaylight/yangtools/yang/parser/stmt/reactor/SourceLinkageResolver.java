@@ -333,7 +333,7 @@ public final class SourceLinkageResolver {
                                             resolvedDep.getValue().getLocalName()));
                             }
                         }
-                        newResolved.addImport(importedDep.prefix().getLocalName(), depModule);
+                        newResolved.addImport(importedDep.prefix(), depModule);
                     } else {
                         if (currentVersion != dependencyVersion) {
                             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
@@ -404,7 +404,7 @@ public final class SourceLinkageResolver {
             //double-check that the parent does satisfy this belongs-to
             verify(submoduleInfo.belongsTo().isSatisfiedBy(parentId));
 
-            resolvedSubmodule.setBelongsTo(submoduleInfo.belongsTo().prefix().getLocalName(), resolvedParent);
+            resolvedSubmodule.setBelongsTo(submoduleInfo.belongsTo().prefix(), resolvedParent);
         }
     }
 
