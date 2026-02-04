@@ -10,17 +10,13 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 final class EnumPairImpl implements EnumPair, Immutable {
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
     private final String description;
     private final String reference;
     private final @NonNull Status status;
@@ -28,18 +24,12 @@ final class EnumPairImpl implements EnumPair, Immutable {
     private final int value;
 
     EnumPairImpl(final String name, final int value, final String description, final String reference,
-            final Status status, final ImmutableList<UnknownSchemaNode> unknownSchemaNodes) {
+            final Status status) {
         this.name = requireNonNull(name);
         this.value = value;
         this.description = description;
         this.reference = reference;
         this.status = requireNonNull(status);
-        this.unknownSchemaNodes = requireNonNull(unknownSchemaNodes);
-    }
-
-    @Override
-    public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownSchemaNodes;
     }
 
     @Override
@@ -71,7 +61,6 @@ final class EnumPairImpl implements EnumPair, Immutable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + unknownSchemaNodes.hashCode();
         result = prime * result + name.hashCode();
         result = prime * result + Integer.hashCode(value);
         return result;
@@ -80,8 +69,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
     @Override
     public boolean equals(final Object obj) {
         return this == obj || obj instanceof EnumPair other
-            && name.equals(other.getName()) && value == other.getValue()
-            && unknownSchemaNodes.equals(other.getUnknownSchemaNodes());
+            && name.equals(other.getName()) && value == other.getValue();
     }
 
     @Override
