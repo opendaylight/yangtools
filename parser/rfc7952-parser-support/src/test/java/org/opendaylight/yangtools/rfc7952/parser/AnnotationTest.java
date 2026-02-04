@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -39,15 +39,13 @@ class AnnotationTest {
             .addSource(new URLYangTextSource(AnnotationTest.class.getResource("/example-last-modified.yang")))
             .buildEffective();
 
-        assertThat(context.getModuleStatements().values().stream()
-            .flatMap(module -> module.streamEffectiveSubstatements(AnnotationEffectiveStatement.class))
-            .toList()).hasSize(1).first().satisfies(annotation -> {
-                assertEquals(LAST_MODIFIED, annotation.argument());
-                assertEquals(BaseTypes.stringType(), annotation.typeDefinition());
-                assertEquals(Optional.of("""
-                    This annotation contains the date and time when the
-                    annotated instance was last modified (or created)."""),
-                    annotation.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class));
-            });
+        final var annotation = AnnotationEffectiveStatement.lookupIn(context, LAST_MODIFIED);
+        assertNotNull(annotation);
+        assertEquals(LAST_MODIFIED, annotation.argument());
+        assertEquals(BaseTypes.stringType(), annotation.typeDefinition());
+        assertEquals(Optional.of("""
+            This annotation contains the date and time when the
+            annotated instance was last modified (or created)."""),
+            annotation.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class));
     }
 }

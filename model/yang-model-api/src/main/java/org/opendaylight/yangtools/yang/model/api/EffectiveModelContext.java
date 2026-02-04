@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -29,14 +30,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeRoot;
  * {@link EffectiveStatement}-based result of YANG parser compilation. Unlike a SchemaContext, which it extends,
  * it gives access to individual {@link ModuleEffectiveStatement}s that comprise it. It also supports resolution of
  * schema node identifiers via {@link #findSchemaTreeNode(SchemaNodeIdentifier)}.
- *
- * @author Robert Varga
  */
 @Beta
 // FIXME: 8.0.0: evaluate if we still need to extend SchemaContext here
 public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
 
     @NonNull Map<QNameModule, ModuleEffectiveStatement> getModuleStatements();
+
+    default @Nullable ModuleEffectiveStatement lookupModule(final QNameModule moduleName) {
+        return getModuleStatements().get(requireNonNull(moduleName));
+    }
 
     default @NonNull Optional<ModuleEffectiveStatement> findModuleStatement(final QNameModule moduleName) {
         return Optional.ofNullable(getModuleStatements().get(requireNonNull(moduleName)));
