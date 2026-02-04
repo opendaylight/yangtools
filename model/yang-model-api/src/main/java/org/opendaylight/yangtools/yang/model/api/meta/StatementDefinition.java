@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -182,6 +183,15 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
     @Deprecated(since = "15.0.0", forRemoval = true)
     default @NonNull Class<? extends E> getEffectiveRepresentationClass() {
         return effectiveRepresentation();
+    }
+
+    /**
+     * {@return {@code true} if this definition represents an {@code extension} statement}
+     * @since 15.0.0
+     */
+    @Beta
+    default boolean isExtension() {
+        return !YangConstants.RFC6020_YIN_MODULE.equals(statementName().getModule());
     }
 
     /**
