@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG metamodel extensions to support YANG module tags, as defined in
+ * YANG metamodel extensions to support YANG module tags, {@link ModuleTagStatement}, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8819">RFC8819</a>.
  */
 @org.osgi.annotation.bundle.Export
