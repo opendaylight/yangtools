@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG metamodel extensions to YANG notifications, as defined in
+ * YANG metamodel extensions to YANG notifications, {@link SubscriptionStateNotificationStatement}, as defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8639">RFC8639</a>.
  */
 @org.osgi.annotation.bundle.Export

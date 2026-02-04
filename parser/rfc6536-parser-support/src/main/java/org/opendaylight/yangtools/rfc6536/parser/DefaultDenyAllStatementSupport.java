@@ -56,6 +56,6 @@ public final class DefaultDenyAllStatementSupport
     @Override
     protected DefaultDenyAllEffectiveStatement createEffective(final Current<Empty, DefaultDenyAllStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DefaultDenyAllEffectiveStatementImpl(stmt, substatements);
+        return new DefaultDenyAllEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

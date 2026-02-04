@@ -10,29 +10,15 @@ package org.opendaylight.yangtools.rfc6536.parser;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
-import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class DefaultDenyAllEffectiveStatementImpl
-        extends AbstractEffectiveUnknownSchmemaNode<Empty, @NonNull DefaultDenyAllStatement>
-        implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
-    DefaultDenyAllEffectiveStatementImpl(final Current<Empty, DefaultDenyAllStatement> stmt,
+final class DefaultDenyAllEffectiveStatementImpl extends WithSubstatements<Empty, @NonNull DefaultDenyAllStatement>
+        implements DefaultDenyAllEffectiveStatement {
+    DefaultDenyAllEffectiveStatementImpl(final @NonNull DefaultDenyAllStatement declared,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
-    }
-
-    @Override
-    public QName getQName() {
-        return getNodeType();
-    }
-
-    @Override
-    public DefaultDenyAllEffectiveStatement asEffectiveStatement() {
-        return this;
+        super(declared, substatements);
     }
 }
