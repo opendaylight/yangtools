@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -44,9 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +81,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             final var parent = stack.currentStatement();
             parentNode = switch (parent) {
                 case DataSchemaNode data -> data;
-                case OperationDefinition oper -> oper.toContainerLike();
-                case NotificationDefinition notif -> notif.toContainerLike();
-                case YangDataSchemaNode yangData -> yangData.toContainerLike();
+                case DataSchemaCompat<?, ?> compat -> compat.toDataSchemaNode();
                 default -> throw new IllegalArgumentException("Illegal parent node " + parent);
             };
         } else {

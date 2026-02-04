@@ -13,6 +13,8 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -53,5 +55,15 @@ public final class ActionEffectiveStatementImpl extends WithTypedefNamespace<QNa
     @Override
     public ActionEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public DataNodeContainer toDataNodeContainer() {
+        return toContainerLike();
+    }
+
+    @Override
+    public DataSchemaNode toDataSchemaNode() {
+        return toContainerLike();
     }
 }
