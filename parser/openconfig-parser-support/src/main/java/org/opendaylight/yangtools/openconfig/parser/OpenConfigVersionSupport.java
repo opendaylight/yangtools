@@ -51,6 +51,6 @@ final class OpenConfigVersionSupport
     protected OpenConfigVersionEffectiveStatement createEffective(
             final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OpenConfigVersionEffectiveStatementImpl(stmt, substatements);
+        return new OpenConfigVersionEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

@@ -33,7 +33,7 @@ final class MaxAccessStatementSupport
 
     @Override
     public MaxAccess parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final MaxAccess val = MaxAccess.forStringLiteral(value);
+        final var val = MaxAccess.forStringLiteral(value);
         if (val == null) {
             throw new SourceException(ctx, "Invalid max-access value '%s'", value);
         }
@@ -42,7 +42,7 @@ final class MaxAccessStatementSupport
 
     @Override
     public String internArgument(final String rawArgument) {
-        final MaxAccess val = MaxAccess.forStringLiteral(rawArgument);
+        final var val = MaxAccess.forStringLiteral(rawArgument);
         return val == null ? rawArgument : val.stringLiteral();
     }
 
@@ -61,6 +61,6 @@ final class MaxAccessStatementSupport
     @Override
     protected MaxAccessEffectiveStatement createEffective(final Current<MaxAccess, MaxAccessStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new MaxAccessEffectiveStatementImpl(stmt, substatements);
+        return new MaxAccessEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

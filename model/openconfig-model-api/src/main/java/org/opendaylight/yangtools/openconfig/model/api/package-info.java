@@ -9,5 +9,7 @@
  * YANG parser support for metamodel extensions defined in
  * <a href="https://github.com/openconfig/public/blob/master/release/models/openconfig-extensions.yang">OpenConfig</a>.
  */
+// FIXME: update above link to the currently-implemented extensions
+// FIXME: update to latest release
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.openconfig.model.api;
