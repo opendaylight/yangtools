@@ -10,27 +10,14 @@ package org.opendaylight.yangtools.rfc6643.parser;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasEffectiveStatement;
-import org.opendaylight.yangtools.rfc6643.model.api.AliasSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class AliasEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<String, @NonNull AliasStatement>
-        implements AliasEffectiveStatement, AliasSchemaNode {
-    AliasEffectiveStatementImpl(final Current<String, AliasStatement> stmt,
+final class AliasEffectiveStatementImpl extends WithSubstatements<String, @NonNull AliasStatement>
+        implements AliasEffectiveStatement {
+    AliasEffectiveStatementImpl(final @NonNull AliasStatement declared,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
-    }
-
-    @Override
-    public QName getQName() {
-        return getNodeType();
-    }
-
-    @Override
-    public AliasEffectiveStatement asEffectiveStatement() {
-        return this;
+        super(declared, substatements);
     }
 }

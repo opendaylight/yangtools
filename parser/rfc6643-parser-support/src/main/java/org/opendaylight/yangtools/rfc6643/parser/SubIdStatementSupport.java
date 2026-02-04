@@ -48,6 +48,6 @@ final class SubIdStatementSupport extends AbstractStatementSupport<Uint32, SubId
     @Override
     protected SubIdEffectiveStatement createEffective(final Current<Uint32, SubIdStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new SubIdEffectiveStatementImpl(stmt, substatements);
+        return new SubIdEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

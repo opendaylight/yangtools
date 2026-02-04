@@ -42,6 +42,6 @@ final class ImpliedStatementSupport
     @Override
     protected ImpliedEffectiveStatement createEffective(final Current<String, ImpliedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ImpliedEffectiveStatementImpl(stmt, substatements);
+        return new ImpliedEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

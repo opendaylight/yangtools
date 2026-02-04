@@ -90,6 +90,6 @@ final class MountPointStatementSupport
     @Override
     protected MountPointEffectiveStatement createEffective(final Current<MountPointLabel, MountPointStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new MountPointEffectiveStatementImpl(stmt, substatements);
+        return new MountPointEffectiveStatementImpl(stmt.declared(), stmt.getArgument(), substatements);
     }
 }
