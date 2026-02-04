@@ -66,7 +66,7 @@ final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStat
     protected GetFilterElementAttributesEffectiveStatement createEffective(
             final Current<Empty, GetFilterElementAttributesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new GetFilterElementAttributesEffectiveStatementImpl(stmt, substatements);
+        return new GetFilterElementAttributesEffectiveStatementImpl(stmt.declared(), substatements);
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {

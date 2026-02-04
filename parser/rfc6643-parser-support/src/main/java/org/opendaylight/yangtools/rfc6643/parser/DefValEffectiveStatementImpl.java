@@ -10,27 +10,14 @@ package org.opendaylight.yangtools.rfc6643.parser;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValEffectiveStatement;
-import org.opendaylight.yangtools.rfc6643.model.api.DefValSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class DefValEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<String, @NonNull DefValStatement>
-        implements DefValEffectiveStatement, DefValSchemaNode {
-    DefValEffectiveStatementImpl(final Current<String, DefValStatement> stmt,
+final class DefValEffectiveStatementImpl extends WithSubstatements<String, @NonNull DefValStatement>
+        implements DefValEffectiveStatement {
+    DefValEffectiveStatementImpl(final @NonNull DefValStatement declared,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
-    }
-
-    @Override
-    public QName getQName() {
-        return getNodeType();
-    }
-
-    @Override
-    public DefValEffectiveStatement asEffectiveStatement() {
-        return this;
+        super(declared, substatements);
     }
 }

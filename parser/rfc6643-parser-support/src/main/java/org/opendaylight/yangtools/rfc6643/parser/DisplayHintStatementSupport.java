@@ -43,6 +43,6 @@ final class DisplayHintStatementSupport
     @Override
     protected DisplayHintEffectiveStatement createEffective(final Current<String, DisplayHintStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DisplayHintEffectiveStatementImpl(stmt, substatements);
+        return new DisplayHintEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

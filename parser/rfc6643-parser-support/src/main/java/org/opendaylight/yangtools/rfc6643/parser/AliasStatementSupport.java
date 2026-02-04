@@ -50,6 +50,6 @@ final class AliasStatementSupport extends AbstractStringStatementSupport<AliasSt
     @Override
     protected AliasEffectiveStatement createEffective(final Current<String, AliasStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new AliasEffectiveStatementImpl(stmt, substatements);
+        return new AliasEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }
