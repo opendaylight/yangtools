@@ -185,6 +185,13 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
     }
 
     /**
+     * {@return {@code true} if this definition represents an {@code extension} statement}
+     */
+    default boolean isExtension() {
+        return !YangConstants.RFC6020_YIN_MODULE.equals(statementName().getModule());
+    }
+
+    /**
      * {@return the {@link System#identityHashCode(Object)} of this object}
      */
     @Override
