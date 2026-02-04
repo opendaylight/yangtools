@@ -197,6 +197,6 @@ final class YangDataStatementSupport
                 "yang-data requires exactly one container data node definition, found %s", schemaSub);
         };
 
-        return new YangDataEffectiveStatementImpl(stmt, substatements, child);
+        return new YangDataEffectiveStatementImpl(stmt.declared(), substatements, child);
     }
 }

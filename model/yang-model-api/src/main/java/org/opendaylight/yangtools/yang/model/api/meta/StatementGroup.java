@@ -13,17 +13,27 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 
 /**
  * Utility class holding various groups as defined in RFC7950.
@@ -70,6 +80,36 @@ public final class StatementGroup {
         ActionStatement.DEF, ContainerStatement.DEF, LeafStatement.DEF, LeafListStatement.DEF, ListStatement.DEF,
         ChoiceStatement.DEF, CaseStatement.DEF, RpcStatement.DEF, InputStatement.DEF, OutputStatement.DEF,
         NotificationStatement.DEF, AnydataStatement.DEF, AnyxmlStatement.DEF);
+
+    // FIXME: also document these groups
+
+    //module-header-stmts = ;; these stmts can appear in any order
+    //        yang-version-stmt
+    //        namespace-stmt
+    //        prefix-stmt
+    public static final Set<StatementDefinition<?, ?, ?>> MODULE_HEADER_STMTS = Set.of(
+        YangVersionStatement.DEF, NamespaceStatement.DEF, PrefixStatement.DEF);
+
+    //submodule-header-stmts =
+    //        ;; these stmts can appear in any order
+    //        yang-version-stmt
+    //        belongs-to-stmt
+    public static final Set<StatementDefinition<?, ?, ?>> SUBMODULE_HEADER_STMTS = Set.of(
+        YangVersionStatement.DEF, BelongsToStatement.DEF);
+
+    //meta-stmts          = ;; these stmts can appear in any order
+    //        [organization-stmt]
+    //        [contact-stmt]
+    //        [description-stmt]
+    //        [reference-stmt]
+    public static final Set<StatementDefinition<?, ?, ?>> META_STMTS = Set.of(
+        OrganizationStatement.DEF, ContactStatement.DEF, DescriptionStatement.DEF, ReferenceStatement.DEF);
+
+    //linkage-stmts       = ;; these stmts can appear in any order
+    //        *import-stmt
+    //        *include-stmt
+    public static final Set<StatementDefinition<?, ?, ?>> LINKAGE_STMTS = Set.of(
+        ImportStatement.DEF, IncludeStatement.DEF);
 
     private StatementGroup() {
         // Hidden on purpose
