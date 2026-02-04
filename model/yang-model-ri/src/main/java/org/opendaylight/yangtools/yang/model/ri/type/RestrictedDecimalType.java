@@ -7,20 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 final class RestrictedDecimalType extends AbstractRangeRestrictedType<DecimalTypeDefinition, Decimal64>
         implements DecimalTypeDefinition {
     RestrictedDecimalType(final DecimalTypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<Decimal64> rangeConstraint) {
-        super(baseType, qname, unknownSchemaNodes, rangeConstraint);
+        super(baseType, qname, rangeConstraint);
     }
 
     @Override

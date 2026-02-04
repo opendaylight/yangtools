@@ -36,16 +36,14 @@ public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<Decimal
     @Override
     DecimalTypeDefinition buildConstrainedType(final ConstraintMetaDefinition constraint, final ValueRanges ranges) {
         final int scale = scale();
-        return new BaseDecimalType(getQName(), getUnknownSchemaNodes(), scale,
-            new ResolvedRangeConstraint<>(constraint, ensureResolvedScale(
-                calculateRanges(BaseDecimalType.constraintsForDigits(scale), ranges), scale)));
+        return new BaseDecimalType(getQName(), scale, new ResolvedRangeConstraint<>(constraint,
+            ensureResolvedScale(calculateRanges(BaseDecimalType.constraintsForDigits(scale), ranges), scale)));
     }
 
     @Override
     DecimalTypeDefinition buildUnconstrainedType() {
         final int scale = scale();
-        return new BaseDecimalType(getQName(), getUnknownSchemaNodes(), scale,
-            BaseDecimalType.constraintsForDigits(scale));
+        return new BaseDecimalType(getQName(), scale, BaseDecimalType.constraintsForDigits(scale));
     }
 
     private int scale() {

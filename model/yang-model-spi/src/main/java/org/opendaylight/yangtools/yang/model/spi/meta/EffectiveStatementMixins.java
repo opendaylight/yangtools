@@ -177,11 +177,6 @@ public final class EffectiveStatementMixins {
         default Optional<String> getReference() {
             return findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class);
         }
-
-        @Override
-        default Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-            return filterEffectiveStatements(UnknownSchemaNode.class);
-        }
     }
 
     /**

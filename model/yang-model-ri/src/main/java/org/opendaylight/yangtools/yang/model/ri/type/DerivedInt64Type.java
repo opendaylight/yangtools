@@ -7,18 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 
 final class DerivedInt64Type extends AbstractRangeRestrictedDerivedType<Int64TypeDefinition, Long>
         implements Int64TypeDefinition {
     DerivedInt64Type(final Int64TypeDefinition baseType, final QName qname, final Object defaultValue,
-            final String description, final String reference, final Status status, final String units,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
+            final String description, final String reference, final Status status, final String units) {
+        super(baseType, qname, defaultValue, description, reference, status, units);
     }
 
     @Override

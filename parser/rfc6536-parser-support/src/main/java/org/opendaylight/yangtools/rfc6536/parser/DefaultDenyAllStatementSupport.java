@@ -29,6 +29,17 @@ public final class DefaultDenyAllStatementSupport
         super(DefaultDenyAllStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
+    // FIXME: not implemented:
+
+    // RFC8341:
+    //    The 'default-deny-write' extension MAY appear within a data
+    //    definition statement.  It is ignored otherwise.";
+
+    // RFC7951:
+    //    o  data definition statement: A statement that defines new data
+    //    nodes.  One of "container", "leaf", "leaf-list", "list", "choice",
+    //    "case", "augment", "uses", "anydata", and "anyxml".
+
     @Override
     protected DefaultDenyAllStatement createDeclared(final BoundStmtCtx<Empty> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {

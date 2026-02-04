@@ -10,12 +10,9 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 /**
@@ -26,7 +23,6 @@ public final class EnumPairBuilder implements Mutable {
     private final String name;
     private final Integer value;
 
-    private ImmutableList<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.of();
     private Status status = Status.CURRENT;
     private String description;
     private String reference;
@@ -55,23 +51,12 @@ public final class EnumPairBuilder implements Mutable {
         return this;
     }
 
-    public @NonNull EnumPairBuilder setUnknownSchemaNodes(
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
-        return this;
-    }
-
-    public @NonNull EnumPairBuilder setUnknownSchemaNodes(final UnknownSchemaNode... unknownSchemaNodes) {
-        this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
-        return this;
-    }
-
     /**
      * Return an {@link EnumPair} representation of this builder's current state.
      *
      * @return An EnumPair
      */
     public @NonNull EnumPair build() {
-        return new EnumPairImpl(name, value, description, reference, status, unknownSchemaNodes);
+        return new EnumPairImpl(name, value, description, reference, status);
     }
 }

@@ -7,18 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class RestrictedIdentityrefType extends AbstractRestrictedType<IdentityrefTypeDefinition>
         implements IdentityrefTypeDefinition {
-    RestrictedIdentityrefType(final IdentityrefTypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, qname, unknownSchemaNodes);
+    RestrictedIdentityrefType(final IdentityrefTypeDefinition baseType, final QName qname) {
+        super(baseType, qname);
     }
 
     @Override
