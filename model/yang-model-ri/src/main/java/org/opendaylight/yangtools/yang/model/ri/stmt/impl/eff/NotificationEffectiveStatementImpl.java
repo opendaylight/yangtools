@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -64,5 +65,15 @@ public final class NotificationEffectiveStatementImpl
     @Override
     public NotificationEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public DataNodeContainer toDataNodeContainer() {
+        return toContainerLike();
+    }
+
+    @Override
+    public DataSchemaNode toDataSchemaNode() {
+        return toContainerLike();
     }
 }

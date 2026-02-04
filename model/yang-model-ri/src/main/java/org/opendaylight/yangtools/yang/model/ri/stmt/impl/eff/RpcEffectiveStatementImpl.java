@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
@@ -20,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationDefinitionMixin;
 
 public final class RpcEffectiveStatementImpl extends WithTypedefNamespace<QName, @NonNull RpcStatement>
-        implements RpcDefinition, RpcEffectiveStatement, OperationDefinitionMixin<@NonNull RpcStatement> {
+        implements RpcEffectiveStatement, RpcDefinition, OperationDefinitionMixin<@NonNull RpcStatement> {
     private final @NonNull QName argument;
     private final int flags;
 
@@ -45,5 +47,15 @@ public final class RpcEffectiveStatementImpl extends WithTypedefNamespace<QName,
     @Override
     public RpcEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public DataNodeContainer toDataNodeContainer() {
+        return toContainerLike();
+    }
+
+    @Override
+    public DataSchemaNode toDataSchemaNode() {
+        return toContainerLike();
     }
 }

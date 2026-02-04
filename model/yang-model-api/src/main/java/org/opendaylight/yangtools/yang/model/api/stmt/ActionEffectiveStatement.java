@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -20,7 +21,8 @@ public non-sealed interface ActionEffectiveStatement extends SchemaTreeEffective
         DataTreeAwareEffectiveStatement<QName, @NonNull ActionStatement>,
         InputEffectiveStatement.MandatoryIn<QName, @NonNull ActionStatement>,
         OutputEffectiveStatement.MandatoryIn<QName, @NonNull ActionStatement>,
-        TypedefEffectiveStatement.MultipleIn<QName, @NonNull ActionStatement> {
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull ActionStatement>,
+        DataSchemaCompat<QName, @NonNull ActionStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ActionStatement, ?> statementDefinition() {
         return ActionStatement.DEF;
