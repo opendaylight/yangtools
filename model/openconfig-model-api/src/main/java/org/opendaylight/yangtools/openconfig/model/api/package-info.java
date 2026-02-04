@@ -8,11 +8,6 @@
 /**
  * YANG parser support for metamodel extensions defined in
  * <a href="https://github.com/openconfig/public/blob/master/release/models/openconfig-extensions.yang">OpenConfig</a>.
- *
- * <p>The openconfig-version extension is integrated in the parser, as it supports the semantic version import
- * resolution. SchemaNode world primary entry point is defined in
- * {@link org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueSchemaNode#isPresentIn(
- * org.opendaylight.yangtools.yang.model.api.SchemaNode)}.
  */
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.openconfig.model.api;

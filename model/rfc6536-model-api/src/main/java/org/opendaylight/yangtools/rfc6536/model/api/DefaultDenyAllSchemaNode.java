@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6536.model.api;
 
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -16,18 +14,17 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>, being attached to a SchemaNode.
  */
 public interface DefaultDenyAllSchemaNode extends UnknownSchemaNode {
-    /**
-     * Attempt to find a {@link DefaultDenyAllSchemaNode} in a parent {@link DataSchemaNode}.
-     *
-     * @param parent Parent to search
-     * @return {@link DefaultDenyAllSchemaNode} child, if present.
-     */
-    static Optional<DefaultDenyAllSchemaNode> findIn(final DataSchemaNode parent) {
-        return parent.getUnknownSchemaNodes().stream()
-            .filter(DefaultDenyAllSchemaNode.class::isInstance)
-            .findAny()
-            .map(DefaultDenyAllSchemaNode.class::cast);
-    }
+
+    // RFC8341:
+    //    The 'default-deny-write' extension MAY appear within a data
+    //    definition statement.  It is ignored otherwise.";
+
+    // RFC7951:
+    //    o  data definition statement: A statement that defines new data
+    //    nodes.  One of "container", "leaf", "leaf-list", "list", "choice",
+    //    "case", "augment", "uses", "anydata", and "anyxml".
+
+    // FIXME: audit implementation that the above is true
 
     @Override
     DefaultDenyAllEffectiveStatement asEffectiveStatement();

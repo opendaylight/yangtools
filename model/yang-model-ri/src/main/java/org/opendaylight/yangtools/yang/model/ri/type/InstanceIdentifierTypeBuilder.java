@@ -20,11 +20,11 @@ public final class InstanceIdentifierTypeBuilder
 
     @Override
     InstanceIdentifierTypeDefinition buildType() {
-        final InstanceIdentifierTypeDefinition base = getBaseType();
+        final var base = getBaseType();
         if (getRequireInstance() == base.requireInstance()) {
             return base;
         }
 
-        return new RestrictedInstanceIdentifierType(base, getQName(), getUnknownSchemaNodes(), getRequireInstance());
+        return new RestrictedInstanceIdentifierType(base, getQName(), getRequireInstance());
     }
 }

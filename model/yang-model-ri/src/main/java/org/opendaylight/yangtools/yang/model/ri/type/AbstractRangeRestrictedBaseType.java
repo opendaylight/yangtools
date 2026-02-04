@@ -11,11 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
-import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
@@ -48,13 +46,12 @@ abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefi
 
     AbstractRangeRestrictedBaseType(final QName qname, final N minValue, final N maxValue) {
         super(qname);
-        this.rangeConstraint = new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(
-            Range.closed(minValue, maxValue)));
+        rangeConstraint = new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT,
+            ImmutableRangeSet.of(Range.closed(minValue, maxValue)));
     }
 
-    AbstractRangeRestrictedBaseType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
-            final RangeConstraint<N> rangeConstraint) {
-        super(qname, unknownSchemaNodes);
+    AbstractRangeRestrictedBaseType(final QName qname, final RangeConstraint<N> rangeConstraint) {
+        super(qname);
         this.rangeConstraint = requireNonNull(rangeConstraint);
     }
 
