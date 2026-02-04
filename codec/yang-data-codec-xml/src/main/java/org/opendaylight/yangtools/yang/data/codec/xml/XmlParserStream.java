@@ -39,7 +39,6 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
@@ -77,9 +76,8 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -153,9 +151,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     private static DataSchemaNode coerceAsParent(final EffectiveStatement<?, ?> stmt) {
         return switch (stmt) {
             case DataSchemaNode data -> data;
-            case OperationDefinition oper -> oper.toContainerLike();
-            case NotificationDefinition notif -> notif.toContainerLike();
-            case YangDataSchemaNode yangData -> yangData.toContainerLike();
+            case DataSchemaCompat<?, ?> compat -> compat.toDataSchemaNode();
             default -> throw new IllegalArgumentException("Illegal parent node " + stmt);
         };
     }

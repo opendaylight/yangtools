@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -17,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface NotificationEffectiveStatement
     extends SchemaTreeEffectiveStatement<@NonNull NotificationStatement>,
             DataTreeAwareEffectiveStatement<QName, @NonNull NotificationStatement>,
-            TypedefEffectiveStatement.MultipleIn<QName, @NonNull NotificationStatement> {
+            TypedefEffectiveStatement.MultipleIn<QName, @NonNull NotificationStatement>,
+            DataSchemaCompat<QName, @NonNull NotificationStatement> {
     @Override
     default StatementDefinition<QName, @NonNull NotificationStatement, ?> statementDefinition() {
         return NotificationStatement.DEF;

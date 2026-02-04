@@ -101,4 +101,22 @@
             <artifactId>mockito-configuration</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze-declarations</id>
+                        <configuration>
+                            <ignoredNonTestScopedDependencies>
+                                <ignoredNonTestScopedDependencies>org.opendaylight.yangtools:rfc8040-model-api</ignoredNonTestScopedDependencies>
+                            </ignoredNonTestScopedDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
