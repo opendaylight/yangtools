@@ -17,7 +17,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -67,13 +67,14 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
             throws XMLStreamException {
-        final var optAnnotation = AnnotationSchemaNode.find(streamUtils.modelContext(), new AnnotationName(qname));
-        if (optAnnotation.isPresent()) {
-            return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.orElseThrow().getType()), value,
+        final var annotation = AnnotationEffectiveStatement.lookupIn(streamUtils.modelContext(),
+            new AnnotationName(qname));
+
+        if (annotation != null) {
+            return streamUtils.encodeValue(xmlWriter, resolveType(annotation.getTypeDefinition()), value,
                 qname.getModule());
         }
-
-        if (qname.getRevision().isPresent()) {
+        if (qname.getModule().revision() != null) {
             throw new IllegalArgumentException("Failed to find bound annotation " + qname);
         }
         if (value instanceof String str) {
