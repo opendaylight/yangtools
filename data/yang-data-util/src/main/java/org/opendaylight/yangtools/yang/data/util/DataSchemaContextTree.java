@@ -110,13 +110,13 @@ public final class DataSchemaContextTree {
 
     // Split out to aid inlining
     private DataSchemaContext.@Nullable Composite loadYangData(final @NonNull YangDataName name) {
-        final var optModule = modelContext.findModule(name.module());
+        final var optModule = modelContext.findModuleStatement(name.module());
         if (optModule.isEmpty()) {
             return null;
         }
 
-        for (var unknownSchema : optModule.orElseThrow().getUnknownSchemaNodes()) {
-            if (unknownSchema instanceof YangDataSchemaNode schema && name.equals(schema.name())) {
+        for (var stmt : optModule.orElseThrow().effectiveSubstatements()) {
+            if (stmt instanceof YangDataSchemaNode schema && name.equals(schema.name())) {
                 final var created = new YangDataContext(schema);
                 final var raced = yangData.putIfAbsent(name, created);
                 return raced != null ? raced : created;

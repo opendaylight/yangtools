@@ -7,17 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 final class RestrictedUnionType extends AbstractRestrictedType<UnionTypeDefinition> implements UnionTypeDefinition {
-    RestrictedUnionType(final UnionTypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, qname, unknownSchemaNodes);
+    RestrictedUnionType(final UnionTypeDefinition baseType, final QName qname) {
+        super(baseType, qname);
     }
 
     @Override

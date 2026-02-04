@@ -11,7 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -30,6 +29,5 @@ class BooleanTypeTest {
         assertNull(boolType.getBaseType(), "Base type is null");
         assertEquals(Optional.empty(), boolType.getDefaultValue());
         assertEquals(Status.CURRENT, boolType.getStatus(), "Status CURRENT");
-        assertEquals(List.of(), boolType.getUnknownSchemaNodes(), "Should contain empty list");
     }
 }

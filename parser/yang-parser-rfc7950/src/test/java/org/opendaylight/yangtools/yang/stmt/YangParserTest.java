@@ -79,7 +79,6 @@ class YangParserTest extends AbstractModelTest {
         assertFalse(ifEntry.getDescription().isPresent());
         assertFalse(ifEntry.getReference().isPresent());
         assertEquals(Status.CURRENT, ifEntry.getStatus());
-        assertEquals(0, ifEntry.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
         assertFalse(ifEntry.isAugmenting());
         assertEquals(Optional.of(Boolean.TRUE), ifEntry.effectiveConfig());
@@ -470,7 +469,6 @@ class YangParserTest extends AbstractModelTest {
         assertFalse(notification.getDescription().isPresent());
         assertFalse(notification.getReference().isPresent());
         assertEquals(Status.CURRENT, notification.getStatus());
-        assertEquals(0, notification.getUnknownSchemaNodes().size());
         // test DataNodeContainer args
         assertEquals(0, notification.getTypeDefinitions().size());
         assertEquals(3, notification.getChildNodes().size());

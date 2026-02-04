@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
@@ -25,21 +25,22 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 @Beta
 public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
     /**
-     * Find specified annotation if it is supported by the specified SchemaContext.
+     * Find specified annotation if it is supported by the specified EffectiveModelContext.
      *
-     * @param context SchemaContext to search
+     * @param context EffectiveModelContext to search
      * @param name Annotation name
      * @return {@link AnnotationSchemaNode} corresponding to specified name, or empty if it is not supported
-     *         by the SchemaContext..
+     *         by the EffectiveModelContext
      * @throws NullPointerException if any of the arguments is null
      */
-    static @NonNull Optional<AnnotationSchemaNode> find(final SchemaContext context, final AnnotationName name) {
+    static @NonNull Optional<AnnotationSchemaNode> find(final EffectiveModelContext context,
+            final AnnotationName name) {
         if (context instanceof AnnotationSchemaNodeAware aware) {
             return aware.findAnnotation(name);
         }
 
-        return context.findModule(name.qname().getModule())
-            .flatMap(module -> module.getUnknownSchemaNodes().stream()
+        return context.findModuleStatement(name.qname().getModule())
+            .flatMap(module -> module.effectiveSubstatements().stream()
                 .filter(AnnotationSchemaNode.class::isInstance)
                 .map(AnnotationSchemaNode.class::cast)
                 .filter(annotation -> name.equals(annotation.name()))
@@ -47,19 +48,17 @@ public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
     }
 
     /**
-     * Find all annotations supported by a SchemaContext.
+     * Find all annotations supported by a EffectiveModelContext.
      *
-     * @param context SchemaContext to search
-     * @return {@link AnnotationSchemaNode}s supported by the SchemaContext..
+     * @param context EffectiveModelContext to search
+     * @return {@link AnnotationSchemaNode}s supported by the EffectiveModelContext
      * @throws NullPointerException if context is null
      */
-    static @NonNull Map<AnnotationName, AnnotationSchemaNode> findAll(final SchemaContext context) {
+    static @NonNull Map<AnnotationName, AnnotationSchemaNode> findAll(final EffectiveModelContext context) {
         final var builder = ImmutableMap.<AnnotationName, AnnotationSchemaNode>builder();
-        for (var module : context.getModules()) {
-            for (var node : module.getUnknownSchemaNodes()) {
-                if (node instanceof AnnotationSchemaNode annotation) {
-                    builder.put(annotation.name(), annotation);
-                }
+        for (var module : context.getModuleStatements().values()) {
+            for (var annotation : module.filterEffectiveStatements(AnnotationSchemaNode.class)) {
+                builder.put(annotation.name(), annotation);
             }
         }
         return builder.build();

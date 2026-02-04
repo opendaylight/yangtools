@@ -11,7 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -29,7 +28,6 @@ class EmptyTypeTest {
         assertEquals(Optional.empty(), emptyType.getReference());
         assertEquals(Optional.empty(), emptyType.getUnits(), "Units");
         assertEquals(Optional.empty(), emptyType.getDescription());
-        assertEquals(List.of(), emptyType.getUnknownSchemaNodes(), "UnknownSchemaNodes");
         assertThat(emptyType.toString()).contains("name=(urn:ietf:params:xml:ns:yang:1)empty");
     }
 }

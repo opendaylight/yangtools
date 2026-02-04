@@ -12,15 +12,13 @@ import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition> implements EnumTypeDefinition {
     private final @NonNull ImmutableList<EnumPair> values;
 
-    BaseEnumerationType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
-            final Collection<EnumPair> values) {
-        super(qname, unknownSchemaNodes);
+    BaseEnumerationType(final QName qname, final Collection<EnumPair> values) {
+        super(qname);
         this.values = ImmutableList.copyOf(values);
     }
 

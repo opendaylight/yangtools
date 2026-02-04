@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -24,37 +23,36 @@ class BitImplTest {
 
         // hashCode method test
 
-        BitImpl biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
+        var biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
 
         assertEquals(biA, biA, "biA should equals to itsefl");
         assertNotEquals(null, biA, "biA shouldn't equal to null");
         assertNotEquals("str", biA, "biA shouldn't equal to object of other type");
 
          // // test schemaPath
-        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
-        BitImpl biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
+        var biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
         assertNotEquals(biA, biB, "biA shouldn't equal to biB");
 
-        biA = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
-        biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
+        biA = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
+        biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
         assertEquals(biA, biB, "biA should equal to biB");
 
-        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
-        biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
+        biB = new BitImpl("someNameB2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
         assertNotEquals(biA, biB, "biA shouldn't equal to biB");
 
-        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
-        biB = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
+        biB = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
         assertEquals(biA, biB, "biA should equal to biB");
 
-        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT, List.of());
+        biA = new BitImpl("someNameA2", FIFTY_FIVE, "description", "reference", Status.CURRENT);
 
         // test of getter methods
         assertEquals("someNameA2", biA.getName(), "Incorrect value for qname.");
         assertEquals(Optional.of("description"), biA.getDescription(), "Incorrect value for description.");
         assertEquals(Optional.of("reference"), biA.getReference(), "Incorrect value for reference.");
         assertEquals(Status.CURRENT, biA.getStatus(), "Incorrect value for status.");
-        assertEquals(List.of(), biA.getUnknownSchemaNodes(), "Incorrect value for unknown nodes.");
 
         // test of toString method
         assertEquals("Bit[name=someNameA2, position=55]",

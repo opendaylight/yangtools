@@ -80,7 +80,7 @@ public final class RestrictedTypes {
         return new LengthRestrictedTypeBuilder<>(baseType, qname) {
             @Override
             BinaryTypeDefinition buildType(final @Nullable LengthConstraint constraint) {
-                return new RestrictedBinaryType(getBaseType(), getQName(), getUnknownSchemaNodes(), constraint);
+                return new RestrictedBinaryType(getBaseType(), getQName(), constraint);
             }
 
             @Override
@@ -101,7 +101,7 @@ public final class RestrictedTypes {
         return new AbstractRestrictedTypeBuilder<>(baseType, qname) {
             @Override
             BooleanTypeDefinition buildType() {
-                return new RestrictedBooleanType(getBaseType(), getQName(), getUnknownSchemaNodes());
+                return new RestrictedBooleanType(getBaseType(), getQName());
             }
         };
     }
@@ -111,7 +111,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             DecimalTypeDefinition buildType(final RangeConstraint<@NonNull Decimal64> rangeConstraint) {
-                return new RestrictedDecimalType(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedDecimalType(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -121,7 +121,7 @@ public final class RestrictedTypes {
         return new AbstractRestrictedTypeBuilder<>(baseType, qname) {
             @Override
             EmptyTypeDefinition buildType() {
-                return new RestrictedEmptyType(getBaseType(), getQName(), getUnknownSchemaNodes());
+                return new RestrictedEmptyType(getBaseType(), getQName());
             }
         };
     }
@@ -136,7 +136,7 @@ public final class RestrictedTypes {
         return new AbstractRestrictedTypeBuilder<>(baseType, qname) {
             @Override
             IdentityrefTypeDefinition buildType() {
-                return new RestrictedIdentityrefType(getBaseType(), getQName(), getUnknownSchemaNodes());
+                return new RestrictedIdentityrefType(getBaseType(), getQName());
             }
         };
     }
@@ -155,8 +155,7 @@ public final class RestrictedTypes {
                 if (getRequireInstance() == base.requireInstance()) {
                     return base;
                 }
-                return new RestrictedLeafrefType(getBaseType(), getQName(), getUnknownSchemaNodes(),
-                        getRequireInstance());
+                return new RestrictedLeafrefType(getBaseType(), getQName(), getRequireInstance());
             }
         };
     }
@@ -166,7 +165,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Int8TypeDefinition buildType(final RangeConstraint<Byte> rangeConstraint) {
-                return new RestrictedInt8Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedInt8Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -176,7 +175,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Int16TypeDefinition buildType(final RangeConstraint<Short> rangeConstraint) {
-                return new RestrictedInt16Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedInt16Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -186,7 +185,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Int32TypeDefinition buildType(final RangeConstraint<Integer> rangeConstraint) {
-                return new RestrictedInt32Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedInt32Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -196,7 +195,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Int64TypeDefinition buildType(final RangeConstraint<Long> rangeConstraint) {
-                return new RestrictedInt64Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedInt64Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -210,7 +209,7 @@ public final class RestrictedTypes {
         return new AbstractRestrictedTypeBuilder<>(baseType, qname) {
             @Override
             UnionTypeDefinition buildType() {
-                return new RestrictedUnionType(getBaseType(), getQName(), getUnknownSchemaNodes());
+                return new RestrictedUnionType(getBaseType(), getQName());
             }
         };
     }
@@ -220,7 +219,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Uint8TypeDefinition buildType(final RangeConstraint<@NonNull Uint8> rangeConstraint) {
-                return new RestrictedUint8Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedUint8Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -230,7 +229,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Uint16TypeDefinition buildType(final RangeConstraint<@NonNull Uint16> rangeConstraint) {
-                return new RestrictedUint16Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedUint16Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -240,7 +239,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Uint32TypeDefinition buildType(final RangeConstraint<@NonNull Uint32> rangeConstraint) {
-                return new RestrictedUint32Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedUint32Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }
@@ -250,7 +249,7 @@ public final class RestrictedTypes {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
             Uint64TypeDefinition buildType(final RangeConstraint<@NonNull Uint64> rangeConstraint) {
-                return new RestrictedUint64Type(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
+                return new RestrictedUint64Type(getBaseType(), getQName(), rangeConstraint);
             }
         };
     }

@@ -24,7 +24,7 @@ import java.util.TreeMap
 import java.util.function.Function
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement
 import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext
 import org.opendaylight.yangtools.yang.model.api.Module
@@ -83,7 +83,7 @@ final class YangModuleInfoTemplate {
         this.moduleFilePathResolver = moduleFilePathResolver
         packageName = module.QNameModule.getServicePackageName;
         modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»'''
-        hasYangData = module.unknownSchemaNodes.stream.anyMatch([s | s instanceof YangDataSchemaNode])
+        hasYangData = module.asEffectiveStatement.findFirstEffectiveSubstatement(YangDataEffectiveStatement).present
     }
 
     def String generate() {

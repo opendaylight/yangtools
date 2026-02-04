@@ -23,12 +23,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeSet;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -42,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 public abstract class AbstractSchemaContext implements SchemaContext {
     /**
@@ -85,7 +81,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     // Accessed via DERIVED_IDENTITIES
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> derivedIdentities = null;
 
@@ -112,43 +107,43 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public Collection<? extends DataSchemaNode> getDataDefinitions() {
-        final Set<DataSchemaNode> dataDefs = new HashSet<>();
-        for (Module m : getModules()) {
-            dataDefs.addAll(m.getChildNodes());
+        final var dataDefs = new HashSet<DataSchemaNode>();
+        for (var module : getModules()) {
+            dataDefs.addAll(module.getChildNodes());
         }
         return dataDefs;
     }
 
     @Override
     public Collection<? extends NotificationDefinition> getNotifications() {
-        final Set<NotificationDefinition> notifications = new HashSet<>();
-        for (Module m : getModules()) {
-            notifications.addAll(m.getNotifications());
+        final var notifications = new HashSet<NotificationDefinition>();
+        for (var module : getModules()) {
+            notifications.addAll(module.getNotifications());
         }
         return notifications;
     }
 
     @Override
     public Collection<? extends RpcDefinition> getOperations() {
-        final Set<RpcDefinition> rpcs = new HashSet<>();
-        for (Module m : getModules()) {
-            rpcs.addAll(m.getRpcs());
+        final var rpcs = new HashSet<RpcDefinition>();
+        for (var module : getModules()) {
+            rpcs.addAll(module.getRpcs());
         }
         return rpcs;
     }
 
     @Override
     public Collection<? extends ExtensionDefinition> getExtensions() {
-        final Set<ExtensionDefinition> extensions = new HashSet<>();
-        for (Module m : getModules()) {
-            extensions.addAll(m.getExtensionSchemaNodes());
+        final var extensions = new HashSet<ExtensionDefinition>();
+        for (var module : getModules()) {
+            extensions.addAll(module.getExtensionSchemaNodes());
         }
         return extensions;
     }
 
     @Override
     public Optional<? extends Module> findModule(final String name, final Optional<Revision> revision) {
-        for (final Module module : getNameToModules().get(name)) {
+        for (var module : getNameToModules().get(name)) {
             if (revision.equals(module.getRevision())) {
                 return Optional.of(module);
             }
@@ -173,18 +168,9 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
-        final List<UnknownSchemaNode> result = new ArrayList<>();
-        for (Module module : getModules()) {
-            result.addAll(module.getUnknownSchemaNodes());
-        }
-        return Collections.unmodifiableList(result);
-    }
-
-    @Override
     public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
-        final Set<TypeDefinition<?>> result = new LinkedHashSet<>();
-        for (Module module : getModules()) {
+        final var result = new LinkedHashSet<TypeDefinition<?>>();
+        for (var module : getModules()) {
             result.addAll(module.getTypeDefinitions());
         }
         return Collections.unmodifiableSet(result);
@@ -192,8 +178,8 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public Collection<? extends DataSchemaNode> getChildNodes() {
-        final Set<DataSchemaNode> result = new LinkedHashSet<>();
-        for (Module module : getModules()) {
+        final var result = new LinkedHashSet<DataSchemaNode>();
+        for (var module : getModules()) {
             result.addAll(module.getChildNodes());
         }
         return Collections.unmodifiableSet(result);
@@ -201,8 +187,8 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public Collection<? extends GroupingDefinition> getGroupings() {
-        final Set<GroupingDefinition> result = new LinkedHashSet<>();
-        for (Module module : getModules()) {
+        final var result = new LinkedHashSet<GroupingDefinition>();
+        for (var module : getModules()) {
             result.addAll(module.getGroupings());
         }
         return Collections.unmodifiableSet(result);
@@ -211,8 +197,8 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     @Override
     public DataSchemaNode dataChildByName(final QName name) {
         requireNonNull(name);
-        for (Module module : getModules()) {
-            final DataSchemaNode result = module.dataChildByName(name);
+        for (var module : getModules()) {
+            final var result = module.dataChildByName(name);
             if (result != null) {
                 return result;
             }
@@ -222,13 +208,12 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public Collection<? extends IdentitySchemaNode> getDerivedIdentities(final IdentitySchemaNode identity) {
-        ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> local =
-                (ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>>)
-                DERIVED_IDENTITIES.getAcquire(this);
+        var local = (ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>>)
+            DERIVED_IDENTITIES.getAcquire(this);
         if (local == null) {
             local = loadDerivedIdentities();
         }
-        final ImmutableSet<IdentitySchemaNode> result = local.get(requireNonNull(identity));
+        final var result = local.get(requireNonNull(identity));
         if (result == null) {
             throw new IllegalArgumentException("Identity " + identity + " not found");
         }
@@ -238,25 +223,25 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     private ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> loadDerivedIdentities() {
         final SetMultimap<IdentitySchemaNode, IdentitySchemaNode> tmp =
                 Multimaps.newSetMultimap(new HashMap<>(), HashSet::new);
-        final List<IdentitySchemaNode> identities = new ArrayList<>();
-        for (Module module : getModules()) {
-            final Collection<? extends @NonNull IdentitySchemaNode> ids = module.getIdentities();
-            for (IdentitySchemaNode identity : ids) {
-                for (IdentitySchemaNode base : identity.getBaseIdentities()) {
+        final var identities = new ArrayList<IdentitySchemaNode>();
+        for (var module : getModules()) {
+            final var ids = module.getIdentities();
+            for (var identity : ids) {
+                for (var base : identity.getBaseIdentities()) {
                     tmp.put(base, identity);
                 }
             }
             identities.addAll(ids);
         }
 
-        final ImmutableMap.Builder<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> builder =
-                ImmutableMap.builderWithExpectedSize(identities.size());
-        for (IdentitySchemaNode identity : identities) {
+        final var builder = ImmutableMap.<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>>builderWithExpectedSize(
+            identities.size());
+        for (var identity : identities) {
             builder.put(identity, ImmutableSet.copyOf(tmp.get(identity)));
         }
 
-        final ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>> result = builder.build();
-        final Object witness = DERIVED_IDENTITIES.compareAndExchangeRelease(this, null, result);
+        final var result = builder.build();
+        final var witness = DERIVED_IDENTITIES.compareAndExchangeRelease(this, null, result);
         return witness == null ? result : (ImmutableMap<IdentitySchemaNode, ImmutableSet<IdentitySchemaNode>>) witness;
     }
 }
