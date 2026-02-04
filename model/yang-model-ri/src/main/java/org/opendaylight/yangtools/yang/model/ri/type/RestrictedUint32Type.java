@@ -7,20 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
 final class RestrictedUint32Type extends AbstractRangeRestrictedType<Uint32TypeDefinition, Uint32>
         implements Uint32TypeDefinition {
     RestrictedUint32Type(final Uint32TypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<Uint32> rangeConstraint) {
-        super(baseType, qname, unknownSchemaNodes, rangeConstraint);
+        super(baseType, qname, rangeConstraint);
     }
 
     @Override

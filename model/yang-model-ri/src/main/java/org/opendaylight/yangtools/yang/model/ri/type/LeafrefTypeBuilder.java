@@ -30,6 +30,6 @@ public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuild
 
     @Override
     LeafrefTypeDefinition buildType() {
-        return new BaseLeafrefType(getQName(), pathStatement, getRequireInstance(), getUnknownSchemaNodes());
+        return new BaseLeafrefType(getQName(), pathStatement, getRequireInstance());
     }
 }

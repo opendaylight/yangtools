@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
@@ -405,7 +404,7 @@ class TypeTest {
     @Test
     void exceptionTest() {
         final var enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
-                .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();
+                .setReference("reference").build();
 
         final var rangeset = ImmutableRangeSet.of(Range.closed(1, 2));
         final var invalidRangeConstraintException = new InvalidRangeConstraintException(
@@ -438,11 +437,10 @@ class TypeTest {
 
     @Test
     void invalidEnumDefinitionExceptionTest() {
-        final var unknown = mock(UnknownSchemaNode.class);
         final var enumPair1 = EnumPairBuilder.create("enum1", 1).setDescription("description")
-                .setReference("reference").setUnknownSchemaNodes(unknown).build();
+                .setReference("reference").build();
         final var enumPair2 = EnumPairBuilder.create("enum", 1).setDescription("description")
-                .setReference("reference").setUnknownSchemaNodes(unknown).build();
+                .setReference("reference").build();
         final var enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(Q_NAME);
         enumerationTypeBuilder.addEnum(enumPair1);
         enumerationTypeBuilder.addEnum(enumPair2);

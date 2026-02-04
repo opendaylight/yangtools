@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -25,12 +24,6 @@ final class TypeEffectiveStatementImpl<T extends TypeDefinition<T>>
     TypeEffectiveStatementImpl(final @NonNull TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final TypeBuilder<T> builder) {
         super(declared, substatements);
-
-        for (var stmt : substatements) {
-            if (stmt instanceof UnknownSchemaNode unknown) {
-                builder.addUnknownSchemaNode(unknown);
-            }
-        }
         typeDefinition = builder.build();
     }
 

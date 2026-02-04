@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 final class RestrictedInt8Type extends AbstractRangeRestrictedType<Int8TypeDefinition, Byte>
         implements Int8TypeDefinition {
     RestrictedInt8Type(final Int8TypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<Byte> rangeConstraint) {
-        super(baseType, qname, unknownSchemaNodes, rangeConstraint);
+        super(baseType, qname, rangeConstraint);
     }
 
     @Override
