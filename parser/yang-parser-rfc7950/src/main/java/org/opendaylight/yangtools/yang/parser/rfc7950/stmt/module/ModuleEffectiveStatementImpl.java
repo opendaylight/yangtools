@@ -18,6 +18,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
+import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -36,15 +38,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class ModuleEffectiveStatementImpl
         extends AbstractEffectiveModule<@NonNull ModuleStatement, ModuleEffectiveStatement>
-        implements Module, ModuleEffectiveStatement {
+        implements Module, ModuleEffectiveStatement, AnnotationEffectiveStatement.Index {
     private final ImmutableMap<Unqualified, SubmoduleEffectiveStatement> nameToSubmodule;
     private final ImmutableMap<QName, ExtensionEffectiveStatement> qnameToExtension;
     private final ImmutableMap<QName, FeatureEffectiveStatement> qnameToFeature;
     private final ImmutableMap<QName, IdentityEffectiveStatement> qnameToIdentity;
     private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
+    private final ImmutableMap<AnnotationName, AnnotationEffectiveStatement> annotations;
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
-    private final @NonNull QNameModule qnameModule;
     private final ImmutableList<Submodule> submodules;
+    private final @NonNull QNameModule qnameModule;
 
     ModuleEffectiveStatementImpl(final Current<Unqualified, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
@@ -72,18 +75,14 @@ final class ModuleEffectiveStatementImpl
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
 
-        qnameToExtension = substatements.stream()
-            .filter(ExtensionEffectiveStatement.class::isInstance)
-            .map(ExtensionEffectiveStatement.class::cast)
+        qnameToExtension = streamEffectiveSubstatements(ExtensionEffectiveStatement.class)
             .collect(ImmutableMap.toImmutableMap(ExtensionEffectiveStatement::argument, Function.identity()));
-        qnameToFeature = substatements.stream()
-            .filter(FeatureEffectiveStatement.class::isInstance)
-            .map(FeatureEffectiveStatement.class::cast)
+        qnameToFeature = streamEffectiveSubstatements(FeatureEffectiveStatement.class)
             .collect(ImmutableMap.toImmutableMap(FeatureEffectiveStatement::argument, Function.identity()));
-        qnameToIdentity = substatements.stream()
-            .filter(IdentityEffectiveStatement.class::isInstance)
-            .map(IdentityEffectiveStatement.class::cast)
+        qnameToIdentity = streamEffectiveSubstatements(IdentityEffectiveStatement.class)
             .collect(ImmutableMap.toImmutableMap(IdentityEffectiveStatement::argument, Function.identity()));
+        annotations = streamEffectiveSubstatements(AnnotationEffectiveStatement.class)
+            .collect(ImmutableMap.toImmutableMap(AnnotationEffectiveStatement::argument, Function.identity()));
     }
 
     @Override
@@ -170,5 +169,10 @@ final class ModuleEffectiveStatementImpl
     @Override
     public Optional<SubmoduleEffectiveStatement> findSubmodule(final Unqualified submoduleName) {
         return findValue(nameToSubmodule, submoduleName);
+    }
+
+    @Override
+    public AnnotationEffectiveStatement lookupAnnotation(final AnnotationName name) {
+        return annotations.get(requireNonNull(name));
     }
 }

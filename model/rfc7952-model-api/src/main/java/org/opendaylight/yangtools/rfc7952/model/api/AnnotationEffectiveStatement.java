@@ -8,7 +8,10 @@
 package org.opendaylight.yangtools.rfc7952.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
@@ -19,6 +22,46 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  */
 public interface AnnotationEffectiveStatement
         extends UnknownEffectiveStatement<AnnotationName, @NonNull AnnotationStatement>, TypeDefinitionAware {
+    /**
+     * An entity capable of finding {@link AnnotationEffectiveStatement}s.
+     */
+    @NonNullByDefault
+    interface Index {
+        /**
+         * {@return the {@code AnnotationEffectiveStatement} with specified name, or {@code null} if not present}
+         * @param name the {@link AnnotationName}
+         */
+        @Nullable AnnotationEffectiveStatement lookupAnnotation(AnnotationName name);
+    }
+
+    /**
+     * {@return {@link AnnotationEffectiveStatement} corresponding to specified name, or {@code null} if not found}
+     * @param modelContext to {@link EffectiveModelContext} to search
+     * @param name the {@link AnnotationName} to look for
+     */
+    @NonNullByDefault
+    static @Nullable AnnotationEffectiveStatement lookupIn(final EffectiveModelContext modelContext,
+            final AnnotationName name) {
+        return modelContext instanceof Index index ? index.lookupAnnotation(name) : searchIn(modelContext, name);
+    }
+
+    private static @Nullable AnnotationEffectiveStatement searchIn(final @NonNull EffectiveModelContext modelContext,
+            final @NonNull AnnotationName name) {
+        final var module = modelContext.lookupModule(name.qname().getModule());
+        return switch (module) {
+            case null -> null;
+            case Index index -> index.lookupAnnotation(name);
+            default -> {
+                for (var stmt : module.filterEffectiveStatements(AnnotationEffectiveStatement.class)) {
+                    if (name.equals(stmt.argument())) {
+                        yield stmt;
+                    }
+                }
+                yield null;
+            }
+        };
+    }
+
     @Override
     default StatementDefinition<AnnotationName, @NonNull AnnotationStatement, ?> statementDefinition() {
         return AnnotationStatement.DEF;

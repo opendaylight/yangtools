@@ -38,7 +38,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
-import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
@@ -358,16 +358,16 @@ public final class XmlParserStream implements Closeable, Flushable {
             }
 
             // Cross-relate attribute namespace to the module
-            final Optional<QNameModule> optModule = resolveXmlNamespace(attributeNS);
+            final var optModule = resolveXmlNamespace(attributeNS);
             if (optModule.isPresent()) {
-                final QName qname = QName.create(optModule.orElseThrow(), localName);
-                final var optAnnotation = AnnotationSchemaNode.find(codecs.modelContext(),
+                final var qname = QName.create(optModule.orElseThrow(), localName);
+                final var annotation = AnnotationEffectiveStatement.lookupIn(codecs.modelContext(),
                     new AnnotationName(qname));
-                if (optAnnotation.isPresent()) {
-                    final AnnotationSchemaNode schema = optAnnotation.orElseThrow();
-                    final Object value = codecs.codecFor(schema, stack)
+
+                if (annotation != null) {
+                    final var value = codecs.codecFor(annotation, stack)
                         .parseValue(in.getNamespaceContext(), attrValue);
-                    attributes.put(schema.getQName(), value);
+                    attributes.put(qname, value);
                     continue;
                 }
 
