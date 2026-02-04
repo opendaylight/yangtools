@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.data.util.context;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
 public final class YangDataContext extends AbstractCompositeContext {
-    public YangDataContext(@NonNull YangDataSchemaNode schema) {
-        super(null, schema, schema.toContainerLike());
+    public YangDataContext(final @NonNull YangDataEffectiveStatement stmt) {
+        super(null, stmt.toDataNodeContainer(), stmt.toDataSchemaNode());
     }
 }
