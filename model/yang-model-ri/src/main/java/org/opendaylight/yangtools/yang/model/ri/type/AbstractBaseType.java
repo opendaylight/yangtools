@@ -7,21 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     AbstractBaseType(final QName qname) {
-        this(qname, ImmutableList.of());
-    }
-
-    AbstractBaseType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(qname, unknownSchemaNodes);
+        super(qname);
     }
 
     @Override

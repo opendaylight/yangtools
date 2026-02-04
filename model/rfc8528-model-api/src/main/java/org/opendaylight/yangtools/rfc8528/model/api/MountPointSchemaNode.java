@@ -8,10 +8,6 @@
 package org.opendaylight.yangtools.rfc8528.model.api;
 
 import com.google.common.annotations.Beta;
-import java.util.stream.Stream;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -20,32 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  */
 @Beta
 public interface MountPointSchemaNode extends UnknownSchemaNode {
-    /**
-     * Find all mount points defined in a {@link ContainerSchemaNode}.
-     *
-     * @param schema ContainerSchemaNode to search
-     * @return {@link MountPointSchemaNode}s defined the ContainerSchemaNode.
-     * @throws NullPointerException if context is null
-     */
-    static @NonNull Stream<MountPointSchemaNode> streamAll(final ContainerSchemaNode schema) {
-        return schema.getUnknownSchemaNodes().stream()
-                .filter(MountPointSchemaNode.class::isInstance)
-                .map(MountPointSchemaNode.class::cast);
-    }
-
-    /**
-     * Find all mount points defined in a {@link ListSchemaNode}.
-     *
-     * @param schema ListSchemaNode to search
-     * @return {@link MountPointSchemaNode}s defined the ListSchemaNode.
-     * @throws NullPointerException if context is null
-     */
-    static @NonNull Stream<MountPointSchemaNode> streamAll(final ListSchemaNode schema) {
-        return schema.getUnknownSchemaNodes().stream()
-                .filter(MountPointSchemaNode.class::isInstance)
-                .map(MountPointSchemaNode.class::cast);
-    }
-
     @Override
     MountPointEffectiveStatement asEffectiveStatement();
 }

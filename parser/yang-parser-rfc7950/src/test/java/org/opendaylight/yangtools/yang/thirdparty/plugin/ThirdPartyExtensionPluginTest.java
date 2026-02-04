@@ -10,13 +10,9 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import java.util.Collection;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -37,17 +33,17 @@ class ThirdPartyExtensionPluginTest {
             .newBuild();
         reactor.addSource(StmtTestUtils.sourceForResource("/plugin-test/foo.yang"));
 
-        final EffectiveModelContext schema = reactor.buildEffective();
-        final DataSchemaNode dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));
+        final var schema = reactor.buildEffective();
+        final var dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));
 
-        final ContainerSchemaNode root = assertInstanceOf(ContainerSchemaNode.class, dataChildByName);
+        final var root = assertInstanceOf(ContainerSchemaNode.class, dataChildByName);
 
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
-        assertEquals(1, unknownSchemaNodes.size());
+        final var allThirdParty = root.asEffectiveStatement()
+            .collectEffectiveSubstatements(ThirdPartyExtensionEffectiveStatement.class);
+        assertEquals(1, allThirdParty.size());
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        final ThirdPartyExtensionEffectiveStatement thirdPartyExtensionStmt =
-            assertInstanceOf(ThirdPartyExtensionEffectiveStatement.class, unknownSchemaNode);
+        final var thirdPartyExtensionStmt =
+            assertInstanceOf(ThirdPartyExtensionEffectiveStatement.class, allThirdParty.iterator().next());
         assertEquals("Third-party namespace test.", thirdPartyExtensionStmt.getValueFromNamespace());
         assertEquals("plugin test", thirdPartyExtensionStmt.argument());
     }

@@ -40,7 +40,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -537,17 +537,19 @@ public final class XmlParserStream implements Closeable, Flushable {
                         // Parent can potentially hold a mount point, let's see if there is a label present. We
                         // explicitly unmask Optional to null so as to not to lead us on to functional programming,
                         // because ...
-                        final var mount = switch (parentSchema) {
-                            case ContainerSchemaNode container ->
-                                MountPointSchemaNode.streamAll(container).findFirst().orElse(null);
-                            case ListSchemaNode list -> MountPointSchemaNode.streamAll(list).findFirst().orElse(null);
+                        final var label = switch (parentSchema) {
+                            case ContainerSchemaNode container -> container.asEffectiveStatement()
+                                .findFirstEffectiveSubstatementArgument(MountPointEffectiveStatement.class)
+                                .orElse(null);
+                            case ListSchemaNode list -> list.asEffectiveStatement()
+                                .findFirstEffectiveSubstatementArgument(MountPointEffectiveStatement.class)
+                                .orElse(null);
                             case ContainerLike containerLike -> null;
                             default -> throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema,
                                 in.getLocation());
                         };
 
-                        if (mount != null) {
-                            final var label = mount.asEffectiveStatement().argument();
+                        if (label != null) {
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
                                 nsUri, label);
 

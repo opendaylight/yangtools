@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.spi;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -20,13 +18,9 @@ import com.google.common.collect.SetMultimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
-import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNodeAwareSchemaContext;
-import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -37,12 +31,11 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  * any extensive analysis to ensure the resulting object complies to SchemaContext interface.
  */
 @Beta
-public class SimpleSchemaContext extends AbstractSchemaContext implements AnnotationSchemaNodeAwareSchemaContext {
+public class SimpleSchemaContext extends AbstractSchemaContext {
     private final ImmutableSetMultimap<XMLNamespace, Module> namespaceToModules;
     private final ImmutableSetMultimap<String, Module> nameToModules;
     private final ImmutableMap<QNameModule, Module> moduleMap;
     private final ImmutableSet<Module> modules;
-    private final ImmutableMap<AnnotationName, AnnotationSchemaNode> annotations;
 
     protected SimpleSchemaContext(final Collection<? extends @NonNull Module> modules) {
         /*
@@ -78,7 +71,6 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
         moduleMap = moduleMapBuilder.build();
-        annotations = ImmutableMap.copyOf(AnnotationSchemaNode.findAll(this));
     }
 
     /**
@@ -92,11 +84,6 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
     @Override
     public final Set<Module> getModules() {
         return modules;
-    }
-
-    @Override
-    public final Optional<AnnotationSchemaNode> findAnnotation(final AnnotationName qname) {
-        return Optional.ofNullable(annotations.get(requireNonNull(qname)));
     }
 
     @Override

@@ -46,7 +46,6 @@ class BitsTypeTest {
         assertNull(bitsType.getBaseType(), "BaseType should be null");
         assertEquals(Optional.empty(), bitsType.getDefaultValue());
         assertEquals(Status.CURRENT, bitsType.getStatus(), "Status should be CURRENT");
-        assertEquals(List.of(), bitsType.getUnknownSchemaNodes(), "Should be empty list");
         assertEquals(List.of(bit), bitsType.getBits(), "Values should be [enumPair]");
 
         assertEquals(bitsType.hashCode(), bitsType.hashCode(), "Hash code of bitsType should be equal");

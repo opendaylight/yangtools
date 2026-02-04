@@ -10,21 +10,18 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefinition>
         implements IdentityrefTypeDefinition {
     private final @NonNull ImmutableSet<@NonNull IdentitySchemaNode> identities;
 
-    BaseIdentityrefType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
-            final ImmutableSet<@NonNull IdentitySchemaNode> identities) {
-        super(qname, unknownSchemaNodes);
+    BaseIdentityrefType(final QName qname, final ImmutableSet<@NonNull IdentitySchemaNode> identities) {
+        super(qname);
         this.identities = requireNonNull(identities);
     }
 

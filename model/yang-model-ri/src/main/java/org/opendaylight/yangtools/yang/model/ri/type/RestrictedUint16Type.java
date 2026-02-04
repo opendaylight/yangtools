@@ -7,20 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint16;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 
 final class RestrictedUint16Type extends AbstractRangeRestrictedType<Uint16TypeDefinition, Uint16>
         implements Uint16TypeDefinition {
     RestrictedUint16Type(final Uint16TypeDefinition baseType, final QName qname,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<Uint16> rangeConstraint) {
-        super(baseType, qname, unknownSchemaNodes, rangeConstraint);
+        super(baseType, qname, rangeConstraint);
     }
 
     @Override

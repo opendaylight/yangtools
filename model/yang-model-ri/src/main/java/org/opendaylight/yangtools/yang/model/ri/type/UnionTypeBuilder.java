@@ -27,6 +27,6 @@ public final class UnionTypeBuilder extends TypeBuilder<UnionTypeDefinition> {
 
     @Override
     public UnionTypeDefinition build() {
-        return new BaseUnionType(getQName(), getUnknownSchemaNodes(), builder.build());
+        return new BaseUnionType(getQName(), builder.build());
     }
 }
