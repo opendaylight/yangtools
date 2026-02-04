@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
@@ -158,16 +157,12 @@ final class ResolvedSourceBuilder {
     private QNameModule resolveQnameModule() {
         if (sourceInfo instanceof SourceInfo.Module moduleInfo) {
             // FIXME: separate subclass with eager instantiation and interned
-            return QNameModule.ofRevision(moduleInfo.namespace(), latestRevision());
+            return QNameModule.ofRevision(moduleInfo.namespace(), sourceInfo.latestRevision());
         }
         // Submodule's QNameModule is composed of parents Namespace + its own Revision (or null, if absent)
         verifyNotNull(belongsTo, "Cannot resolve QNameModule of a submodule %s. Missing belongs-to",
             sourceInfo.sourceId());
-        return QNameModule.ofRevision(belongsTo.parentModuleQname().namespace(), latestRevision());
-    }
-
-    private Revision latestRevision() {
-        return sourceInfo.revisions().isEmpty() ? null : sourceInfo.revisions().iterator().next();
+        return QNameModule.ofRevision(belongsTo.parentModuleQname().namespace(), sourceInfo.latestRevision());
     }
 
     private void ensureBuilderOpened() {
