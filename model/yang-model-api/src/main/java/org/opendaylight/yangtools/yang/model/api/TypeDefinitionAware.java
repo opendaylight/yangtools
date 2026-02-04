@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 
 /**
  * Interface indicating an entity which acts as a holder of a {@link TypeDefinition}.
  */
-public interface TypeDefinitionAware {
+public sealed interface TypeDefinitionAware permits TypedDataSchemaNode, TypeDefinitionCompat {
     /**
      * {@return the effective {@link QNameModule} of this statement}
      */

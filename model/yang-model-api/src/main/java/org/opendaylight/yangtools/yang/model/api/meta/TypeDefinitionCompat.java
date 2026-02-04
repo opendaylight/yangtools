@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
  * Interface indicating an entity which acts as a holder of a {@link TypeDefinition}.
  */
 @NonNullByDefault
-public interface TypeDefinitionCompat<A, D extends DeclaredStatement<A>>
+public non-sealed interface TypeDefinitionCompat<A, D extends DeclaredStatement<A>>
     extends EffectiveStatement<A, D>, TypeDefinitionAware {
     // Nothing else
 }
