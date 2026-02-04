@@ -17,51 +17,43 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-final class YangDataEffectiveStatementImpl
-        extends AbstractEffectiveUnknownSchmemaNode<YangDataName, @NonNull YangDataStatement>
-        implements YangDataEffectiveStatement, YangDataSchemaNode,
-                   DataNodeContainerMixin<YangDataName, @NonNull YangDataStatement> {
-    private final DataSchemaNode child;
+final class YangDataEffectiveStatementImpl extends WithSubstatements<YangDataName, @NonNull YangDataStatement>
+        implements YangDataEffectiveStatement, DataNodeContainerMixin<YangDataName, @NonNull YangDataStatement> {
+    private final @NonNull DataSchemaNode child;
 
-    YangDataEffectiveStatementImpl(final Current<YangDataName, YangDataStatement> stmt,
+    YangDataEffectiveStatementImpl(final @NonNull YangDataStatement declared,
              final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
              final DataSchemaNode child) {
-        super(stmt.declared(), stmt.getArgument(), stmt.history(), substatements);
+        super(declared, substatements);
         this.child = requireNonNull(child);
     }
 
     @Override
-    public YangDataName name() {
-        return argument();
+    public DataNodeContainer toDataNodeContainer() {
+        return this;
     }
 
     @Override
-    public QName getQName() {
-        return child.getQName();
+    public DataSchemaNode toDataSchemaNode() {
+        return new CompatDataSchemaNode(this);
     }
 
     @Override
     public @Nullable DataSchemaNode dataChildByName(final @Nullable QName name) {
         // FIXME: dataChildByName() should be fixed
         return requireNonNull(name).equals(child.getQName()) ? child : null;
-    }
-
-    @Override
-    public YangDataEffectiveStatement asEffectiveStatement() {
-        return this;
     }
 
     @Override
