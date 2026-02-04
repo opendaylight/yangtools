@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
-import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
+import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
+import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMConstants;
 import org.opendaylight.yangtools.rfc6536.parser.dagger.Rfc6536Module;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -41,8 +42,9 @@ class NACMTest {
             .buildEffective();
 
         final var module = context.findModule(NACMConstants.RFC6536_MODULE).orElseThrow();
-        final var nacm = module.getDataChildByName(QName.create(NACMConstants.RFC6536_MODULE, "nacm"));
-        assertTrue(DefaultDenyAllSchemaNode.findIn(nacm).isPresent());
-        assertFalse(DefaultDenyWriteSchemaNode.findIn(nacm).isPresent());
+        final var nacm = assertInstanceOf(ContainerSchemaNode.class,
+            module.dataChildByName(QName.create(NACMConstants.RFC6536_MODULE, "nacm"))).asEffectiveStatement();
+        assertThat(nacm.findFirstEffectiveSubstatement(DefaultDenyAllEffectiveStatement.class)).isPresent();
+        assertThat(nacm.findFirstEffectiveSubstatement(DefaultDenyWriteEffectiveStatement.class)).isEmpty();
     }
 }
