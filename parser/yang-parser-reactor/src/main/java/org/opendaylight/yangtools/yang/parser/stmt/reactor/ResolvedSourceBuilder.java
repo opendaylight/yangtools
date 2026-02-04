@@ -136,7 +136,7 @@ final class ResolvedSourceBuilder {
                 throw new IllegalStateException("Unresolved import %s of module %s".formatted(
                     importedModule.sourceId(), sourceId()));
             }
-            result.add(new ResolvedImport(entry.getKey(), resolved.sourceId(), resolved.qnameModule()));
+            result.add(new ResolvedImport(entry.getKey(), resolved.sourceInfo().sourceId(), resolved.qnameModule()));
         }
 
         return result;
