@@ -53,6 +53,6 @@ final class OidStatementSupport
     @Override
     protected OidEffectiveStatement createEffective(final Current<ObjectIdentifier, OidStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OidEffectiveStatementImpl(stmt, substatements);
+        return new OidEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

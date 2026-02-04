@@ -6,7 +6,8 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG metamodel extensions to support OpenDaylight extensions as defined in yang-ext.yang.
+ * YANG metamodel extensions to support OpenDaylight extensions as defined in {@code yang-ext.yang} and
+ * {@code odl-codegen-extensions.yang}.
  */
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.odlext.model.api;

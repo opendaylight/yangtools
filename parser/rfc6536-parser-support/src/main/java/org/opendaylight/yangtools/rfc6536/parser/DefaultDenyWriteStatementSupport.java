@@ -56,6 +56,6 @@ public final class DefaultDenyWriteStatementSupport
     @Override
     protected DefaultDenyWriteEffectiveStatement createEffective(final Current<Empty, DefaultDenyWriteStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DefaultDenyWriteEffectiveStatementImpl(stmt, substatements);
+        return new DefaultDenyWriteEffectiveStatementImpl(stmt.declared(), substatements);
     }
 }

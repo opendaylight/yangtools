@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+/**
+ * The effective representation of {@code subscription-state-notification} extension.
+ */
 public interface SubscriptionStateNotificationEffectiveStatement
         extends EffectiveStatement<Empty, @NonNull SubscriptionStateNotificationStatement> {
     @Override
