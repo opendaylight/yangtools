@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -85,7 +85,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                 case DataSchemaNode data -> data;
                 case OperationDefinition oper -> oper.toContainerLike();
                 case NotificationDefinition notif -> notif.toContainerLike();
-                case YangDataSchemaNode yangData -> yangData.toContainerLike();
+                case YangDataEffectiveStatement yangData -> yangData.toDataSchemaNode();
                 default -> throw new IllegalArgumentException("Illegal parent node " + parent);
             };
         } else {
