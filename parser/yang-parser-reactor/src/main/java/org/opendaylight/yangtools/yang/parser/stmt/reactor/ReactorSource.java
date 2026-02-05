@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
@@ -43,5 +44,16 @@ record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
     SourceSpecificContext toSourceContext() {
         return new SourceSpecificContext.Builder(global, sourceInfo)
             .build(streamFactory.newStreamSource(source, sourceInfo.yangVersion()));
+    }
+
+    // Note: equality overridden to identity for predictable use as a Map key
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(this);
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return this == obj;
     }
 }

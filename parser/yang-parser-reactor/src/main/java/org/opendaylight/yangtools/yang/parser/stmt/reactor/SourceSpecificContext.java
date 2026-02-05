@@ -52,7 +52,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSource.Stage {
+final class SourceSpecificContext implements NamespaceStorage, Mutable {
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -156,11 +156,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
         this.streamSource = requireNonNull(streamSource);
-    }
-
-    @Override
-    public SourceIdentifier sourceId() {
-        return sourceInfo.sourceId();
     }
 
     @NonNull BuildGlobalContext globalContext() {

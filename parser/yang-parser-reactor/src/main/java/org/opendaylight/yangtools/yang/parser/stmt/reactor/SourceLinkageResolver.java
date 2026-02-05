@@ -69,11 +69,10 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
-    private final List<SourceSpecificContext> mainSources = new ArrayList<>();
-    private final List<SourceSpecificContext> libSources = new ArrayList<>();
+    private final List<ReactorSource<?>> mainSources = new ArrayList<>();
+    private final List<ReactorSource<?>> libSources = new ArrayList<>();
 
-    private final Map<SourceIdentifier, SourceInfo> allSources = new HashMap<>();
-    private final Map<SourceIdentifier, SourceSpecificContext> allContexts = new HashMap<>();
+    private final Map<SourceIdentifier, ReactorSource<?>> allSources = new HashMap<>();
 
     /**
      * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
@@ -100,8 +99,9 @@ public final class SourceLinkageResolver {
     private final Map<ResolvedSourceBuilder, Set<SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     private SourceLinkageResolver(
-            final @NonNull Collection<SourceSpecificContext> withMainSources,
-            final @NonNull Collection<SourceSpecificContext> withLibSources) {
+            final @NonNull Collection<ReactorSource<?>> withMainSources,
+            // FIXME: this forces libSource materialzation -- we want to do that lazily
+            final @NonNull Collection<ReactorSource<?>> withLibSources) {
         mainSources.addAll(requireNonNull(withMainSources));
         libSources.addAll(requireNonNull(withLibSources));
     }
@@ -122,18 +122,18 @@ public final class SourceLinkageResolver {
         return new SourceLinkageResolver(initializeSources(mainSources), initializeSources(libSources));
     }
 
-    private static @NonNull Collection<SourceSpecificContext> initializeSources(
-            final @NonNull Collection<BuildSource<?>> sourcesToInitialize)
-                    throws ReactorException, SourceSyntaxException {
-        final var contexts = new HashSet<SourceSpecificContext>();
-        for (final var buildSource : sourcesToInitialize) {
-            final SourceSpecificContext context;
+    @NonNullByDefault
+    private static Collection<ReactorSource<?>> initializeSources(final Collection<BuildSource<?>> buildSources)
+            throws ReactorException, SourceSyntaxException {
+        final var contexts = new HashSet<ReactorSource<?>>();
+        for (final var buildSource : buildSources) {
+            final ReactorSource<?> reactorSource;
             try {
-                context = buildSource.ensureSourceContext();
+                reactorSource = buildSource.ensureReactorSource();
             } catch (IOException e) {
                 throw new SomeModifiersUnresolvedException(ModelProcessingPhase.INIT, buildSource.sourceId(), e);
             }
-            contexts.add(context);
+            contexts.add(reactorSource);
         }
         return contexts;
     }
@@ -157,29 +157,29 @@ public final class SourceLinkageResolver {
         tryResolveBelongsTo();
         tryResolveSiblings();
 
-        final var allResolved = new LinkedHashMap<SourceSpecificContext, ResolvedSourceInfo>(involvedSourcesMap.size());
-        for (final Map.Entry<SourceIdentifier, ResolvedSourceBuilder> involvedSource : involvedSourcesMap.entrySet()) {
-            final ResolvedSourceInfo fullyResolved = involvedSource.getValue().build(allResolved);
-            allResolved.put(involvedSource.getValue().context(), fullyResolved);
+        final var allResolved = new LinkedHashMap<ReactorSource<?>, ResolvedSourceInfo>(involvedSourcesMap.size());
+        for (var involvedSource : involvedSourcesMap.entrySet()) {
+            final var fullyResolved = involvedSource.getValue().build(allResolved);
+            allResolved.put(involvedSource.getValue().reactorSource(), fullyResolved);
         }
 
         return allResolved.entrySet().stream()
-            .map(entry -> new ResolvedSourceContext(entry.getKey(), entry.getValue()))
+            .map(entry -> new ResolvedSourceContext(entry.getKey().toSourceContext(), entry.getValue()))
             .toList();
     }
 
     private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
-        for (var source : allSources.entrySet()) {
-            if (source.getValue() instanceof SourceInfo.Submodule submoduleInfo) {
+        for (var source : allSources.values()) {
+            if (source.sourceInfo() instanceof SourceInfo.Submodule submoduleInfo) {
                 final var belongsTo = submoduleInfo.belongsTo();
                 final var parentName = belongsTo.name();
                 final var parentId = findSatisfied(allSourcesMapped.get(parentName), belongsTo);
+                final var submoduleId = source.sourceId();
                 if (parentId != null) {
-                    submoduleToParentMap.put(source.getKey(), parentId);
+                    submoduleToParentMap.put(submoduleId, parentId);
                     continue;
                 }
 
-                final var submoduleId = source.getKey();
                 throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, submoduleId,
                     new InferenceException(refOf(submoduleId, belongsTo.sourceRef()),
                         "Module %s from belongs-to was not found", parentName.getLocalName()));
@@ -187,13 +187,12 @@ public final class SourceLinkageResolver {
         }
     }
 
-    private void mapSources(final Collection<SourceSpecificContext> sources) {
-        for (final SourceSpecificContext source : sources) {
-            final var sourceInfo = source.sourceInfo();
-            final var sourceId = sourceInfo.sourceId();
+    private void mapSources(final Collection<ReactorSource<?>> sources) {
+        for (var source : sources) {
+            final var sourceId = source.sourceId();
 
-            allSources.putIfAbsent(sourceId, sourceInfo);
-            allContexts.putIfAbsent(sourceId, source);
+            // FIXME: verify no duplicates
+            allSources.putIfAbsent(sourceId, source);
             final var allOfQname = allSourcesMapped.get(sourceId.name());
             if (allOfQname != null) {
                 allOfQname.add(sourceId);
@@ -215,7 +214,7 @@ public final class SourceLinkageResolver {
     }
 
     private void tryResolveDependencies() throws ReactorException {
-        for (final SourceSpecificContext mainSource : mainSources) {
+        for (var mainSource : mainSources) {
             tryResolveDependenciesOf(mainSource.sourceInfo().sourceId());
         }
     }
@@ -229,8 +228,8 @@ public final class SourceLinkageResolver {
             final var sourceInfo = mainSources.get(i).sourceInfo();
 
             if (sourceInfo instanceof Submodule) {
-                final SourceIdentifier parentId = submoduleToParentMap.get(sourceInfo.sourceId());
-                final SourceSpecificContext parentCtx = allContexts.get(parentId);
+                final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
+                final var parentCtx = allSources.get(parentId);
 
                 // Only add if not already in the list
                 if (!mainSources.contains(parentCtx)) {
@@ -393,7 +392,7 @@ public final class SourceLinkageResolver {
             }
 
             // FIXME: ensure this through type safety
-            final var submoduleInfo = (Submodule) resolvedSubmodule.context().sourceInfo();
+            final var submoduleInfo = (Submodule) resolvedSubmodule.reactorSource().sourceInfo();
             final var resolvedParent = involvedSourcesMap.get(parentId);
             if (resolvedParent == null) {
                 throw new InferenceException(new SourceStatementDeclaration(submoduleId),
@@ -423,7 +422,7 @@ public final class SourceLinkageResolver {
             for (final SourceIdentifier sibling : siblings) {
                 final var resolvedSibling = involvedSourcesMap.get(sibling);
                 if (resolvedSibling == null) {
-                    final var sourceId = resolvedSource.sourceId();
+                    final var sourceId = resolvedSource.reactorSource().sourceId();
                     throw new InferenceException(new SourceStatementDeclaration(sourceId),
                         "Included submodule %s of module %s was not resolved", sibling, sourceId);
                 }
@@ -444,7 +443,7 @@ public final class SourceLinkageResolver {
         if (involvedSourcesMap.containsKey(id)) {
             return involvedSourcesMap.get(id);
         }
-        final var newResolvedBuilder = new ResolvedSourceBuilder(allContexts.get(id), allSources.get(id));
+        final var newResolvedBuilder = new ResolvedSourceBuilder(allSources.get(id));
         involvedSourcesMap.put(id, newResolvedBuilder);
         final var potentials = involvedSourcesGrouped.get(id.name());
         if (potentials != null) {
@@ -483,8 +482,13 @@ public final class SourceLinkageResolver {
         return matchingMapped != null ? matchingMapped : Set.of();
     }
 
+    private @Nullable SourceInfo lookupSourceInfo(final SourceIdentifier sourceId) {
+        final var reactorSource = allSources.get(sourceId);
+        return reactorSource == null ? null : reactorSource.sourceInfo();
+    }
+
     private @Nullable SourceIdentifier findSatisfyingParentForSubmodule(final SourceIdentifier submoduleId) {
-        if (!(allSources.get(submoduleId) instanceof SourceInfo.Submodule submodule)) {
+        if (!(lookupSourceInfo(submoduleId) instanceof SourceInfo.Submodule submodule)) {
             return null;
         }
 
@@ -511,7 +515,7 @@ public final class SourceLinkageResolver {
     }
 
     private Set<SourceDependency> getDependenciesOf(final SourceIdentifier id) {
-        final var sourceInfo = allSources.get(id);
+        final var sourceInfo = lookupSourceInfo(id);
         final var dependencies = new HashSet<SourceDependency>();
         dependencies.addAll(sourceInfo.imports());
         dependencies.addAll(sourceInfo.includes());
