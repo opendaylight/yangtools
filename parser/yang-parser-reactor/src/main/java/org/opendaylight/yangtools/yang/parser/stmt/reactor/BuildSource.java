@@ -34,7 +34,7 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
     /**
      * A stage in {@link BuildSource} lifecycle.
      */
-    sealed interface Stage permits NeedTransform, Materialized, SourceSpecificContext {
+    sealed interface Stage permits Analyzed, NeedTransform, Materialized, SourceSpecificContext {
         /**
          * {@return the stage SourceIdentifier}
          */
@@ -74,8 +74,10 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
      *
      * @param <S> the {@link SourceRepresentation}
      */
-    private record Materialized<S extends SourceRepresentation & SourceInfo.Extractor>(
-            BuildGlobalContext global, S source, StatementStreamSource.Factory<S> streamFactory) implements Stage {
+    private record Materialized<S extends MaterializedSourceRepresentation<?, ?>>(
+            BuildGlobalContext global,
+            S source,
+            StatementStreamSource.Factory<S> streamFactory) implements Stage {
         Materialized {
             requireNonNull(global);
             requireNonNull(source);
@@ -91,6 +93,28 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
             final var sourceInfo = source.extractSourceInfo();
             final var yangVersion = source.extractSourceInfo().yangVersion();
             return new SourceSpecificContext(global, sourceInfo, streamFactory.newStreamSource(source, yangVersion));
+        }
+    }
+
+    private record Analyzed<S extends MaterializedSourceRepresentation<?, ?>>(
+            BuildGlobalContext global,
+            S source,
+            SourceInfo sourceInfo,
+            StatementStreamSource.Factory<S> streamFactory) implements Stage {
+        Analyzed {
+            requireNonNull(global);
+            requireNonNull(source);
+            requireNonNull(streamFactory);
+        }
+
+        @Override
+        public SourceIdentifier sourceId() {
+            return sourceInfo.sourceId();
+        }
+
+        SourceSpecificContext toSourceContext() {
+            return new SourceSpecificContext(global, sourceInfo,
+                streamFactory.newStreamSource(source, sourceInfo.yangVersion()));
         }
     }
 
@@ -122,6 +146,11 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
             }
             case Materialized<?> materialized -> {
                 final var context = materialized.toSourceContext();
+                stage = context;
+                yield context;
+            }
+            case Analyzed<?> analyzed -> {
+                final var context = analyzed.toSourceContext();
                 stage = context;
                 yield context;
             }
