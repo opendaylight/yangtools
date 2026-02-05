@@ -95,6 +95,52 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e1c6d329_a4dc8d22",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-05T17:04:35Z",
+      "side": 1,
+      "message": "bad cast",
+      "range": {
+        "startLine": 502,
+        "startChar": 55,
+        "endLine": 502,
+        "endChar": 86
+      },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b93be0f5_040df327",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-05T17:04:35Z",
+      "side": 1,
+      "message": "this should work the other way around:\nhere we construct unmodifiable maps that represent the contents of the namespace and pass them to SourceSpecificContext and it then just projects those maps.",
+      "range": {
+        "startLine": 522,
+        "startChar": 8,
+        "endLine": 522,
+        "endChar": 30
+      },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d5a652b_cd86c49a",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
         "patchSetId": 64
