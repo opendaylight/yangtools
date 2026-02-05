@@ -72,6 +72,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b99467b3_cffa0e01",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-05T17:00:28Z",
+      "side": 1,
+      "message": "why did we lose local variable type inference here?",
+      "range": {
+        "startLine": 170,
+        "startChar": 14,
+        "endLine": 170,
+        "endChar": 41
+      },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d5a652b_cd86c49a",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
         "patchSetId": 64
