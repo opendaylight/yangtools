@@ -24,23 +24,22 @@ import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 class IRStatementVisitor {
     private final @NonNull StatementDefinitionResolver resolver;
+    private final @NonNull PrefixResolver prefixResolver;
     private final @NonNull StringEscaping escaping;
-    private final PrefixResolver prefixes;
     private final @NonNull StatementWriter writer;
-    private final String sourceName;
+    private final String symbolicName;
 
-    IRStatementVisitor(final StringEscaping escaping, final String sourceName, final StatementWriter writer,
-            final StatementDefinitionResolver resolver, final PrefixResolver prefixes) {
+    IRStatementVisitor(final StringEscaping escaping, final PrefixResolver prefixResolver, final StatementWriter writer,
+            final StatementDefinitionResolver resolver, final String symbolicName) {
         this.escaping = requireNonNull(escaping);
+        this.prefixResolver = requireNonNull(prefixResolver);
         this.writer = requireNonNull(writer);
         this.resolver = requireNonNull(resolver);
-        this.sourceName = sourceName;
-        this.prefixes = prefixes;
+        this.symbolicName = symbolicName;
     }
 
     final void visit(final IRStatement stmt) {
@@ -52,7 +51,7 @@ class IRStatementVisitor {
      * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
      * This applies to any declared statement, including unknown statements.
      *
-     * @param prefixes collection of all relevant prefix mappings supplied for actual parsing phase
+     * @param prefixResolver collection of all relevant prefix mappings supplied for actual parsing phase
      * @param resolver collection of all relevant statement definition mappings provided for actual parsing phase
      * @param keyword statement keyword text to parse from source
      * @param ref Source reference
@@ -72,12 +71,7 @@ class IRStatementVisitor {
 
     private @Nullable QName getValidStatementDefinition(final @NonNull Qualified keyword,
             final @NonNull StatementSourceReference ref) {
-        if (prefixes == null) {
-            // No prefixes to look up from
-            return null;
-        }
-
-        final var module = prefixes.resolvePrefix(keyword.prefix());
+        final var module = prefixResolver.resolvePrefix(keyword.prefix());
         if (module == null) {
             // Failed to look the namespace
             return null;
@@ -102,7 +96,7 @@ class IRStatementVisitor {
 
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final IRStatement stmt) {
-        final var ref = StatementDeclarations.inText(sourceName, stmt.startLine(), stmt.startColumn() + 1);
+        final var ref = StatementDeclarations.inText(symbolicName, stmt.startLine(), stmt.startColumn() + 1);
         final var def = getValidStatementDefinition(stmt.keyword(), ref);
         if (def == null) {
             return false;

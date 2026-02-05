@@ -46,7 +46,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +113,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         new ReactorStatementDefinitionResolver();
     private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
     private final @NonNull BuildGlobalContext globalContext;
-    private final @NonNull PrefixResolver prefixToModule;
     private final @NonNull SourceInfo sourceInfo;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
@@ -136,10 +134,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @NonNullByDefault
     SourceSpecificContext(final BuildGlobalContext globalContext, final SourceInfo sourceInfo,
-            final PrefixResolver prefixToModule, final StatementStreamSource streamSource) {
+            final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
-        this.prefixToModule = requireNonNull(prefixToModule);
         this.streamSource = requireNonNull(streamSource);
     }
 
@@ -439,12 +436,12 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             case SOURCE_PRE_LINKAGE ->
                 streamSource.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
             case SOURCE_LINKAGE ->
-                streamSource.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixToModule);
+                streamSource.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
             case STATEMENT_DEFINITION ->
                 streamSource.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase),
-                    stmtDef(), prefixToModule);
+                    stmtDef());
             case FULL_DECLARATION ->
-                streamSource.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixToModule);
+                streamSource.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef());
             default -> {
                 // No-op
             }

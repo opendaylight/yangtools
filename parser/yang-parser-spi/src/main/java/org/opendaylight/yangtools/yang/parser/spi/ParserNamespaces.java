@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 
 /**
  * Baseline {@link ParserNamespace}s mostly derived from YANG specification.
@@ -198,8 +197,6 @@ public final class ParserNamespaces {
      * Source-specific mapping of prefixes to namespaces. This namespace is populated by all statements which have
      * impact on the XML namespace, for example {@code import}, {@code belongs-to} and really anywhere a {@code prefix}
      * statement is present.
-     *
-     * @see PrefixResolver
      */
     public static final @NonNull ParserNamespace<String, QNameModule> PREFIX_TO_MODULE =
         new ParserNamespace<>("prefix-to-qnamemodule");

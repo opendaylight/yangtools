@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -63,11 +62,12 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     @FunctionalInterface
     interface Factory<S extends MaterializedSourceRepresentation<?, ?>> {
         /**
-         * {@return a new {@link StatementStreamSource} backed by specified source and version}
+         * {@return a new {@link StatementStreamSource} backed by specified source, version and prefix resolver}
          * @param source the source
          * @param yangVersion the version
+         * @param prefixResolver the {@link PrefixResolver}
          */
-        StatementStreamSource newStreamSource(S source, YangVersion yangVersion);
+        StatementStreamSource newStreamSource(S source, YangVersion yangVersion, PrefixResolver prefixResolver);
     }
 
     /**
@@ -113,14 +113,11 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
      *            Map of available statement definitions. Only these statements
      *            may be written to statement writer, source MUST ignore and
      *            MUST NOT emit any other statements.
-     * @param preLinkagePrefixes
-     *            Pre-linkage map of source-specific prefixes to namespaces
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkage(StatementWriter writer, StatementDefinitionResolver resolver,
-        PrefixResolver preLinkagePrefixes);
+    void writeLinkage(StatementWriter writer, StatementDefinitionResolver resolver);
 
     /**
      * Emits only linkage and language extension statements to supplied
@@ -134,15 +131,11 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
      *            Map of available statement definitions. Only these statements
      *            may be written to statement writer, source MUST ignore and
      *            MUST NOT emit any other statements.
-     * @param prefixes
-     *            Map of source-specific prefixes to namespaces
-     *
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkageAndStatementDefinitions(StatementWriter writer, StatementDefinitionResolver resolver,
-        PrefixResolver prefixes);
+    void writeLinkageAndStatementDefinitions(StatementWriter writer, StatementDefinitionResolver resolver);
 
     /**
      * Emits every statements present in this statement source to supplied
@@ -154,11 +147,9 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
      *            statements.
      * @param resolver
      *            Map of available statement definitions.
-     * @param prefixes
-     *            Map of source-specific prefixes to namespaces
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeFull(StatementWriter writer, StatementDefinitionResolver resolver, PrefixResolver prefixes);
+    void writeFull(StatementWriter writer, StatementDefinitionResolver resolver);
 }
