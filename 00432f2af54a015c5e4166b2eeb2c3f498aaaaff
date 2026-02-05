@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "13a29b1f_bf3e49bd",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceInfo.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-05T16:56:28Z",
+      "side": 1,
+      "message": "this should not be here",
+      "range": {
+        "startLine": 29,
+        "startChar": 4,
+        "endLine": 29,
+        "endChar": 39
+      },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad9ff35c_805848f5",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceInfo.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-05T16:56:28Z",
+      "side": 1,
+      "message": "bad rebase",
+      "range": {
+        "startLine": 41,
+        "startChar": 18,
+        "endLine": 41,
+        "endChar": 38
+      },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d5a652b_cd86c49a",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-05T16:56:28Z",
+      "side": 1,
+      "message": "this should actually be an invariant based not on ParserNamespaces but on ResolvedSourceInfo",
+      "range": {
+        "startLine": 483,
+        "startChar": 27,
+        "endLine": 483,
+        "endChar": 37
+      },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
