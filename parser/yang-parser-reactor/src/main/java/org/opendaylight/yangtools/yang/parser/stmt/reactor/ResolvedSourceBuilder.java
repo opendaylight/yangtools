@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -35,23 +34,30 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.Resolved
 final class ResolvedSourceBuilder {
     private final ImmutableMap.Builder<Unqualified, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
     private final ImmutableSet.Builder<ResolvedSourceBuilder> includes = new ImmutableSet.Builder<>();
-    private final SourceSpecificContext sourceContext;
-    private final SourceInfo sourceInfo;
+    private final @NonNull ReactorSource<?> reactorSource;
 
     private ResolvedBelongsTo belongsTo;
     private ResolvedSourceInfo buildFinished;
 
-    ResolvedSourceBuilder(final @NonNull SourceSpecificContext sourceContext, final @NonNull SourceInfo sourceInfo) {
-        this.sourceContext = requireNonNull(sourceContext);
-        this.sourceInfo = requireNonNull(sourceInfo);
+    @NonNullByDefault
+    ResolvedSourceBuilder(final ReactorSource<?> reactorSource) {
+        this.reactorSource = requireNonNull(reactorSource);
     }
 
-    SourceSpecificContext context() {
-        return sourceContext;
+    @NonNull ReactorSource<?> reactorSource() {
+        return reactorSource;
     }
 
-    YangVersion yangVersion() {
-        return sourceInfo.yangVersion();
+    private @NonNull SourceIdentifier sourceId() {
+        return sourceInfo().sourceId();
+    }
+
+    private @NonNull SourceInfo sourceInfo() {
+        return reactorSource.sourceInfo();
+    }
+
+    @NonNull YangVersion yangVersion() {
+        return sourceInfo().yangVersion();
     }
 
     /**
@@ -100,7 +106,8 @@ final class ResolvedSourceBuilder {
      * @param allResolved all the sources which were already resolved
      * @return ResolvedSourceInfo of this source
      */
-    ResolvedSourceInfo build(final @NonNull Map<SourceSpecificContext, ResolvedSourceInfo> allResolved) {
+    @NonNullByDefault
+    ResolvedSourceInfo build(final Map<ReactorSource<?>, ResolvedSourceInfo> allResolved) {
         requireNonNull(allResolved);
 
         if (buildFinished != null) {
@@ -108,22 +115,18 @@ final class ResolvedSourceBuilder {
         }
 
         // TODO: for submodules this should be the 'belongsTo' prefix
-        final var prefix = sourceInfo instanceof SourceInfo.Module module ? module.prefix() : null;
+        final var prefix = sourceInfo() instanceof SourceInfo.Module module ? module.prefix() : null;
 
-        buildFinished = new ResolvedSourceInfo(sourceInfo.sourceId(), resolveQnameModule(),
+        buildFinished = new ResolvedSourceInfo(sourceInfo().sourceId(), resolveQnameModule(),
             resolveImports(allResolved), resolveIncludes(), prefix, belongsTo);
         return buildFinished;
     }
 
-    SourceIdentifier sourceId() {
-        return sourceInfo.sourceId();
-    }
-
     private List<ResolvedImport> resolveImports(
-            final Map<SourceSpecificContext, ResolvedSourceInfo> allResolved) {
+            final Map<ReactorSource<?>, ResolvedSourceInfo> allResolved) {
         return imports.build().entrySet().stream()
             .map(prefixedImport -> {
-                final var impContext = prefixedImport.getValue().context();
+                final var impContext = prefixedImport.getValue().reactorSource();
                 // FIXME: containsKey + get -> should be get() and null check
                 if (!allResolved.containsKey(impContext)) {
                     // FIXME: better exception
@@ -143,21 +146,17 @@ final class ResolvedSourceBuilder {
     }
 
     private QNameModule resolveQnameModule() {
+        final var sourceInfo = sourceInfo();
         if (sourceInfo instanceof SourceInfo.Module moduleInfo) {
-            return QNameModule.ofRevision(moduleInfo.namespace(), latestRevision());
+            return QNameModule.ofRevision(moduleInfo.namespace(), moduleInfo.latestRevision());
         }
         // Submodule's QNameModule is composed of parents Namespace + its own Revision (or null, if absent)
         verifyNotNull(belongsTo, "Cannot resolve QNameModule of a submodule %s. Missing belongs-to",
             sourceInfo.sourceId());
-        return QNameModule.ofRevision(belongsTo.parentModuleQname().namespace(), latestRevision());
-    }
-
-    private Revision latestRevision() {
-        return sourceInfo.revisions().isEmpty() ? null : sourceInfo.revisions().iterator().next();
+        return QNameModule.ofRevision(belongsTo.parentModuleQname().namespace(), sourceInfo.latestRevision());
     }
 
     private void ensureBuilderOpened() {
-        verify(buildFinished == null, "Builder for source %s was already closed",
-            sourceInfo.sourceId());
+        verify(buildFinished == null, "Builder for source %s was already closed", sourceId());
     }
 }
