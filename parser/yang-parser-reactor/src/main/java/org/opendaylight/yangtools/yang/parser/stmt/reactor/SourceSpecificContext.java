@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -56,6 +58,22 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         NO_PROGRESS,
         PROGRESS,
         FINISHED
+    }
+
+    @NonNullByDefault
+    static final class Builder {
+        private final TreeMap<Unqualified, QNameModule> prefixToModule = new TreeMap<>();
+        private final BuildGlobalContext globalContext;
+        private final SourceInfo sourceInfo;
+
+        Builder(final BuildGlobalContext globalContext, final SourceInfo sourceInfo) {
+            this.globalContext = requireNonNull(globalContext);
+            this.sourceInfo = requireNonNull(sourceInfo);
+        }
+
+        SourceSpecificContext build(final StatementStreamSource streamSource) {
+            return new SourceSpecificContext(globalContext, sourceInfo, streamSource);
+        }
     }
 
     private static final class SupportedStatements extends NamespaceAccess<QName, StatementSupport<?, ?, ?>> {
@@ -134,8 +152,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
     // If not null, do not add anything to modifiers, but record it here.
     private List<Entry<ModelProcessingPhase, ModifierImpl>> delayedModifiers;
 
-    SourceSpecificContext(final @NonNull BuildGlobalContext globalContext, final @NonNull SourceInfo sourceInfo,
-            final @NonNull StatementStreamSource streamSource) {
+    @NonNullByDefault
+    private SourceSpecificContext(final BuildGlobalContext globalContext, final SourceInfo sourceInfo,
+            final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
         this.streamSource = requireNonNull(streamSource);

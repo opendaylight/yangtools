@@ -117,8 +117,8 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
         }
 
         SourceSpecificContext toSourceContext() {
-            return new SourceSpecificContext(global, sourceInfo,
-                streamFactory.newStreamSource(source, sourceInfo.yangVersion()));
+            return new SourceSpecificContext.Builder(global, sourceInfo)
+                .build(streamFactory.newStreamSource(source, sourceInfo.yangVersion()));
         }
     }
 
