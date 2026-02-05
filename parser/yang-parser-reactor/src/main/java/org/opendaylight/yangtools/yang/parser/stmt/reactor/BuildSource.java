@@ -33,7 +33,7 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
     /**
      * A stage in {@link BuildSource} lifecycle.
      */
-    sealed interface Stage permits NeedTransform, Materialized, ReactorSource, SourceSpecificContext {
+    sealed interface Stage permits NeedTransform, Materialized, ReactorSource {
         /**
          * {@return the stage SourceIdentifier}
          */
@@ -111,54 +111,25 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
 
     // TODO: we really would like this to be 'ensureReactorSource' continuation, but for that we need to peel out
     //       source-specific context access.
-    SourceInfo ensureSourceInfo() throws IOException, SourceSyntaxException {
+    ReactorSource<?> ensureReactorSource() throws IOException, SourceSyntaxException {
         return switch (stage) {
-            case NeedTransform<?, ?> needTransform -> ensureSourceInfo(needTransform);
-            case Materialized<?> materialized -> ensureSourceInfo(materialized);
-            case ReactorSource<?> reactorSource -> reactorSource.sourceInfo();
-            case SourceSpecificContext sourceContext -> sourceContext.sourceInfo();
+            case NeedTransform<?, ?> needTransform -> ensureReactorSource(needTransform);
+            case Materialized<?> materialized -> ensureReactorSource(materialized);
+            case ReactorSource<?> reactorSource -> reactorSource;
         };
     }
 
-    private SourceInfo ensureSourceInfo(final Materialized<?> materialized) throws SourceSyntaxException {
+    private ReactorSource<?> ensureReactorSource(final Materialized<?> materialized) throws SourceSyntaxException {
         final var reactorSource = materialized.toReactorSource();
         stage = reactorSource;
-        return reactorSource.sourceInfo();
+        return reactorSource;
     }
 
-    private SourceInfo ensureSourceInfo(final NeedTransform<?, ?> needTransform)
+    private ReactorSource<?> ensureReactorSource(final NeedTransform<?, ?> needTransform)
             throws IOException, SourceSyntaxException {
         final var materialized = needTransform.toMaterialized();
         stage = materialized;
-        return ensureSourceInfo(materialized);
-    }
-
-    SourceSpecificContext ensureSourceContext() throws IOException, SourceSyntaxException {
-        return switch (stage) {
-            case NeedTransform<?, ?> needTransform -> ensureSourceContext(needTransform);
-            case Materialized<?> materialized -> ensureSourceContext(materialized);
-            case ReactorSource<?> reactorSource -> ensureSourceContext(reactorSource);
-            case SourceSpecificContext sourceContext -> sourceContext;
-        };
-    }
-
-    private SourceSpecificContext ensureSourceContext(final ReactorSource<?> reactorSource) {
-        final var sourceContext = reactorSource.toSourceContext();
-        stage = sourceContext;
-        return sourceContext;
-    }
-
-    private SourceSpecificContext ensureSourceContext(final Materialized<?> materialized) throws SourceSyntaxException {
-        final var reactorSource = materialized.toReactorSource();
-        stage = reactorSource;
-        return ensureSourceContext(reactorSource);
-    }
-
-    private SourceSpecificContext ensureSourceContext(final NeedTransform<?, ?> needTransform)
-            throws IOException, SourceSyntaxException {
-        final var materialized = needTransform.toMaterialized();
-        stage = materialized;
-        return ensureSourceContext(materialized);
+        return ensureReactorSource(materialized);
     }
 
     @Override
