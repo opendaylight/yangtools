@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -163,9 +164,40 @@ public final class SourceLinkageResolver {
             allResolved.put(involvedSource.getValue().reactorSource(), fullyResolved);
         }
 
-        return allResolved.entrySet().stream()
-            .map(entry -> new ResolvedSourceContext(entry.getKey().toSourceContext(), entry.getValue()))
-            .toList();
+        final var result = new ArrayList<ResolvedSourceContext>(allResolved.size());
+        for (var entry : allResolved.entrySet()) {
+            final var source = entry.getKey();
+            final var resolved = entry.getValue();
+            final var prefixToModule = new HashMap<Unqualified, QNameModule>();
+
+            // all resolved imports
+            for (var dep : resolved.imports()) {
+                putPrefix(prefixToModule, dep.prefix(), dep.qname());
+            }
+
+            // the prefix under which the module is known
+            switch (source.sourceInfo()) {
+                case SourceInfo.Module info -> putPrefix(prefixToModule, info.prefix(), resolved.qnameModule());
+                case SourceInfo.Submodule info -> putPrefix(prefixToModule, info.belongsTo().prefix(),
+                    // FIXME: missing @NonNull: this should be ensured through class hierarchy
+                    resolved.belongsTo().parentModuleQname());
+            }
+
+            result.add(new ResolvedSourceContext(new SourceSpecificContext(source.global(), source.sourceInfo(),
+                ImmutablePrefixResolver.of(prefixToModule), source.toStreamSource()), resolved));
+        }
+
+        return List.copyOf(result);
+    }
+
+    // FIXME: this smells of a builder for ImmutablePrefixResolver or similar
+    private static void putPrefix(HashMap<Unqualified, QNameModule> prefixToModule, final Unqualified prefix,
+            final QNameModule module) {
+        final var prev = prefixToModule.putIfAbsent(requireNonNull(prefix), requireNonNull(module));
+        if (prev != null) {
+            throw new IllegalArgumentException("Attempted to remap prefix %s from %s to %s".formatted(
+                prefix.getLocalName(), prev, module));
+        }
     }
 
     private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {

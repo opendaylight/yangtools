@@ -41,9 +41,8 @@ record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
         return sourceInfo.sourceId();
     }
 
-    SourceSpecificContext toSourceContext() {
-        return new SourceSpecificContext(global, sourceInfo,
-            streamFactory.newStreamSource(source, sourceInfo.yangVersion()));
+    StatementStreamSource toStreamSource() {
+        return streamFactory.newStreamSource(source, sourceInfo.yangVersion());
     }
 
     // Note: equality overridden to identity for predictable use as a Map key
