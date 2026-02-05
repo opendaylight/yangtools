@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.parser.stmt.reactor;
+
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.BuildSource.Stage;
+
+/**
+ * A {@link Stage} when we have acquired {@link SourceInfo} from the source representation.
+ *
+ * @param <S> the {@link MaterializedSourceRepresentation}
+ */
+@NonNullByDefault
+record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
+        BuildGlobalContext global,
+        S source,
+        SourceInfo sourceInfo,
+        StatementStreamSource.Factory<S> streamFactory) implements BuildSource.Stage  {
+    ReactorSource {
+        requireNonNull(global);
+        requireNonNull(source);
+        requireNonNull(sourceInfo);
+        requireNonNull(streamFactory);
+    }
+
+    @Override
+    public SourceIdentifier sourceId() {
+        // Note: unlike source.sourceId(), this is guaranteed to be canonical
+        return sourceInfo.sourceId();
+    }
+
+    SourceSpecificContext toSourceContext() {
+        return new SourceSpecificContext(global, sourceInfo,
+            streamFactory.newStreamSource(source, sourceInfo.yangVersion()));
+    }
+}

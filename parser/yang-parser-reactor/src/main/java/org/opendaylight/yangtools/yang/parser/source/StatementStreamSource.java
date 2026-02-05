@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.source;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixResolver;
@@ -61,7 +61,7 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
      */
     @NonNullByDefault
     @FunctionalInterface
-    interface Factory<S extends SourceRepresentation & SourceInfo.Extractor> {
+    interface Factory<S extends MaterializedSourceRepresentation<?, ?>> {
         /**
          * {@return a new {@link StatementStreamSource} backed by specified source and version}
          * @param source the source

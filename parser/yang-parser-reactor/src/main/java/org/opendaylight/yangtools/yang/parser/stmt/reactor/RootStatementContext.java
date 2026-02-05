@@ -295,7 +295,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @NonNull YangVersion getRootVersionImpl() {
-        return sourceContext.getSourceInfo().yangVersion();
+        return sourceContext.sourceInfo().yangVersion();
     }
 
     /**

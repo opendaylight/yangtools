@@ -129,7 +129,7 @@ public final class SourceLinkageResolver {
         for (final var buildSource : sourcesToInitialize) {
             final SourceSpecificContext context;
             try {
-                context = buildSource.getSourceContext();
+                context = buildSource.ensureSourceContext();
             } catch (IOException e) {
                 throw new SomeModifiersUnresolvedException(ModelProcessingPhase.INIT, buildSource.sourceId(), e);
             }
@@ -189,7 +189,7 @@ public final class SourceLinkageResolver {
 
     private void mapSources(final Collection<SourceSpecificContext> sources) {
         for (final SourceSpecificContext source : sources) {
-            final var sourceInfo = source.getSourceInfo();
+            final var sourceInfo = source.sourceInfo();
             final var sourceId = sourceInfo.sourceId();
 
             allSources.putIfAbsent(sourceId, sourceInfo);
@@ -216,7 +216,7 @@ public final class SourceLinkageResolver {
 
     private void tryResolveDependencies() throws ReactorException {
         for (final SourceSpecificContext mainSource : mainSources) {
-            tryResolveDependenciesOf(mainSource.getSourceInfo().sourceId());
+            tryResolveDependenciesOf(mainSource.sourceInfo().sourceId());
         }
     }
 
@@ -226,7 +226,7 @@ public final class SourceLinkageResolver {
     private void reuniteMainSubmodulesWithParents() {
         // use classic for loop to enable expansion of the mainSources list
         for (int i = 0; i < mainSources.size(); i++) {
-            final var sourceInfo = mainSources.get(i).getSourceInfo();
+            final var sourceInfo = mainSources.get(i).sourceInfo();
 
             if (sourceInfo instanceof Submodule) {
                 final SourceIdentifier parentId = submoduleToParentMap.get(sourceInfo.sourceId());
@@ -393,7 +393,7 @@ public final class SourceLinkageResolver {
             }
 
             // FIXME: ensure this through type safety
-            final var submoduleInfo = (Submodule) resolvedSubmodule.context().getSourceInfo();
+            final var submoduleInfo = (Submodule) resolvedSubmodule.context().sourceInfo();
             final var resolvedParent = involvedSourcesMap.get(parentId);
             if (resolvedParent == null) {
                 throw new InferenceException(new SourceStatementDeclaration(submoduleId),
