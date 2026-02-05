@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -225,9 +224,13 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
             if (includedContexts.isEmpty()) {
                 includedContexts = new ArrayList<>(1);
             }
-            verify(value instanceof RootStatementContext);
-            includedContexts.add((RootStatementContext<?, ?, ?>) value);
+
+            if (!(value instanceof RootStatementContext<?, ?, ?> root)) {
+                throw new VerifyException("Unexpected value " + value);
+            }
+            includedContexts.add(root);
         }
+
         return super.putToLocalStorage(type, key, value);
     }
 
