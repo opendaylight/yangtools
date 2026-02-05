@@ -49,6 +49,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fd78365d_8332a7e8",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/YinDOMStatementStreamSource.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-05T16:59:15Z",
+      "side": 1,
+      "message": "why are we changing this part?",
+      "range": {
+        "startLine": 31,
+        "startChar": 8,
+        "endLine": 31,
+        "endChar": 36
+      },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d5a652b_cd86c49a",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
         "patchSetId": 64
