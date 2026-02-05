@@ -154,8 +154,8 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable, BuildSou
         return inProgressPhase;
     }
 
-    @NonNull public SourceInfo getSourceInfo() {
-        return this.sourceInfo;
+    @NonNull SourceInfo sourceInfo() {
+        return sourceInfo;
     }
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,

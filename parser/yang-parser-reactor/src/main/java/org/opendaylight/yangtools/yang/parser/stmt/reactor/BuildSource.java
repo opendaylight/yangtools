@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Extractor;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 
@@ -34,7 +33,7 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
     /**
      * A stage in {@link BuildSource} lifecycle.
      */
-    sealed interface Stage permits NeedTransform, Materialized, SourceSpecificContext {
+    sealed interface Stage permits Analyzed, NeedTransform, Materialized, SourceSpecificContext {
         /**
          * {@return the stage SourceIdentifier}
          */
@@ -70,12 +69,14 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
     }
 
     /**
-     * A {@link Stage} when we have acquired a representation that is a {@link Extractor}.
+     * A {@link Stage} when we have acquired a {@link MaterializedSourceRepresentation}.
      *
-     * @param <S> the {@link SourceRepresentation}
+     * @param <S> the {@link MaterializedSourceRepresentation}
      */
-    private record Materialized<S extends SourceRepresentation & SourceInfo.Extractor>(
-            BuildGlobalContext global, S source, StatementStreamSource.Factory<S> streamFactory) implements Stage {
+    private record Materialized<S extends MaterializedSourceRepresentation<?, ?>>(
+            BuildGlobalContext global,
+            S source,
+            StatementStreamSource.Factory<S> streamFactory) implements Stage {
         Materialized {
             requireNonNull(global);
             requireNonNull(source);
@@ -87,10 +88,37 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
             return source.sourceId();
         }
 
-        SourceSpecificContext toSourceContext() throws SourceSyntaxException {
-            final var sourceInfo = source.extractSourceInfo();
-            final var yangVersion = source.extractSourceInfo().yangVersion();
-            return new SourceSpecificContext(global, sourceInfo, streamFactory.newStreamSource(source, yangVersion));
+        Analyzed<S> toAnalyzed() throws SourceSyntaxException {
+            return new Analyzed<>(global, source, source.extractSourceInfo(), streamFactory);
+        }
+    }
+
+    /**
+     * A {@link Stage} when we have acquired {@link SourceInfo} from the source representation.
+     *
+     * @param <S> the {@link MaterializedSourceRepresentation}
+     */
+    private record Analyzed<S extends MaterializedSourceRepresentation<?, ?>>(
+            BuildGlobalContext global,
+            S source,
+            SourceInfo sourceInfo,
+            StatementStreamSource.Factory<S> streamFactory) implements Stage {
+        Analyzed {
+            requireNonNull(global);
+            requireNonNull(source);
+            requireNonNull(sourceInfo);
+            requireNonNull(streamFactory);
+        }
+
+        @Override
+        public SourceIdentifier sourceId() {
+            // Note: unlike source.sourceId(), this is guaranteed to be canonical
+            return sourceInfo.sourceId();
+        }
+
+        SourceSpecificContext toSourceContext() {
+            return new SourceSpecificContext(global, sourceInfo,
+                streamFactory.newStreamSource(source, sourceInfo.yangVersion()));
         }
     }
 
@@ -110,23 +138,54 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
         return stage.sourceId();
     }
 
-    SourceSpecificContext getSourceContext() throws IOException, SourceSyntaxException {
+    SourceInfo ensureSourceInfo() throws IOException, SourceSyntaxException {
         return switch (stage) {
-            case NeedTransform<?, ?> needTransform -> {
-                // Note: two stores to free references as soon as possible
-                final var materialized = needTransform.toMaterialized();
-                stage = materialized;
-                final var context = materialized.toSourceContext();
-                stage = context;
-                yield context;
-            }
-            case Materialized<?> materialized -> {
-                final var context = materialized.toSourceContext();
-                stage = context;
-                yield context;
-            }
+            case NeedTransform<?, ?> needTransform -> ensureSourceInfo(needTransform);
+            case Materialized<?> materialized -> ensureSourceInfo(materialized);
+            case Analyzed<?> analyzed -> analyzed.sourceInfo;
+            case SourceSpecificContext sourceContext -> sourceContext.sourceInfo();
+        };
+    }
+
+    private SourceInfo ensureSourceInfo(final Materialized<?> materialized) throws SourceSyntaxException {
+        final var analyzed = materialized.toAnalyzed();
+        stage = analyzed;
+        return analyzed.sourceInfo;
+    }
+
+    private SourceInfo ensureSourceInfo(final NeedTransform<?, ?> needTransform)
+            throws IOException, SourceSyntaxException {
+        final var materialized = needTransform.toMaterialized();
+        stage = materialized;
+        return ensureSourceInfo(materialized);
+    }
+
+    SourceSpecificContext ensureSourceContext() throws IOException, SourceSyntaxException {
+        return switch (stage) {
+            case NeedTransform<?, ?> needTransform -> ensureSourceContext(needTransform);
+            case Materialized<?> materialized -> ensureSourceContext(materialized);
+            case Analyzed<?> analyzed -> ensureSourceContext(analyzed);
             case SourceSpecificContext sourceContext -> sourceContext;
         };
+    }
+
+    private SourceSpecificContext ensureSourceContext(final Analyzed<?> analyzed) {
+        final var sourceContext = analyzed.toSourceContext();
+        stage = sourceContext;
+        return sourceContext;
+    }
+
+    private SourceSpecificContext ensureSourceContext(final Materialized<?> materialized) throws SourceSyntaxException {
+        final var analyzed = materialized.toAnalyzed();
+        stage = analyzed;
+        return ensureSourceContext(analyzed);
+    }
+
+    private SourceSpecificContext ensureSourceContext(final NeedTransform<?, ?> needTransform)
+            throws IOException, SourceSyntaxException {
+        final var materialized = needTransform.toMaterialized();
+        stage = materialized;
+        return ensureSourceContext(materialized);
     }
 
     @Override

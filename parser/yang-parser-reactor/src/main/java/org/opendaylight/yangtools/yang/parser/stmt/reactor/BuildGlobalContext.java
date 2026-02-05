@@ -98,8 +98,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> void addSource(final S source,
             final StatementStreamSource.Factory<S> streamFactory) throws IOException, SourceSyntaxException {
         final var buildSource = new BuildSource<>(this, source, streamFactory);
-        // eagerly initialize required sources
-        buildSource.getSourceContext();
+        // eagerly initialize, so that any source-related problem is reported now rather than later
+        buildSource.ensureSourceInfo();
         sources.add(buildSource);
     }
 
