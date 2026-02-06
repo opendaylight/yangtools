@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
@@ -32,10 +31,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 
 sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildAction
         permits YangReactorBuildAction, YinReactorBuildAction {
-    private final @NonNull BuildGlobalContext context;
-
+    private SourceLinkageBuilder linkageBuilder = new SourceLinkageBuilder();
     private boolean supportedFeaturesSet = false;
     private boolean modulesDeviatedByModulesSet = false;
+    private BuildGlobalContext context;
 
     ReactorBuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
@@ -44,25 +43,25 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
 
     @Override
     public BuildAction addSource(final YangIRSource source) throws IOException, SourceSyntaxException {
-        context.addSource(source, StatementStreamSource.forYangIR());
+        linkageBuilder.addSource(source, StatementStreamSource.forYangIR());
         return this;
     }
 
     @Override
     public BuildAction addSource(final YinDOMSource source) throws IOException, SourceSyntaxException {
-        context.addSource(source, StatementStreamSource.forYInDOM());
+        linkageBuilder.addSource(source, StatementStreamSource.forYInDOM());
         return this;
     }
 
     @Override
     public final BuildAction addLibSource(final YangIRSource libSource) {
-        context.addLibSource(libSource, StatementStreamSource.forYangIR());
+        linkageBuilder.addLibSource(libSource, StatementStreamSource.forYangIR());
         return this;
     }
 
     @Override
     public final BuildAction addLibSource(final YinDOMSource libSource) {
-        context.addLibSource(libSource, StatementStreamSource.forYInDOM());
+        linkageBuilder.addLibSource(libSource, StatementStreamSource.forYInDOM());
         return this;
     }
 
@@ -70,7 +69,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     @NonNullByDefault
     public final <S extends SourceRepresentation> BuildAction addLibYangSource(
             final SourceTransformer<S, YangIRSource> transformer, final S source) {
-        context.addLibSource(transformer, source, StatementStreamSource.forYangIR());
+        linkageBuilder.addLibSource(transformer, source, StatementStreamSource.forYangIR());
         return this;
     }
 
@@ -78,7 +77,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     @NonNullByDefault
     public final <S extends SourceRepresentation> BuildAction addLibYinSource(
             final SourceTransformer<S, YinDOMSource> transformer, final S source) {
-        context.addLibSource(transformer, source, StatementStreamSource.forYInDOM());
+        linkageBuilder.addLibSource(transformer, source, StatementStreamSource.forYInDOM());
         return this;
     }
 
@@ -101,11 +100,21 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
 
     @Override
     public final ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException {
-        return context.build();
+        return buildLinkage().build();
     }
 
     @Override
     public final EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
-        return context.buildEffective();
+        return buildLinkage().buildEffective();
+    }
+
+    @NonNullByDefault
+    private BuildGlobalContext buildLinkage() throws ReactorException, SourceSyntaxException {
+        final var linkage = linkageBuilder.build();
+        linkageBuilder = null;
+        final var ret = context;
+        ret.linkSources(linkage);
+        context = null;
+        return ret;
     }
 }
