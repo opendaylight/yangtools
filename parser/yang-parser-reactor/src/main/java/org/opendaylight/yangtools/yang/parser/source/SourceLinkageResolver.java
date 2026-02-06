@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.reactor;
+package org.opendaylight.yangtools.yang.parser.source;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
@@ -38,9 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
-import org.opendaylight.yangtools.yang.parser.source.BuildSource;
-import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -126,7 +123,7 @@ public final class SourceLinkageResolver {
      * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
-    static Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources(
+    public static Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources(
             final Collection<BuildSource<?>> mainSources, final Collection<BuildSource<?>> libSources)
                 throws ReactorException, SourceSyntaxException {
         if (mainSources.isEmpty()) {
