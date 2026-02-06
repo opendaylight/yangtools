@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 
 /**
  * An immutable {@link NamespaceBinding}.
@@ -38,6 +39,11 @@ public record ImmutableNamespaceBinding(QName current, Map<Unqualified, QNameMod
     @Override
     public @Nullable QNameModule lookupModule(final Unqualified prefix) {
         return prefixToModule.get(requireNonNull(prefix));
+    }
+
+    @Override
+    public YangNamespaceContext toYangNamespaceContext() {
+        return ImmutableYangNamespaceContext.of(prefixToModule);
     }
 
     @Override
