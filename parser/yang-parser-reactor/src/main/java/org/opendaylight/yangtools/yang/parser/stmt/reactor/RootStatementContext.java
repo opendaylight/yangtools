@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +58,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         ParserNamespaces.TYPE, new SweptNamespace(ParserNamespaces.TYPE));
 
     private final @NonNull SourceSpecificContext sourceContext;
+    private final @NonNull QNameModule definingModule;
     private final A argument;
 
     private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
@@ -70,9 +69,11 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      */
     private List<RootStatementContext<?, ?, ?>> includedContexts = ImmutableList.of();
 
-    RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
-            final StatementSourceReference ref, final String rawArgument) {
+    RootStatementContext(final QNameModule definingModule, final SourceSpecificContext sourceContext,
+            final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
+            final String rawArgument) {
         super(def, ref, rawArgument);
+        this.definingModule = requireNonNull(definingModule);
         this.sourceContext = requireNonNull(sourceContext);
         argument = def.argumentFactory().parseArgumentValue(this, rawArgument());
     }
@@ -96,24 +97,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     @Override
     public QNameModule definingModule() {
-        final StmtContext<?, ?, ?> module;
-        if (produces(ModuleStatement.DEF)) {
-            module = this;
-        } else if (produces(SubmoduleStatement.DEF)) {
-            final var belongsTo = namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
-            if (belongsTo == null || belongsTo.isEmpty()) {
-                throw new VerifyException(this + " does not have belongs-to linkage resolved");
-            }
-            module = belongsTo.values().iterator().next();
-        } else {
-            throw new VerifyException("Unsupported root " + this);
-        }
-
-        final var ret = namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, module);
-        if (ret == null) {
-            throw new VerifyException("Failed to look up QNameModule for " + module + " in " + this);
-        }
-        return ret;
+        return definingModule;
     }
 
     @Override

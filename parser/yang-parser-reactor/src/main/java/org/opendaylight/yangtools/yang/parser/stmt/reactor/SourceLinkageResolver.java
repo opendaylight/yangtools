@@ -177,16 +177,23 @@ public final class SourceLinkageResolver {
                 putPrefix(prefixToModule, dep.source().prefix(), dep.qname());
             }
 
-            // the prefix under which the module is known
+            // the module the source belongs to
+            final QNameModule definingModule;
             switch (source.sourceInfo()) {
-                case SourceInfo.Module info -> putPrefix(prefixToModule, info.prefix(), resolved.qnameModule());
-                case SourceInfo.Submodule info -> putPrefix(prefixToModule, info.belongsTo().prefix(),
+                case SourceInfo.Module info -> {
+                    definingModule = resolved.qnameModule();
+                    putPrefix(prefixToModule, info.prefix(), definingModule);
+                }
+                case SourceInfo.Submodule info -> {
                     // FIXME: missing @NonNull: this should be ensured through class hierarchy
-                    resolved.belongsTo().parentModuleQname());
+                    final var belongsTo = resolved.belongsTo();
+                    definingModule = belongsTo.parentModuleQname();
+                    putPrefix(prefixToModule, belongsTo.source().prefix(), definingModule);
+                }
             }
 
             result.add(new ResolvedSourceContext(new SourceSpecificContext(source.global(), source.sourceInfo(),
-                source.toStreamSource(prefixToModule)), resolved));
+                definingModule, source.toStreamSource(prefixToModule)), resolved));
         }
 
         return List.copyOf(result);

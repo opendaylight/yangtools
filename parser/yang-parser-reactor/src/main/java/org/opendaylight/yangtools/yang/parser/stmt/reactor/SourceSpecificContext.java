@@ -27,6 +27,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -113,6 +114,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         new ReactorStatementDefinitionResolver();
     private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
     private final @NonNull BuildGlobalContext globalContext;
+    private final @NonNull QNameModule definingModule;
     private final @NonNull SourceInfo sourceInfo;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
@@ -134,9 +136,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @NonNullByDefault
     SourceSpecificContext(final BuildGlobalContext globalContext, final SourceInfo sourceInfo,
-            final StatementStreamSource streamSource) {
+            final QNameModule definingModule, final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
+        this.definingModule = requireNonNull(definingModule);
         this.streamSource = requireNonNull(streamSource);
     }
 
@@ -198,7 +201,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          * we need to create new root.
          */
         if (root == null) {
-            root = new RootStatementContext<>(this, def, ref, argument);
+            root = new RootStatementContext<>(definingModule, this, def, ref, argument);
         } else {
             final var rootStatement = root.definition().statementName();
             final var rootArgument = root.rawArgument();
