@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
-import org.opendaylight.yangtools.yang.parser.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -202,7 +201,7 @@ public final class SourceLinkageResolver {
 
             result.add(new ResolvedSourceContext(new SourceSpecificContext(source.global(), source.sourceInfo(),
                 new ImmutableNamespaceBinding(currentModule, Map.copyOf(prefixToModule)),
-                source.toStreamSource(PrefixResolver.of(prefixToModule))), resolved));
+                source.toStreamSource(prefixToModule)), resolved));
         }
 
         return List.copyOf(result);
