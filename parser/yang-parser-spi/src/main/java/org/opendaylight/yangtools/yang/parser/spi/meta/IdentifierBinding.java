@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,9 +30,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 @NonNullByDefault
 public final class IdentifierBinding {
-    public AbsoluteSchemaNodeidParser absoluteSchemaNodeid;
     public DescendantSchemaNodeidParser descendantSchemaNodeid;
+    public AbsoluteSchemaNodeidParser absoluteSchemaNodeid;
     public NodeIdentifierParser nodeIdentifier;
+    public NamespaceBinding namespaceBinding;
     public IdentifierParser identifier;
 
     /**
@@ -39,6 +42,7 @@ public final class IdentifierBinding {
      * @param namespaceBinding the {@link NamespaceBinding}
      */
     public IdentifierBinding(final NamespaceBinding namespaceBinding) {
+        this.namespaceBinding = requireNonNull(namespaceBinding);
         identifier = new IdentifierParser(namespaceBinding);
         nodeIdentifier = new NodeIdentifierParser(identifier);
         descendantSchemaNodeid = new DescendantSchemaNodeidParser(nodeIdentifier);
