@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
@@ -62,12 +65,13 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     @FunctionalInterface
     interface Factory<S extends MaterializedSourceRepresentation<?, ?>> {
         /**
-         * {@return a new {@link StatementStreamSource} backed by specified source, version and prefix resolver}
+         * {@return a new {@link StatementStreamSource} backed by specified source, version and prefix mapping}
          * @param source the source
          * @param yangVersion the version
-         * @param prefixResolver the {@link PrefixResolver}
+         * @param prefixToModule the prefix mapping
          */
-        StatementStreamSource newStreamSource(S source, YangVersion yangVersion, PrefixResolver prefixResolver);
+        StatementStreamSource newStreamSource(S source, YangVersion yangVersion,
+            Map<? extends Unqualified, ? extends QNameModule> prefixToModule);
     }
 
     /**

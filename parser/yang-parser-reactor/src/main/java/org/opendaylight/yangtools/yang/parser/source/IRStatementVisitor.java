@@ -20,26 +20,20 @@ import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
-import org.opendaylight.yangtools.yang.ir.StringEscaping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 class IRStatementVisitor {
     private final @NonNull StatementDefinitionResolver resolver;
-    private final @NonNull PrefixResolver prefixResolver;
-    private final @NonNull StringEscaping escaping;
+    private final @NonNull YangIRStatementStreamSource source;
     private final @NonNull StatementWriter writer;
-    private final String symbolicName;
 
-    IRStatementVisitor(final StringEscaping escaping, final PrefixResolver prefixResolver, final StatementWriter writer,
-            final StatementDefinitionResolver resolver, final String symbolicName) {
-        this.escaping = requireNonNull(escaping);
-        this.prefixResolver = requireNonNull(prefixResolver);
+    IRStatementVisitor(final YangIRStatementStreamSource source, final StatementWriter writer,
+            final StatementDefinitionResolver resolver) {
+        this.source = requireNonNull(source);
         this.writer = requireNonNull(writer);
         this.resolver = requireNonNull(resolver);
-        this.symbolicName = symbolicName;
     }
 
     final void visit(final IRStatement stmt) {
@@ -71,7 +65,7 @@ class IRStatementVisitor {
 
     private @Nullable QName getValidStatementDefinition(final @NonNull Qualified keyword,
             final @NonNull StatementSourceReference ref) {
-        final var module = prefixResolver.resolvePrefix(keyword.prefix());
+        final var module = source.resolvePrefix(keyword.prefix());
         if (module == null) {
             // Failed to look the namespace
             return null;
@@ -96,7 +90,7 @@ class IRStatementVisitor {
 
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final IRStatement stmt) {
-        final var ref = StatementDeclarations.inText(symbolicName, stmt.startLine(), stmt.startColumn() + 1);
+        final var ref = source.refOf(stmt);
         final var def = getValidStatementDefinition(stmt.keyword(), ref);
         if (def == null) {
             return false;
@@ -106,7 +100,7 @@ class IRStatementVisitor {
         final String argument;
         if (argumentCtx != null) {
             try {
-                argument = argumentCtx.asString(escaping);
+                argument = argumentCtx.asString(source.escaping());
             } catch (ParseException e) {
                 throw new SourceException(e.getMessage(), ref, e);
             }
