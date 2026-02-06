@@ -12,11 +12,9 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -48,11 +46,10 @@ final class OperationsValidateModuleAction implements InferenceAction {
 
     @Override
     public void apply(final InferenceContext ctx) {
-        final Mutable<?, ?, ?> moduleCtx = prereq.resolve(ctx);
+        final var moduleCtx = prereq.resolve(ctx);
 
         // Check namespace and revision first
-        final QNameModule moduleQName = moduleCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, moduleCtx);
-        if (!YangDataConstants.RFC8040_MODULE.equals(moduleQName)) {
+        if (!YangDataConstants.RFC8040_MODULE.equals(moduleCtx.definingModule())) {
             return;
         }
 
