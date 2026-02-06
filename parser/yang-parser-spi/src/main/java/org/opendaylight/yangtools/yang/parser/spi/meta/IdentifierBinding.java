@@ -7,14 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
-import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.stmt.AbsoluteSchemaNodeidParser;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DescendantSchemaNodeidParser;
 import org.opendaylight.yangtools.yang.model.spi.stmt.IdentifierParser;
@@ -27,27 +24,45 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  *
  * @since 14.0.22
  */
-@Beta
 @NonNullByDefault
-public final class IdentifierBinding {
-    public DescendantSchemaNodeidParser descendantSchemaNodeid;
-    public AbsoluteSchemaNodeidParser absoluteSchemaNodeid;
-    public NodeIdentifierParser nodeIdentifier;
-    public NamespaceBinding namespaceBinding;
-    public IdentifierParser identifier;
-
+public sealed interface IdentifierBinding extends Immutable permits DefaultIdentifierBinding {
     /**
-     * Construct an instance backed by a {@link NamespaceBinding}.
-     *
+     * {@return an instance backed by a {@link NamespaceBinding}}
      * @param namespaceBinding the {@link NamespaceBinding}
      */
-    public IdentifierBinding(final NamespaceBinding namespaceBinding) {
-        this.namespaceBinding = requireNonNull(namespaceBinding);
-        identifier = new IdentifierParser(namespaceBinding);
-        nodeIdentifier = new NodeIdentifierParser(identifier);
-        descendantSchemaNodeid = new DescendantSchemaNodeidParser(nodeIdentifier);
-        absoluteSchemaNodeid = new AbsoluteSchemaNodeidParser(descendantSchemaNodeid);
+    static IdentifierBinding of(final NamespaceBinding namespaceBinding) {
+        final var identifier = new IdentifierParser(namespaceBinding);
+        final var nodeIdentifier = new NodeIdentifierParser(identifier);
+        final var descendantSchemaNodeid = new DescendantSchemaNodeidParser(nodeIdentifier);
+        final var absoluteSchemaNodeid = new AbsoluteSchemaNodeidParser(descendantSchemaNodeid);
+        return new DefaultIdentifierBinding(descendantSchemaNodeid, absoluteSchemaNodeid, nodeIdentifier,
+            namespaceBinding, identifier);
     }
+
+    /**
+     * {@return the backing {@link DescendantSchemaNodeidParser}}
+     */
+    DescendantSchemaNodeidParser descendantSchemaNodeid();
+
+    /**
+     * {@return the backing {@link AbsoluteSchemaNodeidParser}}
+     */
+    AbsoluteSchemaNodeidParser absoluteSchemaNodeid();
+
+    /**
+     * {@return the backing {@link NodeIdentifierParser}}
+     */
+    NodeIdentifierParser nodeIdentifier();
+
+    /**
+     * {@return the backing {@link NamespaceBinding}}
+     */
+    NamespaceBinding namespaceBinding();
+
+    /**
+     * {@return the backing {@link IdentifierParser}}
+     */
+    IdentifierParser identifier();
 
     /**
      * Parse a statement argument as an {@code identifier-arg}.
@@ -57,13 +72,7 @@ public final class IdentifierBinding {
      * @return a {@link QName}
      * @throws SourceException if {@code arg} is not a valid {@code identifier-arg}
      */
-    public QName parseIdentifierArg(final CommonStmtCtx stmt, final String rawArgument) {
-        try {
-            return identifier.parseArgument(rawArgument);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, rawArgument, e);
-        }
-    }
+    QName parseIdentifierArg(CommonStmtCtx stmt, String rawArgument);
 
     /**
      * Parse a statement argument as an {@code identifier-arg}.
@@ -74,13 +83,7 @@ public final class IdentifierBinding {
      * @return a {@link QName}
      * @throws SourceException if {@code arg} is not a valid {@code identifier-arg}
      */
-    public QName parseIdentifierArg(final String qualifier, final CommonStmtCtx stmt, final String rawArgument) {
-        try {
-            return identifier.parseArgument(rawArgument);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(qualifier, stmt, rawArgument, e);
-        }
-    }
+    QName parseIdentifierArg(String qualifier, CommonStmtCtx stmt, String rawArgument);
 
     /**
      * Parse a statement argument as an {@code identifier-ref-arg}.
@@ -91,15 +94,7 @@ public final class IdentifierBinding {
      * @throws SourceException if {@code arg} is not a valid {@code identifier-ref-arg}
      * @throws InferenceException if YANG node identifier's module cannot be resolved
      */
-    public QName parseIdentifierRefArg(final CommonStmtCtx stmt, final String rawArgument) {
-        try {
-            return nodeIdentifier.parseNodeIdentifierAs("identifier-ref-arg", rawArgument, 0, rawArgument.length());
-        } catch (ArgumentBindingException e) {
-            throw new InferenceException(e.getMessage(), stmt, e);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, rawArgument, e);
-        }
-    }
+    QName parseIdentifierRefArg(CommonStmtCtx stmt, String rawArgument);
 
     /**
      * Parse a statement argument as an {@code node-identifier-arg}.
@@ -110,15 +105,7 @@ public final class IdentifierBinding {
      * @throws SourceException if the string is not a valid YANG node identifier
      * @throws InferenceException if YANG node identifier's module cannot be resolved
      */
-    public QName parseNodeIdentifierArg(final CommonStmtCtx stmt, final String rawArgument) {
-        try {
-            return nodeIdentifier.parseArgument(rawArgument);
-        } catch (ArgumentBindingException e) {
-            throw new InferenceException(e.getMessage(), stmt, e);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, rawArgument, e);
-        }
-    }
+    QName parseNodeIdentifierArg(CommonStmtCtx stmt, String rawArgument);
 
     /**
      * Create a {@code node-identifier} from its {@code prefix} and {@code identifier}.
@@ -131,15 +118,7 @@ public final class IdentifierBinding {
      * @throws InferenceException if YANG node identifier's module cannot be resolved
      */
     @Beta
-    public QName createNodeIdentifier(final CommonStmtCtx stmt, final String prefix, final String localName) {
-        try {
-            return nodeIdentifier.createNodeIdentifier(prefix, localName);
-        } catch (ArgumentBindingException e) {
-            throw new InferenceException(e.getMessage(), stmt, e);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, prefix + ":" + identifier, e);
-        }
-    }
+    QName createNodeIdentifier(CommonStmtCtx stmt, String prefix, String localName);
 
     /**
      * Parse a statement argument as an {@code absolute-schema-nodeid}.
@@ -150,15 +129,7 @@ public final class IdentifierBinding {
      * @throws SourceException if the string is not a valid {@code absolute-schema-nodeid}
      * @throws InferenceException if YANG node identifier's module cannot be resolved
      */
-    public SchemaNodeIdentifier.Absolute parseAbsoluteSchemaNodeid(final CommonStmtCtx stmt, final String rawArgument) {
-        try {
-            return absoluteSchemaNodeid.parseArgument(rawArgument);
-        } catch (ArgumentBindingException e) {
-            throw new InferenceException(e.getMessage(), stmt, e);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, rawArgument, e);
-        }
-    }
+    SchemaNodeIdentifier.Absolute parseAbsoluteSchemaNodeid(CommonStmtCtx stmt, String rawArgument);
 
     /**
      * Parse a statement argument as an {@code absolute-schema-nodeid} equivalent production.
@@ -170,16 +141,8 @@ public final class IdentifierBinding {
      * @throws SourceException if the string is not a valid {@code absolute-schema-nodeid}
      * @throws InferenceException if YANG node identifier's module cannot be resolved
      */
-    public SchemaNodeIdentifier.Absolute parseAbsoluteSchemaNodeidAs(final String production, final CommonStmtCtx stmt,
-            final String rawArgument) {
-        try {
-            return absoluteSchemaNodeid.parseAbsoluteSchemaNodeidAs(production, rawArgument, 0, rawArgument.length());
-        } catch (ArgumentBindingException e) {
-            throw new InferenceException(e.getMessage(), stmt, e);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, rawArgument, e);
-        }
-    }
+    SchemaNodeIdentifier.Absolute parseAbsoluteSchemaNodeidAs(String production, CommonStmtCtx stmt,
+            String rawArgument);
 
     /**
      * Parse a statement argument as an {@code descendant-schema-nodeid}.
@@ -190,16 +153,7 @@ public final class IdentifierBinding {
      * @throws SourceException if the string is not a valid {@code descendant-schema-nodeid}
      * @throws InferenceException if YANG node identifier's module cannot be resolved
      */
-    public SchemaNodeIdentifier.Descendant parseDescendantSchemaNodeid(final CommonStmtCtx stmt,
-            final String rawArgument) {
-        try {
-            return descendantSchemaNodeid.parseArgument(rawArgument);
-        } catch (ArgumentBindingException e) {
-            throw new InferenceException(e.getMessage(), stmt, e);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, rawArgument, e);
-        }
-    }
+    SchemaNodeIdentifier.Descendant parseDescendantSchemaNodeid(CommonStmtCtx stmt, String rawArgument);
 
     /**
      * Parse a statement argument as an {@code descendant-schema-nodeid} equivalent production.
@@ -211,43 +165,6 @@ public final class IdentifierBinding {
      * @throws SourceException if the string is not a valid {@code descendant-schema-nodeid}
      * @throws InferenceException if YANG node identifier's module cannot be resolved
      */
-    public SchemaNodeIdentifier.Descendant parseDescendantSchemaNodeidAs(final String production,
-            final CommonStmtCtx stmt, final String rawArgument) {
-        try {
-            return descendantSchemaNodeid.parseDescendantSchemaNodeidAs(production, rawArgument, 0,
-                rawArgument.length());
-        } catch (ArgumentBindingException e) {
-            throw new InferenceException(e.getMessage(), stmt, e);
-        } catch (ArgumentSyntaxException e) {
-            throw newSourceException(stmt, rawArgument, e);
-        }
-    }
-
-    private static SourceException newSourceException(final CommonStmtCtx stmt,
-            final String rawArgument, final ArgumentSyntaxException cause) {
-        // qualify with statement's name
-        return newSourceException(stmt.publicDefinition().statementName().getLocalName(), stmt, rawArgument, cause);
-    }
-
-    /**
-     * Return a new {@link SourceException} that is reporting an {@link ArgumentSyntaxException} while parsing a
-     * statement argument.
-     *
-     * @param qualifier the string used to qualify the argument name
-     * @param stmt Statement context, not retained
-     * @param rawArgument the argument value being parsed
-     * @param cause the {@link ArgumentSyntaxException} cause
-     * @return a new {@link SourceException}
-     */
-    private static SourceException newSourceException(final String qualifier, final CommonStmtCtx stmt,
-            final String rawArgument, final ArgumentSyntaxException cause) {
-        final var sb = new StringBuilder()
-            .append('\'').append(rawArgument).append("' is not a valid ").append(qualifier).append(' ')
-            .append(stmt.publicDefinition().getArgumentDefinition().argumentName().getLocalName());
-        final var position = cause.getPosition();
-        if (position != 0) {
-            sb.append(" on position ").append(position);
-        }
-        return new SourceException(sb.append(": ").append(cause.getMessage()).toString(), stmt, cause);
-    }
+    SchemaNodeIdentifier.Descendant parseDescendantSchemaNodeidAs(final String production, CommonStmtCtx stmt,
+        String rawArgument);
 }
