@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -39,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
+import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -170,8 +172,8 @@ public final class SourceLinkageResolver {
         for (var entry : allResolved.entrySet()) {
             final var source = entry.getKey();
             final var resolved = entry.getValue();
-            final var prefixToModule = new HashMap<Unqualified, QNameModule>();
 
+            final var prefixToModule = new HashMap<Unqualified, QNameModule>();
             // all resolved imports
             for (var dep : resolved.imports()) {
                 putPrefix(prefixToModule, dep.source().prefix(), dep.qname());
@@ -179,21 +181,29 @@ public final class SourceLinkageResolver {
 
             // the module the source belongs to
             final QNameModule definingModule;
+            // the prefix under which the module is known as well as its claim to a namespace+revision
+            final QName currentModule;
             switch (source.sourceInfo()) {
                 case SourceInfo.Module info -> {
                     definingModule = resolved.qnameModule();
+                    // FIXME: info.moduleName() should and resolved.qnameModule() should always be the same
+                    currentModule = info.moduleName().intern();
                     putPrefix(prefixToModule, info.prefix(), definingModule);
                 }
                 case SourceInfo.Submodule info -> {
                     // FIXME: missing @NonNull: this should be ensured through class hierarchy
                     final var belongsTo = resolved.belongsTo();
                     definingModule = belongsTo.parentModuleQname();
+                    // FIXME: this should live in info, just like moduleName() does
+                    currentModule = info.sourceId().name().bindTo(
+                        QNameModule.ofRevision(definingModule.namespace(), info.latestRevision()));
                     putPrefix(prefixToModule, belongsTo.source().prefix(), definingModule);
                 }
             }
 
             result.add(new ResolvedSourceContext(new SourceSpecificContext(source.global(), source.sourceInfo(),
-                definingModule, source.toStreamSource(prefixToModule)), resolved));
+                definingModule, new ImmutableNamespaceBinding(currentModule, Map.copyOf(prefixToModule)),
+                source.toStreamSource(prefixToModule)), resolved));
         }
 
         return List.copyOf(result);
