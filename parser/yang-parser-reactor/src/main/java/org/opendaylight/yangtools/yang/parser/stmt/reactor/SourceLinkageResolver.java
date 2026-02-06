@@ -40,6 +40,8 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
+import org.opendaylight.yangtools.yang.parser.source.BuildSource;
+import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -74,6 +76,7 @@ public final class SourceLinkageResolver {
 
     private final List<ReactorSource<?>> mainSources = new ArrayList<>();
     private final List<ReactorSource<?>> libSources = new ArrayList<>();
+    private final @NonNull BuildGlobalContext globalContext;
 
     private final Map<SourceIdentifier, ReactorSource<?>> allSources = new HashMap<>();
 
@@ -102,10 +105,12 @@ public final class SourceLinkageResolver {
     // FIXME: would a HashTable work better?
     private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
-    private SourceLinkageResolver(
-            final @NonNull Collection<ReactorSource<?>> withMainSources,
+    @NonNullByDefault
+    private SourceLinkageResolver(final BuildGlobalContext globalContext,
+            final Collection<ReactorSource<?>> withMainSources,
             // FIXME: this forces libSource materialzation -- we want to do that lazily
-            final @NonNull Collection<ReactorSource<?>> withLibSources) {
+            final Collection<ReactorSource<?>> withLibSources) {
+        this.globalContext = requireNonNull(globalContext);
         mainSources.addAll(requireNonNull(withMainSources));
         libSources.addAll(requireNonNull(withLibSources));
     }
@@ -121,9 +126,11 @@ public final class SourceLinkageResolver {
      * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
-    static @NonNull SourceLinkageResolver create(final @NonNull Collection<BuildSource<?>> mainSources,
-            final @NonNull Collection<BuildSource<?>> libSources) throws ReactorException, SourceSyntaxException {
-        return new SourceLinkageResolver(initializeSources(mainSources), initializeSources(libSources));
+    @NonNullByDefault
+    static SourceLinkageResolver create(final BuildGlobalContext globalContext,
+            final Collection<BuildSource<?>> mainSources, final Collection<BuildSource<?>> libSources)
+                throws ReactorException, SourceSyntaxException {
+        return new SourceLinkageResolver(globalContext, initializeSources(mainSources), initializeSources(libSources));
     }
 
     @NonNullByDefault
@@ -196,7 +203,7 @@ public final class SourceLinkageResolver {
             // a weird thing: this source's name bound to defining module
             final var moduleName = source.sourceId().name().bindTo(definingModule).intern();
 
-            result.add(new ResolvedSourceContext(new SourceSpecificContext(source.global(), source.sourceInfo(),
+            result.add(new ResolvedSourceContext(new SourceSpecificContext(globalContext, source.sourceInfo(),
                 definingModule, new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
                 source.toStreamSource(prefixToModule)), resolved));
         }

@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
+import org.opendaylight.yangtools.yang.parser.source.BuildSource;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -97,7 +98,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     @NonNullByDefault
     <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> void addSource(final S source,
             final StatementStreamSource.Factory<S> streamFactory) throws IOException, SourceSyntaxException {
-        final var buildSource = new BuildSource<>(this, source, streamFactory);
+        final var buildSource = BuildSource.ofMaterialized(source, streamFactory);
         // eagerly initialize, so that any source-related problem is reported now rather than later
         buildSource.ensureReactorSource();
         sources.add(buildSource);
@@ -107,7 +108,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     public <I extends SourceRepresentation, O extends SourceRepresentation & MaterializedSourceRepresentation<O, ?>>
             void addLibSource(final SourceTransformer<I, O> transformer, final I source,
                 final StatementStreamSource.Factory<O> streamFactory) {
-        libSources.add(new BuildSource<>(this, transformer, source, streamFactory));
+        libSources.add(BuildSource.ofTransformed(transformer, source, streamFactory));
     }
 
     @NonNullByDefault
@@ -116,7 +117,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         // library sources are lazily initialized
-        libSources.add(new BuildSource<>(this, source, streamFactory));
+        libSources.add(BuildSource.ofMaterialized(source, streamFactory));
     }
 
     void setSupportedFeatures(final FeatureSet supportedFeatures) {
@@ -170,14 +171,14 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     @NonNull
     ReactorDeclaredModel build() throws ReactorException, SourceSyntaxException {
-        final var resolvedSources = SourceLinkageResolver.create(sources, libSources).resolveInvolvedSources();
+        final var resolvedSources = SourceLinkageResolver.create(this, sources, libSources).resolveInvolvedSources();
         executePhases(resolvedSources);
         return transform(resolvedSources);
     }
 
     @NonNull
     EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
-        final var resolvedSources = SourceLinkageResolver.create(sources, libSources).resolveInvolvedSources();
+        final var resolvedSources = SourceLinkageResolver.create(this, sources, libSources).resolveInvolvedSources();
         executePhases(resolvedSources);
         return transformEffective(resolvedSources);
     }

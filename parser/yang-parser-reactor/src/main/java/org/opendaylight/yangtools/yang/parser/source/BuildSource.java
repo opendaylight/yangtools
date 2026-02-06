@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.reactor;
+package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
-import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 
 /**
  * A single registered source. Allows instantiating {@link SourceInfo} and {@link StatementStreamSource} to further
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
  * @param streamSupplier the {@link StatementStreamSource} supplier
  */
 @NonNullByDefault
-final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> {
+public final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> {
     /**
      * A stage in {@link BuildSource} lifecycle.
      */
@@ -46,12 +45,10 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
     private record NeedTransform<
             I extends SourceRepresentation,
             O extends SourceRepresentation & MaterializedSourceRepresentation<O, ?>>(
-            BuildGlobalContext global,
             SourceTransformer<I, O> transformer,
             I input,
             StatementStreamSource.Factory<O> streamFactory) implements Stage {
         NeedTransform {
-            requireNonNull(global);
             requireNonNull(transformer);
             requireNonNull(input);
             requireNonNull(streamFactory);
@@ -64,7 +61,7 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
 
         Materialized<O> toMaterialized() throws IOException, SourceSyntaxException {
             final var source = transformer.transformSource(input);
-            return new Materialized<>(global, source, streamFactory);
+            return new Materialized<>(source, streamFactory);
         }
     }
 
@@ -74,11 +71,9 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
      * @param <S> the {@link MaterializedSourceRepresentation}
      */
     private record Materialized<S extends MaterializedSourceRepresentation<?, ?>>(
-            BuildGlobalContext global,
             S source,
             StatementStreamSource.Factory<S> streamFactory) implements Stage {
         Materialized {
-            requireNonNull(global);
             requireNonNull(source);
             requireNonNull(streamFactory);
         }
@@ -89,29 +84,34 @@ final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepre
         }
 
         ReactorSource<S> toReactorSource() throws SourceSyntaxException {
-            return new ReactorSource<>(global, source, source.extractSourceInfo(), streamFactory);
+            return new ReactorSource<>(source, source.extractSourceInfo(), streamFactory);
         }
     }
 
     private Stage stage;
 
-    BuildSource(final BuildGlobalContext global, final S source, final StatementStreamSource.Factory<S> streamFactory) {
-        stage = new Materialized<>(global, source, streamFactory);
+    private BuildSource(final Stage stage) {
+        this.stage = requireNonNull(stage);
     }
 
-    <I extends SourceRepresentation> BuildSource(final BuildGlobalContext global,
-            final SourceTransformer<I, S> transformer, final I input,
-            final StatementStreamSource.Factory<S> streamFactory) {
-        stage = new NeedTransform<>(global, transformer, input, streamFactory);
+    public static <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>>
+            BuildSource<S> ofMaterialized(final S source, final StatementStreamSource.Factory<S> streamFactory) {
+        return new BuildSource<>(new Materialized<>(source, streamFactory));
     }
 
-    SourceIdentifier sourceId() {
+    public static <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>,
+            I extends SourceRepresentation> BuildSource<S> ofTransformed(final SourceTransformer<I, S> transformer,
+                final I input, final StatementStreamSource.Factory<S> streamFactory) {
+        return new BuildSource<>(new NeedTransform<>(transformer, input, streamFactory));
+    }
+
+    public SourceIdentifier sourceId() {
         return stage.sourceId();
     }
 
     // TODO: we really would like this to be 'ensureReactorSource' continuation, but for that we need to peel out
     //       source-specific context access.
-    ReactorSource<?> ensureReactorSource() throws IOException, SourceSyntaxException {
+    public ReactorSource<?> ensureReactorSource() throws IOException, SourceSyntaxException {
         return switch (stage) {
             case NeedTransform<?, ?> needTransform -> ensureReactorSource(needTransform);
             case Materialized<?> materialized -> ensureReactorSource(materialized);
