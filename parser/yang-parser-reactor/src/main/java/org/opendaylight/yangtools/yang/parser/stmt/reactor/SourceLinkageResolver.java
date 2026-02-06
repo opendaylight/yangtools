@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
+import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -170,8 +171,8 @@ public final class SourceLinkageResolver {
         for (var entry : allResolved.entrySet()) {
             final var source = entry.getKey();
             final var resolved = entry.getValue();
-            final var prefixToModule = new HashMap<Unqualified, QNameModule>();
 
+            final var prefixToModule = new HashMap<Unqualified, QNameModule>();
             // all resolved imports
             for (var dep : resolved.imports()) {
                 putPrefix(prefixToModule, dep.source().prefix(), dep.qname());
@@ -192,8 +193,12 @@ public final class SourceLinkageResolver {
                 }
             }
 
+            // a weird thing: this source's name bound to defining module
+            final var moduleName = source.sourceId().name().bindTo(definingModule).intern();
+
             result.add(new ResolvedSourceContext(new SourceSpecificContext(source.global(), source.sourceInfo(),
-                definingModule, source.toStreamSource(prefixToModule)), resolved));
+                definingModule, new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
+                source.toStreamSource(prefixToModule)), resolved));
         }
 
         return List.copyOf(result);

@@ -269,9 +269,8 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public final QName moduleName() {
-        final var root = getRoot();
-        return QName.create(root.definingModule(), root.getRawArgument());
+    public QName moduleName() {
+        return getRoot().moduleName();
     }
 
     //
