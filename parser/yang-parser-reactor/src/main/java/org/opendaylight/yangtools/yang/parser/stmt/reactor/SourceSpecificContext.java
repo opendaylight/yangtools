@@ -35,9 +35,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.stmt.NamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -113,6 +115,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private final @NonNull ReactorStatementDefinitionResolver statementResolver =
         new ReactorStatementDefinitionResolver();
     private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
+    private final @NonNull IdentifierBinding identifierBinding;
     private final @NonNull BuildGlobalContext globalContext;
     private final @NonNull QNameModule definingModule;
     private final @NonNull SourceInfo sourceInfo;
@@ -137,10 +140,12 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @NonNullByDefault
     SourceSpecificContext(final BuildGlobalContext globalContext, final SourceInfo sourceInfo,
-            final QNameModule definingModule, final StatementStreamSource streamSource) {
+            final QNameModule definingModule, final NamespaceBinding namespaceBinding,
+            final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
         this.definingModule = requireNonNull(definingModule);
+        identifierBinding = IdentifierBinding.of(namespaceBinding);
         this.streamSource = requireNonNull(streamSource);
     }
 
@@ -148,12 +153,12 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return globalContext;
     }
 
-    ModelProcessingPhase getInProgressPhase() {
-        return inProgressPhase;
-    }
-
     @NonNull SourceInfo sourceInfo() {
         return sourceInfo;
+    }
+
+    ModelProcessingPhase getInProgressPhase() {
+        return inProgressPhase;
     }
 
     AbstractResumedStatement<?, ?, ?> createDeclaredChild(final AbstractResumedStatement<?, ?, ?> current,
@@ -202,7 +207,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          * we need to create new root.
          */
         if (root == null) {
-            root = new RootStatementContext<>(definingModule, this, def, ref, argument);
+            root = new RootStatementContext<>(definingModule, identifierBinding, this, def, ref, argument);
         } else {
             final var rootStatement = root.definition().statementName();
             final var rootArgument = root.rawArgument();
