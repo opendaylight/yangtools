@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.reactor;
+package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.BuildSource.Stage;
+import org.opendaylight.yangtools.yang.parser.source.BuildSource.Stage;
 
 /**
  * A {@link Stage} when we have acquired {@link SourceInfo} from the source representation.
@@ -26,13 +25,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.BuildSource.Stage;
  * @param <S> the {@link MaterializedSourceRepresentation}
  */
 @NonNullByDefault
-record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
-        BuildGlobalContext global,
+public record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
         S source,
         SourceInfo sourceInfo,
-        StatementStreamSource.Factory<S> streamFactory) implements BuildSource.Stage  {
-    ReactorSource {
-        requireNonNull(global);
+        StatementStreamSource.Factory<S> streamFactory) implements BuildSource.Stage {
+    public ReactorSource {
         requireNonNull(source);
         requireNonNull(sourceInfo);
         requireNonNull(streamFactory);
@@ -44,7 +41,7 @@ record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
         return sourceInfo.sourceId();
     }
 
-    StatementStreamSource toStreamSource(final Map<Unqualified, QNameModule> prefixToModule) {
+    public StatementStreamSource toStreamSource(final Map<Unqualified, QNameModule> prefixToModule) {
         return streamFactory.newStreamSource(source, sourceInfo.yangVersion(), prefixToModule);
     }
 
