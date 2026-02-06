@@ -179,28 +179,31 @@ public final class SourceLinkageResolver {
                 putPrefix(prefixToModule, dep.source().prefix(), dep.qname());
             }
 
-            // the prefix under which the module is known as well as its claim to a namespace+revision
+            // the name under which the module is known as well as its claim to a namespace+revision
             final QName currentModule;
+            // the module the source belongs to
+            final QNameModule definingModule;
             switch (source.sourceInfo()) {
                 case SourceInfo.Module info -> {
                     putPrefix(prefixToModule, info.prefix(), resolved.qnameModule());
 
                     // FIXME: info.moduleName() should and resolved.qnameModule() should always be the same
                     currentModule = info.moduleName().intern();
+                    definingModule = currentModule.getModule();
                 }
                 case SourceInfo.Submodule info -> {
                     // FIXME: missing @NonNull: this should be ensured through class hierarchy
-                    final var parentModule = resolved.belongsTo().parentModuleQname();
-                    putPrefix(prefixToModule, info.belongsTo().prefix(), parentModule);
+                    definingModule = resolved.belongsTo().parentModuleQname();
+                    putPrefix(prefixToModule, info.belongsTo().prefix(), definingModule);
 
                     // FIXME: this should live in info, just like moduleName() does
                     currentModule = info.sourceId().name().bindTo(
-                        QNameModule.ofRevision(parentModule.namespace(), info.latestRevision()));
+                        QNameModule.ofRevision(definingModule.namespace(), info.latestRevision()));
                 }
             }
 
             result.add(new ResolvedSourceContext(new SourceSpecificContext(source.global(), source.sourceInfo(),
-                new ImmutableNamespaceBinding(currentModule, Map.copyOf(prefixToModule)),
+                new ImmutableNamespaceBinding(currentModule, Map.copyOf(prefixToModule)), definingModule,
                 source.toStreamSource(prefixToModule)), resolved));
         }
 
