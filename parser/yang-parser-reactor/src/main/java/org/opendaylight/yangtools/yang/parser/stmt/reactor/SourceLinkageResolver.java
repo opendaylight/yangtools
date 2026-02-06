@@ -26,7 +26,6 @@ import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -39,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
-import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.BuildSource;
 import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
@@ -55,17 +53,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
  * and linked together according to their dependencies (includes, imports, belongs-to)
  */
 public final class SourceLinkageResolver {
-
-    @NonNullByDefault
-    record ResolvedSourceContext(
-            SourceSpecificContext context,
-            ResolvedSourceInfo resolvedSourceInfo) {
-        ResolvedSourceContext {
-            requireNonNull(context);
-            requireNonNull(resolvedSourceInfo);
-        }
-    }
-
     /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
      */
@@ -76,7 +63,6 @@ public final class SourceLinkageResolver {
 
     private final List<ReactorSource<?>> mainSources = new ArrayList<>();
     private final List<ReactorSource<?>> libSources = new ArrayList<>();
-    private final @NonNull BuildGlobalContext globalContext;
 
     private final Map<SourceIdentifier, ReactorSource<?>> allSources = new HashMap<>();
 
@@ -106,31 +92,11 @@ public final class SourceLinkageResolver {
     private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
-    private SourceLinkageResolver(final BuildGlobalContext globalContext,
-            final Collection<ReactorSource<?>> withMainSources,
+    private SourceLinkageResolver(final Collection<ReactorSource<?>> withMainSources,
             // FIXME: this forces libSource materialzation -- we want to do that lazily
             final Collection<ReactorSource<?>> withLibSources) {
-        this.globalContext = requireNonNull(globalContext);
         mainSources.addAll(requireNonNull(withMainSources));
         libSources.addAll(requireNonNull(withLibSources));
-    }
-
-    /**
-     * Creates a SourceLinkageResolver for specified main and library sources.
-     *
-     * @param mainSources sources used as the base for the Schema Context. All of them have to be resolved and included
-     *                    in the output of the {@link SourceLinkageResolver}
-     * @param libSources dependencies of the main sources, as well as other library sources. Unreferenced (unused)
-     *                   sources will be omitted from the output of the {@link SourceLinkageResolver}
-     * @return {@link SourceLinkageResolver} ready to resolve the inter-source linkage.
-     * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
-     * @throws ReactorException if the source files couldn't be loaded or parsed
-     */
-    @NonNullByDefault
-    static SourceLinkageResolver create(final BuildGlobalContext globalContext,
-            final Collection<BuildSource<?>> mainSources, final Collection<BuildSource<?>> libSources)
-                throws ReactorException, SourceSyntaxException {
-        return new SourceLinkageResolver(globalContext, initializeSources(mainSources), initializeSources(libSources));
     }
 
     @NonNullByDefault
@@ -152,13 +118,26 @@ public final class SourceLinkageResolver {
     /**
      * Processes all main sources and library sources. Finds out which ones are involved and resolves dependencies
      * between them.
+     * @param mainSources sources used as the base for the Schema Context. All of them have to be resolved and included
+     *                    in the output of the {@link SourceLinkageResolver}
+     * @param libSources dependencies of the main sources, as well as other library sources. Unreferenced (unused)
+     *                   sources will be omitted from the output of the {@link SourceLinkageResolver}
      * @return list of resolved sources
+     * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
+     * @throws ReactorException if the source files couldn't be loaded or parsed
      */
-    @NonNull List<ResolvedSourceContext> resolveInvolvedSources() throws ReactorException {
+    static Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources(
+            final Collection<BuildSource<?>> mainSources, final Collection<BuildSource<?>> libSources)
+                throws ReactorException, SourceSyntaxException {
         if (mainSources.isEmpty()) {
-            return List.of();
+            return Map.of();
         }
 
+        return new SourceLinkageResolver(initializeSources(mainSources), initializeSources(libSources))
+            .resolveInvolvedSources();
+    }
+
+    private Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         mapSources(mainSources);
         mapSources(libSources);
         mapSubmodulesToParents();
@@ -174,51 +153,7 @@ public final class SourceLinkageResolver {
             allResolved.put(involvedSource.getValue().reactorSource(), fullyResolved);
         }
 
-        final var result = new ArrayList<ResolvedSourceContext>(allResolved.size());
-        for (var entry : allResolved.entrySet()) {
-            final var source = entry.getKey();
-            final var resolved = entry.getValue();
-
-            final var prefixToModule = new HashMap<Unqualified, QNameModule>();
-            // all resolved imports
-            for (var dep : resolved.imports()) {
-                putPrefix(prefixToModule, dep.source().prefix(), dep.qname());
-            }
-
-            // the module the source belongs to
-            final QNameModule definingModule;
-            switch (source.sourceInfo()) {
-                case SourceInfo.Module info -> {
-                    definingModule = resolved.qnameModule();
-                    putPrefix(prefixToModule, info.prefix(), definingModule);
-                }
-                case SourceInfo.Submodule info -> {
-                    // FIXME: missing @NonNull: this should be ensured through class hierarchy
-                    final var belongsTo = resolved.belongsTo();
-                    definingModule = belongsTo.parentModuleQname();
-                    putPrefix(prefixToModule, belongsTo.source().prefix(), definingModule);
-                }
-            }
-
-            // a weird thing: this source's name bound to defining module
-            final var moduleName = source.sourceId().name().bindTo(definingModule).intern();
-
-            result.add(new ResolvedSourceContext(new SourceSpecificContext(globalContext, source.sourceInfo(),
-                definingModule, new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
-                source.toStreamSource(prefixToModule)), resolved));
-        }
-
-        return List.copyOf(result);
-    }
-
-    // FIXME: this smells of a builder for ImmutablePrefixResolver or similar
-    private static void putPrefix(final HashMap<Unqualified, QNameModule> prefixToModule, final Unqualified prefix,
-            final QNameModule module) {
-        final var prev = prefixToModule.putIfAbsent(requireNonNull(prefix), requireNonNull(module));
-        if (prev != null) {
-            throw new IllegalArgumentException("Attempted to remap prefix %s from %s to %s".formatted(
-                prefix.getLocalName(), prev, module));
-        }
+        return allResolved;
     }
 
     private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
