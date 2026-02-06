@@ -140,7 +140,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             final NamespaceBinding namespaceBinding, final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
-        identifierBinding = new IdentifierBinding(namespaceBinding);
+        identifierBinding = IdentifierBinding.of(namespaceBinding);
         this.streamSource = requireNonNull(streamSource);
     }
 
