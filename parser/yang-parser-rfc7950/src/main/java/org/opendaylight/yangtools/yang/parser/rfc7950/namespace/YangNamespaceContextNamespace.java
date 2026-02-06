@@ -26,12 +26,12 @@ public final class YangNamespaceContextNamespace {
 
     public static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
         final var root = ctx.getRoot();
-        YangNamespaceContext ret = ctx.namespaceItem(INSTANCE, root);
+        var ret = ctx.namespaceItem(INSTANCE, root);
         if (ret == null) {
             if (!(ctx instanceof Mutable<?, ?, ?> mutable)) {
                 throw new VerifyException("Cannot populate namespace context to " + ctx);
             }
-            ret = new StmtNamespaceContext(root);
+            ret = mutable.identifierBinding().namespaceBinding().toYangNamespaceContext();
             mutable.addToNs(INSTANCE, root, ret);
         }
         return ret;

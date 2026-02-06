@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 
 /**
  * Interface for binding {@code prefix}-based {code identifier} ABNF constructs -- for example as used in
@@ -34,4 +35,9 @@ public interface NamespaceBinding {
      * @param prefix the prefix
      */
     @Nullable QNameModule lookupModule(UnresolvedQName.Unqualified prefix);
+
+    /**
+     * {@return a {@link YangNamespaceContext} equivalent of this mapping.
+     */
+    YangNamespaceContext toYangNamespaceContext();
 }
