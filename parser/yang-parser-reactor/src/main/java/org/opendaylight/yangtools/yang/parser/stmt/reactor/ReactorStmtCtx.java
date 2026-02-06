@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -269,9 +270,8 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public final QName moduleName() {
-        final var root = getRoot();
-        return QName.create(root.definingModule(), root.getRawArgument());
+    public Unqualified sourceName() {
+        return getRoot().sourceName();
     }
 
     //

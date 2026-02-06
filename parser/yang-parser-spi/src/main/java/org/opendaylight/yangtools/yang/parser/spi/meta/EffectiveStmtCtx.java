@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -92,7 +93,7 @@ public non-sealed interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextC
         @Override
         <X, Y extends DeclaredStatement<X>> @Nullable Current<X, Y> tryDeclaring(Class<Y> type);
 
-        @NonNull QName moduleName();
+        @NonNull Unqualified sourceName();
 
         // FIXME: 8.0.0: this method should be moved to stmt.type in some shape or form
         @NonNull QName argumentAsTypeQName();

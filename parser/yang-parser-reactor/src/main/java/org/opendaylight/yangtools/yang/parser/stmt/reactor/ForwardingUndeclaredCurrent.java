@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -56,8 +57,8 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public QName moduleName() {
-        return delegate.moduleName();
+    public Unqualified sourceName() {
+        return delegate.sourceName();
     }
 
     @Override

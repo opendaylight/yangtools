@@ -43,9 +43,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class EffectiveStmtUtils {
-    // FIXME: this should reside somewhere in max_elements
-    private static final String UNBOUNDED_STR = "unbounded";
-
     private EffectiveStmtUtils() {
         // Hidden on purpose
     }
@@ -54,7 +51,7 @@ public final class EffectiveStmtUtils {
             final EffectiveStatement<?, ?> effectiveStatement) {
         return new SourceException(stmt,
             "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
-            stmt.moduleName().getLocalName(), effectiveStatement.argument(), effectiveStatement.argument());
+            stmt.sourceName().getLocalName(), effectiveStatement.argument(), effectiveStatement.argument());
     }
 
     @NonNullByDefault
