@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
 record YinDOMStatementStreamSource(@NonNull YinDOMSource source) implements StatementStreamSource {
     @NonNullByDefault
     static final Factory<YinDOMSource> FACTORY =
-        (source, yangVersion, prefixResolver) -> new YinDOMStatementStreamSource(source);
+        (source, yangVersion, prefixToModule) -> new YinDOMStatementStreamSource(source);
 
     YinDOMStatementStreamSource {
         requireNonNull(source);

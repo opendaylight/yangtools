@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.parser.source.PrefixResolver;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.BuildSource.Stage;
 
@@ -42,8 +44,8 @@ record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
         return sourceInfo.sourceId();
     }
 
-    StatementStreamSource toStreamSource(final PrefixResolver prefixResolver) {
-        return streamFactory.newStreamSource(source, sourceInfo.yangVersion(), prefixResolver);
+    StatementStreamSource toStreamSource(final Map<Unqualified, QNameModule> prefixToModule) {
+        return streamFactory.newStreamSource(source, sourceInfo.yangVersion(), prefixToModule);
     }
 
     // Note: equality overridden to identity for predictable use as a Map key
