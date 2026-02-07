@@ -47,11 +47,11 @@ public final class BuildSource<S extends SourceRepresentation & MaterializedSour
             O extends SourceRepresentation & MaterializedSourceRepresentation<O, ?>>(
             SourceTransformer<I, O> transformer,
             I input,
-            StatementStreamSource.Factory<O> streamFactory) implements Stage {
+            StatementStreamSource.Support<O> streamSupport) implements Stage {
         NeedTransform {
             requireNonNull(transformer);
             requireNonNull(input);
-            requireNonNull(streamFactory);
+            requireNonNull(streamSupport);
         }
 
         @Override
@@ -61,7 +61,7 @@ public final class BuildSource<S extends SourceRepresentation & MaterializedSour
 
         Materialized<O> toMaterialized() throws IOException, SourceSyntaxException {
             final var source = transformer.transformSource(input);
-            return new Materialized<>(source, streamFactory);
+            return new Materialized<>(source, streamSupport);
         }
     }
 
@@ -72,10 +72,10 @@ public final class BuildSource<S extends SourceRepresentation & MaterializedSour
      */
     private record Materialized<S extends MaterializedSourceRepresentation<?, ?>>(
             S source,
-            StatementStreamSource.Factory<S> streamFactory) implements Stage {
+            StatementStreamSource.Support<S> streamSupport) implements Stage {
         Materialized {
             requireNonNull(source);
-            requireNonNull(streamFactory);
+            requireNonNull(streamSupport);
         }
 
         @Override
@@ -83,8 +83,9 @@ public final class BuildSource<S extends SourceRepresentation & MaterializedSour
             return source.sourceId();
         }
 
-        ReactorSource<S> toReactorSource() throws SourceSyntaxException {
-            return new ReactorSource<>(source, source.extractSourceInfo(), streamFactory);
+        ReactorSource toReactorSource() throws SourceSyntaxException {
+            final var sourceInfo = source.extractSourceInfo();
+            return new ReactorSource(sourceInfo, streamSupport.newFactory(source, sourceInfo.yangVersion()));
         }
     }
 
@@ -95,14 +96,14 @@ public final class BuildSource<S extends SourceRepresentation & MaterializedSour
     }
 
     public static <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>>
-            BuildSource<S> ofMaterialized(final S source, final StatementStreamSource.Factory<S> streamFactory) {
-        return new BuildSource<>(new Materialized<>(source, streamFactory));
+            BuildSource<S> ofMaterialized(final S source, final StatementStreamSource.Support<S> streamSupport) {
+        return new BuildSource<>(new Materialized<>(source, streamSupport));
     }
 
     public static <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>,
             I extends SourceRepresentation> BuildSource<S> ofTransformed(final SourceTransformer<I, S> transformer,
-                final I input, final StatementStreamSource.Factory<S> streamFactory) {
-        return new BuildSource<>(new NeedTransform<>(transformer, input, streamFactory));
+                final I input, final StatementStreamSource.Support<S> streamSupport) {
+        return new BuildSource<>(new NeedTransform<>(transformer, input, streamSupport));
     }
 
     public SourceIdentifier sourceId() {
@@ -111,21 +112,21 @@ public final class BuildSource<S extends SourceRepresentation & MaterializedSour
 
     // TODO: we really would like this to be 'ensureReactorSource' continuation, but for that we need to peel out
     //       source-specific context access.
-    public ReactorSource<?> ensureReactorSource() throws IOException, SourceSyntaxException {
+    public ReactorSource ensureReactorSource() throws IOException, SourceSyntaxException {
         return switch (stage) {
             case NeedTransform<?, ?> needTransform -> ensureReactorSource(needTransform);
             case Materialized<?> materialized -> ensureReactorSource(materialized);
-            case ReactorSource<?> reactorSource -> reactorSource;
+            case ReactorSource reactorSource -> reactorSource;
         };
     }
 
-    private ReactorSource<?> ensureReactorSource(final Materialized<?> materialized) throws SourceSyntaxException {
+    private ReactorSource ensureReactorSource(final Materialized<?> materialized) throws SourceSyntaxException {
         final var reactorSource = materialized.toReactorSource();
         stage = reactorSource;
         return reactorSource;
     }
 
-    private ReactorSource<?> ensureReactorSource(final NeedTransform<?, ?> needTransform)
+    private ReactorSource ensureReactorSource(final NeedTransform<?, ?> needTransform)
             throws IOException, SourceSyntaxException {
         final var materialized = needTransform.toMaterialized();
         stage = materialized;

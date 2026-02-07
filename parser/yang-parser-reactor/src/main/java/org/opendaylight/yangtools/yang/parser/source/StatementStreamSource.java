@@ -58,36 +58,48 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public sealed interface StatementStreamSource permits YangIRStatementStreamSource, YinDOMStatementStreamSource {
     /**
      * A factory for {@link StatementStreamSource}s.
+     */
+    @NonNullByDefault
+    @FunctionalInterface
+    interface Factory {
+        /**
+         * {@return a new {@link StatementStreamSource} backed by specified prefix mapping}
+         * @param prefixToModule the prefix mapping
+         */
+        StatementStreamSource newStreamSource(Map<? extends Unqualified, ? extends QNameModule> prefixToModule);
+    }
+
+    /**
+     * A factory factory for {@link StatementStreamSource}s.
      *
      * @param <S> the type of {@link SourceRepresentation}
      */
     @NonNullByDefault
     @FunctionalInterface
-    interface Factory<S extends MaterializedSourceRepresentation<?, ?>> {
+    interface Support<S extends MaterializedSourceRepresentation<?, ?>> {
         /**
-         * {@return a new {@link StatementStreamSource} backed by specified source, version and prefix mapping}
+         * {@return a new {@link Factory} backed by specified source and version}
          * @param source the source
          * @param yangVersion the version
          * @param prefixToModule the prefix mapping
          */
-        StatementStreamSource newStreamSource(S source, YangVersion yangVersion,
-            Map<? extends Unqualified, ? extends QNameModule> prefixToModule);
+        Factory newFactory(S source, YangVersion yangVersion);
     }
 
     /**
      * The {@link Factory} for {@link YangIRSource}.
      */
     @NonNullByDefault
-    static Factory<YangIRSource> forYangIR() {
-        return YangIRStatementStreamSource.FACTORY;
+    static Support<YangIRSource> forYangIR() {
+        return YangIRStatementStreamSource.SUPPORT;
     }
 
     /**
      * The {@link Factory} for {@link YinDOMSource}.
      */
     @NonNullByDefault
-    static Factory<YinDOMSource> forYInDOM() {
-        return YinDOMStatementStreamSource.FACTORY;
+    static Support<YinDOMSource> forYInDOM() {
+        return YinDOMStatementStreamSource.SUPPORT;
     }
 
     /**

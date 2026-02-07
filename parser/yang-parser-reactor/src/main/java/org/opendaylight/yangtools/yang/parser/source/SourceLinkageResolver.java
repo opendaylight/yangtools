@@ -58,10 +58,10 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
-    private final List<ReactorSource<?>> mainSources = new ArrayList<>();
-    private final List<ReactorSource<?>> libSources = new ArrayList<>();
+    private final List<ReactorSource> mainSources = new ArrayList<>();
+    private final List<ReactorSource> libSources = new ArrayList<>();
 
-    private final Map<SourceIdentifier, ReactorSource<?>> allSources = new HashMap<>();
+    private final Map<SourceIdentifier, ReactorSource> allSources = new HashMap<>();
 
     /**
      * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
@@ -89,19 +89,19 @@ public final class SourceLinkageResolver {
     private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
-    private SourceLinkageResolver(final Collection<ReactorSource<?>> withMainSources,
+    private SourceLinkageResolver(final Collection<ReactorSource> withMainSources,
             // FIXME: this forces libSource materialzation -- we want to do that lazily
-            final Collection<ReactorSource<?>> withLibSources) {
+            final Collection<ReactorSource> withLibSources) {
         mainSources.addAll(requireNonNull(withMainSources));
         libSources.addAll(requireNonNull(withLibSources));
     }
 
     @NonNullByDefault
-    private static Collection<ReactorSource<?>> initializeSources(final Collection<BuildSource<?>> buildSources)
+    private static Collection<ReactorSource> initializeSources(final Collection<BuildSource<?>> buildSources)
             throws ReactorException, SourceSyntaxException {
-        final var contexts = new HashSet<ReactorSource<?>>();
+        final var contexts = new HashSet<ReactorSource>();
         for (final var buildSource : buildSources) {
-            final ReactorSource<?> reactorSource;
+            final ReactorSource reactorSource;
             try {
                 reactorSource = buildSource.ensureReactorSource();
             } catch (IOException e) {
@@ -123,7 +123,7 @@ public final class SourceLinkageResolver {
      * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
-    public static Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources(
+    public static Map<ReactorSource, ResolvedSourceInfo> resolveInvolvedSources(
             final Collection<BuildSource<?>> mainSources, final Collection<BuildSource<?>> libSources)
                 throws ReactorException, SourceSyntaxException {
         if (mainSources.isEmpty()) {
@@ -134,7 +134,7 @@ public final class SourceLinkageResolver {
             .resolveInvolvedSources();
     }
 
-    private Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
+    private Map<ReactorSource, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         mapSources(mainSources);
         mapSources(libSources);
         mapSubmodulesToParents();
@@ -144,7 +144,7 @@ public final class SourceLinkageResolver {
         tryResolveBelongsTo();
         tryResolveSiblings();
 
-        final var allResolved = new LinkedHashMap<ReactorSource<?>, ResolvedSourceInfo>(involvedSourcesMap.size());
+        final var allResolved = new LinkedHashMap<ReactorSource, ResolvedSourceInfo>(involvedSourcesMap.size());
         for (var involvedSource : involvedSourcesMap.entrySet()) {
             final var fullyResolved = involvedSource.getValue().build(allResolved);
             allResolved.put(involvedSource.getValue().reactorSource(), fullyResolved);
@@ -172,7 +172,7 @@ public final class SourceLinkageResolver {
         }
     }
 
-    private void mapSources(final Collection<ReactorSource<?>> sources) {
+    private void mapSources(final Collection<ReactorSource> sources) {
         for (var source : sources) {
             final var sourceId = source.sourceId();
 

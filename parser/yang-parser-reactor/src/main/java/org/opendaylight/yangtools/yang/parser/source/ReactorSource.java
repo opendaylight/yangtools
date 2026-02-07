@@ -9,11 +9,8 @@ package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
@@ -25,12 +22,10 @@ import org.opendaylight.yangtools.yang.parser.source.BuildSource.Stage;
  * @param <S> the {@link MaterializedSourceRepresentation}
  */
 @NonNullByDefault
-public record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
-        S source,
+public record ReactorSource(
         SourceInfo sourceInfo,
-        StatementStreamSource.Factory<S> streamFactory) implements BuildSource.Stage {
+        StatementStreamSource.Factory streamFactory) implements BuildSource.Stage {
     public ReactorSource {
-        requireNonNull(source);
         requireNonNull(sourceInfo);
         requireNonNull(streamFactory);
     }
@@ -39,10 +34,6 @@ public record ReactorSource<S extends MaterializedSourceRepresentation<?, ?>>(
     public SourceIdentifier sourceId() {
         // Note: unlike source.sourceId(), this is guaranteed to be canonical
         return sourceInfo.sourceId();
-    }
-
-    public StatementStreamSource toStreamSource(final Map<Unqualified, QNameModule> prefixToModule) {
-        return streamFactory.newStreamSource(source, sourceInfo.yangVersion(), prefixToModule);
     }
 
     // Note: equality overridden to identity for predictable use as a Map key

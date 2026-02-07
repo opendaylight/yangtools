@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.ir.StringEscaping;
@@ -35,14 +36,26 @@ record YangIRStatementStreamSource(
         @NonNull StringEscaping escaping,
         @NonNull Map<String, QNameModule> prefixToModule) implements StatementStreamSource {
     @NonNullByDefault
-    static final Factory<YangIRSource> FACTORY = (source, yangVersion, prefixToModule) ->
-        new YangIRStatementStreamSource(source,
-            switch (yangVersion) {
-                case VERSION_1 -> StringEscaping.RFC6020;
-                case VERSION_1_1 -> StringEscaping.RFC7950;
-            },
-            prefixToModule.entrySet().stream().collect(
-                Collectors.toUnmodifiableMap(entry -> entry.getKey().getLocalName(), Map.Entry::getValue)));
+    static final Support<YangIRSource> SUPPORT = (source, yangVersion) -> new YangIRFactory(source,
+        switch (yangVersion) {
+            case VERSION_1 -> StringEscaping.RFC6020;
+            case VERSION_1_1 -> StringEscaping.RFC7950;
+        });
+
+    @NonNullByDefault
+    private record YangIRFactory(YangIRSource source, StringEscaping escaping) implements Factory {
+        YangIRFactory {
+            requireNonNull(source);
+            requireNonNull(escaping);
+        }
+
+        @Override
+        public StatementStreamSource newStreamSource(
+                final Map<? extends Unqualified, ? extends QNameModule> prefixToModule) {
+            return new YangIRStatementStreamSource(source, escaping, prefixToModule.entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(entry -> entry.getKey().getLocalName(), Map.Entry::getValue)));
+        }
+    }
 
     YangIRStatementStreamSource {
         requireNonNull(source);

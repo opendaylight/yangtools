@@ -36,17 +36,17 @@ final class ResolvedSourceBuilder {
     // these retain insertion order
     private final ImmutableMap.Builder<Include, ResolvedSourceBuilder> includes = new ImmutableMap.Builder<>();
     private final ImmutableMap.Builder<Import, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
-    private final @NonNull ReactorSource<?> reactorSource;
+    private final @NonNull ReactorSource reactorSource;
 
     private ResolvedBelongsTo belongsTo;
     private ResolvedSourceInfo buildFinished;
 
     @NonNullByDefault
-    ResolvedSourceBuilder(final ReactorSource<?> reactorSource) {
+    ResolvedSourceBuilder(final ReactorSource reactorSource) {
         this.reactorSource = requireNonNull(reactorSource);
     }
 
-    @NonNull ReactorSource<?> reactorSource() {
+    @NonNull ReactorSource reactorSource() {
         return reactorSource;
     }
 
@@ -110,7 +110,7 @@ final class ResolvedSourceBuilder {
      * @return ResolvedSourceInfo of this source
      */
     @NonNullByDefault
-    ResolvedSourceInfo build(final Map<ReactorSource<?>, ResolvedSourceInfo> allResolved) {
+    ResolvedSourceInfo build(final Map<ReactorSource, ResolvedSourceInfo> allResolved) {
         requireNonNull(allResolved);
 
         if (buildFinished != null) {
@@ -125,7 +125,7 @@ final class ResolvedSourceBuilder {
         return buildFinished;
     }
 
-    private List<ResolvedImport> resolveImports(final Map<ReactorSource<?>, ResolvedSourceInfo> allResolved) {
+    private List<ResolvedImport> resolveImports(final Map<ReactorSource, ResolvedSourceInfo> allResolved) {
         final var map = imports.build();
         final var result = new ArrayList<ResolvedImport>(map.size());
 
