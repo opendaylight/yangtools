@@ -10,23 +10,26 @@ package org.opendaylight.yangtools.yang.parser.source;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import java.io.IOException;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.RevisionUnion;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
@@ -37,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Module;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -50,6 +54,51 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
  * and linked together according to their dependencies (includes, imports, belongs-to)
  */
 public final class SourceLinkageResolver {
+    @NonNullByDefault
+    private abstract static sealed class Src<
+            I extends SourceInfo,
+            R extends SourceLinkage.Ref,
+            L extends SourceLinkage> {
+        final I info;
+        final R ref;
+
+        private boolean required;
+
+        Src(final I info, final R ref) {
+            this.info = requireNonNull(info);
+            this.ref = requireNonNull(ref);
+        }
+
+        final boolean required() {
+            return required;
+        }
+
+        final boolean setRequired() {
+            return required ? false : (required = true);
+        }
+    }
+
+    @NonNullByDefault
+    private static final class ModuleSrc extends Src<SourceInfo.Module, SourceLinkage.ModuleRef, ModuleLinkage> {
+        private final ArrayDeque<SubmoduleSrc> linkedFromBelongsTo = new ArrayDeque<>();
+
+        ModuleSrc(final Module info) {
+            super(info, new SourceLinkage.ModuleRef(info.sourceId()));
+        }
+
+        void linkFromBelongsTo(final SubmoduleSrc submodule) {
+            linkedFromBelongsTo.addLast(submodule);
+        }
+    }
+
+    @NonNullByDefault
+    private static final class SubmoduleSrc
+            extends Src<SourceInfo.Submodule, SourceLinkage.SubmoduleRef, SubmoduleLinkage> {
+        SubmoduleSrc(final Submodule info) {
+            super(info, new SourceLinkage.SubmoduleRef(info.sourceId()));
+        }
+    }
+
     /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
      */
@@ -58,10 +107,23 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
-    private final List<ReactorSource<?>> mainSources = new ArrayList<>();
-    private final List<ReactorSource<?>> libSources = new ArrayList<>();
+    // Tracking of modules and submodules.
+    private final ArrayDeque<SubmoduleSrc> submodules = new ArrayDeque<>();
+    private final ArrayDeque<ModuleSrc> modules = new ArrayDeque<>();
 
-    private final Map<SourceIdentifier, ReactorSource<?>> allSources = new HashMap<>();
+    // Primary linkage invariant: (module name, revision) -> module mapping
+    //
+    // We need to satisfy both:
+    //   import foo { prefix bar; }
+    //   import foo { prefix bar; revision 2026-07-02; }
+    //
+    // The second form is the exact match. We take advantage of RevisionUnion to make that matching super easy using
+    // a table. The table is organized via Comparable to make ordering predictable.
+    private final Table<Unqualified, RevisionUnion, ModuleSrc> modulesByName =
+        Tables.newCustomTable(new TreeMap<>(), () -> new TreeMap<>(Comparator.reverseOrder()));
+
+    // Primary output invariant: (namespace, revision) -> module mapping
+    private final HashMap<QNameModule, ModuleSrc> modulesByNamespace = new HashMap<>();
 
     /**
      * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
@@ -89,27 +151,55 @@ public final class SourceLinkageResolver {
     private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
-    private SourceLinkageResolver(final Collection<ReactorSource<?>> withMainSources,
-            // FIXME: this forces libSource materialzation -- we want to do that lazily
-            final Collection<ReactorSource<?>> withLibSources) {
-        mainSources.addAll(requireNonNull(withMainSources));
-        libSources.addAll(requireNonNull(withLibSources));
+    public SourceLinkage.Ref addSource(final SourceInfo source) {
+        final var src = insertSource(source);
+        src.setRequired();
+        return src.ref;
     }
 
     @NonNullByDefault
-    private static Collection<ReactorSource<?>> initializeSources(final Collection<BuildSource<?>> buildSources)
-            throws ReactorException, SourceSyntaxException {
-        final var contexts = new HashSet<ReactorSource<?>>();
-        for (final var buildSource : buildSources) {
-            final ReactorSource<?> reactorSource;
-            try {
-                reactorSource = buildSource.ensureReactorSource();
-            } catch (IOException e) {
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.INIT, buildSource.sourceId(), e);
+    public SourceLinkage.Ref addLibSource(final SourceInfo source) {
+        return insertSource(source).ref;
+    }
+
+    @NonNullByDefault
+    private Src<?, ?, ?> insertSource(final SourceInfo source) {
+        switch (source) {
+            case SourceInfo.Module info -> {
+                final var module = new ModuleSrc(info);
+
+                // Try to claim namespace + revision
+                final var namespace = QNameModule.of(info.namespace(), info.latestRevision());
+                final var prevByNs = modulesByNamespace.putIfAbsent(namespace, module);
+                if (prevByNs != null) {
+                    // FIXME: better exception
+                    throw new IllegalArgumentException("Adding %s causes conflict on namespace %s with %s".formatted(
+                        source, namespace, prevByNs));
+                }
+
+                final var name = info.sourceId().name();
+                final var revision = namespace.revisionUnion();
+                final var prevByName = modulesByName.put(name, revision, module);
+                if (prevByName != null) {
+                    // undo modifications
+                    modulesByName.put(name, revision, prevByName);
+                    modulesByNamespace.replace(namespace, module, prevByNs);
+
+                    // FIXME: better exception
+                    throw new IllegalArgumentException(
+                        "Adding %s causes conflict on name %s%s with %s".formatted(
+                            source, name, revision instanceof Revision rev ? " revision " + rev : "", prevByName));
+                }
+
+                modules.add(module);
+                return module;
             }
-            contexts.add(reactorSource);
+            case SourceInfo.Submodule info -> {
+                final var submodule = new SubmoduleSrc(info);
+                submodules.add(submodule);
+                return submodule;
+            }
         }
-        return contexts;
     }
 
     /**
@@ -123,21 +213,21 @@ public final class SourceLinkageResolver {
      * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
-    public static Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources(
-            final Collection<BuildSource<?>> mainSources, final Collection<BuildSource<?>> libSources)
-                throws ReactorException, SourceSyntaxException {
-        if (mainSources.isEmpty()) {
-            return Map.of();
+    @NonNullByDefault
+    public Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
+        // First try to link all required modules's imports
+        for (var module : modules) {
+            if (!module.required()) {
+                continue;
+            }
+
+
+
+
+
         }
 
-        return new SourceLinkageResolver(initializeSources(mainSources), initializeSources(libSources))
-            .resolveInvolvedSources();
-    }
-
-    private Map<ReactorSource<?>, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
-        mapSources(mainSources);
-        mapSources(libSources);
-        mapSubmodulesToParents();
+            mapSubmodulesToParents();
         reuniteMainSubmodulesWithParents();
 
         tryResolveDependencies();
@@ -153,49 +243,58 @@ public final class SourceLinkageResolver {
         return allResolved;
     }
 
-    private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
-        for (var source : allSources.values()) {
-            if (source.sourceInfo() instanceof SourceInfo.Submodule submoduleInfo) {
-                final var belongsTo = submoduleInfo.belongsTo();
-                final var parentName = belongsTo.name();
-                final var parentId = findSatisfied(allSourcesMapped.get(parentName), belongsTo);
-                final var submoduleId = source.sourceId();
-                if (parentId != null) {
-                    submoduleToParentMap.put(submoduleId, parentId);
-                    continue;
-                }
+    private void resolveImports(final Src<?, ?, ?> src) {
+        final var map = new HashMap<Unqualified, SourceLinkage.ModuleRef>();
+        for (var dep : src.info.imports()) {
 
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, submoduleId,
-                    new InferenceException(refOf(submoduleId, belongsTo.sourceRef()),
-                        "Module %s from belongs-to was not found", parentName.getLocalName()));
-            }
-        }
-    }
-
-    private void mapSources(final Collection<ReactorSource<?>> sources) {
-        for (var source : sources) {
-            final var sourceId = source.sourceId();
-
-            // FIXME: verify no duplicates
-            allSources.putIfAbsent(sourceId, source);
-            final var allOfQname = allSourcesMapped.get(sourceId.name());
-            if (allOfQname != null) {
-                allOfQname.add(sourceId);
+            final ModuleSrc module;
+            final var revision = dep.revision();
+            if (revision == null) {
+                final var matching = modulesByName.row(dep.name());
+                module = matching.isEmpty() ? null : matching.values().iterator().next();
             } else {
-                mapSource(sourceId);
+                module = modulesByName.get(dep.name(), revision);
             }
+
+            if (module == null) {
+                // FIXME: better exception
+                throw new IllegalArgumentException();
+            }
+
+            final var prefix = dep.prefix();
+            final var prev = map.putIfAbsent(prefix, module.ref);
+
+            // FIXME: check duplicate
+
         }
     }
 
-    private void mapSource(final SourceIdentifier sourceId) {
-        final var name = sourceId.name();
-        final var matches = allSourcesMapped.get(name);
-        if (matches != null) {
-            matches.add(sourceId);
-            return;
+    private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
+        final var ambiguousBelongsTo = HashMultimap.<Unqualified, SubmoduleSrc>create();
+
+        for (var submodule = submodules.pollFirst(); submodule != null; submodule = submodules.pollFirst()) {
+            final var info = submodule.info;
+
+            final var belongsTo = info.belongsTo();
+            final var name = belongsTo.name();
+            final var matchingName = modulesByName.row(name);
+            switch (matchingName.size()) {
+                case 0 -> {
+                    final var sourceId = info.sourceId();
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                        new InferenceException(refOf(sourceId, belongsTo.sourceRef()),
+                            "Module %s from belongs-to was not found", name.getLocalName()));
+                }
+                case 1 -> matchingName.values().iterator().next().linkFromBelongsTo(submodule);
+                default -> ambiguousBelongsTo.put(name, submodule);
+            }
         }
 
-        allSourcesMapped.put(name, newMatchSetWith(sourceId));
+        if (!ambiguousBelongsTo.isEmpty()) {
+            // FIXME: improve this
+            throw new IllegalStateException("Unhandled ambiguous belongs-to " + ambiguousBelongsTo);
+        }
+
     }
 
     private void tryResolveDependencies() throws ReactorException {

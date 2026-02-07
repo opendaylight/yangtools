@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -18,9 +19,12 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.parser.source.BuildSource;
 import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
+import org.opendaylight.yangtools.yang.parser.source.SourceLinkage;
 import org.opendaylight.yangtools.yang.parser.source.SourceLinkageResolver;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 @NonNullByDefault
 final class SourceLinkageBuilder {
@@ -48,6 +52,28 @@ final class SourceLinkageBuilder {
     }
 
     Map<ReactorSource<?>, ResolvedSourceInfo> build() throws ReactorException, SourceSyntaxException {
-        return SourceLinkageResolver.resolveInvolvedSources(sources, libSources);
+        final var resolver = new SourceLinkageResolver();
+        final var refToSource = new HashMap<SourceLinkage.Ref, ReactorSource<?>>();
+
+        for (var source : sources) {
+            final var reactorSource = ensureReactorSource(source);
+            refToSource.put(resolver.addSource(reactorSource.sourceInfo()), reactorSource);
+        }
+        for (var source : libSources) {
+            final var reactorSource = ensureReactorSource(source);
+            refToSource.put(resolver.addLibSource(reactorSource.sourceInfo()), reactorSource);
+        }
+
+        // FIXME: not suite
+        return resolver.resolveInvolvedSources();
+    }
+
+    private static ReactorSource<?> ensureReactorSource(final BuildSource<?> source)
+            throws ReactorException, SourceSyntaxException {
+        try {
+            return source.ensureReactorSource();
+        } catch (IOException e) {
+            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, source.sourceId(), e);
+        }
     }
 }
