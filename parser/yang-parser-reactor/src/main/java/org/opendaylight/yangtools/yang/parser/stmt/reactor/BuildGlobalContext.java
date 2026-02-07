@@ -141,7 +141,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @NonNullByDefault
-    void linkSources(final Map<ReactorSource<?>, ResolvedSourceInfo> linkage) throws ReactorException {
+    void linkSources(final Map<ReactorSource, ResolvedSourceInfo> linkage) throws ReactorException {
         final var linkedSources = new ArrayList<SourceSpecificContext>(linkage.size());
         for (var entry : linkage.entrySet()) {
             final var source = entry.getKey();
@@ -173,7 +173,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
             linkedSources.add(new SourceSpecificContext(this, source.sourceInfo(),
                 definingModule, new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
-                source.toStreamSource(prefixToModule)));
+                source.streamFactory().newStreamSource(prefixToModule)));
         }
         sources = List.copyOf(linkedSources);
     }

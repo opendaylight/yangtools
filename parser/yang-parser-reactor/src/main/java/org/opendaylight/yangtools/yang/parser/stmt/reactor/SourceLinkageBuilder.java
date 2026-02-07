@@ -28,8 +28,8 @@ final class SourceLinkageBuilder {
     private final HashSet<BuildSource<?>> libSources = new HashSet<>();
 
     <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> void addSource(final S source,
-            final StatementStreamSource.Factory<S> streamFactory) throws IOException, SourceSyntaxException {
-        final var buildSource = BuildSource.ofMaterialized(source, streamFactory);
+            final StatementStreamSource.Support<S> streamSupport) throws IOException, SourceSyntaxException {
+        final var buildSource = BuildSource.ofMaterialized(source, streamSupport);
         // eagerly initialize, so that any source-related problem is reported now rather than later
         buildSource.ensureReactorSource();
         sources.add(buildSource);
@@ -37,17 +37,17 @@ final class SourceLinkageBuilder {
 
     <I extends SourceRepresentation, O extends SourceRepresentation & MaterializedSourceRepresentation<O, ?>>
             void addLibSource(final SourceTransformer<I, O> transformer, final I source,
-                final StatementStreamSource.Factory<O> streamFactory) {
-        libSources.add(BuildSource.ofTransformed(transformer, source, streamFactory));
+                final StatementStreamSource.Support<O> streamSupport) {
+        libSources.add(BuildSource.ofTransformed(transformer, source, streamSupport));
     }
 
     <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> void addLibSource(final S source,
-            final StatementStreamSource.Factory<S> streamFactory) {
+            final StatementStreamSource.Support<S> streamSupport) {
         // library sources are lazily initialized
-        libSources.add(BuildSource.ofMaterialized(source, streamFactory));
+        libSources.add(BuildSource.ofMaterialized(source, streamSupport));
     }
 
-    Map<ReactorSource<?>, ResolvedSourceInfo> build() throws ReactorException, SourceSyntaxException {
+    Map<ReactorSource, ResolvedSourceInfo> build() throws ReactorException, SourceSyntaxException {
         return SourceLinkageResolver.resolveInvolvedSources(sources, libSources);
     }
 }
