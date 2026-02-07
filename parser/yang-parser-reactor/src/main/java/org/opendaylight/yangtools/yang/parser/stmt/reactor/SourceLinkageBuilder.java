@@ -20,7 +20,9 @@ import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.source.SourceLinkageResolver;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 @NonNullByDefault
 final class SourceLinkageBuilder {
@@ -48,6 +50,24 @@ final class SourceLinkageBuilder {
     }
 
     Map<ReactorSource<?>, ResolvedSourceInfo> build() throws ReactorException, SourceSyntaxException {
-        return SourceLinkageResolver.resolveInvolvedSources(sources, libSources);
+        final var resolver = new SourceLinkageResolver();
+
+        for (var source : sources) {
+            resolver.addSource(ensureReactorSource(source));
+        }
+        for (var source : libSources) {
+            resolver.addLibSource(ensureReactorSource(source));
+        }
+
+        return resolver.resolveInvolvedSources();
+    }
+
+    private static ReactorSource<?> ensureReactorSource(final BuildSource<?> source)
+            throws ReactorException, SourceSyntaxException {
+        try {
+            return source.ensureReactorSource();
+        } catch (IOException e) {
+            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, source.sourceId(), e);
+        }
     }
 }
