@@ -92,8 +92,6 @@ public final class ImportStatementSupport
             public void apply(final InferenceContext ctx) {
                 final var importedModuleContext = imported.resolve(ctx);
                 verify(moduleName.equals(importedModuleContext.getArgument()));
-                final var importedModuleNamespace = verifyNotNull(importedModuleContext.namespaceItem(
-                    ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName));
                 final var impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
                     "Missing prefix statement");
@@ -108,7 +106,8 @@ public final class ImportStatementSupport
                     }
                 }
 
-                stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, impPrefix, importedModuleNamespace);
+                stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, impPrefix,
+                    importedModuleContext.definingModule().namespace());
             }
 
             @Override

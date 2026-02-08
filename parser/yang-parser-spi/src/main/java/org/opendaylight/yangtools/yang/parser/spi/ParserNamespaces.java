@@ -208,12 +208,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("qnamemodule-to-name");
 
     /**
-     * Pre-linkage global mapping of module names to namespaces.
-     */
-    public static final @NonNull ParserNamespace<Unqualified, XMLNamespace> MODULE_NAME_TO_NAMESPACE =
-        new ParserNamespace<>("module-name-to-xmlnamespace");
-
-    /**
      * Global mapping of modules to source identifier.
      */
     public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> MODULECTX_TO_SOURCE =
