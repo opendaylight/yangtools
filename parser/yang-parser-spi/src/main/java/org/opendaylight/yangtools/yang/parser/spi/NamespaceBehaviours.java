@@ -79,9 +79,6 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> MODULE_NAMESPACE_TO_NAME =
         NamespaceBehaviour.global(ParserNamespaces.MODULE_NAMESPACE_TO_NAME);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> MODULE_NAME_TO_NAMESPACE =
-        NamespaceBehaviour.global(ParserNamespaces.MODULE_NAME_TO_NAMESPACE);
-
     public static final @NonNull NamespaceBehaviour<?, ?> MODULECTX_TO_SOURCE =
         NamespaceBehaviour.global(ParserNamespaces.MODULECTX_TO_SOURCE);
 

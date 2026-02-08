@@ -152,7 +152,6 @@ public final class ModuleStatementSupport
         final var moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", moduleName);
-        stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_NAMESPACE, moduleName, moduleNs);
 
         final var modulePrefix = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
