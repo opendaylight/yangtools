@@ -194,14 +194,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("supportedFeatures");
 
     /**
-     * Source-specific mapping of prefixes to namespaces. This namespace is populated by all statements which have
-     * impact on the XML namespace, for example {@code import}, {@code belongs-to} and really anywhere a {@code prefix}
-     * statement is present.
-     */
-    public static final @NonNull ParserNamespace<String, QNameModule> PREFIX_TO_MODULE =
-        new ParserNamespace<>("prefix-to-qnamemodule");
-
-    /**
      * Namespace used for storing information about modules that support deviation resolution.
      * Map key (QNameModule) denotes a module which can be deviated by the modules specified in the Map value.
      */

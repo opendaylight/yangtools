@@ -193,7 +193,6 @@ public final class ModuleStatementSupport
             "Prefix of the module [%s] is missing", stmt.argument());
 
         stmt.addToNs(QNameModuleNamespace.INSTANCE, Empty.value(), qNameModule);
-        stmt.addToNs(ParserNamespaces.PREFIX_TO_MODULE, modulePrefix, qNameModule);
         stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_SOURCE, stmt, moduleIdentifier);

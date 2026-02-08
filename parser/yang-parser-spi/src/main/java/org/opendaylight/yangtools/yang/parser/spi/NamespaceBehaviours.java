@@ -73,9 +73,6 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> SUPPORTED_FEATURES =
         NamespaceBehaviour.global(ParserNamespaces.SUPPORTED_FEATURES);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> PREFIX_TO_MODULE =
-        NamespaceBehaviour.global(ParserNamespaces.PREFIX_TO_MODULE);
-
     public static final @NonNull NamespaceBehaviour<?, ?> MODULES_DEVIATED_BY =
         NamespaceBehaviour.global(ParserNamespaces.MODULES_DEVIATED_BY);
 
