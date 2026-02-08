@@ -240,10 +240,7 @@ public final class UsesStatementSupport
 
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
-        if (targetCtx.getParentContext() == null) {
-            return targetCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, targetCtx);
-        }
-        if (targetCtx.produces(AugmentStatement.DEF)) {
+        if (targetCtx.getParentContext() == null || targetCtx.produces(AugmentStatement.DEF)) {
             return targetCtx.definingModule();
         }
         if (targetCtx.argument() instanceof QName targetQName && stmtContext.argument() instanceof QName) {

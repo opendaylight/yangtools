@@ -260,8 +260,7 @@ public final class DeviateStatementSupport
             return true;
         }
 
-        final var currentModule = deviateStmtCtx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME,
-                deviateStmtCtx.getRoot());
+        final var currentModule = deviateStmtCtx.definingModule();
         final var targetModule = deviationTarget.getNodeIdentifiers().getLast().getModule();
         final var deviationModulesSupportedByTargetModule = modulesDeviatedByModules.get(targetModule);
         if (deviationModulesSupportedByTargetModule != null) {

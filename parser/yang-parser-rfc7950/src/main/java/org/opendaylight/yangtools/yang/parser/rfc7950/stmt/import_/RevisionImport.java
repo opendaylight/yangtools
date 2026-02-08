@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -63,15 +62,11 @@ final class RevisionImport {
                     ParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
                 stmt.addToNs(ImportedVersionNamespace.INSTANCE, Empty.value(), importedModuleIdentifier);
 
-                final QNameModule mod = InferenceException.throwIfNull(
-                    stmt.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, importedModule), stmt,
-                    "Failed to find module of %s", importedModule);
-
                 linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,
                     importedModule);
                 final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                 stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
-                stmt.addToNs(ModuleQNameToPrefix.INSTANCE, mod, impPrefix);
+                stmt.addToNs(ModuleQNameToPrefix.INSTANCE, importedModule.definingModule(), impPrefix);
             }
 
             @Override

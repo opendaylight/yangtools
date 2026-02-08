@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -20,12 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -56,15 +52,7 @@ public final class DeviationStatementSupport
     public void onFullDefinitionDeclared(final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
         super.onFullDefinitionDeclared(ctx);
 
-        StmtContext<?, ?, ?> root = ctx.getRoot();
-        if (root.produces(SubmoduleStatement.DEF)) {
-            // root is submodule, we need to find the module we belong to. We can rely on there being exactly one
-            // belongs-to statement, enforced SubmoduleStatementSupport's validator.
-            root = Iterables.getOnlyElement(root.namespace(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX).values());
-        }
-
-        final var currentModule = verifyNotNull(ctx.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root),
-            "Failed to find QName for %s", root);
+        final var currentModule = ctx.definingModule();
         final var targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx,
