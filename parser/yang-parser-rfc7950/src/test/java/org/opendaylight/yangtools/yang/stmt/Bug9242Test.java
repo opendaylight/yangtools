@@ -47,10 +47,10 @@ class Bug9242Test extends AbstractYangTest {
 
         final LeafSchemaNode myLeaf = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
             impModule.getQNameModule(), "my-leaf"));
-        assertSame(deviatedMyLeafType, myLeaf.getType());
+        assertSame(deviatedMyLeafType, myLeaf.getTypeDefinition());
 
         final LeafSchemaNode myLeaf2 = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
             impModule.getQNameModule(), "my-leaf-2"));
-        assertSame(deviatedMyLeaf2Type, myLeaf2.getType());
+        assertSame(deviatedMyLeaf2Type, myLeaf2.getTypeDefinition());
     }
 }

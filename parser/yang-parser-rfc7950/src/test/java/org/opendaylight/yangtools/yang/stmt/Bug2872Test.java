@@ -23,7 +23,7 @@ class Bug2872Test extends AbstractYangTest {
         final var schema = assertEffectiveModelDir("/bugs/bug2872");
         final var myLeaf = assertInstanceOf(LeafSchemaNode.class, schema.getDataChildByName(
             QName.create("bug2872", "2016-06-08", "bar")));
-        final var myEnum = assertInstanceOf(EnumTypeDefinition.class, myLeaf.getType());
+        final var myEnum = assertInstanceOf(EnumTypeDefinition.class, myLeaf.getTypeDefinition());
 
         assertEquals(List.of("value-one", "value-two"), myEnum.getValues().stream().map(EnumPair::getName).toList());
     }

@@ -73,7 +73,7 @@ class DeviationResolutionTest extends AbstractYangTest {
         final var constraint = assertInstanceOf(ElementCountMatcher.InRange.class, myLeafList.elementCountMatcher());
         assertEquals(MinElementsArgument.of(5), constraint.atLeast());
         assertEquals(MaxElementsArgument.of(10), constraint.atMost());
-        assertNotNull(myLeafList.getType().getUnits());
+        assertNotNull(myLeafList.getTypeDefinition().getUnits());
 
         final var myList = assertInstanceOf(ListSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-list")));
@@ -111,9 +111,9 @@ class DeviationResolutionTest extends AbstractYangTest {
         final var myLeaf = assertInstanceOf(LeafSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf")));
 
-        assertInstanceOf(Uint32TypeDefinition.class, myLeaf.getType());
-        assertEquals(Optional.of("bytes"), myLeaf.getType().getUnits());
-        assertEquals(Optional.of("10"), myLeaf.getType().getDefaultValue());
+        final var myLeafType = assertInstanceOf(Uint32TypeDefinition.class, myLeaf.getTypeDefinition());
+        assertEquals(Optional.of("bytes"), myLeafType.getUnits());
+        assertEquals(Optional.of("10"), myLeafType.getDefaultValue());
 
         final var myLeafList = assertInstanceOf(LeafListSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf-list-test")));
@@ -132,15 +132,15 @@ class DeviationResolutionTest extends AbstractYangTest {
         final var myAugLeaf = assertInstanceOf(LeafSchemaNode.class,
             myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-aug-leaf")));
         assertNotNull(myAugLeaf);
-        assertInstanceOf(Uint32TypeDefinition.class, myAugLeaf.getType());
-        assertEquals(Optional.of("seconds"), myAugLeaf.getType().getUnits());
-        assertEquals(Optional.of("new-def-val"), myAugLeaf.getType().getDefaultValue());
+        final var myAugLeafType = assertInstanceOf(Uint32TypeDefinition.class, myAugLeaf.getTypeDefinition());
+        assertEquals(Optional.of("seconds"), myAugLeafType.getUnits());
+        assertEquals(Optional.of("new-def-val"), myAugLeafType.getDefaultValue());
 
         final var myUsedLeaf = assertInstanceOf(LeafSchemaNode.class,
             myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-used-leaf")));
-        assertInstanceOf(Uint32TypeDefinition.class, myUsedLeaf.getType());
-        assertEquals(Optional.of("weeks"), myUsedLeaf.getType().getUnits());
-        assertEquals(Optional.of("new-def-val"), myUsedLeaf.getType().getDefaultValue());
+        final var myUsedLeafType = assertInstanceOf(Uint32TypeDefinition.class, myUsedLeaf.getTypeDefinition());
+        assertEquals(Optional.of("weeks"), myUsedLeafType.getUnits());
+        assertEquals(Optional.of("new-def-val"), myUsedLeafType.getDefaultValue());
     }
 
     @Test
@@ -153,8 +153,8 @@ class DeviationResolutionTest extends AbstractYangTest {
         final var myLeaf = assertInstanceOf(LeafSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf")));
 
-        assertEquals(Optional.empty(), myLeaf.getType().getDefaultValue());
-        assertEquals(Optional.empty(), myLeaf.getType().getUnits());
+        assertEquals(Optional.empty(), myLeaf.getTypeDefinition().getDefaultValue());
+        assertEquals(Optional.empty(), myLeaf.getTypeDefinition().getUnits());
 
         final var myLeafList = assertInstanceOf(LeafListSchemaNode.class,
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-leaf-list")));
@@ -169,15 +169,15 @@ class DeviationResolutionTest extends AbstractYangTest {
             barModule.getDataChildByName(QName.create(barModule.getQNameModule(), "my-cont")));
         final var myAugLeaf = assertInstanceOf(LeafSchemaNode.class,
             myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-aug-leaf")));
-        assertEquals(Optional.empty(), myAugLeaf.getType().getDefaultValue());
-        assertEquals(Optional.empty(), myAugLeaf.getType().getUnits());
+        assertEquals(Optional.empty(), myAugLeaf.getTypeDefinition().getDefaultValue());
+        assertEquals(Optional.empty(), myAugLeaf.getTypeDefinition().getUnits());
         assertEquals(0, myAugLeaf.getMustConstraints().size());
 
         final var myUsedLeaf = assertInstanceOf(LeafSchemaNode.class,
             myCont.getDataChildByName(QName.create(barModule.getQNameModule(), "my-used-leaf")));
         assertNotNull(myUsedLeaf);
-        assertEquals(Optional.empty(), myUsedLeaf.getType().getDefaultValue());
-        assertEquals(Optional.empty(), myUsedLeaf.getType().getUnits());
+        assertEquals(Optional.empty(), myUsedLeaf.getTypeDefinition().getDefaultValue());
+        assertEquals(Optional.empty(), myUsedLeaf.getTypeDefinition().getUnits());
         assertEquals(0, myUsedLeaf.getMustConstraints().size());
     }
 

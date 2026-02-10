@@ -176,7 +176,7 @@ class MoreRevisionsTest extends AbstractYangTest {
 
         var interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).orElseThrow();
         var leafLastChange = interfacesModule20121115.getDataChildByName(lastChange);
-        QName lastChangeTypeQName = assertInstanceOf(LeafSchemaNode.class, leafLastChange).getType().getQName();
+        var lastChangeTypeQName = assertInstanceOf(LeafSchemaNode.class, leafLastChange).getTypeDefinition().getQName();
         assertEquals(dateTimeTypeDef20100924, lastChangeTypeQName);
 
         var imports = interfacesModule20121115.getImports();
@@ -193,7 +193,7 @@ class MoreRevisionsTest extends AbstractYangTest {
 
         var monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").orElseThrow();
         var leafLockedTime = monitoringModule19700101.getDataChildByName(lockedTime);
-        QName lockedTimeTypeQName = assertInstanceOf(LeafSchemaNode.class, leafLockedTime).getType().getQName();
+        var lockedTimeTypeQName = assertInstanceOf(LeafSchemaNode.class, leafLockedTime).getTypeDefinition().getQName();
         assertEquals(dateTimeTypeDef20130715, lockedTimeTypeQName);
 
         var imports = monitoringModule19700101.getImports();

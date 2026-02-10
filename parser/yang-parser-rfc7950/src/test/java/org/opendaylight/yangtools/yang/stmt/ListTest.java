@@ -48,23 +48,23 @@ class ListTest extends AbstractYangTest {
         var leaf = assertInstanceOf(LeafSchemaNode.class,
             list.getDataChildByName(QName.create(testModule.getQNameModule(), "key1")));
         assertTrue(leaf.isMandatory());
-        assertEquals("int32", leaf.getType().getQName().getLocalName());
+        assertEquals("int32", leaf.getTypeDefinition().getQName().getLocalName());
 
         leaf = assertInstanceOf(LeafSchemaNode.class,
             list.getDataChildByName(QName.create(testModule.getQNameModule(), "key2")));
         assertTrue(leaf.isMandatory());
-        assertEquals("int16", leaf.getType().getQName().getLocalName());
+        assertEquals("int16", leaf.getTypeDefinition().getQName().getLocalName());
 
         leaf = assertInstanceOf(LeafSchemaNode.class,
             list.getDataChildByName(QName.create(testModule.getQNameModule(), "old-leaf")));
         assertFalse(leaf.isMandatory());
-        assertEquals("string", leaf.getType().getQName().getLocalName());
+        assertEquals("string", leaf.getTypeDefinition().getQName().getLocalName());
 
         leaf = assertInstanceOf(LeafSchemaNode.class,
             list.getDataChildByName(QName.create(testModule.getQNameModule(), "young-leaf")));
         assertFalse(leaf.isMandatory());
-        assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
-        assertEquals(Optional.of("default-value"), leaf.getType().getDefaultValue());
+        assertEquals("young-leaf", leaf.getTypeDefinition().getQName().getLocalName());
+        assertEquals(Optional.of("default-value"), leaf.getTypeDefinition().getDefaultValue());
 
         final var leafList = assertInstanceOf(LeafListSchemaNode.class,
             list.getDataChildByName(QName.create(testModule.getQNameModule(), "list-of-leaves")));
@@ -73,6 +73,6 @@ class ListTest extends AbstractYangTest {
         constraint = assertInstanceOf(ElementCountMatcher.InRange.class, leafList.elementCountMatcher());
         assertEquals(MinElementsArgument.of(2), constraint.atLeast());
         assertEquals(MaxElementsArgument.of(20), constraint.atMost());
-        assertEquals("string", leafList.getType().getQName().getLocalName());
+        assertEquals("string", leafList.getTypeDefinition().getQName().getLocalName());
     }
 }

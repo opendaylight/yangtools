@@ -139,7 +139,7 @@ class GroupingTest extends AbstractModelTest {
         assertNotEquals(how_u, how_g);
 
         final var address_u = assertInstanceOf(LeafSchemaNode.class, destination.dataChildByName(fooQName("address")));
-        assertEquals(Optional.of("1.2.3.4"), address_u.getType().getDefaultValue());
+        assertEquals(Optional.of("1.2.3.4"), address_u.getTypeDefinition().getDefaultValue());
         assertEquals(Optional.of("IP address of target node"), address_u.getDescription());
         assertEquals(Optional.of("address reference added by refine"), address_u.getReference());
         assertEquals(Optional.of(Boolean.FALSE), address_u.effectiveConfig());
@@ -148,7 +148,7 @@ class GroupingTest extends AbstractModelTest {
 
         final var address_g = assertInstanceOf(LeafSchemaNode.class, grouping.dataChildByName(bazQName("address")));
         assertFalse(address_g.isAddedByUses());
-        assertEquals(Optional.empty(), address_g.getType().getDefaultValue());
+        assertEquals(Optional.empty(), address_g.getTypeDefinition().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertEquals(Optional.empty(), address_g.getReference());
         assertEquals(Optional.empty(), address_g.effectiveConfig());
@@ -223,7 +223,7 @@ class GroupingTest extends AbstractModelTest {
         assertNotEquals(how_u, how_g);
 
         final var address_u = assertInstanceOf(LeafSchemaNode.class, FOO.dataChildByName(fooQName("address")));
-        assertEquals(Optional.empty(), address_u.getType().getDefaultValue());
+        assertEquals(Optional.empty(), address_u.getTypeDefinition().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_u.getDescription());
         assertFalse(address_u.getReference().isPresent());
         assertEquals(Optional.empty(), address_u.effectiveConfig());
@@ -231,7 +231,7 @@ class GroupingTest extends AbstractModelTest {
 
         final var address_g = assertInstanceOf(LeafSchemaNode.class, grouping.dataChildByName(bazQName("address")));
         assertFalse(address_g.isAddedByUses());
-        assertEquals(Optional.empty(), address_g.getType().getDefaultValue());
+        assertEquals(Optional.empty(), address_g.getTypeDefinition().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertFalse(address_g.getReference().isPresent());
         assertEquals(Optional.empty(), address_g.effectiveConfig());
@@ -431,7 +431,7 @@ class GroupingTest extends AbstractModelTest {
         }
 
         assertNotNull(impType);
-        assertEquals(leaf.getType().getQName(), impType.getQName());
+        assertEquals(leaf.getTypeDefinition().getQName(), impType.getQName());
     }
 
     private static void assertIsAddedByUses(final GroupingDefinition node, final boolean expected) {

@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class AnnotationEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<AnnotationName, @NonNull AnnotationStatement>
         implements AnnotationEffectiveStatement, AnnotationSchemaNode {
-    private final TypeDefinition<?> type;
+    private final @NonNull TypeDefinition<?> typeDefinition;
 
     AnnotationEffectiveStatementImpl(final Current<AnnotationName, AnnotationStatement> stmt,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -42,17 +42,12 @@ final class AnnotationEffectiveStatementImpl
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             qname);
         findFirstEffectiveSubstatementArgument(UnitsEffectiveStatement.class).ifPresent(builder::setUnits);
-        type = builder.build();
-    }
-
-    @Override
-    public TypeDefinition<?> getType() {
-        return type;
+        typeDefinition = builder.build();
     }
 
     @Override
     public TypeDefinition<?> getTypeDefinition() {
-        return type;
+        return typeDefinition;
     }
 
     @Override

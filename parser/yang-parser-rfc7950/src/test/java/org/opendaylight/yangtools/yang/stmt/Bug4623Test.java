@@ -37,7 +37,7 @@ class Bug4623Test extends AbstractYangTest {
             QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
 
         // then
-        final var type = leaf.getType();
+        final var type = leaf.getTypeDefinition();
         assertNotNull(type);
 
         // here are no effective extensions
@@ -68,7 +68,7 @@ class Bug4623Test extends AbstractYangTest {
         // then
         assertNotNull(leaf);
 
-        final var type = leaf.getType();
+        final var type = leaf.getTypeDefinition();
         assertNotNull(type);
         assertExtension(leaf);
 
@@ -95,7 +95,7 @@ class Bug4623Test extends AbstractYangTest {
                 QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
 
         // then
-        final var type = leaf.getType();
+        final var type = leaf.getTypeDefinition();
         assertNotNull(type);
         assertExtension(leaf);
 

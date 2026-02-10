@@ -41,7 +41,7 @@ class Bug6887Test extends AbstractYangTest {
         final var myEnumerationLeaf = assertInstanceOf(LeafSchemaNode.class,
             foo.getDataChildByName(QName.create(foo.getQNameModule(), "my-enumeration-leaf")));
 
-        var enumerationType = assertInstanceOf(EnumTypeDefinition.class, myEnumerationLeaf.getType());
+        var enumerationType = assertInstanceOf(EnumTypeDefinition.class, myEnumerationLeaf.getTypeDefinition());
 
         var enums = enumerationType.getValues();
         assertEquals(2, enums.size());
@@ -64,7 +64,7 @@ class Bug6887Test extends AbstractYangTest {
         final var myEnumerationLeaf2 = assertInstanceOf(LeafSchemaNode.class, foo.getDataChildByName(
             QName.create(foo.getQNameModule(), "my-enumeration-leaf-2")));
 
-        enumerationType = assertInstanceOf(EnumTypeDefinition.class, myEnumerationLeaf2.getType());
+        enumerationType = assertInstanceOf(EnumTypeDefinition.class, myEnumerationLeaf2.getTypeDefinition());
         enums = enumerationType.getValues();
         assertEquals(3, enums.size());
         assertContainsEnums(enums, yellowEnum, redEnum, blackEnum);
@@ -121,7 +121,7 @@ class Bug6887Test extends AbstractYangTest {
         final var myBitsLeaf = assertInstanceOf(LeafSchemaNode.class, bar.getDataChildByName(
             QName.create(bar.getQNameModule(), "my-bits-leaf")));
 
-        var bitsType = assertInstanceOf(BitsTypeDefinition.class, myBitsLeaf.getType());
+        var bitsType = assertInstanceOf(BitsTypeDefinition.class, myBitsLeaf.getTypeDefinition());
 
         var bits = bitsType.getBits();
         assertEquals(2, bits.size());
@@ -149,7 +149,7 @@ class Bug6887Test extends AbstractYangTest {
         final var myBitsLeaf2 = assertInstanceOf(LeafSchemaNode.class, bar.getDataChildByName(
             QName.create(bar.getQNameModule(), "my-bits-leaf-2")));
 
-        bitsType = (BitsTypeDefinition) myBitsLeaf2.getType();
+        bitsType = (BitsTypeDefinition) myBitsLeaf2.getTypeDefinition();
         bits = bitsType.getBits();
         assertEquals(3, bits.size());
         bitB = createBit("bit-b", 2);

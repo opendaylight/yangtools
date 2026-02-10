@@ -28,9 +28,9 @@ class Bug5200Test extends AbstractYangTest {
         var myLeaf2Node = context.findDataTreeChild(root, QName.create(root, "my-leaf-2")).orElseThrow();
 
         final var myLeafType = assertInstanceOf(StringTypeDefinition.class,
-            assertInstanceOf(LeafSchemaNode.class, myLeafNode).getType());
+            assertInstanceOf(LeafSchemaNode.class, myLeafNode).getTypeDefinition());
         final var myLeaf2Type = assertInstanceOf(Int32TypeDefinition.class,
-            assertInstanceOf(LeafSchemaNode.class, myLeaf2Node).getType());
+            assertInstanceOf(LeafSchemaNode.class, myLeaf2Node).getTypeDefinition());
 
         final var lengthConstraint = myLeafType.getLengthConstraint().orElseThrow();
         final var patternConstraints = myLeafType.getPatternConstraints();

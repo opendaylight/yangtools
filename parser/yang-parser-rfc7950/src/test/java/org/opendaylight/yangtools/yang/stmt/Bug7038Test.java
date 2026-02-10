@@ -35,7 +35,7 @@ class Bug7038Test extends AbstractYangTest {
         final var root = assertInstanceOf(ContainerSchemaNode.class,
             assertEffectiveModelDir("/bugs/bug7038/yang11").getDataChildByName(QName.create("foo", "root")));
         final var typedef = assertInstanceOf(LeafSchemaNode.class,
-            root.getDataChildByName(QName.create("foo", "my-leafref"))).getType();
+            root.getDataChildByName(QName.create("foo", "my-leafref"))).getTypeDefinition();
         assertFalse(assertInstanceOf(LeafrefTypeDefinition.class, typedef).requireInstance());
     }
 

@@ -184,7 +184,7 @@ class YangParserSimpleTest extends AbstractYangTest {
         final LeafListSchemaNode added = (LeafListSchemaNode) nodes.getDataChildByName(QName.create(
             MODULE.getQNameModule(), "added"));
         assertEquals(QName.create(SN, "added"), added.getQName());
-        assertEquals(QName.create(SN, "mytype"), added.getType().getQName());
+        assertEquals(QName.create(SN, "mytype"), added.getTypeDefinition().getQName());
 
         final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
             MODULE.getQNameModule(), "links"));

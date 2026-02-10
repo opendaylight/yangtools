@@ -34,13 +34,13 @@ class YT971Test extends AbstractYangTest {
         final LeafSchemaNode leafSchemaNode = assertInstanceOf(LeafSchemaNode.class, someLeaf);
         assertEquals(Optional.of("Some string that ends with a backslash (with escape backslash too) \\"),
             leafSchemaNode.getDescription());
-        assertInstanceOf(Int16TypeDefinition.class, leafSchemaNode.getType());
+        assertInstanceOf(Int16TypeDefinition.class, leafSchemaNode.getTypeDefinition());
 
         final DataSchemaNode someOtherLeaf = containerSchemaNode.getDataChildByName(
             QName.create(NAMESPACE, "some-other-leaf"));
 
         final LeafSchemaNode otherLeafSchemaNode = assertInstanceOf(LeafSchemaNode.class, someOtherLeaf);
         assertEquals(Optional.of("Some string after the double backslash"), otherLeafSchemaNode.getDescription());
-        assertInstanceOf(Int32TypeDefinition.class, otherLeafSchemaNode.getType());
+        assertInstanceOf(Int32TypeDefinition.class, otherLeafSchemaNode.getTypeDefinition());
     }
 }

@@ -31,7 +31,7 @@ class IdentityrefStatementTest extends AbstractYangTest {
 
         final var idrefLeaf = assertInstanceOf(LeafSchemaNode.class,
             foo.getDataChildByName(QName.create(foo.getQNameModule(), "idref-leaf")));
-        final var idrefType = assertInstanceOf(IdentityrefTypeDefinition.class, idrefLeaf.getType());
+        final var idrefType = assertInstanceOf(IdentityrefTypeDefinition.class, idrefLeaf.getTypeDefinition());
         final var referencedIdentities = idrefType.getIdentities();
         assertEquals(Set.copyOf(identities), referencedIdentities);
         assertEquals("id-a", idrefType.getIdentities().iterator().next().getQName().getLocalName());
