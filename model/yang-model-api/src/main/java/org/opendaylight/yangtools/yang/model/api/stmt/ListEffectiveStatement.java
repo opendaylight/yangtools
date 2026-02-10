@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -19,9 +21,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface ListEffectiveStatement extends DataTreeEffectiveStatement<@NonNull ListStatement>,
         DataTreeAwareEffectiveStatement<QName, @NonNull ListStatement>,
         OrderedByEffectiveStatement.OptionalIn<QName, @NonNull ListStatement>,
-        TypedefEffectiveStatement.MultipleIn<QName, @NonNull ListStatement> {
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull ListStatement>,
+        DataSchemaCompat<QName, @NonNull ListStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ListStatement, ?> statementDefinition() {
         return ListStatement.DEF;
     }
+
+    @Override
+    ListSchemaNode toDataNodeContainer();
+
+    @Override
+    ListSchemaNode toDataSchemaNode();
 }
