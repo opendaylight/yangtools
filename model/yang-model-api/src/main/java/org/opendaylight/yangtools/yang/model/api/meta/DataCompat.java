@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  *
  * @since 15.0.0
  */
-public interface DataSchemaCompat<A, D extends DeclaredStatement<A>> extends DataContainerCompat<A, D> {
+public interface DataCompat<A, D extends DeclaredStatement<A>> extends DataContainerCompat<A, D> {
     /**
      * {@return this statement's {@code DataSchemaNode} projection}
      */
