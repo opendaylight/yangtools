@@ -24,7 +24,7 @@ class YinFileLeafListStmtTest extends AbstractYinModulesTest {
             QName.create(testModule.getQNameModule(), "netconf-state"),
             QName.create(testModule.getQNameModule(), "capabilities"),
             QName.create(testModule.getQNameModule(), "capability")).orElseThrow());
-        assertEquals("uri", leafList.getType().getQName().getLocalName());
+        assertEquals("uri", leafList.typeDefinition().getQName().getLocalName());
         assertEquals(Optional.of("List of NETCONF capabilities supported by the server."), leafList.getDescription());
         assertFalse(leafList.isUserOrdered());
     }

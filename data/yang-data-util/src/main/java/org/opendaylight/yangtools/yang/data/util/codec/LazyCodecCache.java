@@ -11,27 +11,25 @@ import com.google.common.annotations.Beta;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 
 /**
  * Lazily-populated CodecCache. This is a non-thread-safe factory, which performs caching of codecs. It is most
  * appropriate for one-off encodings of repetitive data.
- *
- * @author Robert Varga
- */
+*/
 @Beta
 public final class LazyCodecCache<T> extends CodecCache<T> {
     private final Map<SchemaNode, T> complexCodecs = new IdentityHashMap<>();
     private final Map<TypeDefinition<?>, T> simpleCodecs = new IdentityHashMap<>();
 
     @Override
-    <S extends SchemaNode & TypeAware> T getComplex(final S schema, final T codec) {
+    <S extends SchemaNode & TypeDefinitionAware> T getComplex(final S schema, final T codec) {
         return complexCodecs.computeIfAbsent(schema, any -> codec);
     }
 
     @Override
-    <S extends SchemaNode & TypeAware> T lookupComplex(final S schema) {
+    <S extends SchemaNode & TypeDefinitionAware> T lookupComplex(final S schema) {
         return complexCodecs.get(schema);
     }
 

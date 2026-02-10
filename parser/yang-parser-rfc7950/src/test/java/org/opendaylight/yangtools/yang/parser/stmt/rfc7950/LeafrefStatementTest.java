@@ -46,7 +46,8 @@ class LeafrefStatementTest extends AbstractYangTest {
     }
 
     private static void assertRequireInstanceInLeafref(final LeafSchemaNode leaf, final boolean requireInstance) {
-        assertEquals(requireInstance, assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType()).requireInstance());
+        assertEquals(requireInstance,
+            assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition()).requireInstance());
     }
 
     @Test

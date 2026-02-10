@@ -134,7 +134,7 @@ class YT1473Test {
             }""");
         final var baz = assertInstanceOf(ListSchemaNode.class, modelContext.getDataChildByName(FOO_BAZ));
         final var id = assertInstanceOf(LeafSchemaNode.class, baz.getDataChildByName(FOO_ID));
-        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, id.getType());
+        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, id.typeDefinition());
         CODEC = XmlCodecFactory.create(modelContext, true).instanceIdentifierCodec(type);
     }
 

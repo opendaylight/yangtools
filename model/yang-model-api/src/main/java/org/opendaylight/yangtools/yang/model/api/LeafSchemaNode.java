@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
  * tree.
  *
  * <p>Since we are presenting the effective model of the world, the information dictated by 'default' and 'units'
- * substatements is captured in the type returned via {@link #getType()}.
+ * substatements is captured in the type returned via {@link #typeDefinition()}.
  */
 public non-sealed interface LeafSchemaNode extends TypedDataSchemaNode, MandatoryAware,
     DocumentedNode.Mixin<LeafEffectiveStatement>, MustConstraintAware.Mixin<LeafEffectiveStatement>,

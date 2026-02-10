@@ -81,7 +81,7 @@ class YT1060Test {
         final var cont = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(CONT));
         final var leaf1 = assertInstanceOf(LeafSchemaNode.class, cont.getDataChildByName(LEAF1));
         path = assertInstanceOf(LocationPath.class,
-            assertInstanceOf(LeafrefTypeDefinition.class, leaf1.getType()).getPathStatement());
+            assertInstanceOf(LeafrefTypeDefinition.class, leaf1.typeDefinition()).getPathStatement());
 
         // Quick checks before we get to the point
         final var locationPath = path.locationPath();

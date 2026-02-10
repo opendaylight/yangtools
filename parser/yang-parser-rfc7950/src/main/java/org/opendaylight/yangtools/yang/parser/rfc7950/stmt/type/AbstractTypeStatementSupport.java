@@ -217,7 +217,7 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
         }
 
         // Now instantiate the proper effective statement for that type
-        final var baseType = typeStmt.getTypeDefinition();
+        final var baseType = typeStmt.typeDefinition();
         final var declared = stmt.declared();
         return switch (baseType) {
             case BinaryTypeDefinition def -> createBinary(stmt, def, declared, substatements);
