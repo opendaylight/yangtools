@@ -75,6 +75,11 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
+    public final LeafListSchemaNode toDataSchemaNode() {
+        return this;
+    }
+
+    @Override
     public final QNameModule currentModule() {
         return argument().getModule();
     }

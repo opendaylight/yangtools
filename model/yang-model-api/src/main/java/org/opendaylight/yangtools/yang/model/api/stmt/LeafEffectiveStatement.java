@@ -9,14 +9,20 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code leaf} statement.
  */
-public non-sealed interface LeafEffectiveStatement extends DataTreeEffectiveStatement<@NonNull LeafStatement> {
+public non-sealed interface LeafEffectiveStatement extends DataTreeEffectiveStatement<@NonNull LeafStatement>,
+        DataSchemaCompat<QName, @NonNull LeafStatement> {
     @Override
     default StatementDefinition<QName, @NonNull LeafStatement, ?> statementDefinition() {
         return LeafStatement.DEF;
     }
+
+    @Override
+    LeafSchemaNode toDataSchemaNode();
 }

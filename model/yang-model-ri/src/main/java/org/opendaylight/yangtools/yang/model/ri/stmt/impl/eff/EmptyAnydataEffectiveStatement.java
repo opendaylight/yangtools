@@ -60,4 +60,9 @@ public class EmptyAnydataEffectiveStatement extends Default<QName, @NonNull Anyd
     public final AnydataEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final AnydataSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }

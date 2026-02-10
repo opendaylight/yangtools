@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.DataCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             final var parent = stack.currentStatement();
             parentNode = switch (parent) {
                 case DataSchemaNode data -> data;
-                case DataCompat<?, ?> compat -> compat.toDataSchemaNode();
+                case DataSchemaCompat<?, ?> compat -> compat.toDataSchemaNode();
                 default -> throw new IllegalArgumentException("Illegal parent node " + parent);
             };
         } else {
