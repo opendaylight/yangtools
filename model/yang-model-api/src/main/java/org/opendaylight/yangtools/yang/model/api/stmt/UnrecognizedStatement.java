@@ -9,13 +9,14 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Common interface for unrecognized unknown statements. An {@link UnrecognizedStatement} is an instance of a statement
  * defined via an {@code extension} statement, for which the parser did not have semantic support (in which case the
  * statement would result in a corresponding semantic subclass of {@link UnknownStatement}).
  *
- * <p>This construct does not have a {@link UnknownEffectiveStatement} counterpart because we cannot reasonably build an
+ * <p>This construct does not have a {@link EffectiveStatement} counterpart because we cannot reasonably build an
  * effective model of something we do not recognize.
  */
 public interface UnrecognizedStatement extends UnknownStatement<Object> {

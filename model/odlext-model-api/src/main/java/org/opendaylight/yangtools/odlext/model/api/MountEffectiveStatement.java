@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-public interface MountEffectiveStatement extends UnknownEffectiveStatement<Empty, @NonNull MountStatement> {
+public interface MountEffectiveStatement extends EffectiveStatement<Empty, @NonNull MountStatement> {
     @Override
     default StatementDefinition<Empty, @NonNull MountStatement, ?> statementDefinition() {
         return MountStatement.DEF;

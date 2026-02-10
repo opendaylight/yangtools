@@ -9,15 +9,14 @@ package org.opendaylight.yangtools.rfc6536.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective statement representation of 'default-deny-all' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  */
-public interface DefaultDenyAllEffectiveStatement
-        extends UnknownEffectiveStatement<Empty, @NonNull DefaultDenyAllStatement> {
+public interface DefaultDenyAllEffectiveStatement extends EffectiveStatement<Empty, @NonNull DefaultDenyAllStatement> {
     @Override
     default StatementDefinition<Empty, @NonNull DefaultDenyAllStatement, ?> statementDefinition() {
         return DefaultDenyAllStatement.DEF;

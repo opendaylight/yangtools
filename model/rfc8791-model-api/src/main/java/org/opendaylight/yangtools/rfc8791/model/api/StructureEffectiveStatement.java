@@ -11,15 +11,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective representation of a {@code sx:structure} statement.
  *
  * @since 14.0.21
  */
-public interface StructureEffectiveStatement extends UnknownEffectiveStatement<QName, @NonNull StructureStatement>,
-        DataTreeAwareEffectiveStatement<QName, @NonNull StructureStatement> {
+public interface StructureEffectiveStatement
+        extends DataTreeAwareEffectiveStatement<QName, @NonNull StructureStatement> {
     @Override
     default StatementDefinition<QName, @NonNull StructureStatement, ?> statementDefinition() {
         return StructureStatement.DEF;

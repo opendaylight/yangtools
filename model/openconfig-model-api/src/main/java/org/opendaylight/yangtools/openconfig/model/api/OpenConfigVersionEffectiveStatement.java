@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.openconfig.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface OpenConfigVersionEffectiveStatement
-        extends UnknownEffectiveStatement<SemVer, @NonNull OpenConfigVersionStatement> {
+        extends EffectiveStatement<SemVer, @NonNull OpenConfigVersionStatement> {
     @Override
     default StatementDefinition<SemVer, @NonNull OpenConfigVersionStatement, ?> statementDefinition() {
         return OpenConfigVersionStatement.DEF;
