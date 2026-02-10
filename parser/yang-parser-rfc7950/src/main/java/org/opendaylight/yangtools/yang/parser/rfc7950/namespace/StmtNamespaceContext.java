@@ -11,8 +11,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableYangNamespaceContext;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 
 @Deprecated(since = "15.0.0", forRemoval = true)
 final class StmtNamespaceContext {
@@ -24,13 +23,9 @@ final class StmtNamespaceContext {
 
     @java.io.Serial
     private Object readResolve() {
-        final var map = new HashMap<Unqualified, QNameModule>();
-        for (var entry : moduleToPrefix.entrySet()) {
-            map.put(Unqualified.of(entry.getValue()), entry.getKey());
-        }
-        for (var entry : prefixToModule.entrySet()) {
-            map.putIfAbsent(Unqualified.of(entry.getKey()), entry.getValue());
-        }
-        return ImmutableYangNamespaceContext.of(map);
+        final var map = new HashMap<String, QNameModule>();
+        map.putAll(prefixToModule);
+        map.putAll(moduleToPrefix.inverse());
+        return YangNamespaceContext.of(map);
     }
 }

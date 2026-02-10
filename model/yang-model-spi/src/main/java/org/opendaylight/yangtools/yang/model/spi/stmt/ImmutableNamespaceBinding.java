@@ -43,7 +43,7 @@ public record ImmutableNamespaceBinding(QName current, Map<Unqualified, QNameMod
 
     @Override
     public YangNamespaceContext toYangNamespaceContext() {
-        return ImmutableYangNamespaceContext.of(prefixToModule);
+        return YangNamespaceContext.ofUnqualified(prefixToModule);
     }
 
     @Override

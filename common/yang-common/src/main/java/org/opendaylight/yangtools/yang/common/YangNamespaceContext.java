@@ -7,11 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import com.google.common.collect.BiMap;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
 /**
  * Interface for mapping between {@link String} prefixes and {@link QNameModule} namespaces. The conceptual model
@@ -21,7 +26,50 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <p>Each namespace context has a set of prefix/namespace mappings. A namespace can be bound to multiple prefixes at
  * the same time.
  */
-public interface YangNamespaceContext extends Immutable, Serializable {
+public sealed interface YangNamespaceContext extends Immutable, Serializable permits ImmutableYangNamespaceContext {
+    @NonNullByDefault
+    static YangNamespaceContext of(final BiMap<String, QNameModule> mapping) {
+        return new ImmutableYangNamespaceContext(mapping.inverse(), mapping);
+    }
+
+    @NonNullByDefault
+    static YangNamespaceContext of(final Map<String, QNameModule> prefixToModule) {
+        final var toPrefix = HashMap.<QNameModule, String>newHashMap(prefixToModule.size());
+        for (var entry : prefixToModule.entrySet()) {
+            final var prefix = entry.getKey();
+            final var module = entry.getValue();
+
+            // slightly more complicated: use the lexicographically lowest prefix
+            final var prev = toPrefix.putIfAbsent(module, prefix);
+            if (prev != null && prev.compareTo(prefix) > 0) {
+                toPrefix.replace(module, prev, prefix);
+            }
+        }
+
+        return new ImmutableYangNamespaceContext(toPrefix, prefixToModule);
+    }
+
+    @NonNullByDefault
+    static YangNamespaceContext ofUnqualified(final Map<Unqualified, QNameModule> prefixToModule) {
+        final var toModule = HashMap.<String, QNameModule>newHashMap(prefixToModule.size());
+        final var toPrefix = HashMap.<QNameModule, String>newHashMap(prefixToModule.size());
+        for (var entry : prefixToModule.entrySet()) {
+            final var prefix = entry.getKey().getLocalName();
+            final var module = entry.getValue();
+
+            // simple
+            toModule.put(prefix, module);
+
+            // slightly more complicated: use the lexicographically lowest prefix
+            final var prev = toPrefix.putIfAbsent(module, prefix);
+            if (prev != null && prev.compareTo(prefix) > 0) {
+                toPrefix.replace(module, prev, prefix);
+            }
+        }
+
+        return new ImmutableYangNamespaceContext(toPrefix, toModule);
+    }
+
     /**
      * Return QNameModule to which a particular prefix is bound.
      *
@@ -29,7 +77,7 @@ public interface YangNamespaceContext extends Immutable, Serializable {
      * @return QNameModule bound to specified prefix, or {@code null}
      * @throws NullPointerException if {@code prefix} is {@code null}
      */
-    @Nullable QNameModule namespaceForPrefix(String prefix);
+    @Nullable QNameModule namespaceForPrefix(@NonNull String prefix);
 
     /**
      * Return QNameModule to which a particular prefix is bound.
@@ -39,7 +87,7 @@ public interface YangNamespaceContext extends Immutable, Serializable {
      * @return QNameModule bound to specified prefix
      * @throws NullPointerException if {@code prefix} is {@code null}
      */
-    default @NonNull Optional<QNameModule> findNamespaceForPrefix(final String prefix) {
+    default @NonNull Optional<QNameModule> findNamespaceForPrefix(final @NonNull String prefix) {
         return Optional.ofNullable(namespaceForPrefix(prefix));
     }
 
@@ -51,7 +99,7 @@ public interface YangNamespaceContext extends Immutable, Serializable {
      * @return Prefix to which the QNameModule is bound, or {@code null}
      * @throws NullPointerException if {@code module} is {@code null}
      */
-    @Nullable String prefixForNamespace(QNameModule namespace);
+    @Nullable String prefixForNamespace(@NonNull QNameModule namespace);
 
     /**
      * Return a prefix to which a particular QNameModule is bound. If a namespace is bound to multiple prefixes, it is
@@ -62,7 +110,7 @@ public interface YangNamespaceContext extends Immutable, Serializable {
      * @return Prefix to which the QNameModule is bound
      * @throws NullPointerException if {@code module} is {@code null}
      */
-    default @NonNull Optional<String> findPrefixForNamespace(final QNameModule namespace) {
+    default @NonNull Optional<String> findPrefixForNamespace(final @NonNull QNameModule namespace) {
         return Optional.ofNullable(prefixForNamespace(namespace));
     }
 
@@ -80,7 +128,8 @@ public interface YangNamespaceContext extends Immutable, Serializable {
      * @throws IllegalArgumentException if {@code localName} does not conform to local name requirements or if the
      *                                  prefix is not bound in this context.
      */
-    default @NonNull QName createQName(final String prefix, final String localName) {
+    @NonNullByDefault
+    default QName createQName(final String prefix, final String localName) {
         final var namespace = namespaceForPrefix(prefix);
         if (namespace == null) {
             throw new IllegalArgumentException("Prefix " + prefix + " is not bound");
