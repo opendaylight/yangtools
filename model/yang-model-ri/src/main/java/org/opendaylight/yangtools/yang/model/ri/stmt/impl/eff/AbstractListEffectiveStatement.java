@@ -81,4 +81,14 @@ abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName
     public final ListEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final ListSchemaNode toDataNodeContainer() {
+        return this;
+    }
+
+    @Override
+    public final ListSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }

@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
 
@@ -51,10 +50,5 @@ public final class DeclaredCaseEffectiveStatement extends DefaultWithDataTree<QN
     @Override
     public DataSchemaNode dataChildByName(final QName name) {
         return dataSchemaNode(name);
-    }
-
-    @Override
-    public CaseEffectiveStatement asEffectiveStatement() {
-        return this;
     }
 }

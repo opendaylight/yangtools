@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -23,5 +25,13 @@ public non-sealed interface NotificationEffectiveStatement
     @Override
     default StatementDefinition<QName, @NonNull NotificationStatement, ?> statementDefinition() {
         return NotificationStatement.DEF;
+    }
+
+    @Override
+    NotificationDefinition toDataNodeContainer();
+
+    @Override
+    default DataSchemaNode toDataSchemaNode() {
+        return toDataNodeContainer().toContainerLike();
     }
 }

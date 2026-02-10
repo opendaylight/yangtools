@@ -32,4 +32,14 @@ public final class UndeclaredOutputEffectiveStatement
     public OutputEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public OutputSchemaNode toDataNodeContainer() {
+        return this;
+    }
+
+    @Override
+    public OutputSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }

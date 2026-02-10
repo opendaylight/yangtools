@@ -21,4 +21,19 @@ interface CaseEffectiveStatementMixin extends CaseEffectiveStatement, CaseSchema
     default QName getQName() {
         return argument();
     }
+
+    @Override
+    default CaseEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
+    default CaseSchemaNode toDataNodeContainer() {
+        return this;
+    }
+
+    @Override
+    default CaseSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }

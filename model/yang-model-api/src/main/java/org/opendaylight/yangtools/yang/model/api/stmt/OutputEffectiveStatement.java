@@ -11,6 +11,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -20,7 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public non-sealed interface OutputEffectiveStatement extends DataTreeEffectiveStatement<@NonNull OutputStatement>,
         DataTreeAwareEffectiveStatement<QName, @NonNull OutputStatement>,
-        TypedefEffectiveStatement.MultipleIn<QName, @NonNull OutputStatement> {
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull OutputStatement>,
+        DataSchemaCompat<QName, @NonNull OutputStatement> {
     /**
      * An {@link EffectiveStatement} that is a parent of a single {@link OutputEffectiveStatement}.
      *
@@ -47,4 +50,10 @@ public non-sealed interface OutputEffectiveStatement extends DataTreeEffectiveSt
     default StatementDefinition<QName, @NonNull OutputStatement, ?> statementDefinition() {
         return OutputStatement.DEF;
     }
+
+    @Override
+    OutputSchemaNode toDataNodeContainer();
+
+    @Override
+    OutputSchemaNode toDataSchemaNode();
 }
