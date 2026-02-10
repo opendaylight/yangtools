@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.DataCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public non-sealed interface ContainerEffectiveStatement extends DataTreeEffectiveStatement<@NonNull ContainerStatement>,
         DataTreeAwareEffectiveStatement<QName, @NonNull ContainerStatement>,
         TypedefEffectiveStatement.MultipleIn<QName, @NonNull ContainerStatement>,
-        DataSchemaCompat<QName, @NonNull ContainerStatement> {
+        DataCompat<QName, @NonNull ContainerStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ContainerStatement, ?> statementDefinition() {
         return ContainerStatement.DEF;

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.DataCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -19,8 +19,7 @@ public non-sealed interface RpcEffectiveStatement extends SchemaTreeEffectiveSta
         DataTreeAwareEffectiveStatement<QName, @NonNull RpcStatement>,
         InputEffectiveStatement.MandatoryIn<QName, @NonNull RpcStatement>,
         OutputEffectiveStatement.MandatoryIn<QName, @NonNull RpcStatement>,
-        TypedefEffectiveStatement.MultipleIn<QName, @NonNull RpcStatement>,
-        DataSchemaCompat<QName, @NonNull RpcStatement> {
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull RpcStatement>, DataCompat<QName, @NonNull RpcStatement> {
     @Override
     default StatementDefinition<QName, @NonNull RpcStatement, ?> statementDefinition() {
         return RpcStatement.DEF;

@@ -77,7 +77,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.DataCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -151,7 +151,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     private static DataSchemaNode coerceAsParent(final EffectiveStatement<?, ?> stmt) {
         return switch (stmt) {
             case DataSchemaNode data -> data;
-            case DataSchemaCompat<?, ?> compat -> compat.toDataSchemaNode();
+            case DataCompat<?, ?> compat -> compat.toDataSchemaNode();
             default -> throw new IllegalArgumentException("Illegal parent node " + stmt);
         };
     }
