@@ -20,21 +20,20 @@ import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-class BiMapYangNamespaceContextTest {
+class YangNamespaceContextTest {
     private static final QNameModule FOO = QNameModule.of("foo");
     private static final QNameModule BAR = QNameModule.of("bar");
     private static final QNameModule BAZ = QNameModule.of("baz");
 
-    private final BiMapYangNamespaceContext context = new BiMapYangNamespaceContext(
-        ImmutableBiMap.of("foo", FOO, "bar", BAR));
+    private final YangNamespaceContext context = YangNamespaceContext.of(ImmutableBiMap.of("foo", FOO, "bar", BAR));
 
     @Test
     void testEquals() {
         assertTrue(context.equals(context));
-        assertTrue(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("foo", FOO, "bar", BAR))));
+        assertTrue(context.equals(YangNamespaceContext.of(ImmutableBiMap.of("foo", FOO, "bar", BAR))));
         assertFalse(context.equals(null));
-        assertFalse(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("foo", FOO))));
-        assertFalse(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("bar", BAR))));
+        assertFalse(context.equals(YangNamespaceContext.of(ImmutableBiMap.of("foo", FOO))));
+        assertFalse(context.equals(YangNamespaceContext.of(ImmutableBiMap.of("bar", BAR))));
     }
 
     @Test
@@ -61,9 +60,11 @@ class BiMapYangNamespaceContextTest {
             bytes = bos.toByteArray();
         }
 
-        final BiMapYangNamespaceContext other;
+        assertEquals(28, bytes.length);
+
+        final YangNamespaceContext other;
         try (var dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
-            other = BiMapYangNamespaceContext.readFrom(dis);
+            other = YangNamespaceContext.readFrom(dis);
         }
 
         assertEquals(context, other);

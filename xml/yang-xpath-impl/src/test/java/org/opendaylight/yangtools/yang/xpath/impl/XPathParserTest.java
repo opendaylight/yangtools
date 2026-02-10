@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import com.google.common.collect.ImmutableBiMap;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
@@ -28,7 +27,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 class XPathParserTest {
     private static final QNameModule DEFNS = QNameModule.of("defaultns");
-    private static final YangNamespaceContext CONTEXT = new BiMapYangNamespaceContext(ImmutableBiMap.of(
+    private static final YangNamespaceContext CONTEXT = YangNamespaceContext.of(ImmutableBiMap.of(
         "def", DEFNS,
         "foo", QNameModule.of("foo"),
         "bar", QNameModule.of("bar")));

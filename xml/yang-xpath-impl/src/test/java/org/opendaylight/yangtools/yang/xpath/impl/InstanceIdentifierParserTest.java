@@ -23,7 +23,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
-import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName;
@@ -41,7 +40,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 class InstanceIdentifierParserTest {
     private static final QNameModule DEFNS = QNameModule.of("defaultns");
-    private static final YangNamespaceContext CONTEXT = new BiMapYangNamespaceContext(ImmutableBiMap.of(
+    private static final YangNamespaceContext CONTEXT = YangNamespaceContext.of(ImmutableBiMap.of(
         "def", DEFNS,
         "foo", QNameModule.of("foo"),
         "bar", QNameModule.of("bar")));
