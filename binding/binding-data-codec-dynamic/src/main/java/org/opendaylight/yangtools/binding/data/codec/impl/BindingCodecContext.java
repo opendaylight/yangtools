@@ -116,13 +116,12 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -720,7 +719,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type, but this may return
                     //                   Object.class
                     final Class<?> valueType = method.getReturnType();
-                    final ValueCodec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
+                    final ValueCodec<Object, Object> codec = getCodec(valueType, leafSchema.typeDefinition());
                     valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
                         context.modelContext());
                 } else if (schema instanceof LeafListSchemaNode leafListSchema) {
@@ -741,7 +740,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                         throw new IllegalStateException("Unexpected return type " + genericType);
                     }
 
-                    final ValueCodec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
+                    final ValueCodec<Object, Object> codec = getCodec(valueType, leafListSchema.typeDefinition());
                     valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName(), valueType);
                 } else if (schema instanceof AnyxmlSchemaNode anyxmlSchema) {
                     valueNode = new AnyxmlCodecContext<>(anyxmlSchema, method.getName(), opaqueReturnType(method),
@@ -805,8 +804,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         } else if (typeDef instanceof LeafrefTypeDefinition) {
             final var schema = context.getTypeWithSchema(valueType).statement();
             return getCodec(valueType, switch (schema) {
-                case TypeDefinitionAware typeDefAware -> typeDefAware.getTypeDefinition();
-                case TypeAware typeAware -> typeAware.getType();
+                case TypeDefinitionCompat typeDefAware -> typeDefAware.typeDefinition();
                 default -> throw new IllegalStateException("Unexpected schema " + schema);
             });
         }

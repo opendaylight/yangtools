@@ -13,6 +13,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -74,12 +75,17 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
-    public final TypeDefinition<?> getType() {
+    public final QNameModule currentModule() {
+        return argument().getModule();
+    }
+
+    @Override
+    public final TypeDefinition<?> typeDefinition() {
         final var local = (TypeDefinition<?>) TYPE.getAcquire(this);
         return local != null ? local : loadType();
     }
 
-    private TypeDefinition<?> loadType() {
+    private @NonNull TypeDefinition<?> loadType() {
         final var ret = ConcreteTypes.typeOf(this);
         final var witness = (TypeDefinition<?>) TYPE.compareAndExchangeRelease(this, null, ret);
         return witness != null ? witness : ret;

@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>, being attached to a SchemaNode.
  */
 @Beta
-public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
+public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeDefinitionAware {
     /**
      * Find specified annotation if it is supported by the specified EffectiveModelContext.
      *

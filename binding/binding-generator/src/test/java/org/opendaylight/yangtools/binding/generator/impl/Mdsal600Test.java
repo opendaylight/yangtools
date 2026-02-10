@@ -36,8 +36,8 @@ class Mdsal600Test {
             fooSchema.findDataTreeChild(QName.create("mdsal600", "bar")).orElseThrow());
         final var bazSchema = assertInstanceOf(LeafSchemaNode.class,
             fooSchema.findDataTreeChild(QName.create("mdsal600", "baz")).orElseThrow());
-        final var barTypeSchema = barSchema.getType();
-        final var bazTypeSchema = bazSchema.getType();
+        final var barTypeSchema = barSchema.typeDefinition();
+        final var bazTypeSchema = bazSchema.typeDefinition();
 
         // Precondition to our bug: the two types compare as equal, but are not the same
         assertEquals(barTypeSchema, bazTypeSchema);

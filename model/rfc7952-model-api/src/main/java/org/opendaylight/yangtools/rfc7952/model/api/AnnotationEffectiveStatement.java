@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.rfc7952.model.api;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
 public interface AnnotationEffectiveStatement
-        extends UnknownEffectiveStatement<AnnotationName, @NonNull AnnotationStatement>, TypeDefinitionAware {
+        extends UnknownEffectiveStatement<AnnotationName, @NonNull AnnotationStatement>,
+                TypeDefinitionCompat<AnnotationName, @NonNull AnnotationStatement> {
     @Override
     default StatementDefinition<AnnotationName, @NonNull AnnotationStatement, ?> statementDefinition() {
         return AnnotationStatement.DEF;

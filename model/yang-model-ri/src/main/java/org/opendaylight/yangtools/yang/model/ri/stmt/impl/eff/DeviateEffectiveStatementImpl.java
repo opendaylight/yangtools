@@ -75,7 +75,7 @@ public final class DeviateEffectiveStatementImpl extends WithSubstatements<Devia
     @Override
     public TypeDefinition<?> getDeviatedType() {
         return findFirstEffectiveSubstatement(TypeEffectiveStatement.class)
-            .map(TypeEffectiveStatement::getTypeDefinition)
+            .map(TypeEffectiveStatement::typeDefinition)
             .orElse(null);
     }
 

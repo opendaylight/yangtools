@@ -46,7 +46,7 @@ class YT1442Test {
             }""")
             .getDataChildByName(QName.create("yt1442", "foo"));
         codec = assertInstanceOf(DecimalStringCodec.class,
-            TypeDefinitionAwareCodec.from(assertInstanceOf(LeafSchemaNode.class, foo).getType()));
+            TypeDefinitionAwareCodec.from(assertInstanceOf(LeafSchemaNode.class, foo).typeDefinition()));
     }
 
     @Test

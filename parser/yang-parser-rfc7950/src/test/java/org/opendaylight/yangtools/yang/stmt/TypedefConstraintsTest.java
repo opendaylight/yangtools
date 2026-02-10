@@ -43,9 +43,7 @@ class TypedefConstraintsTest extends AbstractYangTest {
             "id-decimal64"));
         final var leafDecimal = assertInstanceOf(LeafSchemaNode.class, dataNode);
 
-        final var type = leafDecimal.getType();
-
-        final var decType = assertInstanceOf(DecimalTypeDefinition.class, type);
+        final var decType = assertInstanceOf(DecimalTypeDefinition.class, leafDecimal.typeDefinition());
         assertEquals(4, decType.getFractionDigits());
 
         final var decRangeConstraints = decType.getRangeConstraint().orElseThrow().getAllowedRanges().asRanges();

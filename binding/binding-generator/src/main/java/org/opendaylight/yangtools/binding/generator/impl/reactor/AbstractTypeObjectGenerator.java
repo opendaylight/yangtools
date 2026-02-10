@@ -730,20 +730,20 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                         provideAvailableNameForGenTOBuilder(typeName.simpleName()));
                     final GeneratedTransferObject subUnion = createUnion(auxiliaryGeneratedTypes, builderFactory,
                         definingStatement, dependencies, subUnionName, module, subType, isTypedef,
-                        subType.getTypeDefinition());
+                        subType.typeDefinition());
                     builder.addEnclosingTransferObject(subUnion);
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
                 } else if (BuiltInType.ENUMERATION.typeName().equals(subName)) {
                     final var subEnumeration = createEnumeration(builderFactory, definingStatement,
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
-                        (EnumTypeDefinition) subType.getTypeDefinition());
+                        (EnumTypeDefinition) subType.typeDefinition());
                     builder.addEnumeration(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (BuiltInType.BITS.typeName().equals(subName)) {
                     final var subBits = createBits(builderFactory, definingStatement,
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
-                        (BitsTypeDefinition) subType.getTypeDefinition(), isTypedef);
+                        (BitsTypeDefinition) subType.typeDefinition(), isTypedef);
                     builder.addEnclosingTransferObject(subBits);
                     generatedType = subBits;
                 } else if (BuiltInType.IDENTITYREF.typeName().equals(subName)) {
@@ -787,10 +787,10 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                         }
                     }
 
-                    expressions.putAll(resolveRegExpressions(subType.getTypeDefinition()));
+                    expressions.putAll(resolveRegExpressions(subType.typeDefinition()));
 
                     generatedType = restrictType(baseType,
-                        BindingGeneratorUtil.getRestrictions(type.getTypeDefinition()), builderFactory);
+                        BindingGeneratorUtil.getRestrictions(type.typeDefinition()), builderFactory);
                 }
 
                 final String propName = Naming.getPropertyName(propSource);

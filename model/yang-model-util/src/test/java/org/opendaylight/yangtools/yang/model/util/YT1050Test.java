@@ -86,7 +86,7 @@ class YT1050Test {
 
     @Test
     void testFindDataSchemaNodeForRelativeXPathWithDeref() {
-        final var typeNodeType = assertInstanceOf(LeafrefTypeDefinition.class, secondaryType.getType());
+        final var typeNodeType = assertInstanceOf(LeafrefTypeDefinition.class, secondaryType.typeDefinition());
         final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(QName.create(module.getQNameModule(), "grp"));
         stack.enterSchemaTree(QName.create(module.getQNameModule(), "secondary"));

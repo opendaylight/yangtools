@@ -60,7 +60,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode)
             throws XMLStreamException {
-        return streamUtils.encodeValue(xmlWriter, resolveType(schemaNode.getType()), value,
+        return streamUtils.encodeValue(xmlWriter, resolveType(schemaNode.typeDefinition()), value,
             schemaNode.getQName().getModule());
     }
 
@@ -69,8 +69,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             throws XMLStreamException {
         final var optAnnotation = AnnotationSchemaNode.find(streamUtils.modelContext(), new AnnotationName(qname));
         if (optAnnotation.isPresent()) {
-            return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.orElseThrow().getType()), value,
-                qname.getModule());
+            return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.orElseThrow().typeDefinition()),
+                value, qname.getModule());
         }
 
         if (qname.getRevision().isPresent()) {
