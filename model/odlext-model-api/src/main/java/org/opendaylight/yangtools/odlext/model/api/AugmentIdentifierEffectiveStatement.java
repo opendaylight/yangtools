@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface AugmentIdentifierEffectiveStatement
-        extends UnknownEffectiveStatement<Unqualified, @NonNull AugmentIdentifierStatement> {
+        extends EffectiveStatement<Unqualified, @NonNull AugmentIdentifierStatement> {
     @Override
     default StatementDefinition<Unqualified, @NonNull AugmentIdentifierStatement, ?> statementDefinition() {
         return AugmentIdentifierStatement.DEF;

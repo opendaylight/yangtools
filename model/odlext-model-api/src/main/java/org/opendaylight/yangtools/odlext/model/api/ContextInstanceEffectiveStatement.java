@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 public interface ContextInstanceEffectiveStatement
-        extends UnknownEffectiveStatement<QName, @NonNull ContextInstanceStatement> {
+        extends EffectiveStatement<QName, @NonNull ContextInstanceStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ContextInstanceStatement, ?> statementDefinition() {
         return ContextInstanceStatement.DEF;

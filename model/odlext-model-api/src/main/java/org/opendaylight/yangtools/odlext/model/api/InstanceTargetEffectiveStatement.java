@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
-public interface InstanceTargetEffectiveStatement
-        extends UnknownEffectiveStatement<String, @NonNull InstanceTargetStatement> {
+public interface InstanceTargetEffectiveStatement extends EffectiveStatement<String, @NonNull InstanceTargetStatement> {
     @Override
     default StatementDefinition<String, @NonNull InstanceTargetStatement, ?> statementDefinition() {
         return InstanceTargetStatement.DEF;

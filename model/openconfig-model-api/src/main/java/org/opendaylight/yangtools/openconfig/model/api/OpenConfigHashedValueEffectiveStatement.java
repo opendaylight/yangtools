@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.openconfig.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Effective statement corresponding to config's "openconfig-hashed-value" (new name) or "openconfig-encrypted-value"
  * (old name).
  */
 public interface OpenConfigHashedValueEffectiveStatement
-        extends UnknownEffectiveStatement<Empty, @NonNull OpenConfigHashedValueStatement> {
+        extends EffectiveStatement<Empty, @NonNull OpenConfigHashedValueStatement> {
     // Nothing else
 }
