@@ -169,7 +169,7 @@ class TypesResolutionTest extends AbstractYangTest {
         var tested = CONTEXT.findModules("custom-types-test").iterator().next();
         var leaf = assertInstanceOf(LeafSchemaNode.class,
             tested.getDataChildByName(QName.create(tested.getQNameModule(), "inst-id-leaf1")));
-        var leafType = assertInstanceOf(InstanceIdentifierTypeDefinition.class, leaf.getType());
+        var leafType = assertInstanceOf(InstanceIdentifierTypeDefinition.class, leaf.typeDefinition());
         assertFalse(leafType.requireInstance());
         assertEquals(1, leaf.asEffectiveStatement().requireDeclared().declaredSubstatements(UnrecognizedStatement.class)
             .size());
@@ -180,7 +180,7 @@ class TypesResolutionTest extends AbstractYangTest {
         var tested = CONTEXT.findModules("custom-types-test").iterator().next();
         var leaf = assertInstanceOf(LeafSchemaNode.class,
             tested.getDataChildByName(QName.create(tested.getQNameModule(), "inst-id-leaf2")));
-        var leafType = assertInstanceOf(InstanceIdentifierTypeDefinition.class, leaf.getType());
+        var leafType = assertInstanceOf(InstanceIdentifierTypeDefinition.class, leaf.typeDefinition());
         assertFalse(leafType.requireInstance());
     }
 
@@ -222,7 +222,7 @@ class TypesResolutionTest extends AbstractYangTest {
         var tested = CONTEXT.findModules("custom-types-test").iterator().next();
         var leaf = assertInstanceOf(LeafSchemaNode.class,
             tested.getDataChildByName(QName.create(tested.getQNameModule(), "mybits")));
-        var leafType = assertInstanceOf(BitsTypeDefinition.class, leaf.getType());
+        var leafType = assertInstanceOf(BitsTypeDefinition.class, leaf.typeDefinition());
         var bits = leafType.getBits().iterator();
 
         var bit1 = bits.next();

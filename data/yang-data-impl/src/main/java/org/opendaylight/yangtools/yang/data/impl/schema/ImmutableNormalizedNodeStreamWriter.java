@@ -125,7 +125,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     private static <T> SystemLeafSetNode.Builder<T> leafSetNodeBuilder(final SystemLeafSetNode.Builder<T> delegate,
             final @Nullable DataSchemaNode schema) {
         if (schema instanceof LeafListSchemaNode leafListSchema) {
-            final var type = leafListSchema.getType();
+            final var type = leafListSchema.typeDefinition();
             if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition
                     || type instanceof IdentityrefTypeDefinition) {
                 return new InterningLeafSetNodeBuilder<T>(delegate, (Interner) ENTRY_INTERNER);

@@ -78,7 +78,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
     }
 
     @Override
-    public TypeDefinition<?> getTypeDefinition() {
+    public TypeDefinition<?> typeDefinition() {
         final var existing = (TypeDefinition<?>) TYPE_DEFINITION.getAcquire(this);
         return existing != null ? existing : loadTypeDefinition();
     }
@@ -91,7 +91,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
 
     private @NonNull TypeDefinition<?> loadTypeDefinition() {
         final var type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
-        final var builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), argument());
+        final var builder = DerivedTypes.derivedTypeBuilder(type.typeDefinition(), argument());
 
         effectiveSubstatements().forEach(stmt -> {
             switch (stmt) {
@@ -135,8 +135,8 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
         }
 
         @Override
-        public TypeDefinition<?> getTypeDefinition() {
-            return TypedefEffectiveStatementImpl.this.getTypeDefinition();
+        public TypeDefinition<?> typeDefinition() {
+            return TypedefEffectiveStatementImpl.this.typeDefinition();
         }
     }
 }

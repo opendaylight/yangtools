@@ -70,8 +70,8 @@ sealed class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
 
     private static Object createDefaultObject(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec,
             final EffectiveModelContext schemaContext) {
-        var optDefaultValue = schema.getType().getDefaultValue();
-        TypeDefinition<?> type = schema.getType();
+        TypeDefinition<?> type = schema.typeDefinition();
+        var optDefaultValue = type.getDefaultValue();
         if (optDefaultValue.isPresent()) {
             final var defaultValue = optDefaultValue.orElseThrow();
             if (type instanceof IdentityrefTypeDefinition) {

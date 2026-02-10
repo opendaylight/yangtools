@@ -5,21 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api.stmt;
+package org.opendaylight.yangtools.yang.model.api.meta;
 
-import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Interface indicating an entity which acts as a holder of a {@link TypeDefinition}.
  */
-@Beta
-public interface TypeDefinitionAware {
+@NonNullByDefault
+public interface TypeDefinitionCompat {
     /**
-     * Return this statement's effective type definition.
-     *
-     * @return Effective {@link TypeDefinition} as defined by this statement.
+     * {@return Effective {@link TypeDefinition} as defined by this statement}
      */
-    @NonNull TypeDefinition<?> getTypeDefinition();
+    TypeDefinition<?> typeDefinition();
 }

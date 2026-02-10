@@ -82,12 +82,12 @@ public final class UndeclaredLeafEffectiveStatement
     }
 
     @Override
-    public TypeDefinition<?> getType() {
+    public TypeDefinition<?> typeDefinition() {
         final var local = (TypeDefinition<?>) TYPE.getAcquire(this);
         return local != null ? local : loadType();
     }
 
-    private TypeDefinition<?> loadType() {
+    private @NonNull TypeDefinition<?> loadType() {
         final var ret = ConcreteTypes.typeOf(this);
         final var witness = (TypeDefinition<?>) TYPE.compareAndExchangeRelease(this, null, ret);
         return witness != null ? witness : ret;

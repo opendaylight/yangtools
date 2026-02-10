@@ -83,18 +83,18 @@ class YT588Test {
             SchemaInferenceStack.ofDataTreePath(context, root, conGrp, leafRef),
             assertInstanceOf(LeafrefTypeDefinition.class,
                 assertInstanceOf(LeafSchemaNode.class, context.findDataTreeChild(root, conGrp, leafRef).orElseThrow())
-                    .getType()).getPathStatement());
+                    .typeDefinition()).getPathStatement());
 
         assertResolvedTypeDefinition(Int16TypeDefinition.class,
             SchemaInferenceStack.ofDataTreePath(context, root, leafRef2),
             assertInstanceOf(LeafrefTypeDefinition.class,
                 assertInstanceOf(LeafSchemaNode.class, context.findDataTreeChild(root, leafRef2).orElseThrow())
-                    .getType()).getPathStatement());
+                    .typeDefinition()).getPathStatement());
     }
 
     private static void assertResolvedTypeDefinition(final Class<? extends TypeDefinition<?>> expectedType,
             final SchemaInferenceStack stack, final PathExpression expression) {
         final var typed = assertInstanceOf(TypedDataSchemaNode.class, stack.resolvePathExpression(expression));
-        assertInstanceOf(expectedType, typed.getType());
+        assertInstanceOf(expectedType, typed.typeDefinition());
     }
 }

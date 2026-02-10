@@ -28,7 +28,7 @@ final class TypeEffectiveStatementImpl<T extends TypeDefinition<T>>
     }
 
     @Override
-    public T getTypeDefinition() {
+    public T typeDefinition() {
         return typeDefinition;
     }
 }

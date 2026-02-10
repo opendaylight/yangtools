@@ -47,7 +47,7 @@ class StringPatternCheckingCodecTest {
         final var testLeaf = (LeafSchemaNode) testContainer.getDataChildByName(
                 QName.create(testModuleQName, "string-leaf-with-valid-pattern"));
 
-        final var codec = getCodec(testLeaf.getType(), StringCodec.class);
+        final var codec = getCodec(testLeaf.typeDefinition(), StringCodec.class);
         assertNotNull(codec);
         assertEquals("ABCD", codec.serialize("ABCD"));
         assertEquals("ABCD", codec.deserialize("ABCD"));

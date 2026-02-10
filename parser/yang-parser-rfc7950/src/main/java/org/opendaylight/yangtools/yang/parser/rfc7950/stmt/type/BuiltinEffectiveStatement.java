@@ -43,7 +43,7 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement {
     }
 
     @Override
-    public TypeDefinition<?> getTypeDefinition() {
+    public TypeDefinition<?> typeDefinition() {
         return typedef;
     }
 
@@ -59,6 +59,6 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement {
 
     @Override
     public final QName argument() {
-        return getTypeDefinition().getQName();
+        return typeDefinition().getQName();
     }
 }

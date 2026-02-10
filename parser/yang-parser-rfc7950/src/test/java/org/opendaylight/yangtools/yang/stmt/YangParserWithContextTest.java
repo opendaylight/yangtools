@@ -83,7 +83,7 @@ class YangParserWithContextTest {
         final var leaf = assertInstanceOf(LeafSchemaNode.class,
             module.getDataChildByName(QName.create(module.getQNameModule(), "id")));
 
-        final var leafType = assertInstanceOf(Uint16TypeDefinition.class, leaf.getType());
+        final var leafType = assertInstanceOf(Uint16TypeDefinition.class, leaf.typeDefinition());
         QName qname = leafType.getQName();
         assertEquals(XMLNamespace.of("urn:simple.demo.test1"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2013-06-18"), qname.getRevision());

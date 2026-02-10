@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class AnnotationEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<AnnotationName, @NonNull AnnotationStatement>
         implements AnnotationEffectiveStatement, AnnotationSchemaNode {
-    private final TypeDefinition<?> type;
+    private final @NonNull TypeDefinition<?> typeDefinition;
 
     AnnotationEffectiveStatementImpl(final Current<AnnotationName, AnnotationStatement> stmt,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -39,20 +39,15 @@ final class AnnotationEffectiveStatementImpl
             findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElse(null), stmt,
             "AnnotationStatementSupport %s is missing a 'type' statement", qname);
 
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
+        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.typeDefinition(),
             qname);
         findFirstEffectiveSubstatementArgument(UnitsEffectiveStatement.class).ifPresent(builder::setUnits);
-        type = builder.build();
+        typeDefinition = builder.build();
     }
 
     @Override
-    public TypeDefinition<?> getType() {
-        return type;
-    }
-
-    @Override
-    public TypeDefinition<?> getTypeDefinition() {
-        return type;
+    public TypeDefinition<?> typeDefinition() {
+        return typeDefinition;
     }
 
     @Override
