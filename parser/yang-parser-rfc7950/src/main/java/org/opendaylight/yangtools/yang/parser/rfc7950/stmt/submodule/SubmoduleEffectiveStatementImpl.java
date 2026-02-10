@@ -133,6 +133,11 @@ final class SubmoduleEffectiveStatementImpl
     }
 
     @Override
+    public Submodule toDataNodeContainer() {
+        return this;
+    }
+
+    @Override
     public void seal() {
         if (!sealed) {
             submodules = ImmutableSet.copyOf(Iterables.transform(submoduleContexts,

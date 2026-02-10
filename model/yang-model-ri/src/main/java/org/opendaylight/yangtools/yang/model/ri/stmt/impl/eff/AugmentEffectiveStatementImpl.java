@@ -56,4 +56,9 @@ public final class AugmentEffectiveStatementImpl
     public AugmentEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public AugmentationSchemaNode toDataNodeContainer() {
+        return this;
+    }
 }

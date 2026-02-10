@@ -14,6 +14,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.meta.DataContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
@@ -24,6 +26,7 @@ public non-sealed interface ModuleEffectiveStatement
             RootEffectiveStatement<@NonNull ModuleStatement>,
             PrefixEffectiveStatement.MandatoryIn<Unqualified, @NonNull ModuleStatement>,
             TypedefEffectiveStatement.MultipleIn<Unqualified, @NonNull ModuleStatement>,
+            DataContainerCompat<Unqualified, @NonNull ModuleStatement>,
             SchemaTreeRoot {
     /**
      * Conformance type, as defined by <a href="https://www.rfc-editor.org/rfc/rfc7895#page-9">RFC7895</a> and
@@ -71,6 +74,9 @@ public non-sealed interface ModuleEffectiveStatement
     default StatementDefinition<Unqualified, @NonNull ModuleStatement, ?> statementDefinition() {
         return ModuleStatement.DEF;
     }
+
+    @Override
+    Module toDataNodeContainer();
 
     /**
      * Return this statement's {@code namespace} substatement.
