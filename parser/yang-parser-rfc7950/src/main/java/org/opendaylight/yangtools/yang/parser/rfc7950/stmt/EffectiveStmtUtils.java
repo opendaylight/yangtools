@@ -123,7 +123,7 @@ public final class EffectiveStmtUtils {
     }
 
     private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement typeStmt) {
-        final var typeDefinition = typeStmt.getTypeDefinition();
+        final var typeDefinition = typeStmt.typeDefinition();
         return typeDefinition instanceof EnumTypeDefinition || typeDefinition instanceof BitsTypeDefinition
                 || typeDefinition instanceof UnionTypeDefinition;
     }
@@ -174,7 +174,7 @@ public final class EffectiveStmtUtils {
             final Collection<? extends EffectiveStatement<?, ?>> statements) {
         final var typedefs = new HashSet<TypeDefinition<?>>();
         for (var statement : statements) {
-            if (statement instanceof TypedefEffectiveStatement tes && !typedefs.add(tes.getTypeDefinition())) {
+            if (statement instanceof TypedefEffectiveStatement tes && !typedefs.add(tes.typeDefinition())) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, statement);
             }
         }

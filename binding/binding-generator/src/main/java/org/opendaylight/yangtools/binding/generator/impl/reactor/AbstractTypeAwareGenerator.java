@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
 
+import com.google.common.base.VerifyException;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -17,8 +18,8 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -33,7 +34,7 @@ abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?
 
     AbstractTypeAwareGenerator(final T statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-        verify(statement instanceof TypeAware, "Unexpected statement %s", statement);
+        verify(statement instanceof TypeDefinitionAware, "Unexpected statement %s", statement);
     }
 
     @Override
@@ -57,8 +58,10 @@ abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?
     @Override
     final TypeDefinition<?> extractTypeDefinition() {
         final var stmt = statement();
-        verify(stmt instanceof TypedDataSchemaNode, "Unexpected statement %s", stmt);
-        return ((TypedDataSchemaNode) stmt).getType();
+        if (!(stmt instanceof TypedDataSchemaNode typed)) {
+            throw new VerifyException("Unexpected statement " + stmt);
+        }
+        return typed.typeDefinition();
     }
 
     @Override

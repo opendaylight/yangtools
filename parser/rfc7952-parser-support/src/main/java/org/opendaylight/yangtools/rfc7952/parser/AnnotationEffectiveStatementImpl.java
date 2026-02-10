@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -27,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class AnnotationEffectiveStatementImpl
         extends AbstractEffectiveUnknownSchmemaNode<AnnotationName, @NonNull AnnotationStatement>
         implements AnnotationEffectiveStatement, AnnotationSchemaNode {
-    private final TypeDefinition<?> type;
+    private final @NonNull TypeDefinition<?> typeDefinition;
 
     AnnotationEffectiveStatementImpl(final Current<AnnotationName, AnnotationStatement> stmt,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -39,20 +40,20 @@ final class AnnotationEffectiveStatementImpl
             findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElse(null), stmt,
             "AnnotationStatementSupport %s is missing a 'type' statement", qname);
 
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
+        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.typeDefinition(),
             qname);
         findFirstEffectiveSubstatementArgument(UnitsEffectiveStatement.class).ifPresent(builder::setUnits);
-        type = builder.build();
+        typeDefinition = builder.build();
     }
 
     @Override
-    public TypeDefinition<?> getType() {
-        return type;
+    public QNameModule currentModule() {
+        return argument().qname().getModule();
     }
 
     @Override
-    public TypeDefinition<?> getTypeDefinition() {
-        return type;
+    public TypeDefinition<?> typeDefinition() {
+        return typeDefinition;
     }
 
     @Override

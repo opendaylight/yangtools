@@ -145,7 +145,7 @@ class XmlStreamUtilsTest {
         }
 
         final var leaf = assertInstanceOf(LeafSchemaNode.class, stack.currentStatement());
-        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition());
 
         return assertInstanceOf(expected, stack.resolveLeafref(type));
     }

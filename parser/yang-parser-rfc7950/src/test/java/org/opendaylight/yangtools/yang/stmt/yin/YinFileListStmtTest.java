@@ -42,13 +42,13 @@ class YinFileListStmtTest extends AbstractYinModulesTest {
         var leaf = assertInstanceOf(LeafSchemaNode.class, childrenIterator.next());
         assertEquals("name", leaf.getQName().getLocalName());
         assertEquals(Optional.of("Unique module instance name"), leaf.getDescription());
-        assertEquals(BaseTypes.stringType(), leaf.getType());
+        assertEquals(BaseTypes.stringType(), leaf.typeDefinition());
         assertTrue(leaf.isMandatory());
 
         leaf = assertInstanceOf(LeafSchemaNode.class, childrenIterator.next());
         assertEquals("type", leaf.getQName().getLocalName());
 
-        final var leafType = assertInstanceOf(IdentityrefTypeDefinition.class, leaf.getType());
+        final var leafType = assertInstanceOf(IdentityrefTypeDefinition.class, leaf.typeDefinition());
         assertEquals("module-type", leafType.getIdentities().iterator().next().getQName().getLocalName());
         assertTrue(leaf.isMandatory());
     }

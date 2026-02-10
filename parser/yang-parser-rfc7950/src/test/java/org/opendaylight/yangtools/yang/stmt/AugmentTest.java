@@ -83,7 +83,7 @@ class AugmentTest extends AbstractYangTest {
         assertEquals(QName.create(FOO, "ds0ChannelNumber"), ds0ChannelNumber.getQName());
         assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
-        assertEquals(BuiltInType.STRING.typeName(), ds0ChannelNumber.getType().getQName());
+        assertEquals(BuiltInType.STRING.typeName(), ds0ChannelNumber.typeDefinition().getQName());
 
         // leaf interface-id
         assertEquals(QName.create(FOO, "interface-id"), interfaceId.getQName());

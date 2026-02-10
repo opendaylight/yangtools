@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -61,7 +61,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         this.cache = requireNonNull(cache);
     }
 
-    public final <S extends TypeAware & SchemaNode> @NonNull T codecFor(final S schema,
+    public final <S extends TypeDefinitionAware & SchemaNode> @NonNull T codecFor(final S schema,
             final LeafrefResolver resolver) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
@@ -75,7 +75,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
          *
          * We assume prevalence is in above order and that caching is effective.
          */
-        final var type = schema.getType();
+        final var type = schema.typeDefinition();
         T ret = cache.lookupSimple(type);
         if (ret != null) {
             LOG.trace("Type {} hit simple {}", type, ret);

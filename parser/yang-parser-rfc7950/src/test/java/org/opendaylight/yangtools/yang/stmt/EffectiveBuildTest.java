@@ -76,7 +76,7 @@ class EffectiveBuildTest {
 
         var leaf = assertInstanceOf(LeafSchemaNode.class, childNodes.iterator().next());
 
-        assertNotNull(leaf.getType());
+        assertNotNull(leaf.typeDefinition());
     }
 
     @Test

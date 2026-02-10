@@ -77,7 +77,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
                 throwSourceException(stmt, effectiveStatement);
             }
             if (effectiveStatement instanceof TypedefEffectiveStatement typedef
-                    && !mutableTypeDefinitions.add(typedef.getTypeDefinition())) {
+                    && !mutableTypeDefinitions.add(typedef.typeDefinition())) {
                 throwSourceException(stmt, effectiveStatement);
             }
             if (effectiveStatement instanceof GroupingDefinition grouping && !mutableGroupings.add(grouping)) {
