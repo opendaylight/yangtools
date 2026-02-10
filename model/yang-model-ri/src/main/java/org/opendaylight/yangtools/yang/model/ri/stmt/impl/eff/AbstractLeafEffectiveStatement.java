@@ -74,6 +74,11 @@ public abstract class AbstractLeafEffectiveStatement
     }
 
     @Override
+    public final LeafSchemaNode toDataSchemaNode() {
+        return this;
+    }
+
+    @Override
     public final QNameModule currentModule() {
         return argument().getModule();
     }

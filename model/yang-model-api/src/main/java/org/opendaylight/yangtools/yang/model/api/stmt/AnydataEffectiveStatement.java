@@ -9,14 +9,20 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code anydata} statement.
  */
-public non-sealed interface AnydataEffectiveStatement extends DataTreeEffectiveStatement<@NonNull AnydataStatement> {
+public non-sealed interface AnydataEffectiveStatement extends DataTreeEffectiveStatement<@NonNull AnydataStatement>,
+        DataSchemaCompat<QName, @NonNull AnydataStatement> {
     @Override
     default StatementDefinition<QName, @NonNull AnydataStatement, ?> statementDefinition() {
         return AnydataStatement.DEF;
     }
+
+    @Override
+    AnydataSchemaNode toDataSchemaNode();
 }

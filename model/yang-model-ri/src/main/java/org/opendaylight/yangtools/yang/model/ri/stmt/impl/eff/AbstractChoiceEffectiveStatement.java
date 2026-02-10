@@ -56,4 +56,9 @@ public abstract class AbstractChoiceEffectiveStatement extends DefaultWithDataTr
     public final ChoiceEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final ChoiceSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }
