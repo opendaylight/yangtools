@@ -55,12 +55,12 @@ class YT1100Test {
         final var name = QName.create(qnm, "name");
         final var leaf = assertInstanceOf(LeafSchemaNode.class,
             module.findDataTreeChild(foo, schedulerNode, childSchedulerNodes, name).orElseThrow());
-        final var leafref = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType()).getPathStatement();
+        final var leafref = assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition()).getPathStatement();
 
         final var resolvedLeafRef = assertInstanceOf(LeafSchemaNode.class,
             SchemaInferenceStack.ofDataTreePath(context, foo, schedulerNode, childSchedulerNodes, name)
                 .resolvePathExpression(leafref));
         assertEquals(QName.create(qnm, "name"), resolvedLeafRef.getQName());
-        assertInstanceOf(StringTypeDefinition.class, resolvedLeafRef.getType());
+        assertInstanceOf(StringTypeDefinition.class, resolvedLeafRef.typeDefinition());
     }
 }

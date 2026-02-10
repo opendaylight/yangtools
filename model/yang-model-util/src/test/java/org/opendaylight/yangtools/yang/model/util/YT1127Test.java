@@ -59,7 +59,7 @@ class YT1127Test {
         final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(QName.create("foo", "grp"));
         final var leaf1 = assertInstanceOf(LeafSchemaNode.class, stack.enterSchemaTree(QName.create("foo", "leaf1")));
-        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf1.getType());
+        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf1.typeDefinition());
 
         final var ex = assertThrows(IllegalArgumentException.class, () -> stack.resolveLeafref(type));
         assertThat(ex.getMessage()).startsWith("Illegal parent access in YangLocationPath");
@@ -73,7 +73,7 @@ class YT1127Test {
             QName.create("foo", "cont"), QName.create("foo", "leaf2"));
 
         final var leaf2 = assertInstanceOf(LeafSchemaNode.class, stack.currentStatement());
-        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf2.getType());
+        final var type = assertInstanceOf(LeafrefTypeDefinition.class, leaf2.typeDefinition());
 
         final var ex = assertThrows(IllegalArgumentException.class, () -> stack.resolveLeafref(type));
         assertThat(ex.getMessage()).startsWith("Illegal parent access in YangLocationPath");

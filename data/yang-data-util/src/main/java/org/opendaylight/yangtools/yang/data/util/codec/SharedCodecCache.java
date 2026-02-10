@@ -13,13 +13,11 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.ExecutionException;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 
 /**
  * A thread-safe lazily-populated codec cache. Instances are cached in an internal weak/soft cache.
- *
- * @author Robert Varga
  */
 @Beta
 public final class SharedCodecCache<T> extends CodecCache<T> {
@@ -29,7 +27,7 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
     private final Cache<SchemaNode, T> complexCodecs = CacheBuilder.newBuilder().weakKeys().softValues().build();
 
     @Override
-    public <S extends SchemaNode & TypeAware> T lookupComplex(final S schema) {
+    public <S extends SchemaNode & TypeDefinitionCompat> T lookupComplex(final S schema) {
         return complexCodecs.getIfPresent(schema);
     }
 
@@ -39,7 +37,7 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    <S extends SchemaNode & TypeAware> T getComplex(final S schema, final T codec) {
+    <S extends SchemaNode & TypeDefinitionCompat> T getComplex(final S schema, final T codec) {
         try {
             return complexCodecs.get(schema, () -> codec);
         } catch (ExecutionException e) {

@@ -28,7 +28,7 @@ class Bug5396Test extends AbstractYangTest {
         var findDataSchemaNode = context.findDataTreeChild(root, myLeaf2).orElseThrow();
 
         var leaf2 = assertInstanceOf(LeafSchemaNode.class, findDataSchemaNode);
-        var union = assertInstanceOf(UnionTypeDefinition.class, leaf2.getType());
+        var union = assertInstanceOf(UnionTypeDefinition.class, leaf2.typeDefinition());
         var types = union.getTypes();
 
         assertEquals(4, types.size());

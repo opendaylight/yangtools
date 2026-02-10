@@ -30,12 +30,12 @@ class Bug6870Test extends AbstractYangTest {
         assertModifier(context, null, QName.create("foo", "root"), QName.create("foo", "my-leaf-2"));
     }
 
-    private static void assertModifier(final EffectiveModelContext schemaContext,
+    private static void assertModifier(final EffectiveModelContext modelContext,
             final ModifierKind expectedModifierKind, final QName... qnames) {
-        final DataSchemaNode findNode = schemaContext.findDataTreeChild(qnames).orElseThrow();
+        final DataSchemaNode findNode = modelContext.findDataTreeChild(qnames).orElseThrow();
         final LeafSchemaNode myLeaf = assertInstanceOf(LeafSchemaNode.class, findNode);
 
-        final var type = myLeaf.getType();
+        final var type = myLeaf.typeDefinition();
         final var patternConstraints = assertInstanceOf(StringTypeDefinition.class, type).getPatternConstraints();
         assertEquals(1, patternConstraints.size());
         assertEquals(Optional.ofNullable(expectedModifierKind), patternConstraints.iterator().next().getModifier());

@@ -56,7 +56,7 @@ class LeafrefStaticAnalysisTest {
     @Test
     void testFooOuterId() {
         final var leaf = assertInstanceOf(LeafSchemaNode.class, bar.getDataChildByName(QName.create(FOO, "outer-id")));
-        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition());
         final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "outer-id"));
         final var found = assertInstanceOf(LeafSchemaNode.class,
@@ -79,7 +79,7 @@ class LeafrefStaticAnalysisTest {
     void testFooOuterIndirectProp() {
         final var leaf = assertInstanceOf(LeafSchemaNode.class,
             bar.getDataChildByName(QName.create(FOO, "outer-indirect-prop")));
-        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition());
         final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "outer-indirect-prop"));
         final var found = assertInstanceOf(LeafSchemaNode.class,
@@ -90,7 +90,7 @@ class LeafrefStaticAnalysisTest {
     @Test
     void testGrpIndirect() {
         final var leaf = assertInstanceOf(LeafSchemaNode.class, grp.getDataChildByName(QName.create(FOO, "indirect")));
-        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition());
         final var stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "indirect"));
@@ -102,7 +102,7 @@ class LeafrefStaticAnalysisTest {
     @Test
     void testFooIndirect() {
         final var leaf = assertInstanceOf(LeafSchemaNode.class, bar.getDataChildByName(QName.create(FOO, "indirect")));
-        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType());
+        final var leafType = assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition());
         final var stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "indirect"));
         final var found = assertInstanceOf(LeafSchemaNode.class,
@@ -178,6 +178,6 @@ class LeafrefStaticAnalysisTest {
     private static IllegalArgumentException assertThrowsIAE(final SchemaInferenceStack stack,
             final LeafSchemaNode leaf) {
         return assertThrows(IllegalArgumentException.class, () -> stack.resolvePathExpression(
-            assertInstanceOf(LeafrefTypeDefinition.class, leaf.getType()).getPathStatement()));
+            assertInstanceOf(LeafrefTypeDefinition.class, leaf.typeDefinition()).getPathStatement()));
     }
 }

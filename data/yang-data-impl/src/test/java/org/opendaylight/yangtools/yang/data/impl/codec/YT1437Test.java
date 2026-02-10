@@ -33,7 +33,7 @@ class YT1437Test {
         final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow();
 
         final var codec = assertInstanceOf(DecimalStringCodec.class,
-            TypeDefinitionAwareCodec.from(assertInstanceOf(LeafSchemaNode.class, foo).getType()));
+            TypeDefinitionAwareCodec.from(assertInstanceOf(LeafSchemaNode.class, foo).typeDefinition()));
 
         final var one = codec.deserialize("20.0");
         assertEquals(2, one.scale());

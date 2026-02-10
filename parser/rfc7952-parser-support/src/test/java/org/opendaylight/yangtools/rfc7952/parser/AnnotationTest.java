@@ -43,7 +43,7 @@ class AnnotationTest {
             .flatMap(module -> module.streamEffectiveSubstatements(AnnotationEffectiveStatement.class))
             .toList()).hasSize(1).first().satisfies(annotation -> {
                 assertEquals(LAST_MODIFIED, annotation.argument());
-                assertEquals(BaseTypes.stringType(), annotation.getTypeDefinition());
+                assertEquals(BaseTypes.stringType(), annotation.typeDefinition());
                 assertEquals(Optional.of("""
                     This annotation contains the date and time when the
                     annotated instance was last modified (or created)."""),
