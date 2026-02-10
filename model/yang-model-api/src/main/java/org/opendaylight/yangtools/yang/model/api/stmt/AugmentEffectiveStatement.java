@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -16,9 +18,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * <a href="https://www.rfc-editor.org/rfc/rfc7950#section-7.17">RFC7950</a>.
  */
 public interface AugmentEffectiveStatement
-        extends SchemaTreeAwareEffectiveStatement<SchemaNodeIdentifier, @NonNull AugmentStatement> {
+        extends SchemaTreeAwareEffectiveStatement<SchemaNodeIdentifier, @NonNull AugmentStatement>,
+                DataContainerCompat<SchemaNodeIdentifier, @NonNull AugmentStatement> {
     @Override
     default StatementDefinition<SchemaNodeIdentifier, @NonNull AugmentStatement, ?> statementDefinition() {
         return AugmentStatement.DEF;
     }
+
+    @Override
+    AugmentationSchemaNode toDataNodeContainer();
 }

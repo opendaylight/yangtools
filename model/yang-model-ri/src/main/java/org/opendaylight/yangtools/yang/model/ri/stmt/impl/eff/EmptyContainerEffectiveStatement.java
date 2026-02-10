@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 
 public final class EmptyContainerEffectiveStatement extends AbstractContainerEffectiveStatement {
-    public EmptyContainerEffectiveStatement(final ContainerStatement declared,
+    public EmptyContainerEffectiveStatement(final @NonNull ContainerStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags) {
         super(declared, substatements, flags);
     }

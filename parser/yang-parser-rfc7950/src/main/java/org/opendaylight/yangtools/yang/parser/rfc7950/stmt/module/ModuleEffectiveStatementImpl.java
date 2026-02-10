@@ -46,7 +46,7 @@ final class ModuleEffectiveStatementImpl
     private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
     private final ImmutableMap<AnnotationName, AnnotationEffectiveStatement> annotations;
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
-    private final ImmutableList<Submodule> submodules;
+    private final @NonNull ImmutableList<Submodule> submodules;
     private final @NonNull QNameModule qnameModule;
 
     ModuleEffectiveStatementImpl(final Current<Unqualified, ModuleStatement> stmt,
@@ -108,6 +108,11 @@ final class ModuleEffectiveStatementImpl
 
     @Override
     public ModuleEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
+    public Module toDataNodeContainer() {
         return this;
     }
 

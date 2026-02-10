@@ -46,4 +46,9 @@ public abstract class AbstractGroupingEffectiveStatement extends WithTypedefName
     public final GroupingEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final GroupingDefinition toDataNodeContainer() {
+        return this;
+    }
 }

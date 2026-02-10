@@ -9,15 +9,21 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DataContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code grouping} statement.
  */
 public interface GroupingEffectiveStatement extends DataTreeAwareEffectiveStatement<QName, @NonNull GroupingStatement>,
-        TypedefEffectiveStatement.MultipleIn<QName, @NonNull GroupingStatement> {
+        TypedefEffectiveStatement.MultipleIn<QName, @NonNull GroupingStatement>,
+        DataContainerCompat<QName, @NonNull GroupingStatement> {
     @Override
     default StatementDefinition<QName, @NonNull GroupingStatement, ?> statementDefinition() {
         return GroupingStatement.DEF;
     }
+
+    @Override
+    GroupingDefinition toDataNodeContainer();
 }

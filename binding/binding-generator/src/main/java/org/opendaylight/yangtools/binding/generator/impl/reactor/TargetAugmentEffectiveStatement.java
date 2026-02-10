@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -38,19 +37,20 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement, AugmentationSchemaNode {
     private final @NonNull List<EffectiveStatement<?, ?>> substatements;
     private final @NonNull AugmentEffectiveStatement delegate;
-    private final @NonNull AugmentationSchemaNode schemaDelegate;
 
-    TargetAugmentEffectiveStatement(final AugmentEffectiveStatement augment,
+    TargetAugmentEffectiveStatement(final AugmentEffectiveStatement delegate,
             final SchemaTreeAwareEffectiveStatement<?, ?> target,
             final ImmutableList<EffectiveStatement<?, ?>> substatements) {
-        delegate = requireNonNull(augment);
-        verify(augment instanceof AugmentationSchemaNode, "Unsupported augment implementation %s", augment);
-        schemaDelegate = (AugmentationSchemaNode) augment;
+        this.delegate = requireNonNull(delegate);
         this.substatements = requireNonNull(substatements);
     }
 
     @NonNull AugmentEffectiveStatement delegate() {
         return delegate;
+    }
+
+    private @NonNull AugmentationSchemaNode schemaDelegate() {
+        return delegate.toDataNodeContainer();
     }
 
     @Override
@@ -89,7 +89,7 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
 
     @Override
     public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
-        return schemaDelegate.getTypeDefinitions();
+        return schemaDelegate().getTypeDefinitions();
     }
 
     @Override
@@ -100,7 +100,7 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
 
     @Override
     public Collection<? extends GroupingDefinition> getGroupings() {
-        return schemaDelegate.getGroupings();
+        return schemaDelegate().getGroupings();
     }
 
     @Override
@@ -110,7 +110,7 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
 
     @Override
     public Collection<? extends UsesNode> getUses() {
-        return schemaDelegate.getUses();
+        return schemaDelegate().getUses();
     }
 
     @Override
@@ -127,26 +127,31 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
 
     @Override
     public Optional<? extends QualifiedBound> getWhenCondition() {
-        return schemaDelegate.getWhenCondition();
+        return schemaDelegate().getWhenCondition();
     }
 
     @Override
     public @NonNull Status getStatus() {
-        return schemaDelegate.getStatus();
+        return schemaDelegate().getStatus();
     }
 
     @Override
     public Optional<String> getDescription() {
-        return schemaDelegate.getDescription();
+        return schemaDelegate().getDescription();
     }
 
     @Override
     public Optional<String> getReference() {
-        return schemaDelegate.getReference();
+        return schemaDelegate().getReference();
     }
 
     @Override
     public AugmentEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
+    public AugmentationSchemaNode toDataNodeContainer() {
         return this;
     }
 
