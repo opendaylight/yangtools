@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc8791.model.api;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective representation of a {@code sx:augment-structure} statement.
@@ -18,8 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * @since 14.0.21
  */
 public interface AugmentStructureEffectiveStatement
-        extends UnknownEffectiveStatement<AugmentStructureArgument, @NonNull AugmentStructureStatement>,
-                DataTreeAwareEffectiveStatement<AugmentStructureArgument, @NonNull AugmentStructureStatement> {
+        extends DataTreeAwareEffectiveStatement<AugmentStructureArgument, @NonNull AugmentStructureStatement> {
     @Override
     default StatementDefinition<AugmentStructureArgument, @NonNull AugmentStructureStatement, ?> statementDefinition() {
         return AugmentStructureStatement.DEF;
