@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -61,8 +60,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         this.cache = requireNonNull(cache);
     }
 
-    public final <S extends TypeDefinitionAware & SchemaNode> @NonNull T codecFor(final S schema,
-            final LeafrefResolver resolver) {
+    public final @NonNull T codecFor(final TypeDefinitionAware schema, final LeafrefResolver resolver) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
          * codecs as much as possible.
@@ -95,7 +93,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         }
 
         // ... and complex types afterwards
-        ret = createComplexCodecFor(schema, type, resolver);
+        ret = createComplexCodecFor(schema.currentModule(), type, resolver);
         LOG.trace("Type {} miss complex {}", type, ret);
         return cache.getComplex(schema, ret);
     }
@@ -197,16 +195,16 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return true;
     }
 
-    private T createComplexCodecFor(final SchemaNode schema, final TypeDefinition<?> type,
+    private T createComplexCodecFor(final QNameModule currentModule, final TypeDefinition<?> type,
             final LeafrefResolver resolver) {
         return switch (type) {
-            case IdentityrefTypeDefinition identityref -> identityRefCodec(identityref, schema.getQName().getModule());
+            case IdentityrefTypeDefinition identityref -> identityRefCodec(identityref, currentModule);
             case LeafrefTypeDefinition leafref -> {
                 final var target = resolver.resolveLeafref(leafref);
                 final var ret = getSimpleCodecFor(target);
-                yield ret != null ? ret : createComplexCodecFor(schema, target, resolver);
+                yield ret != null ? ret : createComplexCodecFor(currentModule, target, resolver);
             }
-            case UnionTypeDefinition union -> createComplexUnion(schema, union, resolver);
+            case UnionTypeDefinition union -> createComplexUnion(currentModule, union, resolver);
             default -> throw new IllegalArgumentException("Unsupported type " + type);
         };
     }
@@ -227,7 +225,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return unionCodec(union, codecs);
     }
 
-    private T createComplexUnion(final SchemaNode schema, final UnionTypeDefinition union,
+    private T createComplexUnion(final QNameModule currentModule, final UnionTypeDefinition union,
             final LeafrefResolver resolver) {
         final var types = union.getTypes();
         final var codecs = new ArrayList<T>(types.size());
@@ -237,11 +235,11 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
             if (codec == null) {
                 codec = getSimpleCodecFor(type);
                 if (codec == null) {
-                    codec = createComplexCodecFor(schema, type, resolver);
+                    codec = createComplexCodecFor(currentModule, type, resolver);
                 }
             }
 
-            codecs.add(verifyNotNull(codec, "Type %s has no codec with %s", type, schema));
+            codecs.add(verifyNotNull(codec, "Type %s has no codec with %s", type, currentModule));
         }
 
         return unionCodec(union, codecs);

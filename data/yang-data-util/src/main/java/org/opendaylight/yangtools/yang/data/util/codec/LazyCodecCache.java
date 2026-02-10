@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 import com.google.common.annotations.Beta;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 
@@ -20,16 +19,16 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 */
 @Beta
 public final class LazyCodecCache<T> extends CodecCache<T> {
-    private final Map<SchemaNode, T> complexCodecs = new IdentityHashMap<>();
+    private final Map<TypeDefinitionAware, T> complexCodecs = new IdentityHashMap<>();
     private final Map<TypeDefinition<?>, T> simpleCodecs = new IdentityHashMap<>();
 
     @Override
-    <S extends SchemaNode & TypeDefinitionAware> T getComplex(final S schema, final T codec) {
+    T getComplex(final TypeDefinitionAware schema, final T codec) {
         return complexCodecs.computeIfAbsent(schema, any -> codec);
     }
 
     @Override
-    <S extends SchemaNode & TypeDefinitionAware> T lookupComplex(final S schema) {
+    T lookupComplex(final TypeDefinitionAware schema) {
         return complexCodecs.get(schema);
     }
 
