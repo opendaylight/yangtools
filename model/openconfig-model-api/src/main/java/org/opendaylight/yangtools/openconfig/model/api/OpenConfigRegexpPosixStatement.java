@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.openconfig.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement corresponding to config's "regexp-posix" .
  *
  * @author Martin Bobak
  */
-public interface OpenConfigRegexpPosixStatement extends UnknownStatement<Empty> {
+public interface OpenConfigRegexpPosixStatement extends DeclaredStatement<Empty> {
     /**
      * The definition of {@code oc-ext:regex-posix} statement.
      *

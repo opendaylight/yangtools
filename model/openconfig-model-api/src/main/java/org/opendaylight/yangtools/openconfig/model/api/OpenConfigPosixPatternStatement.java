@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.openconfig.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement corresponding to config's "posix-pattern" .
  *
  * @author Martin Bobak
  */
-public interface OpenConfigPosixPatternStatement extends UnknownStatement<String> {
+public interface OpenConfigPosixPatternStatement extends DeclaredStatement<String> {
     /**
      * The definition of {@code oc-ext:posix-pattern} statement.
      *

@@ -5,10 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api.stmt;
+package org.opendaylight.yangtools.yang.model.api.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Effective view of an {@link UnrecognizedStatement}. This class never be instantiated.

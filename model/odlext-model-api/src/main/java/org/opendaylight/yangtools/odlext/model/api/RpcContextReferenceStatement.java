@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-public interface RpcContextReferenceStatement extends UnknownStatement<String> {
+public interface RpcContextReferenceStatement extends DeclaredStatement<String> {
     /**
      * The definition of {@code yang-ext:rpc-context-reference} statement.
      *

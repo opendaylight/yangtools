@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.odlext.model.api;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-public interface ContextReferenceStatement extends UnknownStatement<QName> {
+public interface ContextReferenceStatement extends DeclaredStatement<QName> {
     /**
      * The definition of {@code yang-ext:context-reference} statement.
      *

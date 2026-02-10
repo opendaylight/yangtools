@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-public interface MountStatement extends UnknownStatement<Empty> {
+public interface MountStatement extends DeclaredStatement<Empty> {
     /**
      * The definition of {@code yang-ext:mount} statement.
      *
