@@ -424,6 +424,6 @@ public final class EffectiveStatementMixins {
 
     static Collection<? extends @NonNull TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
         return Collections2.transform(stmt.filterEffectiveStatements(TypedefEffectiveStatement.class),
-            TypedefEffectiveStatement::getTypeDefinition);
+            TypedefEffectiveStatement::typeDefinition);
     }
 }

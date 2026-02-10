@@ -14,6 +14,7 @@ import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -78,7 +79,12 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
     }
 
     @Override
-    public TypeDefinition<?> getTypeDefinition() {
+    public QNameModule currentModule() {
+        return argument().getModule();
+    }
+
+    @Override
+    public TypeDefinition<?> typeDefinition() {
         final var existing = (TypeDefinition<?>) TYPE_DEFINITION.getAcquire(this);
         return existing != null ? existing : loadTypeDefinition();
     }
@@ -91,7 +97,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
 
     private @NonNull TypeDefinition<?> loadTypeDefinition() {
         final var type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
-        final var builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), argument());
+        final var builder = DerivedTypes.derivedTypeBuilder(type.typeDefinition(), argument());
 
         effectiveSubstatements().forEach(stmt -> {
             switch (stmt) {
@@ -135,8 +141,13 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
         }
 
         @Override
-        public TypeDefinition<?> getTypeDefinition() {
-            return TypedefEffectiveStatementImpl.this.getTypeDefinition();
+        public QNameModule currentModule() {
+            return argument().getModule();
+        }
+
+        @Override
+        public TypeDefinition<?> typeDefinition() {
+            return TypedefEffectiveStatementImpl.this.typeDefinition();
         }
     }
 }

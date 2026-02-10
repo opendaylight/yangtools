@@ -11,12 +11,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 
 /**
  * Effective view of a {@code type} statement. Its {@link #argument()} points to a {@code typedef} statement in this
  * statement's ancestor hierarchy.
  */
-public interface TypeEffectiveStatement extends EffectiveStatement<QName, @NonNull TypeStatement>, TypeDefinitionAware {
+public interface TypeEffectiveStatement extends EffectiveStatement<QName, @NonNull TypeStatement>,
+        TypeDefinitionCompat<QName, @NonNull TypeStatement> {
     @Override
     default StatementDefinition<QName, @NonNull TypeStatement, ?> statementDefinition() {
         return TypeStatement.DEF;

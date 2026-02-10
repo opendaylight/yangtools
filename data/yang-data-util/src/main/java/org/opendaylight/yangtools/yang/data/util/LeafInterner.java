@@ -62,7 +62,7 @@ public final class LeafInterner {
      */
     public static <T extends LeafNode<?>> @NonNull Optional<Interner<T>> forSchema(
             final @Nullable LeafSchemaNode schema) {
-        if (schema != null && isLowCardinality(schema.getType())) {
+        if (schema != null && isLowCardinality(schema.typeDefinition())) {
             return Optional.of(LeafInterner::intern);
         }
 

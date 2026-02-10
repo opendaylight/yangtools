@@ -77,7 +77,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
 
     @Override
     TypeDefinition<?> extractTypeDefinition() {
-        return statement().getTypeDefinition();
+        return statement().typeDefinition();
     }
 
     @Override
@@ -90,7 +90,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         builder.setRestrictions(computeRestrictions());
         YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
 
-        final var typedef = statement().getTypeDefinition();
+        final var typedef = statement().typeDefinition();
         annotateDeprecatedIfNecessary(typedef, builder);
         addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
         addUnits(builder, typedef);

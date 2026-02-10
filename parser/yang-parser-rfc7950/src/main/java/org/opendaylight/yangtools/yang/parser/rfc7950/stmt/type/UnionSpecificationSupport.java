@@ -50,7 +50,7 @@ final class UnionSpecificationSupport extends AbstractTypeSupport {
 
         for (var subStmt : substatements) {
             if (subStmt instanceof TypeEffectiveStatement tes) {
-                builder.addType(tes.getTypeDefinition());
+                builder.addType(tes.typeDefinition());
             }
         }
 

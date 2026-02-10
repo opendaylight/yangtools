@@ -208,8 +208,8 @@
  *
  * <dt>type
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.LeafSchemaNode#getType()}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode#getType()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.LeafSchemaNode#typeDefinition()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode#typeDefinition()}
  *
  * <dt>typedef
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition}

@@ -56,6 +56,7 @@ class Bug6771Test extends AbstractYangTest {
 
     private static void verifyLeafType(final ModuleEffectiveStatement module, final QName... qnames) {
         assertInstanceOf(Uint32TypeDefinition.class,
-            assertInstanceOf(LeafSchemaNode.class, module.findSchemaTreeNode(qnames).orElseThrow()).getType());
+            assertInstanceOf(LeafSchemaNode.class,
+                module.findSchemaTreeNode(qnames).orElseThrow()).typeDefinition());
     }
 }

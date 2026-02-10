@@ -38,10 +38,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
@@ -626,11 +626,11 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
         var current = type;
         while (true) {
             final var resolved = tmp.resolvePathExpression(current.getPathStatement());
-            if (!(resolved instanceof TypeAware typeAware)) {
+            if (!(resolved instanceof TypeDefinitionCompat typeAware)) {
                 throw new IllegalStateException("Unexpected result " + resolved + " resultion of " + type);
             }
 
-            final var result = typeAware.getType();
+            final var result = typeAware.typeDefinition();
             if (!(result instanceof LeafrefTypeDefinition leafref)) {
                 return result;
             }
@@ -675,7 +675,7 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
         }
 
         // We have a deref() target, decide what to do about it
-        final var targetType = typed.getType();
+        final var targetType = typed.typeDefinition();
         if (targetType instanceof InstanceIdentifierTypeDefinition) {
             // Static inference breaks down, we cannot determine where this points to
             // FIXME: dedicated exception, users can recover from it, derive from IAE

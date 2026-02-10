@@ -25,17 +25,17 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class LeafRefContextTreeBuilder {
     private final List<LeafRefContext> leafRefs = new ArrayList<>();
-    private final EffectiveModelContext schemaContext;
+    private final EffectiveModelContext modelContext;
 
     LeafRefContextTreeBuilder(final EffectiveModelContext schemaContext) {
-        this.schemaContext = schemaContext;
+        modelContext = schemaContext;
     }
 
     LeafRefContext buildLeafRefContextTree() {
-        final var stack = SchemaInferenceStack.of(schemaContext);
-        final var rootBuilder = new LeafRefContextBuilder(SchemaContext.NAME, ImmutableList.of(), schemaContext);
+        final var stack = SchemaInferenceStack.of(modelContext);
+        final var rootBuilder = new LeafRefContextBuilder(SchemaContext.NAME, ImmutableList.of(), modelContext);
 
-        final var modules = schemaContext.getModules();
+        final var modules = modelContext.getModules();
         for (final var module : modules) {
             for (var childNode : module.getChildNodes()) {
                 stack.enterSchemaTree(childNode.getQName());
@@ -65,47 +65,51 @@ final class LeafRefContextTreeBuilder {
 
     private LeafRefContext buildLeafRefContextReferencingTree(final DataSchemaNode node,
             final SchemaInferenceStack stack) {
-        final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
-            extractPath(stack), schemaContext);
+        final var currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(), extractPath(stack),
+            modelContext);
 
-        if (node instanceof DataNodeContainer container) {
-            for (var childNode : container.getChildNodes()) {
-                stack.enterSchemaTree(childNode.getQName());
-                final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(childNode, stack);
-                stack.exit();
-                if (childLeafRefContext.hasReferencingChild() || childLeafRefContext.isReferencing()) {
-                    currentLeafRefContextBuilder.addReferencingChild(childLeafRefContext,
-                        childLeafRefContext.getNodeName());
+        switch (node) {
+            case DataNodeContainer container -> {
+                for (var childNode : container.getChildNodes()) {
+                    stack.enterSchemaTree(childNode.getQName());
+                    final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(childNode, stack);
+                    stack.exit();
+                    if (childLeafRefContext.hasReferencingChild() || childLeafRefContext.isReferencing()) {
+                        currentLeafRefContextBuilder.addReferencingChild(childLeafRefContext,
+                            childLeafRefContext.getNodeName());
+                    }
                 }
             }
-        } else if (node instanceof ChoiceSchemaNode choice) {
-            // :FIXME choice without case
-            for (var caseNode : choice.getCases()) {
-                stack.enterSchemaTree(caseNode.getQName());
-                final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(caseNode, stack);
-                stack.exit();
-                if (childLeafRefContext.hasReferencingChild() || childLeafRefContext.isReferencing()) {
-                    currentLeafRefContextBuilder.addReferencingChild(childLeafRefContext,
-                        childLeafRefContext.getNodeName());
+            case ChoiceSchemaNode choice -> {
+                // :FIXME choice without case
+                for (var caseNode : choice.getCases()) {
+                    stack.enterSchemaTree(caseNode.getQName());
+                    final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(caseNode, stack);
+                    stack.exit();
+                    if (childLeafRefContext.hasReferencingChild() || childLeafRefContext.isReferencing()) {
+                        currentLeafRefContextBuilder.addReferencingChild(childLeafRefContext,
+                            childLeafRefContext.getNodeName());
+                    }
                 }
             }
+            case TypedDataSchemaNode typedNode -> {
+                // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
+                if (typedNode.typeDefinition() instanceof LeafrefTypeDefinition leafrefType) {
+                    final var path = leafrefType.getPathStatement();
+                    final var leafRefPathParser = new LeafRefPathParserImpl(leafrefType, typedNode);
+                    final var  leafRefPath = leafRefPathParser.parseLeafRefPath(path);
 
-        } else if (node instanceof TypedDataSchemaNode typedNode) {
-            final var type = typedNode.getType();
+                    currentLeafRefContextBuilder.setLeafRefTargetPathString(path.getOriginalString());
+                    currentLeafRefContextBuilder.setReferencing(true);
+                    currentLeafRefContextBuilder.setLeafRefTargetPath(leafRefPath);
 
-            // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
-            if (type instanceof LeafrefTypeDefinition leafrefType) {
-                final var path = leafrefType.getPathStatement();
-                final var leafRefPathParser = new LeafRefPathParserImpl(leafrefType, typedNode);
-                final var  leafRefPath = leafRefPathParser.parseLeafRefPath(path);
-
-                currentLeafRefContextBuilder.setLeafRefTargetPathString(path.getOriginalString());
-                currentLeafRefContextBuilder.setReferencing(true);
-                currentLeafRefContextBuilder.setLeafRefTargetPath(leafRefPath);
-
-                final var currentLeafRefContext = currentLeafRefContextBuilder.build();
-                leafRefs.add(currentLeafRefContext);
-                return currentLeafRefContext;
+                    final var currentLeafRefContext = currentLeafRefContextBuilder.build();
+                    leafRefs.add(currentLeafRefContext);
+                    return currentLeafRefContext;
+                }
+            }
+            default -> {
+                // No-op
             }
         }
 
@@ -115,7 +119,7 @@ final class LeafRefContextTreeBuilder {
     private LeafRefContext buildLeafRefContextReferencedByTree(final DataSchemaNode node, final Module currentModule,
             final SchemaInferenceStack stack) {
         final var currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(), extractPath(stack),
-            schemaContext);
+            modelContext);
         if (node instanceof DataNodeContainer container) {
             for (var childNode : container.getChildNodes()) {
                 stack.enterSchemaTree(childNode.getQName());
