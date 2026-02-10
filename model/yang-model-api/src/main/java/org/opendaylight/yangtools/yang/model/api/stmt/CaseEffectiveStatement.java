@@ -10,15 +10,14 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.DataCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code case} statement.
  */
 public non-sealed interface CaseEffectiveStatement extends SchemaTreeEffectiveStatement<@NonNull CaseStatement>,
-        DataTreeAwareEffectiveStatement<QName, @NonNull CaseStatement>,
-        DataSchemaCompat<QName, @NonNull CaseStatement> {
+        DataTreeAwareEffectiveStatement<QName, @NonNull CaseStatement>, DataCompat<QName, @NonNull CaseStatement> {
     @Override
     default StatementDefinition<QName, @NonNull CaseStatement, ?> statementDefinition() {
         return CaseStatement.DEF;
