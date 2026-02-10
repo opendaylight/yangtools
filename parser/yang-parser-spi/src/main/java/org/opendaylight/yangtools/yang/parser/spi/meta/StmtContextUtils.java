@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -110,27 +109,6 @@ public final class StmtContextUtils {
             }
         }
         return listBuilder.build();
-    }
-
-    public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllSubstatements(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
-        return ImmutableList.<StmtContext<A, D, ?>>builder()
-            .addAll(findAllDeclaredSubstatements(stmtContext, type))
-            .addAll(findAllEffectiveSubstatements(stmtContext, type))
-            .build();
-    }
-
-    /**
-     * Returns true if supplied statement context represents unknown statement, otherwise returns false.
-     *
-     * @param stmtCtx statement context to be checked
-     * @return true if supplied statement context represents unknown statement, otherwise false
-     * @throws NullPointerException if supplied statement context is null
-     * @deprecated Use {@code stmtCtx.producesDeclared(UnknownStatement.class)} instead
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.producesDeclared(UnknownStatement.class);
     }
 
     /**

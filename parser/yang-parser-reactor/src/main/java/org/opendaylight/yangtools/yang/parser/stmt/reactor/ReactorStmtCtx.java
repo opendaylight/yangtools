@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
@@ -674,10 +673,10 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public final QNameModule effectiveNamespace() {
-        if (producesDeclared(UnknownStatement.class)) {
+        if (producesExtension()) {
             return publicDefinition().statementName().getModule();
         }
-        if (producesDeclared(UsesStatement.class)) {
+        if (produces(UsesStatement.DEF)) {
             return coerceParent().effectiveNamespace();
         }
 
@@ -689,8 +688,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             return qnameFromArgument(originalOrSelf(), str).getModule();
         }
         if (argument instanceof SchemaNodeIdentifier sni
-                && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
-                        || producesDeclared(DeviationStatement.class))) {
+            && producesAnyOf(AugmentStatement.DEF, RefineStatement.DEF, DeviationStatement.DEF)) {
             return sni.lastNodeIdentifier().getModule();
         }
 
@@ -720,7 +718,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                 localName = namesParts[1];
                 qnameModule = root.getModuleQNameByPrefix(prefix);
                 // in case of unknown statement argument, we're not going to parse it
-                if (qnameModule == null && ctx.producesDeclared(UnknownStatement.class)) {
+                if (qnameModule == null && ctx.producesExtension()) {
                     localName = value;
                     qnameModule = ctx.definingModule();
                 }

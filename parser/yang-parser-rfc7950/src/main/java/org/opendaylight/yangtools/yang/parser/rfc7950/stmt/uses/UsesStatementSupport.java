@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
@@ -235,7 +234,7 @@ public final class UsesStatementSupport
         //
         // We do not live in that world yet, hence we do the following and keep our fingers crossed.
         // FIXME: YANGTOOLS-403: this should not be necessary once we implement the above (although tests will complain)
-        return stmt.producesDeclared(UnknownStatement.class);
+        return stmt.producesExtension();
     }
 
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
@@ -267,7 +266,7 @@ public final class UsesStatementSupport
         //        this trick through a shared namespace or similar reactor-agnostic meeting place. It really feels like
         //        an inference action RefineStatementSupport should be doing.
         final var refineTargetCtx = optRefineTargetCtx.orElseThrow();
-        if (refineTargetCtx.producesDeclared(UnknownStatement.class)) {
+        if (refineTargetCtx.producesExtension()) {
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", refineStmtCtx.argument(),
                 refineStmtCtx.coerceParentContext().argument(), refineTargetCtx.argument(),
@@ -319,7 +318,7 @@ public final class UsesStatementSupport
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
                 || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())
-                || refineSubstatementCtx.producesDeclared(UnknownStatement.class);
+                || refineSubstatementCtx.producesExtension();
     }
 
     private static boolean isSupportedRefineTarget(final StmtContext<?, ?, ?> refineSubstatementCtx,

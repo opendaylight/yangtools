@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -158,6 +159,14 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             switch (source.sourceInfo()) {
                 case SourceInfo.Module info -> {
                     definingModule = resolved.qnameModule();
+                    // Reject any source whose namespace would collide with YIN and could define constructs which
+                    // conflict with YANG specification: 'typedef uint8', 'extension list' and similar
+                    if (YangConstants.RFC6020_YIN_NAMESPACE.equals(definingModule.namespace())) {
+                        // FIXME: better exception
+                        throw new IllegalArgumentException("Source " + source + " resolves to reserved namespace "
+                            + YangConstants.RFC6020_YIN_NAMESPACE);
+                    }
+
                     putPrefix(prefixToModule, info.prefix(), definingModule);
                 }
                 case SourceInfo.Submodule info -> {

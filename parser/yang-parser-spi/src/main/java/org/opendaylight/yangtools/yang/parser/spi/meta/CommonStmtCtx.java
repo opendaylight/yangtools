@@ -32,6 +32,7 @@ public interface CommonStmtCtx {
      * {@return {@code true} if this context produces the statement corresponding to the specified
      * {@link StatementDefinition}}
      * @param def the {@link StatementDefinition}
+     * @since 15.0.0
      */
     default boolean produces(final StatementDefinition<?, ?, ?> def) {
         return def.equals(publicDefinition());
@@ -42,6 +43,7 @@ public interface CommonStmtCtx {
      * {@link StatementDefinition}s}
      * @param first the first {@link StatementDefinition}s
      * @param second the second {@link StatementDefinition}s
+     * @since 15.0.0
      */
     default boolean producesAnyOf(final StatementDefinition<?, ?, ?> first, final StatementDefinition<?, ?, ?> second) {
         requireNonNull(second);
@@ -53,6 +55,7 @@ public interface CommonStmtCtx {
      * {@return {@code true} if this context produces a statement corresponding to any of the specified
      * {@link StatementDefinition}s}
      * @param defs the {@link StatementDefinition}s
+     * @since 15.0.0
      */
     default boolean producesAnyOf(final StatementDefinition<?, ?, ?>... defs) {
         final var myDef = publicDefinition();
@@ -68,6 +71,7 @@ public interface CommonStmtCtx {
      * {@return {@code true} if this context produces a statement corresponding to any of the specified
      * {@link StatementDefinition}s}
      * @param defs the {@link StatementDefinition}s
+     * @since 15.0.0
      */
     default boolean producesAnyOf(final Collection<? extends StatementDefinition<?, ?, ?>> defs) {
         return defs.contains(publicDefinition());
@@ -91,6 +95,14 @@ public interface CommonStmtCtx {
      */
     default <E extends EffectiveStatement<?, ?>> boolean producesEffective(final Class<? super E> type) {
         return type.isAssignableFrom(publicDefinition().effectiveRepresentation());
+    }
+
+    /**
+     * {@return {@code true} when this context produces a statement outside of YANG vocabulary}
+     * @since 15.0.0
+     */
+    default boolean producesExtension() {
+        return publicDefinition().isExtension();
     }
 
     <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> @Nullable CommonStmtCtx asDeclaring(

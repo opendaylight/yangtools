@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -279,7 +278,7 @@ public final class DeviateStatementSupport
     }
 
     private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
-        if (!stmtCtxToBeAdded.producesDeclared(UnknownStatement.class)) {
+        if (!stmtCtxToBeAdded.producesExtension()) {
             if (stmtCtxToBeAdded.producesAnyOf(SINGLETON_STATEMENTS) || stmtCtxToBeAdded.produces(DefaultStatement.DEF)
                     && targetCtx.produces(LeafStatement.DEF)) {
                 final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
@@ -381,7 +380,7 @@ public final class DeviateStatementSupport
     private static void copyStatement(final StmtContext<?, ?, ?> stmtCtxToBeCopied, final Mutable<?, ?, ?> targetCtx) {
         // we need to make a copy of the statement context only if it is an unknown statement, otherwise
         // we can reuse the original statement context
-        if (!stmtCtxToBeCopied.producesDeclared(UnknownStatement.class)) {
+        if (!stmtCtxToBeCopied.producesExtension()) {
             // FIXME: I think this should be handled by the corresponding support's copy policy
             targetCtx.addEffectiveSubstatement(stmtCtxToBeCopied.replicaAsChildOf(targetCtx));
         } else {

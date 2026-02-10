@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.spi;
 
 import com.google.common.collect.SetMultimap;
-import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -36,10 +36,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
  * Baseline {@link ParserNamespace}s mostly derived from YANG specification.
@@ -265,16 +263,11 @@ public final class ParserNamespaces {
         return Optional.ofNullable(current);
     }
 
-    @SuppressWarnings("unchecked")
-    private static StmtContext<?, ?, ?> tryToFindUnknownStatement(final String localName,
+    private static @Nullable StmtContext<?, ?, ?> tryToFindUnknownStatement(final String localName,
             final StmtContext<?, ?, ?> current) {
-        final Collection<? extends StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
-            current, UnknownStatement.class);
-        for (final var unknownSubstatement : unknownSubstatements) {
-            if (localName.equals(unknownSubstatement.rawArgument())) {
-                return unknownSubstatement;
-            }
-        }
-        return null;
+        return current.allSubstatementsStream()
+            .filter(stmt -> stmt.producesExtension() && localName.equals(stmt.rawArgument()))
+            .findFirst()
+            .orElse(null);
     }
 }
