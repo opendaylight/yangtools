@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
@@ -31,5 +32,10 @@ public interface OutputSchemaNode extends ContainerLike, AugmentationTarget.Mixi
     @Override
     default Collection<? extends NotificationDefinition> getNotifications() {
         return List.of();
+    }
+
+    @Override
+    default Optional<Boolean> effectiveConfig() {
+        return Optional.empty();
     }
 }

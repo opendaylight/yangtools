@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -240,20 +238,7 @@ public final class EffectiveStatementMixins {
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerLike, WithStatusMixin<QName, D>, DataNodeContainerMixin<QName, D>,
                     CopyableMixin<QName, D> {
-        @Override
-        default Optional<ActionDefinition> findAction(final QName qname) {
-            return Optional.empty();
-        }
-
-        @Override
-        default Optional<NotificationDefinition> findNotification(final QName qname) {
-            return Optional.empty();
-        }
-
-        @Override
-        default Optional<Boolean> effectiveConfig() {
-            return Optional.empty();
-        }
+        // Nothing else
     }
 
     /**
