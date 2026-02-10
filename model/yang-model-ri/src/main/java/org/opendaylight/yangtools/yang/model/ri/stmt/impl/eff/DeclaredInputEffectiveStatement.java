@@ -59,4 +59,14 @@ public final class DeclaredInputEffectiveStatement extends WithTypedefNamespace<
     public InputEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public InputSchemaNode toDataNodeContainer() {
+        return this;
+    }
+
+    @Override
+    public InputSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }

@@ -61,4 +61,14 @@ public abstract class AbstractContainerEffectiveStatement
     public final ContainerEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final ContainerSchemaNode toDataNodeContainer() {
+        return this;
+    }
+
+    @Override
+    public final ContainerSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }
