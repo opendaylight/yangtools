@@ -33,7 +33,7 @@ class YT1097Test {
         final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow();
         assertInstanceOf(LeafSchemaNode.class, foo);
 
-        final var codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).getType());
+        final var codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).typeDefinition());
         assertInstanceOf(UnionStringCodec.class, codec);
 
         assertDecoded(codec, Boolean.TRUE, "true");

@@ -103,16 +103,16 @@ class YangParserTest extends AbstractModelTest {
 
         final var ifIndex = assertInstanceOf(LeafSchemaNode.class, ifEntry.getDataChildByName(barQName("ifIndex")));
         assertEquals(ifEntry.getKeyDefinition().get(0), ifIndex.getQName());
-        assertInstanceOf(Uint32TypeDefinition.class, ifIndex.getType());
-        assertEquals(Optional.of("minutes"), ifIndex.getType().getUnits());
+        final var ifIndexType = assertInstanceOf(Uint32TypeDefinition.class, ifIndex.typeDefinition());
+        assertEquals(Optional.of("minutes"), ifIndexType.getUnits());
         final var ifMtu = assertInstanceOf(LeafSchemaNode.class, ifEntry.getDataChildByName(barQName("ifMtu")));
-        assertEquals(BaseTypes.int32Type(), ifMtu.getType());
+        assertEquals(BaseTypes.int32Type(), ifMtu.typeDefinition());
     }
 
     @Test
     void testTypedefRangesResolving() {
         final var int32Leaf = assertInstanceOf(LeafSchemaNode.class, FOO.getDataChildByName(fooQName("int32-leaf")));
-        final var leafType = assertInstanceOf(Int32TypeDefinition.class, int32Leaf.getType());
+        final var leafType = assertInstanceOf(Int32TypeDefinition.class, int32Leaf.typeDefinition());
         assertEquals(fooQName("int32-ext2"), leafType.getQName());
         assertEquals(Optional.of("mile"), leafType.getUnits());
         assertEquals(Optional.of("11"), leafType.getDefaultValue());
@@ -157,7 +157,7 @@ class YangParserTest extends AbstractModelTest {
     @Test
     void testTypedefPatternsResolving() {
         final var stringleaf = assertInstanceOf(LeafSchemaNode.class, FOO.getDataChildByName(fooQName("string-leaf")));
-        final var type = assertInstanceOf(StringTypeDefinition.class, stringleaf.getType());
+        final var type = assertInstanceOf(StringTypeDefinition.class, stringleaf.typeDefinition());
         assertEquals(barQName("string-ext4"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
@@ -209,7 +209,7 @@ class YangParserTest extends AbstractModelTest {
     void testTypedefInvalidPatternsResolving() {
         final var multiplePatternStringLeaf = assertInstanceOf(LeafSchemaNode.class,
             FOO.getDataChildByName(fooQName("multiple-pattern-string-leaf")));
-        var type = assertInstanceOf(StringTypeDefinition.class, multiplePatternStringLeaf.getType());
+        var type = assertInstanceOf(StringTypeDefinition.class, multiplePatternStringLeaf.typeDefinition());
         assertEquals(barQName("multiple-pattern-string"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
@@ -221,7 +221,7 @@ class YangParserTest extends AbstractModelTest {
 
         final var multiplePatternDirectStringDefLeaf = assertInstanceOf(LeafSchemaNode.class,
             FOO.getDataChildByName(fooQName("multiple-pattern-direct-string-def-leaf")));
-        type = assertInstanceOf(StringTypeDefinition.class, multiplePatternDirectStringDefLeaf.getType());
+        type = assertInstanceOf(StringTypeDefinition.class, multiplePatternDirectStringDefLeaf.typeDefinition());
         assertEquals(fooQName("string"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
@@ -236,7 +236,7 @@ class YangParserTest extends AbstractModelTest {
     @Test
     void testTypedefLengthsResolving() {
         final var lengthLeaf = assertInstanceOf(LeafSchemaNode.class, FOO.getDataChildByName(fooQName("length-leaf")));
-        final var type = assertInstanceOf(StringTypeDefinition.class, lengthLeaf.getType());
+        final var type = assertInstanceOf(StringTypeDefinition.class, lengthLeaf.typeDefinition());
 
         assertEquals(fooQName("string-ext2"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
@@ -279,7 +279,7 @@ class YangParserTest extends AbstractModelTest {
     @Test
     void testTypedefDecimal1() {
         final var testleaf = assertInstanceOf(LeafSchemaNode.class, FOO.getDataChildByName(fooQName("decimal-leaf")));
-        final var type = assertInstanceOf(DecimalTypeDefinition.class, testleaf.getType());
+        final var type = assertInstanceOf(DecimalTypeDefinition.class, testleaf.typeDefinition());
         assertEquals(barQName("my-decimal-type"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
@@ -299,7 +299,7 @@ class YangParserTest extends AbstractModelTest {
     @Test
     void testTypedefDecimal2() {
         final var testleaf = assertInstanceOf(LeafSchemaNode.class, FOO.getDataChildByName(fooQName("decimal-leaf2")));
-        final var type = assertInstanceOf(DecimalTypeDefinition.class, testleaf.getType());
+        final var type = assertInstanceOf(DecimalTypeDefinition.class, testleaf.typeDefinition());
         assertEquals(barQName("my-decimal-type"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
@@ -313,7 +313,7 @@ class YangParserTest extends AbstractModelTest {
     @Test
     void testTypedefUnion() {
         final var unionleaf = assertInstanceOf(LeafSchemaNode.class, FOO.getDataChildByName(fooQName("union-leaf")));
-        final var type = assertInstanceOf(UnionTypeDefinition.class, unionleaf.getType());
+        final var type = assertInstanceOf(UnionTypeDefinition.class, unionleaf.typeDefinition());
         assertEquals(barQName("my-union-ext"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
@@ -346,7 +346,7 @@ class YangParserTest extends AbstractModelTest {
     void testNestedUnionResolving() {
         final var testleaf = assertInstanceOf(LeafSchemaNode.class,
             FOO.getDataChildByName(fooQName("custom-union-leaf")));
-        final var type = assertInstanceOf(UnionTypeDefinition.class, testleaf.getType());
+        final var type = assertInstanceOf(UnionTypeDefinition.class, testleaf.typeDefinition());
         assertEquals(bazQName("union1"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
@@ -477,10 +477,10 @@ class YangParserTest extends AbstractModelTest {
 
         final var eventClass = assertInstanceOf(LeafSchemaNode.class,
             notification.getDataChildByName(bazQName("event-class")));
-        assertInstanceOf(StringTypeDefinition.class, eventClass.getType());
+        assertInstanceOf(StringTypeDefinition.class, eventClass.typeDefinition());
         final var severity = assertInstanceOf(LeafSchemaNode.class,
             notification.getDataChildByName(bazQName("severity")));
-        assertInstanceOf(StringTypeDefinition.class, severity.getType());
+        assertInstanceOf(StringTypeDefinition.class, severity.typeDefinition());
     }
 
     @Test

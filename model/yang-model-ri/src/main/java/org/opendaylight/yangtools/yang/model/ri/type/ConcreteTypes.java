@@ -80,7 +80,7 @@ public final class ConcreteTypes {
 
     public static TypeDefinition<?> typeOf(final LeafEffectiveStatement leaf) {
         final var typeStmt = leaf.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
-        final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leaf.argument());
+        final var builder = concreteTypeBuilder(typeStmt.typeDefinition(), leaf.argument());
         leaf.effectiveSubstatements().forEach(stmt -> {
             switch (stmt) {
                 case DefaultEffectiveStatement dflt -> builder.setDefaultValue(dflt.argument());
@@ -98,7 +98,7 @@ public final class ConcreteTypes {
 
     public static TypeDefinition<?> typeOf(final LeafListEffectiveStatement leafList) {
         final var typeStmt = leafList.findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
-        final var builder = concreteTypeBuilder(typeStmt.getTypeDefinition(), leafList.argument());
+        final var builder = concreteTypeBuilder(typeStmt.typeDefinition(), leafList.argument());
         leafList.effectiveSubstatements().forEach(stmt -> {
             // NOTE: 'default' is omitted here on purpose
             switch (stmt) {

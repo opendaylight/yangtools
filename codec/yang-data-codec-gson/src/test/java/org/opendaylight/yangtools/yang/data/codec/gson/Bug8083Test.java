@@ -244,7 +244,7 @@ class Bug8083Test {
     private static JSONCodec<YangInstanceIdentifier> getCodec(final JSONCodecFactorySupplier supplier) {
         final var top = assertInstanceOf(ContainerSchemaNode.class, FULL_SCHEMA_CONTEXT.dataChildByName(TOP_QNAME));
         final var foo = assertInstanceOf(LeafSchemaNode.class, top.dataChildByName(FOO_QNAME));
-        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, foo.getType());
+        final var type = assertInstanceOf(InstanceIdentifierTypeDefinition.class, foo.typeDefinition());
         return supplier.createSimple(FULL_SCHEMA_CONTEXT).instanceIdentifierCodec(type);
     }
 

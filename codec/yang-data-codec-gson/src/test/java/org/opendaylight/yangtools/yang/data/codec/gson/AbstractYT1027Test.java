@@ -88,7 +88,8 @@ abstract class AbstractYT1027Test {
     }
 
     private static TypeDefinition<?> getTypeDefinition(final QName name) {
-        return assertInstanceOf(LeafSchemaNode.class, SCHEMA_CONTEXT.findDataTreeChild(name).orElseThrow()).getType();
+        return assertInstanceOf(LeafSchemaNode.class,
+            SCHEMA_CONTEXT.findDataTreeChild(name).orElseThrow()).typeDefinition();
     }
 
     @AfterAll

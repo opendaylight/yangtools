@@ -15,6 +15,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -82,12 +83,17 @@ public final class UndeclaredLeafEffectiveStatement
     }
 
     @Override
-    public TypeDefinition<?> getType() {
+    public QNameModule currentModule() {
+        return argument.getModule();
+    }
+
+    @Override
+    public TypeDefinition<?> typeDefinition() {
         final var local = (TypeDefinition<?>) TYPE.getAcquire(this);
         return local != null ? local : loadType();
     }
 
-    private TypeDefinition<?> loadType() {
+    private @NonNull TypeDefinition<?> loadType() {
         final var ret = ConcreteTypes.typeOf(this);
         final var witness = (TypeDefinition<?>) TYPE.compareAndExchangeRelease(this, null, ret);
         return witness != null ? witness : ret;

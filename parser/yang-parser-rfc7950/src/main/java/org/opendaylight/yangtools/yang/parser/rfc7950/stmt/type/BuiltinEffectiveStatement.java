@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -43,7 +44,12 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement {
     }
 
     @Override
-    public TypeDefinition<?> getTypeDefinition() {
+    public QNameModule currentModule() {
+        return argument().getModule();
+    }
+
+    @Override
+    public TypeDefinition<?> typeDefinition() {
         return typedef;
     }
 
@@ -59,6 +65,6 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement {
 
     @Override
     public final QName argument() {
-        return getTypeDefinition().getQName();
+        return typeDefinition().getQName();
     }
 }

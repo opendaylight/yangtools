@@ -20,6 +20,6 @@ public abstract sealed class AbstractValueContext extends AbstractContext implem
 
     @Override
     public final TypeDefinition<?> type() {
-        return ((TypedDataSchemaNode) dataSchemaNode()).getType();
+        return ((TypedDataSchemaNode) dataSchemaNode()).typeDefinition();
     }
 }
