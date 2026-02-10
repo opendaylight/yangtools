@@ -11,15 +11,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared representation of a {@code sx:augment-structure} statement.
  *
  * @since 14.0.21
  */
-public interface AugmentStructureStatement extends DeclaredStatement<AugmentStructureArgument>,
-        UnknownStatement<AugmentStructureArgument> {
+public interface AugmentStructureStatement extends DeclaredStatement<AugmentStructureArgument> {
     /**
      * The definition of {@code sx:augment-structure} statement.
      */

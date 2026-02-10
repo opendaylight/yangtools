@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 
 class Bug7865Test extends AbstractYangTest {
     @Test

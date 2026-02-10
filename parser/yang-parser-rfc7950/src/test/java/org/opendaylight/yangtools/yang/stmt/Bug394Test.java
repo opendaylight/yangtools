@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 
 /**
  * Test antlr grammar capability to parse nested unknown nodes.

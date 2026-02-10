@@ -5,21 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api.stmt;
+package org.opendaylight.yangtools.yang.model.api.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * Common interface for unrecognized unknown statements. An {@link UnrecognizedStatement} is an instance of a statement
- * defined via an {@code extension} statement, for which the parser did not have semantic support (in which case the
- * statement would result in a corresponding semantic subclass of {@link UnknownStatement}).
+ * Common interface for unrecognized statements. An {@link UnrecognizedStatement} is an instance of a statement
+ * defined via an {@code extension} statement, for which the parser did not have semantic support.
  *
- * <p>This construct does not have a {@link EffectiveStatement} counterpart because we cannot reasonably build an
- * effective model of something we do not recognize.
+ * <p>The effective counterpart to this statement is {@link UnrecognizedEffectiveStatement}, which can never be
+ * instantiated.
  */
-public interface UnrecognizedStatement extends UnknownStatement<Object> {
+public interface UnrecognizedStatement extends DeclaredStatement<Object> {
     /**
      * {@inheritDoc}
      *

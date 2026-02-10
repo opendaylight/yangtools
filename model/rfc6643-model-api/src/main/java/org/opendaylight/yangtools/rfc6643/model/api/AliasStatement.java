@@ -13,10 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-public interface AliasStatement extends UnknownStatement<String>, DescriptionStatement.OptionalIn<String>,
-        ReferenceStatement.OptionalIn<String>, StatusStatement.OptionalIn<String> {
+public interface AliasStatement extends DescriptionStatement.OptionalIn<String>, ReferenceStatement.OptionalIn<String>,
+        StatusStatement.OptionalIn<String> {
     /**
      * The definition of {@code smiv2:alias} statement.
      *

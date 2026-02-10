@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 
 class Bug7037Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
@@ -94,7 +96,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
@@ -663,8 +664,8 @@ public final class DeclaredStatements {
             : new RegularUnitsStatement(argument, substatements);
     }
 
-    public static UnrecognizedStatement createUnrecognized(final String rawArgument,
-            final StatementDefinition publicDefinition,
+    public static UnrecognizedStatement createUnrecognized(final @Nullable String rawArgument,
+            final StatementDefinition<Object, ?, ?> publicDefinition,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new UnrecognizedStatementImpl(rawArgument, publicDefinition, substatements);
     }

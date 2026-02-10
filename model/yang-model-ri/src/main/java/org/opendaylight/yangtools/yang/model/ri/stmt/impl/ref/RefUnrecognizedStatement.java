@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
 public final class RefUnrecognizedStatement extends AbstractRefStatement<Object, UnrecognizedStatement>

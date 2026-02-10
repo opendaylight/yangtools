@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 class ControllerStmtParserTest extends AbstractYangTest {

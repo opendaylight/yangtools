@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.rfc6643.model.api;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-public interface SubIdStatement extends UnknownStatement<Uint32> {
+public interface SubIdStatement extends DeclaredStatement<Uint32> {
     /**
      * The definition of {@code smiv2:subid} statement.
      *

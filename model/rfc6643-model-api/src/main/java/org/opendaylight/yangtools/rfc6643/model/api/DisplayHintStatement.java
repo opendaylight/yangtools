@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.rfc6643.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-public interface DisplayHintStatement extends UnknownStatement<String> {
+public interface DisplayHintStatement extends DeclaredStatement<String> {
     /**
      * The definition of {@code smiv2:max-access} statement.
      *

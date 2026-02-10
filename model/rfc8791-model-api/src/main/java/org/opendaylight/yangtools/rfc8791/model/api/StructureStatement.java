@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.rfc8791.model.api;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared representation of a {@code sx:structure} statement.
  *
  * @since 14.0.21
  */
-public interface StructureStatement extends UnknownStatement<QName> {
+public interface StructureStatement extends DeclaredStatement<QName> {
     /**
      * The definition of {@code sx:structure} statement.
      */

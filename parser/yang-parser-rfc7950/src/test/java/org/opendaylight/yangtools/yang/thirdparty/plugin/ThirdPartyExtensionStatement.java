@@ -10,14 +10,14 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Public declared statement definition that this plugin supports. This interface should generally depend only on
  * concepts defined in yang-model-api.
  */
-public interface ThirdPartyExtensionStatement extends UnknownStatement<String> {
+public interface ThirdPartyExtensionStatement extends DeclaredStatement<String> {
     /**
      * The definition of {@code nc:get-filter-element-attributes} statement.
      *

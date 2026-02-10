@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.rfc6241.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of {@code extension get-filter-element-attributes} defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6241">RFC6241</a>.
  */
-public interface GetFilterElementAttributesStatement extends UnknownStatement<Empty> {
+public interface GetFilterElementAttributesStatement extends DeclaredStatement<Empty> {
     /**
      * The definition of {@code nc:get-filter-element-attributes} statement.
      *

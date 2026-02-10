@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.rfc6536.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of {@code extension default-deny-all} defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  */
-public interface DefaultDenyAllStatement extends UnknownStatement<Empty> {
+public interface DefaultDenyAllStatement extends DeclaredStatement<Empty> {
     /**
      * The definition of {@code nacm:default-deny-all} statement.
      *

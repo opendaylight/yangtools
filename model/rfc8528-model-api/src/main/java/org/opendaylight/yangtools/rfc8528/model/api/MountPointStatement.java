@@ -15,15 +15,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of 'mount-point' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc8528">RFC8528</a>.
  */
-public interface MountPointStatement extends UnknownStatement<MountPointLabel>,
-        ConfigStatement.OptionalIn<MountPointLabel>, DescriptionStatement.OptionalIn<MountPointLabel>,
-        ReferenceStatement.OptionalIn<MountPointLabel>, StatusStatement.OptionalIn<MountPointLabel> {
+public interface MountPointStatement extends ConfigStatement.OptionalIn<MountPointLabel>,
+        DescriptionStatement.OptionalIn<MountPointLabel>, ReferenceStatement.OptionalIn<MountPointLabel>,
+        StatusStatement.OptionalIn<MountPointLabel> {
     /**
      * The definition of {@code yangmnt:mount-point} statement.
      *

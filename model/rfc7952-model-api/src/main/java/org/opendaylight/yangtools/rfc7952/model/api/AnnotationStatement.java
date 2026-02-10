@@ -16,16 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
  * Declared statement representation of 'annotation' extension defined in
  * <a href="https://www.rfc-editor.org/rfc/rfc7952">RFC7952</a>.
  */
-public interface AnnotationStatement extends UnknownStatement<AnnotationName>,
-        DescriptionStatement.OptionalIn<AnnotationName>, IfFeatureStatement.MultipleIn<AnnotationName>,
-        ReferenceStatement.OptionalIn<AnnotationName>, StatusStatement.OptionalIn<AnnotationName>,
-        TypeStatement.OptionalIn<AnnotationName> {
+public interface AnnotationStatement extends DescriptionStatement.OptionalIn<AnnotationName>,
+        IfFeatureStatement.MultipleIn<AnnotationName>, ReferenceStatement.OptionalIn<AnnotationName>,
+        StatusStatement.OptionalIn<AnnotationName>, TypeStatement.OptionalIn<AnnotationName> {
     /**
      * The definition of {@code nc:get-filter-element-attributes} statement.
      *

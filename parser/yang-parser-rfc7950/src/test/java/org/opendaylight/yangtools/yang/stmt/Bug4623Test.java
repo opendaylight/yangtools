@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 class Bug4623Test extends AbstractYangTest {

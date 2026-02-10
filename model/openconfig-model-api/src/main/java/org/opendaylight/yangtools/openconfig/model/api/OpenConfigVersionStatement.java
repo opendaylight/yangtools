@@ -11,10 +11,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
-public interface OpenConfigVersionStatement extends UnknownStatement<SemVer> {
+public interface OpenConfigVersionStatement extends DeclaredStatement<SemVer> {
     /**
      * The definition of {@code oc-ext:openconfig-version} statement.
      *
