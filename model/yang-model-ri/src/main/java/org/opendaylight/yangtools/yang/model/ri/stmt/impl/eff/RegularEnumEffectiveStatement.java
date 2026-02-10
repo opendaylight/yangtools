@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 
 public final class RegularEnumEffectiveStatement extends WithSubstatements<String, @NonNull EnumStatement>
         implements EnumEffectiveStatement, DocumentedNode.Mixin<EnumEffectiveStatement>, DocumentedNode.WithStatus {
-    public  RegularEnumEffectiveStatement(final @NonNull EnumStatement declared,
+    public RegularEnumEffectiveStatement(final @NonNull EnumStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }
