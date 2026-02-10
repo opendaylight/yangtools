@@ -50,4 +50,9 @@ public class EmptyAnyxmlEffectiveStatement extends Default<QName, @NonNull Anyxm
     public final AnyxmlEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final AnyxmlSchemaNode toDataSchemaNode() {
+        return this;
+    }
 }

@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
- * An {@link EffectiveStatement} with {@link DataNodeContainer} and {@link DataSchemaNode} projections to aid schema
- * migration.
+ * An {@link EffectiveStatement} with a {@link DataSchemaNode} projection to aid schema migration.
  *
  * @since 15.0.0
  */
-public interface DataCompat<A, D extends DeclaredStatement<A>>
-    extends DataContainerCompat<A, D>, DataSchemaCompat<A, D> {
-    // Nothing else
+public interface DataSchemaCompat<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
+    /**
+     * {@return this statement's {@code DataSchemaNode} projection}
+     */
+    @NonNull DataSchemaNode toDataSchemaNode();
 }

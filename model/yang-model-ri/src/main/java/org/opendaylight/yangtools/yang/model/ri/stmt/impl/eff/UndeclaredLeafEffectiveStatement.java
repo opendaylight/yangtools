@@ -83,6 +83,11 @@ public final class UndeclaredLeafEffectiveStatement
     }
 
     @Override
+    public LeafSchemaNode toDataSchemaNode() {
+        return this;
+    }
+
+    @Override
     public QNameModule currentModule() {
         return argument.getModule();
     }
