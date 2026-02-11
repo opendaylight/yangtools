@@ -9,24 +9,15 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 public final class RegularRangeEffectiveStatement extends WithSubstatements<ValueRanges, @NonNull RangeStatement>
-        implements RangeEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, @NonNull RangeStatement>,
-                   DocumentedNode.Mixin<RangeEffectiveStatement> {
+        implements RangeConstraintMixin {
     public RegularRangeEffectiveStatement(final @NonNull RangeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
-    }
-
-    @Override
-    public RangeEffectiveStatement asEffectiveStatement() {
-        return this;
     }
 }

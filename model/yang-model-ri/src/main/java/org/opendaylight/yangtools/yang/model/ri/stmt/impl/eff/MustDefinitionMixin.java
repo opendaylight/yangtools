@@ -15,12 +15,18 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-interface MustDefinitionMixin
-    extends MustDefinition, MustEffectiveStatement,
-            ConstraintMetaDefinitionMixin<QualifiedBound, @NonNull MustStatement>,
-            DocumentedNode.Mixin<MustEffectiveStatement> {
+sealed interface MustDefinitionMixin
+        extends MustDefinition, MustEffectiveStatement,
+                ConstraintMetaDefinitionMixin<QualifiedBound, @NonNull MustStatement>,
+                DocumentedNode.Mixin<MustEffectiveStatement>
+        permits EmptyMustEffectiveStatement, RegularMustEffectiveStatement {
     @Override
     default MustEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
+    default MustDefinition asConstraint() {
         return this;
     }
 }
