@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
  */
 public interface ListSchemaNode extends DataNodeContainer, DataSchemaNode, ElementCountConstraintAware,
         ActionNodeContainer.Mixin<ListEffectiveStatement>, AugmentationTarget.Mixin<ListEffectiveStatement>,
-        DocumentedNode.Mixin<ListEffectiveStatement>, MustConstraintAware.Mixin<ListEffectiveStatement>,
-        NotificationNodeContainer.Mixin<ListEffectiveStatement>, UserOrderedAware<ListEffectiveStatement>,
-        WhenConditionAware.Mixin<ListEffectiveStatement> {
+        DataNodeContainer.Mixin<ListEffectiveStatement>, DocumentedNode.Mixin<ListEffectiveStatement>,
+        MustConstraintAware.Mixin<ListEffectiveStatement>, NotificationNodeContainer.Mixin<ListEffectiveStatement>,
+        UserOrderedAware<ListEffectiveStatement>, WhenConditionAware.Mixin<ListEffectiveStatement> {
     /**
      * Returns the list of leaf identifiers.
      *

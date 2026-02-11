@@ -20,17 +20,15 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 
 final class YangDataEffectiveStatementImpl extends WithSubstatements<YangDataName, @NonNull YangDataStatement>
-        implements YangDataEffectiveStatement, DataNodeContainerMixin<YangDataName, @NonNull YangDataStatement> {
+        implements YangDataEffectiveStatement {
     private final @NonNull DataSchemaNode child;
 
     YangDataEffectiveStatementImpl(final @NonNull YangDataStatement declared,
@@ -38,11 +36,6 @@ final class YangDataEffectiveStatementImpl extends WithSubstatements<YangDataNam
              final DataSchemaNode child) {
         super(declared, substatements);
         this.child = requireNonNull(child);
-    }
-
-    @Override
-    public DataNodeContainer toDataNodeContainer() {
-        return this;
     }
 
     @Override

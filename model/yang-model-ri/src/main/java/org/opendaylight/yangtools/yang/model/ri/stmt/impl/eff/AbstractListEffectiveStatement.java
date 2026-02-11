@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainer
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyKeyStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.UserOrderedAwareMixin;
 
@@ -34,8 +33,7 @@ abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName
             ActionNodeContainerCompat<QName, @NonNull ListStatement, ListEffectiveStatement>,
             NotificationNodeContainerCompat<QName, @NonNull ListStatement, ListEffectiveStatement>,
             DataSchemaNodeMixin<@NonNull ListStatement>,
-            UserOrderedAwareMixin<QName, @NonNull ListStatement, ListEffectiveStatement>,
-            DataNodeContainerMixin<QName, @NonNull ListStatement> {
+            UserOrderedAwareMixin<QName, @NonNull ListStatement, ListEffectiveStatement> {
     private final int flags;
     private final @Nullable Object keyArgument;
 
