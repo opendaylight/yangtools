@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -35,15 +33,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not
 //                  considered to be data nodes.
 @NonNullByDefault
-public abstract class TreeNode implements StoreTreeNode<TreeNode> {
-    private final NormalizedNode data;
-    private final Version incarnation;
-
-    TreeNode(final NormalizedNode data, final Version incarnation) {
-        this.data = requireNonNull(data);
-        this.incarnation = requireNonNull(incarnation);
-    }
-
+public abstract sealed class TreeNode implements StoreTreeNode<TreeNode> permits AbstractTreeNode {
     /**
      * Create a new TreeNode from a data node.
      *
@@ -64,13 +54,9 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
     }
 
     /**
-     * Get a read-only view of the underlying data.
-     *
-     * @return Unmodifiable view of the underlying data.
+     * {@return an unmodifiable view of the underlying data}
      */
-    public final NormalizedNode data() {
-        return data;
-    }
+    public abstract NormalizedNode data();
 
     /**
      * Get the data node incarnation. This version is updated whenever the data representation of this particular node
@@ -79,9 +65,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
      *
      * @return data node incarnation
      */
-    public final Version incarnation() {
-        return incarnation;
-    }
+    public abstract Version incarnation();
 
     /**
      * Get the subtree version. This version is updated whenever the data representation of this particular node
@@ -101,7 +85,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("version", incarnation)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);

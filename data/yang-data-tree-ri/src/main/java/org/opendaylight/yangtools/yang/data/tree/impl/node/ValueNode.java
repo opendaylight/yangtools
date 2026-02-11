@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * children as absent, subtree version equal to {@link #incarnation()} and do not support mutable view.
  */
 @NonNullByDefault
-final class ValueNode extends TreeNode {
+final class ValueNode extends AbstractTreeNode {
     private static final Logger LOG = LoggerFactory.getLogger(ValueNode.class);
 
     ValueNode(final NormalizedNode data, final Version incarnation) {

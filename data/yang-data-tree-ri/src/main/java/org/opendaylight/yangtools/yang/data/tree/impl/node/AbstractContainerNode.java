@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * changed is tracked by the subtree version.
  */
 @NonNullByDefault
-abstract class AbstractContainerNode extends TreeNode {
+abstract sealed class AbstractContainerNode extends AbstractTreeNode
+        permits AbstractModifiedContainerNode, SimpleContainerNode {
     AbstractContainerNode(final NormalizedNode data, final Version incarnation) {
         super(data, incarnation);
     }
