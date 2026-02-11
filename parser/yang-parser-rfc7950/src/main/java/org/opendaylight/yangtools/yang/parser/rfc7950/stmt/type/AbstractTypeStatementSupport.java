@@ -281,7 +281,7 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
         for (var stmt : substatements) {
             if (stmt instanceof LengthEffectiveStatement length) {
                 try {
-                    builder.setLengthConstraint(length, length.argument());
+                    builder.setLengthConstraint(length.asConstraint(), length.argument());
                 } catch (IllegalStateException e) {
                     throw new SourceException(ctx, e, "Multiple length constraints encountered");
                 } catch (InvalidLengthConstraintException e) {
@@ -324,7 +324,8 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
 
         for (var stmt : substatements) {
             switch (stmt) {
-                case RangeEffectiveStatement range ->  builder.setRangeConstraint(range, range.argument());
+                case RangeEffectiveStatement range ->
+                    builder.setRangeConstraint(range.asConstraint(), range.argument());
                 case FractionDigitsEffectiveStatement fdes -> {
                     final var digits = fdes.argument();
                     SourceException.throwIf(baseType.getFractionDigits() != digits, ctx,
@@ -390,7 +391,7 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
                 final RangeRestrictedTypeBuilder<T, N> builder) {
         for (var stmt : substatements) {
             if (stmt instanceof RangeEffectiveStatement range) {
-                builder.setRangeConstraint(range, range.argument());
+                builder.setRangeConstraint(range.asConstraint(), range.argument());
             }
         }
 
@@ -425,14 +426,14 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
             switch (stmt) {
                 case LengthEffectiveStatement length -> {
                     try {
-                        builder.setLengthConstraint(length, length.argument());
+                        builder.setLengthConstraint(length.asConstraint(), length.argument());
                     } catch (IllegalStateException e) {
                         throw new SourceException(ctx, e, "Multiple length constraints encountered");
                     } catch (InvalidLengthConstraintException e) {
                         throw new SourceException(ctx, e, "Invalid length constraint %s", length.argument());
                     }
                 }
-                case PatternEffectiveStatement pattern -> builder.addPatternConstraint(pattern);
+                case PatternEffectiveStatement pattern -> builder.addPatternConstraint(pattern.asConstraint());
                 default -> {
                     // No-op
                 }

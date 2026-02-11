@@ -7,35 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.ConstraintCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 /**
  * Effective representation of a {@code pattern} statement.
  */
-public interface PatternEffectiveStatement
-        extends EffectiveStatement<PatternExpression, @NonNull PatternStatement>, PatternConstraint {
+public interface PatternEffectiveStatement extends ConstraintCompat<PatternExpression, @NonNull PatternStatement> {
     @Override
     default StatementDefinition<PatternExpression, @NonNull PatternStatement, ?> statementDefinition() {
         return PatternStatement.DEF;
     }
 
     @Override
-    default String getJavaPatternString() {
-        return argument().getJavaPatternString();
-    }
-
-    @Override
-    default String getRegularExpressionString() {
-        return argument().getRegularExpressionString();
-    }
-
-    @Override
-    default Optional<ModifierKind> getModifier() {
-        return findFirstEffectiveSubstatementArgument(ModifierEffectiveStatement.class);
-    }
+    PatternConstraint asConstraint();
 }
