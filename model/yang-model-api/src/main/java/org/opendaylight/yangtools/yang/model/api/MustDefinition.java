@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
  * <code>must "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";</code>
  * </i>
  */
-public interface MustDefinition extends ConstraintMetaDefinition, EffectiveStatementEquivalent<MustEffectiveStatement> {
+public interface MustDefinition extends ConstraintMetaDefinition.Mixin<MustEffectiveStatement> {
     /**
      * Returns XPath expression which contains constraint.
      *
