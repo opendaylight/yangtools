@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -236,7 +237,8 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     protected abstract @NonNull TreeNode applyMerge(ModifiedNode modification, @NonNull TreeNode currentMeta,
         Version version);
 
-    protected abstract @NonNull TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue,
+    @NonNullByDefault
+    protected abstract TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue,
         @Nullable TreeNode currentMeta, Version version);
 
     /**

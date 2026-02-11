@@ -73,8 +73,8 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
      * because it enforces presence of mandatory leaves, which is not something we want here, as structural containers
      * are not root anchors for that validation.
      */
-    static final class Structural extends ContainerModificationStrategy {
-        private final ContainerNode emptyNode;
+    static final class Structural extends ContainerModificationStrategy implements AutomaticLifecycleMixin {
+        private final @NonNull ContainerNode emptyNode;
 
         Structural(final ContainerLike schema, final DataTreeConfiguration treeConfig) {
             super(schema, treeConfig);
@@ -85,8 +85,18 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
 
         @Override
         TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-            return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
-                version);
+            return apply(emptyNode, modification, currentMeta, version);
+        }
+
+        @Override
+        public TreeNode superApply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+            return super.apply(modification, currentMeta, version);
+        }
+
+        @Override
+        public TreeNode thisApplyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+                final TreeNode currentMeta, final Version version) {
+            return applyWrite(modification, newValue, currentMeta, version);
         }
 
         @Override

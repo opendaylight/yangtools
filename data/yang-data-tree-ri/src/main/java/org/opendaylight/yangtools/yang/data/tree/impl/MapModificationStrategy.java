@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class MapModificationStrategy extends Invisible<ListSchemaNode> {
+final class MapModificationStrategy extends Invisible<ListSchemaNode> implements AutomaticLifecycleMixin {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UserMapNode> ORDERED_SUPPORT =
         new NormalizedNodeContainerSupport<>(UserMapNode.class, ChildTrackingPolicy.ORDERED,
             BUILDER_FACTORY::newUserMapBuilder, BUILDER_FACTORY::newUserMapBuilder);
@@ -59,8 +60,18 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
 
     @Override
     TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
-            version);
+        return apply(emptyNode, modification, currentMeta, version);
+    }
+
+    @Override
+    public TreeNode superApply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+        return super.apply(modification, currentMeta, version);
+    }
+
+    @Override
+    public TreeNode thisApplyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+            final TreeNode currentMeta, final Version version) {
+        return applyWrite(modification, newValue, currentMeta, version);
     }
 
     @Override

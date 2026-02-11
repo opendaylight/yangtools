@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
+final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode>
+        implements AutomaticLifecycleMixin {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
         new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
             BUILDER_FACTORY::newUnkeyedListEntryBuilder, BUILDER_FACTORY::newUnkeyedListEntryBuilder);
@@ -44,8 +45,18 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
 
     @Override
     TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
-            version);
+        return apply(emptyNode, modification, currentMeta, version);
+    }
+
+    @Override
+    public TreeNode superApply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+        return super.apply(modification, currentMeta, version);
+    }
+
+    @Override
+    public TreeNode thisApplyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+            final TreeNode currentMeta, final Version version) {
+        return applyWrite(modification, newValue, currentMeta, version);
     }
 
     @Override
