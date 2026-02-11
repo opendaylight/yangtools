@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -56,7 +58,7 @@ final class OperationWithModification {
      * Read a particular child. If the child has been modified and does not have a stable
      * view, one will we instantiated with specified version.
      */
-    Optional<NormalizedNode> read(final PathArgument child, final Version version) {
+    Optional<NormalizedNode> read(final @NonNull PathArgument child, final @NonNull Version version) {
         final ModifiedNode childNode = modification.childByArg(child);
         if (childNode != null) {
             var snapshot = childNode.getSnapshot();
@@ -89,6 +91,7 @@ final class OperationWithModification {
         return applyOperation;
     }
 
+    @NonNullByDefault
     public @Nullable TreeNode apply(final @Nullable TreeNode data, final Version version) {
         return applyOperation.apply(modification, data, version);
     }

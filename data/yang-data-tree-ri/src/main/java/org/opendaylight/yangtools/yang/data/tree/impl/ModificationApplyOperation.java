@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -53,6 +54,7 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      *         resulted in deletion of this node.
      * @throws IllegalArgumentException If it is not possible to apply Operation on provided Metadata node
      */
+    @NonNullByDefault
     abstract @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
 
     /**
