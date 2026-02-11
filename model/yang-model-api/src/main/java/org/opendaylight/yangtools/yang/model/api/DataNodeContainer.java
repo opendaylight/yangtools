@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.Collections2;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -18,6 +19,8 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * Node which can contains other nodes.
@@ -106,11 +109,10 @@ public interface DataNodeContainer {
     default Optional<DataSchemaNode> findDataChildByName(final QName first, final QName... others) {
         var current = dataChildByName(first);
         for (var qname : others) {
-            if (current instanceof DataNodeContainer container) {
-                current = container.dataChildByName(qname);
-            } else {
+            if (!(current instanceof DataNodeContainer container)) {
                 return Optional.empty();
             }
+            current = container.dataChildByName(qname);
         }
         return Optional.ofNullable(current);
     }
@@ -199,5 +201,36 @@ public interface DataNodeContainer {
         return node instanceof ContainerSchemaNode || node instanceof LeafSchemaNode
             || node instanceof LeafListSchemaNode || node instanceof ListSchemaNode
             || node instanceof AnydataSchemaNode || node instanceof AnyxmlSchemaNode;
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatement} and {@link DataNodeContainer}.
+     *
+     * @param <E> Type of equivalent {@link EffectiveStatement}.
+     * @since 15.0.0
+     */
+    public interface Mixin<E extends EffectiveStatement<?, ?>>
+            extends EffectiveStatementEquivalent<E>, DataNodeContainer {
+        @Override
+        default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
+            return Collections2.transform(
+                asEffectiveStatement().filterEffectiveStatements(TypedefEffectiveStatement.class),
+                TypedefEffectiveStatement::typeDefinition);
+        }
+
+        @Override
+        default Collection<? extends DataSchemaNode> getChildNodes() {
+            return asEffectiveStatement().filterEffectiveStatements(DataSchemaNode.class);
+        }
+
+        @Override
+        default Collection<? extends GroupingDefinition> getGroupings() {
+            return asEffectiveStatement().filterEffectiveStatements(GroupingDefinition.class);
+        }
+
+        @Override
+        default Collection<? extends UsesNode> getUses() {
+            return asEffectiveStatement().filterEffectiveStatements(UsesNode.class);
+        }
     }
 }

@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UserOrderedAware;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
@@ -84,34 +82,6 @@ public final class EffectiveStatementMixins {
         @Deprecated(since = "8.0.0")
         default boolean isAugmenting() {
             return (flags() & FlagsBuilder.AUGMENTING) != 0;
-        }
-    }
-
-    /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link DataNodeContainer}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface DataNodeContainerMixin<A, D extends DeclaredStatement<A>> extends DataNodeContainer, Mixin<A, D> {
-        @Override
-        default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
-            return filterTypeDefinitions(this);
-        }
-
-        @Override
-        default Collection<? extends DataSchemaNode> getChildNodes() {
-            return filterEffectiveStatements(DataSchemaNode.class);
-        }
-
-        @Override
-        default Collection<? extends GroupingDefinition> getGroupings() {
-            return filterEffectiveStatements(GroupingDefinition.class);
-        }
-
-        @Override
-        default Collection<? extends UsesNode> getUses() {
-            return filterEffectiveStatements(UsesNode.class);
         }
     }
 
@@ -236,8 +206,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
-            extends ContainerLike, WithStatusMixin<QName, D>, DataNodeContainerMixin<QName, D>,
-                    CopyableMixin<QName, D> {
+            extends ContainerLike, WithStatusMixin<QName, D>, CopyableMixin<QName, D> {
         // Nothing else
     }
 
@@ -262,8 +231,9 @@ public final class EffectiveStatementMixins {
     public interface OperationDefinitionMixin<D extends DeclaredStatement<QName>>
             extends SchemaNodeMixin<D>, OperationDefinition {
         @Override
-        default Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions() {
-            return filterTypeDefinitions(this);
+        default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
+            return Collections2.transform(filterEffectiveStatements(TypedefEffectiveStatement.class),
+                TypedefEffectiveStatement::typeDefinition);
         }
 
         @Override
@@ -389,10 +359,5 @@ public final class EffectiveStatementMixins {
     static <T extends ContainerLike> T findAsContainer(final EffectiveStatement<?, ?> stmt,
             final Class<? extends EffectiveStatement<QName, ?>> type, final Class<T> target) {
         return target.cast(stmt.findFirstEffectiveSubstatement(type).orElseThrow());
-    }
-
-    static Collection<? extends @NonNull TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
-        return Collections2.transform(stmt.filterEffectiveStatements(TypedefEffectiveStatement.class),
-            TypedefEffectiveStatement::typeDefinition);
     }
 }
