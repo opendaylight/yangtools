@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -46,6 +47,7 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
     /**
      * Implementation of this operation must be stateless and must not change state of this object.
      *
+     * @param path the path to modification
      * @param modification NodeModification to be applied
      * @param currentMeta Store Metadata Node on which NodeModification should be applied
      * @param version New subtree version of parent node
@@ -53,17 +55,20 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      *         resulted in deletion of this node.
      * @throws IllegalArgumentException If it is not possible to apply Operation on provided Metadata node
      */
-    abstract @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
+    @NonNullByDefault
+    abstract @Nullable TreeNode apply(ModificationPath path, ModifiedNode modification,
+        @Nullable TreeNode currentMeta, Version version);
 
     /**
      * Checks if provided node modification could be applied to current metadata node.
      *
-     * @param path Path to modification
+     * @param path the path to modification
      * @param modification Modification
      * @param currentMeta Metadata Node to which modification should be applied
      * @param version Metadata version
      * @throws DataValidationFailedException if the modification is not applicable
      */
+    @NonNullByDefault
     abstract void checkApplicable(ModificationPath path, NodeModification modification,
         @Nullable TreeNode currentMeta, Version version) throws DataValidationFailedException;
 
@@ -71,28 +76,31 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      * Performs a quick structural verification of NodeModification, such as written values / types uses right
      * structural elements.
      *
-     * @param modification data to be verified.
-     * @throws IllegalArgumentException If provided NodeModification does not adhere to the
-     *         structure.
+     * @param path path to data
+     * @param value data to be verified
+     * @throws IllegalArgumentException If provided NodeModification does not adhere to the structure
      */
-    abstract void quickVerifyStructure(NormalizedNode modification);
+    @NonNullByDefault
+    abstract void quickVerifyStructure(ModificationPath path, NormalizedNode value);
 
     /**
      * Performs a full structural verification of NodeModification, such as written values / types uses right
      * structural elements. Unlike {@link #quickVerifyStructure(NormalizedNode)} this includes recursively checking
      * children, too.
      *
-     * @param modification data to be verified.
-     * @throws IllegalArgumentException If provided NodeModification does not adhere to the
-     *         structure.
+     * @param path path to data
+     * @param value data to be verified
+     * @throws IllegalArgumentException If provided NodeModification does not adhere to the structure
      */
-    abstract void fullVerifyStructure(NormalizedNode modification);
+    @NonNullByDefault
+    abstract void fullVerifyStructure(ModificationPath path, NormalizedNode value);
 
     /**
      * Return the tracking policy for this node's children.
      *
      * @return Tracking policy, may not be null.
      */
+    @NonNullByDefault
     abstract ChildTrackingPolicy getChildPolicy();
 
     /**
@@ -104,7 +112,9 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
      * @param value Value which should be merge into the modification
      * @param version Data version as carried in the containing {@link InMemoryDataTreeModification}
      */
-    abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode value, Version version);
+    @NonNullByDefault
+    abstract void mergeIntoModifiedNode(ModificationPath path, ModifiedNode modification, NormalizedNode value,
+        Version version);
 
     /**
      * {@inheritDoc}
@@ -115,8 +125,10 @@ abstract sealed class ModificationApplyOperation implements StoreTreeNode<Modifi
     @Override
     public abstract ModificationApplyOperation childByArg(PathArgument arg);
 
-    abstract void recursivelyVerifyStructure(NormalizedNode value);
+    @NonNullByDefault
+    abstract void recursivelyVerifyStructure(ModificationPath path, NormalizedNode value);
 
+    @NonNullByDefault
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 
     @Override

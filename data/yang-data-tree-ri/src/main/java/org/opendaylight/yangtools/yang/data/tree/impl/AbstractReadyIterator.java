@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 abstract class AbstractReadyIterator {
@@ -29,7 +30,8 @@ abstract class AbstractReadyIterator {
         return new RootReadyIterator(root, root.getChildren().iterator(), operation);
     }
 
-    final AbstractReadyIterator process(final Version version) {
+    @NonNullByDefault
+    final AbstractReadyIterator process(final ModificationPath path, final Version version) {
         // Walk all child nodes and remove any children which have not
         // been modified. If a child has children, we need to iterate
         // through it via re-entering this method on the child iterator.
@@ -39,19 +41,24 @@ abstract class AbstractReadyIterator {
             final var childOp = op.childByArg(childId);
             checkState(childOp != null, "Schema for child %s is not present.", childId);
 
-            if (child.isEmpty()) {
-                // The child is empty, seal it
-                child.seal(childOp, version);
-                if (child.getOperation() == LogicalOperation.NONE) {
-                    children.remove();
-                }
-            } else {
+            if (!child.isEmpty()) {
                 return new NestedReadyIterator(this, child, child.getChildren().iterator(), childOp);
+            }
+
+            // The child is empty, seal it
+            path.push(childId);
+            try {
+                child.seal(path, childOp, version);
+            } finally {
+                path.pop();
+            }
+            if (child.getOperation() == LogicalOperation.NONE) {
+                children.remove();
             }
         }
 
         // We are done with this node, seal it.
-        node.seal(op, version);
+        node.seal(path, op, version);
 
         // Remove from parent if we have one and this is a no-op
         if (node.getOperation() == LogicalOperation.NONE) {

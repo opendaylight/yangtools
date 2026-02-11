@@ -74,7 +74,7 @@ final class UniqueValidation extends AbstractValidation {
     }
 
     @Override
-    void enforceOnData(final NormalizedNode data) {
+    void enforceOnDataUnchecked(final ModificationPath path, final NormalizedNode data) {
         enforceOnData(data, (message, values) -> new UniqueValidationFailedException(message));
     }
 

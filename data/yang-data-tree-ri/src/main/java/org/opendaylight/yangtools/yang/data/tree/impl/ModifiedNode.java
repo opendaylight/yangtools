@@ -193,8 +193,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      *         present in original data.
      */
     @NonNullByDefault
-    ModifiedNode modifyChild(final PathArgument child, final ModificationApplyOperation childOper,
-            final Version modVersion) {
+    ModifiedNode modifyChild(final ModificationPath childPath, final PathArgument child,
+            final ModificationApplyOperation childOper, final Version modVersion) {
         clearSnapshot();
         if (operation == LogicalOperation.NONE) {
             updateOperationType(LogicalOperation.TOUCH);
@@ -212,7 +212,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             @SuppressWarnings({ "rawtypes", "unchecked" })
             final var childData = ((DistinctNodeContainer) value).childByArg(child);
             if (childData != null) {
-                childOper.mergeIntoModifiedNode(newlyCreated, childData, modVersion);
+                childOper.mergeIntoModifiedNode(childPath, newlyCreated, childData, modVersion);
             }
         }
 
@@ -221,13 +221,19 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     @NonNullByDefault
-    ModifiedNode createMergeChild(final NormalizedNode child, final ModificationApplyOperation childOper,
-            final Version modVersion) {
-        final var name = child.name();
-        final var node = new ModifiedNode(name, originalMetadata(name, modVersion), childOper.getChildPolicy());
-        childOper.mergeIntoModifiedNode(node, child, modVersion);
+    ModifiedNode createMergeChild(final ModificationPath path, final NormalizedNode child,
+            final ModificationApplyOperation childOper, final Version modVersion) {
+        final var childId = child.name();
+        final var node = new ModifiedNode(childId, originalMetadata(childId, modVersion), childOper.getChildPolicy());
 
-        final var existing = children.putIfAbsent(name, node);
+        path.push(childId);
+        try {
+            childOper.mergeIntoModifiedNode(path, node, child, modVersion);
+        } finally {
+            path.pop();
+        }
+
+        final var existing = children.putIfAbsent(childId, node);
         if (existing != null) {
             throw new VerifyException("Attempted to replace " + existing + " with " + node);
         }
@@ -292,7 +298,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param schema associated apply operation
      * @param version target version
      */
-    void seal(final ModificationApplyOperation schema, final Version version) {
+    @NonNullByDefault
+    void seal(final ModificationPath path, final ModificationApplyOperation schema, final Version version) {
         clearSnapshot();
         writtenOriginal = null;
 
@@ -308,7 +315,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case WRITE -> {
                 // A WRITE can collapse all of its children
                 if (!clearChildren) {
-                    final var applied = schema.apply(this, original(), version);
+                    final var applied = schema.apply(path, this, original(), version);
                     value = applied != null ? applied.data() : null;
                     clearChildren = true;
                 }
@@ -317,7 +324,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                     // The write has ended up being empty, such as a write of an empty list.
                     updateOperationType(LogicalOperation.DELETE);
                 } else {
-                    schema.fullVerifyStructure(value);
+                    schema.fullVerifyStructure(path, value);
                 }
             }
             default -> {

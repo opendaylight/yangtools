@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -75,8 +76,9 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
+    TreeNode apply(final ModificationPath path, final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, path, modification, currentMeta,
             version);
     }
 
@@ -91,17 +93,21 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    void optionalVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
-        enforceCases(writtenValue);
+    void optionalVerifyValueChildren(final ModificationPath path, final DistinctNodeContainer<?, ?> writtenValue) {
+        enforceCases(path, writtenValue);
     }
 
-    private void enforceCases(final TreeNode tree) {
-        enforceCases(tree.data());
+    @NonNullByDefault
+    private void enforceCases(final ModificationPath path, final TreeNode tree) {
+        enforceCases(path, tree.data());
     }
 
-    private void enforceCases(final NormalizedNode normalizedNode) {
-        verify(normalizedNode instanceof ChoiceNode);
-        final var choice = (ChoiceNode) normalizedNode;
+    @NonNullByDefault
+    private void enforceCases(final ModificationPath path, final NormalizedNode normalizedNode) {
+        if (!(normalizedNode instanceof ChoiceNode choice)) {
+            throw new VerifyException("Unexpected " + normalizedNode + " at " + path.toInstanceIdentifier());
+        }
+
         if (!choice.isEmpty()) {
             final var firstChild = choice.body().iterator().next();
             final var enforcer = verifyNotNull(caseEnforcers.get(firstChild.name()),
@@ -113,35 +119,37 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
                 for (var id : other.getChildIdentifiers()) {
                     final var child = choice.childByArg(id);
                     checkArgument(child == null,
-                        "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
-                        firstChild.name(), enforcer, id, other, child);
+                        "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s at %s",
+                        firstChild.name(), enforcer, id, other, child, path.toInstanceIdentifier());
                 }
             }
 
             // Make sure all mandatory children are present
-            enforcer.enforceOnChoice(choice);
+            enforcer.enforceOnChoice(path, choice);
         }
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final var ret = super.applyMerge(modification, currentMeta, version);
-        enforceCases(ret);
-        return ret;
-    }
-
-    @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+    protected TreeNode applyMerge(final ModificationPath path, final ModifiedNode modification,
             final TreeNode currentMeta, final Version version) {
-        final var ret = super.applyWrite(modification, newValue, currentMeta, version);
-        enforceCases(ret);
+        final var ret = super.applyMerge(path, modification, currentMeta, version);
+        enforceCases(path, ret);
         return ret;
     }
 
     @Override
-    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final var ret = super.applyTouch(modification, currentMeta, version);
-        enforceCases(ret);
+    protected TreeNode applyWrite(final ModificationPath path, final ModifiedNode modification,
+            final NormalizedNode newValue, final TreeNode currentMeta, final Version version) {
+        final var ret = super.applyWrite(path, modification, newValue, currentMeta, version);
+        enforceCases(path, ret);
+        return ret;
+    }
+
+    @Override
+    protected TreeNode applyTouch(final ModificationPath path, final ModifiedNode modification,
+            final TreeNode currentMeta, final Version version) {
+        final var ret = super.applyTouch(path, modification, currentMeta, version);
+        enforceCases(path, ret);
         return ret;
     }
 }

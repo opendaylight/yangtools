@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -46,25 +45,25 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     }
 
     @Override
-    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+    protected TreeNode applyTouch(final ModificationPath path, final ModifiedNode modification,
+            final TreeNode currentMeta, final Version version) {
         throw new UnsupportedOperationException("Node " + schema + " is leaf type node. "
             + " Subtree change is not allowed.");
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+    protected TreeNode applyMerge(final ModificationPath path, final ModifiedNode modification,
+            final TreeNode currentMeta, final Version version) {
         // Just overwrite whatever was there, but be sure to run validation
         final var newValue = modification.getValue();
-        verifyWrittenValue(newValue);
+        verifyWrittenValue(path, newValue);
         modification.resolveModificationType(ModificationType.WRITE);
-        return applyWrite(modification, newValue, null, version);
+        return applyWrite(path, modification, newValue, null, version);
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-            final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyWrite(final ModificationPath path, final ModifiedNode modification,
+            final NormalizedNode newValue, final TreeNode currentMeta, final Version version) {
         return TreeNode.of(newValue, version);
     }
 
@@ -75,7 +74,8 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
+    void mergeIntoModifiedNode(final ModificationPath path, final ModifiedNode node, final NormalizedNode value,
+            final Version version) {
         switch (node.getOperation()) {
             // Delete performs a data dependency check on existence of the node. Performing a merge on DELETE means we
             // are really performing a write.
@@ -85,13 +85,13 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     }
 
     @Override
-    void verifyValue(final NormalizedNode writtenValue) {
-        verifyWrittenValue(writtenValue);
+    void verifyValue(final ModificationPath path, final NormalizedNode writtenValue) {
+        verifyWrittenValue(path, writtenValue);
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode value) {
-        verifyWrittenValue(value);
+    void recursivelyVerifyStructure(final ModificationPath path, final NormalizedNode value) {
+        verifyWrittenValue(path, value);
     }
 
     @Override
@@ -99,7 +99,10 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
         return helper.add("value", nodeClass.getSimpleName());
     }
 
-    private void verifyWrittenValue(final NormalizedNode value) {
-        checkArgument(nodeClass.isInstance(value), "Expected an instance of %s, have %s", nodeClass, value);
+    private void verifyWrittenValue(final ModificationPath path, final NormalizedNode value) {
+        if (!nodeClass.isInstance(value)) {
+            throw new IllegalArgumentException("Expected an instance of %s, have %s at %s".formatted(nodeClass, value,
+                path.toInstanceIdentifier()));
+        }
     }
 }

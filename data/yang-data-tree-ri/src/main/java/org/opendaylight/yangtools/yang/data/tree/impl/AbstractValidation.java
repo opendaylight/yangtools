@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -43,22 +44,24 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
     }
 
     @Override
-    final void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
-        delegate.mergeIntoModifiedNode(node, value, version);
+    final void mergeIntoModifiedNode(final ModificationPath path, final ModifiedNode node, final NormalizedNode value,
+            final Version version) {
+        delegate.mergeIntoModifiedNode(path, node, value, version);
     }
 
     @Override
-    final void quickVerifyStructure(final NormalizedNode modification) {
-        delegate.quickVerifyStructure(modification);
+    final void quickVerifyStructure(final ModificationPath path, final NormalizedNode value) {
+        delegate.quickVerifyStructure(path, value);
     }
 
     @Override
-    final void recursivelyVerifyStructure(final NormalizedNode value) {
-        delegate.recursivelyVerifyStructure(value);
+    final void recursivelyVerifyStructure(final ModificationPath path, final NormalizedNode value) {
+        delegate.recursivelyVerifyStructure(path, value);
     }
 
     @Override
-    final TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    final TreeNode apply(final ModificationPath path, final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
         var validated = modification.validatedNode(this, currentMeta);
         if (validated != null) {
             return validated.treeNode();
@@ -73,9 +76,9 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
         }
 
         // Deal with the result moving on us
-        final var ret = delegate.apply(modification, currentMeta, version);
+        final var ret = delegate.apply(path, modification, currentMeta, version);
         if (ret != null) {
-            enforceOnData(ret.data());
+            enforceOnDataUnchecked(path, ret.data());
         }
         return ret;
     }
@@ -98,7 +101,7 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
 
         // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
         // is immutable, so the result of validation will probably not change. Note we should not be checking number
-        final var applied = delegate.apply(modified, currentMeta, version);
+        final var applied = delegate.apply(path, modified, currentMeta, version);
         checkApplicable(path, applied);
 
         // Everything passed. We now have a snapshot of the result node, it would be too bad if we just threw it out.
@@ -119,18 +122,20 @@ abstract sealed class AbstractValidation extends ModificationApplyOperation
     }
 
     @Override
-    void fullVerifyStructure(final NormalizedNode modification) {
-        delegate.fullVerifyStructure(modification);
-        enforceOnData(modification);
+    void fullVerifyStructure(final ModificationPath path, final NormalizedNode value) {
+        delegate.fullVerifyStructure(path, value);
+        enforceOnDataUnchecked(path, value);
     }
 
     final @NonNull ModificationApplyOperation delegate() {
         return delegate;
     }
 
+    @NonNullByDefault
     abstract void enforceOnData(ModificationPath path, NormalizedNode value) throws DataValidationFailedException;
 
-    abstract void enforceOnData(@NonNull NormalizedNode data);
+    @NonNullByDefault
+    abstract void enforceOnDataUnchecked(ModificationPath path, NormalizedNode value);
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {

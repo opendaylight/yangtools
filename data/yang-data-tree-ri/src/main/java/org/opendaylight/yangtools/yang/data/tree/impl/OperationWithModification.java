@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -25,15 +26,17 @@ final class OperationWithModification {
         modification = requireNonNull(mod);
     }
 
-    void write(final NormalizedNode value) {
+    @NonNullByDefault
+    void write(final ModificationPath path, final NormalizedNode value) {
         modification.write(value);
         /**
          * Fast validation of structure, full validation on written data will be run during seal.
          */
-        applyOperation.quickVerifyStructure(value);
+        applyOperation.quickVerifyStructure(path, value);
     }
 
-    void merge(final NormalizedNode data, final Version version) {
+    @NonNullByDefault
+    void merge(final ModificationPath path, final NormalizedNode data, final Version version) {
         /*
          * A merge operation will end up overwriting parts of the tree, retaining others. We want to
          * make sure we do not validate the complete resulting structure, but rather just what was
@@ -44,8 +47,8 @@ final class OperationWithModification {
          * We perform only quick validation here, full validation will be applied as-needed during
          * preparation, as the merge is reconciled with current state.
          */
-        applyOperation.quickVerifyStructure(data);
-        applyOperation.mergeIntoModifiedNode(modification, data, version);
+        applyOperation.quickVerifyStructure(path, data);
+        applyOperation.mergeIntoModifiedNode(path, modification, data, version);
     }
 
     void delete() {

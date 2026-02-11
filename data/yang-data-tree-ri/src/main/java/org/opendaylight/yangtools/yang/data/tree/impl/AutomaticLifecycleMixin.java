@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -23,51 +24,57 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  */
 final class AutomaticLifecycleMixin {
     /**
-     * This is a capture of {@link ModificationApplyOperation#apply(ModifiedNode, TreeNode, Version)}.
+     * This is a capture of {@link ModificationApplyOperation#apply(ModificationPath, ModifiedNode, TreeNode, Version)}.
      */
+    @NonNullByDefault
     @FunctionalInterface
     interface Apply {
-        @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
+        @Nullable TreeNode apply(ModificationPath path, ModifiedNode modification, @Nullable TreeNode currentMeta,
+            Version version);
     }
 
     /**
      * This is a capture of
-     * {@link SchemaAwareApplyOperation#applyWrite(ModifiedNode, NormalizedNode, TreeNode, Version)}.
+     * {@link SchemaAwareApplyOperation#applyWrite(ModificationPath, ModifiedNode, NormalizedNode, TreeNode, Version)}.
      */
+    @NonNullByDefault
     @FunctionalInterface
     interface ApplyWrite {
-        TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue, @Nullable TreeNode currentMeta,
-            Version version);
+        TreeNode applyWrite(ModificationPath path, ModifiedNode modification, NormalizedNode newValue,
+            @Nullable TreeNode currentMeta, Version version);
     }
 
     private AutomaticLifecycleMixin() {
         // Hidden on purpose
     }
 
+    @NonNullByDefault
     static @Nullable TreeNode apply(final Apply delegate, final ApplyWrite writeDelegate,
-            final NormalizedNode emptyNode, final ModifiedNode modification, final @Nullable TreeNode currentMeta,
-            final Version version) {
+            final NormalizedNode emptyNode, final ModificationPath path, final ModifiedNode modification,
+            final @Nullable TreeNode currentMeta, final Version version) {
         final @Nullable TreeNode ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
             if (modification.isEmpty()) {
-                return delegate.apply(modification, currentMeta, version);
+                return delegate.apply(path, modification, currentMeta, version);
             }
             // Delete with children, implies it really is an empty write
-            ret = verifyNotNull(writeDelegate.applyWrite(modification, emptyNode, currentMeta, version));
+            ret = verifyNotNull(writeDelegate.applyWrite(path, modification, emptyNode, currentMeta, version));
         } else if (modification.getOperation() == LogicalOperation.TOUCH && currentMeta == null) {
-            ret = applyTouch(delegate, emptyNode, modification, null, version);
+            ret = applyTouch(delegate, emptyNode, path, modification, null, version);
         } else {
             // No special handling required here, run normal apply operation
-            ret = delegate.apply(modification, currentMeta, version);
+            ret = delegate.apply(path, modification, currentMeta, version);
         }
 
         return ret == null ? null : disappearResult(modification, ret, currentMeta);
     }
 
+    @NonNullByDefault
     private static @Nullable TreeNode applyTouch(final Apply delegate, final NormalizedNode emptyNode,
-            final ModifiedNode modification, final @Nullable TreeNode currentMeta, final Version version) {
+            final ModificationPath path, final ModifiedNode modification, final @Nullable TreeNode currentMeta,
+            final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
-        final var ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
+        final var ret = delegate.apply(path, modification, fakeMeta(emptyNode, version), version);
 
         // If the delegate indicated SUBTREE_MODIFIED, account for the fake and report APPEARED
         if (modification.getModificationType() == ModificationType.SUBTREE_MODIFIED) {

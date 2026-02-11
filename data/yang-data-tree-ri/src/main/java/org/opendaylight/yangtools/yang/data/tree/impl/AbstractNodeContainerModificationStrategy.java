@@ -104,29 +104,38 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     }
 
     @Override
-    final void verifyValue(final NormalizedNode writtenValue) {
-        final Class<?> nodeClass = support.requiredClass;
+    final void verifyValue(final ModificationPath path, final NormalizedNode writtenValue) {
+        final var nodeClass = support.requiredClass;
+
+        // FIXME: better exception
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
     }
 
     @Override
-    final void verifyValueChildren(final NormalizedNode writtenValue) {
+    final void verifyValueChildren(final ModificationPath path, final NormalizedNode writtenValue) {
         final var container = (DistinctNodeContainer<?, ?>) writtenValue;
         if (verifyChildrenStructure) {
             for (var child : container.body()) {
-                final var childOp = childByArg(child.name());
+                final var childId = child.name();
+                final var childOp = childByArg(childId);
                 if (childOp == null) {
                     throw new SchemaValidationFailedException(String.format(
                         "Node %s is not a valid child of %s according to the schema.",
                         child.name(), container.name()));
                 }
-                childOp.fullVerifyStructure(child);
+
+                path.push(childId);
+                try {
+                    childOp.fullVerifyStructure(path, child);
+                } finally {
+                    path.pop();
+                }
             }
 
-            optionalVerifyValueChildren(container);
+            optionalVerifyValueChildren(path, container);
         }
-        mandatoryVerifyValueChildren(container);
+        mandatoryVerifyValueChildren(path, container);
     }
 
     /**
@@ -135,7 +144,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      *
      * @param writtenValue Effective written value
      */
-    void optionalVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
+    @NonNullByDefault
+    void optionalVerifyValueChildren(final ModificationPath path, final DistinctNodeContainer<?, ?> writtenValue) {
         // Defaults to no-op
     }
 
@@ -145,28 +155,37 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      *
      * @param writtenValue Effective written value
      */
-    void mandatoryVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
+    @NonNullByDefault
+    void mandatoryVerifyValueChildren(final ModificationPath path, final DistinctNodeContainer<?, ?> writtenValue) {
         // Defaults to no-op
     }
 
     @Override
-    protected final void recursivelyVerifyStructure(final NormalizedNode value) {
-        final var container = (NormalizedNodeContainer<?>) value;
+    protected final void recursivelyVerifyStructure(final ModificationPath path, final NormalizedNode value) {
+        if (!(value instanceof NormalizedNodeContainer<?> container)) {
+            throw new VerifyException("Unexpected value " + value + " at " + path.toInstanceIdentifier());
+        }
+
         for (var child : container.body()) {
-            final var childOp = childByArg(child.name());
+            final var childId = child.name();
+            final var childOp = childByArg(childId);
             if (childOp == null) {
                 throw new SchemaValidationFailedException(
-                    String.format("Node %s is not a valid child of %s according to the schema.",
-                        child.name(), container.name()));
+                    "Node %s is not a valid child of %s according to the schema.".formatted(childId, container.name()));
             }
 
-            childOp.recursivelyVerifyStructure(child);
+            path.push(childId);
+            try {
+                childOp.recursivelyVerifyStructure(path, child);
+            } finally {
+                path.pop();
+            }
         }
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
-            final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyWrite(final ModificationPath path, final ModifiedNode modification,
+            final NormalizedNode newValue, final TreeNode currentMeta, final Version version) {
         final var newValueMeta = TreeNode.of(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
@@ -186,8 +205,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final var result = mutateChildren(newValueMeta.toMutable(version), support.createBuilder(newValue), version,
-            modification.getChildren());
+        final var result = mutateChildren(path, newValueMeta.toMutable(version), support.createBuilder(newValue),
+            version, modification.getChildren());
 
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
@@ -206,17 +225,27 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      * @return Sealed immutable copy of TreeNode structure with all Data Node references set.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
-            final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+    private TreeNode mutateChildren(final ModificationPath path, final MutableTreeNode meta,
+            final NormalizedNodeContainerBuilder data, final Version nodeVersion,
+            final Iterable<ModifiedNode> modifications) {
         for (var mod : modifications) {
-            final var id = mod.getIdentifier();
-            final var result = resolveChildOperation(id).apply(mod, meta.childByArg(id), nodeVersion);
+            final var childId = mod.getIdentifier();
+            final var childOp = resolveChildOperation(childId);
+
+            path.push(childId);
+            final TreeNode result;
+            try {
+                result = childOp.apply(path, mod, meta.childByArg(childId), nodeVersion);
+            } finally {
+                path.pop();
+            }
+
             if (result != null) {
                 meta.putChild(result);
                 data.addChild(result.data());
             } else {
-                meta.removeChild(id);
-                data.removeChild(id);
+                meta.removeChild(childId);
+                data.removeChild(childId);
             }
         }
 
@@ -225,7 +254,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyMerge(final ModificationPath path, final ModifiedNode modification,
+            final TreeNode currentMeta, final Version version) {
         // The node which we are merging exists. We now need to expand any child operations implied by the value. Once
         // we do that, ModifiedNode children will look like this node were a TOUCH and we will let applyTouch() do the
         // heavy lifting of applying the children recursively (either through here or through applyWrite()).
@@ -243,14 +273,15 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         //    b: the nodes we create here
         final var it = containerValue.body().iterator();
         final var first = nextToExpand(modification, it);
-        return first == null ? applyTouch(modification, currentMeta, version)
+        return first == null ? applyTouch(path, modification, currentMeta, version)
             // we need to to expand our children, potentially leading to result 2b
-            : applyMerge(modification, currentMeta, version, first, it);
+            : applyMerge(path, modification, currentMeta, version, first, it);
     }
 
     @NonNullByDefault
-    private TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version,
-            final NormalizedNode first, final Iterator<? extends NormalizedNode> it) {
+    private TreeNode applyMerge(final ModificationPath path, final ModifiedNode modification,
+            final TreeNode currentMeta, final Version version, final NormalizedNode first,
+            final Iterator<? extends NormalizedNode> it) {
         // We need to create at least one child to hold the expansion of this MERGE. Such children exist only for
         // AbstractModifiedNodeBasedCandidateNode's consumption.
         final var expanded = new ArrayList<ModifiedNode>();
@@ -259,11 +290,11 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         // Add first and any remaining entries
         NormalizedNode child = first;
         do {
-            expanded.add(copy.createMergeChild(child, resolveChildOperation(child.name()), version));
+            expanded.add(copy.createMergeChild(path, child, resolveChildOperation(child.name()), version));
             child = nextToExpand(copy, it);
         } while (child != null);
 
-        final var ret = applyTouch(copy, currentMeta, version);
+        final var ret = applyTouch(path, copy, currentMeta, version);
         modification.resolveModificationType(copy, expanded);
         return ret;
     }
@@ -279,28 +310,36 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         return null;
     }
 
-    private void mergeChildrenIntoModification(final ModifiedNode modification,
+    @NonNullByDefault
+    private void mergeChildrenIntoModification(final ModificationPath path, final ModifiedNode modification,
             final Collection<? extends NormalizedNode> children, final Version version) {
-        for (final NormalizedNode c : children) {
-            final ModificationApplyOperation childOp = resolveChildOperation(c.name());
-            final ModifiedNode childNode = modification.modifyChild(c.name(), childOp, version);
-            childOp.mergeIntoModifiedNode(childNode, c, version);
+        for (var child : children) {
+            final var childId = child.name();
+            final var childOp = resolveChildOperation(childId);
+
+            path.push(childId);
+            try {
+                final var childNode = modification.modifyChild(path, childId, childOp, version);
+                childOp.mergeIntoModifiedNode(path, childNode, child, version);
+            } finally {
+                path.pop();
+            }
         }
     }
 
     @Override
-    final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode value,
-            final Version version) {
+    final void mergeIntoModifiedNode(final ModificationPath path, final ModifiedNode modification,
+            final NormalizedNode value, final Version version) {
         final var valueChildren = ((DistinctNodeContainer<?, ?>) value).body();
         final var op = modification.getOperation();
         switch (op) {
             case NONE -> {
                 // Fresh node, just record a MERGE with a value
-                recursivelyVerifyStructure(value);
+                recursivelyVerifyStructure(path, value);
                 modification.updateValue(LogicalOperation.MERGE, value);
             }
             case TOUCH -> {
-                mergeChildrenIntoModification(modification, valueChildren, version);
+                mergeChildrenIntoModification(path, modification, valueChildren, version);
                 // We record empty merge value, since real children merges are already expanded. This is needed to
                 // satisfy non-null for merge original merge value can not be used since it mean different order of
                 // operation - parent changes are always resolved before children ones, and having node in TOUCH means
@@ -310,7 +349,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
             case MERGE -> {
                 // Merging into an existing node. Merge data children modifications (maybe recursively) and mark
                 // as MERGE, invalidating cached snapshot
-                mergeChildrenIntoModification(modification, valueChildren, version);
+                mergeChildrenIntoModification(path, modification, valueChildren, version);
                 modification.updateOperationType(LogicalOperation.MERGE);
             }
             case DELETE -> {
@@ -320,10 +359,10 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
                 // and then append any child entries.
                 if (!modification.isEmpty()) {
                     // Version does not matter here as we'll throw it out
-                    final var current = apply(modification, modification.original(), Version.initial(false));
+                    final var current = apply(path, modification, modification.original(), Version.initial(false));
                     if (current != null) {
                         modification.updateValue(LogicalOperation.WRITE, current.data());
-                        mergeChildrenIntoModification(modification, valueChildren, version);
+                        mergeChildrenIntoModification(path, modification, valueChildren, version);
                         return;
                     }
                 }
@@ -333,7 +372,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
             case WRITE -> {
                 // We are augmenting a previous write. We'll just walk value's children, get the corresponding
                 // ModifiedNode and run recursively on it
-                mergeChildrenIntoModification(modification, valueChildren, version);
+                mergeChildrenIntoModification(path, modification, valueChildren, version);
                 modification.updateOperationType(LogicalOperation.WRITE);
             }
             default -> throw new IllegalArgumentException("Unsupported operation " + op);
@@ -341,7 +380,8 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     }
 
     @Override
-    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyTouch(final ModificationPath path, final ModifiedNode modification,
+            final TreeNode currentMeta, final Version version) {
         /*
          * The user may have issued an empty merge operation. In this case we:
          * - do not perform a data tree mutation
@@ -352,7 +392,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         if (!modification.isEmpty()) {
             final var dataBuilder = support.createBuilder(currentMeta.data());
             final var children = modification.getChildren();
-            final var ret = mutateChildren(currentMeta.toMutable(version), dataBuilder, version, children);
+            final var ret = mutateChildren(path, currentMeta.toMutable(version), dataBuilder, version, children);
 
             /*
              * It is possible that the only modifications under this node were empty merges, which were turned into
@@ -435,10 +475,11 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         for (var childMod : modification.getChildren()) {
             final var childId = childMod.getIdentifier();
             final var childMeta = currentMeta.childByArg(childId);
+            final var operation = resolveChildOperation(childId);
 
             path.push(childId);
             try {
-                resolveChildOperation(childId).checkApplicable(path, childMod, childMeta, version);
+                operation.checkApplicable(path, childMod, childMeta, version);
             } finally {
                 path.pop();
             }

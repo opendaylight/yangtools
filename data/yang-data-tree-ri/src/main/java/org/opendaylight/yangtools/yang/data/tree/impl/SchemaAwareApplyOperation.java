@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
@@ -110,30 +111,33 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     }
 
     @Override
-    final void quickVerifyStructure(final NormalizedNode writtenValue) {
-        verifyValue(writtenValue);
+    final void quickVerifyStructure(final ModificationPath path, final NormalizedNode writtenValue) {
+        verifyValue(path, writtenValue);
     }
 
     @Override
-    final void fullVerifyStructure(final NormalizedNode writtenValue) {
-        verifyValue(writtenValue);
-        verifyValueChildren(writtenValue);
+    final void fullVerifyStructure(final ModificationPath path, final NormalizedNode writtenValue) {
+        verifyValue(path, writtenValue);
+        verifyValueChildren(path, writtenValue);
     }
 
     /**
      * Verify the a written value, without performing deeper tree validation.
      *
+     * @param path the {@link ModificationPath}
      * @param writtenValue Written value
      */
-    abstract void verifyValue(NormalizedNode writtenValue);
+    abstract void verifyValue(final ModificationPath path, NormalizedNode writtenValue);
 
     /**
      * Verify the children implied by a written value after the value itself has been verified by
      * {@link #verifyValue(NormalizedNode)}. Default implementation does nothing.
      *
+     * @param path the {@link ModificationPath}
      * @param writtenValue Written value
      */
-    void verifyValueChildren(final NormalizedNode writtenValue) {
+    @NonNullByDefault
+    void verifyValueChildren(final ModificationPath path, final NormalizedNode writtenValue) {
         // Defaults to no-op
     }
 
@@ -182,7 +186,8 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     }
 
     @Override
-    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    TreeNode apply(final ModificationPath path, final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
         return switch (modification.getOperation()) {
             case DELETE -> {
                 // Deletion of a non-existing node is a no-op, report it as such
@@ -194,7 +199,7 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
                 if (currentMeta == null) {
                     throw new IllegalArgumentException("Metadata not available for modification " + modification);
                 }
-                yield modification.setSnapshot(applyTouch(modification, currentMeta, version));
+                yield modification.setSnapshot(applyTouch(path, modification, currentMeta, version));
             }
             case MERGE -> {
                 final TreeNode result;
@@ -204,17 +209,18 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
                     // structure is usually verified when the transaction is sealed. To preserve correctness, we have
                     // to run that validation here.
                     modification.resolveModificationType(ModificationType.WRITE);
-                    result = applyWrite(modification, modification.getValue(), null, version);
-                    fullVerifyStructure(result.data());
+                    result = applyWrite(path, modification, modification.getValue(), null, version);
+                    fullVerifyStructure(path, result.data());
                 } else {
-                    result = applyMerge(modification, currentMeta, version);
+                    result = applyMerge(path, modification, currentMeta, version);
                 }
 
                 yield modification.setSnapshot(result);
             }
             case WRITE -> {
                 modification.resolveModificationType(ModificationType.WRITE);
-                yield modification.setSnapshot(applyWrite(modification, modification.getValue(), currentMeta, version));
+                yield modification.setSnapshot(applyWrite(path, modification, modification.getValue(), currentMeta,
+                    version));
             }
             case NONE -> {
                 modification.resolveModificationType(ModificationType.UNMODIFIED);
@@ -233,10 +239,12 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract @NonNull TreeNode applyMerge(ModifiedNode modification, @NonNull TreeNode currentMeta,
+    @NonNullByDefault
+    protected abstract TreeNode applyMerge(ModificationPath path, ModifiedNode modification, TreeNode currentMeta,
         Version version);
 
-    protected abstract @NonNull TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue,
+    @NonNullByDefault
+    protected abstract TreeNode applyWrite(ModificationPath path, ModifiedNode modification, NormalizedNode newValue,
         @Nullable TreeNode currentMeta, Version version);
 
     /**
@@ -249,7 +257,8 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract @NonNull TreeNode applyTouch(ModifiedNode modification, @NonNull TreeNode currentMeta,
+    @NonNullByDefault
+    protected abstract TreeNode applyTouch(ModificationPath path, ModifiedNode modification, TreeNode currentMeta,
         Version version);
 
     /**

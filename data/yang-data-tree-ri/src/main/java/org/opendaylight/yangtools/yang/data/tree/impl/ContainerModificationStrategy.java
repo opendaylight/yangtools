@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -37,29 +38,30 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         }
 
         @Override
-        void mandatoryVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
+        void mandatoryVerifyValueChildren(final ModificationPath path, final DistinctNodeContainer<?, ?> writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 
         @Override
-        protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-                final Version version) {
-            return enforce(super.applyMerge(modification, currentMeta, version));
-        }
-
-        @Override
-        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+        protected TreeNode applyMerge(final ModificationPath path, final ModifiedNode modification,
                 final TreeNode currentMeta, final Version version) {
-            return enforce(super.applyWrite(modification, newValue, currentMeta, version));
+            return enforce(path, super.applyMerge(path, modification, currentMeta, version));
         }
 
         @Override
-        protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
-                final Version version) {
-            return enforce(super.applyTouch(modification, currentMeta, version));
+        protected TreeNode applyWrite(final ModificationPath path, final ModifiedNode modification,
+                final NormalizedNode newValue, final TreeNode currentMeta, final Version version) {
+            return enforce(path, super.applyWrite(path, modification, newValue, currentMeta, version));
         }
 
-        private @NonNull TreeNode enforce(final TreeNode treeNode) {
+        @Override
+        protected TreeNode applyTouch(final ModificationPath path, final ModifiedNode modification,
+                final TreeNode currentMeta, final Version version) {
+            return enforce(path, super.applyTouch(path, modification, currentMeta, version));
+        }
+
+        @NonNullByDefault
+        private TreeNode enforce(final ModificationPath path, final TreeNode treeNode) {
             enforcer.enforceOnData(treeNode.data());
             return treeNode;
         }
@@ -74,7 +76,7 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
      * are not root anchors for that validation.
      */
     static final class Structural extends ContainerModificationStrategy {
-        private final ContainerNode emptyNode;
+        private final @NonNull ContainerNode emptyNode;
 
         Structural(final ContainerLike schema, final DataTreeConfiguration treeConfig) {
             super(schema, treeConfig);
@@ -84,9 +86,10 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         }
 
         @Override
-        TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-            return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
-                version);
+        TreeNode apply(final ModificationPath path, final ModifiedNode modification, final TreeNode currentMeta,
+                final Version version) {
+            return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, path, modification,
+                currentMeta, version);
         }
 
         @Override

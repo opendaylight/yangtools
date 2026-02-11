@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.RequiredElementCountException;
@@ -37,21 +35,16 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     }
 
     @Override
-    void enforceOnData(final NormalizedNode data) {
+    void enforceOnDataUnchecked(final ModificationPath path, final NormalizedNode value) {
         try {
-            enforceOnData(data, null);
+            enforceOnData(path, value);
         } catch (RequiredElementCountException e) {
             throw new MinMaxElementsValidationFailedException(e);
         }
     }
 
     @Override
-    void enforceOnData(final ModificationPath path, final NormalizedNode data) throws RequiredElementCountException {
-        enforceOnData(data, requireNonNull(path));
-    }
-
-    private void enforceOnData(final NormalizedNode value, final @Nullable ModificationPath path)
-            throws RequiredElementCountException {
+    void enforceOnData(final ModificationPath path, final NormalizedNode value) throws RequiredElementCountException {
         if (!(value instanceof NormalizedNodeContainer<?> container)) {
             throw new IllegalArgumentException(value + " is not a NormalizedNodeContainer");
         }
@@ -61,16 +54,13 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
             case null -> {
                 // No-op
             }
-            case TooFewElements violation -> {
-                throw new RequiredElementCountException(
-                    path == null ? YangInstanceIdentifier.of() : path.toInstanceIdentifier(), violation.errorAppTag(),
-                    value.name() + " does not have enough elements (" + count + "), needs at least "
-                        + violation.atLeast());
+            case TooFewElements tfe -> {
+                throw new RequiredElementCountException(path.toInstanceIdentifier(), tfe.errorAppTag(),
+                    value.name() + " does not have enough elements (" + count + "), needs at least " + tfe.atLeast());
             }
-            case TooManyElements violation -> {
-                throw new RequiredElementCountException(
-                    path == null ? YangInstanceIdentifier.of() : path.toInstanceIdentifier(), violation.errorAppTag(),
-                    value.name() + " has too many elements (" + count + "), can have at most " + violation.atMost());
+            case TooManyElements tme -> {
+                throw new RequiredElementCountException(path.toInstanceIdentifier(), tme.errorAppTag(),
+                    value.name() + " has too many elements (" + count + "), can have at most " + tme.atMost());
             }
         }
     }

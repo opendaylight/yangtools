@@ -202,7 +202,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     private final RootApplyStrategy strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
-    private final Version version;
+    private final @NonNull Version version;
 
     // All access needs to go through STATE variable handle
     @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
@@ -245,14 +245,14 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     public void write(final YangInstanceIdentifier path, final NormalizedNode data) {
         final var rootNode = checkOpen();
         checkIdentifierReferencesData(rootNode, path, data);
-        resolveModificationFor(rootNode, path).write(data);
+        resolveModificationFor(rootNode, path).write(new ModificationPath(path), data);
     }
 
     @Override
     public void merge(final YangInstanceIdentifier path, final NormalizedNode data) {
         final var rootNode = checkOpen();
         checkIdentifierReferencesData(rootNode, path, data);
-        resolveModificationFor(rootNode, path).merge(data, version);
+        resolveModificationFor(rootNode, path).merge(new ModificationPath(path), data, version);
     }
 
     @Override
@@ -312,7 +312,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         }
 
         try {
-            return resolveModificationStrategy(path).apply(modification, modification.original(), version);
+            return resolveModificationStrategy(path).apply(new ModificationPath(path), modification,
+                modification.original(), version);
         } catch (Exception e) {
             LOG.error("Could not create snapshot for {}:{}", path, modification, e);
             throw e;
@@ -412,7 +413,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             case AppliedToSnapshot ready -> newModification(ready.applied);
             case Prepared prepared -> newModification(prepared.applied);
             case Ready ready -> {
-                final var after = getStrategy().apply(ready.root, snapshotRoot(), version);
+                final var after = getStrategy().apply(new ModificationPath(), ready.root, snapshotRoot(), version);
                 if (after == null) {
                     // TODO: This precludes non-presence container as a root which completely disappears. I think we
                     //       need to supported a state when we have a non-existent root. IIRC there are other parts of
@@ -652,7 +653,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @NonNullByDefault
     private Prepared prepare(final ModifiedNode rootNode, final YangInstanceIdentifier path, final TreeNode current) {
-        final var newRoot = getStrategy().apply(rootNode, current, version);
+        final var newRoot = getStrategy().apply(new ModificationPath(path), rootNode, current, version);
         if (newRoot == null) {
             // TODO: this precludes rooting using transient root, for example a non-presence container
             throw new IllegalStateException("Apply strategy failed to produce root node for modification " + this);

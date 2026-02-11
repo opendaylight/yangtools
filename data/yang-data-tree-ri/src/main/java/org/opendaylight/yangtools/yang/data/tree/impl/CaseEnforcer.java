@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -32,7 +33,7 @@ class CaseEnforcer implements Immutable {
         }
 
         @Override
-        void enforceOnChoice(final ChoiceNode choice) {
+        void enforceOnChoice(final ModificationPath path, final ChoiceNode choice) {
             enforcer.enforceOnData(choice);
         }
     }
@@ -75,7 +76,8 @@ class CaseEnforcer implements Immutable {
         return children.keySet();
     }
 
-    void enforceOnChoice(final ChoiceNode choice) {
+    @NonNullByDefault
+    void enforceOnChoice(final ModificationPath path, final ChoiceNode choice) {
         // Default is no-op
     }
 }

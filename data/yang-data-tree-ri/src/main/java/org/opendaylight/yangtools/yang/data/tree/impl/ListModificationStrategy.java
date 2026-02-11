@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,8 +28,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
             BUILDER_FACTORY::newUnkeyedListEntryBuilder, BUILDER_FACTORY::newUnkeyedListEntryBuilder);
 
-    private final DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
-    private final UnkeyedListNode emptyNode;
+    private final @NonNull DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
+    private final @NonNull UnkeyedListNode emptyNode;
 
     ListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         entryStrategy = new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig);
@@ -42,8 +44,9 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
+    TreeNode apply(final ModificationPath path, final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, path, modification, currentMeta,
             version);
     }
 
@@ -53,19 +56,22 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        throw new IllegalStateException(String.format("Merge of modification %s on unkeyed list should never be called",
-            modification));
-    }
-
-    @Override
-    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        throw new UnsupportedOperationException("UnkeyedList does not support subtree change.");
-    }
-
-    @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+    protected TreeNode applyMerge(final ModificationPath path, final ModifiedNode modification,
             final TreeNode currentMeta, final Version version) {
+        throw new IllegalStateException("Merge of modification %s on unkeyed list %s should never be called".formatted(
+            modification, path.toInstanceIdentifier()));
+    }
+
+    @Override
+    protected TreeNode applyTouch(final ModificationPath path, final ModifiedNode modification,
+            final TreeNode currentMeta, final Version version) {
+        throw new UnsupportedOperationException("Unkeyed list %s does not support subtree change.".formatted(
+            path.toInstanceIdentifier()));
+    }
+
+    @Override
+    protected TreeNode applyWrite(final ModificationPath path, final ModifiedNode modification,
+            final NormalizedNode newValue, final TreeNode currentMeta, final Version version) {
         final var newValueMeta = TreeNode.of(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
@@ -80,7 +86,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
          * As it turns out, once we materialize the written data, we can share the code path with the subtree change. So
          * let's create an unsealed TreeNode and run the common parts on it -- which end with the node being sealed.
          */
-        return mutateChildren(newValueMeta.toMutable(version),
+        return mutateChildren(path, newValueMeta.toMutable(version),
             BUILDER_FACTORY.newUnkeyedListBuilder((UnkeyedListNode) newValue), version, modification.getChildren());
     }
 
@@ -94,20 +100,29 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
      * @param modifications modification operations to apply
      * @return Sealed immutable copy of TreeNode structure with all Data Node references set.
      */
+    @NonNullByDefault
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
-            final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+    private TreeNode mutateChildren(final ModificationPath path, final MutableTreeNode meta,
+            final NormalizedNodeContainerBuilder data, final Version nodeVersion,
+            final Iterable<ModifiedNode> modifications) {
         for (var mod : modifications) {
-            final var id = mod.getIdentifier();
-            final var cm = meta.childByArg(id);
+            final var childId = mod.getIdentifier();
+            final var childMeta = meta.childByArg(childId);
+            final var childOp = resolveChildOperation(childId);
 
-            final var result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+            path.push(childId);
+            final TreeNode result;
+            try {
+                result = childOp.apply(path, mod, childMeta, nodeVersion);
+            } finally {
+                path.pop();
+            }
             if (result != null) {
                 meta.putChild(result);
                 data.addChild(result.data());
             } else {
-                meta.removeChild(id);
-                data.removeChild(id);
+                meta.removeChild(childId);
+                data.removeChild(childId);
             }
         }
 
@@ -121,12 +136,12 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    void verifyValue(final NormalizedNode value) {
+    void verifyValue(final ModificationPath path, final NormalizedNode value) {
         // NOOP
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode value) {
+    void recursivelyVerifyStructure(final ModificationPath path, final NormalizedNode value) {
         // NOOP
     }
 
@@ -137,7 +152,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
+    void mergeIntoModifiedNode(final ModificationPath path, final ModifiedNode node, final NormalizedNode value,
+            final Version version) {
         // Unkeyed lists are always replaced
         node.write(value);
     }

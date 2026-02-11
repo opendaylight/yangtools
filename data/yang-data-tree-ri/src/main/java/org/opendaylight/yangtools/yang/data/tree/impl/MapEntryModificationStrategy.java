@@ -31,29 +31,29 @@ sealed class MapEntryModificationStrategy extends DataNodeContainerModificationS
         }
 
         @Override
-        void mandatoryVerifyValueChildren(final DistinctNodeContainer<?, ?> writtenValue) {
+        void mandatoryVerifyValueChildren(final ModificationPath path, final DistinctNodeContainer<?, ?> writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 
         @Override
-        protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-                final Version version) {
-            return enforce(super.applyMerge(modification, currentMeta, version));
-        }
-
-        @Override
-        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+        protected TreeNode applyMerge(final ModificationPath path, final ModifiedNode modification,
                 final TreeNode currentMeta, final Version version) {
-            return enforce(super.applyWrite(modification, newValue, currentMeta, version));
+            return enforce(path, super.applyMerge(path, modification, currentMeta, version));
         }
 
         @Override
-        protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
-                final Version version) {
-            return enforce(super.applyTouch(modification, currentMeta, version));
+        protected TreeNode applyWrite(final ModificationPath path, final ModifiedNode modification,
+                final NormalizedNode newValue, final TreeNode currentMeta, final Version version) {
+            return enforce(path, super.applyWrite(path, modification, newValue, currentMeta, version));
         }
 
-        private @NonNull TreeNode enforce(final TreeNode treeNode) {
+        @Override
+        protected TreeNode applyTouch(final ModificationPath path, final ModifiedNode modification,
+                final TreeNode currentMeta, final Version version) {
+            return enforce(path, super.applyTouch(path, modification, currentMeta, version));
+        }
+
+        private @NonNull TreeNode enforce(final ModificationPath path, final TreeNode treeNode) {
             enforcer.enforceOnData(treeNode.data());
             return treeNode;
         }
