@@ -66,7 +66,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        final var newValueMeta = TreeNode.of(newValue, version);
+        final var newValueMeta = newTreeNode(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
         }
@@ -80,7 +80,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
          * As it turns out, once we materialize the written data, we can share the code path with the subtree change. So
          * let's create an unsealed TreeNode and run the common parts on it -- which end with the node being sealed.
          */
-        return mutateChildren(newValueMeta.toMutable(version),
+        return mutateChildren(openTreeNode(newValueMeta, version),
             BUILDER_FACTORY.newUnkeyedListBuilder((UnkeyedListNode) newValue), version, modification.getChildren());
     }
 

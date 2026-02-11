@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -103,7 +104,8 @@ final class AutomaticLifecycleMixin {
         return null;
     }
 
-    private static @NonNull TreeNode fakeMeta(final NormalizedNode emptyNode, final Version version) {
+    @NonNullByDefault
+    private static TreeNode fakeMeta(final NormalizedNode emptyNode, final Version version) {
         return TreeNode.of(emptyNode, version);
     }
 }

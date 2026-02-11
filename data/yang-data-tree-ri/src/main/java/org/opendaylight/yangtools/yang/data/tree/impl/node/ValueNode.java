@@ -39,7 +39,7 @@ final class ValueNode extends TreeNode {
     }
 
     @Override
-    public MutableTreeNode toMutable(final Version nextSubtreeVersion) {
+    MutableTreeNode toMutable(final Version nextSubtreeVersion) {
         /**
          * Value nodes can only we read/written/delete, which does a straight replace. That means they do not have
          * a need to be made mutable.
