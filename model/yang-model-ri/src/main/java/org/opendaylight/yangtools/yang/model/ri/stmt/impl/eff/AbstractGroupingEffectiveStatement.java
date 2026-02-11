@@ -17,13 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AddedByUsesMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
 public abstract class AbstractGroupingEffectiveStatement extends WithTypedefNamespace<QName, @NonNull GroupingStatement>
-        implements GroupingDefinition, GroupingEffectiveStatement,
-            DataNodeContainerMixin<QName, @NonNull GroupingStatement>, SchemaNodeMixin<@NonNull GroupingStatement>,
-            AddedByUsesMixin<QName, @NonNull GroupingStatement> {
+        implements GroupingDefinition, GroupingEffectiveStatement, SchemaNodeMixin<@NonNull GroupingStatement>,
+                   AddedByUsesMixin<QName, @NonNull GroupingStatement> {
     private final int flags;
 
     AbstractGroupingEffectiveStatement(final GroupingStatement declared,
