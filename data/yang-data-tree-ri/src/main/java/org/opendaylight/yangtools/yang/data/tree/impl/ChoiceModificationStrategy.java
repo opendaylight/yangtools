@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 
-final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
+final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> implements AutomaticLifecycleMixin {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, ChoiceNode> SUPPORT =
             new NormalizedNodeContainerSupport<>(ChoiceNode.class, BUILDER_FACTORY::newChoiceBuilder,
                 BUILDER_FACTORY::newChoiceBuilder);
@@ -76,8 +76,19 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
 
     @Override
     TreeNode apply(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, currentMeta,
-            version);
+        return applyWithAutomatic(emptyNode, modification, currentMeta, version);
+    }
+
+    @Override
+    public TreeNode delegatedApply(final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
+        return super.apply(modification, currentMeta, version);
+    }
+
+    @Override
+    public TreeNode delegatedapplyWrite(final ModifiedNode modification, final NormalizedNode newValue,
+            final TreeNode currentMeta, final Version version) {
+        return applyWrite(modification, newValue, currentMeta, version);
     }
 
     @Override

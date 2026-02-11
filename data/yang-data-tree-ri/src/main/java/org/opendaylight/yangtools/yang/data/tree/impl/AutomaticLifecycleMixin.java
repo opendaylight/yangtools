@@ -9,66 +9,58 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeAccess;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 /**
  * Mixin-type support class for subclasses of {@link ModificationApplyOperation} which need to provide automatic
  * lifecycle management.
  */
-final class AutomaticLifecycleMixin {
+@NonNullByDefault
+sealed interface AutomaticLifecycleMixin extends TreeNodeAccess
+        permits ChoiceModificationStrategy, ContainerModificationStrategy.Structural, ListModificationStrategy,
+                MapModificationStrategy {
     /**
      * This is a capture of {@link ModificationApplyOperation#apply(ModifiedNode, TreeNode, Version)}.
      */
-    @FunctionalInterface
-    interface Apply {
-        @Nullable TreeNode apply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
-    }
+    @Nullable TreeNode delegatedApply(ModifiedNode modification, @Nullable TreeNode currentMeta, Version version);
 
     /**
      * This is a capture of
      * {@link SchemaAwareApplyOperation#applyWrite(ModifiedNode, NormalizedNode, TreeNode, Version)}.
      */
-    @FunctionalInterface
-    interface ApplyWrite {
-        TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue, @Nullable TreeNode currentMeta,
-            Version version);
-    }
+    TreeNode delegatedapplyWrite(ModifiedNode modification, NormalizedNode newValue, @Nullable TreeNode currentMeta,
+        Version version);
 
-    private AutomaticLifecycleMixin() {
-        // Hidden on purpose
-    }
-
-    static @Nullable TreeNode apply(final Apply delegate, final ApplyWrite writeDelegate,
-            final NormalizedNode emptyNode, final ModifiedNode modification, final @Nullable TreeNode currentMeta,
-            final Version version) {
+    default @Nullable TreeNode applyWithAutomatic(final NormalizedNode emptyNode, final ModifiedNode modification,
+            final @Nullable TreeNode currentMeta, final Version version) {
         final @Nullable TreeNode ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
             if (modification.isEmpty()) {
-                return delegate.apply(modification, currentMeta, version);
+                return delegatedApply(modification, currentMeta, version);
             }
             // Delete with children, implies it really is an empty write
-            ret = verifyNotNull(writeDelegate.applyWrite(modification, emptyNode, currentMeta, version));
+            ret = verifyNotNull(delegatedapplyWrite(modification, emptyNode, currentMeta, version));
         } else if (modification.getOperation() == LogicalOperation.TOUCH && currentMeta == null) {
-            ret = applyTouch(delegate, emptyNode, modification, null, version);
+            ret = applyTouch(this, emptyNode, modification, null, version);
         } else {
             // No special handling required here, run normal apply operation
-            ret = delegate.apply(modification, currentMeta, version);
+            ret = delegatedApply(modification, currentMeta, version);
         }
 
         return ret == null ? null : disappearResult(modification, ret, currentMeta);
     }
 
-    private static @Nullable TreeNode applyTouch(final Apply delegate, final NormalizedNode emptyNode,
+    private static @Nullable TreeNode applyTouch(final AutomaticLifecycleMixin self, final NormalizedNode emptyNode,
             final ModifiedNode modification, final @Nullable TreeNode currentMeta, final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
-        final var ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
+        final var ret = self.delegatedApply(modification, self.newTreeNode(emptyNode, version), version);
 
         // If the delegate indicated SUBTREE_MODIFIED, account for the fake and report APPEARED
         if (modification.getModificationType() == ModificationType.SUBTREE_MODIFIED) {
@@ -77,7 +69,7 @@ final class AutomaticLifecycleMixin {
         return ret;
     }
 
-    private static @Nullable TreeNode disappearResult(final ModifiedNode modification, final @NonNull TreeNode result,
+    private static @Nullable TreeNode disappearResult(final ModifiedNode modification, final TreeNode result,
             final @Nullable TreeNode currentMeta) {
         // Check if the result is in fact empty before pulling any tricks
         final var data = result.data();
@@ -102,10 +94,5 @@ final class AutomaticLifecycleMixin {
         }
         modification.resolveModificationType(finalType);
         return null;
-    }
-
-    @NonNullByDefault
-    private static TreeNode fakeMeta(final NormalizedNode emptyNode, final Version version) {
-        return TreeNode.of(emptyNode, version);
     }
 }
