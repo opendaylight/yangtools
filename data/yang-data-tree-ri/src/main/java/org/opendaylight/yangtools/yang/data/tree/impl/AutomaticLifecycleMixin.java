@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.tree.api.ModificationType;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeAccess;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 /**
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  * lifecycle management.
  */
 @NonNullByDefault
-sealed interface AutomaticLifecycleMixin
+sealed interface AutomaticLifecycleMixin extends TreeNodeAccess
         permits ChoiceModificationStrategy, ContainerModificationStrategy.Structural, ListModificationStrategy,
                 MapModificationStrategy {
     /**
@@ -62,7 +63,7 @@ sealed interface AutomaticLifecycleMixin
     private static @Nullable TreeNode applyTouch(final AutomaticLifecycleMixin self, final NormalizedNode emptyNode,
             final ModifiedNode modification, final @Nullable TreeNode currentMeta, final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
-        final var ret = self.superApply(modification, TreeNode.of(emptyNode, version), version);
+        final var ret = self.superApply(modification, self.newTreeNode(emptyNode, version), version);
 
         // If the delegate indicated SUBTREE_MODIFIED, account for the fake and report APPEARED
         if (modification.getModificationType() == ModificationType.SUBTREE_MODIFIED) {

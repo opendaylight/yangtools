@@ -87,9 +87,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
      * {@link #checkTouchApplicable(ModificationPath, NodeModification, TreeNode, Version)}
      * It is okay to use a global constant, as the delegate will ignore it anyway.
      */
-    private static final Version FAKE_VERSION = Version.initial(false);
+    private static final @NonNull Version FAKE_VERSION = Version.initial(false);
 
-    private final NormalizedNodeContainerSupport<?, ?> support;
+    private final @NonNull NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
 
     AbstractNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support,
@@ -167,7 +167,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        final var newValueMeta = TreeNode.of(newValue, version);
+        final var newValueMeta = newTreeNode(newValue, version);
         if (modification.isEmpty()) {
             return newValueMeta;
         }
@@ -186,13 +186,13 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final var result = mutateChildren(newValueMeta.toMutable(version), support.createBuilder(newValue), version,
+        final var result = mutateChildren(openTreeNode(newValueMeta, version), support.createBuilder(newValue), version,
             modification.getChildren());
 
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
-        return TreeNode.of(result.data(), version);
+        return newTreeNode(result.data(), version);
     }
 
     /**
@@ -352,7 +352,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         if (!modification.isEmpty()) {
             final var dataBuilder = support.createBuilder(currentMeta.data());
             final var children = modification.getChildren();
-            final var ret = mutateChildren(currentMeta.toMutable(version), dataBuilder, version, children);
+            final var ret = mutateChildren(openTreeNode(currentMeta, version), dataBuilder, version, children);
 
             /*
              * It is possible that the only modifications under this node were empty merges, which were turned into
@@ -411,8 +411,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
         return null;
     }
 
-    static final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
-        return TreeNode.of(emptyNode, FAKE_VERSION);
+    @NonNullByDefault
+    final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
+        return newTreeNode(emptyNode, FAKE_VERSION);
     }
 
     @Override
