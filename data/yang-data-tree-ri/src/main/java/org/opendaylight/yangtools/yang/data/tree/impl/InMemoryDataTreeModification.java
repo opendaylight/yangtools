@@ -202,7 +202,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     private final RootApplyStrategy strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
-    private final Version version;
+    private final @NonNull Version version;
 
     // All access needs to go through STATE variable handle
     @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
@@ -428,7 +428,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         };
     }
 
-    Version getVersion() {
+    @NonNull Version version() {
         return version;
     }
 

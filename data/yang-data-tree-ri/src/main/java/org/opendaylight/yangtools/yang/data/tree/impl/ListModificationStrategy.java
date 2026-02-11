@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,8 +27,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
             BUILDER_FACTORY::newUnkeyedListEntryBuilder, BUILDER_FACTORY::newUnkeyedListEntryBuilder);
 
-    private final DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
-    private final UnkeyedListNode emptyNode;
+    private final @NonNull DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
+    private final @NonNull UnkeyedListNode emptyNode;
 
     ListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         entryStrategy = new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig);

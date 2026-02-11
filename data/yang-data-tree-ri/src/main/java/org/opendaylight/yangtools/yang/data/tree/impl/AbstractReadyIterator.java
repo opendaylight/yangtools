@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 abstract class AbstractReadyIterator {
@@ -29,7 +31,7 @@ abstract class AbstractReadyIterator {
         return new RootReadyIterator(root, root.getChildren().iterator(), operation);
     }
 
-    final AbstractReadyIterator process(final Version version) {
+    final @Nullable AbstractReadyIterator process(final @NonNull Version version) {
         // Walk all child nodes and remove any children which have not
         // been modified. If a child has children, we need to iterate
         // through it via re-entering this method on the child iterator.
@@ -39,14 +41,13 @@ abstract class AbstractReadyIterator {
             final var childOp = op.childByArg(childId);
             checkState(childOp != null, "Schema for child %s is not present.", childId);
 
-            if (child.isEmpty()) {
-                // The child is empty, seal it
-                child.seal(childOp, version);
-                if (child.getOperation() == LogicalOperation.NONE) {
-                    children.remove();
-                }
-            } else {
+            if (!child.isEmpty()) {
                 return new NestedReadyIterator(this, child, child.getChildren().iterator(), childOp);
+            }
+            // The child is empty, seal it
+            child.seal(childOp, version);
+            if (child.getOperation() == LogicalOperation.NONE) {
+                children.remove();
             }
         }
 

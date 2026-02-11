@@ -292,6 +292,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param schema associated apply operation
      * @param version target version
      */
+    @NonNullByDefault
     void seal(final ModificationApplyOperation schema, final Version version) {
         clearSnapshot();
         writtenOriginal = null;

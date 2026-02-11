@@ -37,7 +37,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
         final var operation = op.getApplyOperation().childByArg(child);
         if (operation != null) {
             return OperationWithModification.from(operation,
-                op.getModification().modifyChild(child, operation, getParent().getVersion()));
+                op.getModification().modifyChild(child, operation, getParent().version()));
         }
 
         // Node not found, construct its path
@@ -90,7 +90,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
 
     @Override
     public Optional<NormalizedNode> readNode(final PathArgument child) {
-        return stack.peek().read(child, getParent().getVersion());
+        return stack.peek().read(child, getParent().version());
     }
 
     @Override
@@ -103,7 +103,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
     public void merge(final PathArgument child, final NormalizedNode data) {
         ensureNotClosed();
         InMemoryDataTreeModification.checkIdentifierReferencesData(child, data);
-        resolveChildModification(child).merge(data, getParent().getVersion());
+        resolveChildModification(child).merge(data, getParent().version());
     }
 
     @Override
