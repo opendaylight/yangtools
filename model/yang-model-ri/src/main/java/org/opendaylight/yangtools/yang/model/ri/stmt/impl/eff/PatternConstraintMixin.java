@@ -8,20 +8,16 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
-import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 sealed interface PatternConstraintMixin
-        extends PatternConstraint, PatternEffectiveStatement,
-            ConstraintMetaDefinitionMixin<PatternExpression, @NonNull PatternStatement>,
-            DocumentedNode.Mixin<PatternEffectiveStatement>
+        extends PatternConstraint, PatternEffectiveStatement, ConstraintMetaDefinition.Mixin<PatternEffectiveStatement>,
+                DocumentedNode.Mixin<PatternEffectiveStatement>
         permits EmptyPatternEffectiveStatement, RegularPatternEffectiveStatement {
     @Override
     default PatternEffectiveStatement asEffectiveStatement() {
