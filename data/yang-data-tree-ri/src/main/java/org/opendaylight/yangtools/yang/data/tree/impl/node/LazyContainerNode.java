@@ -29,7 +29,7 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     }
 
     @Override
-    public MutableTreeNode toMutable(final Version nextSubtreeVersion) {
+    MutableTreeNode toMutable(final Version nextSubtreeVersion) {
         final var snapshot = snapshotChildren();
         return snapshot.size() == castData().size()
             ? new MaterializedMutableContainerNode(this, nextSubtreeVersion, snapshot)

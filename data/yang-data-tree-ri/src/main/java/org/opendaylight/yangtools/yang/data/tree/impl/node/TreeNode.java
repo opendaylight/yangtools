@@ -45,7 +45,7 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
     }
 
     /**
-     * Create a new AbstractTreeNode from a data node.
+     * Create a new TreeNode from a data node.
      *
      * @param data data node
      * @param incarnation data node version
@@ -92,13 +92,12 @@ public abstract class TreeNode implements StoreTreeNode<TreeNode> {
     public abstract Version subtreeVersion();
 
     /**
-     * Get a mutable, isolated copy of the node.
+     * Get a mutable, isolated copy of this node.
      *
      * @param nextSubtreeVersion next subtree version
      * @return Mutable copy
-     * @throws NullPointerException if {@code nextSubtreeVersion} is {@code null}
      */
-    public abstract MutableTreeNode toMutable(Version nextSubtreeVersion);
+    abstract MutableTreeNode toMutable(Version nextSubtreeVersion);
 
     @Override
     public final String toString() {

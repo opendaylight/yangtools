@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNodeAccess;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
 /**
@@ -42,7 +43,7 @@ import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
  *   </li>
  * </ul>
  */
-abstract sealed class ModificationApplyOperation implements StoreTreeNode<ModificationApplyOperation>
+abstract sealed class ModificationApplyOperation implements StoreTreeNode<ModificationApplyOperation>, TreeNodeAccess
         permits AbstractValidation, SchemaAwareApplyOperation {
     /**
      * Implementation of this operation must be stateless and must not change state of this object.
