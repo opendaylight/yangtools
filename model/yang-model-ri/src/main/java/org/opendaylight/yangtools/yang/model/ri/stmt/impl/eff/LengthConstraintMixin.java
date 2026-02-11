@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 sealed interface LengthConstraintMixin
-        extends LengthEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, @NonNull LengthStatement>,
+        extends LengthEffectiveStatement, ConstraintMetaDefinition.Mixin<LengthEffectiveStatement>,
                 DocumentedNode.Mixin<LengthEffectiveStatement>
         permits EmptyLengthEffectiveStatement, RegularLengthEffectiveStatement {
     @Override
