@@ -54,11 +54,13 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport {
 
         final var builder = BaseTypes.decimalTypeBuilder(stmt.argumentAsTypeQName());
         for (var subStmt : substatements) {
-            if (subStmt instanceof FractionDigitsEffectiveStatement fracDigits) {
-                builder.setFractionDigits(fracDigits.argument());
-            }
-            if (subStmt instanceof RangeEffectiveStatement range) {
-                builder.setRangeConstraint(range, range.argument());
+            switch (subStmt) {
+                case FractionDigitsEffectiveStatement fracDigits -> builder.setFractionDigits(fracDigits.argument());
+                case RangeEffectiveStatement range ->
+                    builder.setRangeConstraint(range.asConstraint(), range.argument());
+                default -> {
+                    // no-op
+                }
             }
         }
 
