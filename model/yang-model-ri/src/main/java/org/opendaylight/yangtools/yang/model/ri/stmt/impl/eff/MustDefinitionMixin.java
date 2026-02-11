@@ -7,18 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 sealed interface MustDefinitionMixin
-        extends MustDefinition, MustEffectiveStatement,
-                ConstraintMetaDefinitionMixin<QualifiedBound, @NonNull MustStatement>,
-                DocumentedNode.Mixin<MustEffectiveStatement>
+        extends MustDefinition, MustEffectiveStatement, DocumentedNode.Mixin<MustEffectiveStatement>
         permits EmptyMustEffectiveStatement, RegularMustEffectiveStatement {
     @Override
     default MustEffectiveStatement asEffectiveStatement() {
