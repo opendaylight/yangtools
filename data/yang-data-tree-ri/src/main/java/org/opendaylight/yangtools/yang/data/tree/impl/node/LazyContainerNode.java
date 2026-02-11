@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl.node;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Collections2;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -19,10 +20,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * instantiating a child node from data node. Resulting node is not cached.
  */
 final class LazyContainerNode extends AbstractModifiedContainerNode {
+    @NonNullByDefault
     LazyContainerNode(final NormalizedNode data, final Version version, final Version subtreeVersion) {
         this(data, version, MapAdaptor.getDefaultInstance().initialSnapshot(1), subtreeVersion);
     }
 
+    @NonNullByDefault
     LazyContainerNode(final NormalizedNode data, final Version version,
             final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
         super(data, version, children, subtreeVersion);
@@ -39,13 +42,13 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     @Override
     public TreeNode childByArg(final PathArgument arg) {
         final TreeNode modified;
-        return (modified = getModifiedChild(arg)) == null ? childFromData(arg) : modified;
+        return (modified = modifiedChild(arg)) == null ? childFromData(arg) : modified;
     }
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         // Modified children add added by superclass. Here we filter the other children.
         return super.addToStringAttributes(helper).add("untouched", Collections2.filter(castData().body(),
-            input -> getModifiedChild(input.name()) == null));
+            input -> modifiedChild(input.name()) == null));
     }
 }
