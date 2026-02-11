@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * Abstract base for container-based {@link MutableTreeNode}s. It tracks modified nodes in a map and deals with
  * correctly implementing {@link #seal()}.
  */
-abstract class AbstractMutableContainerNode extends MutableTreeNode {
+abstract sealed class AbstractMutableContainerNode extends MutableTreeNode
+        permits LazyMutableContainerNode, MaterializedMutableContainerNode {
     private final @NonNull Version incarnation;
     private final @NonNull Version subtreeVersion;
 
