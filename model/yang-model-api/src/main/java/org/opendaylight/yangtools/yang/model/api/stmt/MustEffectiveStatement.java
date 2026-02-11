@@ -8,16 +8,20 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.ConstraintCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
  * Effective representation of a {@code must} statement.
  */
-public interface MustEffectiveStatement extends EffectiveStatement<QualifiedBound, @NonNull MustStatement> {
+public interface MustEffectiveStatement extends ConstraintCompat<QualifiedBound, @NonNull MustStatement> {
     @Override
     default StatementDefinition<QualifiedBound, @NonNull MustStatement, ?> statementDefinition() {
         return MustStatement.DEF;
     }
+
+    @Override
+    MustDefinition asConstraint();
 }
