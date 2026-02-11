@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.tree.impl.node;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A fully-modified node -- we know we have all children, so it performs lookups only.
  */
 final class MaterializedContainerNode extends AbstractModifiedContainerNode {
+    @NonNullByDefault
     MaterializedContainerNode(final NormalizedNode data, final Version version,
             final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
         super(data, version, children, subtreeVersion);
@@ -22,7 +24,7 @@ final class MaterializedContainerNode extends AbstractModifiedContainerNode {
 
     @Override
     public TreeNode childByArg(final PathArgument arg) {
-        return getModifiedChild(arg);
+        return modifiedChild(arg);
     }
 
     @Override

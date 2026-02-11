@@ -11,6 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -18,10 +21,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 /**
  * A container node which has been modified. It tracks the subtree version and all modified children.
  */
-abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
-    private final Map<PathArgument, TreeNode> children;
-    private final Version subtreeVersion;
+abstract sealed class AbstractModifiedContainerNode extends AbstractContainerNode
+        permits LazyContainerNode, MaterializedContainerNode {
+    private final @NonNull Map<PathArgument, TreeNode> children;
+    private final @NonNull Version subtreeVersion;
 
+    @NonNullByDefault
     AbstractModifiedContainerNode(final NormalizedNode data, final Version version,
             final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
         super(data, version);
@@ -29,7 +34,7 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
         this.children = requireNonNull(children);
     }
 
-    final TreeNode getModifiedChild(final PathArgument childId) {
+    final @Nullable TreeNode modifiedChild(final @NonNull PathArgument childId) {
         return children.get(childId);
     }
 

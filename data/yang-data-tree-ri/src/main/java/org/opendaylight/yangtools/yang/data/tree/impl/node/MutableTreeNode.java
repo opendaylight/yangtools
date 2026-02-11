@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
  * this object is {@link #seal()}ed, any interactions with it will result in undefined behavior.
  */
 @NonNullByDefault
-public abstract class MutableTreeNode implements StoreTreeNode<TreeNode> {
+public sealed abstract class MutableTreeNode implements StoreTreeNode<TreeNode> permits AbstractMutableContainerNode {
     /**
      * Set the data component of the node.
      *
