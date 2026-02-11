@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 sealed interface RangeConstraintMixin
-        extends RangeEffectiveStatement, ConstraintMetaDefinitionMixin<ValueRanges, @NonNull RangeStatement>,
+        extends RangeEffectiveStatement, ConstraintMetaDefinition.Mixin<RangeEffectiveStatement>,
                 DocumentedNode.Mixin<RangeEffectiveStatement>
         permits EmptyRangeEffectiveStatement, RegularRangeEffectiveStatement {
     @Override

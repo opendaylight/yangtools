@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
-import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -34,8 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UserOrderedAware;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
@@ -122,25 +119,6 @@ public final class EffectiveStatementMixins {
                 case FlagsBuilder.STATUS_OBSOLETE -> Status.OBSOLETE;
                 default -> throw new IllegalStateException("Illegal status " + status);
             };
-        }
-    }
-
-    /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link ConstraintMetaDefinition}.
-     *
-     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface ConstraintMetaDefinitionMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>,
-            ConstraintMetaDefinition {
-        @Override
-        default Optional<String> getErrorAppTag() {
-            return findFirstEffectiveSubstatementArgument(ErrorAppTagEffectiveStatement.class);
-        }
-
-        @Override
-        default Optional<String> getErrorMessage() {
-            return findFirstEffectiveSubstatementArgument(ErrorMessageEffectiveStatement.class);
         }
     }
 
