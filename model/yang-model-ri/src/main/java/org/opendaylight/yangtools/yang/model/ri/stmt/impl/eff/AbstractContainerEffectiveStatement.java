@@ -18,17 +18,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.PresenceMixin;
 
-public abstract class AbstractContainerEffectiveStatement
+public abstract sealed class AbstractContainerEffectiveStatement
         extends WithTypedefNamespace<QName, @NonNull ContainerStatement>
         implements ContainerEffectiveStatement, ContainerSchemaNode, DataSchemaNodeMixin<@NonNull ContainerStatement>,
-            DataNodeContainerMixin<QName, @NonNull ContainerStatement>,
-            ActionNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
-            NotificationNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
-            PresenceMixin<QName, @NonNull ContainerStatement> {
+                   ActionNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
+                   NotificationNodeContainerCompat<QName, @NonNull ContainerStatement, ContainerEffectiveStatement>,
+                   PresenceMixin<QName, @NonNull ContainerStatement>
+        permits EmptyContainerEffectiveStatement, RegularContainerEffectiveStatement {
     private final int flags;
 
     AbstractContainerEffectiveStatement(final @NonNull ContainerStatement declared,
