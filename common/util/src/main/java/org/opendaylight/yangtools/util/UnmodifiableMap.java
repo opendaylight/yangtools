@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -29,6 +31,27 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @param <V> the type of mapped values
  */
 public final class UnmodifiableMap<K, V> implements Map<K, V>, Immutable {
+    private static final @NonNull Set<Class<?>> SINGLETON_CLASSES;
+
+    static {
+        final var tmp = new HashSet<Class<?>>();
+        // sneaky access
+        tmp.add(Collections.unmodifiableMap(new HashMap<>()).getClass());
+        tmp.add(Collections.singletonMap(null, null).getClass());
+        // unmodifiable implementations: on OpenJDK 21 this these are:
+        // MapN
+        tmp.add(Map.of().getClass());
+        // Map1
+        tmp.add(Map.of("a", "b").getClass());
+        // MapN
+        tmp.add(Map.of("a", "b", "b", "a").getClass());
+        // TODO: and all that because we cannot see ImmutableCollections.AbstractImmutableMap... hopefully that
+        //       becomes available once JEP-401 lands as a stable feature, but perhaps not -- there is a hint at things
+        //       in AbstractMap...
+
+        SINGLETON_CLASSES = Set.copyOf(tmp);
+    }
+
     private final @NonNull Map<K, V> delegate;
 
     private UnmodifiableMap(final @NonNull Map<K, V> delegate) {
@@ -43,10 +66,14 @@ public final class UnmodifiableMap<K, V> implements Map<K, V>, Immutable {
      * @return An unmodifiable view of the map
      * @throws NullPointerException if {@code map} is null
      */
-    @SuppressModernizer
     public static <K, V> @NonNull Map<K, V> of(final @NonNull Map<K, V> map) {
+        return knownUnmodifiable(map) ? map : new UnmodifiableMap<>(map);
+    }
+
+    @SuppressModernizer
+    private static boolean knownUnmodifiable(final @NonNull Map<?, ?> map) {
         return map instanceof Immutable || map instanceof ImmutableMap ||  Collections.EMPTY_MAP == map
-            ? map : new UnmodifiableMap<>(map);
+            || SINGLETON_CLASSES.contains(map.getClass());
     }
 
     @Override

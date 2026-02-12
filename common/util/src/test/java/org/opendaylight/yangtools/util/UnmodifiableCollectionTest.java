@@ -11,15 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class UnmodifiableCollectionTest {
-
     @Test
     void testUnmodifiableCollection() {
         final var immutableTestList = ImmutableList.<Integer>builder()
@@ -29,13 +32,13 @@ class UnmodifiableCollectionTest {
                 .add(4)
                 .add(5).build();
 
-        final var testUnmodifiableCollection = UnmodifiableCollection.create(immutableTestList);
+        final var testUnmodifiableCollection = UnmodifiableCollection.of(immutableTestList);
         assertNotNull(testUnmodifiableCollection);
 
         // Note: this cannot be ImmutableList, because UnmodifiableCollection does recognize it and returns it as is,
         //       without converting it to an UnmodifiableCollection -- which is not what we want.
         final var testList = Arrays.asList(1, 2, 3, 4, 5);
-        final var testUnmodifiableCollection2 = UnmodifiableCollection.create(testList);
+        final var testUnmodifiableCollection2 = UnmodifiableCollection.of(testList);
 
         final var iterator = testUnmodifiableCollection2.iterator();
         assertNotNull(iterator);
@@ -59,5 +62,25 @@ class UnmodifiableCollectionTest {
         assertTrue(testUnmodifiableCollection2.containsAll(testUnmodifiableCollection));
 
         assertEquals("UnmodifiableCollection{" + testList + "}", testUnmodifiableCollection2.toString());
+    }
+
+    @Test
+    void testListOf() {
+        assertKnown(List.of());
+        assertKnown(List.of(1));
+        assertKnown(List.of(1, 2));
+        assertKnown(List.of(1, 2, 3));
+    }
+
+    @Test
+    void testSetOf() {
+        assertKnown(Set.of());
+        assertKnown(Set.of(1));
+        assertKnown(Set.of(1, 2));
+        assertKnown(Set.of(1, 2, 3));
+    }
+
+    private static void assertKnown(final Collection<?> coll) {
+        assertSame(coll, UnmodifiableCollection.of(coll));
     }
 }
