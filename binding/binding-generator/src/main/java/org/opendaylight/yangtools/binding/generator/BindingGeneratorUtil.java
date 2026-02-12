@@ -13,6 +13,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -41,7 +43,7 @@ public final class BindingGeneratorUtil {
         // Hidden on purpose
     }
 
-    public static Restrictions getRestrictions(final TypeDefinition<?> type) {
+    public static @NonNull Restrictions getRestrictions(final @Nullable TypeDefinition<?> type) {
         // Old parser generated types which actually contained based restrictions, but our code deals with that when
         // binding to core Java types. Hence we'll emit empty restrictions for base types.
         if (type == null || type.getBaseType() == null) {
@@ -64,7 +66,6 @@ public final class BindingGeneratorUtil {
 
             return Restrictions.empty();
         }
-
 
         /*
          * Take care of extended types.
@@ -97,9 +98,9 @@ public final class BindingGeneratorUtil {
                 range = decimal.getRangeConstraint();
             }
             return Restrictions.of(range.orElse(null));
-        } else if (type instanceof RangeRestrictedTypeDefinition) {
+        } else if (type instanceof RangeRestrictedTypeDefinition<?, ?> range) {
             // Integer-like types
-            return Restrictions.of(extractRangeConstraint((RangeRestrictedTypeDefinition<?, ?>) type).orElse(null));
+            return Restrictions.of(extractRangeConstraint(range).orElse(null));
         } else if (type instanceof StringTypeDefinition string) {
             final var base = string.getBaseType();
             final Optional<LengthConstraint> length;
