@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -33,14 +35,14 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 
 abstract class AbstractGeneratedType extends AbstractType implements GeneratedType {
-    private final TypeComment comment;
-    private final List<AnnotationType> annotations;
-    private final List<Type> implementsTypes;
-    private final List<Enumeration> enumerations;
-    private final List<Constant> constants;
-    private final List<MethodSignature> methodSignatures;
-    private final List<GeneratedType> enclosedTypes;
-    private final List<GeneratedProperty> properties;
+    private final @Nullable TypeComment comment;
+    private final @NonNull List<AnnotationType> annotations;
+    private final @NonNull List<Type> implementsTypes;
+    private final @NonNull List<Enumeration> enumerations;
+    private final @NonNull List<Constant> constants;
+    private final @NonNull List<MethodSignature> methodSignatures;
+    private final @NonNull List<GeneratedType> enclosedTypes;
+    private final @NonNull List<GeneratedProperty> properties;
     private final boolean isAbstract;
     private final YangSourceDefinition definition;
 
@@ -77,18 +79,20 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         definition = null;
     }
 
-    protected static final <T> List<T> makeUnmodifiable(final List<T> list) {
+    protected static final <T> @NonNull List<T> makeUnmodifiable(final List<T> list) {
         return switch (list.size()) {
-            case 0 -> Collections.emptyList();
+            case 0 -> List.of();
             case 1 -> Collections.singletonList(list.getFirst());
+            case 2 -> List.copyOf(list);
             default -> Collections.unmodifiableList(list);
         };
     }
 
-    protected static <T> Set<T> makeUnmodifiable(final Set<T> set) {
+    protected static <T> @NonNull Set<T> makeUnmodifiable(final Set<T> set) {
         return switch (set.size()) {
-            case 0 -> Collections.emptySet();
+            case 0 -> Set.of();
             case 1 -> Collections.singleton(set.iterator().next());
+            case 2 -> Set.copyOf(set);
             default -> Collections.unmodifiableSet(set);
         };
     }
@@ -96,15 +100,15 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     private static List<GeneratedType> toUnmodifiableEnclosedTypes(
             final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
             final List<GeneratedTOBuilder> enclosedGenTOBuilders) {
-        final ArrayList<GeneratedType> enclosedTypesList = new ArrayList<>(enclosedGenTypeBuilders.size()
-                + enclosedGenTOBuilders.size());
-        for (final GeneratedTypeBuilder builder : enclosedGenTypeBuilders) {
+        final var enclosedTypesList = new ArrayList<GeneratedType>(
+            enclosedGenTypeBuilders.size() + enclosedGenTOBuilders.size());
+        for (var builder : enclosedGenTypeBuilders) {
             if (builder != null) {
                 enclosedTypesList.add(builder.build());
             }
         }
 
-        for (final GeneratedTOBuilder builder : enclosedGenTOBuilders) {
+        for (var builder : enclosedGenTOBuilders) {
             if (builder != null) {
                 enclosedTypesList.add(builder.build());
             }
@@ -113,46 +117,37 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         return makeUnmodifiable(enclosedTypesList);
     }
 
-    protected static final List<AnnotationType> toUnmodifiableAnnotations(
+    protected static final @NonNull List<AnnotationType> toUnmodifiableAnnotations(
             final List<AnnotationTypeBuilder> annotationBuilders) {
-        final List<AnnotationType> annotationList = new ArrayList<>(annotationBuilders.size());
-        for (final AnnotationTypeBuilder builder : annotationBuilders) {
-            annotationList.add(builder.build());
-        }
-        return makeUnmodifiable(annotationList);
+        return makeUnmodifiable(annotationBuilders.stream()
+            .map(AnnotationTypeBuilder::build)
+            .collect(Collectors.toUnmodifiableList()));
     }
 
-    protected final List<MethodSignature> toUnmodifiableMethods(final List<MethodSignatureBuilder> methodBuilders) {
-        final List<MethodSignature> methods = new ArrayList<>(methodBuilders.size());
-        for (final MethodSignatureBuilder methodBuilder : methodBuilders) {
-            methods.add(methodBuilder.toInstance(this));
-        }
-        return makeUnmodifiable(methods);
+    protected final @NonNull List<MethodSignature> toUnmodifiableMethods(
+            final List<MethodSignatureBuilder> methodBuilders) {
+        return makeUnmodifiable(methodBuilders.stream()
+            .map(builder -> builder.toInstance(this))
+            .collect(Collectors.toUnmodifiableList()));
     }
 
-    protected final Set<MethodSignature> toUnmodifiableMethods(final Set<MethodSignatureBuilder> getters) {
-        final Set<MethodSignature> methods = new HashSet<>(getters.size());
-        for (final MethodSignatureBuilder methodBuilder : getters) {
-            methods.add(methodBuilder.toInstance(this));
-        }
-        return makeUnmodifiable(methods);
+    protected final @NonNull Set<MethodSignature> toUnmodifiableMethods(final Set<MethodSignatureBuilder> getters) {
+        return makeUnmodifiable(getters.stream()
+            .map(builder -> builder.toInstance(this))
+            .collect(Collectors.toUnmodifiableSet()));
     }
 
-    protected final List<Enumeration> toUnmodifiableEnumerations(final List<EnumBuilder> enumBuilders) {
-        final List<Enumeration> enums = new ArrayList<>(enumBuilders.size());
-        for (final EnumBuilder enumBuilder : enumBuilders) {
-            enums.add(enumBuilder.toInstance());
-        }
-        return makeUnmodifiable(enums);
+    protected static final @NonNull List<Enumeration> toUnmodifiableEnumerations(final List<EnumBuilder> enumBuilders) {
+        return makeUnmodifiable(enumBuilders.stream()
+            .map(EnumBuilder::toInstance)
+            .collect(Collectors.toUnmodifiableList()));
     }
 
-    protected final List<GeneratedProperty> toUnmodifiableProperties(
+    protected static final @NonNull List<GeneratedProperty> toUnmodifiableProperties(
             final List<GeneratedPropertyBuilder> methodBuilders) {
-        final List<GeneratedProperty> methods = new ArrayList<>(methodBuilders.size());
-        for (final GeneratedPropertyBuilder methodBuilder : methodBuilders) {
-            methods.add(methodBuilder.toInstance());
-        }
-        return makeUnmodifiable(methods);
+        return makeUnmodifiable(methodBuilders.stream()
+            .map(GeneratedPropertyBuilder::toInstance)
+            .collect(Collectors.toUnmodifiableList()));
     }
 
     @Override
