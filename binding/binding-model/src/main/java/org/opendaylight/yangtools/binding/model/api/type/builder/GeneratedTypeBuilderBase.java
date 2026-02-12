@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
@@ -142,6 +144,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *
      * @param description a string that contains a human-readable textual description of type definition.
      */
+    @NonNullByDefault
     void setDescription(String description);
 
     /**
@@ -149,6 +152,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *
      * @param moduleName the name of the module
      */
+    @NonNullByDefault
     void setModuleName(String moduleName);
 
     /**
@@ -158,6 +162,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *
      * @param reference a textual cross-reference to an external document.
      */
+    @NonNullByDefault
     void setReference(String reference);
 
     /**
@@ -166,4 +171,9 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @param definition YANG source definition, must not be null
      */
     void setYangSourceDefinition(@NonNull YangSourceDefinition definition);
+
+    /**
+     * {@return a new immutable {@link GeneratedType} instance}
+     */
+    @NonNull GeneratedType build();
 }

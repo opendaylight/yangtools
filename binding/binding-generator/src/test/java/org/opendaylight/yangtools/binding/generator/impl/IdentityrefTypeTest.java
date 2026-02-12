@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class IdentityrefTypeTest {
@@ -45,18 +47,17 @@ class IdentityrefTypeTest {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangFiles(testModels));
         assertEquals(2, genTypes.size());
 
-        var moduleGenType = genTypes.stream()
+        var moduleGenType = assertInstanceOf(DataRootArchetype.class, genTypes.stream()
             .filter(type -> type.getName().equals("ModuleIdentityrefData"))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow());
 
         var methodSignatures = moduleGenType.getMethodDefinitions();
-        assertEquals(3, methodSignatures.size());
+        assertEquals(2, methodSignatures.size());
 
-        assertEquals("implementedInterface", methodSignatures.get(0).getName());
-        var methodSignature = methodSignatures.get(1);
+        var methodSignature = methodSignatures.getFirst();
         assertEquals("getLf", methodSignature.getName());
-        assertEquals("requireLf", methodSignatures.get(2).getName());
+        assertEquals("requireLf", methodSignatures.get(1).getName());
 
         assertEquals("org.opendaylight.yang.gen.v1.urn.identityref.module.rev131109.SomeIdentity",
             methodSignature.getReturnType().getFullyQualifiedName());
