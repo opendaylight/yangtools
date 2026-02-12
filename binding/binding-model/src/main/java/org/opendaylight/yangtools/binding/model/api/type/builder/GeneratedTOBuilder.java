@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -62,14 +62,8 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      */
     GeneratedTOBuilder addToStringProperty(GeneratedPropertyBuilder property);
 
+    @NonNullByDefault
     void setRestrictions(Restrictions restrictions);
-
-    /**
-     * Returns instance of <code>GeneratedTransferObject</code> which data are build from the data of this builder.
-     *
-     * @return generated transfer object instance
-     */
-    @NonNull GeneratedTransferObject build();
 
     void setTypedef(boolean isTypedef);
 
@@ -90,4 +84,12 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
     void setIsUnion(boolean isUnion);
 
     void setSUID(GeneratedPropertyBuilder suid);
+
+    /**
+     * Returns instance of <code>GeneratedTransferObject</code> which data are build from the data of this builder.
+     *
+     * @return generated transfer object instance
+     */
+    @Override
+    GeneratedTransferObject build();
 }
