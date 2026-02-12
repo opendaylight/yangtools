@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
-public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
+public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private Restrictions restrictions;
     private GeneratedPropertyBuilder suid;
     private String reference;
@@ -26,22 +28,22 @@ public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
 
     @Override
     public final void setRestrictions(final Restrictions restrictions) {
-        this.restrictions = restrictions;
+        this.restrictions = requireNonNull(restrictions);
     }
 
     @Override
     public final void setSUID(final GeneratedPropertyBuilder newSuid) {
-        suid = newSuid;
+        suid = requireNonNull(newSuid);
     }
 
     @Override
     public final void setDescription(final String description) {
-        this.description = description;
+        this.description = requireNonNull(description);
     }
 
     @Override
     public final void setModuleName(final String moduleName) {
-        this.moduleName = moduleName;
+        this.moduleName = requireNonNull(moduleName);
     }
 
     @Override
