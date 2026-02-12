@@ -18,11 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -92,10 +92,10 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(property = "yang.skip", defaultValue = "false")
     private boolean yangSkip;
 
-    @Component
+    @Inject
     private BuildContext buildContext;
 
-    @Component
+    @Inject
     private RepositorySystem repoSystem;
 
     @Parameter(readonly = true, defaultValue = "${repositorySystemSession}")
