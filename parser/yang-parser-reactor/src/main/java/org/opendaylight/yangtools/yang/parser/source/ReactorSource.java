@@ -12,14 +12,11 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.parser.source.BuildSource.Stage;
 
 /**
  * A {@link Stage} when we have acquired {@link SourceInfo} from the source representation.
- *
- * @param <S> the {@link MaterializedSourceRepresentation}
  */
 @NonNullByDefault
 public record ReactorSource(

@@ -23,9 +23,6 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 /**
  * A single registered source. Allows instantiating {@link SourceInfo} and {@link StatementStreamSource} to further
  * process the source.
- *
- * @param extractor the {@link SourceInfoExtractor}
- * @param streamSupplier the {@link StatementStreamSource} supplier
  */
 @NonNullByDefault
 public final class BuildSource<S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> {

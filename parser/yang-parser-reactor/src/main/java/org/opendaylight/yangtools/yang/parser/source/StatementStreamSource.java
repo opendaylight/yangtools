@@ -36,19 +36,19 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * It is necessary in order to correct resolution of unknown statements used by linkage
  * phase (e.g. semantic version of yang modules).
  * </li>
- * <li>{@link #writeLinkage(StatementWriter, StatementDefinitionResolver, PrefixResolver)} -
+ * <li>{@link #writeLinkage(StatementWriter, StatementDefinitionResolver)} -
  * Source MUST emit only statements related in linkage, which are present in
  * supplied statement definition map. This step is used to build cross-source
  * linkage and visibility relationship, and to determine XMl namespaces and
  * prefixes.</li>
  * <li>
- * {@link #writeLinkageAndStatementDefinitions(StatementWriter, StatementDefinitionResolver, PrefixResolver)}
+ * {@link #writeLinkageAndStatementDefinitions(StatementWriter, StatementDefinitionResolver)}
  * - Source MUST emit only statements related to linkage and language extensions
  * definitions, which are present in supplied statement definition map. This
  * step is used to build statement definitions in order to fully processed
  * source.</li>
  * <li>
- * {@link #writeFull(StatementWriter, StatementDefinitionResolver, PrefixResolver)}
+ * {@link #writeFull(StatementWriter, StatementDefinitionResolver)}
  * - Source MUST emit all statements present in source. This step is used to
  * build full declared statement model of source.</li>
  * </ol>
