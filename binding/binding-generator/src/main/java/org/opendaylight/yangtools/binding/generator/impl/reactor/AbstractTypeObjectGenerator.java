@@ -513,7 +513,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         return restrictType(baseType, computeRestrictions(), builderFactory);
     }
 
-    private static @NonNull Type restrictType(final @NonNull Type baseType, final Restrictions restrictions,
+    private static @NonNull Type restrictType(final @NonNull Type baseType, final @Nullable Restrictions restrictions,
             final TypeBuilderFactory builderFactory) {
         if (restrictions == null || restrictions.isEmpty()) {
             // No additional restrictions, return base type
