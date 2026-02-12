@@ -92,10 +92,8 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newDataRootBuilder(typeName());
         builder.setModuleName(statement().argument().getLocalName());
-        builder.addImplementsType(BindingTypes.dataRoot(builder));
-        defaultImplementedInterace(builder);
         addUsesInterfaces(builder, builderFactory);
         addGetterMethods(builder, builderFactory);
         builderFactory.addCodegenInformation(statement(), builder);

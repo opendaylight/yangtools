@@ -180,8 +180,8 @@ class JavaFileTemplate {
         .build();
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
-    private final AbstractJavaGeneratedType javaType;
-    private final GeneratedType type;
+    private final @NonNull AbstractJavaGeneratedType javaType;
+    private final @NonNull GeneratedType type;
 
     JavaFileTemplate(final @NonNull GeneratedType type) {
         this(new TopLevelJavaGeneratedType(type), type);
@@ -192,11 +192,11 @@ class JavaFileTemplate {
         this.type = requireNonNull(type);
     }
 
-    final AbstractJavaGeneratedType javaType() {
+    final @NonNull AbstractJavaGeneratedType javaType() {
         return javaType;
     }
 
-    final GeneratedType type() {
+    final @NonNull GeneratedType type() {
         return type;
     }
 
@@ -250,7 +250,7 @@ class JavaFileTemplate {
             return "";
         }
 
-        final NestedJavaGeneratedType innerJavaType = javaType.getEnclosedType(innerClass.getIdentifier());
+        final var innerJavaType = javaType.getEnclosedType(innerClass.getIdentifier());
         return gto.isUnionType() ? new UnionTemplate(innerJavaType, gto).generateAsInnerClass()
                 : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
     }
