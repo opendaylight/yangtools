@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -27,11 +28,13 @@ public final class InterfaceGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        if (type instanceof GeneratedType genType && !(type instanceof GeneratedTransferObject)) {
-            final InterfaceTemplate interfaceTemplate = new InterfaceTemplate(genType);
-            return interfaceTemplate.generate();
-        }
-        return "";
+        return switch (type) {
+            case DataRootArchetype dataRoot -> new DataRootTemplate(dataRoot).generate();
+            // Note: unfortunate class hierarchy design
+            case GeneratedTransferObject gto -> "";
+            case GeneratedType gt -> new InterfaceTemplate(gt).generate();
+            default -> "";
+        };
     }
 
     @Override

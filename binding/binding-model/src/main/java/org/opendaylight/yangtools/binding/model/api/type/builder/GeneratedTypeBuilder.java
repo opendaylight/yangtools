@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 
 /**
@@ -17,10 +16,5 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
  * @see GeneratedType
  */
 public interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<GeneratedTypeBuilder> {
-    /**
-     * Returns the <code>new</code> <i>immutable</i> instance of Generated Type.
-     *
-     * @return the <code>new</code> <i>immutable</i> instance of Generated Type.
-     */
-    @NonNull GeneratedType build();
+    // Nothing else
 }
