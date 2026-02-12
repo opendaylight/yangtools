@@ -8,7 +8,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -21,6 +20,7 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -70,15 +70,9 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionLeafrefToEnumType() {
-        final var bData = assertGeneratedType(TEST_TYPE_PROVIDER_B_DATA);
+        final var bData = assertInstanceOf(DataRootArchetype.class, assertGeneratedType(TEST_TYPE_PROVIDER_B_DATA));
         final var bDataMethods = bData.getMethodDefinitions();
-        assertEquals(9, bDataMethods.size());
-
-        final var bIface = assertGeneratedMethod(bDataMethods, "implementedInterface");
-        assertTrue(bIface.isDefault());
-        final var bIfaceType = assertInstanceOf(ParameterizedType.class, bIface.getReturnType());
-        assertEquals(Types.CLASS, bIfaceType.getRawType());
-        assertArrayEquals(new Type[] { bData }, bIfaceType.getActualTypeArguments());
+        assertEquals(8, bDataMethods.size());
 
         final var bEnumType = assertInstanceOf(Enumeration.class,
             assertGeneratedMethod(bDataMethods, "getEnum").getReturnType());

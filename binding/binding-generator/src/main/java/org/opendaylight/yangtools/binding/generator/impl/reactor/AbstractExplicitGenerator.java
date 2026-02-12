@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
@@ -311,8 +312,8 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return domain.addPrimary(this, new CamelCaseNamingStrategy(namespace(), localName()));
     }
 
-    void addAsGetterMethod(final @NonNull GeneratedTypeBuilderBase<?> builder,
-            final @NonNull TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
