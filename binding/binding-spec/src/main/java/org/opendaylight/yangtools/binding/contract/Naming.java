@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -111,6 +112,14 @@ public final class Naming {
     // Here we carve out some field names.
 
     /**
+     * DataRoot specializations use this field to store their {@link RootMeta} for use with {@link DataRoot#meta()}.
+     * Publicly-available for static injection purposes.
+     *
+     * @since 15.0.0
+     */
+    public static final @NonNull String META_STATIC_FIELD_NAME = "META";
+
+    /**
      * The name of the field holding the {@code ietf-restconf:yang-data} argument, present in all {@link YangData}
      * specializations. The type of the field is requied to be {@link YangDataName}.
      */
@@ -180,6 +189,12 @@ public final class Naming {
      * Name of {@link ScalarTypeObject#getValue()}.
      */
     public static final @NonNull String SCALAR_TYPE_OBJECT_GET_VALUE_NAME = "getValue";
+
+    /**
+     * The name of {@link DataRoot#meta()} method.
+     * @since 15.0.0
+     */
+    public static final @NonNull String DATA_ROOT_META_NAME = "meta";
 
     /**
      * Prefix for normal getter methods.
