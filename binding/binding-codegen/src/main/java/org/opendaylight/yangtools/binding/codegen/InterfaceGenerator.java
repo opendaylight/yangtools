@@ -27,8 +27,8 @@ public final class InterfaceGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        if (type instanceof GeneratedType genType && !(type instanceof GeneratedTransferObject)) {
-            final InterfaceTemplate interfaceTemplate = new InterfaceTemplate(genType);
+        if (type instanceof GeneratedType genType && !(genType instanceof GeneratedTransferObject)) {
+            final var interfaceTemplate = new InterfaceTemplate(genType);
             return interfaceTemplate.generate();
         }
         return "";
