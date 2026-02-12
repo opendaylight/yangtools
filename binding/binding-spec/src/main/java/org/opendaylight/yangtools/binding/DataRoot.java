@@ -7,10 +7,18 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
+
 /**
  * Data Root of YANG module.
  */
 public non-sealed interface DataRoot<T extends DataRoot<T>> extends DataContainer {
     @Override
     Class<T> implementedInterface();
+
+    /**
+     * {@return the {@link RootMeta} for this root}
+     */
+    @NonNull RootMeta<T> meta();
 }
