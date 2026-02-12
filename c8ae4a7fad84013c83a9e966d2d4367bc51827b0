@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "32aacd73_c8a6fcc1",
+        "filename": "data/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/StackedYangInstanceIdentifier.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-12T15:54:03Z",
+      "side": 1,
+      "message": "yeah, this is a leak",
+      "range": {
+        "startLine": 113,
+        "startChar": 11,
+        "endLine": 113,
+        "endChar": 38
+      },
+      "revId": "c8ae4a7fad84013c83a9e966d2d4367bc51827b0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
