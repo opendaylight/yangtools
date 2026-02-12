@@ -13,7 +13,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
@@ -24,6 +26,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Abstra
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
@@ -40,12 +43,17 @@ import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
  * A factory component creating {@link TypeBuilder} instances.
  */
 @Beta
-public abstract class TypeBuilderFactory implements Immutable {
+public abstract sealed class TypeBuilderFactory implements Immutable {
     private static final class Codegen extends TypeBuilderFactory {
         private static final @NonNull Codegen INSTANCE = new Codegen();
 
         private Codegen() {
             // Hidden on purpose
+        }
+
+        @Override
+        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
+            return new DataRootArchetypeBuilder.Codegen(typeName, yangModuleInfo);
         }
 
         @Override
@@ -128,6 +136,11 @@ public abstract class TypeBuilderFactory implements Immutable {
         }
 
         @Override
+        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
+            return new DataRootArchetypeBuilder.Runtime(typeName, yangModuleInfo);
+        }
+
+        @Override
         GeneratedTOBuilder newGeneratedTOBuilder(final JavaTypeName identifier) {
             return new RuntimeGeneratedTOBuilder(identifier);
         }
@@ -203,25 +216,30 @@ public abstract class TypeBuilderFactory implements Immutable {
         }
     }
 
-    TypeBuilderFactory() {
-        // Hidden on purpose
-    }
-
-    public static @NonNull TypeBuilderFactory codegen() {
+    @NonNullByDefault
+    public static final TypeBuilderFactory codegen() {
         return Codegen.INSTANCE;
     }
 
-    public static @NonNull TypeBuilderFactory runtime() {
+    @NonNullByDefault
+    public static final TypeBuilderFactory runtime() {
         return Runtime.INSTANCE;
     }
 
-    abstract @NonNull AbstractEnumerationBuilder newEnumerationBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, JavaTypeName yangModuleInfo);
 
-    abstract @NonNull GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract AbstractEnumerationBuilder newEnumerationBuilder(JavaTypeName identifier);
 
-    abstract @NonNull GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);
 
-    abstract @NonNull GeneratedUnionBuilder newGeneratedUnionBuilder(JavaTypeName identifier);
+    @NonNullByDefault
+    abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
+
+    @NonNullByDefault
+    abstract GeneratedUnionBuilder newGeneratedUnionBuilder(JavaTypeName identifier);
 
     abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
 

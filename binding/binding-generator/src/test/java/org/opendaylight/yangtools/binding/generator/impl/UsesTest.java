@@ -8,11 +8,14 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsInterface;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsMethods;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -295,7 +298,7 @@ class UsesTest {
         int groupingModulTestCounter = 0;
         int groupingUsesModulDataCounter = 0;
         GeneratedType groupingModulTest = null;
-        GeneratedType groupingUsesModulData = null;
+        DataRootArchetype groupingUsesModulData = null;
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
@@ -303,7 +306,7 @@ class UsesTest {
                     groupingModulTest = genType;
                     groupingModulTestCounter++;
                 } else if (genType.getName().equals("GroupingUsesModulData")) {
-                    groupingUsesModulData = genType;
+                    groupingUsesModulData = assertInstanceOf(DataRootArchetype.class, genType);
                     groupingUsesModulDataCounter++;
                 }
             }
@@ -322,8 +325,7 @@ class UsesTest {
 
         containsInterface("GroupingModulTest", groupingUsesModulData);
 
-        assertEquals(1, groupingUsesModulData.getMethodDefinitions().size(),
-            "Number of method in GroupingUsesModulData is incorrect");
+        assertEquals(List.of(), groupingUsesModulData.getMethodDefinitions());
         assertEquals(4, groupingModulTest.getMethodDefinitions().size(),
             "Number of method in GroupingModulTest is incorrect");
 
