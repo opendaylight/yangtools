@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -343,10 +344,10 @@ public abstract class Generator implements Iterable<Generator> {
 
     static final <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Generator parent,
             final Class<T> type) {
-        for (Generator child : parent) {
+        for (var child : parent) {
             if (child instanceof AbstractExplicitGenerator) {
                 @SuppressWarnings("unchecked")
-                final AbstractExplicitGenerator<T, ?> explicit = (AbstractExplicitGenerator<T, ?>)child;
+                final var explicit = (AbstractExplicitGenerator<T, ?>)child;
                 if (type.isInstance(explicit.statement())) {
                     return explicit;
                 }
@@ -355,9 +356,9 @@ public abstract class Generator implements Iterable<Generator> {
         throw new IllegalStateException("Cannot find " + type + " in " + parent);
     }
 
-    private static MethodSignatureBuilder defineImplementedInterfaceMethod(final GeneratedTypeBuilder typeBuilder,
-            final Type classType) {
-        final MethodSignatureBuilder ret = typeBuilder
+    private static MethodSignatureBuilder defineImplementedInterfaceMethod(
+            final GeneratedTypeBuilderBase<?> typeBuilder, final Type classType) {
+        final var ret = typeBuilder
                 .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
                 .setAccessModifier(AccessModifier.PUBLIC)
                 .setReturnType(classType(classType));
