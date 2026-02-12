@@ -71,4 +71,18 @@
             <artifactId>guava-testlib</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.gaul</groupId>
+                <artifactId>modernizer-maven-plugin</artifactId>
+                <configuration>
+                    <ignoreClassNamePatterns>
+                        org/opendaylight/yangtools/util/concurrent/ExceptionMapper
+                    </ignoreClassNamePatterns>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

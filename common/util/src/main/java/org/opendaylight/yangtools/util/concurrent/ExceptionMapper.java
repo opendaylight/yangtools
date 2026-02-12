@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Function;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import org.gaul.modernizer_maven_annotations.SuppressModernizer;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Utility exception mapper which translates an Exception to a specified type of Exception. This mapper is intended to
@@ -26,11 +26,9 @@ import org.gaul.modernizer_maven_annotations.SuppressModernizer;
  * @param <X> the exception type
  * @author Thomas Pantelis
  */
-@SuppressModernizer
 public abstract class ExceptionMapper<X extends Exception> implements Function<Exception, X> {
-
-    private final Class<X> exceptionType;
-    private final String opName;
+    private final @NonNull Class<X> exceptionType;
+    private final @NonNull String opName;
 
     /**
      * Constructor.
@@ -44,11 +42,9 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
     }
 
     /**
-     * Return the exception class produced by this instance.
-     *
-     * @return Exception class.
+     * {@return the exception class produced by this instance}
      */
-    protected final Class<X> getExceptionType() {
+    protected final @NonNull Class<X> getExceptionType() {
         return exceptionType;
     }
 
@@ -57,39 +53,39 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
      *
      * @param message the message for the new exception.
      * @param cause the cause for the new exception.
-     *
      * @return an instance of the exception type.
      */
     protected abstract X newWithCause(String message, Throwable cause);
 
+    // FIXME: should be final
     @Override
     public X apply(final Exception input) {
-
-        // If exception is of the specified type,return it.
+        // If exception is of the specified type, return it.
         if (exceptionType.isInstance(input)) {
             return exceptionType.cast(input);
         }
 
-        // If exception is ExecutionException whose cause is of the specified
-        // type, return the cause.
-        if (input instanceof ExecutionException) {
-            final var cause = input.getCause();
-            if (exceptionType.isInstance(cause)) {
-                return exceptionType.cast(cause);
-            } else if (cause != null) {
-                return newWithCause(opName + " execution failed", cause);
+        switch (input) {
+            // If exception is ExecutionException whose cause is of the specified type, return the cause.
+            case ExecutionException ee -> {
+                final var cause = ee.getCause();
+                if (exceptionType.isInstance(cause)) {
+                    return exceptionType.cast(cause);
+                }
+                if (cause != null) {
+                    return newWithCause(opName + " execution failed", cause);
+                }
             }
-        }
-
-        // Otherwise return an instance of the specified type with the original
-        // cause.
-
-        if (input instanceof InterruptedException) {
-            return newWithCause(opName + " was interupted.", input);
-        }
-
-        if (input instanceof CancellationException) {
-            return newWithCause(opName + " was cancelled.", input);
+            // Otherwise return an instance of the specified type with the original cause.
+            case CancellationException ce -> {
+                return newWithCause(opName + " was cancelled.", input);
+            }
+            case InterruptedException ie -> {
+                return newWithCause(opName + " was interupted.", ie);
+            }
+            case null, default -> {
+                // fall through
+            }
         }
 
         // We really shouldn't get here but need to cover it anyway for completeness.
