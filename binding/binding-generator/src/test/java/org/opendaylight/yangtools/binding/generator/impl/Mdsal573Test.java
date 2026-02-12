@@ -7,10 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal573Test {
@@ -21,7 +26,10 @@ class Mdsal573Test {
         assertNotNull(generateTypes);
         assertEquals(7, generateTypes.size());
 
-        final var methodSignature = generateTypes.getFirst().getMethodDefinitions().getFirst();
-        assertEquals("implementedInterface", methodSignature.getName());
+        final var root = assertInstanceOf(DataRootArchetype.class, generateTypes.getFirst());
+        assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal573.norev", "Mdsal573Data"),
+            root.getIdentifier());
+        assertEquals(List.of(), root.getMethodDefinitions());
+        assertThat(root.getImplements()).hasSize(3);
     }
 }

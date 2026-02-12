@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
-public class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
+public non-sealed class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     public RuntimeGeneratedTOBuilder(final JavaTypeName identifier) {
         super(identifier);
     }

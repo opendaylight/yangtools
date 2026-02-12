@@ -45,7 +45,7 @@ class InterfaceTemplate extends BaseTemplate {
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
      */
-    val List<Constant> consts
+    package val List<Constant> consts
 
     /**
      * List of method signatures which are generated as method declarations.
@@ -169,7 +169,7 @@ class InterfaceTemplate extends BaseTemplate {
      *
      * @return string with constants in JAVA format
      */
-    def private generateConstants() '''
+    def package generateConstants() '''
         «IF !consts.empty»
             «FOR c : consts»
                 «IF !c.name.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)»
@@ -184,7 +184,7 @@ class InterfaceTemplate extends BaseTemplate {
      *
      * @return string with the declaration of methods source code in JAVA format
      */
-    def private generateMethods() '''
+    def package generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
                 «IF m.isDefault»
@@ -278,7 +278,7 @@ class InterfaceTemplate extends BaseTemplate {
         '''
     }
 
-    def private generateDefaultImplementedInterface() '''
+    def package final generateDefaultImplementedInterface() '''
         @«OVERRIDE.importedName»
         default «CLASS.importedName»<«type.fullyQualifiedName»> «BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»() {
             return «type.fullyQualifiedName».class;

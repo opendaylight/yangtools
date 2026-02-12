@@ -87,7 +87,10 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         builder.setTypedef(true);
         builder.setExtendsType(baseType);
         builder.setIsUnion(baseType.isUnionType());
-        builder.setRestrictions(computeRestrictions());
+        final var restrictions = computeRestrictions();
+        if (restrictions != null) {
+            builder.setRestrictions(restrictions);
+        }
         YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
 
         final var typedef = statement().typeDefinition();
