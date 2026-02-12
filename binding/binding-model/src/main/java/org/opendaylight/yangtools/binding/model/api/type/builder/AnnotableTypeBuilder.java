@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * Common interface for java type builders which allow attaching annotations to them.
  */
 @Beta
-public interface AnnotableTypeBuilder {
+public interface AnnotableTypeBuilder extends Mutable {
     /**
      * The method creates new {@link AnnotationTypeBuilder} containing specified package name an annotation name.
      *
