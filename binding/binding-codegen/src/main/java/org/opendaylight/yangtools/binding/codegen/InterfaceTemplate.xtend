@@ -45,7 +45,7 @@ class InterfaceTemplate extends BaseTemplate {
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
      */
-    val List<Constant> consts
+    package val List<Constant> consts
 
     /**
      * List of method signatures which are generated as method declarations.
@@ -169,7 +169,7 @@ class InterfaceTemplate extends BaseTemplate {
      *
      * @return string with constants in JAVA format
      */
-    def private generateConstants() '''
+    def package generateConstants() '''
         «IF !consts.empty»
             «FOR c : consts»
                 «IF !c.name.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)»
