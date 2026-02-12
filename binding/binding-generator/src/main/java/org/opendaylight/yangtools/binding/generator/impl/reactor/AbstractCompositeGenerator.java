@@ -7,21 +7,23 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -451,7 +453,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * @param builder Target builder
      * @param builderFactory factory for creating {@link TypeBuilder}s
      */
-    final void addUsesInterfaces(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
+    final void addUsesInterfaces(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
         for (var grp : groupings) {
             builder.addImplementsType(grp.getGeneratedType(builderFactory));
         }
@@ -461,7 +463,8 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         builder.addImplementsType(BindingTypes.augmentable(builder));
     }
 
-    final void addGetterMethods(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    final void addGetterMethods(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
         for (var child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {
