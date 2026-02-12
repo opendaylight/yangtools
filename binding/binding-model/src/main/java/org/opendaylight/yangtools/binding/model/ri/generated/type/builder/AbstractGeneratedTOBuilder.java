@@ -22,8 +22,9 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-abstract class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
-        implements GeneratedTOBuilder {
+abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
+        implements GeneratedTOBuilder
+        permits CodegenGeneratedTOBuilder, RuntimeGeneratedTOBuilder {
 
     // FIXME are these three referenced anywhere at runtime?
     private List<GeneratedPropertyBuilder> equalsProperties = Collections.emptyList();
