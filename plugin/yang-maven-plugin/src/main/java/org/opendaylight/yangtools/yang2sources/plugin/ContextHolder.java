@@ -39,6 +39,7 @@ record ContextHolder(
             "Unsupported representation %s", representation);
         final var id = module.getSourceIdentifier();
         return sources.contains(id)
+                // FIXME: YANGTOOLS-1693: java.nio.file.Path instead
                 ? Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + id.toYangFilename())
                         : Optional.empty();
     }
