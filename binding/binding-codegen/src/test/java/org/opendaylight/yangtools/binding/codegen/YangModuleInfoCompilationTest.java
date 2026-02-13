@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertRegularFile;
 
 import com.google.common.collect.ImmutableSet;
@@ -21,7 +22,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -86,38 +86,33 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
 
         // Test generated $YangModuleInfoImpl class
         assertFalse(yangModuleInfoClass.isInterface());
-        Method getInstance = assertContainsMethod(yangModuleInfoClass, YangModuleInfo.class, "getInstance");
-        Object yangModuleInfo = getInstance.invoke(null);
+
+        final var instance = yangModuleInfoClass.getDeclaredField("INSTANCE");
+        assertEquals(YangModuleInfo.class, instance.getType());
+
+        final var yangModuleInfo = assertInstanceOf(YangModuleInfo.class, instance.get(null));
 
         // Test getImportedModules method
-        Method getImportedModules = assertContainsMethod(yangModuleInfoClass, ImmutableSet.class, "getImportedModules");
-        Object importedModules = getImportedModules.invoke(yangModuleInfo);
-        assertTrue(importedModules instanceof Set);
+        final var getImportedModules = assertContainsMethod(yangModuleInfoClass, ImmutableSet.class,
+            "getImportedModules");
+        final var importedModules = assertInstanceOf(ImmutableSet.class, getImportedModules.invoke(yangModuleInfo));
 
         YangModuleInfo infoImport = null;
         YangModuleInfo infoSub1 = null;
         YangModuleInfo infoSub2 = null;
         YangModuleInfo infoSub3 = null;
-        for (Object importedModule : (Set<?>) importedModules) {
-            assertTrue(importedModule instanceof YangModuleInfo);
-            YangModuleInfo ymi = (YangModuleInfo) importedModule;
-            String name = ymi.getName().getLocalName();
+        for (var importedModule : importedModules) {
+            final var moduleInfo = assertInstanceOf(YangModuleInfo.class, importedModule);
+            String name = moduleInfo.getName().getLocalName();
 
             switch (name) {
-                case "import-module":
-                    infoImport = ymi;
-                    break;
-                case "submodule1":
-                    infoSub1 = ymi;
-                    break;
-                case "submodule2":
-                    infoSub2 = ymi;
-                    break;
-                case "submodule3":
-                    infoSub3 = ymi;
-                    break;
-                default:
+                case "import-module" -> infoImport = moduleInfo;
+                case "submodule1" -> infoSub1 = moduleInfo;
+                case "submodule2" -> infoSub2 = moduleInfo;
+                case "submodule3" -> infoSub3 = moduleInfo;
+                default -> {
                     // no-op
+                }
             }
         }
         assertNotNull(infoImport);
@@ -145,13 +140,8 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
 
     private static Method assertContainsMethod(final Class<?> clazz, final Class<?> returnType, final String name,
             final Class<?>... args) {
-        try {
-            Method method = clazz.getDeclaredMethod(name, args);
-            assertEquals(returnType, method.getReturnType());
-            return method;
-        } catch (NoSuchMethodException e) {
-            throw new AssertionError("Method " + name + " with args " + Arrays.toString(args)
-                    + " does not exists in class " + clazz.getSimpleName(), e);
-        }
+        final var method = assertDoesNotThrow(() -> clazz.getDeclaredMethod(name, args));
+        assertEquals(returnType, method.getReturnType());
+        return method;
     }
 }

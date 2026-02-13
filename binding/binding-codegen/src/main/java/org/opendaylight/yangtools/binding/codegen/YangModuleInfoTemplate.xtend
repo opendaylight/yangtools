@@ -93,18 +93,15 @@ final class YangModuleInfoTemplate {
             public final class «MODULE_INFO_CLASS_NAME» extends ResourceYangModuleInfo {
                 «val rev = module.revision»
                 private static final @NonNull QName NAME = QName.create("«module.QNameModule.namespace().toString»", «IF rev.present»"«rev.orElseThrow.toString»", «ENDIF»"«module.name»").intern();
-                private static final @NonNull YangModuleInfo INSTANCE = new «MODULE_INFO_CLASS_NAME»();
+
+                /**
+                 * The singleton instance.
+                 */
+                public static final @NonNull YangModuleInfo INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
 
-                /**
-                 * Return the singleton instance of this class.
-                 *
-                 * @return The singleton instance
-                 */
-                public static @NonNull YangModuleInfo getInstance() {
-                    return INSTANCE;
-                }
+                «classBody(module, MODULE_INFO_CLASS_NAME, submodules)»
 
                 /**
                  * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this
@@ -133,8 +130,6 @@ final class YangModuleInfoTemplate {
                     return new YangDataName(NAME.getModule(), templateName).intern();
                 }
             «ENDIF»
-
-                «classBody(module, MODULE_INFO_CLASS_NAME, submodules)»
             }
         '''
         return '''
@@ -167,12 +162,12 @@ final class YangModuleInfoTemplate {
              * Construct a new provider.
              */
             public «MODEL_BINDING_PROVIDER_CLASS_NAME»() {
-                // No-op
+                // Nothing else
             }
 
             @Override
             public YangModuleInfo getModuleInfo() {
-                return «MODULE_INFO_CLASS_NAME».getInstance();
+                return «MODULE_INFO_CLASS_NAME».INSTANCE;
             }
         }
     '''
@@ -202,14 +197,14 @@ final class YangModuleInfoTemplate {
                                 «sorted.put(module.QNameModule.revisionUnion, module)»
                             «ENDIF»
                         «ENDFOR»
-                        set.add(«sorted.lastEntry().value.QNameModule.getServicePackageName».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«sorted.lastEntry().value.QNameModule.getServicePackageName».«MODULE_INFO_CLASS_NAME».INSTANCE);
                     «ELSE»
-                        set.add(«(ctx.findModule(name, rev).orElseThrow.QNameModule).getServicePackageName».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«(ctx.findModule(name, rev).orElseThrow.QNameModule).getServicePackageName».«MODULE_INFO_CLASS_NAME».INSTANCE);
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
             «FOR submodule : submodules»
-                set.add(«submodule.name.className»Info.getInstance());
+                set.add(«submodule.name.className»Info.INSTANCE);
             «ENDFOR»
             «IF m.imports.empty && submodules.empty»
                 importedModules = ImmutableSet.of();
@@ -252,13 +247,10 @@ final class YangModuleInfoTemplate {
                 «val rev = submodule.revision»
                 private final @NonNull QName NAME = QName.create("«submodule.QNameModule.namespace().toString»", «
                 IF rev.present»"«rev.orElseThrow.toString»", «ENDIF»"«submodule.name»").intern();
-                private static final @NonNull YangModuleInfo INSTANCE = new «className»Info();
+
+                static final @NonNull YangModuleInfo INSTANCE = new «className»Info();
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
-
-                public static @NonNull YangModuleInfo getInstance() {
-                    return INSTANCE;
-                }
 
                 «classBody(submodule, className + "Info", ImmutableSet.of)»
             }

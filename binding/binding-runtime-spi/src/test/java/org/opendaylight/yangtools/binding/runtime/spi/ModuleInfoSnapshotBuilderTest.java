@@ -23,7 +23,7 @@ class ModuleInfoSnapshotBuilderTest {
     void testModuleRegistration() throws Exception {
         final var snapshotBuilder = new ModuleInfoSnapshotBuilder(
             DaggerDefaultYangParserComponent.create().parserFactory());
-        snapshotBuilder.add(YangModuleInfoImpl.getInstance());
+        snapshotBuilder.add(YangModuleInfoImpl.INSTANCE);
         snapshotBuilder.addModuleFeatures(Mdsal767Data.class, Set.of(One$F.VALUE));
 
         final var snapshot = snapshotBuilder.build();
