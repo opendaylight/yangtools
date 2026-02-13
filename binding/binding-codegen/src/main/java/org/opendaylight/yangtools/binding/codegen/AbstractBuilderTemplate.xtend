@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes
 import org.opendaylight.yangtools.binding.contract.Naming
 
+// FIXME: YANGTOOLS-1619: convert to Java
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
