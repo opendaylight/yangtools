@@ -180,8 +180,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
             // a weird thing: this source's name bound to defining module
             final var moduleName = source.sourceId().name().bindTo(definingModule).intern();
 
-            linkedSources.add(new SourceSpecificContext(this, source.sourceInfo(),
-                definingModule, new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
+            linkedSources.add(new SourceSpecificContext(this, source.sourceInfo(), definingModule,
+                new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
                 source.streamFactory().newStreamSource(prefixToModule)));
         }
         sources = List.copyOf(linkedSources);
