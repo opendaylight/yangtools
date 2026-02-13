@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.binding.EnumTypeObject
 /**
  * Template for generating JAVA enumeration type.
  */
+// FIXME: YANGTOOLS-1777: convert to Java
 class EnumTemplate extends BaseTemplate {
     static val ENUM_TYPE_OBJECT = JavaTypeName.create(EnumTypeObject)
 
