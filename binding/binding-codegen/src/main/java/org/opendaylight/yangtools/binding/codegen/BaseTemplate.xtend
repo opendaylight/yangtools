@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.binding.BaseIdentity
 import org.opendaylight.yangtools.binding.contract.Naming
 import org.opendaylight.yangtools.yang.common.YangDataName
 
+// FIXME: YANGTOOLS-1618: convert to Java
 abstract class BaseTemplate extends AbstractBaseTemplate {
     static final char NEW_LINE = '\n'
     static final char SPACE = ' '
