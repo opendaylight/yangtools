@@ -19,7 +19,7 @@ class ContextHolderTest {
     void contextHolderTest() {
         final var context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang", "/test2.yang");
         final var holder = new ContextHolder(context, Set.of(), Set.of());
-        assertSame(context, holder.getContext());
-        assertEquals(Set.of(), holder.getYangModules());
+        assertSame(context, holder.modelContext());
+        assertEquals(Set.of(), holder.modules());
     }
 }
