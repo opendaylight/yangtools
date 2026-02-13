@@ -82,7 +82,7 @@ public final class BuildSource<S extends SourceRepresentation & MaterializedSour
 
         ReactorSource toReactorSource() throws SourceSyntaxException {
             final var sourceInfo = source.extractSourceInfo();
-            return new ReactorSource(sourceInfo, streamSupport.newFactory(source, sourceInfo.yangVersion()));
+            return new ReactorSourceImpl(sourceInfo, streamSupport.newFactory(source, sourceInfo.yangVersion()));
         }
     }
 
