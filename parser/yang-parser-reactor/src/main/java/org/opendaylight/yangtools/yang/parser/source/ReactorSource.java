@@ -11,7 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.BuildSource.Stage;
 
 /**
@@ -26,18 +26,17 @@ public sealed interface ReactorSource extends BuildSource.Stage permits ReactorS
      */
     @Override
     default SourceIdentifier sourceId() {
-        return ref().correctId();
+        return infoRef().ref().correctId();
     }
 
     /**
-     * {@return the {@link SourceRef} identity of this source}
+     * {@return the {@link SourceInfoRef} identity of this source}
      */
-    SourceRef ref();
+    SourceInfoRef infoRef();
 
-    /**
-     * {@return the {@link SourceInfo} of this source}
-     */
-    SourceInfo sourceInfo();
+    default SourceInfo sourceInfo() {
+        return infoRef().info();
+    }
 
     /**
      * {@return the {@link StatementStreamSource.Factory} of this source}

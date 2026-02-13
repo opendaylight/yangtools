@@ -96,10 +96,10 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     ImmutableSet<Include> includes();
 
     /**
-     * {@return a new {@code SourceRef} derived on this object's {@link #sourceId()}}
+     * {@return a new {@code SourceInfoRef} derived on this object's {@link #sourceId()}}
      * @since 15.0.0
      */
-    SourceRef newRef();
+    SourceInfoRef newRef();
 
     /**
      * A {@link SourceInfo} about a {@link ModuleStatement}-backed source.
@@ -123,8 +123,8 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         }
 
         @Override
-        public SourceRef.ToModule newRef() {
-            return new ModuleRef(sourceId);
+        public SourceInfoRef.OfModule newRef() {
+            return new ModuleInfoRef(new ModuleRef(sourceId), this);
         }
 
         /**
@@ -199,8 +199,8 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         }
 
         @Override
-        public SourceRef.ToSubmodule newRef() {
-            return new SubmoduleRef(sourceId);
+        public SourceInfoRef.OfSubmodule newRef() {
+            return new SubmoduleInfoRef(new SubmoduleRef(sourceId), this);
         }
 
         public static Builder builder() {

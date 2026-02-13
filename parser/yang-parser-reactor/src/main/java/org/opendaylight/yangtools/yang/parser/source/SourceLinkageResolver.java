@@ -200,7 +200,7 @@ public final class SourceLinkageResolver {
 
     private void tryResolveDependencies() throws ReactorException {
         for (var mainSource : mainSources) {
-            tryResolveDependenciesOf(mainSource.sourceInfo().sourceId());
+            tryResolveDependenciesOf(mainSource.sourceId());
         }
     }
 
