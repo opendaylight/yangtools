@@ -295,7 +295,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def allValuesConstructor() '''
+    def package allValuesConstructor() '''
     public «type.name»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
@@ -501,7 +501,7 @@ class ClassTemplate extends BaseTemplate {
         ENDIF
     »'''
 
-    def protected String finalClass() {
+    def package String finalClass() {
         return " "
     }
 
