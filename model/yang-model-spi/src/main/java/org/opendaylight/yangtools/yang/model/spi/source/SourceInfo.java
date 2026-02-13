@@ -86,18 +86,20 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     }
 
     /**
-     * Return all {@link Import} dependencies.
-     *
-     * @return all import dependencies
+     * {@return all {@link Import} dependencies}
      */
     ImmutableSet<Import> imports();
 
     /**
-     * Return all {@link Include} dependencies.
-     *
-     * @return all include dependencies
+     * {@return all {@link Include} dependencies}
      */
     ImmutableSet<Include> includes();
+
+    /**
+     * {@return a new {@code SourceRef} derived on this object's {@link #sourceId()}}
+     * @since 15.0.0
+     */
+    SourceRef newRef();
 
     /**
      * A {@link SourceInfo} about a {@link ModuleStatement}-backed source.
@@ -118,6 +120,11 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             requireNonNull(revisions);
             requireNonNull(imports);
             requireNonNull(includes);
+        }
+
+        @Override
+        public SourceRef.ToModule newRef() {
+            return new ModuleRef(sourceId);
         }
 
         /**
@@ -189,6 +196,11 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             requireNonNull(imports);
             requireNonNull(imports);
             requireNonNull(includes);
+        }
+
+        @Override
+        public SourceRef.ToSubmodule newRef() {
+            return new SubmoduleRef(sourceId);
         }
 
         public static Builder builder() {
