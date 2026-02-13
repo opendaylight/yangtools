@@ -7,40 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
-import static java.util.Objects.requireNonNull;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.source.BuildSource.Stage;
 
 /**
  * A {@link Stage} when we have acquired {@link SourceInfo} from the source representation.
  */
 @NonNullByDefault
-public record ReactorSource(
-        SourceInfo sourceInfo,
-        StatementStreamSource.Factory streamFactory) implements BuildSource.Stage {
-    public ReactorSource {
-        requireNonNull(sourceInfo);
-        requireNonNull(streamFactory);
+public sealed interface ReactorSource extends BuildSource.Stage permits ReactorSourceImpl {
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Unlike source.sourceId(), this is guaranteed to be canonical
+     */
+    @Override
+    default SourceIdentifier sourceId() {
+        return ref().correctId();
     }
 
-    @Override
-    public SourceIdentifier sourceId() {
-        // Note: unlike source.sourceId(), this is guaranteed to be canonical
-        return sourceInfo.sourceId();
-    }
+    /**
+     * {@return the {@link SourceRef} identity of this source}
+     */
+    SourceRef ref();
+
+    /**
+     * {@return the {@link SourceInfo} of this source}
+     */
+    SourceInfo sourceInfo();
+
+    /**
+     * {@return the {@link StatementStreamSource.Factory} of this source}
+     */
+    StatementStreamSource.Factory streamFactory();
 
     // Note: equality overridden to identity for predictable use as a Map key
     @Override
-    public int hashCode() {
-        return System.identityHashCode(this);
-    }
+    int hashCode();
 
     @Override
-    public boolean equals(final @Nullable Object obj) {
-        return this == obj;
-    }
+    boolean equals(@Nullable Object obj);
 }
