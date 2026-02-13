@@ -59,7 +59,7 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
      * generated property with data about field which is generated as the getter method
      * @return string with the getter method source code in JAVA format
      */
-    protected def getterMethod(GeneratedProperty field) '''
+    def package getterMethod(GeneratedProperty field) '''
         «val methodName = field.getterMethodName»
         public «field.returnType.importedName» «methodName»() {
             «val fieldName = field.fieldName»
@@ -153,7 +153,7 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
         return sb.toString
     }
 
-    def protected String formatDataForJavaDoc(GeneratedType type) {
+    def package String formatDataForJavaDoc(GeneratedType type) {
         val sb = new StringBuilder()
         val comment = type.comment
         if (comment !== null) {
