@@ -12,9 +12,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 
 import com.google.common.collect.ImmutableTable;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -27,40 +28,42 @@ class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
     @Mock
     private BuildContext buildContext;
 
-    private final File file = new File(getClass().getResource("/yang").getFile());
+    private Path file;
+
+    @BeforeEach
+    void beforeEach() throws Exception {
+        file = Path.of(getClass().getResource("/yang").toURI());
+    }
 
     @Test
     void basicTest() {
         assertMojoExecution(
-            new YangToSourcesProcessor(buildContext, file, List.of(),
-                List.of(new FileGeneratorArg("mockGenerator")), project, true),
-            mock -> {
-                doAnswer(invocation -> {
-                    final var localModules = invocation.<Set<Module>>getArgument(1);
-                    assertEquals(2, localModules.size());
-                    return ImmutableTable.of();
-                }).when(mock).generateFiles(any(), any(), any());
-            },
+            new YangToSourcesProcessor(buildContext, file, Set.of(), List.of(new FileGeneratorArg("mockGenerator")),
+                project, true),
+            mock -> doAnswer(invocation -> {
+                final var localModules = invocation.<Set<Module>>getArgument(1);
+                assertEquals(2, localModules.size());
+                return ImmutableTable.of();
+            }).when(mock).generateFiles(any(), any(), any()),
             mock -> {
                 // No-op
             });
     }
 
     @Test
-    void excludeFilesTest() {
-        final var excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
+    void excludeFilesTest() throws Exception {
+        final var excludedYang = Path.of(getClass().getResource("/yang/excluded-file.yang").toURI());
 
         assertMojoExecution(
-            new YangToSourcesProcessor(buildContext, file, List.of(excludedYang),
+            new YangToSourcesProcessor(buildContext, file, Set.of(excludedYang),
                 List.of(new FileGeneratorArg("mockGenerator")), project, true),
+            mock -> doAnswer(invocation -> {
+                final var localModules = invocation.<Set<Module>>getArgument(1);
+                assertEquals(1, localModules.size());
+                assertEquals("mock", localModules.iterator().next().getName());
+                return ImmutableTable.of();
+            }).when(mock).generateFiles(any(), any(), any()),
             mock -> {
-                doAnswer(invocation -> {
-                    final var localModules = invocation.<Set<Module>>getArgument(1);
-                    assertEquals(1, localModules.size());
-                    assertEquals("mock", localModules.iterator().next().getName());
-                    return ImmutableTable.of();
-                }).when(mock).generateFiles(any(), any(), any());
-            }, mock -> {
                 // No-op
             });
     }

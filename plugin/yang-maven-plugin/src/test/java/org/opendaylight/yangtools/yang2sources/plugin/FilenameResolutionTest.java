@@ -14,7 +14,7 @@ import static org.mockito.Mockito.doAnswer;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -29,24 +29,23 @@ class FilenameResolutionTest extends AbstractCodeGeneratorTest {
     @Test
     void testResolveSubmoduleResource() throws Exception {
         assertMojoExecution(new YangToSourcesProcessor(
-            new File(Resources.getResource(FilenameResolutionTest.class, "/filename").toURI()),
+            Path.of(Resources.getResource(FilenameResolutionTest.class, "/filename").toURI()),
             List.of(new FileGeneratorArg("mockGenerator")), project, yangProvider),
+            mock -> doAnswer(invocation -> {
+                final EffectiveModelContext context = invocation.getArgument(0);
+                final ModuleResourceResolver resolver = invocation.getArgument(2);
+
+                final var module = Iterables.getOnlyElement(context.getModules());
+                assertEquals(Optional.of("/META-INF/yang/foo@2020-10-13.yang"),
+                    resolver.findModuleResourcePath(module, YangTextSource.class));
+
+                final var submodule = Iterables.getOnlyElement(module.getSubmodules());
+                assertEquals(Optional.of("/META-INF/yang/foo-submodule@2020-10-12.yang"),
+                    resolver.findModuleResourcePath(submodule, YangTextSource.class));
+
+                return ImmutableTable.of();
+            }).when(mock).generateFiles(any(), any(), any()),
             mock -> {
-                doAnswer(invocation -> {
-                    final EffectiveModelContext context = invocation.getArgument(0);
-                    final ModuleResourceResolver resolver = invocation.getArgument(2);
-
-                    final var module = Iterables.getOnlyElement(context.getModules());
-                    assertEquals(Optional.of("/META-INF/yang/foo@2020-10-13.yang"),
-                        resolver.findModuleResourcePath(module, YangTextSource.class));
-
-                    final var submodule = Iterables.getOnlyElement(module.getSubmodules());
-                    assertEquals(Optional.of("/META-INF/yang/foo-submodule@2020-10-12.yang"),
-                        resolver.findModuleResourcePath(submodule, YangTextSource.class));
-
-                    return ImmutableTable.of();
-                }).when(mock).generateFiles(any(), any(), any());
-            }, mock -> {
                 // No-op
             });
     }
