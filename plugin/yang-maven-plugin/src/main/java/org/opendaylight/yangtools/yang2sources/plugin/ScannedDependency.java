@@ -9,21 +9,23 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
+import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_STR;
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING;
-import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING_JAR;
+import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.YANG_STR;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -35,103 +37,103 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @NonNullByDefault
-abstract class ScannedDependency {
+abstract sealed class ScannedDependency {
     private static final class Single extends ScannedDependency {
-        Single(final File file) {
+        Single(final Path file) {
             super(file);
         }
 
         @Override
-        ImmutableList<YangTextSource> sources() {
-            return ImmutableList.of(new FileYangTextSource(file().toPath()));
+        List<YangTextSource> sources() {
+            return List.of(new FileYangTextSource(file()));
         }
     }
 
     private static final class Zip extends ScannedDependency {
-        private final ImmutableSet<String> entryNames;
+        private final List<Path> files;
 
-        Zip(final File file, final ImmutableSet<String> entryNames) {
+        Zip(final Path file, final List<Path> files) {
             super(file);
-            this.entryNames = requireNonNull(entryNames);
+            this.files = List.copyOf(files);
         }
 
         @Override
-        ImmutableList<YangTextSource> sources() throws IOException {
-            final var builder = ImmutableList.<YangTextSource>builderWithExpectedSize(entryNames.size());
-
-            try (var zip = new ZipFile(file())) {
-                for (var entryName : entryNames) {
-                    final var entry = requireNonNull(zip.getEntry(entryName));
-
-                    builder.add(new DelegatedYangTextSource(
-                        SourceIdentifier.ofYangFileName(entryName.substring(entryName.lastIndexOf('/') + 1)),
-                        ByteSource.wrap(zip.getInputStream(entry).readAllBytes())
-                            .asCharSource(StandardCharsets.UTF_8)));
+        List<YangTextSource> sources() throws IOException {
+            final var tmp = new ArrayList<YangTextSource>(files.size());
+            try (var zipfs = FileSystems.newFileSystem(file())) {
+                final var root = zipfs.getPath("/");
+                for (var file : files) {
+                    tmp.add(new DelegatedYangTextSource(
+                        SourceIdentifier.ofYangFileName(file.getFileName().toString()),
+                        ByteSource.wrap(Files.readAllBytes(root.resolve(file))).asCharSource(StandardCharsets.UTF_8)));
                 }
             }
-
-            return builder.build();
+            return List.copyOf(tmp);
         }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(ScannedDependency.class);
 
-    private final File file;
+    private final Path file;
 
-    ScannedDependency(final File file) {
+    ScannedDependency(final Path file) {
         this.file = requireNonNull(file);
     }
 
     static List<ScannedDependency> scanDependencies(final MavenProject project) throws IOException {
-        final List<File> filesOnCp = getClassPath(project);
+        final var filesOnCp = getClassPath(project);
         LOG.debug("{} Searching for YANG files in dependencies: {}", YangToSourcesProcessor.LOG_PREFIX, filesOnCp);
         LOG.debug("{} Searching for YANG files in {} dependencies", YangToSourcesProcessor.LOG_PREFIX,
             filesOnCp.size());
 
         final var result = new ArrayList<ScannedDependency>();
-        for (File file : filesOnCp) {
+        for (var file : filesOnCp) {
             // is it jar file or directory?
+            // FIXME: YANGTOOLS-1693: java.nio.file.Files instead
             if (file.isDirectory()) {
-                final File yangDir = new File(file, META_INF_YANG_STRING);
+                final var yangDir = new File(file, META_INF_YANG_STRING);
                 if (yangDir.exists() && yangDir.isDirectory()) {
                     result.addAll(scanDirectory(yangDir));
                 }
             } else {
-                result.addAll(scanZipFile(file));
+                result.addAll(scanZipFile(file.toPath()));
             }
         }
         return result;
     }
 
-    private static ImmutableList<ScannedDependency> scanDirectory(final File yangDir) {
+    private static List<ScannedDependency> scanDirectory(final File yangDir) {
+        // FIXME: YANGTOOLS-1693: java.nio.file.Files instead
         return Arrays.stream(yangDir.listFiles(
             (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile()))
-                .map(Single::new)
-                .collect(ImmutableList.toImmutableList());
+                .map(file -> new Single(file.toPath()))
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    private static ImmutableList<ScannedDependency> scanZipFile(final File zipFile) throws IOException {
-        final ImmutableSet<String> entryNames;
-        try (ZipFile zip = new ZipFile(zipFile)) {
-            entryNames = zip.stream()
-                .filter(entry -> {
-                    final String entryName = entry.getName();
-                    return entryName.startsWith(META_INF_YANG_STRING_JAR) && !entry.isDirectory()
-                        && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION);
-                })
-                .map(ZipEntry::getName)
-                .collect(ImmutableSet.toImmutableSet());
+    private static List<ScannedDependency> scanZipFile(final Path zipFile) throws IOException {
+        final List<Path> files;
+        try (var zipfs = FileSystems.newFileSystem(zipFile)) {
+            final var metaInfYang = zipfs.getPath("/", META_INF_STR, YANG_STR);
+
+            try (var wlk = Files.walk(metaInfYang, 1)) {
+                files = wlk.filter(Files::isRegularFile)
+                    .filter(path -> path.endsWith(RFC6020_YANG_FILE_EXTENSION))
+                    .map(metaInfYang::relativize)
+                    .sorted()
+                    .collect(Collectors.toUnmodifiableList());
+            } catch (NoSuchFileException e) {
+                LOG.debug("METAINF/yang not found", e);
+                return List.of();
+            }
         }
-
-        return entryNames.isEmpty() ? ImmutableList.of() : ImmutableList.of(new Zip(zipFile, entryNames));
+        return files.isEmpty() ? List.of() : List.of(new Zip(zipFile, files));
     }
 
-    // FIXME: java.nio.file.Path
-    final File file() {
+    final Path file() {
         return file;
     }
 
-    abstract ImmutableList<YangTextSource> sources() throws IOException;
+    abstract List<YangTextSource> sources() throws IOException;
 
     @VisibleForTesting
     static List<File> getClassPath(final MavenProject project) {
