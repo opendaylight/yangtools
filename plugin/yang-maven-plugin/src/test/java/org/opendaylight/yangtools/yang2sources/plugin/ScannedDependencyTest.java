@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -75,43 +77,40 @@ class ScannedDependencyTest {
     private static void prepareProject(final MavenProject project) throws Exception {
         final var manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        final var testFile2 = new File(ScannedDependencyTest.class.getResource("/").getPath(), "test.jar");
-        try (var target = new JarOutputStream(Files.newOutputStream(testFile2.toPath()), manifest)) {
-            addSourceFileToTargetJar(new File(ScannedDependencyTest.class.getResource("/tests/META-INF").getPath()),
+        final var testFile2 = Path.of(ScannedDependencyTest.class.getResource("/").toURI()).resolve("test.jar");
+        try (var target = new JarOutputStream(Files.newOutputStream(testFile2), manifest)) {
+            addSourceFileToTargetJar(Path.of(ScannedDependencyTest.class.getResource("/tests/META-INF").toURI()),
                 target);
         }
 
         final var artifact = mock(Artifact.class);
-        doReturn(new File(ScannedDependencyTest.class.getResource("/tests").toURI())).when(artifact).getFile();
+        doReturn(Path.of(ScannedDependencyTest.class.getResource("/tests").toURI()).toFile()).when(artifact).getFile();
 
         final var artifact2 = mock(Artifact.class);
-        doReturn(testFile2).when(artifact2).getFile();
+        doReturn(testFile2.toFile()).when(artifact2).getFile();
         doReturn(ImmutableSet.of(artifact, artifact2)).when(project).getArtifacts();
     }
 
-    private static void addSourceFileToTargetJar(final File source, final JarOutputStream target) throws IOException {
-        if (source.isDirectory()) {
-            String name = source.getPath().replace("\\", "/");
-            if (!name.isEmpty()) {
-                if (!name.endsWith("/")) {
-                    name += "/";
-                }
-                final var entry = new JarEntry(name);
-                entry.setTime(source.lastModified());
+    private static void addSourceFileToTargetJar(final Path source, final JarOutputStream target) throws IOException {
+        if (Files.isDirectory(source)) {
+            if (source.getNameCount() != 0) {
+                final var entry = new JarEntry(source.toString() + "/");
+                entry.setLastModifiedTime(Files.getLastModifiedTime(source));
                 target.putNextEntry(entry);
                 target.closeEntry();
             }
-            for (var nestedFile : source.listFiles()) {
-                addSourceFileToTargetJar(nestedFile, target);
+
+            try (var files = Files.newDirectoryStream(source)) {
+                files.forEach(file -> assertDoesNotThrow(() -> addSourceFileToTargetJar(file, target)));
             }
             return;
         }
 
-        final var entry = new JarEntry(source.getPath().replace("\\", "/"));
-        entry.setTime(source.lastModified());
+        final var entry = new JarEntry(source.toString());
+        entry.setLastModifiedTime(Files.getLastModifiedTime(source));
         target.putNextEntry(entry);
 
-        try (var in = new BufferedInputStream(Files.newInputStream(source.toPath()))) {
+        try (var in = new BufferedInputStream(Files.newInputStream(source))) {
             final byte[] buffer = new byte[1024];
             while (true) {
                 final int count = in.read(buffer);
