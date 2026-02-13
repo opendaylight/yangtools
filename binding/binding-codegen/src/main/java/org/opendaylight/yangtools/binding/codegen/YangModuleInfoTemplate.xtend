@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.binding.codegen
 
 import static extension org.opendaylight.yangtools.binding.contract.Naming.getClassName
 import static extension org.opendaylight.yangtools.binding.contract.Naming.getServicePackageName
+import static java.util.Objects.requireNonNull
 import static org.opendaylight.yangtools.binding.contract.Naming.MODEL_BINDING_PROVIDER_CLASS_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_CLASS_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
 
-import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
 import java.util.Comparator
 import java.util.HashSet
@@ -77,11 +77,10 @@ final class YangModuleInfoTemplate {
     val String modelBindingProviderName
 
     new(Module module, EffectiveModelContext ctx, Function<ModuleLike, Optional<String>> moduleFilePathResolver) {
-        Preconditions.checkArgument(module !== null, "Module must not be null.")
-        this.module = module
+        this.module = requireNonNull(module)
         this.ctx = ctx
         this.moduleFilePathResolver = moduleFilePathResolver
-        packageName = module.QNameModule.getServicePackageName;
+        packageName = module.QNameModule.getServicePackageName
         modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»'''
         hasYangData = module.asEffectiveStatement.findFirstEffectiveSubstatement(YangDataEffectiveStatement).present
     }
@@ -201,7 +200,7 @@ final class YangModuleInfoTemplate {
                     «val name = imp.moduleName.localName»
                     «val rev = imp.revision»
                     «IF rev.empty»
-                        «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap(REVISION_COMPARATOR)»
+                        «val sorted = new TreeMap<Optional<Revision>, Module>(REVISION_COMPARATOR)»
                         «FOR module : ctx.modules»
                             «IF name.equals(module.name)»
                                 «sorted.put(module.revision, module)»
@@ -245,9 +244,8 @@ final class YangModuleInfoTemplate {
     }
 
     private def sourcePath(ModuleLike module) {
-        val opt = moduleFilePathResolver.apply(module)
-        Preconditions.checkState(opt.isPresent, "Module %s does not have a file path", module)
-        return opt.orElseThrow
+        moduleFilePathResolver.apply(module)
+            .orElseThrow([ | new IllegalStateException("Module " + module + " does not have a file path")])
     }
 
     private def generateSubInfo(Set<Submodule> submodules) '''
