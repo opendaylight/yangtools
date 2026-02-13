@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.LOG_PREFIX;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -116,8 +114,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
         checkClasspath();
 
         // defaults to ${basedir}/src/main/yang
-        File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
-        Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
+        final var yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir().toPath());
+        final var excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
         new YangToSourcesProcessor(buildContext, yangFilesRootFile, excludedFiles, arrayToList(fileGenerators), project,
             inspectDependencies).execute();
@@ -184,29 +182,20 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
 
     private static <T> List<T> arrayToList(final T[] array) {
-        return array == null ? ImmutableList.of() : Arrays.asList(array);
+        return array == null ? List.of() : List.of(array);
     }
 
-    private static File processYangFilesRootDir(final String yangFilesRootDir, final File baseDir) {
-        File yangFilesRootFile;
+    private static Path processYangFilesRootDir(final String yangFilesRootDir, final Path baseDir) {
         if (yangFilesRootDir == null) {
-            yangFilesRootFile = new File(baseDir, "src" + File.separator + "main" + File.separator + "yang");
-        } else {
-            File file = new File(yangFilesRootDir);
-            if (file.isAbsolute()) {
-                yangFilesRootFile = file;
-            } else {
-                yangFilesRootFile = new File(baseDir, file.getPath());
-            }
+            return baseDir.resolve("src").resolve("main").resolve("yang");
         }
-        return yangFilesRootFile;
+        final var rootDir = Path.of(yangFilesRootDir);
+        return rootDir.isAbsolute() ? rootDir : baseDir.resolve(rootDir);
     }
 
-    private static Collection<File> processExcludeFiles(final String[] excludeFiles, final File baseDir) {
-        if (excludeFiles == null) {
-            return ImmutableList.of();
-        }
-
-        return Collections2.transform(Arrays.asList(excludeFiles), f -> new File(baseDir, f));
+    private static Set<Path> processExcludeFiles(final String[] excludeFiles, final Path baseDir) {
+        return excludeFiles == null ? Set.of() : Arrays.stream(excludeFiles)
+            .map(baseDir::resolve)
+            .collect(Collectors.toUnmodifiableSet());
     }
 }

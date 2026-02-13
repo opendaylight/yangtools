@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.io.Resources;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -21,13 +21,9 @@ class GenerateSourcesTest extends AbstractCodeGeneratorTest {
     @Test
     void test() throws Exception {
         assertMojoExecution(new YangToSourcesProcessor(
-            new File(Resources.getResource(GenerateSourcesTest.class, "/yang").toURI()),
+            Path.of(Resources.getResource(GenerateSourcesTest.class, "/yang").toURI()),
             List.of(new FileGeneratorArg("mockGenerator")), project, yangProvider),
-            mock -> {
-                doReturn(ImmutableTable.of()).when(mock).generateFiles(any(), any(), any());
-            },
-            mock -> {
-                verify(mock).generateFiles(any(), any(), any());
-            });
+            mock -> doReturn(ImmutableTable.of()).when(mock).generateFiles(any(), any(), any()),
+            mock -> verify(mock).generateFiles(any(), any(), any()));
     }
 }

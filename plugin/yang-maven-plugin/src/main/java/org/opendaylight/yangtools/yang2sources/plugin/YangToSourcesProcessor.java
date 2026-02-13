@@ -14,9 +14,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -101,8 +99,8 @@ class YangToSourcesProcessor {
 
     private final YangTextToIRSourceTransformer textToIR;
     private final YangParserFactory parserFactory;
-    private final File yangFilesRootDir;
-    private final Set<File> excludedFiles;
+    private final Path yangFilesRootDir;
+    private final Set<Path> excludedFiles;
     private final ImmutableMap<String, FileGeneratorArg> fileGeneratorArgs;
     private final @NonNull MavenProject project;
     private final boolean inspectDependencies;
@@ -111,12 +109,12 @@ class YangToSourcesProcessor {
     private final StateStorage stateStorage;
     private final String projectBuildDirectory;
 
-    private YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
-            final Collection<File> excludedFiles, final List<FileGeneratorArg> fileGeneratorsArgs,
+    private YangToSourcesProcessor(final BuildContext buildContext, final Path yangFilesRootDir,
+            final Set<Path> excludedFiles, final List<FileGeneratorArg> fileGeneratorsArgs,
             final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
         this.buildContext = requireNonNull(buildContext, "buildContext");
         this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
-        this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
+        this.excludedFiles = Set.copyOf(excludedFiles);
         //FIXME multiple FileGeneratorArg entries of same identifier became one here
         fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
         this.project = requireNonNull(project);
@@ -129,14 +127,14 @@ class YangToSourcesProcessor {
     }
 
     @VisibleForTesting
-    YangToSourcesProcessor(final File yangFilesRootDir, final List<FileGeneratorArg> fileGenerators,
+    YangToSourcesProcessor(final Path yangFilesRootDir, final List<FileGeneratorArg> fileGenerators,
             final MavenProject project, final YangProvider yangProvider) {
-        this(new DefaultBuildContext(), yangFilesRootDir, List.of(), List.of(), project, false, yangProvider);
+        this(new DefaultBuildContext(), yangFilesRootDir, Set.of(), List.of(), project, false, yangProvider);
     }
 
-    YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
-            final Collection<File> excludedFiles, final List<FileGeneratorArg> fileGenerators,
-            final MavenProject project, final boolean inspectDependencies) {
+    YangToSourcesProcessor(final BuildContext buildContext, final Path yangFilesRootDir, final Set<Path> excludedFiles,
+            final List<FileGeneratorArg> fileGenerators, final MavenProject project,
+            final boolean inspectDependencies) {
         this(buildContext, yangFilesRootDir, excludedFiles, fileGenerators, project, inspectDependencies,
             YANG_PROVIDER);
     }
@@ -155,7 +153,7 @@ class YangToSourcesProcessor {
         }
 
         // Collect all files in the current project.
-        final List<File> yangFilesInProject;
+        final List<Path> yangFilesInProject;
         try {
             yangFilesInProject = listFiles(yangFilesRootDir, excludedFiles);
         } catch (IOException e) {
@@ -248,7 +246,7 @@ class YangToSourcesProcessor {
 
         final var parsed = yangFilesInProject.parallelStream()
             .map(file -> {
-                final var textSource = new FileYangTextSource(file.toPath());
+                final var textSource = new FileYangTextSource(file);
                 YangIRSource irSource;
                 try {
                     irSource = textToIR.transformSource(textSource);
@@ -400,7 +398,7 @@ class YangToSourcesProcessor {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private @NonNull ProcessorModuleReactor createReactor(final List<File> yangFilesInProject,
+    private @NonNull ProcessorModuleReactor createReactor(final List<Path> yangFilesInProject,
             final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
             final List<Entry<FileYangTextSource, YangIRSource>> parsed) throws MojoExecutionException {
 
@@ -437,26 +435,25 @@ class YangToSourcesProcessor {
         }
     }
 
-    private static ImmutableList<File> listFiles(final File root, final Collection<File> excludedFiles)
+    private static List<Path> listFiles(final Path root, final Set<Path> excludedFiles)
             throws IOException {
-        if (!root.isDirectory()) {
+        if (!Files.isDirectory(root)) {
             LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, root);
-            return ImmutableList.of();
+            return List.of();
         }
 
-        try (var stream = Files.walk(root.toPath())) {
+        try (var stream = Files.walk(root)) {
             return stream
-                .map(Path::toFile)
-                .filter(File::isFile)
-                .filter(f -> {
-                    if (excludedFiles.contains(f)) {
-                        LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
+                .filter(Files::isRegularFile)
+                .filter(file -> {
+                    if (excludedFiles.contains(file)) {
+                        LOG.info("{} YANG file excluded {}", LOG_PREFIX, file);
                         return false;
                     }
                     return true;
                 })
-                .filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION))
-                .collect(ImmutableList.toImmutableList());
+                .filter(file -> file.getFileName().toString().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION))
+                .collect(Collectors.toUnmodifiableList());
         }
     }
 
