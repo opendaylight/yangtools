@@ -64,11 +64,13 @@ class YangToSourcesProcessor {
         ServiceLoader.load(YangParserFactory.class).findFirst().orElseThrow(
             () -> new IllegalStateException("Failed to find a YangParserFactory implementation"));
 
-    private static final String META_INF_STR = "META-INF";
-    private static final String YANG_STR = "yang";
+    static final String META_INF_STR = "META-INF";
+    static final String YANG_STR = "yang";
 
     static final String LOG_PREFIX = "yang-to-sources:";
-    static final String META_INF_YANG_STRING = META_INF_STR + File.separator + YANG_STR;
+
+    // FIXME: YANGTOOLS-1693: remove these constants
+    private static final String META_INF_YANG_STRING = META_INF_STR + File.separator + YANG_STR;
     static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
     static final String META_INF_YANG_SERVICES_STRING_JAR = META_INF_STR + "/" + "services";
 
