@@ -13,27 +13,18 @@ import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 
 @NonNullByDefault
-record ReactorSourceImpl(
-        SourceRef ref,
-        SourceInfo sourceInfo,
-        StatementStreamSource.Factory streamFactory) implements ReactorSource {
+record ReactorSourceImpl(SourceInfoRef infoRef, StatementStreamSource.Factory streamFactory) implements ReactorSource {
     ReactorSourceImpl {
-        requireNonNull(ref);
-        requireNonNull(sourceInfo);
+        requireNonNull(infoRef);
         requireNonNull(streamFactory);
-    }
-
-    ReactorSourceImpl(final SourceInfo sourceInfo, final StatementStreamSource.Factory streamFactory) {
-        this(sourceInfo.newRef(), sourceInfo, streamFactory);
     }
 
     @Override
     public SourceIdentifier sourceId() {
-        return ref.correctId();
+        return infoRef.ref().correctId();
     }
 
     @Override
@@ -48,7 +39,7 @@ record ReactorSourceImpl(
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(ReactorSource.class).add("ref", ref).toString();
+        return MoreObjects.toStringHelper(ReactorSource.class).add("ref", infoRef).toString();
     }
 }
 
