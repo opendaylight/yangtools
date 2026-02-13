@@ -14,6 +14,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * A source of text passable for {@link PrettyTree}. It appended to {@link Appendable}.
+ *
+ * @since 15.0.0
  */
 @Beta
 @NonNullByDefault
