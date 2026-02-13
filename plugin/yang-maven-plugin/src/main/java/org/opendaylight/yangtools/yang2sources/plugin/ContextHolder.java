@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -23,15 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 
-final class ContextHolder implements Immutable, ModuleResourceResolver {
-    private final @NonNull EffectiveModelContext context;
-    private final @NonNull ImmutableSet<Module> modules;
-    private final ImmutableSet<SourceIdentifier> sources;
-
-    ContextHolder(final EffectiveModelContext context, final Set<Module> modules, final Set<SourceIdentifier> sources) {
-        this.context = requireNonNull(context);
-        this.modules = ImmutableSet.copyOf(modules);
-        this.sources = ImmutableSet.copyOf(sources);
+record ContextHolder(
+        @NonNull EffectiveModelContext modelContext,
+        @NonNull Set<Module> modules,
+        @NonNull Set<SourceIdentifier> sources) implements Immutable, ModuleResourceResolver {
+    ContextHolder {
+        requireNonNull(modelContext);
+        modules = Set.copyOf(modules);
+        sources = Set.copyOf(sources);
     }
 
     @Override
@@ -43,13 +41,5 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
         return sources.contains(id)
                 ? Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + id.toYangFilename())
                         : Optional.empty();
-    }
-
-    @NonNull EffectiveModelContext getContext() {
-        return context;
-    }
-
-    @NonNull ImmutableSet<Module> getYangModules() {
-        return modules;
     }
 }

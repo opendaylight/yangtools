@@ -283,7 +283,8 @@ class YangToSourcesProcessor {
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to read reactor " + moduleReactor, e);
             }
-            LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(), yangSw);
+            LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.modelContext().getModules().size(),
+                yangSw);
 
             for (var factory : codeGenerators) {
                 if (!parserConfig.equals(factory.parserConfig())) {

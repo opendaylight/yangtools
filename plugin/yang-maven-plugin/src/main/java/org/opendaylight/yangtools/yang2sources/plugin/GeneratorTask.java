@@ -79,7 +79,7 @@ final class GeneratorTask implements Identifiable<String> {
 
         // Step one: determine what files are going to be generated
         final var sw = Stopwatch.createStarted();
-        final var generatedFiles = gen.generateFiles(context.getContext(), context.getYangModules(), context);
+        final var generatedFiles = gen.generateFiles(context.modelContext(), context.modules(), context);
         LOG.info("{}: Defined {} files in {}", getIdentifier(), generatedFiles.size(), sw);
 
         // Step two: create generation tasks for each target file and group them by parent directory
