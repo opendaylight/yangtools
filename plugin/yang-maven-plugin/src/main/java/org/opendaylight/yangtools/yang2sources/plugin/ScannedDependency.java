@@ -21,9 +21,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -86,29 +86,28 @@ abstract sealed class ScannedDependency {
 
         final var result = new ArrayList<ScannedDependency>();
         for (var file : filesOnCp) {
-            final var path = file.toPath();
-
             // is it a directory?
-            if (Files.isDirectory(path)) {
-                // FIXME: YANGTOOLS-1693: java.nio.file.Files instead
-                final var yangDir = path.resolve(META_INF_STR).resolve(YANG_STR);
+            if (Files.isDirectory(file)) {
+                final var yangDir = file.resolve(META_INF_STR).resolve(YANG_STR);
                 if (Files.isDirectory(yangDir)) {
                     result.addAll(scanDirectory(yangDir));
                 }
-            } else if (Files.isRegularFile(path)) {
+            } else if (Files.isRegularFile(file)) {
                 // is it a jar file?
-                result.addAll(scanZipFile(path));
+                result.addAll(scanZipFile(file));
             }
         }
         return result;
     }
 
-    private static List<ScannedDependency> scanDirectory(final Path yangDir) {
-        // FIXME: YANGTOOLS-1693: java.nio.file.Files instead
-        return Arrays.stream(yangDir.toFile().listFiles(
-            (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile()))
-                .map(file -> new Single(file.toPath()))
+    private static List<ScannedDependency> scanDirectory(final Path yangDir) throws IOException {
+        try (var stream = Files.newDirectoryStream(yangDir)) {
+            return StreamSupport.stream(stream.spliterator(), false)
+                .filter(path -> path.getFileName().toString().endsWith(RFC6020_YANG_FILE_EXTENSION))
+                .filter(Files::isRegularFile)
+                .map(Single::new)
                 .collect(Collectors.toUnmodifiableList());
+        }
     }
 
     private static List<ScannedDependency> scanZipFile(final Path zipFile) throws IOException {
@@ -138,10 +137,12 @@ abstract sealed class ScannedDependency {
     abstract List<YangTextSource> sources() throws IOException;
 
     @VisibleForTesting
-    static List<File> getClassPath(final MavenProject project) {
+    static List<Path> getClassPath(final MavenProject project) {
         return project.getArtifacts().stream()
             .map(Artifact::getFile)
-            .filter(file -> file.isFile() && file.getName().endsWith(".jar") || file.isDirectory())
+            .map(File::toPath)
+            .filter(file -> Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jar")
+                || Files.isDirectory(file))
             .toList();
     }
 }

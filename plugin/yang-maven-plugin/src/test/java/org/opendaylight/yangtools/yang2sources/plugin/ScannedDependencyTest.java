@@ -11,15 +11,19 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -36,24 +40,50 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ScannedDependencyTest {
     @Mock
     private MavenProject project;
+    @Mock
+    private File file;
+    @Mock
+    private File file2;
+    @Mock
+    private Path path;
+    @Mock
+    private Path path2;
+    @Mock
+    private FileSystem filesystem;
+    @Mock
+    private FileSystemProvider provider;
+    @Mock
+    private BasicFileAttributes attr;
+    @Mock
+    private BasicFileAttributes attr2;
+    @Mock
+    private Artifact artifact;
+    @Mock
+    private Artifact artifact2;
 
     @Test
-    void getClassPathTest() {
-        final var file = mock(File.class);
-        final var file2 = mock(File.class);
-        final var artifact = mock(Artifact.class);
-        final var artifact2 = mock(Artifact.class);
+    void getClassPathTest() throws IOException {
+        doReturn(provider).when(filesystem).provider();
 
         doReturn(Set.of(artifact, artifact2)).when(project).getArtifacts();
         doReturn(file).when(artifact).getFile();
-        doReturn(true).when(file).isFile();
-        doReturn("iamjar.jar").when(file).getName();
+        doReturn(path).when(file).toPath();
+        doReturn(Path.of("iamjar.jar")).when(path).getFileName();
+        doReturn(filesystem).when(path).getFileSystem();
+        doReturn(attr).when(provider).readAttributesIfExists(eq(path), eq(BasicFileAttributes.class),
+            eq(new LinkOption[0]));
+        doReturn(true).when(attr).isRegularFile();
+
         doReturn(file2).when(artifact2).getFile();
-        doReturn(true).when(file2).isDirectory();
+        doReturn(path2).when(file2).toPath();
+        doReturn(filesystem).when(path2).getFileSystem();
+        doReturn(attr2).when(provider).readAttributesIfExists(eq(path2), eq(BasicFileAttributes.class),
+            eq(new LinkOption[0]));
+        doReturn(true).when(attr2).isDirectory();
 
         final var files = ScannedDependency.getClassPath(project);
         assertEquals(2, files.size());
-        assertTrue(files.contains(file) && files.contains(file2));
+        assertTrue(files.contains(path) && files.contains(path2));
     }
 
     @Test
@@ -74,7 +104,7 @@ class ScannedDependencyTest {
         assertEquals(2, files.size());
     }
 
-    private static void prepareProject(final MavenProject project) throws Exception {
+    private void prepareProject(final MavenProject prj) throws Exception {
         final var manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
         final var testFile2 = Path.of(ScannedDependencyTest.class.getResource("/").toURI()).resolve("test.jar");
@@ -83,12 +113,10 @@ class ScannedDependencyTest {
                 target);
         }
 
-        final var artifact = mock(Artifact.class);
         doReturn(Path.of(ScannedDependencyTest.class.getResource("/tests").toURI()).toFile()).when(artifact).getFile();
 
-        final var artifact2 = mock(Artifact.class);
         doReturn(testFile2.toFile()).when(artifact2).getFile();
-        doReturn(ImmutableSet.of(artifact, artifact2)).when(project).getArtifacts();
+        doReturn(ImmutableSet.of(artifact, artifact2)).when(prj).getArtifacts();
     }
 
     private static void addSourceFileToTargetJar(final Path source, final JarOutputStream target) throws IOException {
