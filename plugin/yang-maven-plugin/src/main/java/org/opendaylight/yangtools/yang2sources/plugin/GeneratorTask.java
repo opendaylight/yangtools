@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.MultimapBuilder;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,27 +83,27 @@ final class GeneratorTask implements Identifiable<String> {
 
         // Step two: create generation tasks for each target file and group them by parent directory
         sw.reset().start();
-        final var dirs = MultimapBuilder.hashKeys().arrayListValues().<File, WriteTask>build();
+        final var dirs = MultimapBuilder.hashKeys().arrayListValues().<Path, WriteTask>build();
         for (var cell : generatedFiles.cellSet()) {
             final GeneratedFile file = cell.getValue();
             final String relativePath = cell.getColumnKey().getPath();
-            final File target;
+            final Path target;
             switch (file.getLifecycle()) {
                 case PERSISTENT:
-                    target = new File(access.persistentPath(cell.getRowKey()), relativePath);
-                    if (target.exists()) {
+                    target = access.persistentPath(cell.getRowKey()).resolve(relativePath);
+                    if (Files.exists(target)) {
                         LOG.debug("Skipping existing persistent {}", target);
                         continue;
                     }
                     break;
                 case TRANSIENT:
-                    target = new File(access.transientPath(cell.getRowKey()), relativePath);
+                    target = access.transientPath(cell.getRowKey()).resolve(relativePath);
                     break;
                 default:
                     throw new FileGeneratorException("Unsupported file type in " + file);
             }
 
-            dirs.put(target.getParentFile(), new WriteTask(target, cell.getValue()));
+            dirs.put(target.getParent(), new WriteTask(target, cell.getValue()));
         }
         LOG.info("Sorted {} files into {} directories in {}", dirs.size(), dirs.keySet().size(), sw);
 
@@ -112,7 +111,7 @@ final class GeneratorTask implements Identifiable<String> {
         sw.reset().start();
         dirs.keySet().parallelStream().forEach(path -> {
             try {
-                Files.createDirectories(path.toPath());
+                Files.createDirectories(path);
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to create " + path, e);
             }
@@ -140,7 +139,7 @@ final class GeneratorTask implements Identifiable<String> {
             .map(output -> {
                 final var state = output.state();
                 if (output.changed()) {
-                    buildContext.refresh(new File(state.path()));
+                    buildContext.refresh(Path.of(state.path()).toFile());
                 }
                 return state;
             })
@@ -164,15 +163,15 @@ final class GeneratorTask implements Identifiable<String> {
 
     private static final class WriteTask {
         private final GeneratedFile file;
-        private final File target;
+        private final Path target;
 
-        WriteTask(final File target, final GeneratedFile file) {
+        WriteTask(final Path target, final GeneratedFile file) {
             this.target = requireNonNull(target);
             this.file = requireNonNull(file);
         }
 
         OutputFile generateFile() throws IOException {
-            if (!target.isFile()) {
+            if (!Files.isRegularFile(target)) {
                 // Target file does not exist: just output body
                 return new OutputFile(FileState.ofWrittenFile(target, file::writeBody), true);
             }
@@ -181,7 +180,7 @@ final class GeneratorTask implements Identifiable<String> {
             final var existingFile = FileState.ofFile(target);
 
             // Write out the new output into a temporary file
-            final var tmpFile = FileState.ofWrittenFile(File.createTempFile("gen", null, target.getParentFile()),
+            final var tmpFile = FileState.ofWrittenFile(Files.createTempFile(target.getParent(), "gen", null),
                 file::writeBody);
 
             // If file size and checksum matches just delete our output
@@ -192,7 +191,7 @@ final class GeneratorTask implements Identifiable<String> {
             }
 
             // Mismatch: move the temp file into place
-            Files.move(tmpPath, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(tmpPath, target, StandardCopyOption.REPLACE_EXISTING);
             return new OutputFile(new FileState(existingFile.path(), tmpFile.size(), tmpFile.crc32()), true);
         }
     }
