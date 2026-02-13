@@ -5,26 +5,28 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.source;
+package org.opendaylight.yangtools.yang.model.api.source;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
- * A {@link StatementDeclaration} when we only have a {@link SourceIdentifier}.
+ * The equivalent of {@link StatementDeclaration} when we only have a {@link SourceIdentifier}.
+ * @since 15.0.0
  */
+@Beta
 @NonNullByDefault
-final class SourceStatementDeclaration extends StatementSourceReference implements DeclarationReference {
+public final class DeclarationInSource extends StatementSourceReference implements DeclarationReference {
     private final SourceIdentifier sourceId;
 
-    SourceStatementDeclaration(final SourceIdentifier sourceId) {
+    DeclarationInSource(final SourceIdentifier sourceId) {
         this.sourceId = requireNonNull(sourceId);
     }
 

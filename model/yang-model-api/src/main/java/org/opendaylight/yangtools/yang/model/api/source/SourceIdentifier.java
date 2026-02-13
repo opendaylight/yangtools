@@ -151,6 +151,14 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
         return toYinFileName(name.getLocalName(), revision);
     }
 
+    /**
+     * {@return a {@code StatementSourceReference} loosely identifying the same source as this identifier}
+     * @since 15.0.0
+     */
+    public @NonNull DeclarationInSource toReference() {
+        return new DeclarationInSource(this);
+    }
+
     @Override
     public String toString() {
         final var sb = new StringBuilder("SourceIdentifier [").append(name.getLocalName());

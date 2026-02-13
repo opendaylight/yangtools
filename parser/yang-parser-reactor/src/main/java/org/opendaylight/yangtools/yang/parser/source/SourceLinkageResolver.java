@@ -355,7 +355,7 @@ public final class SourceLinkageResolver {
                     // Check circular dependency
                     if (inProgress.contains(dep)) {
                         throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                            new InferenceException(new SourceStatementDeclaration(current),
+                            new InferenceException(current.toReference(),
                                 "Found circular dependency between modules %s and %s",
                                 current.name().getLocalName(), dep.name().getLocalName()));
                     }
@@ -380,15 +380,14 @@ public final class SourceLinkageResolver {
 
             final var resolvedSubmodule = involvedSourcesMap.get(submoduleId);
             if (resolvedSubmodule == null) {
-                throw new InferenceException(new SourceStatementDeclaration(submoduleId),
-                    "Submodule %s was not resolved", submoduleId);
+                throw new InferenceException(submoduleId.toReference(), "Submodule %s was not resolved", submoduleId);
             }
 
             // FIXME: ensure this through type safety
             final var submoduleInfo = (Submodule) resolvedSubmodule.reactorSource().sourceInfo();
             final var resolvedParent = involvedSourcesMap.get(parentId);
             if (resolvedParent == null) {
-                throw new InferenceException(new SourceStatementDeclaration(submoduleId),
+                throw new InferenceException(submoduleId.toReference(),
                     "Parent module %s of submodule %s was not resolved", parentId, submoduleId);
             }
 
@@ -418,7 +417,7 @@ public final class SourceLinkageResolver {
                 final var resolvedSibling = involvedSourcesMap.get(sibling);
                 if (resolvedSibling == null) {
                     final var sourceId = resolvedSource.reactorSource().sourceId();
-                    throw new InferenceException(new SourceStatementDeclaration(sourceId),
+                    throw new InferenceException(sourceId.toReference(),
                         "Included submodule %s of module %s was not resolved", sibling, sourceId);
                 }
                 resolvedSource.resolveInclude(includeEntry.getKey(), resolvedSibling);
@@ -515,6 +514,6 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private static StatementSourceReference refOf(final SourceIdentifier sourceId,
             final @Nullable StatementSourceReference sourceRef) {
-        return sourceRef != null ? sourceRef : new SourceStatementDeclaration(sourceId);
+        return sourceRef != null ? sourceRef : sourceId.toReference();
     }
 }
