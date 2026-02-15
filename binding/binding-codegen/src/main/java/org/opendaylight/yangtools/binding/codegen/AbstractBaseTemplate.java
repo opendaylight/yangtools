@@ -152,29 +152,6 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    static final String asHtmlLink(final String href) {
-        final var length = href.length();
-        if (length == 0) {
-            return "";
-        }
-
-        // we want to convert typos trail of thought: we translate text like
-        // from       'according to http://foo/bar: foo has to '
-        // to         'according to <a href ="http://foo/bar">.../a>: foo has to '
-        // instead of 'according to <a href ="http://foo/bar:">.../a> foo has to '
-
-        final var limit = length - 1;
-        final var lastChar = href.charAt(limit);
-        final var sb = new StringBuilder().append("<a href = \"");
-        switch (lastChar) {
-            case '.', ':', ',' ->
-                sb.append(href, 0, limit).append("\">").append(href, 0, limit).append("</a>").append(lastChar);
-            default -> sb.append(href).append("\">").append(href).append("</a>");
-        }
-        return sb.toString();
-    }
-
-    @NonNullByDefault
     String formatDataForJavaDoc(final GeneratedType type) {
         final var sb = new StringBuilder();
         final var comment = type.getComment();
