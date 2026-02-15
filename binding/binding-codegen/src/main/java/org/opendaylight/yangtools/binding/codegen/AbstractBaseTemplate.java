@@ -78,6 +78,28 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         }
     }
 
+    /**
+     * Template method which generates sequence of the names of the class attributes from {@code parameters}.
+     *
+     * @param parameters group of generated property instances which are transformed to the sequence of parameter names
+     * @return string with the list of the parameter names of the {@code parameters}
+     */
+    static final @NonNull String asArguments(final @NonNull List<GeneratedProperty> parameters) {
+        final var it = parameters.iterator();
+        if (!it.hasNext()) {
+            return "";
+        }
+
+        final var sb = new StringBuilder();
+        while (true) {
+            sb.append(fieldName(it.next()));
+            if (!it.hasNext()) {
+                return sb.toString();
+            }
+            sb.append(", ");
+        }
+    }
+
     static final @NonNull String getterMethodName(final @NonNull String propName) {
         return Naming.GETTER_PREFIX + Naming.toFirstUpper(propName);
     }

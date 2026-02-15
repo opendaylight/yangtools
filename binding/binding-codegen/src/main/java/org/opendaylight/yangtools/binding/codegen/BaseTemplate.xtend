@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
-import java.util.Collection
 import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
@@ -104,16 +103,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
     def final protected asNonNullArgumentsDeclaration(Iterable<GeneratedProperty> parameters) '''«IF !parameters.empty»
         «FOR parameter : parameters SEPARATOR ", "»«parameter.returnType.importedNonNull» «parameter
         .fieldName»«ENDFOR»«ENDIF»'''
-
-    /**
-     * Template method which generates sequence of the names of the class attributes from <code>parameters</code>.
-     *
-     * @param parameters
-     * group of generated property instances which are transformed to the sequence of parameter names
-     * @return string with the list of the parameter names of the <code>parameters</code>
-     */
-    def final protected asArguments(Collection<GeneratedProperty> parameters) '''«IF !parameters.empty»«FOR parameter : parameters SEPARATOR ", "»«parameter.
-        fieldName»«ENDFOR»«ENDIF»'''
 
     /**
      * Template method which generates JAVA comments.
