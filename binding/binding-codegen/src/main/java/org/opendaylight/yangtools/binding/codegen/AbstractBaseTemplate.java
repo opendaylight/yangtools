@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -257,6 +258,31 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         appendSnippet(sb, type);
         return additionalComment.isBlank() ? sb.toString()
             : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
+    }
+
+    @NonNullByDefault
+    final String generateAnnotation(final AnnotationType annotation) {
+        final var sb = new StringBuilder()
+            .append('@').append(importedName(annotation));
+
+        final var params = annotation.getParameters();
+        if (params != null && !params.isEmpty()) {
+            sb.append("(\n");
+
+            final var it = params.iterator();
+            while (true) {
+                final var param = it.next();
+                sb.append("    ").append(param.getName()).append('=').append(param.getValue());
+                if (!it.hasNext()) {
+                    break;
+                }
+                sb.append(",\n");
+            }
+
+            sb.append("\n)");
+        }
+
+        return sb.append('\n').toString();
     }
 
     @NonNullByDefault

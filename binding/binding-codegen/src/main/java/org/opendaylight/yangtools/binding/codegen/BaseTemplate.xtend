@@ -16,7 +16,6 @@ import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
 import java.util.regex.Pattern
-import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
-import org.opendaylight.yangtools.binding.model.api.TypeMemberComment
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.BaseIdentity
 import org.opendaylight.yangtools.binding.contract.Naming
@@ -173,16 +171,5 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
            «CODEHELPERS.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«fieldName», «Constants.MEMBER_REGEX_LIST»«fieldName»);
            «ENDIF»
        «ENDFOR»
-    '''
-
-    def protected final generateAnnotation(AnnotationType annotation) '''
-        @«annotation.importedName»
-        «IF annotation.parameters !== null && !annotation.parameters.empty»
-        (
-        «FOR param : annotation.parameters SEPARATOR ","»
-            «param.name»=«param.value»
-        «ENDFOR»
-        )
-        «ENDIF»
     '''
 }
