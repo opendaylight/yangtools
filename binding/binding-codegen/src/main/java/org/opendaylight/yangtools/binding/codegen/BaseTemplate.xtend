@@ -84,16 +84,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
     '''
 
     /**
-     * Template method which generates method parameters with their types from <code>parameters</code>.
-     *
-     * @param parameters
-     * group of generated property instances which are transformed to the method parameters
-     * @return string with the list of the method parameters with their types in JAVA format
-     */
-    def final protected asArgumentsDeclaration(Iterable<GeneratedProperty> parameters) '''«IF !parameters.empty»«FOR parameter : parameters SEPARATOR ", "»«parameter.
-        returnType.importedName» «parameter.fieldName»«ENDFOR»«ENDIF»'''
-
-    /**
      * Template method which generates method parameters with their types from <code>parameters</code>, annotating them
      * with {@link NonNull}.
      *
