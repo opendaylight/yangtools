@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 /**
  * Intermediate Java-based parts under {@link BaseTemplate}.
@@ -202,6 +204,33 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             .append("    return this;\n")
             .append("}\n")
             .toString();
+    }
+
+    /**
+     * Template method which generates JAVA comments.
+     *
+     * @param comment string with the comment for whole JAVA class
+     * @return string with comment in JAVA format
+     */
+    static final @NonNull String asJavadoc(final @Nullable TypeMemberComment comment) {
+        if (comment == null) {
+            return "";
+        }
+
+        final var sb = new StringBuilder();
+        final var contract = comment.contractDescription();
+        if (contract != null) {
+            sb.append(contract).append("\n\n");
+        }
+        final var reference = comment.referenceDescription();
+        if (reference != null) {
+            sb.append(BaseTemplate.formatReference(reference));
+        }
+        final var signature = comment.typeSignature();
+        if (signature != null) {
+            sb.append(signature).append('\n');
+        }
+        return wrapToDocumentation(sb.toString());
     }
 
     @NonNullByDefault

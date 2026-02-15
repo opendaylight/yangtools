@@ -47,25 +47,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
     // Helper patterns
 
-    /**
-     * Template method which generates JAVA comments.
-     *
-     * @param comment string with the comment for whole JAVA class
-     * @return string with comment in JAVA format
-     */
-    def final protected asJavadoc(TypeMemberComment comment) {
-        if (comment === null) {
-            return ''
-        }
-        return wrapToDocumentation('''
-           «comment.contractDescription»
-
-           «comment.referenceDescription.formatReference»
-
-           «comment.typeSignature»
-        ''')
-    }
-
     def static formatReference(String reference) '''
         «IF reference !== null»
             <pre>
