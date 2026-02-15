@@ -168,16 +168,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
         «ENDIF»
     '''
 
-    def protected generateCheckers(GeneratedProperty field, Restrictions restrictions, Type actualType) '''
-       «IF restrictions.rangeConstraint.present»
-           «AbstractRangeGenerator.forType(actualType).generateRangeChecker(field.name.toFirstUpper,
-               restrictions.rangeConstraint.orElseThrow, this)»
-       «ENDIF»
-       «IF restrictions.lengthConstraint.present»
-           «LengthGenerator.generateLengthChecker(field.fieldName, actualType, restrictions.lengthConstraint.orElseThrow, this)»
-       «ENDIF»
-    '''
-
     def protected checkArgument(GeneratedProperty property, Restrictions restrictions, Type actualType, String value) '''
        «IF restrictions.getRangeConstraint.isPresent»
            «IF actualType instanceof ConcreteType»

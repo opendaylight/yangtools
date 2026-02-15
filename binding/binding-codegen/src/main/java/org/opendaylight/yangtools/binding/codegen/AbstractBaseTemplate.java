@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Intermediate Java-based parts under {@link BaseTemplate}.
@@ -226,6 +228,24 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         appendSnippet(sb, type);
         return additionalComment.isBlank() ? sb.toString()
             : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
+    }
+
+    @NonNullByDefault
+    final String generateCheckers(final GeneratedProperty field, final Restrictions restrictions,
+            final Type actualType) {
+        final var sb = new StringBuilder();
+        restrictions.getRangeConstraint().ifPresent(
+            range -> sb
+                .append(AbstractRangeGenerator.forType(actualType)
+                    .generateRangeChecker(StringExtensions.toFirstUpper(field.getName()), range, this))
+        );
+        // FIXME: this call looks unlike the range checker call: it should be refactored to acquire a generator,
+        //        so that we can suppress checker when not needed -- just like ranges do above
+        restrictions.getLengthConstraint().ifPresent(
+            length -> sb.append(LengthGenerator.generateLengthChecker(fieldName(field), actualType, length, this))
+
+        );
+        return sb.toString();
     }
 
     static final @NonNull String getterMethodName(final @NonNull String propName) {
