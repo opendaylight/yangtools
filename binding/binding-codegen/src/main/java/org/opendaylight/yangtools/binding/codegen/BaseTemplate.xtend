@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen
 
-import static extension org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
@@ -36,17 +35,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
     }
 
     // Helper patterns
-
-    def static formatReference(String reference) '''
-        «IF reference !== null»
-            <pre>
-                <code>
-                    «reference.encodeAngleBrackets.formatToParagraph»
-                </code>
-            </pre>
-
-        «ENDIF»
-    '''
 
     def protected emitConstant(Constant c) '''
         «IF Naming.QNAME_STATIC_FIELD_NAME.equals(c.name)»

@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -35,8 +36,6 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
     private static final Splitter NL_SPLITTER = Splitter.on('\n');
-    private static final char NEW_LINE = '\n';
-    private static final char SPACE = ' ';
 
     AbstractBaseTemplate(final @NonNull GeneratedType type) {
         super(type);
@@ -232,7 +231,7 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         }
         final var reference = comment.referenceDescription();
         if (reference != null) {
-            sb.append(BaseTemplate.formatReference(reference));
+            sb.append(formatReference(reference));
         }
         final var signature = comment.typeSignature();
         if (signature != null) {
@@ -267,15 +266,25 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
     }
 
-    @NonNullByDefault
-    static final String formatToParagraph(final String inputText) {
-        final var sb = new StringBuilder();
-        var lineBuilder = new StringBuilder();
-        var isFirstElementOnNewLineEmptyChar = false;
-        var formattedText = WS_MATCHER.replaceFrom(JavaFileTemplate.encodeJavadocSymbols(inputText), ' ');
+    static final @NonNull String formatReference(final @Nullable String reference) {
+        if (reference == null) {
+            return "";
+        }
+
+        final var sb = new StringBuilder().append("""
+            <pre>
+                <code>
+            """);
+
+        // FIXME: use a {@code} block which will render some of this encoding superfluous, but it requires paying
+        //        attention to '}' pairing in input
+        var formattedText = BindingGeneratorUtil.encodeAngleBrackets(reference);
+        formattedText = WS_MATCHER.replaceFrom(JavaFileTemplate.encodeJavadocSymbols(formattedText), ' ');
         formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ");
 
         // FIXME: can we NOT use StringTokenizer here?
+        var lineBuilder = new StringBuilder();
+        var isFirstElementOnNewLineEmptyChar = false;
         final var tokenizer = new StringTokenizer(formattedText, " ", true);
         while (tokenizer.hasMoreTokens()) {
             final var nextElement = tokenizer.nextToken();
@@ -286,10 +295,11 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
                 if (lineBuilder.charAt(limit) == ' ') {
                     lineBuilder.setLength(limit);
                 }
+                // FIXME: use append(CharSequence, int, int) instead
                 if (!lineBuilder.isEmpty() && lineBuilder.charAt(0) == ' ') {
                     lineBuilder.deleteCharAt(0);
                 }
-                sb.append(lineBuilder).append('\n');
+                sb.append("        ").append(lineBuilder).append('\n');
                 lineBuilder.setLength(0);
 
                 if (" ".equals(nextElement)) {
@@ -302,7 +312,16 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
                 lineBuilder.append(nextElement);
             }
         }
-        return sb.append(lineBuilder).append('\n').toString();
+        if (!lineBuilder.isEmpty()) {
+            sb.append("        ").append(lineBuilder).append('\n');
+        }
+
+        return sb.append("""
+                </code>
+            </pre>
+
+            """)
+            .toString();
     }
 
     @NonNullByDefault
