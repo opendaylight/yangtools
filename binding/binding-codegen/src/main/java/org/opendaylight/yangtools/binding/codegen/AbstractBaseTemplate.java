@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 
 /**
  * Intermediate Java-based parts under {@link BaseTemplate}.
@@ -52,6 +53,29 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
     // Helper patterns
     static final @NonNull String fieldName(final GeneratedProperty property) {
         return "_" + property.getName();
+    }
+
+    /**
+     * Template method which generates method parameters with their types from {@code parameters}.
+     *
+     * @param parameters list of parameter instances which are transformed to the method parameters
+     * @return string with the list of the method parameters with their types in JAVA format
+     */
+    final @NonNull String generateParameters(final @NonNull List<MethodSignature.Parameter> parameters) {
+        final var it = parameters.iterator();
+        if (!it.hasNext()) {
+            return "";
+        }
+
+        final var sb = new StringBuilder();
+        while (true) {
+            final var parameter = it.next();
+            sb.append(importedName(parameter.type())).append(' ').append(parameter.name());
+            if (!it.hasNext()) {
+                return sb.toString();
+            }
+            sb.append(", ");
+        }
     }
 
     static final @NonNull String getterMethodName(final @NonNull String propName) {
