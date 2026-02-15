@@ -110,25 +110,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
         «ENDIF»
     '''
 
-    def asLink(String text) {
-        val StringBuilder sb = new StringBuilder()
-        var tempText = text
-        var char lastChar = SPACE
-        var boolean badEnding = false
-
-        if (text.endsWith('.') || text.endsWith(':') || text.endsWith(',')) {
-            tempText = text.substring(0, text.length - 1)
-            lastChar = text.charAt(text.length - 1)
-            badEnding = true
-        }
-        sb.append("<a href = \"").append(tempText).append("\">").append(tempText).append("</a>")
-
-        if (badEnding)
-            sb.append(lastChar)
-
-        return sb.toString
-    }
-
     protected static def formatToParagraph(String inputText) {
         val StringBuilder sb = new StringBuilder();
         var StringBuilder lineBuilder = new StringBuilder();
