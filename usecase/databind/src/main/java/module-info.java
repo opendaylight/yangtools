@@ -8,9 +8,8 @@
 /**
  * Object models of NETCONF/RESTCONF constructs and their YANG-assisted data binding operations.
  */
-module org.opendaylight.netconf.databind {
+module org.opendaylight.yangtools.databind {
     exports org.opendaylight.netconf.databind;
-    exports org.opendaylight.netconf.databind.subtree;
 
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.data.codec.gson;
