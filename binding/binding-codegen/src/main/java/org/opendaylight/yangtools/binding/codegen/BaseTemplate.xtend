@@ -11,18 +11,14 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
 import java.util.Locale
-import java.util.Map.Entry
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
-import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
-import org.opendaylight.yangtools.binding.BaseIdentity
 import org.opendaylight.yangtools.binding.contract.Naming
-import org.opendaylight.yangtools.yang.common.YangDataName
 
 // FIXME: YANGTOOLS-1618: convert to Java
 abstract class BaseTemplate extends AbstractBaseTemplate {
@@ -36,26 +32,29 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
     // Helper patterns
 
-    def protected emitConstant(Constant c) '''
-        «IF Naming.QNAME_STATIC_FIELD_NAME.equals(c.name)»
-            «val entry = c.value as Entry<JavaTypeName, String>»
-            /**
-             * YANG identifier of the statement represented by this class.
-             */
-            public static final «c.type.importedNonNull» «c.name» = «entry.key.importedName».«Naming.MODULE_INFO_QNAMEOF_METHOD_NAME»("«entry.value»");
-        «ELSEIF Naming.NAME_STATIC_FIELD_NAME.equals(c.name)»
-            «val entry = c.value as Entry<JavaTypeName, YangDataName>»
-            /**
-             * Yang Data template name of the statement represented by this class.
-             */
-            public static final «c.type.importedNonNull» «c.name» = «entry.key.importedName».«Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME»("«entry.value.name»");
-        «ELSEIF Naming.VALUE_STATIC_FIELD_NAME.equals(c.name) && BaseIdentity.equals(c.value)»
-            «val typeName = c.type.importedName»
-            «val override = OVERRIDE.importedName»
+    override package final emitNameConstant(String name, Type type, JavaTypeName yangModuleInfo,
+            String yangDataName) '''
+        /**
+         * Yang Data template name of the statement represented by this class.
+         */
+        public static final «type.importedNonNull» «name» = «yangModuleInfo.importedName».«Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME»("«yangDataName»");
+    '''
+
+    override package final emitQNameConstant(String name, Type type, JavaTypeName yangModuleInfo, String localName) '''
+        /**
+         * YANG identifier of the statement represented by this class.
+         */
+        public static final «type.importedNonNull» «name» = «yangModuleInfo.importedName».«Naming.MODULE_INFO_QNAMEOF_METHOD_NAME»("«localName»");
+    '''
+
+    override package CharSequence emitValueConstant(String name, Type type) {
+        val typeName = type.importedName
+        val override = OVERRIDE.importedName
+        return '''
             /**
              * Singleton value representing the {@link «typeName»} identity.
              */
-            public static final «c.type.importedNonNull» «c.name» = new «typeName»() {
+            public static final «type.importedNonNull» «name» = new «typeName»() {
                 @java.io.Serial
                 private static final long serialVersionUID = 1L;
 
@@ -77,18 +76,16 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
                 @«override»
                 public «STRING.importedName» toString() {
-                    return «MOREOBJECTS.importedName».toStringHelper("«c.type.name»").add("qname", QNAME).toString();
+                    return «MOREOBJECTS.importedName».toStringHelper("«typeName»").add("qname", QNAME).toString();
                 }
 
                 @java.io.Serial
                 private Object readResolve() throws java.io.ObjectStreamException {
-                    return «c.name»;
+                    return «name»;
                 }
             };
-        «ELSE»
-            public static final «c.type.importedName» «c.name» = «c.value»;
-        «ENDIF»
-    '''
+        '''
+    }
 
     def protected checkArgument(GeneratedProperty property, Restrictions restrictions, Type actualType, String value) '''
        «IF restrictions.getRangeConstraint.isPresent»

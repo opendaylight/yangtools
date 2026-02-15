@@ -11,6 +11,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -21,13 +22,16 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**
  * Intermediate Java-based parts under {@link BaseTemplate}.
@@ -162,6 +166,38 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             sb.append(", ");
         }
     }
+
+    @NonNullByDefault
+    final CharSequence emitConstant(final Constant constant) {
+        final var name = constant.getName();
+        return switch (name) {
+            case Naming.NAME_STATIC_FIELD_NAME -> {
+                @SuppressWarnings("unchecked")
+                final var entry = (Entry<JavaTypeName, YangDataName>) constant.getValue();
+                yield emitNameConstant(constant.getName(), constant.getType(), entry.getKey(),
+                    entry.getValue().name());
+            }
+            case Naming.QNAME_STATIC_FIELD_NAME -> {
+                @SuppressWarnings("unchecked")
+                final var entry = (Entry<JavaTypeName, String>) constant.getValue();
+                yield emitQNameConstant(constant.getName(), constant.getType(), entry.getKey(), entry.getValue());
+            }
+            case Naming.VALUE_STATIC_FIELD_NAME -> emitValueConstant(constant.getName(), constant.getType());
+            default -> new StringBuilder()
+                .append("public static final ").append(importedName(constant.getType())).append(' ')
+                .append(constant.getName()).append(" = ").append(constant.getValue()).append(";\n")
+                .toString();
+        };
+    }
+
+    @NonNullByDefault
+    abstract CharSequence emitNameConstant(String name, Type type, JavaTypeName yangModuleInfo, String yangDataName);
+
+    @NonNullByDefault
+    abstract CharSequence emitQNameConstant(String name, Type type, JavaTypeName yangModuleInfo, String localName);
+
+    @NonNullByDefault
+    abstract CharSequence emitValueConstant(String name, Type type);
 
     /**
      * Template method which generates the getter method for {@code field}.

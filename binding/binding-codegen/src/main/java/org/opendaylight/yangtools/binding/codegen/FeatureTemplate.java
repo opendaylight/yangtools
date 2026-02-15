@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -47,20 +46,13 @@ final class FeatureTemplate extends ClassTemplate {
             + "}";
     }
 
-    @SuppressWarnings("checkstyle:ParameterName")
     @Override
-    protected CharSequence emitConstant(final Constant c) {
-        if (!Naming.VALUE_STATIC_FIELD_NAME.equals(c.getName()) || !YangFeature.class.equals(c.getValue())) {
-            return super.emitConstant(c);
-        }
-
-        final var type = type();
-        final var typeName = type.getName();
+    CharSequence emitValueConstant(final String name, final Type type) {
+        final var typeName = importedName(type());
         return "/**\n"
             + " * {@link " + typeName + "} singleton instance.\n"
             + " */\n"
-            + "public static final " + importedName(type) + ' ' + Naming.VALUE_STATIC_FIELD_NAME + " = new "
-            + type.getName() + "();";
+            + "public static final " + typeName + ' ' + Naming.VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();";
     }
 
     @Override
