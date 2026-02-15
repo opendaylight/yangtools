@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * The Method Signature interface contains simplified meta model for java method definition. Each method MUST be defined
@@ -57,21 +60,16 @@ public interface MethodSignature extends TypeMember {
      * The Parameter interface is designed to hold the information of method Parameter(s). The parameter is defined by
      * his Name which MUST be unique as java does not allow multiple parameters with same names for one method and Type
      * that is associated with parameter.
+     *
+     * @param name the parameter name
+     * @param type the {@link Type} that is bounded to parameter name
      */
-    interface Parameter {
-        /**
-         * Returns the parameter name.
-         *
-         * @return the parameter name.
-         */
-        String getName();
-
-        /**
-         * Returns Type that is bounded to parameter name.
-         *
-         * @return Type that is bounded to parameter name.
-         */
-        Type getType();
+    @NonNullByDefault
+    record Parameter(String name, Type type) {
+        public Parameter {
+            requireNonNull(name);
+            requireNonNull(type);
+        }
     }
 
     /**
