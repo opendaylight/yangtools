@@ -26,6 +26,11 @@
         <dependencies>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>concepts</artifactId>
+                <version>15.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>dagger-yang-parser</artifactId>
                 <version>15.0.0-SNAPSHOT</version>
             </dependency>
@@ -36,12 +41,7 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-util</artifactId>
-                <version>15.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>concepts</artifactId>
+                <artifactId>databind</artifactId>
                 <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -82,6 +82,11 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-tree-ri</artifactId>
+                <version>15.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-data-util</artifactId>
                 <version>15.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -503,6 +508,13 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>odl-yangtools-codec</artifactId>
+                <version>15.0.0-SNAPSHOT</version>
+                <type>xml</type>
+                <classifier>features</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-data-api</artifactId>
                 <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
@@ -517,7 +529,7 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>odl-yangtools-codec</artifactId>
+                <artifactId>odl-yangtools-databind</artifactId>
                 <version>15.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>

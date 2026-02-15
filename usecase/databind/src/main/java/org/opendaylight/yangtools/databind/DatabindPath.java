@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.netconf.databind;
+package org.opendaylight.yangtools.databind;
 
 import static java.util.Objects.requireNonNull;
 
@@ -77,12 +77,12 @@ public sealed interface DatabindPath {
 
         @Override
         public InputEffectiveStatement inputStatement() {
-            return statement.input();
+            return statement.inputStatement();
         }
 
         @Override
         public OutputEffectiveStatement outputStatement() {
-            return statement.output();
+            return statement.outputStatement();
         }
     }
 
@@ -92,7 +92,7 @@ public sealed interface DatabindPath {
      * @param databind the {@link DatabindContext} to which this path is bound
      * @param inference the {@link EffectiveStatementInference} made by this path
      * @param instance the {@link YangInstanceIdentifier} of the instance being referenced,
-     *                 {@link YangInstanceIdentifier#empty()} denotes the datastore
+     *                 {@link YangInstanceIdentifier#of()} denotes the datastore
      * @param schema the {@link DataSchemaContext} of the datastore instance
      */
     // FIXME: split into 'Datastore' and 'Data' with non-empty instance, so we can bind to correct
@@ -102,6 +102,15 @@ public sealed interface DatabindPath {
             Inference inference,
             YangInstanceIdentifier instance,
             DataSchemaContext schema) implements InstanceRequest {
+        /**
+         * Default constructor.
+         *
+         * @param databind the {@link DatabindContext} to which this path is bound
+         * @param inference the {@link EffectiveStatementInference} made by this path
+         * @param instance the {@link YangInstanceIdentifier} of the instance being referenced,
+         *                 {@link YangInstanceIdentifier#of()} denotes the datastore
+         * @param schema the {@link DataSchemaContext} of the datastore instance
+         */
         public Data {
             requireNonNull(databind);
             requireNonNull(inference);
@@ -150,8 +159,7 @@ public sealed interface DatabindPath {
      *
      * @param databind the {@link DatabindContext} to which this path is bound
      * @param inference the {@link EffectiveStatementInference} made by this path
-     * @param instance the {@link YangInstanceIdentifier} of the instance being referenced, guaranteed to be
-     *        non-empty
+     * @param instance the {@link YangInstanceIdentifier} of the instance being referenced, guaranteed to be non-empty
      * @param statement the {@code NotificationEffectiveStatement}
      */
     record DataNodeNotification(
@@ -159,6 +167,15 @@ public sealed interface DatabindPath {
             Inference inference,
             YangInstanceIdentifier instance,
             NotificationEffectiveStatement statement) implements DatabindPath, InstanceReference {
+        /**
+         * Default constructor.
+         *
+         * @param databind the {@link DatabindContext} to which this path is bound
+         * @param inference the {@link EffectiveStatementInference} made by this path
+         * @param instance the {@link YangInstanceIdentifier} of the instance being referenced, guaranteed to be
+         *        non-empty
+         * @param statement the {@code NotificationEffectiveStatement}
+         */
         public DataNodeNotification {
             requireNonNull(databind);
             requireNonNull(inference);
@@ -207,12 +224,12 @@ public sealed interface DatabindPath {
 
         @Override
         public InputEffectiveStatement inputStatement() {
-            return statement.input();
+            return statement.inputStatement();
         }
 
         @Override
         public OutputEffectiveStatement outputStatement() {
-            return statement.output();
+            return statement.outputStatement();
         }
     }
 
@@ -223,7 +240,7 @@ public sealed interface DatabindPath {
     sealed interface InstanceReference extends DatabindPath {
         /**
          * {@return the {@link YangInstanceIdentifier} of the instance being referenced,
-         *          {@link YangInstanceIdentifier#empty()} denotes the data root}
+         *          {@link YangInstanceIdentifier#of()} denotes the data root}
          */
         YangInstanceIdentifier instance();
 
