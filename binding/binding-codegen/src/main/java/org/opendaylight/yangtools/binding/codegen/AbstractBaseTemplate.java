@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.opendaylight.yangtools.binding.codegen.blk.Block;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -307,7 +308,7 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             return "";
         }
 
-        final var sb = new StringBuilder().append("""
+        var bb = Block.builder().txt("""
             <pre>
                 <code>
             """);
@@ -331,12 +332,11 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
                 if (lineBuilder.charAt(limit) == ' ') {
                     lineBuilder.setLength(limit);
                 }
-                // FIXME: use append(CharSequence, int, int) instead
+                // FIXME: use line(StringBuilder, int) instead
                 if (!lineBuilder.isEmpty() && lineBuilder.charAt(0) == ' ') {
                     lineBuilder.deleteCharAt(0);
                 }
-                sb.append("        ").append(lineBuilder).append('\n');
-                lineBuilder.setLength(0);
+                bb = bb.str("        ").line(lineBuilder.toString());
 
                 if (" ".equals(nextElement)) {
                     isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
@@ -349,14 +349,14 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             }
         }
         if (!lineBuilder.isEmpty()) {
-            sb.append("        ").append(lineBuilder).append('\n');
+            bb = bb.str("        ").line(lineBuilder.toString());
         }
 
-        return sb.append("""
+        return bb.txt("""
                 </code>
             </pre>
-
             """)
+            .build()
             .toString();
     }
 
