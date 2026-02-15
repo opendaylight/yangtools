@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.opendaylight.yangtools.binding.codegen.blk.Block;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -240,12 +241,13 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         final var suffix = StringExtensions.toFirstUpper(field.getName());
         final var typeName = type().getName();
 
-        return new StringBuilder()
-            .append("public ").append(typeName).append(" set").append(suffix).append('(').append(fieldType)
-                .append(" value) {\n")
-            .append("    this.").append(fieldName).append(" = value;\n")
-            .append("    return this;\n")
-            .append("}\n")
+        return Block.builder()
+            .str("public ").str(typeName).str(" set").str(suffix).lp().str(fieldType).line(" value) {")
+            .blk(Block.builder()
+                .str("this.").str(fieldName).line(" = value;")
+                .line("return this;")
+                .build())
+            .rp().nl()
             .toString();
     }
 
@@ -307,7 +309,7 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             return "";
         }
 
-        final var sb = new StringBuilder().append("""
+        var bb = Block.builder().txt("""
             <pre>
                 <code>
             """);
@@ -331,11 +333,11 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
                 if (lineBuilder.charAt(limit) == ' ') {
                     lineBuilder.setLength(limit);
                 }
-                // FIXME: use append(CharSequence, int, int) instead
+                // FIXME: use line(StringBuilder, int) instead
                 if (!lineBuilder.isEmpty() && lineBuilder.charAt(0) == ' ') {
                     lineBuilder.deleteCharAt(0);
                 }
-                sb.append("        ").append(lineBuilder).append('\n');
+                bb = bb.str("        ").line(lineBuilder.toString());
                 lineBuilder.setLength(0);
 
                 if (" ".equals(nextElement)) {
@@ -349,21 +351,20 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             }
         }
         if (!lineBuilder.isEmpty()) {
-            sb.append("        ").append(lineBuilder).append('\n');
+            bb = bb.str("        ").line(lineBuilder.toString());
         }
 
-        return sb.append("""
+        return bb.txt("""
                 </code>
             </pre>
-
             """)
+            .build()
             .toString();
     }
 
     @NonNullByDefault
     final String generateAnnotation(final AnnotationType annotation) {
-        final var sb = new StringBuilder()
-            .append('@').append(importedName(annotation));
+        final var sb = new StringBuilder().append('@').append(importedName(annotation));
 
         final var params = annotation.getParameters();
         if (params != null && !params.isEmpty()) {
@@ -430,14 +431,11 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             return text;
         }
 
-        final var sb = new StringBuilder().append("/**\n");
+        var bb = Block.builder().line("/**");
         for (var line : NL_SPLITTER.split(text)) {
-            sb.append(" *");
-            if (!line.isEmpty()) {
-                sb.append(' ').append(line);
-            }
-            sb.append('\n');
+            bb = bb.str(" *");
+            bb = line.isBlank() ? bb.nl() : bb.sp().line(line);
         }
-        return sb.append(" */").toString();
+        return bb.str(" */").build().toString();
     }
 }
