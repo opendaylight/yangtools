@@ -225,9 +225,9 @@ class ClassTemplate extends BaseTemplate {
 
     def private defaultProperties() '''
         «FOR field : properties SEPARATOR "\n"»
-            «field.getterMethod»
+            «field.asGetterMethod»
             «IF !field.readOnly»
-                «field.setterMethod»
+                «field.asSetterMethod»
             «ENDIF»
         «ENDFOR»
     '''

@@ -106,7 +106,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                  * @return current value
                  */
                 «ENDIF»
-                «field.getterMethod»
+                «field.asGetterMethod»
             «ENDFOR»
         «ENDIF»
     '''

@@ -99,7 +99,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     def private generateGetters() '''
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
-                «field.getterMethod»
+                «field.asGetterMethod»
             «ENDFOR»
         «ENDIF»
     '''
@@ -132,7 +132,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         return Optional.empty
     }
 
-    override getterMethod(GeneratedProperty field) '''
+    override asGetterMethod(GeneratedProperty field) '''
         @«OVERRIDE.importedName»
         public «field.returnType.importedName» «field.getterMethodName»() {
             «val fieldName = field.fieldName»

@@ -70,7 +70,7 @@ final class ListKeyTemplate extends ClassTemplate {
     }
 
     @Override
-    String getterMethod(final GeneratedProperty field) {
+    String asGetterMethod(final GeneratedProperty field) {
         final var fieldName = field.getName();
         final var returnType = field.getReturnType();
 

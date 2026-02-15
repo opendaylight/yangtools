@@ -46,39 +46,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
     }
 
     // Helper patterns
-    /**
-     * Template method which generates the getter method for <code>field</code>
-     *
-     * @param field
-     * generated property with data about field which is generated as the getter method
-     * @return string with the getter method source code in JAVA format
-     */
-    def package getterMethod(GeneratedProperty field) '''
-        «val methodName = field.getterMethodName»
-        public «field.returnType.importedName» «methodName»() {
-            «val fieldName = field.fieldName»
-            «IF field.returnType.name.endsWith("[]")»
-            return «fieldName» == null ? null : «fieldName».clone();
-            «ELSE»
-            return «fieldName»;
-            «ENDIF»
-        }
-    '''
-
-    /**
-     * Template method which generates the setter method for <code>field</code>
-     *
-     * @param field
-     * generated property with data about field which is generated as the setter method
-     * @return string with the setter method source code in JAVA format
-     */
-    final protected def setterMethod(GeneratedProperty field) '''
-        «val returnType = field.returnType.importedName»
-        public «type.name» set«field.name.toFirstUpper»(«returnType» value) {
-            this.«field.fieldName» = value;
-            return this;
-        }
-    '''
 
     /**
      * Template method which generates JAVA comments.

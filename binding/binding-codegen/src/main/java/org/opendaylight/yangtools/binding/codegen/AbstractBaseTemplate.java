@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -149,6 +150,56 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             }
             sb.append(", ");
         }
+    }
+
+    /**
+     * Template method which generates the getter method for {@code field}.
+     *
+     * @param field generated property with data about field which is generated as the getter method
+     * @return string with the getter method source code in JAVA format
+     */
+    @NonNullByDefault
+    CharSequence asGetterMethod(final GeneratedProperty field) {
+        // derive state
+        final var fieldName = fieldName(field);
+        final var methodName = getterMethodName(field);
+        final var returnType = field.getReturnType();
+        final var importedName = importedName(returnType);
+        // any Java array type needs to be duplicated to prevent modification
+        final var copy = returnType.getName().endsWith("[]");
+
+        // emit separately
+        final var sb = new StringBuilder()
+            .append("public ").append(importedName).append(' ').append(methodName).append("() {\n")
+            .append("    return ").append(fieldName);
+        // FIXME: offload this logic to CodeHelpers: this should only apply to byte[] and therefore we can just call
+        //        CodeHelpers.isolatedBytes(byte[]);
+        if (copy) {
+            sb.append(" == null ? null : ").append(fieldName).append(".clone()");
+        }
+        return sb.append(";\n}\n").toString();
+    }
+
+    /**
+     * Template method which generates the setter method for {@code field}.
+     *
+     * @param field generated property with data about field which is generated as the setter method
+     * @return string with the setter method source code in JAVA format
+     */
+    @NonNullByDefault
+    final CharSequence asSetterMethod(final GeneratedProperty field) {
+        final var fieldName = fieldName(field);
+        final var fieldType = importedName(field.getReturnType());
+        final var suffix = StringExtensions.toFirstUpper(field.getName());
+        final var typeName = type().getName();
+
+        return new StringBuilder()
+            .append("public ").append(typeName).append(" set").append(suffix).append('(').append(fieldType)
+                .append(" value) {\n")
+            .append("    this.").append(fieldName).append(" = value;\n")
+            .append("    return this;\n")
+            .append("}\n")
+            .toString();
     }
 
     @NonNullByDefault
