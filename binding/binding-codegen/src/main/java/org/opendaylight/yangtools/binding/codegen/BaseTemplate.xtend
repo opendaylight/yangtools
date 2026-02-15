@@ -17,7 +17,6 @@ import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
 import java.util.regex.Pattern
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Constant
@@ -82,17 +81,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
             return this;
         }
     '''
-
-    /**
-     * Template method which generates method parameters with their types from <code>parameters</code>, annotating them
-     * with {@link NonNull}.
-     *
-     * @param parameters group of generated property instances which are transformed to the method parameters
-     * @return string with the list of the method parameters with their types in JAVA format
-     */
-    def final protected asNonNullArgumentsDeclaration(Iterable<GeneratedProperty> parameters) '''«IF !parameters.empty»
-        «FOR parameter : parameters SEPARATOR ", "»«parameter.returnType.importedNonNull» «parameter
-        .fieldName»«ENDFOR»«ENDIF»'''
 
     /**
      * Template method which generates JAVA comments.
