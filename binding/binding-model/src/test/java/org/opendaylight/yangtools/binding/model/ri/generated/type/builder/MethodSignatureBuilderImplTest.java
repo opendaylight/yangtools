@@ -38,7 +38,7 @@ class MethodSignatureBuilderImplTest {
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"));
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
         final var methodSignature = signatureBuilderImpl.toInstance(null);
-        assertEquals("ipAddress", methodSignature.getParameters().get(0).getName());
+        assertEquals("ipAddress", methodSignature.getParameters().getFirst().name());
     }
 
     @Test

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
@@ -33,26 +34,26 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodS
 
     @Override
     public MethodSignatureBuilder setAbstract(final boolean newIsAbstract) {
-        this.isAbstract = newIsAbstract;
+        isAbstract = newIsAbstract;
         return this;
     }
 
     @Override
     public MethodSignatureBuilder setDefault(final boolean newIsDefault) {
-        this.isDefault = newIsDefault;
+        isDefault = newIsDefault;
         return this;
     }
 
     @Override
     public MethodSignatureBuilder setMechanics(final ValueMechanics newMechanics) {
-        this.mechanics = requireNonNull(newMechanics);
+        mechanics = requireNonNull(newMechanics);
         return this;
     }
 
     @Override
     public MethodSignatureBuilder addParameter(final Type type, final String name) {
-        this.parameters = LazyCollections.lazyAdd(this.parameters, new MethodParameterImpl(name, type));
-        this.unmodifiableParams = Collections.unmodifiableList(this.parameters);
+        parameters = LazyCollections.lazyAdd(parameters, new Parameter(name, type));
+        unmodifiableParams = Collections.unmodifiableList(parameters);
         return this;
     }
 
@@ -83,7 +84,7 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodS
         }
         final MethodSignatureBuilderImpl other = (MethodSignatureBuilderImpl) obj;
         return Objects.equals(getName(), other.getName())
-                && Objects.equals(this.parameters, other.parameters)
+                && Objects.equals(parameters, other.parameters)
                 && Objects.equals(getReturnType(), other.getReturnType());
     }
 
@@ -91,7 +92,7 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodS
     public String toString() {
         return new StringBuilder().append("MethodSignatureBuilderImpl [name=").append(getName())
                 .append(", returnType=").append(getReturnType())
-                .append(", parameters=").append(this.parameters)
+                .append(", parameters=").append(parameters)
                 .append(", annotationBuilders=").append(getAnnotationBuilders())
                 .append(", comment=").append(getComment())
                 .append(']').toString();

@@ -14,14 +14,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
@@ -65,16 +63,15 @@ public final class GeneratorUtil {
             putTypeIntoImports(genType, PATTERN, imports);
         }
 
-        final List<MethodSignature> methods = genType.getMethodDefinitions();
         // METHODS
+        final var methods = genType.getMethodDefinitions();
         if (methods != null) {
-            for (final MethodSignature method : methods) {
-                final Type methodReturnType = method.getReturnType();
-                putTypeIntoImports(genType, methodReturnType, imports);
-                for (final MethodSignature.Parameter methodParam : method.getParameters()) {
-                    putTypeIntoImports(genType, methodParam.getType(), imports);
+            for (var method : methods) {
+                putTypeIntoImports(genType, method.getReturnType(), imports);
+                for (var methodParam : method.getParameters()) {
+                    putTypeIntoImports(genType, methodParam.type(), imports);
                 }
-                for (final AnnotationType at : method.getAnnotations()) {
+                for (var at : method.getAnnotations()) {
                     putTypeIntoImports(genType, at, imports);
                 }
             }

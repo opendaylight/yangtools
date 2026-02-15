@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -52,8 +53,6 @@ class GeneratorUtilTest {
     private Type type;
     @Mock
     private AnnotationType annotationType;
-    @Mock
-    private MethodSignature.Parameter parameter;
     @Mock
     private GeneratedProperty property;
     @Mock
@@ -78,13 +77,12 @@ class GeneratorUtilTest {
         doReturn("tst.package").when(enclosedType).getPackageName();
         doReturn("tstName").when(enclosedType).getName();
 
-        doReturn(List.of(parameter)).when(methodSignature).getParameters();
+        doReturn(List.of(new Parameter("foo", type))).when(methodSignature).getParameters();
 
         doReturn("tst.package").when(annotationType).getPackageName();
         doReturn("tstAnnotationName").when(annotationType).getName();
         doReturn(ANNOTATION).when(annotationType).getIdentifier();
 
-        doReturn(type).when(parameter).getType();
         doReturn(type).when(methodSignature).getReturnType();
         doReturn(List.of(annotationType)).when(methodSignature).getAnnotations();
         doReturn(List.of(methodSignature)).when(enclosedType).getMethodDefinitions();
