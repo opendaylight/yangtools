@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
 import com.google.common.base.CharMatcher
-import com.google.common.base.Splitter
 import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
@@ -37,7 +36,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
     static final char SPACE = ' '
     static val WS_MATCHER = CharMatcher.anyOf("\n\t")
     static val SPACES_PATTERN = Pattern.compile(" +")
-    static val NL_SPLITTER = Splitter.on(NEW_LINE)
 
     new(GeneratedType type) {
         super(type)
@@ -99,23 +97,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
            «comment.typeSignature»
         ''')
-    }
-
-    def static String wrapToDocumentation(String text) {
-        if (text.empty)
-            return ""
-
-        val StringBuilder sb = new StringBuilder().append("/**\n")
-        for (String t : NL_SPLITTER.split(text)) {
-            sb.append(" *")
-            if (!t.isEmpty()) {
-                sb.append(SPACE).append(t)
-            }
-            sb.append(NEW_LINE)
-        }
-        sb.append(" */")
-
-        return sb.toString
     }
 
     def package String formatDataForJavaDoc(GeneratedType type) {

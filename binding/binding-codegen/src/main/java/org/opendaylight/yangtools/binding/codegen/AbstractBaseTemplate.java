@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import com.google.common.base.Splitter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -21,6 +23,8 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
  * Intermediate Java-based parts under {@link BaseTemplate}.
  */
 abstract class AbstractBaseTemplate extends JavaFileTemplate {
+    private static final Splitter NL_SPLITTER = Splitter.on('\n');
+
     AbstractBaseTemplate(final @NonNull GeneratedType type) {
         super(type);
     }
@@ -166,5 +170,22 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         return keyType.getProperties().stream()
             .sorted(Comparator.comparing(GeneratedProperty::getName))
             .collect(Collectors.toList());
+    }
+
+    @NonNullByDefault
+    static final String wrapToDocumentation(final String text) {
+        if (text.isEmpty()) {
+            return text;
+        }
+
+        final var sb = new StringBuilder().append("/**\n");
+        for (var line : NL_SPLITTER.split(text)) {
+            sb.append(" *");
+            if (!line.isEmpty()) {
+                sb.append(' ').append(line);
+            }
+            sb.append('\n');
+        }
+        return sb.append(" */").toString();
     }
 }
