@@ -29,6 +29,7 @@
     <modules>
         <module>dagger-yang-parser</module>
         <module>dagger-yang-parser-vanilla</module>
+        <module>databind</module>
     </modules>
 
     <profiles>
