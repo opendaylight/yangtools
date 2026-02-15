@@ -14,7 +14,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
 import java.util.Collection
-import java.util.List
 import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
-import org.opendaylight.yangtools.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment
@@ -256,21 +254,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
         return sb.append(lineBuilder).append(NEW_LINE).toString
     }
-
-    /**
-     * Template method which generates method parameters with their types from <code>parameters</code>.
-     *
-     * @param parameters
-     * list of parameter instances which are transformed to the method parameters
-     * @return string with the list of the method parameters with their types in JAVA format
-     */
-    def protected generateParameters(List<MethodSignature.Parameter> parameters) '''«
-        IF !parameters.empty»«
-            FOR parameter : parameters SEPARATOR ", "»«
-                parameter.type.importedName» «parameter.name»«
-            ENDFOR»«
-        ENDIF
-    »'''
 
     def protected emitConstant(Constant c) '''
         «IF Naming.QNAME_STATIC_FIELD_NAME.equals(c.name)»
