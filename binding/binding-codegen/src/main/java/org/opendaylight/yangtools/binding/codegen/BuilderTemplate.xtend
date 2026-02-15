@@ -562,7 +562,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     '''
     }
 
-    override protected String formatDataForJavaDoc(GeneratedType type) {
+    override package String formatDataForJavaDoc(GeneratedType type) {
         val typeDescription = createDescription(type)
 
         return '''

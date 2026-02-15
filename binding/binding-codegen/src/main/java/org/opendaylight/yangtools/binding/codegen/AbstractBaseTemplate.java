@@ -151,6 +151,32 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         }
     }
 
+    @NonNullByDefault
+    String formatDataForJavaDoc(final GeneratedType type) {
+        final var sb = new StringBuilder();
+        final var comment = type.getComment();
+        if (comment != null) {
+            sb.append(comment.getJavadoc());
+        }
+        appendSnippet(sb, type);
+
+        final var str = sb.toString();
+        return str.isBlank() ? "" : str.stripTrailing() + '\n';
+    }
+
+    @NonNullByDefault
+    final String formatDataForJavaDoc(final GeneratedType type, final String additionalComment) {
+        final var comment = type.getComment();
+        if (comment == null) {
+            return additionalComment.isBlank() ? "" : additionalComment.stripTrailing() + '\n';
+        }
+
+        final var sb = new StringBuilder().append(comment.getJavadoc());
+        appendSnippet(sb, type);
+        return additionalComment.isBlank() ? sb.toString()
+            : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
+    }
+
     static final @NonNull String getterMethodName(final @NonNull String propName) {
         return Naming.GETTER_PREFIX + Naming.toFirstUpper(propName);
     }

@@ -99,43 +99,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
         ''')
     }
 
-    def package String formatDataForJavaDoc(GeneratedType type) {
-        val sb = new StringBuilder()
-        val comment = type.comment
-        if (comment !== null) {
-            sb.append(comment.javadoc)
-        }
-
-        appendSnippet(sb, type)
-
-        return '''
-            «IF sb.length != 0»
-            «sb.toString»
-            «ENDIF»
-        '''.toString
-    }
-
-    def protected String formatDataForJavaDoc(GeneratedType type, String additionalComment) {
-        val comment = type.comment
-        if (comment === null) {
-            return '''
-                «additionalComment»
-            '''
-        }
-
-        val sb = new StringBuilder().append(comment.javadoc)
-        appendSnippet(sb, type)
-
-        sb.append(NEW_LINE)
-        .append(NEW_LINE)
-        .append(NEW_LINE)
-        .append(additionalComment)
-
-        return '''
-            «sb.toString»
-        '''
-    }
-
     def static formatReference(String reference) '''
         «IF reference !== null»
             <pre>
