@@ -11,11 +11,8 @@ import static extension org.opendaylight.yangtools.binding.generator.BindingGene
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
-import com.google.common.base.CharMatcher
 import java.util.Locale
 import java.util.Map.Entry
-import java.util.StringTokenizer
-import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
@@ -30,11 +27,6 @@ import org.opendaylight.yangtools.yang.common.YangDataName
 
 // FIXME: YANGTOOLS-1618: convert to Java
 abstract class BaseTemplate extends AbstractBaseTemplate {
-    static final char NEW_LINE = '\n'
-    static final char SPACE = ' '
-    static val WS_MATCHER = CharMatcher.anyOf("\n\t")
-    static val SPACES_PATTERN = Pattern.compile(" +")
-
     new(GeneratedType type) {
         super(type)
     }
@@ -55,43 +47,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
         «ENDIF»
     '''
-
-    protected static def formatToParagraph(String inputText) {
-        val StringBuilder sb = new StringBuilder();
-        var StringBuilder lineBuilder = new StringBuilder();
-        var boolean isFirstElementOnNewLineEmptyChar = false;
-
-        var formattedText = WS_MATCHER.replaceFrom(inputText.encodeJavadocSymbols, SPACE)
-        formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ")
-
-        val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true)
-        while (tokenizer.hasMoreTokens) {
-            val nextElement = tokenizer.nextToken
-
-            if (lineBuilder.length != 0 && lineBuilder.length + nextElement.length > 80) {
-                if (lineBuilder.charAt(lineBuilder.length - 1) == SPACE) {
-                    lineBuilder.setLength(lineBuilder.length - 1)
-                }
-                if (lineBuilder.length != 0 && lineBuilder.charAt(0) == SPACE) {
-                    lineBuilder.deleteCharAt(0)
-                }
-
-                sb.append(lineBuilder).append(NEW_LINE)
-                lineBuilder.setLength(0)
-
-                if (" ".equals(nextElement)) {
-                    isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
-                }
-            }
-            if (isFirstElementOnNewLineEmptyChar) {
-                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar
-            } else {
-                lineBuilder.append(nextElement)
-            }
-        }
-
-        return sb.append(lineBuilder).append(NEW_LINE).toString
-    }
 
     def protected emitConstant(Constant c) '''
         «IF Naming.QNAME_STATIC_FIELD_NAME.equals(c.name)»

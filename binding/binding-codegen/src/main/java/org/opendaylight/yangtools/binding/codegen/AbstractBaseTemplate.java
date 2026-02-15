@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -29,7 +32,11 @@ import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
  * Intermediate Java-based parts under {@link BaseTemplate}.
  */
 abstract class AbstractBaseTemplate extends JavaFileTemplate {
+    private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
+    private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
     private static final Splitter NL_SPLITTER = Splitter.on('\n');
+    private static final char NEW_LINE = '\n';
+    private static final char SPACE = ' ';
 
     AbstractBaseTemplate(final @NonNull GeneratedType type) {
         super(type);
@@ -258,6 +265,44 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         appendSnippet(sb, type);
         return additionalComment.isBlank() ? sb.toString()
             : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
+    }
+
+    @NonNullByDefault
+    static final String formatToParagraph(final String inputText) {
+        final var sb = new StringBuilder();
+        var lineBuilder = new StringBuilder();
+        var isFirstElementOnNewLineEmptyChar = false;
+        var formattedText = WS_MATCHER.replaceFrom(JavaFileTemplate.encodeJavadocSymbols(inputText), ' ');
+        formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ");
+
+        // FIXME: can we NOT use StringTokenizer here?
+        final var tokenizer = new StringTokenizer(formattedText, " ", true);
+        while (tokenizer.hasMoreTokens()) {
+            final var nextElement = tokenizer.nextToken();
+            final var lbLength = lineBuilder.length();
+
+            if (lbLength != 0 && lbLength + nextElement.length() > 80) {
+                final var limit = lbLength - 1;
+                if (lineBuilder.charAt(limit) == ' ') {
+                    lineBuilder.setLength(limit);
+                }
+                if (!lineBuilder.isEmpty() && lineBuilder.charAt(0) == ' ') {
+                    lineBuilder.deleteCharAt(0);
+                }
+                sb.append(lineBuilder).append('\n');
+                lineBuilder.setLength(0);
+
+                if (" ".equals(nextElement)) {
+                    isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
+                }
+            }
+            if (isFirstElementOnNewLineEmptyChar) {
+                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
+            } else {
+                lineBuilder.append(nextElement);
+            }
+        }
+        return sb.append(lineBuilder).append('\n').toString();
     }
 
     @NonNullByDefault
