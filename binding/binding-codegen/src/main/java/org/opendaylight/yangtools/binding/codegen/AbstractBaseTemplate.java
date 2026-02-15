@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -257,6 +258,23 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         appendSnippet(sb, type);
         return additionalComment.isBlank() ? sb.toString()
             : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
+    }
+
+    static final @NonNull String formatReference(final @Nullable String reference) {
+        return reference == null ? "" : new StringBuilder()
+            .append("""
+                    <pre>
+                        <code>
+                    """)
+            .append("        ").append(
+                // FIXME: use a {@code} block which will render some of this encoding superfluous
+                BaseTemplate.formatToParagraph(BindingGeneratorUtil.encodeAngleBrackets(reference)))
+            .append("""
+                        </code>
+                    </pre>
+
+                    """)
+            .toString();
     }
 
     @NonNullByDefault

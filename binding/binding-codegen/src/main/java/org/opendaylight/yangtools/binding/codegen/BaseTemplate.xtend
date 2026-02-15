@@ -47,17 +47,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
     // Helper patterns
 
-    def static formatReference(String reference) '''
-        «IF reference !== null»
-            <pre>
-                <code>
-                    «reference.encodeAngleBrackets.formatToParagraph»
-                </code>
-            </pre>
-
-        «ENDIF»
-    '''
-
     protected static def formatToParagraph(String inputText) {
         val StringBuilder sb = new StringBuilder();
         var StringBuilder lineBuilder = new StringBuilder();
