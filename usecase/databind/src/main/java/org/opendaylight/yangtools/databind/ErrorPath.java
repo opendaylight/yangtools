@@ -5,11 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.netconf.databind;
+package org.opendaylight.yangtools.databind;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.netconf.databind.DatabindPath.Data;
+import org.opendaylight.yangtools.databind.DatabindPath.Data;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
@@ -17,14 +17,14 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  * <a href="https://www.rfc-editor.org/rfc/rfc8040#page-83">RFC8040 errors grouping</a>.
  *
  * @param databind the {@link DatabindContext} to which this path is bound
- * @param path the {@link YangInstanceIdentifier}, {@link YangInstanceIdentifier#empty()} denotes the data root
+ * @param path the {@link YangInstanceIdentifier}, {@link YangInstanceIdentifier#of()} denotes the data root
  */
 public record ErrorPath(DatabindContext databind, YangInstanceIdentifier path) {
     /**
      * Default constructor.
      *
      * @param databind the {@link DatabindContext} to which this path is bound
-     * @param path the {@link YangInstanceIdentifier}, {@link YangInstanceIdentifier#empty()} denotes the data root
+     * @param path the {@link YangInstanceIdentifier}, {@link YangInstanceIdentifier#of()} denotes the data root
      */
     public ErrorPath {
         requireNonNull(databind);

@@ -39,6 +39,7 @@
         <module>odl-yangtools-common</module>
         <module>odl-yangtools-data-api</module>
         <module>odl-yangtools-data</module>
+        <module>odl-yangtools-databind</module>
         <module>odl-yangtools-export</module>
         <module>odl-yangtools-netty</module>
         <module>odl-yangtools-parser-api</module>
