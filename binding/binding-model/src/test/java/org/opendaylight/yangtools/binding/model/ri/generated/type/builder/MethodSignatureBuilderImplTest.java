@@ -27,7 +27,7 @@ class MethodSignatureBuilderImplTest {
     void testSetAbstractMethod() {
         final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod").setReturnType(Types.VOID);
         signatureBuilderImpl.setAbstract(true);
-        final var methodSignature = signatureBuilderImpl.toInstance(null);
+        final var methodSignature = signatureBuilderImpl.build();
         assertTrue(methodSignature.isAbstract());
     }
 
@@ -37,7 +37,7 @@ class MethodSignatureBuilderImplTest {
         final var ipAddressType = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"));
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
-        final var methodSignature = signatureBuilderImpl.toInstance(null);
+        final var methodSignature = signatureBuilderImpl.build();
         assertEquals("ipAddress", methodSignature.getParameters().getFirst().name());
     }
 

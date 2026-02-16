@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -63,8 +62,8 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodS
     }
 
     @Override
-    public MethodSignature toInstance(final Type definingType) {
-        final List<AnnotationType> annotations = toAnnotationTypes();
+    public MethodSignature build() {
+        final var annotations = toAnnotationTypes();
         return new MethodSignatureImpl(getName(), annotations, getComment(), getAccessModifier(), getReturnType(),
             unmodifiableParams, isFinal(), isAbstract, isStatic(), isDefault, mechanics);
     }

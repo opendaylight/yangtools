@@ -125,7 +125,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     protected final List<MethodSignature> toUnmodifiableMethods(final List<MethodSignatureBuilder> methodBuilders) {
         final List<MethodSignature> methods = new ArrayList<>(methodBuilders.size());
         for (final MethodSignatureBuilder methodBuilder : methodBuilders) {
-            methods.add(methodBuilder.toInstance(this));
+            methods.add(methodBuilder.build());
         }
         return makeUnmodifiable(methods);
     }
@@ -133,7 +133,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     protected final Set<MethodSignature> toUnmodifiableMethods(final Set<MethodSignatureBuilder> getters) {
         final Set<MethodSignature> methods = new HashSet<>(getters.size());
         for (final MethodSignatureBuilder methodBuilder : getters) {
-            methods.add(methodBuilder.toInstance(this));
+            methods.add(methodBuilder.build());
         }
         return makeUnmodifiable(methods);
     }

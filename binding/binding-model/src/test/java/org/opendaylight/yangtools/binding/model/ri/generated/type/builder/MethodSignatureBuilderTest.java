@@ -45,7 +45,7 @@ class MethodSignatureBuilderTest {
     @Test
     void testAddParameter() {
         builder1.addParameter(Types.STRING, "customParam");
-        var signature = builder1.toInstance(Types.voidType());
+        var signature = builder1.build();
         assertNotNull(signature);
     }
 
