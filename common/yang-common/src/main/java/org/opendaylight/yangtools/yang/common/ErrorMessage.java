@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -21,7 +20,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param elementBody the string to be displayed
  * @param xmlLang optional Language Identification string
  */
-@Beta
 @NonNullByDefault
 public record ErrorMessage(String elementBody, @Nullable String xmlLang) {
     /**

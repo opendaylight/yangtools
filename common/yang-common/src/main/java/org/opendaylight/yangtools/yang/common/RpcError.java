@@ -63,7 +63,7 @@ public interface RpcError {
      *
      * @return a message string.
      */
-    String getMessage();
+    ErrorMessage getMessage();
 
     /**
      * Returns a string containing additional information to provide extended
