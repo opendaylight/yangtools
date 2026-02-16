@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * An immutable context holding a consistent view of things related to data bind operations.
+ *
+ * @since 15.0.0
  */
 public final class DatabindContext {
     private static final VarHandle JSON_CODECS;

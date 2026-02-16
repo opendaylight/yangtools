@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.common.RpcError;
  * @param appTag value of {@code error-api-tag} leaf
  * @param path optional {@code error-path} leaf
  * @param info optional content of {@code error-info} anydata
+ * @since 15.0.0
  */
 @NonNullByDefault
 public record RequestError(
@@ -93,9 +94,9 @@ public record RequestError(
     private static @Nullable ErrorInfo extractErrorInfo(final RpcError rpcError) {
         final var info = rpcError.getInfo();
         if (info != null) {
-            return new ErrorInfo(info);
+            return new ErrorInfo.OfLiteral(info);
         }
         final var cause = rpcError.getCause();
-        return cause != null ? new ErrorInfo(cause.getMessage()) : null;
+        return cause != null ? new ErrorInfo.OfLiteral(cause.getMessage()) : null;
     }
 }

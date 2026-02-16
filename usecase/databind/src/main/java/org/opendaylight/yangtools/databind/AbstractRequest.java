@@ -24,6 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * <a href="https://www.rfc-editor.org/rfc/rfc4122#section-4.4">type 4 UUID</a>.
  *
  * @param <R> type of reported result
+ * @since 15.0.0
  */
 public abstract class AbstractRequest<R> implements Request<R> {
     private static final VarHandle UUID_VH;

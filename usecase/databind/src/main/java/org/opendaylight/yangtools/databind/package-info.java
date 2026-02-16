@@ -7,6 +7,8 @@
  */
 /**
  * YANG databind utilities.
+ *
+ * @since 15.0.0
  */
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.databind;

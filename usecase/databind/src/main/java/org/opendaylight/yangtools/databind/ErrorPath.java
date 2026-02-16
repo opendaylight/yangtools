@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  *
  * @param databind the {@link DatabindContext} to which this path is bound
  * @param path the {@link YangInstanceIdentifier}, {@link YangInstanceIdentifier#of()} denotes the data root
+ * @since 15.0.0
  */
 public record ErrorPath(DatabindContext databind, YangInstanceIdentifier path) {
     /**
