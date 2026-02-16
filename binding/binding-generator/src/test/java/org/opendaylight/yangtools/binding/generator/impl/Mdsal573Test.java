@@ -21,8 +21,40 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 class Mdsal573Test {
     @Test
     void mdsal573Test() {
-        final var generateTypes = DefaultBindingGenerator.generateFor(
-            YangParserTestUtils.parseYangResource("/mdsal573.yang"));
+        final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYang("""
+            module mdsal573 {
+            namespace "mdsal573";
+            prefix l;
+
+            grouping g1 {
+              container c1 {
+                leaf l1 {
+                  type string;
+                }
+              }
+            }
+
+            grouping g2 {
+              uses g3;
+
+              container c2 {
+                leaf l2 {
+                  type string;
+                }
+              }
+            }
+
+            grouping g3 {
+              container c3 {
+                leaf l3 {
+                  type string;
+                }
+              }
+            }
+
+            uses g1;
+            uses g2;
+            }"""));
         assertNotNull(generateTypes);
         assertEquals(7, generateTypes.size());
 
