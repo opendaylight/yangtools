@@ -73,8 +73,7 @@ public record RequestError(
         final var tag = rpcError.getTag();
         final var errorTag = tag != null ? tag : ErrorTag.OPERATION_FAILED;
         final var errorMessage = rpcError.getMessage();
-        return new RequestError(rpcError.getErrorType(), errorTag,
-            errorMessage != null ? new ErrorMessage(errorMessage) : null, rpcError.getApplicationTag(), path,
+        return new RequestError(rpcError.getErrorType(), errorTag, errorMessage, rpcError.getApplicationTag(), path,
             extractErrorInfo(rpcError));
     }
 

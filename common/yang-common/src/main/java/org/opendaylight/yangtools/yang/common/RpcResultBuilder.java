@@ -71,12 +71,12 @@ public final class RpcResultBuilder<T> implements Mutable {
         private final ErrorTag tag;
         private final String info;
         private final ErrorSeverity severity;
-        private final String message;
+        private final ErrorMessage message;
         private final ErrorType errorType;
         private final Throwable cause;
 
-        RpcErrorImpl(final ErrorSeverity severity, final ErrorType errorType, final ErrorTag tag, final String message,
-                final String applicationTag, final String info, final Throwable cause) {
+        RpcErrorImpl(final ErrorSeverity severity, final ErrorType errorType, final ErrorTag tag,
+                final ErrorMessage message, final String applicationTag, final String info, final Throwable cause) {
             this.severity = severity;
             this.errorType = errorType;
             this.tag = tag;
@@ -107,7 +107,7 @@ public final class RpcResultBuilder<T> implements Mutable {
         }
 
         @Override
-        public String getMessage() {
+        public ErrorMessage getMessage() {
             return message;
         }
 
@@ -177,8 +177,7 @@ public final class RpcResultBuilder<T> implements Mutable {
      * @param other the other RpcResult.
      */
     public static <T> @NonNull RpcResultBuilder<T> from(final RpcResult<T> other) {
-        return new RpcResultBuilder<>(other.isSuccessful(), other.getResult())
-                                                      .withRpcErrors(other.getErrors());
+        return new RpcResultBuilder<>(other.isSuccessful(), other.getResult()).withRpcErrors(other.getErrors());
     }
 
     /**
