@@ -120,11 +120,13 @@ class RpcResultBuilderTest {
         rpcResultBuilder.withRpcError(rpcErrorShort);
         final RpcResult<Object> rpcResult = rpcResultBuilder.build();
 
-        assertEquals(rpcErrorShort.getErrorType(), rpcErrorShortWarn.getErrorType());
-        assertEquals(rpcErrorLong.getErrorType(), rpcErrorLongWarn.getErrorType());
+        assertEquals(rpcErrorShort.type(), rpcErrorShortWarn.type());
+        assertEquals(rpcErrorLong.type(), rpcErrorLongWarn.type());
         assertNotNull(rpcResultBuilder.buildFuture());
-        assertEquals("RpcResult [successful=true, result=null, errors=[RpcError [message=msg, severity=ERROR, "
-                + "errorType=RPC, tag=tag, applicationTag=null, info=null, cause=null]]]", rpcResult.toString());
+        assertEquals("""
+            RpcResult [successful=true, result=null, errors=[RpcError{severity=ERROR, type=RPC, \
+            message=ErrorMessage{elementBody=msg}, tag=tag}]]""",
+            rpcResult.toString());
     }
 
     @Test
@@ -166,13 +168,13 @@ class RpcResultBuilderTest {
         assertThat(errors.size()).isGreaterThanOrEqualTo(errorIndex);
 
         RpcError error = errors.get(errorIndex);
-        assertEquals(expSeverity, error.getSeverity());
-        assertEquals(expErrorType, error.getErrorType());
-        assertEquals(expTag, error.getTag());
-        assertEquals(expMessage, error.getMessage());
-        assertEquals(expAppTag, error.getApplicationTag());
-        assertEquals(expInfo, error.getInfo());
-        assertEquals(expCause, error.getCause());
+        assertEquals(expSeverity, error.severity());
+        assertEquals(expErrorType, error.type());
+        assertEquals(expTag, error.tag());
+        assertEquals(new ErrorMessage(expMessage), error.message());
+        assertEquals(expAppTag, error.applicationTag());
+        assertEquals(expInfo, error.info());
+        assertEquals(expCause, error.cause());
     }
 
     void verifyRpcResult(final RpcResult<?> result, final boolean expSuccess, final Object expValue) {
