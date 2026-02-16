@@ -11,6 +11,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
@@ -22,6 +23,7 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -31,6 +33,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**
@@ -439,5 +442,38 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             sb.append('\n');
         }
         return sb.append(" */").toString();
+    }
+
+    @NonNullByDefault
+    final String checkArgument(final GeneratedProperty property, final Restrictions restrictions,
+            final Type actualType, final String value) {
+        final var valueRef = actualType instanceof ConcreteType ? value : value + ".getValue()";
+
+        final var sb = new StringBuilder();
+        if (restrictions.getRangeConstraint().isPresent()) {
+            sb.append(AbstractRangeGenerator.forType(actualType)
+                .generateRangeCheckerCall(StringExtensions.toFirstUpper(property.getName()), valueRef));
+        }
+
+        final var fieldName = fieldName(property);
+        if (restrictions.getLengthConstraint().isPresent()) {
+            sb.append(LengthGenerator.generateLengthCheckerCall(fieldName, valueRef));
+        }
+
+        sb.append('\n');
+        final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);
+
+        for (var currentConstant : type().getConstantDefinitions()) {
+            final var currentName = currentConstant.getName();
+
+            if (currentName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
+                && fieldUpperCase.equals(currentName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length()))) {
+                sb.append(importedName(CODEHELPERS)).append(".checkPattern(value, ")
+                    .append(Constants.MEMBER_PATTERN_LIST).append(fieldName).append(", ")
+                    .append(Constants.MEMBER_REGEX_LIST).append(fieldName).append(");\n");
+            }
+        }
+
+        return sb.toString();
     }
 }

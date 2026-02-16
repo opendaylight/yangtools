@@ -10,14 +10,9 @@ package org.opendaylight.yangtools.binding.codegen
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
-import java.util.Locale
-import org.opendaylight.yangtools.binding.model.api.ConcreteType
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
-import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.contract.Naming
 
 // FIXME: YANGTOOLS-1618: convert to Java
@@ -86,30 +81,4 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
             };
         '''
     }
-
-    def protected checkArgument(GeneratedProperty property, Restrictions restrictions, Type actualType, String value) '''
-       «IF restrictions.getRangeConstraint.isPresent»
-           «IF actualType instanceof ConcreteType»
-               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, value)»
-           «ELSE»
-               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, value + ".getValue()")»
-           «ENDIF»
-       «ENDIF»
-       «val fieldName = property.fieldName»
-       «IF restrictions.getLengthConstraint.isPresent»
-           «IF actualType instanceof ConcreteType»
-               «LengthGenerator.generateLengthCheckerCall(fieldName, value)»
-           «ELSE»
-               «LengthGenerator.generateLengthCheckerCall(fieldName, value + ".getValue()")»
-           «ENDIF»
-       «ENDIF»
-
-       «val fieldUpperCase = fieldName.toUpperCase(Locale.ROOT)»
-       «FOR currentConstant : type.getConstantDefinitions»
-           «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
-               && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
-           «CODEHELPERS.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«fieldName», «Constants.MEMBER_REGEX_LIST»«fieldName»);
-           «ENDIF»
-       «ENDFOR»
-    '''
 }
