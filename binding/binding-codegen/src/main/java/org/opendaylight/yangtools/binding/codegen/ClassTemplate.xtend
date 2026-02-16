@@ -666,13 +666,4 @@ class ClassTemplate extends BaseTemplate {
         }
         return "appendValue"
     }
-
-    def GeneratedProperty getPropByName(String name) {
-        for (GeneratedProperty prop : allProperties) {
-            if (prop.name.equals(name)) {
-                return prop;
-            }
-        }
-        return null
-    }
 }
