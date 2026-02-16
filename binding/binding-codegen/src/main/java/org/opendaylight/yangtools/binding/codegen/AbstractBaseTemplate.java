@@ -460,7 +460,6 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             sb.append(LengthGenerator.generateLengthCheckerCall(fieldName, valueRef));
         }
 
-        sb.append('\n');
         final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);
 
         for (var currentConstant : type().getConstantDefinitions()) {
