@@ -7,16 +7,55 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * Representation of an error.
  */
+@NonNullByDefault
 public interface RpcError {
     /**
-     * Returns the error severity, as determined by the application reporting the error.
-     *
-     * @return an {@link ErrorSeverity} enum.
+     * {@return the error severity, as determined by the application reporting the error}
      */
-    ErrorSeverity getSeverity();
+    ErrorSeverity severity();
+
+    /**
+     * {@return the error severity, as determined by the application reporting the error}
+     * @deprecated Use {@link #severity()} instead.
+     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default ErrorSeverity getSeverity() {
+        return severity();
+    }
+
+    /**
+     * {@return the conceptual layer at which the error occurred}
+     */
+    ErrorType type();
+
+    /**
+     * {@return the conceptual layer at which the error occurred}
+     * @deprecated Use {@link #type()} instead.
+     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default ErrorType getErrorType() {
+        return type();
+    }
+
+    /**
+     * {@return an {@link ErrorMessage} suitable for human display that describes the error condition}
+     */
+    ErrorMessage message();
+
+    /**
+     * {@return an {@link ErrorMessage} suitable for human display that describes the error condition}
+     * @deprecated Use {@link #message()} instead.
+     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default String getMessage() {
+        return message().elementBody();
+    }
 
     /**
      * Returns a short string that identifies the general type of error condition.
@@ -47,44 +86,97 @@ public interface RpcError {
      * </pre>
      * @return a string if available or null otherwise.
      */
-    ErrorTag getTag();
+    @Nullable ErrorTag tag();
 
     /**
-     * Returns a short string that identifies the specific type of error condition as
-     * determined by the application reporting the error.
+     * Returns a short string that identifies the general type of error condition.
+     *
+     * <p>The following outlines suggested values as defined by
+     * (<a href="https://www.rfc-editor.org/rfc/rfc6241#page-89">RFC6241</a>):
+     *
+     * <pre>
+     *    access-denied
+     *    bad-attribute
+     *    bad-element
+     *    data-exists
+     *    data-missing
+     *    in-use
+     *    invalid-value
+     *    lock-denied
+     *    malformed-message
+     *    missing-attribute
+     *    missing-element
+     *    operation-failed
+     *    operation-not-supported
+     *    resource-denied
+     *    rollback-failed
+     *    too-big
+     *    unknown-attribute
+     *    unknown-element
+     *    unknown-namespace
+     * </pre>
+     * @return a string if available or null otherwise.
+     * @deprecated Use {@link #tag()} instead.
+     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default @Nullable ErrorTag getTag() {
+        return tag();
+    }
+
+    /**
+     * Returns a short string that identifies the specific type of error condition as determined by the application
+     * reporting the error.
      *
      * @return a string if available or null otherwise.
      */
-    String getApplicationTag();
+    @Nullable String applicationTag();
 
     /**
-     * Returns a string suitable for human display that describes the error
-     * condition.
+     * Returns a short string that identifies the specific type of error condition as determined by the application
+     * reporting the error.
      *
-     * @return a message string.
+     * @return a string if available or null otherwise.
+     * @deprecated Use {@link #applicationTag()} instead.
      */
-    String getMessage();
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default @Nullable String getApplicationTag() {
+        return applicationTag();
+    }
 
     /**
-     * Returns a string containing additional information to provide extended
-     * and/or implementation-specific debugging information.
+     * Returns a string containing additional information to provide extended and/or implementation-specific debugging
+     * information.
      *
      * @return a string if available or null otherwise.
      */
     // FIXME: YANGTOOLS-765: this is wrong and needs to be modeled at data-api layer with YangErrorInfo
-    String getInfo();
+    @Nullable String info();
+
+    /**
+     * Returns a string containing additional information to provide extended and/or implementation-specific debugging
+     * information.
+     *
+     * @return a string if available or null otherwise.
+     * @deprecated Use {@link #info()} instead.
+     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default @Nullable String getInfo() {
+        return info();
+    }
+
+    /**
+     * {@return a Throwable if the error was triggered by exception, null otherwise}
+     */
+    @Nullable Throwable cause();
 
     /**
      * Returns an exception cause.
      *
-     * @return a Throwable if the error was triggered by exception, null otherwise.
+     * {@return a Throwable if the error was triggered by exception, null otherwise}
+     * @deprecated Use {@link #cause()} instead.
      */
-    Throwable getCause();
-
-    /**
-     * Returns the conceptual layer at which the error occurred.
-     *
-     * @return an {@link ErrorType} enum.
-     */
-    ErrorType getErrorType();
+    @Deprecated(since = "15.0.0", forRemoval = true)
+    default @Nullable Throwable getCause() {
+        return cause();
+    }
 }
