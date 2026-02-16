@@ -164,11 +164,11 @@ class GeneratedTypeBuilderTest {
 
         assertEquals(2, methodDefinitions.size());
 
-        assertTrue(methodDefinitions.contains(methodBuilder.toInstance(instance)));
-        assertTrue(methodDefinitions.contains(methodBuilder2.toInstance(instance)));
+        assertTrue(methodDefinitions.contains(methodBuilder.build()));
+        assertTrue(methodDefinitions.contains(methodBuilder2.build()));
         assertFalse(methodDefinitions.contains(new MethodSignatureBuilderImpl("myMethodName3")
             .setReturnType(Types.BOOLEAN)
-            .toInstance(instance)));
+            .build()));
     }
 
     @Test

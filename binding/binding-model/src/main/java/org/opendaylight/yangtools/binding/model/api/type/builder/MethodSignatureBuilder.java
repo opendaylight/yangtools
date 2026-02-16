@@ -66,8 +66,7 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatur
      * defined inside the scope of <code>class</code> or <code>interface</code> definition. In case that defining Type
      * will be passed as <code>null</code> reference the method SHOULD thrown {@link IllegalArgumentException}.
      *
-     * @param definingType Defining Type of Method Signature
      * @return <code>new</code> <i>immutable</i> instance of Method Signature.
      */
-    MethodSignature toInstance(Type definingType);
+    MethodSignature build();
 }

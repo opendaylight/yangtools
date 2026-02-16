@@ -30,8 +30,8 @@ class AbstractTypeMemberTest {
         methodSignatureBuilderImpl.setFinal(true);
         methodSignatureBuilderImpl.setStatic(true);
 
-        final var genProperty = methodSignatureBuilderImpl.toInstance(typeBuilderImpl);
-        final var genProperty2 = methodSignatureBuilderImpl.toInstance(typeBuilderImpl2);
+        final var genProperty = methodSignatureBuilderImpl.build();
+        final var genProperty2 = methodSignatureBuilderImpl.build();
         assertEquals(TypeMemberComment.contractOf("test comment"), genProperty.getComment());
         assertTrue(genProperty.isFinal());
         assertTrue(genProperty.isStatic());

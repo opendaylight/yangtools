@@ -122,34 +122,35 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         return makeUnmodifiable(annotationList);
     }
 
-    protected final List<MethodSignature> toUnmodifiableMethods(final List<MethodSignatureBuilder> methodBuilders) {
-        final List<MethodSignature> methods = new ArrayList<>(methodBuilders.size());
-        for (final MethodSignatureBuilder methodBuilder : methodBuilders) {
-            methods.add(methodBuilder.toInstance(this));
+    protected static final List<MethodSignature> toUnmodifiableMethods(
+            final List<MethodSignatureBuilder> methodBuilders) {
+        final var methods = new ArrayList<MethodSignature>(methodBuilders.size());
+        for (var methodBuilder : methodBuilders) {
+            methods.add(methodBuilder.build());
         }
         return makeUnmodifiable(methods);
     }
 
-    protected final Set<MethodSignature> toUnmodifiableMethods(final Set<MethodSignatureBuilder> getters) {
-        final Set<MethodSignature> methods = new HashSet<>(getters.size());
-        for (final MethodSignatureBuilder methodBuilder : getters) {
-            methods.add(methodBuilder.toInstance(this));
+    protected static final Set<MethodSignature> toUnmodifiableMethods(final Set<MethodSignatureBuilder> getters) {
+        final var methods = HashSet.<MethodSignature>newHashSet(getters.size());
+        for (var methodBuilder : getters) {
+            methods.add(methodBuilder.build());
         }
         return makeUnmodifiable(methods);
     }
 
-    protected final List<Enumeration> toUnmodifiableEnumerations(final List<EnumBuilder> enumBuilders) {
-        final List<Enumeration> enums = new ArrayList<>(enumBuilders.size());
-        for (final EnumBuilder enumBuilder : enumBuilders) {
+    protected static final List<Enumeration> toUnmodifiableEnumerations(final List<EnumBuilder> enumBuilders) {
+        final var enums = new ArrayList<Enumeration>(enumBuilders.size());
+        for (var enumBuilder : enumBuilders) {
             enums.add(enumBuilder.toInstance());
         }
         return makeUnmodifiable(enums);
     }
 
-    protected final List<GeneratedProperty> toUnmodifiableProperties(
+    protected static final List<GeneratedProperty> toUnmodifiableProperties(
             final List<GeneratedPropertyBuilder> methodBuilders) {
-        final List<GeneratedProperty> methods = new ArrayList<>(methodBuilders.size());
-        for (final GeneratedPropertyBuilder methodBuilder : methodBuilders) {
+        final var methods = new ArrayList<GeneratedProperty>(methodBuilders.size());
+        for (var methodBuilder : methodBuilders) {
             methods.add(methodBuilder.toInstance());
         }
         return makeUnmodifiable(methods);
