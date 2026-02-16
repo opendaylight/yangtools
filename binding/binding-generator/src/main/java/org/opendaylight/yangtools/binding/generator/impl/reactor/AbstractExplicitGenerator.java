@@ -264,11 +264,8 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         final var local = prev;
         if (local == null) {
             return OriginalLink.partial(this);
-        } else if (local == this) {
-            return OriginalLink.complete(this);
-        } else {
-            return OriginalLink.partial(local);
         }
+        return local == this ? OriginalLink.complete(this) : OriginalLink.partial(local);
     }
 
     @Nullable AbstractExplicitGenerator<?, ?> findSchemaTreeGenerator(final QName qname) {
@@ -276,7 +273,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     final @Nullable AbstractExplicitGenerator<?, ?> findLocalSchemaTreeGenerator(final QName qname) {
-        for (Generator child : this) {
+        for (var child : this) {
             if (child instanceof AbstractExplicitGenerator<?, ?> gen
                 && gen.statement() instanceof SchemaTreeEffectiveStatement<?> stmt && qname.equals(stmt.argument())) {
                 return gen;
