@@ -31,6 +31,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference
  *   <li>an {@link Action} pointing to an instantiation of a YANG {@code action} statement, or</li>
  *   <li>a {@link DataNodeNotification} pointing to a YANG {@code notification} statement in with a data node, or</li>
  * </ul>
+ *
+ * @since 15.0.0
  */
 @NonNullByDefault
 public sealed interface DatabindPath {

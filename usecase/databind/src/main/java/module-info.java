@@ -7,6 +7,8 @@
  */
 /**
  * YANG databind utilities.
+ *
+ * @since 15.0.0
  */
 module org.opendaylight.yangtools.databind {
     exports org.opendaylight.yangtools.databind;

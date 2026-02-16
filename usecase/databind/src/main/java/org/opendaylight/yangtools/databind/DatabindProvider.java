@@ -11,6 +11,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * A service providing access to a {@link DatabindContext}.
+ *
+ * @since 15.0.0
  */
 @NonNullByDefault
 public interface DatabindProvider {

@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.yang.common.ErrorType;
 /**
  * A request processing exception, reporting one or more {@link RequestError}s. This exception is not serializable on
  * purpose.
+ *
+ * @since 15.0.0
  */
 @NonNullByDefault
 public final class RequestException extends Exception {
@@ -125,7 +127,7 @@ public final class RequestException extends Exception {
         if (cause != null) {
             final var message = cause.getMessage();
             if (message != null) {
-                return new ErrorInfo(message);
+                return new ErrorInfo.OfLiteral(message);
             }
         }
         return null;

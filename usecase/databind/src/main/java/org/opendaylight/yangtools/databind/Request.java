@@ -35,6 +35,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * is recommended that callers do not perform any further operations and just unwind the stack.
  *
  * @param <R> type of reported result
+ * @since 15.0.0
  */
 @NonNullByDefault
 public interface Request<R> {
