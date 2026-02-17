@@ -9,26 +9,31 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.OpendaylightMdsalAugmentTestData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.OpendaylightMdsalBindingTestData;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.LowestLevel1;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.OpendaylightYangtoolsUnionTestData;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaForClassException;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.runtime.spi.BindingRuntimeHelpers;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 class ExceptionReportingTest {
-    private static final BindingNormalizedNodeSerializer CODEC_WITHOUT_TOP = codec(LowestLevel1.class);
-    private static final BindingNormalizedNodeSerializer ONLY_TOP_CODEC = codec(Top.class);
-    private static final BindingNormalizedNodeSerializer FULL_CODEC = codec(TreeComplexUsesAugment.class);
+    private static final BindingNormalizedNodeSerializer CODEC_WITHOUT_TOP =
+        codec(OpendaylightYangtoolsUnionTestData.META);
+    private static final BindingNormalizedNodeSerializer ONLY_TOP_CODEC = codec(OpendaylightMdsalBindingTestData.META);
+    private static final BindingNormalizedNodeSerializer FULL_CODEC = codec(OpendaylightMdsalAugmentTestData.META);
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final DataObjectIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = DataObjectIdentifier.builder(Top.class)
@@ -79,7 +84,8 @@ class ExceptionReportingTest {
         assertThrows(IncorrectNestingException.class, () -> FULL_CODEC.toYangInstanceIdentifier(iid));
     }
 
-    private static BindingNormalizedNodeSerializer codec(final Class<?>... classes) {
-        return new BindingCodecContext(BindingRuntimeHelpers.createRuntimeContext(classes));
+    private static BindingNormalizedNodeSerializer codec(final RootMeta<?>... roots) {
+        return new BindingCodecContext(BindingRuntimeHelpers.createRuntimeContext(
+            Arrays.stream(roots).map(RootMeta::moduleInfo).toList()));
     }
 }
