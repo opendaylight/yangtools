@@ -101,7 +101,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
     public ModuleInfoSnapshotResolver(final String name, final YangTextToIRSourceTransformer textToIR,
             final YangParserFactory parserFactory) {
-        ctxResolver = YangTextSchemaContextResolver.create(name, parserFactory, textToIR);
+        ctxResolver = YangTextSchemaContextResolver.of(textToIR, parserFactory, name);
     }
 
     public synchronized <R extends @NonNull DataRoot<R>> Registration registerModuleFeatures(final Class<R> module,
