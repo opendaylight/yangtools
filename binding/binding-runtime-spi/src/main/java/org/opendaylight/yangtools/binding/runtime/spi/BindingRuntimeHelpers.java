@@ -39,6 +39,7 @@ public final class BindingRuntimeHelpers {
         // Hidden on purpose
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull EffectiveModelContext createEffectiveModel(final Class<?>... classes) {
         return createEffectiveModel(Arrays.stream(classes)
             .map(BindingRuntimeHelpers::getYangModuleInfo)
@@ -70,6 +71,7 @@ public final class BindingRuntimeHelpers {
             infos.modelContext()), infos);
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull BindingRuntimeContext createRuntimeContext(final Class<?>... classes) {
         try {
             return createRuntimeContext(ServiceLoaderState.ParserFactory.INSTANCE,
@@ -93,6 +95,7 @@ public final class BindingRuntimeHelpers {
             ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(snapshot.modelContext()), snapshot);
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
             final BindingRuntimeGenerator generator, final Class<?>... classes) throws YangParserException {
         return createRuntimeContext(parserFactory, generator, Arrays.asList(classes));
@@ -106,6 +109,7 @@ public final class BindingRuntimeHelpers {
         return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.modelContext()), infos);
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull YangModuleInfo getYangModuleInfo(final Class<?> clazz) {
         final var modelPackage = Naming.rootToServicePackageName(clazz.getPackage().getName());
 
