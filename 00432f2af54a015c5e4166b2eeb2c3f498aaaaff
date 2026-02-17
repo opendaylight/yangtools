@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fb72d937_b7cc4783",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 64
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-02-17T16:10:08Z",
+      "side": 1,
+      "message": "merge conflict and unresolved comments",
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "13a29b1f_bf3e49bd",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceInfo.java",
         "patchSetId": 64
@@ -43,6 +60,23 @@
         "endLine": 41,
         "endChar": 38
       },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51d0fa33_c7dbf6c9",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceInfo.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-02-17T16:10:08Z",
+      "side": 1,
+      "message": "more spaces 😊",
       "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -95,6 +129,40 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8e82335c_5a592323",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-02-17T16:10:08Z",
+      "side": 1,
+      "message": "I guess throws IOException, ReactorException, SourceSyntaxException",
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4e0cb037_0b61baeb",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ReactorBuildAction.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-02-17T16:10:08Z",
+      "side": 1,
+      "message": "I guess we try to have ABCD order of exceptions",
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e1c6d329_a4dc8d22",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
         "patchSetId": 64
@@ -141,6 +209,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f8109844_e5775d45",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceLinkageResolver.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-02-17T16:10:08Z",
+      "side": 1,
+      "message": "var?",
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8d5a652b_cd86c49a",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
         "patchSetId": 64
@@ -158,6 +243,23 @@
         "endLine": 483,
         "endChar": 37
       },
+      "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b6543a09_fc484236",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/import_/ImportStatementSupport.java",
+        "patchSetId": 64
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-02-17T16:10:08Z",
+      "side": 1,
+      "message": "static?",
       "revId": "00432f2af54a015c5e4166b2eeb2c3f498aaaaff",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
