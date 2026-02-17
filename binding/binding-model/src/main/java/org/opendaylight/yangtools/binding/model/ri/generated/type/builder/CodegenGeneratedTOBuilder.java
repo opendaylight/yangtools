@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
-public class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
+public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private Restrictions restrictions;
     private GeneratedPropertyBuilder suid;
     private String reference;
