@@ -18,12 +18,15 @@ import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,11 +47,13 @@ public final class ModuleInfoSnapshotBuilder {
         this.parserFactory = requireNonNull(parserFactory);
     }
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject> clazz) {
         return add(BindingRuntimeHelpers.getYangModuleInfo(clazz));
     }
 
     @SafeVarargs
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public final @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject>... classes) {
         for (var clazz : classes) {
             add(clazz);
@@ -71,6 +76,24 @@ public final class ModuleInfoSnapshotBuilder {
     public @NonNull ModuleInfoSnapshotBuilder add(final Iterable<? extends YangModuleInfo> infos) {
         for (var info : infos) {
             add(info);
+        }
+        return this;
+    }
+
+    @NonNullByDefault
+    public ModuleInfoSnapshotBuilder add(final RootMeta<?> meta) {
+        return add(meta.moduleInfo());
+    }
+
+    @NonNullByDefault
+    public ModuleInfoSnapshotBuilder add(final RootMeta<?>... metas) {
+        return add(List.of(metas));
+    }
+
+    @NonNullByDefault
+    public ModuleInfoSnapshotBuilder add(final List<? extends RootMeta<?>> metas) {
+        for (var meta : metas) {
+            add(meta);
         }
         return this;
     }
