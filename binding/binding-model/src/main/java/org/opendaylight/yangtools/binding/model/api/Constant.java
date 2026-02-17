@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Interface Contact is designed to hold and model java constant. In Java there are no constant keywords instead of the
  * constant is defined as static final field with assigned value. For this purpose the Constant interface contains
@@ -16,13 +18,12 @@ package org.opendaylight.yangtools.binding.model.api;
  * name and java type name (e.g. fully qualified name). From this string user should be able to determine to which type
  * can be {@link #getValue()} type typecasted to unbox and provide value assigned to constant.
  */
+@NonNullByDefault
 public interface Constant {
     /**
-     * Returns the return Type (or just Type) of the Constant.
-     *
-     * @return the return Type (or just Type) of the Constant.
+     * {@return the return Type (or just Type) of the Constant}
      */
-    Type getType();
+    Type type();
 
     /**
      * Returns the name of constant. <br>
@@ -30,12 +31,10 @@ public interface Constant {
      *
      * @return the name of constant.
      */
-    String getName();
+    String name();
 
     /**
-     * Returns boxed value that is assigned for context.
-     *
-     * @return boxed value that is assigned for context.
+     * {@return boxed value that is assigned for context}
      */
-    Object getValue();
+    Object value();
 }

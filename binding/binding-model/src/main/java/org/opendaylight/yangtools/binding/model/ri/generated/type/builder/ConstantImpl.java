@@ -7,68 +7,33 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
-final class ConstantImpl implements Constant {
-    private final Type type;
-    private final String name;
-    private final Object value;
-
-    ConstantImpl(final Type type, final String name, final Object value) {
-        this.type = type;
-        this.name = name;
-        this.value = value;
-    }
-
-    @Override
-    public Type getType() {
-        return this.type;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public Object getValue() {
-        return this.value;
+@NonNullByDefault
+record ConstantImpl(Type type, String name, Object value) implements Constant {
+    ConstantImpl {
+        requireNonNull(type);
+        requireNonNull(name);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(this.name);
-        result = prime * result + Objects.hashCode(this.type);
-        return result;
+        return name.hashCode() * 31 + type.hashCode();
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final ConstantImpl other = (ConstantImpl) obj;
-        return Objects.equals(this.name, other.name) && Objects.equals(this.type, other.type)
-                && Objects.equals(this.value, other.value);
+    public boolean equals(final @Nullable Object obj) {
+        return this == obj || obj instanceof ConstantImpl other && name.equals(other.name) && type.equals(other.type)
+            && value.equals(other.value);
     }
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Constant [type=");
-        builder.append(this.type);
-        builder.append(", name=");
-        builder.append(this.name);
-        builder.append(", value=");
-        builder.append(this.value);
-        builder.append("]");
-        return builder.toString();
+        return "Constant [type=" + type + ", name=" + name + ", value=" + value + "]";
     }
 }
