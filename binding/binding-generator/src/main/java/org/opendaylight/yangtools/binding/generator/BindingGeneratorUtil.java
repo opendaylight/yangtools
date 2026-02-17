@@ -65,7 +65,6 @@ public final class BindingGeneratorUtil {
             return Restrictions.empty();
         }
 
-
         /*
          * Take care of extended types.
          *
@@ -97,9 +96,9 @@ public final class BindingGeneratorUtil {
                 range = decimal.getRangeConstraint();
             }
             return Restrictions.of(range.orElse(null));
-        } else if (type instanceof RangeRestrictedTypeDefinition) {
+        } else if (type instanceof RangeRestrictedTypeDefinition<?, ?> range) {
             // Integer-like types
-            return Restrictions.of(extractRangeConstraint((RangeRestrictedTypeDefinition<?, ?>) type).orElse(null));
+            return Restrictions.of(extractRangeConstraint(range).orElse(null));
         } else if (type instanceof StringTypeDefinition string) {
             final var base = string.getBaseType();
             final Optional<LengthConstraint> length;
