@@ -343,10 +343,10 @@ public abstract class Generator implements Iterable<Generator> {
 
     static final <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Generator parent,
             final Class<T> type) {
-        for (Generator child : parent) {
+        for (var child : parent) {
             if (child instanceof AbstractExplicitGenerator) {
                 @SuppressWarnings("unchecked")
-                final AbstractExplicitGenerator<T, ?> explicit = (AbstractExplicitGenerator<T, ?>)child;
+                final var explicit = (AbstractExplicitGenerator<T, ?>)child;
                 if (type.isInstance(explicit.statement())) {
                     return explicit;
                 }
