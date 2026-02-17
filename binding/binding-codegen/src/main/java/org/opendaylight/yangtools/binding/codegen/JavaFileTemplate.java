@@ -160,7 +160,7 @@ class JavaFileTemplate {
     static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
 
     /**
-     * {@code org.opendaylight.yangtools.binding.CodeHelpers} as a JavaTypeName.
+     * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
