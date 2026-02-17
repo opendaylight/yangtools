@@ -469,12 +469,13 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
             }
 
             final var enclosedType = child.enclosedType(builderFactory);
-            if (enclosedType instanceof GeneratedTransferObject gto) {
-                builder.addEnclosingTransferObject(gto);
-            } else if (enclosedType instanceof Enumeration enumeration) {
-                builder.addEnumeration(enumeration);
-            } else {
-                verify(enclosedType == null, "Unhandled enclosed type %s in %s", enclosedType, child);
+            switch (enclosedType) {
+                case GeneratedTransferObject gto -> builder.addEnclosingTransferObject(gto);
+                case Enumeration enumeration -> builder.addEnumeration(enumeration);
+                case null -> {
+                    // No-op
+                }
+                default -> throw new VerifyException("Unhandled enclosed type %s in %s".formatted(enclosedType, child));
             }
         }
     }
@@ -500,9 +501,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                         tmp.add(new OpaqueObjectGenerator.Anyxml(anyxml, this));
                     }
                 }
-                case CaseEffectiveStatement cast -> {
-                    tmp.add(new CaseGenerator(cast, this));
-                }
+                case CaseEffectiveStatement cast -> tmp.add(new CaseGenerator(cast, this));
                 case ChoiceEffectiveStatement choice -> {
                     // FIXME: use isOriginalDeclaration() ?
                     if (!isAddedByUses(choice)) {
@@ -519,15 +518,9 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                         tmp.add(new FeatureGenerator(feature, parent));
                     }
                 }
-                case GroupingEffectiveStatement grouping -> {
-                    tmp.add(new GroupingGenerator(grouping, this));
-                }
-                case IdentityEffectiveStatement identity -> {
-                    tmp.add(new IdentityGenerator(identity, this));
-                }
-                case InputEffectiveStatement input -> {
-                    tmp.add(new InputGenerator(input, this));
-                }
+                case GroupingEffectiveStatement grouping -> tmp.add(new GroupingGenerator(grouping, this));
+                case IdentityEffectiveStatement identity -> tmp.add(new IdentityGenerator(identity, this));
+                case InputEffectiveStatement input -> tmp.add(new InputGenerator(input, this));
                 case LeafEffectiveStatement leaf -> {
                     if (!isAugmenting(leaf)) {
                         tmp.add(new LeafGenerator(leaf, this));
@@ -572,17 +565,13 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                         }
                     }
                 }
-                case OutputEffectiveStatement output -> {
-                    tmp.add(new OutputGenerator(output, this));
-                }
+                case OutputEffectiveStatement output -> tmp.add(new OutputGenerator(output, this));
                 case RpcEffectiveStatement rpc -> {
                     if (this instanceof ModuleGenerator module) {
                         tmp.add(new RpcGenerator(rpc, module));
                     }
                 }
-                case TypedefEffectiveStatement typedef -> {
-                    tmp.add(new TypedefGenerator(typedef, this));
-                }
+                case TypedefEffectiveStatement typedef -> tmp.add(new TypedefGenerator(typedef, this));
                 case AugmentEffectiveStatement augment -> {
                     // FIXME: MDSAL-695: So here we are ignoring any augment which is not in a module, while the 'uses'
                     //                   processing takes care of the rest. There are two problems here:
