@@ -34,7 +34,7 @@ public final class YinDOMModuleSource extends YinDOMSource {
 
     @Override
     public SourceInfo.Module extractSourceInfo() throws SourceSyntaxException {
-        return new YinDOMSourceInfoExtractor.ForModule(statement(), refProvider()).extractSourceInfo();
+        return new YinDOMSourceInfoExtractor.ForModule(sourceId(), statement(), refProvider()).extractSourceInfo();
     }
 
     @Override

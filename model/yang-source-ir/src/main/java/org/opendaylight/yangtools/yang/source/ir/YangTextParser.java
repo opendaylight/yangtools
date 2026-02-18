@@ -71,13 +71,13 @@ final class YangTextParser extends BaseErrorListener {
 
         final var sb = new StringBuilder().append(first.getMessage());
         it.forEachRemaining(next -> sb.append('\n').append(next.getMessage()));
-        throw new SourceSyntaxException(sb.toString());
+        throw new SourceSyntaxException(sb.toString(), source.sourceId());
     }
 
     @Override
     public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
             final int charPositionInLine, final String msg, final RecognitionException cause) {
-        exceptions.add(new SourceSyntaxException(msg, cause,
-            StatementDeclarations.inText(fileName, line, charPositionInLine)));
+        exceptions.add(new SourceSyntaxException(msg, StatementDeclarations.inText(fileName, line, charPositionInLine),
+            cause));
     }
 }

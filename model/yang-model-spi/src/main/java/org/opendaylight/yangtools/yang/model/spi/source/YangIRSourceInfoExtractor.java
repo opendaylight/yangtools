@@ -215,8 +215,8 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
             return arg.asString(argEscaping);
         } catch (ParseException e) {
             throw new SourceSyntaxException(
-                "Malformed argument to " + stmt.keyword().asStringDeclaration() + ": " + e.getMessage(), e,
-                refOf(stmt));
+                "Malformed argument to " + stmt.keyword().asStringDeclaration() + ": " + e.getMessage(), refOf(stmt),
+                e);
         }
     }
 
@@ -233,8 +233,8 @@ abstract sealed class YangIRSourceInfoExtractor implements SourceInfo.Extractor 
     @NonNullByDefault
     final SourceSyntaxException newInvalidArgument(final IRStatement stmt, final Exception cause) {
         return new SourceSyntaxException(
-            "Invalid argument to " + stmt.keyword().asStringDeclaration() + ": " + cause.getMessage(), cause,
-            refOf(stmt));
+            "Invalid argument to " + stmt.keyword().asStringDeclaration() + ": " + cause.getMessage(), refOf(stmt),
+            cause);
     }
 
     @NonNullByDefault
