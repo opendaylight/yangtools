@@ -1,0 +1,43 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024 The Linux Foundation
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '^.*\.(bin|patch|diff|yang|YANG)$'
+      - id: end-of-file-fixer
+        exclude: '^.*\.(bin|patch|diff|xml|XML|yang|YANG)$'
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-xml
+        exclude: '.*(bad-key|invalid.*|with_auth|baz|bug8927.*|YT893.*)\.(xml|yang)$'
+      - id: check-json
+        exclude: '.*/bug8927/.*\.json$'
+      - id: check-added-large-files
+        args: ["--maxkb=10240"]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        exclude: ".*YT893.*"
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: remove-tabs
+        exclude: '^.*\.(bin|patch|diff|xml|XML|yang|YANG)$'
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types_or: [yaml, markdown]
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [-c=.yamllint]
