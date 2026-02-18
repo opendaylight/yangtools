@@ -1,32 +1,22 @@
 ---
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2024 The Linux Foundation <abelur@linux.com>
+# SPDX-FileCopyrightText: 2024 The Linux Foundation
 
-name: call-github2gerrit-reusable-workflow
+name: GitHub to Gerrit Sync
 
 # yamllint disable-line rule:truthy
 on:
-    workflow_dispatch:
-    pull_request_target:
-        types: [opened, reopened, edited, synchronize]
-        branches:
-            - master
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
 
 concurrency:
-    # yamllint disable-line rule:line-length
-    group: ${{ github.workflow }}-${{ github.run_id }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-    call-in-g2g-workflow:
-        permissions:
-            contents: read
-            pull-requests: write
-        uses: lfit/github2gerrit/.github/workflows/github2gerrit.yaml@main
-        with:
-            GERRIT_KNOWN_HOSTS: ${{ vars.GERRIT_KNOWN_HOSTS }}
-            GERRIT_SSH_USER_G2G: ${{ vars.GERRIT_SSH_USER_G2G }}
-            GERRIT_SSH_USER_G2G_EMAIL: ${{ vars.GERRIT_SSH_USER_G2G_EMAIL }}
-            ORGANIZATION: ${{ vars.ORGANIZATION }}
-        secrets:
-            GERRIT_SSH_PRIVKEY_G2G: ${{ secrets.GERRIT_SSH_PRIVKEY_G2G }}
+  github2gerrit:
+    uses: ./.github/workflows/call-github2gerrit.yaml
+    secrets: inherit
