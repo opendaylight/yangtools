@@ -1,0 +1,132 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+
+name: Gerrit Composed CLM Scan
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+    inputs:
+      GERRIT_BRANCH:
+        description: "Branch that change is against"
+        required: true
+        type: string
+      GERRIT_CHANGE_ID:
+        description: "The ID for the change"
+        required: true
+        type: string
+      GERRIT_CHANGE_NUMBER:
+        description: "The Gerrit number"
+        required: true
+        type: string
+      GERRIT_CHANGE_URL:
+        description: "URL to the change"
+        required: true
+        type: string
+      GERRIT_EVENT_TYPE:
+        description: "Type of Gerrit event"
+        required: true
+        type: string
+      GERRIT_PATCHSET_NUMBER:
+        description: "The patch number for the change"
+        required: true
+        type: string
+      GERRIT_PATCHSET_REVISION:
+        description: "The revision sha"
+        required: true
+        type: string
+      GERRIT_PROJECT:
+        description: "Project in Gerrit"
+        required: true
+        type: string
+      GERRIT_REFSPEC:
+        description: "Gerrit refspec of change"
+        required: true
+        type: string
+  schedule:
+    # Run weekly on Saturdays at 06:58 UTC
+    - cron: "58 6 * * 6"
+
+concurrency:
+  # yamllint disable-line rule:line-length
+  group: composed-clm-scan-${{ github.workflow }}-${{ github.event.inputs.GERRIT_CHANGE_ID || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Notify job start
+        # yamllint disable-line rule:line-length
+        uses: lfit/gerrit-review-action@6d2e00dfd3173cd9a36d11350c8fba44731c7b4e # v0.10.0
+        with:
+          host: ${{ vars.GERRIT_SERVER }}
+          username: ${{ vars.GERRIT_SSH_USER }}
+          key: ${{ secrets.GERRIT_SSH_PRIVKEY }}
+          known_hosts: ${{ vars.GERRIT_KNOWN_HOSTS }}
+          gerrit-change-number: ${{ inputs.GERRIT_CHANGE_NUMBER }}
+          gerrit-patchset-number: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+          vote-type: clear
+          comment-only: true
+      - name: Allow replication
+        run: sleep 10s
+
+  run-maven-clm:
+    runs-on: ubuntu-latest
+    if: ${{ always() && (needs.notify.result == 'success' || github.event_name == 'schedule') }}
+    needs: [notify]
+    steps:
+      - name: Gerrit Checkout
+        # yamllint disable-line rule:line-length
+        uses: lfit/checkout-gerrit-change-action@568e981b55b112c5085d4946f774ce47f2fa8afa # v0.9.0
+        with:
+          gerrit-refspec: ${{ inputs.GERRIT_REFSPEC || 'refs/heads/master' }}
+          gerrit-project: ${{ inputs.GERRIT_PROJECT || github.repository }}
+          gerrit-url: ${{ vars.GERRIT_URL }}
+          delay: "0s"
+
+      - name: Setup Java
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1 # v5
+        with:
+          maven-version: "3.9.5"
+
+      - name: Run Maven Nexus IQ Scan
+        env:
+          NEXUS_IQ_PASSWORD: ${{ secrets.NEXUS_IQ_PASSWORD }}
+          MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED"
+        run: |
+          # yamllint disable rule:line-length
+          mvn clean install dependency:tree com.sonatype.clm:clm-maven-plugin:2.41.0-02:index \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+            -Dmaven.repo.local=/tmp/r \
+            -Dorg.ops4j.pax.url.mvn.localRepository=/tmp/r \
+            -DaltDeploymentRepository=staging::default::file:"${GITHUB_WORKSPACE}"/m2repo
+
+  report-status:
+    if: ${{ always() && github.event_name == 'workflow_dispatch' }}
+    needs: [notify, run-maven-clm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get workflow conclusion
+        # yamllint disable-line rule:line-length
+        uses: im-open/workflow-conclusion@e4f7c4980600fbe0818173e30931d3550801b992 # v2.2.3
+      - name: Report workflow conclusion
+        # yamllint disable-line rule:line-length
+        uses: lfit/gerrit-review-action@6d2e00dfd3173cd9a36d11350c8fba44731c7b4e # v0.10.0
+        with:
+          host: ${{ vars.GERRIT_SERVER }}
+          username: ${{ vars.GERRIT_SSH_USER }}
+          key: ${{ secrets.GERRIT_SSH_PRIVKEY }}
+          known_hosts: ${{ vars.GERRIT_KNOWN_HOSTS }}
+          gerrit-change-number: ${{ inputs.GERRIT_CHANGE_NUMBER }}
+          gerrit-patchset-number: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+          vote-type: ${{ env.WORKFLOW_CONCLUSION }}
+          comment-only: true
