@@ -14,45 +14,47 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReferenceAware;
 
 /**
  * An exception thrown when a {@link SourceRepresentation} is found to contain syntax errors.
+ * @since 15.0.0
  */
-public final class SourceSyntaxException extends Exception {
+@NonNullByDefault
+public final class SourceSyntaxException extends Exception implements StatementSourceReferenceAware {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    private final @Nullable StatementSourceReference sourceRef;
+    private final StatementSourceReference sourceRef;
 
-    public SourceSyntaxException(final String message) {
-        this(message, null, null);
+    public SourceSyntaxException(final String message, final SourceIdentifier sourceId) {
+        this(message, sourceId.toReference(), null);
     }
 
-    public SourceSyntaxException(final String message, final @Nullable Throwable cause) {
-        this(message, cause, null);
+    public SourceSyntaxException(final String message, final StatementSourceReference sourceRef) {
+        this(message, sourceRef, null);
     }
 
-    public SourceSyntaxException(final String message, final @Nullable StatementSourceReference sourceRef) {
-        this(message, null, sourceRef);
+    public SourceSyntaxException(final String message, final SourceIdentifier sourceId,
+            final @Nullable Throwable cause) {
+        this(message, sourceId.toReference(), cause);
     }
 
-    public SourceSyntaxException(final String message, final @Nullable Throwable cause,
-            final @Nullable StatementSourceReference sourceRef) {
+    public SourceSyntaxException(final String message, final StatementSourceReference sourceRef,
+            final @Nullable Throwable cause) {
         super(createMessage(requireNonNull(message), sourceRef), cause);
-        this.sourceRef = sourceRef;
+        this.sourceRef = requireNonNull(sourceRef);
     }
 
-    private static String createMessage(final String message, final @Nullable StatementSourceReference sourceRef) {
-        return sourceRef == null ? message : message + " [at " + sourceRef + ']';
+    private static String createMessage(final String message, final StatementSourceReference sourceRef) {
+        return message + " [at " + sourceRef + ']';
     }
 
-    /**
-     * {@return the {@link StatementSourceReference} to the statement causing this exception, or {@code null} when
-     * not available}
-     */
-    public @Nullable StatementSourceReference sourceRef() {
+    @Override
+    public StatementSourceReference sourceRef() {
         return sourceRef;
     }
 

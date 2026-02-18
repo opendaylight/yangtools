@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -43,8 +44,8 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         private static final String NAMESPACE = NamespaceStatement.DEF.simpleName();
         private static final String NAMESPACE_ARG = NamespaceStatement.DEF.getArgumentDefinition().simpleName();
 
-        ForModule(final Element root, final SourceRefProvider refProvider) {
-            super(root, refProvider);
+        ForModule(final SourceIdentifier sourceId, final Element root, final SourceRefProvider refProvider) {
+            super(sourceId, root, refProvider);
         }
 
         @Override
@@ -72,8 +73,8 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
         private static final String BELONGS_TO = BelongsToStatement.DEF.simpleName();
         private static final String BELONGS_TO_ARG = BelongsToStatement.DEF.getArgumentDefinition().simpleName();
 
-        ForSubmodule(final Element root, final SourceRefProvider refProvider) {
-            super(root, refProvider);
+        ForSubmodule(final SourceIdentifier sourceId, final Element root, final SourceRefProvider refProvider) {
+            super(sourceId, root, refProvider);
         }
 
         @Override
@@ -120,9 +121,12 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
     private static final String YANG_VERSION_ARG = YangVersionStatement.DEF.getArgumentDefinition().simpleName();
 
     private final SourceRefProvider refProvider;
+    private final SourceIdentifier sourceId;
     final Element root;
 
-    YinDOMSourceInfoExtractor(final Element root, final SourceRefProvider refProvider) {
+    YinDOMSourceInfoExtractor(final SourceIdentifier sourceId, final Element root,
+            final SourceRefProvider refProvider) {
+        this.sourceId = requireNonNull(sourceId);
         this.root = requireNonNull(root);
         this.refProvider = requireNonNull(refProvider);
     }
@@ -213,23 +217,23 @@ abstract sealed class YinDOMSourceInfoExtractor implements SourceInfo.Extractor 
     final String getElementArgumentString(final Element element, final String argument) throws SourceSyntaxException {
         final var arg = element.getAttributeNodeNS(null, argument);
         if (arg == null || !arg.getSpecified()) {
-            throw new SourceSyntaxException("Missing argument to " + element.getLocalName(),
-                refProvider.refOf(element));
+            throw new SourceSyntaxException("Missing argument to " + element.getLocalName(), refOf(element));
         }
         return arg.getValue();
     }
 
     final SourceSyntaxException newInvalidArgument(final Element stmt, final Exception cause) {
         return new SourceSyntaxException(
-            "Invalid argument to " + stmt.getLocalName() + ": " + cause.getMessage(), cause, refOf(stmt));
+            "Invalid argument to " + stmt.getLocalName() + ": " + cause.getMessage(), refOf(stmt), cause);
     }
 
     private SourceSyntaxException newMissingSubstatement(final Element parent, final String keyword) {
         return new SourceSyntaxException("Missing " + keyword + " substatement", refOf(parent));
     }
 
-    final @Nullable StatementSourceReference refOf(final Element element) {
-        return refProvider.refOf(element);
+    final StatementSourceReference refOf(final Element element) {
+        final var ref = refProvider.refOf(element);
+        return ref != null ? ref : sourceId.toReference();
     }
 
     static boolean isYinElement(final Element element) {

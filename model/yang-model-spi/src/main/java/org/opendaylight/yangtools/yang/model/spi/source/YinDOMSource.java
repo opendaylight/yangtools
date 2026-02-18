@@ -102,23 +102,28 @@ public abstract sealed class YinDOMSource
         final var element = documentElementOf(domSource);
         final var rootNs = element.getNamespaceURI();
         if (!YangConstants.RFC6020_YIN_NAMESPACE_STRING.equals(rootNs)) {
+            final var ref = refProvider.refOf(element);
             throw new SourceSyntaxException(
                 "Root node namepsace " + rootNs + " does not match " + YangConstants.RFC6020_YIN_NAMESPACE_STRING,
-                refProvider.refOf(element));
+                ref != null ? ref : identifier.toReference());
         }
 
         final var rootName = element.getLocalName();
         final var nameAttr = element.getAttributeNode(MODULE_ARG);
         if (nameAttr == null) {
+            final var ref = refProvider.refOf(element);
             throw new SourceSyntaxException("No " + MODULE_ARG + " name argument found in " + rootName,
-                refProvider.refOf(element));
+                ref != null ? ref : identifier.toReference());
         }
 
         return switch (rootName) {
             case MODULE -> new YinDOMModuleSource(identifier, domSource, refProvider, symbolicName);
             case SUBMODULE -> new YinDOMSubmoduleSource(identifier, domSource, refProvider, symbolicName);
-            default -> throw new SourceSyntaxException("Root element " + rootName + " is not a module nor a submodule",
-                refProvider.refOf(element));
+            default -> {
+                final var ref = refProvider.refOf(element);
+                throw new SourceSyntaxException("Root element " + rootName + " is not a module nor a submodule",
+                    ref != null ? ref : identifier.toReference());
+            }
         };
     }
 

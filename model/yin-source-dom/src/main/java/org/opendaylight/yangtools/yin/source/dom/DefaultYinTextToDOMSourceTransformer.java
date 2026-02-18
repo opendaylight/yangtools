@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yin.source.dom;
 import java.io.IOException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
@@ -39,19 +37,15 @@ public final class DefaultYinTextToDOMSourceTransformer implements YinTextToDOMS
         try {
             parser.parse(input.openStream(), handler);
         } catch (SAXParseException e) {
-            throw new SourceSyntaxException("Failed to parse YIN source", e, sourceRefOf(e, input.symbolicName()));
+            final var lineNumber = e.getLineNumber();
+            final var columnNumber = e.getColumnNumber();
+            throw new SourceSyntaxException("Failed to parse YIN source", lineNumber > 0 && columnNumber > 0
+                ? StatementDeclarations.inText(input.symbolicName(), lineNumber, columnNumber)
+                : input.sourceId().toReference(), e);
         } catch (SAXException e) {
-            throw new SourceSyntaxException("Failed to parse YIN source", e);
+            throw new SourceSyntaxException("Failed to parse YIN source", input.sourceId().toReference(), e);
         }
         return YinDOMSource.of(input.sourceId(), new DOMSource(doc), DefaultSourceRefProvider.INSTANCE,
             input.symbolicName());
-    }
-
-    private static @Nullable StatementSourceReference sourceRefOf(final SAXParseException cause,
-                final @Nullable String symbolicName) {
-        final var lineNumber = cause.getLineNumber();
-        final var columnNumber = cause.getColumnNumber();
-        return lineNumber < 1 || columnNumber < 1 ? null
-            : StatementDeclarations.inText(symbolicName, lineNumber, columnNumber);
     }
 }
