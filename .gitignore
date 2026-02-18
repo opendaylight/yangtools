@@ -26,3 +26,4 @@ __pycache__
 
 # Vim
 .*.sw?
+node_modules/
