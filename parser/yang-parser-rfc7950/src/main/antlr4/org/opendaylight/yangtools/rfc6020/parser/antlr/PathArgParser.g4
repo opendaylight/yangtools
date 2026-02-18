@@ -33,4 +33,3 @@ deref_function_invocation : DEREF_KEYWORD SEP? LEFT_PARENTHESIS SEP? relative_pa
 prefix : identifier;
 
 identifier: IDENTIFIER | CURRENT_KEYWORD | DEREF_KEYWORD;
-

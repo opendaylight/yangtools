@@ -135,7 +135,7 @@
                         <xs:documentation>
 
                           The container for definition of topology types.
-                          The augmenting modules should add empty optional leaf 
+                          The augmenting modules should add empty optional leaf
                           to this container to signalize topology type.
 
                         </xs:documentation>

@@ -155,4 +155,3 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> impleme
         return ret;
     }
 }
-

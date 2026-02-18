@@ -32,4 +32,3 @@ public interface Identifier extends Serializable, Immutable {
     @Override
     String toString();
 }
-
