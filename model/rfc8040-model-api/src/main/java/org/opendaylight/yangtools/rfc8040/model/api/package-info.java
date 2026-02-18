@@ -11,4 +11,3 @@
  */
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.rfc8040.model.api;
-

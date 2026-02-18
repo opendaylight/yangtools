@@ -42,4 +42,3 @@ record ReactorSourceImpl(SourceInfoRef infoRef, StatementStreamSource.Factory st
         return MoreObjects.toStringHelper(ReactorSource.class).add("ref", infoRef).toString();
     }
 }
-

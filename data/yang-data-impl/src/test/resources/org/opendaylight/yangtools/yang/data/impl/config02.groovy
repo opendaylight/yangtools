@@ -10,7 +10,7 @@ def data = {
     topologies {
       topology {
         'topology-id'('topId_01')
-        
+
         //types()
         nodes {
           node {

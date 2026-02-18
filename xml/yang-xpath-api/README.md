@@ -4,4 +4,3 @@ This component defines an object model, rooted in org.opendaylight.yangtools.yan
 Instances of such expressions can be acquired via an implementation of
 org.opendaylight.yangtools.yang.xpath.api.YangXPathParser, which in turn are given out from an implementation of
 org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory.
-

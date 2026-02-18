@@ -106,4 +106,3 @@ DQUOT_END : '"' -> popMode;
 mode SQUOT_STRING_MODE;
 SQUOT_STRING : ~[']+ -> type(SQUOT_STRING);
 SQUOT_END : '\'' -> popMode;
-

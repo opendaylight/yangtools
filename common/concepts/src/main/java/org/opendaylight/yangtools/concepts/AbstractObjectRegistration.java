@@ -33,4 +33,3 @@ public abstract class AbstractObjectRegistration<T> extends AbstractRegistration
         return super.addToStringAttributes(toStringHelper).add("instance", instance);
     }
 }
-

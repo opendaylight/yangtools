@@ -14,20 +14,20 @@ import org.opendaylight.yangtools.yang.data.impl.MyNodeBuilder
 class MyXmlGenerator {
 
     def myBuilder
-    
+
     MyXmlGenerator() {
         myBuilder = MyNodeBuilder.newInstance();
     }
 
-    MyNodeBuilder getBuilder() { 
+    MyNodeBuilder getBuilder() {
       return myBuilder;
     }
-        
+
     void buildTree(data) {
         data.setDelegate(myBuilder)
         data()
     }
-    
+
     /**
      * tests builder execution
      */
@@ -38,7 +38,7 @@ class MyXmlGenerator {
             topologies {
               topology {
                 'topology-id'('topId_01')
-                
+
                 nodes {
                   node {
                     'node-id'('nodeId_02')
@@ -115,6 +115,3 @@ class MyXmlGenerator {
     }
 
 }
-
-
-

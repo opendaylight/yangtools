@@ -106,4 +106,3 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
         }
     }
 }
-

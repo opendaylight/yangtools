@@ -10,4 +10,3 @@
  */
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.yang.model.export;
-

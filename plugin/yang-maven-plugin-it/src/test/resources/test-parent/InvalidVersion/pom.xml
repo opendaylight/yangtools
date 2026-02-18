@@ -16,8 +16,8 @@
     <artifactId>invalid-version</artifactId>
 
     <!-- Testing dependency -->
-    <!-- yang-common dependency added here only for purpose of 'artifact version 
-        check' test: version of yang-common artifact has to be different than one defined 
+    <!-- yang-common dependency added here only for purpose of 'artifact version
+        check' test: version of yang-common artifact has to be different than one defined
         in yang-maven-plugin to make test pass -->
     <dependencies>
         <dependency>
