@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_FILE_EXTENSION;
 
 import java.time.format.DateTimeParseException;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -23,13 +22,38 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangNames;
 
 /**
- * Base class of YANG Schema source identifiers. Source identifiers are designated to be carry only necessary
- * information to look up YANG module (or submodule) source and to be used by various SchemaSourceProviders.
+ * The identifier of a schema source. This class is designed to carry the bare minimum information to look up a YANG
+ * source, be it a module or a submodule.
  *
  * <p>For further reference see: <a href="https://www.rfc-editor.org/rfc/rfc6020#section-5.2">RFC6020</a>
  * and <a href="https://www.rfc-editor.org/rfc/rfc6022#section-3.1">RFC6022</a>.
+ *
+ * <p>This object should always be used in its {#link Identifier} capacity, which is to say parsed from the file, or
+ * derived from {@code module}/{@code submodule} and {@code revvision-date} statements.
+ *
+ * <p>SourceIdentifier identifiers have a defined natural order, which is the product of comparing its parts:
+ * {@link #name} is compared first, followed by {@link Revision#compare(Revision, Revision)}.
  */
-public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision revision) implements Identifier {
+// TODO: this class and its design will need to be re-visited once
+//       https://datatracker.ietf.org/doc/draft-ietf-netmod-yang-module-filename/ is published so that the concept is
+//       compatible with, and useful for implementation of,
+//       https://datatracker.ietf.org/doc/draft-ietf-netmod-yang-module-versioning/ in the overall context of
+//       https://datatracker.ietf.org/doc/draft-ietf-netmod-yang-semver/
+//
+//       When we do that, we should be mixing in optionality and consistency with the source body into the class design:
+//       - the file name is a hint, where both revision and version are optional or read, but should be normalized into
+//         either of the two formats
+//         - here we should how these files are managed on the filesystem:
+//           - the canonical name is with revision
+//           - the versioned name is a symlink to the corresponding revision
+//           - the revisionless name is a symlink to the latest available revision
+//       - the SourceIdentifier extracted from the body is accurate value space item to which the source body is laying
+//         claim
+//       - there may be supplemental information available -- such as all previously-declared revisions and versions,
+//         which is useful during source linkage -- but that part is a model.spi.spi.source concern
+@NonNullByDefault
+public record SourceIdentifier(Unqualified name, @Nullable Revision revision)
+        implements Comparable<SourceIdentifier>, Identifier {
     @java.io.Serial
     private static final long serialVersionUID = 3L;
 
@@ -50,7 +74,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @param name Name of schema
      * @throws NullPointerException if {@code name} is {@code null}
      */
-    public SourceIdentifier(final @NonNull Unqualified name) {
+    public SourceIdentifier(final Unqualified name) {
         this(name, null);
     }
 
@@ -61,7 +85,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @throws NullPointerException if {@code name} is {@code null}
      * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
      */
-    public SourceIdentifier(final @NonNull String name) {
+    public SourceIdentifier(final String name) {
         this(Unqualified.of(name));
     }
 
@@ -73,7 +97,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @throws NullPointerException if {@code name} is {@code null}
      * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
      */
-    public SourceIdentifier(final @NonNull String name, final @Nullable Revision revision) {
+    public SourceIdentifier(final String name, final @Nullable Revision revision) {
         this(Unqualified.of(name), revision);
     }
 
@@ -86,25 +110,25 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @throws IllegalArgumentException if {@code name} is not a valid YANG identifier
      * @throws DateTimeParseException if {@code revision} format does not conform specification.
      */
-    public SourceIdentifier(final @NonNull String name, final @Nullable String revision) {
+    public SourceIdentifier(final String name, final @Nullable String revision) {
         this(name, revision != null ? Revision.of(revision) : null);
     }
 
-    public static @NonNull SourceIdentifier ofYangFileName(final String fileName) {
+    public static SourceIdentifier ofYangFileName(final String fileName) {
         if (fileName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
             return ofFileName(fileName.substring(0, fileName.length() - RFC6020_YANG_FILE_EXTENSION.length()));
         }
         throw new IllegalArgumentException("Filename '" + fileName + "' does not end with '.yang'");
     }
 
-    public static @NonNull SourceIdentifier ofYinFileName(final String fileName) {
+    public static SourceIdentifier ofYinFileName(final String fileName) {
         if (fileName.endsWith(RFC6020_YIN_FILE_EXTENSION)) {
             return ofFileName(fileName.substring(0, fileName.length() - RFC6020_YIN_FILE_EXTENSION.length()));
         }
         throw new IllegalArgumentException("Filename " + fileName + " does not end with '.yin'");
     }
 
-    private static @NonNull SourceIdentifier ofFileName(final String fileName) {
+    private static SourceIdentifier ofFileName(final String fileName) {
         final var parsed = YangNames.parseFilename(fileName);
         return new SourceIdentifier(parsed.getKey(), parsed.getValue());
     }
@@ -120,7 +144,6 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @param qname the {@link QName}
      * @return the {@link SourceIdentifier}
      */
-    @NonNullByDefault
     public static SourceIdentifier ofQName(final QName qname) {
         return new SourceIdentifier(qname.unbind(), qname.getModule().revision());
     }
@@ -134,7 +157,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      *
      * @return Filename for this source identifier.
      */
-    public @NonNull String toYangFilename() {
+    public String toYangFilename() {
         return toYangFileName(name.getLocalName(), revision);
     }
 
@@ -147,7 +170,7 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      *
      * @return Filename for this source identifier.
      */
-    public @NonNull String toYinFilename() {
+    public String toYinFilename() {
         return toYinFileName(name.getLocalName(), revision);
     }
 
@@ -155,8 +178,19 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * {@return a {@code StatementSourceReference} loosely identifying the same source as this identifier}
      * @since 15.0.0
      */
-    public @NonNull DeclarationInSource toReference() {
+    public DeclarationInSource toReference() {
         return new DeclarationInSource(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @since 15.0.0
+     */
+    @Override
+    @SuppressWarnings("checkstyle:parameterName")
+    public int compareTo(final SourceIdentifier o) {
+        final int cmp = name.compareTo(o.name);
+        return cmp != 0 ? cmp : Revision.compare(revision, o.revision());
     }
 
     @Override
@@ -179,8 +213,8 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @param revision optional revision
      * @return Filename for this source identifier.
      */
-    public static @NonNull String toYangFileName(final @NonNull String moduleName, final @Nullable Revision revision) {
-        return toFileName(moduleName, revision, RFC6020_YANG_FILE_EXTENSION);
+    public static String toYangFileName(final String moduleName, final @Nullable Revision revision) {
+        return toFileName(RFC6020_YANG_FILE_EXTENSION, moduleName, revision);
     }
 
     /**
@@ -194,12 +228,12 @@ public record SourceIdentifier(@NonNull Unqualified name, @Nullable Revision rev
      * @param revision optional revision
      * @return Filename for this source identifier.
      */
-    public static @NonNull String toYinFileName(final @NonNull String moduleName, final @Nullable Revision revision) {
-        return toFileName(moduleName, revision, RFC6020_YIN_FILE_EXTENSION);
+    public static String toYinFileName(final String moduleName, final @Nullable Revision revision) {
+        return toFileName(RFC6020_YIN_FILE_EXTENSION, moduleName, revision);
     }
 
-    private static @NonNull String toFileName(final @NonNull String moduleName, final @Nullable Revision revision,
-            final @NonNull String extension) {
+    private static String toFileName(final String extension, final String moduleName,
+            final @Nullable Revision revision) {
         final var sb = new StringBuilder(moduleName);
         if (revision != null) {
             sb.append('@').append(revision);
