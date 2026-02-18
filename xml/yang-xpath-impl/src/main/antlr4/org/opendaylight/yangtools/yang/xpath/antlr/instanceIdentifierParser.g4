@@ -50,4 +50,3 @@ pos : LBRACKET WSP? PositiveIntegerValue WSP? RBRACKET
 quotedString : SQUOT_STRING? SQUOT_END
   | DQUOT_STRING? DQUOT_END
   ;
-

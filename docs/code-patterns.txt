@@ -92,5 +92,3 @@ disposal.
 TBD: volatile vs. double-checked loading with immutables
 TBD: getAcquire() + compareAndExchangeRelease()
 TBD: getAcqiore() + setRelease()
-
-

@@ -24,7 +24,7 @@ Do with this code as you will.
 main  :  expr
   ;
 
-locationPath 
+locationPath
   :  relativeLocationPath
   |  absoluteLocationPathNoroot
   ;
@@ -68,7 +68,7 @@ primaryExpr
   :  variableReference
   |  '(' expr ')'
   |  Literal
-  |  Number  
+  |  Number
   |  functionCall
   ;
 
@@ -154,7 +154,7 @@ NodeType:  'comment'
   |  'processing-instruction'
   |  'node'
   ;
-  
+
 Number  :  Digits ('.' Digits?)?
   |  '.' Digits
   ;
@@ -179,49 +179,49 @@ AxisName:  'ancestor'
   ;
 
 
-  PATHSEP 
+  PATHSEP
        :'/';
-  ABRPATH   
+  ABRPATH
        : '//';
-  LPAR   
+  LPAR
        : '(';
-  RPAR   
+  RPAR
        : ')';
-  LBRAC   
+  LBRAC
        :  '[';
-  RBRAC   
+  RBRAC
        :  ']';
-  MINUS   
+  MINUS
        :  '-';
-  PLUS   
+  PLUS
        :  '+';
-  DOT   
+  DOT
        :  '.';
-  MUL   
+  MUL
        : '*';
-  DOTDOT   
+  DOTDOT
        :  '..';
-  AT   
+  AT
        : '@';
-  COMMA  
+  COMMA
        : ',';
-  PIPE   
+  PIPE
        :  '|';
-  LESS   
+  LESS
        :  '<';
-  MORE_ 
+  MORE_
        :  '>';
-  LE   
+  LE
        :  '<=';
-  GE   
+  GE
        :  '>=';
-  COLON   
+  COLON
        :  ':';
-  CC   
+  CC
        :  '::';
-  APOS   
+  APOS
        :  '\'';
-  QUOT   
+  QUOT
        :  '"';
   AND
        :  'and';
@@ -232,7 +232,7 @@ AxisName:  'ancestor'
   MOD
        :  'mod';
 
-  
+
 Literal  :  '"' ~'"'* '"'
   |  '\'' ~'\''* '\''
   ;
@@ -269,5 +269,3 @@ NCNameChar
   |  '\u00B7' | '\u0300'..'\u036F'
   |  '\u203F'..'\u2040'
   ;
-
-
