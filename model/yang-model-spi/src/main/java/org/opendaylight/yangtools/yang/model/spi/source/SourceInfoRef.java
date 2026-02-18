@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.source;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * The combination of a {@link SourceInfo} and its corresponding {@link SourceRef}.
  * @since 15.0.0
  */
+@NonNullByDefault
 public sealed interface SourceInfoRef {
     /**
      * A {@link SourceInfoRef} to a {@code module}.
