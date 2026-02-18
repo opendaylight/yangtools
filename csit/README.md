@@ -1,9 +1,10 @@
 # YANGTOOLS CSIT TEST
+
 This project is aimed to testing yang files using yang validator tool.
 
 ## Installing
 
-*Prerequisite:*  The followings are required for building test:
+_Prerequisite:_ The followings are required for building test:
 
 - JDK17
 - JAVA_HOME
@@ -12,35 +13,35 @@ This project is aimed to testing yang files using yang validator tool.
 GET THE CODE:
 
 USING HTTPS:
-    git clone "https://git.opendaylight.org/gerrit/yangtools"
+git clone "https://git.opendaylight.org/gerrit/yangtools"
 
 USING SSH:
-    git clone ssh://{USERNAME}@git.opendaylight.org:29418/yangtools
+git clone ssh://{USERNAME}@git.opendaylight.org:29418/yangtools
 
 NAVIGATE TO:
-    cd ~/yangtools/csit
+cd ~/yangtools/csit
 
 INSTALL VIRTUAL ENVIROMENT PACKAGE:
-    sudo apt install python3-virtualenv
+sudo apt install python3-virtualenv
 
 CREATE NEW VIRTUAL ENVIROMENT:
-    virtualenv venv
+virtualenv venv
 
 ACTIVATE VIRTUAL ENVIROMENT:
-    source venv/bin/activate
+source venv/bin/activate
 
 INSTALL JAVA:
-    sudo apt install openjdk-17-jdk openjdk-17-jre
+sudo apt install openjdk-17-jdk openjdk-17-jre
 
 SET JAVA_HOME:
-    export JAVA_HOME enviroment variable
+export JAVA_HOME enviroment variable
 
 ## Running test
 
 RUN TEST:
-    Usage examples:
-    python3 yangtools_test.py -l y -m /src/main/yang/vendor/
-    python3 yangtools_test.py --log=y --models=/src/main/yang/vendor/
+Usage examples:
+python3 yangtools_test.py -l y -m /src/main/yang/vendor/
+python3 yangtools_test.py --log=y --models=/src/main/yang/vendor/
 
     [log]
     -l, --log=y/n    for delete previous logs in ~/yangtools_csit_test/yang_validator_logs/ (omitting will not delete previous logs)
@@ -59,10 +60,10 @@ RUN TEST:
 ## Logs
 
 LOCATION:
-    ~/yangtools_csit_test/yang_validator_logs
+~/yangtools_csit_test/yang_validator_logs
 
 FILES:
-    for each model not pass in yangvalidator, one log file will be created.
-        For example "following-components-yangtools-log.1669020980.753.log" meaning "Following components of unique statement argument refer to non-existent nodes" error.
-    Name of these logs are modified with prefix depending on JAVA error.
-    Txt files will be generated containing list of all models that not passed test.
+for each model not pass in yangvalidator, one log file will be created.
+For example "following-components-yangtools-log.1669020980.753.log" meaning "Following components of unique statement argument refer to non-existent nodes" error.
+Name of these logs are modified with prefix depending on JAVA error.
+Txt files will be generated containing list of all models that not passed test.
