@@ -381,18 +381,18 @@ class AnnotationBuilderTest {
 
         assertEquals("""
             AnnotationTypeBuilderImpl{name=my.package.MyAnnotationName, \
-            annotationBuilders=[AnnotationTypeBuilderImpl{name=my.package.MySubAnnotationName, \
-            annotationBuilders=[], parameters=[]}], parameters=[ParameterImpl [name=MyParameter, value=myValue, \
-            values=[]]]}""", annotationTypeBuilder.toString());
+            annotationBuilders=[AnnotationTypeBuilderImpl{name=my.package.MySubAnnotationName}], \
+            parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
+            annotationTypeBuilder.toString());
 
         var annotationTypeInstance = annotationTypeBuilder.build();
 
         assertEquals("my.package.MyAnnotationName", annotationTypeInstance.fullyQualifiedName());
         assertEquals("""
             AnnotationTypeImpl{name=my.package.MyAnnotationName, \
-            annotations=[AnnotationTypeImpl{name=my.package.MySubAnnotationName, annotations=[], \
-            parameters=[]}], parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
-                annotationTypeInstance.toString());
+            annotations=[AnnotationTypeImpl{name=my.package.MySubAnnotationName}], \
+            parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
+            annotationTypeInstance.toString());
     }
 
     @Test

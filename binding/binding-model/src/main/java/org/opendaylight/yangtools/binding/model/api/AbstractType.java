@@ -50,8 +50,7 @@ public abstract class AbstractType implements Type {
 
     @Override
     public final String toString() {
-        // FIXME: omit null/empty
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitEmptyValues().omitNullValues()).toString();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {

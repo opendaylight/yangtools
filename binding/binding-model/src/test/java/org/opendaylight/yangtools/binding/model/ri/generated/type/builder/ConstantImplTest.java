@@ -31,9 +31,8 @@ class ConstantImplTest {
         assertEquals("IpAddress", constImpl.getName());
         assertEquals("127.0.0.1", constImpl.getValue());
         assertEquals("""
-            Constant [type=CodegenGeneratedTypeBuilder{name=org.opendaylight.yangtools.test.v1.BaseType, \
-            constants=[], enumerations=[], methods=[], annotations=[], implements=[]}, name=IpAddress, \
-            value=127.0.0.1]""", constImpl.toString());
+            Constant [type=CodegenGeneratedTypeBuilder{name=org.opendaylight.yangtools.test.v1.BaseType}, \
+            name=IpAddress, value=127.0.0.1]""", constImpl.toString());
         assertEquals(constImpl.hashCode(), constImpl2.hashCode());
         assertNotNull(constImpl.getType());
         assertNotNull(constImpl.getName());
