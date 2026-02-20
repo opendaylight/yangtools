@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f983a0f_31d72a6f",
+        "filename": "binding/binding-codegen/src/test/java/org/opendaylight/yangtools/binding/codegen/TypedefCompilationTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-02-20T11:31:01Z",
+      "side": 0,
+      "message": "scale instead and also check scale violations",
+      "range": {
+        "startLine": 232,
+        "startChar": 56,
+        "endLine": 232,
+        "endChar": 63
+      },
+      "revId": "fd73fbc17f54397d02e74b880fa4053ec376cf70",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
