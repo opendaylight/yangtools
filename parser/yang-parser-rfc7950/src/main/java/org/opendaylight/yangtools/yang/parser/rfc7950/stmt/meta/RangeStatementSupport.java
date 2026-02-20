@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,7 +72,7 @@ public final class RangeStatementSupport
 
             // some of intervals overlapping
             InferenceException.throwIf(
-                ranges.size() > 1 && ArgumentUtils.compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
+                ranges.size() > 1 && ArgumentUtils.compareNumbers(min, ranges.getLast().upperBound()) != 1,
                 ctx, "Some of the value ranges in %s are not disjoint", rangeArgument);
             ranges.add(ValueRange.of(min, max));
         }
