@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Mutable;
 
@@ -22,6 +23,7 @@ public interface AnnotableTypeBuilder extends Mutable {
      * @param identifier JavaTypeName of the annotation
      * @return a new instance of Annotation Type Builder.
      */
+    @NonNullByDefault
     AnnotationTypeBuilder addAnnotation(JavaTypeName identifier);
 
     /**
@@ -35,6 +37,7 @@ public interface AnnotableTypeBuilder extends Mutable {
      * @throws NullPointerException if any of the arguments are null
      * @throws IllegalArgumentException if any of the arguments is an empty string
      */
+    @NonNullByDefault
     default AnnotationTypeBuilder addAnnotation(final String packageName, final String simpleName) {
         return addAnnotation(JavaTypeName.create(packageName, simpleName));
     }

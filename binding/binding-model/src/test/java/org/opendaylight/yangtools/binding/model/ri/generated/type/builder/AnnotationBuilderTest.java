@@ -375,8 +375,8 @@ class AnnotationBuilderTest {
         annotationTypeBuilder.addParameter("MyParameter", "myValue");
 
         assertEquals("""
-            AnnotationTypeBuilderImpl{identifier=my.package.MyAnnotationName, \
-            annotationBuilders=[AnnotationTypeBuilderImpl{identifier=my.package.MySubAnnotationName, \
+            AnnotationTypeBuilderImpl{typeName=my.package.MyAnnotationName, \
+            annotationBuilders=[AnnotationTypeBuilderImpl{typeName=my.package.MySubAnnotationName, \
             annotationBuilders=[], parameters=[]}], parameters=[ParameterImpl [name=MyParameter, value=myValue, \
             values=[]]]}""", annotationTypeBuilder.toString());
 
