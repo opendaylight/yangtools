@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
@@ -16,11 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  *
  * @see Enumeration
  */
-public interface EnumBuilder extends Type, AnnotableTypeBuilder {
+public non-sealed interface EnumBuilder extends TypeBuilder, AnnotableTypeBuilder {
 
     void setDescription(String description);
-
-    Enumeration toInstance();
 
     /**
      * Updates this builder with data from <code>enumTypeDef</code>. Specifically this data represents list
@@ -29,4 +27,6 @@ public interface EnumBuilder extends Type, AnnotableTypeBuilder {
      * @param enumTypeDef enum type definition as source of enum data for <code>enumBuilder</code>
      */
     void updateEnumPairsFromEnumTypeDef(EnumTypeDefinition enumTypeDef);
+
+    @NonNull Enumeration build();
 }

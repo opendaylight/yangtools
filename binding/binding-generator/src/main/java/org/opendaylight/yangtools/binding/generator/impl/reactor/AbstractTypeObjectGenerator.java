@@ -678,7 +678,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         builder.setModuleName(module.statement().argument().getLocalName());
         builder.updateEnumPairsFromEnumTypeDef(typedef);
-        return builder.toInstance();
+        return builder.build();
     }
 
     private static @NonNull GeneratedType createSimple(final TypeBuilderFactory builderFactory,

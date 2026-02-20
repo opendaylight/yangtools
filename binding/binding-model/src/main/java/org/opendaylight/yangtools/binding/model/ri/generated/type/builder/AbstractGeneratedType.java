@@ -144,7 +144,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
 
     protected static final @NonNull List<Enumeration> toUnmodifiableEnumerations(final List<EnumBuilder> enumBuilders) {
         return makeUnmodifiable(enumBuilders.stream()
-            .map(EnumBuilder::toInstance)
+            .map(EnumBuilder::build)
             .collect(Collectors.toUnmodifiableList()));
     }
 
