@@ -263,8 +263,8 @@ class GeneratedTypeBuilderTest {
         generatedTypeBuilder.setReference("myReference");
         assertNotNull(generatedTypeBuilder.addComment(() -> "My comment.."));
 
-        assertEquals("CodegenGeneratedTypeBuilder{name=my.package.MyName, comment=My comment.., constants=[], "
-            + "enumerations=[], methods=[], annotations=[], implements=[]}", generatedTypeBuilder.toString());
+        assertEquals("CodegenGeneratedTypeBuilder{name=my.package.MyName, comment=My comment..}",
+            generatedTypeBuilder.toString());
 
         var instance = generatedTypeBuilder.build();
 
