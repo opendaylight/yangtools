@@ -73,9 +73,10 @@ public final class RangeStatementSupport
             }
 
             // some of intervals overlapping
-            InferenceException.throwIf(
-                ranges.size() > 1 && ArgumentUtils.compareNumbers(min, ranges.getLast().upperBound()) != 1,
-                ctx, "Some of the value ranges in %s are not disjoint", rangeArgument);
+            if (!ranges.isEmpty()) {
+                InferenceException.throwIf(ArgumentUtils.compareNumbers(min, ranges.getLast().upperBound()) != 1,
+                    ctx, "Some of the value ranges in %s are not disjoint", rangeArgument);
+            }
             ranges.add(ValueRange.of(min, max));
         }
 
