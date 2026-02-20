@@ -9,35 +9,37 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
+import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType.Parameter;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
-final class AnnotationTypeBuilderImpl extends AbstractType implements AnnotationTypeBuilder {
+final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder implements AnnotationTypeBuilder {
+    private List<AnnotationTypeBuilder> annotationBuilders = List.of();
+    private List<Parameter> parameters = List.of();
 
-    private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
-    private List<AnnotationType.Parameter> parameters = Collections.emptyList();
-
-    AnnotationTypeBuilderImpl(final JavaTypeName identifier) {
-        super(identifier);
+    @NonNullByDefault
+    AnnotationTypeBuilderImpl(final JavaTypeName typeName) {
+        super(typeName);
     }
 
     @Override
     public AnnotationTypeBuilder addAnnotation(final String packageName, final String name) {
         final var typeName = JavaTypeName.create(packageName, name);
         for (var builder : annotationBuilders) {
-            if (typeName.equals(builder.getIdentifier())) {
+            if (typeName.equals(builder.typeName())) {
                 return builder;
             }
         }
 
-        final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(typeName);
+        final var builder = new AnnotationTypeBuilderImpl(typeName);
         annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
         return builder;
     }
@@ -53,8 +55,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
     @Override
     public boolean addParameter(final String paramName, final String value) {
         if (paramName != null && value != null) {
-            final ParameterImpl param = new ParameterImpl(paramName, value);
-            return addParameter(param);
+            return addParameter(new ParameterImpl(paramName, value));
         }
         return false;
     }
@@ -62,47 +63,34 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
     @Override
     public boolean addParameters(final String paramName, final List<String> values) {
         if (paramName != null && values != null) {
-            final ParameterImpl param = new ParameterImpl(paramName, values);
-            return addParameter(param);
+            return addParameter(new ParameterImpl(paramName, values));
         }
         return false;
     }
 
     @Override
     public AnnotationType build() {
-        return new AnnotationTypeImpl(getIdentifier(), annotationBuilders, parameters);
+        return new AnnotationTypeImpl(typeName(), annotationBuilders, parameters);
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
         return super.addToStringAttributes(toStringHelper)
-            .omitNullValues()
             .add("annotationBuilders", annotationBuilders)
             .add("parameters", parameters);
     }
 
     private static final class AnnotationTypeImpl extends AbstractType implements AnnotationType {
         private final List<AnnotationType> annotations;
-        private final List<AnnotationType.Parameter> parameters;
-        private final List<String> paramNames;
+        private final List<Parameter> parameters;
 
         AnnotationTypeImpl(final JavaTypeName identifier, final List<AnnotationTypeBuilder> annotationBuilders,
-                final List<AnnotationType.Parameter> parameters) {
+                final List<Parameter> parameters) {
             super(identifier);
-
-            final List<AnnotationType> a = new ArrayList<>();
-            for (final AnnotationTypeBuilder builder : annotationBuilders) {
-                a.add(builder.build());
-            }
-            annotations = ImmutableList.copyOf(a);
-
-            final List<String> p = new ArrayList<>();
-            for (final AnnotationType.Parameter parameter : parameters) {
-                p.add(parameter.getName());
-            }
-            paramNames = ImmutableList.copyOf(p);
-
-            this.parameters = parameters.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(parameters);
+            annotations = annotationBuilders.stream()
+                .map(AnnotationTypeBuilder::build)
+                .collect(ImmutableList.toImmutableList());
+            this.parameters = ImmutableList.copyOf(parameters);
         }
 
         @Override
@@ -113,7 +101,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
         @Override
         public Parameter getParameter(final String paramName) {
             if (paramName != null) {
-                for (final AnnotationType.Parameter parameter : parameters) {
+                for (var parameter : parameters) {
                     if (parameter.getName().equals(paramName)) {
                         return parameter;
                     }
@@ -129,7 +117,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
 
         @Override
         public List<String> getParameterNames() {
-            return paramNames;
+            return Lists.transform(parameters, Parameter::getName);
         }
 
         @Override
@@ -146,8 +134,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
         }
     }
 
-    private static final class ParameterImpl implements AnnotationType.Parameter {
-
+    private static final class ParameterImpl implements Parameter {
         private final String name;
         private final String value;
         private final List<String> values;
