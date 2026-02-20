@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
@@ -38,7 +39,7 @@ public final class Types {
         .build(new CacheLoader<>() {
             @Override
             public ConcreteType load(final Class<?> key) {
-                return new ConcreteTypeImpl(JavaTypeName.create(key), null);
+                return new ConcreteTypeImpl(JavaTypeName.create(key));
             }
         });
 
@@ -306,30 +307,23 @@ public final class Types {
      * Represents a concrete Java type.
      */
     private static final class ConcreteTypeImpl extends AbstractType implements ConcreteType {
-        private final Restrictions restrictions;
-
         /**
          * Default constructor.
          *
          * @param identifier type identifier
          * @param restrictions optional {@link Restrictions}
          */
-        ConcreteTypeImpl(final JavaTypeName identifier, final Restrictions restrictions) {
+        ConcreteTypeImpl(final JavaTypeName identifier) {
             super(identifier);
-            this.restrictions = restrictions;
-        }
-
-        @Override
-        public Restrictions getRestrictions() {
-            return restrictions;
         }
     }
 
     /**
      * Represents a concrete Java type with changed restriction values.
      */
-    private static final class BaseTypeWithRestrictionsImpl extends AbstractType implements
-            BaseTypeWithRestrictions {
+    @NonNullByDefault
+    private static final class BaseTypeWithRestrictionsImpl extends AbstractType
+            implements BaseTypeWithRestrictions {
         private final Restrictions restrictions;
 
         /**
@@ -344,7 +338,7 @@ public final class Types {
         }
 
         @Override
-        public Restrictions getRestrictions() {
+        public Restrictions restrictions() {
             return restrictions;
         }
     }

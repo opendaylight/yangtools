@@ -12,7 +12,5 @@ package org.opendaylight.yangtools.binding.model.api;
  * concrete type.
  */
 public interface ConcreteType extends Type {
-
-    Restrictions getRestrictions();
-
+    // Nothing else
 }
