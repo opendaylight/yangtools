@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class YT1791Test extends AbstractYangTest {
     @Test
     void testOverlappingTwo() {
-        assertThat(assertInferenceException("/bugs/YT1791/two.yang").getMessage())
+        assertThat(assertSourceException("/bugs/YT1791/two.yang").getMessage())
             .startsWith("Some of the value ranges in 120..150|140 are not disjoint [at ")
             .endsWith("/two.yang:8:7]");
     }
