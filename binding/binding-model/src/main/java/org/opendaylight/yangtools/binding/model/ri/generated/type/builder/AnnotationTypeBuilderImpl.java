@@ -32,7 +32,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
     public AnnotationTypeBuilder addAnnotation(final String packageName, final String name) {
         final var typeName = JavaTypeName.create(packageName, name);
         for (var builder : annotationBuilders) {
-            if (typeName.equals(builder.getIdentifier())) {
+            if (typeName.equals(builder.name())) {
                 return builder;
             }
         }
@@ -70,7 +70,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
 
     @Override
     public AnnotationType build() {
-        return new AnnotationTypeImpl(getIdentifier(), annotationBuilders, parameters);
+        return new AnnotationTypeImpl(name(), annotationBuilders, parameters);
     }
 
     @Override

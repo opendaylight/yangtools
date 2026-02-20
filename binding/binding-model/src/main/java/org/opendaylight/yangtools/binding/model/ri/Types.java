@@ -169,7 +169,7 @@ public final class Types {
 
     @Beta
     public static @NonNull ConcreteType restrictedType(final Type type, final @NonNull Restrictions restrictions) {
-        return restrictedType(type.getIdentifier(), restrictions);
+        return restrictedType(type.name(), restrictions);
     }
 
     private static @NonNull ConcreteType restrictedType(final JavaTypeName identifier,
@@ -299,7 +299,7 @@ public final class Types {
     }
 
     public static @Nullable String getOuterClassName(final Type valueType) {
-        return valueType.getIdentifier().immediatelyEnclosingClass().map(Object::toString).orElse(null);
+        return valueType.name().immediatelyEnclosingClass().map(Object::toString).orElse(null);
     }
 
     /**
@@ -370,7 +370,7 @@ public final class Types {
          * @param actTypes array of actual parameters
          */
         ParametrizedTypeImpl(final Type rawType, final Type[] actTypes) {
-            super(rawType.getIdentifier());
+            super(rawType.name());
             this.rawType = requireNonNull(rawType);
             actualTypes = actTypes.clone();
             if (Arrays.stream(actualTypes).anyMatch(Objects::isNull)) {

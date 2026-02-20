@@ -43,7 +43,7 @@ class GeneratedTOBuilderTest {
         final var genTypeBuilder = new CodegenGeneratedTOBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
         assertThat(genTypeBuilder.toString())
-            .startsWith("CodegenGeneratedTOBuilder{identifier=org.opendaylight.controller.AnnotClassCache");
+            .startsWith("CodegenGeneratedTOBuilder{name=org.opendaylight.controller.AnnotClassCache");
     }
 
     @Test
@@ -52,6 +52,6 @@ class GeneratedTOBuilderTest {
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
         var genTO = genTypeBuilder1.build();
-        assertThat(genTO.toString()).startsWith("GTO{identifier=org.opendaylight.controller.AnnotClassCache");
+        assertThat(genTO.toString()).startsWith("GTO{name=org.opendaylight.controller.AnnotClassCache");
     }
 }

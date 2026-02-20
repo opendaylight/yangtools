@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Wraps combination of <code>packageName</code> and <code>name</code> to the object representation.
  */
+@NonNullByDefault
 final class DefaultType extends AbstractType {
     DefaultType(final JavaTypeName identifier) {
         super(identifier);

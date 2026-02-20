@@ -198,11 +198,11 @@ abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBu
 
         public static final String serializeTypedef(final Type type) {
             if (!(type instanceof ParameterizedType parameterizedType)) {
-                return type.getFullyQualifiedName();
+                return type.fullyQualifiedName();
             }
 
             final StringBuilder sb = new StringBuilder();
-            sb.append(parameterizedType.getRawType().getFullyQualifiedName()).append('<');
+            sb.append(parameterizedType.getRawType().fullyQualifiedName()).append('<');
             boolean first = true;
             for (final Type parameter : parameterizedType.getActualTypeArguments()) {
                 if (first) {
