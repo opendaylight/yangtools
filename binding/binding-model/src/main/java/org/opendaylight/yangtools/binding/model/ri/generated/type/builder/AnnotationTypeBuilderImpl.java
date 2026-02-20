@@ -13,17 +13,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
-final class AnnotationTypeBuilderImpl extends AbstractType implements AnnotationTypeBuilder {
-
+final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder implements AnnotationTypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
     private List<AnnotationType.Parameter> parameters = Collections.emptyList();
 
+    @NonNullByDefault
     AnnotationTypeBuilderImpl(final JavaTypeName identifier) {
         super(identifier);
     }
@@ -32,7 +33,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
     public AnnotationTypeBuilder addAnnotation(final String packageName, final String name) {
         final var typeName = JavaTypeName.create(packageName, name);
         for (var builder : annotationBuilders) {
-            if (typeName.equals(builder.getIdentifier())) {
+            if (typeName.equals(builder.typeName())) {
                 return builder;
             }
         }
@@ -70,7 +71,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
 
     @Override
     public AnnotationType build() {
-        return new AnnotationTypeImpl(getIdentifier(), annotationBuilders, parameters);
+        return new AnnotationTypeImpl(typeName(), annotationBuilders, parameters);
     }
 
     @Override

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -21,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  *
  * @see AnnotationType
  */
-public interface AnnotationTypeBuilder extends Type {
+public non-sealed interface AnnotationTypeBuilder extends TypeBuilder {
     /**
      * The method creates new AnnotationTypeBuilder containing specified package
      * name an annotation name. <br>
@@ -33,7 +34,8 @@ public interface AnnotationTypeBuilder extends Type {
      * @param name Name of Annotation Type
      * @return <code>new</code> instance of Annotation Type Builder.
      */
-    @NonNull AnnotationTypeBuilder addAnnotation(String packageName, String name);
+    @NonNullByDefault
+    AnnotationTypeBuilder addAnnotation(String packageName, String name);
 
     /**
      * Adds the parameter into List of parameters for Annotation Type. <br>

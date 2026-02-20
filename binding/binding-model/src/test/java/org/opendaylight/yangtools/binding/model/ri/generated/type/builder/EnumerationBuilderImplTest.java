@@ -71,9 +71,7 @@ class EnumerationBuilderImplTest {
 
     @Test
     void testEnumerationBuilder() {
-        assertEquals(packageName + "." + name, enumerationBuilder.getFullyQualifiedName());
-        assertEquals(name , enumerationBuilder.getName());
-        assertEquals(packageName, enumerationBuilder.getPackageName());
+        assertEquals(JavaTypeName.create(packageName, name), enumerationBuilder.typeName());
 
         assertNotEquals(enumerationBuilder, null);
         assertEquals(enumerationBuilder, enumerationBuilder);
@@ -85,12 +83,12 @@ class EnumerationBuilderImplTest {
 
     @Test
     void testEnumeration() {
-        assertEquals(name, enumeration.getName());
-        assertEquals(packageName, enumeration.getPackageName());
+        assertEquals(name, enumeration.simpleName());
+        assertEquals(packageName, enumeration.packageName());
         assertEquals(null, enumeration.getComment());
         assertEquals(DESCRIPTION, enumeration.getDescription());
         assertEquals(moduleName, enumeration.getModuleName());
-        assertEquals(packageName + '.' + name, enumeration.getFullyQualifiedName());
+        assertEquals(packageName + '.' + name, enumeration.fullyQualifiedName());
         assertEquals(reference, enumeration.getReference());
         assertEquals(List.of(), enumeration.getEnclosedTypes());
         assertEquals(List.of(), enumeration.getEnumerations());
@@ -125,13 +123,13 @@ class EnumerationBuilderImplTest {
 
     @Test
     void testEnumerationToString() {
-        assertEquals("EnumerationImpl{identifier=org.opendaylight.test.TestName, "
+        assertEquals("EnumerationImpl{name=org.opendaylight.test.TestName, "
             + "values=[EnumPair [name=TestValue, mappedName=TestValue, value=12]]}", enumeration.toString());
         assertEquals("public enum " + name + " {\n"
             + "\t TestValue " + "(12 );\n"
             + "}", enumeration.toFormattedString());
 
-        assertEquals("CodegenEnumerationBuilder{identifier=org.opendaylight.test.TestName, "
+        assertEquals("CodegenEnumerationBuilder{name=org.opendaylight.test.TestName, "
             + "values=[EnumPair [name=TestValue, mappedName=TestValue, value=12]]}", enumerationBuilder.toString());
     }
 

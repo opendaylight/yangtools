@@ -547,8 +547,8 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         }
 
         // Base type is a GTO, we need to re-adjust it with new restrictions
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(gto.getIdentifier());
-        final GeneratedTransferObject parent = gto.getSuperType();
+        final var builder = builderFactory.newGeneratedTOBuilder(gto.name());
+        final var parent = gto.getSuperType();
         if (parent != null) {
             builder.setExtendsType(parent);
         }
@@ -706,7 +706,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         if (javaType instanceof ConcreteType
             // FIXME: This looks very suspicious: we should by checking for Types.STRING
-            && "String".equals(javaType.getName()) && typedef.getBaseType() != null) {
+            && "String".equals(javaType.simpleName()) && typedef.getBaseType() != null) {
             addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
         }
         addUnits(builder, typedef);
@@ -804,7 +804,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                             }
 
                             // ... otherwise generate this weird property name
-                            propSource = getUnionLeafrefMemberName(builder.getName(), baseType.getName());
+                            propSource = getUnionLeafrefMemberName(builder.simpleName(), baseType.simpleName());
                         }
                     }
 

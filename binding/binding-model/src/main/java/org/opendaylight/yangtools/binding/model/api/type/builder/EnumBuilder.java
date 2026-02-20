@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
@@ -16,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  *
  * @see Enumeration
  */
-public interface EnumBuilder extends Type, AnnotableTypeBuilder {
+public non-sealed interface EnumBuilder extends AnnotableTypeBuilder, TypeBuilder {
 
     void setDescription(String description);
 

@@ -31,7 +31,7 @@ public final class SerialVersionHelper {
         Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<TypeMemberBuilder<?>> SUID_MEMBER_COMPARATOR =
         Comparator.comparing(TypeMemberBuilder::getName);
-    private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::getFullyQualifiedName);
+    private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::fullyQualifiedName);
     private static final ThreadLocal<MessageDigest> SHA1_MD = ThreadLocal.withInitial(() -> {
         try {
             return MessageDigest.getInstance("SHA");
@@ -47,11 +47,11 @@ public final class SerialVersionHelper {
     public static long computeDefaultSUID(final GeneratedTypeBuilderBase<?> to) {
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try (DataOutputStream dout = new DataOutputStream(bout)) {
-            dout.writeUTF(to.getName());
+            dout.writeUTF(to.simpleName());
             dout.writeInt(to.isAbstract() ? 3 : 7);
 
             for (final Type ifc : sortedCollection(SUID_NAME_COMPARATOR, filteredImplementsTypes(to))) {
-                dout.writeUTF(ifc.getFullyQualifiedName());
+                dout.writeUTF(ifc.fullyQualifiedName());
             }
 
             for (final GeneratedPropertyBuilder gp : sortedCollection(SUID_MEMBER_COMPARATOR, to.getProperties())) {

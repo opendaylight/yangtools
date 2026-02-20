@@ -18,20 +18,20 @@ class TypesTest {
     @Test
     void testVoidType() {
         final var voidType = Types.voidType();
-        assertEquals("Void", voidType.getName());
+        assertEquals("Void", voidType.simpleName());
         assertNotNull(voidType);
     }
 
     @Test
     void testPrimitiveType() {
         final var primitiveType = Types.typeForClass(String[].class);
-        assertEquals("String[]", primitiveType.getName());
+        assertEquals("String[]", primitiveType.simpleName());
     }
 
     @Test
     void testMapTypeFor() {
         final var mapType = Types.mapTypeFor(Types.objectType(), Types.objectType());
-        assertEquals("Map", mapType.getName());
+        assertEquals("Map", mapType.simpleName());
     }
 
     @Test
@@ -42,7 +42,7 @@ class TypesTest {
     @Test
     void testSetTypeFor() {
         final var setType = Types.setTypeFor(Types.objectType());
-        assertEquals("Set", setType.getName());
+        assertEquals("Set", setType.simpleName());
     }
 
     @Test
@@ -53,7 +53,7 @@ class TypesTest {
     @Test
     void testListTypeFor() {
         final var listType = Types.listTypeFor(Types.objectType());
-        assertEquals("List", listType.getName());
+        assertEquals("List", listType.simpleName());
     }
 
     @Test
@@ -65,6 +65,6 @@ class TypesTest {
     void testWildcardTypeFor() {
         final var wildcardType = Types.wildcardTypeFor(JavaTypeName.create("org.opendaylight.yangtools.test",
             "WildcardTypeTest"));
-        assertEquals("WildcardTypeTest", wildcardType.getName());
+        assertEquals("WildcardTypeTest", wildcardType.simpleName());
     }
 }

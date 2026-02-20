@@ -87,7 +87,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
             if (gen instanceof AbstractExplicitGenerator<?, ?> explicit) {
                 final var type = explicit.generatedRuntimeType();
                 if (type != null && type.javaType() instanceof GeneratedType genType) {
-                    final var name = genType.getIdentifier();
+                    final var name = genType.name();
                     final var prev = allTypes.put(name, type);
                     verify(prev == null || prev == type, "Conflict on runtime type mapping of %s between %s and %s",
                         name, prev, type);
@@ -100,7 +100,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                         // The appropriate choice and DataObject at the very least. The choice interface is the first
                         // one mentioned.
                         verify(ifaces.size() >= 2, "Unexpected implemented interfaces %s", ifaces);
-                        choiceToCases.put(ifaces.getFirst().getIdentifier(), caseType);
+                        choiceToCases.put(ifaces.getFirst().name(), caseType);
                     }
                 }
             }

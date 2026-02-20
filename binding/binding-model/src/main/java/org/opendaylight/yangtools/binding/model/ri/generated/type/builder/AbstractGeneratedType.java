@@ -48,7 +48,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     private final YangSourceDefinition definition;
 
     AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?> builder) {
-        super(builder.getIdentifier());
+        super(builder.typeName());
         comment = builder.getComment();
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());

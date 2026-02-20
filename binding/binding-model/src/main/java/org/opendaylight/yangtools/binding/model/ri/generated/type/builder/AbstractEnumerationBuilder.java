@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -38,12 +40,14 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 // FIXME: public because EnumBuilder does not have setters we are exposing
-public abstract class AbstractEnumerationBuilder extends AbstractType implements EnumBuilder {
+public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder implements EnumBuilder
+        permits CodegenEnumerationBuilder, RuntimeEnumerationBuilder {
     private List<Enumeration.Pair> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
 
-    AbstractEnumerationBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    @NonNullByDefault
+    AbstractEnumerationBuilder(final JavaTypeName typeName) {
+        super(typeName);
     }
 
     @Override
@@ -177,11 +181,11 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
     }
 
     abstract static class AbstractEnumeration extends AbstractType implements Enumeration {
-        private final List<AnnotationType> annotations;
-        private final List<Pair> values;
+        private final @NonNull List<AnnotationType> annotations;
+        private final @NonNull List<Pair> values;
 
         AbstractEnumeration(final AbstractEnumerationBuilder builder) {
-            super(builder.getIdentifier());
+            super(builder.typeName());
             values = ImmutableList.copyOf(builder.values);
             annotations = builder.annotationBuilders.stream()
                 .map(AnnotationTypeBuilder::build)
@@ -200,7 +204,7 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
 
         @Override
         public final String toFormattedString() {
-            final var sb = new StringBuilder().append("public enum ").append(getName()).append(" {\n");
+            final var sb = new StringBuilder().append("public enum ").append(simpleName()).append(" {\n");
 
             int offset = 0;
             for (var valPair : values) {

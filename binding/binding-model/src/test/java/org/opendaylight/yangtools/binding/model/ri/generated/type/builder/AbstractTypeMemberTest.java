@@ -37,7 +37,7 @@ class AbstractTypeMemberTest {
         assertTrue(genProperty.isStatic());
         assertEquals(genProperty.hashCode(), genProperty2.hashCode());
         assertEquals("MethodSignatureImpl [name=TestProperty, comment=TypeMemberComment{contract=test comment}, "
-            + "returnType=ConcreteTypeImpl{identifier=java.lang.String}, params=[], annotations=[]]",
+            + "returnType=ConcreteTypeImpl{name=java.lang.String}, params=[], annotations=[]]",
             genProperty.toString());
         assertNotNull(genProperty.toString());
         assertTrue(genProperty.equals(genProperty2));
