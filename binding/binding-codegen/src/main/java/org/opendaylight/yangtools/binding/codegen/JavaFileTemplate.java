@@ -39,7 +39,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.BaseTypeWithRestrictions;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -299,7 +299,7 @@ class JavaFileTemplate {
 
     static final Restrictions getRestrictions(final Type type) {
         return switch (type) {
-            case ConcreteType concrete -> concrete.getRestrictions();
+            case BaseTypeWithRestrictions base -> base.restrictions();
             case GeneratedTransferObject gto -> gto.getRestrictions();
             case null, default -> null;
         };

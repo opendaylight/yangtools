@@ -7,10 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * The BaseTypeWithRestrictions is marker interface that encapsulates definition of java
  * concrete type only with changed restriction values.
  */
+@NonNullByDefault
 public interface BaseTypeWithRestrictions extends ConcreteType {
-
+    /**
+     * {@return the {@link Restrictions} applicable to this type}
+     */
+    Restrictions restrictions();
 }
