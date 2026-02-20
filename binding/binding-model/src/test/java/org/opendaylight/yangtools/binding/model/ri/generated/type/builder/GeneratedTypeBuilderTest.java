@@ -186,18 +186,18 @@ class GeneratedTypeBuilderTest {
         var enumBuilder2 = new CodegenEnumerationBuilder(generatedTypeBuilder.getIdentifier()
             .createEnclosed("myEnumName2"));
 
-        generatedTypeBuilder.addEnumeration(enumBuilder.toInstance());
-        generatedTypeBuilder.addEnumeration(enumBuilder2.toInstance());
+        generatedTypeBuilder.addEnumeration(enumBuilder.build());
+        generatedTypeBuilder.addEnumeration(enumBuilder2.build());
 
         var instance = generatedTypeBuilder.build();
         var enumerations = instance.getEnumerations();
 
         assertEquals(2, enumerations.size());
 
-        assertTrue(enumerations.contains(enumBuilder.toInstance()));
-        assertTrue(enumerations.contains(enumBuilder2.toInstance()));
+        assertTrue(enumerations.contains(enumBuilder.build()));
+        assertTrue(enumerations.contains(enumBuilder2.build()));
         assertFalse(enumerations.contains(new CodegenEnumerationBuilder(JavaTypeName.create("my.package",
-            "myEnumName3")).toInstance()));
+            "myEnumName3")).build()));
     }
 
     @Test

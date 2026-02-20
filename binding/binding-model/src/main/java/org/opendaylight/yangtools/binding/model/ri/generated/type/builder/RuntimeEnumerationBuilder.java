@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -15,8 +16,9 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 public final class RuntimeEnumerationBuilder extends AbstractEnumerationBuilder {
-    public RuntimeEnumerationBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    @NonNullByDefault
+    public RuntimeEnumerationBuilder(final JavaTypeName typeName) {
+        super(typeName);
     }
 
     @Override
@@ -40,7 +42,7 @@ public final class RuntimeEnumerationBuilder extends AbstractEnumerationBuilder 
     }
 
     @Override
-    public Enumeration toInstance() {
+    public Enumeration build() {
         return new EnumerationImpl(this);
     }
 
