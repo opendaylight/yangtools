@@ -106,6 +106,10 @@ public abstract class AbstractYangTest {
         return ret;
     }
 
+    public static @NonNull InferenceException assertInferenceException(final String... yangResourceName) {
+        return assertException(InferenceException.class, yangResourceName);
+    }
+
     public static @NonNull InferenceException assertInferenceException(final Matcher<String> matcher,
             final String... yangResourceName) {
         return assertException(InferenceException.class, matcher, yangResourceName);
