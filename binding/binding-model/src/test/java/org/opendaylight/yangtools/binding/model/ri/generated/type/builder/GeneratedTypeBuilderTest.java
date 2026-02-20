@@ -62,8 +62,7 @@ class GeneratedTypeBuilderTest {
         assertNotEquals(constant.hashCode(), constant4.hashCode());
         assertEquals(constant.hashCode(), constant5.hashCode());
 
-        assertEquals(
-            "Constant [type=ConcreteTypeImpl{identifier=java.lang.String}, name=myConstant, value=myConstantValue]",
+        assertEquals("Constant [type=ConcreteTypeImpl{name=java.lang.String}, name=myConstant, value=myConstantValue]",
             constant.toString());
 
         var instance = generatedTypeBuilder.build();
@@ -181,10 +180,8 @@ class GeneratedTypeBuilderTest {
     void addEnumerationTest() {
         var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
 
-        var enumBuilder = new CodegenEnumerationBuilder(generatedTypeBuilder.getIdentifier()
-            .createEnclosed("myEnumName"));
-        var enumBuilder2 = new CodegenEnumerationBuilder(generatedTypeBuilder.getIdentifier()
-            .createEnclosed("myEnumName2"));
+        var enumBuilder = new CodegenEnumerationBuilder(generatedTypeBuilder.name().createEnclosed("myEnumName"));
+        var enumBuilder2 = new CodegenEnumerationBuilder(generatedTypeBuilder.name().createEnclosed("myEnumName2"));
 
         generatedTypeBuilder.addEnumeration(enumBuilder.toInstance());
         generatedTypeBuilder.addEnumeration(enumBuilder2.toInstance());
@@ -235,11 +232,11 @@ class GeneratedTypeBuilderTest {
     void addEnclosingTransferObjectTest() {
         var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
 
-        var enclosingTransferObject = new CodegenGeneratedTOBuilder(generatedTypeBuilder.getIdentifier()
+        var enclosingTransferObject = new CodegenGeneratedTOBuilder(generatedTypeBuilder.name()
             .createEnclosed("myTOName"));
-        var enclosingTransferObject2 = new CodegenGeneratedTOBuilder(generatedTypeBuilder.getIdentifier()
+        var enclosingTransferObject2 = new CodegenGeneratedTOBuilder(generatedTypeBuilder.name()
             .createEnclosed("myTOName2"));
-        var enclosingTransferObject3 = new CodegenGeneratedTOBuilder(generatedTypeBuilder.getIdentifier()
+        var enclosingTransferObject3 = new CodegenGeneratedTOBuilder(generatedTypeBuilder.name()
             .createEnclosed("myTOName3"));
 
         generatedTypeBuilder.addEnclosingTransferObject(enclosingTransferObject.build());
@@ -254,7 +251,7 @@ class GeneratedTypeBuilderTest {
         assertTrue(enclosedTypes.contains(enclosingTransferObject2.build()));
         assertTrue(enclosedTypes.contains(enclosingTransferObject3.build()));
         assertFalse(enclosedTypes.contains(new CodegenGeneratedTOBuilder(
-            generatedTypeBuilder.getIdentifier().createEnclosed("myTOName4")).build()));
+            generatedTypeBuilder.name().createEnclosed("myTOName4")).build()));
     }
 
     @Test
@@ -266,7 +263,7 @@ class GeneratedTypeBuilderTest {
         generatedTypeBuilder.setReference("myReference");
         assertNotNull(generatedTypeBuilder.addComment(() -> "My comment.."));
 
-        assertEquals("CodegenGeneratedTypeBuilder{identifier=my.package.MyName, comment=My comment.., constants=[], "
+        assertEquals("CodegenGeneratedTypeBuilder{name=my.package.MyName, comment=My comment.., constants=[], "
             + "enumerations=[], methods=[], annotations=[], implements=[]}", generatedTypeBuilder.toString());
 
         var instance = generatedTypeBuilder.build();

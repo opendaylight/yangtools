@@ -20,6 +20,6 @@ public interface GeneratedRuntimeType extends RuntimeType, Identifiable<JavaType
 
     @Override
     default JavaTypeName getIdentifier() {
-        return javaType().getIdentifier();
+        return javaType().name();
     }
 }

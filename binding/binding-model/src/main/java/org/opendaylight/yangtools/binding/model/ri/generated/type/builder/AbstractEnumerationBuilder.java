@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -177,11 +178,11 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
     }
 
     abstract static class AbstractEnumeration extends AbstractType implements Enumeration {
-        private final List<AnnotationType> annotations;
-        private final List<Pair> values;
+        private final @NonNull List<AnnotationType> annotations;
+        private final @NonNull List<Pair> values;
 
         AbstractEnumeration(final AbstractEnumerationBuilder builder) {
-            super(builder.getIdentifier());
+            super(builder.name());
             values = ImmutableList.copyOf(builder.values);
             annotations = builder.annotationBuilders.stream()
                 .map(AnnotationTypeBuilder::build)
@@ -200,7 +201,7 @@ public abstract class AbstractEnumerationBuilder extends AbstractType implements
 
         @Override
         public final String toFormattedString() {
-            final var sb = new StringBuilder().append("public enum ").append(getName()).append(" {\n");
+            final var sb = new StringBuilder().append("public enum ").append(simpleName()).append(" {\n");
 
             int offset = 0;
             for (var valPair : values) {
