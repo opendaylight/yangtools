@@ -30,7 +30,7 @@ public final class ArgumentUtils {
     public static int compareNumbers(final Number n1, final Number n2) {
         final var num1 = yangConstraintToBigDecimal(n1);
         final var num2 = yangConstraintToBigDecimal(n2);
-        return new BigDecimal(num1.toString()).compareTo(new BigDecimal(num2.toString()));
+        return num1.compareTo(num2);
     }
 
     private static BigDecimal yangConstraintToBigDecimal(final Number number) {
