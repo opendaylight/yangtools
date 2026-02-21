@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.Types.parameterizedTypeFor;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
@@ -58,47 +58,48 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 public final class BindingTypes {
 
-    public static final ConcreteType BASE_IDENTITY = typeForBuiltIn(BuiltInType.IDENTITYREF);
-    public static final ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
-    public static final ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
-    public static final ConcreteType GROUPING = typeForClass(Grouping.class);
-    public static final ConcreteType QNAME = typeForClass(QName.class);
-    public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
-    public static final ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
-    public static final ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
-    public static final ConcreteType BITS_TYPE_OBJECT = typeForBuiltIn(BuiltInType.BITS);
-    public static final ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
-    public static final ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
+    public static final @NonNull ConcreteType BASE_IDENTITY = typeForBuiltIn(BuiltInType.IDENTITYREF);
+    public static final @NonNull ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
+    public static final @NonNull ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
+    public static final @NonNull ConcreteType GROUPING = typeForClass(Grouping.class);
+    public static final @NonNull ConcreteType QNAME = typeForClass(QName.class);
+    public static final @NonNull ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
+    public static final @NonNull ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
+    public static final @NonNull ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
+    public static final @NonNull ConcreteType BITS_TYPE_OBJECT = typeForBuiltIn(BuiltInType.BITS);
+    public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
+    public static final @NonNull ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
 
     // This is an annotation, we are current just referencing the type
     public static final JavaTypeName ROUTING_CONTEXT = JavaTypeName.create(RoutingContext.class);
 
     @VisibleForTesting
-    static final ConcreteType AUGMENTABLE = typeForClass(Augmentable.class);
+    static final @NonNull ConcreteType AUGMENTABLE = typeForClass(Augmentable.class);
     @VisibleForTesting
-    static final ConcreteType AUGMENTATION = typeForClass(Augmentation.class);
+    static final @NonNull ConcreteType AUGMENTATION = typeForClass(Augmentation.class);
     @VisibleForTesting
-    static final ConcreteType ENTRY_OBJECT = typeForClass(EntryObject.class);
+    static final @NonNull ConcreteType ENTRY_OBJECT = typeForClass(EntryObject.class);
     @VisibleForTesting
-    static final ConcreteType KEY = typeForClass(Key.class);
+    static final @NonNull ConcreteType KEY = typeForClass(Key.class);
 
-    private static final ConcreteType ACTION = typeForClass(Action.class);
-    private static final ConcreteType CHILD_OF = typeForClass(ChildOf.class);
-    private static final ConcreteType CHOICE_IN = typeForClass(ChoiceIn.class);
-    private static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
-    private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
-    private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
-    private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
-    private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
-    private static final ConcreteType NOTIFICATION_BODY = typeForClass(NotificationBody.class);
-    private static final ConcreteType OBJECT_REFERENCE = typeForClass(DataObjectIdentifier.class);
-    private static final ConcreteType OBJECT_REFERENCE_WITH_KEY = typeForClass(DataObjectIdentifier.WithKey.class);
-    private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
-    private static final ConcreteType ROOT_META = typeForClass(RootMeta.class);
-    private static final ConcreteType RPC = typeForClass(Rpc.class);
-    private static final ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
-    private static final ConcreteType YANG_FEATURE = typeForClass(YangFeature.class);
-    private static final ConcreteType YANG_DATA = typeForClass(YangData.class);
+    private static final @NonNull ConcreteType ACTION = typeForClass(Action.class);
+    private static final @NonNull ConcreteType CHILD_OF = typeForClass(ChildOf.class);
+    private static final @NonNull ConcreteType CHOICE_IN = typeForClass(ChoiceIn.class);
+    private static final @NonNull ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
+    private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
+    private static final @NonNull ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
+    private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
+    private static final @NonNull ConcreteType NOTIFICATION = typeForClass(Notification.class);
+    private static final @NonNull ConcreteType NOTIFICATION_BODY = typeForClass(NotificationBody.class);
+    private static final @NonNull ConcreteType OBJECT_REFERENCE = typeForClass(DataObjectIdentifier.class);
+    private static final @NonNull ConcreteType OBJECT_REFERENCE_WITH_KEY =
+        typeForClass(DataObjectIdentifier.WithKey.class);
+    private static final @NonNull ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
+    private static final @NonNull ConcreteType ROOT_META = typeForClass(RootMeta.class);
+    private static final @NonNull ConcreteType RPC = typeForClass(Rpc.class);
+    private static final @NonNull ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
+    private static final @NonNull ConcreteType YANG_FEATURE = typeForClass(YangFeature.class);
+    private static final @NonNull ConcreteType YANG_DATA = typeForClass(YangData.class);
 
     private BindingTypes() {
         //  Hidden on purpose
@@ -114,7 +115,7 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType action(final Type parent, final Type input, final Type output) {
-        return parameterizedTypeFor(ACTION, objectIdentifier(parent), input, output);
+        return ParameterizedType.of(ACTION, objectIdentifier(parent), input, output);
     }
 
     /**
@@ -129,7 +130,7 @@ public final class BindingTypes {
      */
     public static ParameterizedType keyedListAction(final Type parent, final Type keyType, final Type input,
             final Type output) {
-        return parameterizedTypeFor(KEYED_LIST_ACTION, keyType, parent, input, output);
+        return ParameterizedType.of(KEYED_LIST_ACTION, keyType, parent, input, output);
     }
 
     /**
@@ -140,7 +141,7 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is {@code null}
      */
     public static ParameterizedType notification(final Type concreteType) {
-        return parameterizedTypeFor(NOTIFICATION, concreteType);
+        return ParameterizedType.of(NOTIFICATION, concreteType);
     }
 
     /**
@@ -151,7 +152,7 @@ public final class BindingTypes {
      * @throws NullPointerException if {@code parent} is {@code null}
      */
     public static ParameterizedType notificationBody(final Type concreteType) {
-        return parameterizedTypeFor(NOTIFICATION_BODY, concreteType);
+        return ParameterizedType.of(NOTIFICATION_BODY, concreteType);
     }
 
     /**
@@ -163,7 +164,7 @@ public final class BindingTypes {
      * @throws NullPointerException if {@code parent} is {@code null}
      */
     public static ParameterizedType instanceNotification(final Type concreteType, final Type parent) {
-        return parameterizedTypeFor(INSTANCE_NOTIFICATION, concreteType, parent);
+        return ParameterizedType.of(INSTANCE_NOTIFICATION, concreteType, parent);
     }
 
     /**
@@ -177,7 +178,7 @@ public final class BindingTypes {
      */
     public static ParameterizedType keyedListNotification(final Type concreteType, final Type parent,
             final Type keyType) {
-        return parameterizedTypeFor(KEYED_LIST_NOTIFICATION, concreteType, parent, keyType);
+        return ParameterizedType.of(KEYED_LIST_NOTIFICATION, concreteType, parent, keyType);
     }
 
     /**
@@ -187,8 +188,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Augmentable<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static @NonNull ParameterizedType augmentable(final Type type) {
-        return parameterizedTypeFor(AUGMENTABLE, type);
+    @NonNullByDefault
+    public static ParameterizedType augmentable(final Type type) {
+        return ParameterizedType.of(AUGMENTABLE, type);
     }
 
     /**
@@ -198,8 +200,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Augmentation<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static @NonNull ParameterizedType augmentation(final Type type) {
-        return parameterizedTypeFor(AUGMENTATION, type);
+    @NonNullByDefault
+    public static ParameterizedType augmentation(final Type type) {
+        return ParameterizedType.of(AUGMENTATION, type);
     }
 
     /**
@@ -209,8 +212,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code ChildOf<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType childOf(final Type type) {
-        return parameterizedTypeFor(CHILD_OF, type);
+        return ParameterizedType.of(CHILD_OF, type);
     }
 
     /**
@@ -220,8 +224,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code DataRoot<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType dataRoot(final Type type) {
-        return parameterizedTypeFor(DATA_ROOT, type);
+        return ParameterizedType.of(DATA_ROOT, type);
     }
 
     /**
@@ -231,8 +236,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code ChoiceIn<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType choiceIn(final Type type) {
-        return parameterizedTypeFor(CHOICE_IN, type);
+        return ParameterizedType.of(CHOICE_IN, type);
     }
 
     /**
@@ -242,8 +248,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Key<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType key(final Type type) {
-        return parameterizedTypeFor(KEY, type);
+        return ParameterizedType.of(KEY, type);
     }
 
     /**
@@ -254,8 +261,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code EntryObject<Type, KeyType>}
      * @throws NullPointerException if any argument is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType entryObject(final Type type, final Type keyType) {
-        return parameterizedTypeFor(ENTRY_OBJECT, type, keyType);
+        return ParameterizedType.of(ENTRY_OBJECT, type, keyType);
     }
 
     /**
@@ -265,8 +273,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code DataObjectIdentifier<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType objectIdentifier(final Type type) {
-        return parameterizedTypeFor(OBJECT_REFERENCE, type);
+        return ParameterizedType.of(OBJECT_REFERENCE, type);
     }
 
     /**
@@ -277,8 +286,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code DataObjectIdentifier.WithKey<Type, KeyType>}
      * @throws NullPointerException if any argument is is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType objectIdentifierWithKey(final Type type, final Type keyType) {
-        return parameterizedTypeFor(OBJECT_REFERENCE_WITH_KEY, type, keyType);
+        return ParameterizedType.of(OBJECT_REFERENCE_WITH_KEY, type, keyType);
     }
 
     /**
@@ -288,8 +298,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code OpaqueObject<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType opaqueObject(final Type type) {
-        return parameterizedTypeFor(OPAQUE_OBJECT, type);
+        return ParameterizedType.of(OPAQUE_OBJECT, type);
     }
 
     /**
@@ -299,8 +310,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code RootMeta<Root>}
      * @throws NullPointerException if {@code root} is {@code null}
      */
-    public static @NonNull ParameterizedType rootMeta(final Type root) {
-        return parameterizedTypeFor(ROOT_META, root);
+    @NonNullByDefault
+    public static ParameterizedType rootMeta(final Type root) {
+        return ParameterizedType.of(ROOT_META, root);
     }
 
     /**
@@ -311,8 +323,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Rpc<Input, Output>}
      * @throws NullPointerException if any argument is {@code null}
      */
-    public static @NonNull ParameterizedType rpc(final Type input, final Type output) {
-        return parameterizedTypeFor(RPC, input, output);
+    @NonNullByDefault
+    public static ParameterizedType rpc(final Type input, final Type output) {
+        return ParameterizedType.of(RPC, input, output);
     }
 
     /**
@@ -322,8 +335,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code RpcResult<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType rpcResult(final Type type) {
-        return parameterizedTypeFor(RPC_RESULT, type);
+        return ParameterizedType.of(RPC_RESULT, type);
     }
 
     /**
@@ -333,8 +347,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code ScalarTypeObject<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType scalarTypeObject(final Type type) {
-        return parameterizedTypeFor(SCALAR_TYPE_OBJECT, type);
+        return ParameterizedType.of(SCALAR_TYPE_OBJECT, type);
     }
 
     /**
@@ -344,8 +359,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code YangData<Type>}
      * @throws NullPointerException if any argument is is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType yangData(final Type concreteType) {
-        return parameterizedTypeFor(YANG_DATA, concreteType);
+        return ParameterizedType.of(YANG_DATA, concreteType);
     }
 
     /**
@@ -356,8 +372,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code YangFeature<Type, DataRootType>}
      * @throws NullPointerException if any argument is is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType yangFeature(final Type concreteType, final Type parent) {
-        return parameterizedTypeFor(YANG_FEATURE, concreteType, parent);
+        return ParameterizedType.of(YANG_FEATURE, concreteType, parent);
     }
 
     /**
@@ -442,8 +459,8 @@ public final class BindingTypes {
         }
         if (ENTRY_OBJECT.equals(rawType)) {
             final var args = type.getActualTypeArguments();
-            if (args.length == 2) {
-                final var arg = args[0];
+            if (args.size() == 2) {
+                final var arg = args.getFirst();
                 if (arg != null) {
                     return arg;
                 }
@@ -465,8 +482,8 @@ public final class BindingTypes {
 
     private static Type onlyTypeArgument(final ParameterizedType type) {
         final var args = type.getActualTypeArguments();
-        if (args.length == 1) {
-            final var arg = args[0];
+        if (args.size() == 1) {
+            final var arg = args.getFirst();
             if (arg != null) {
                 return arg;
             }
@@ -481,8 +498,8 @@ public final class BindingTypes {
             if (impls.size() == 1 && impls.getFirst() instanceof ParameterizedType param
                 && YANG_FEATURE.equals(param.getRawType())) {
                 final var args = param.getActualTypeArguments();
-                if (args.length == 2) {
-                    return args[1];
+                if (args.size() == 2) {
+                    return args.getLast();
                 }
             }
         }

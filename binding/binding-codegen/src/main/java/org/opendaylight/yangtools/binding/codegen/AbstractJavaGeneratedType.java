@@ -15,9 +15,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
@@ -104,23 +104,24 @@ abstract class AbstractJavaGeneratedType {
         return annotateReference(ref, type, annotation);
     }
 
-    private String getReferenceString(final StringBuilder sb, final Type type, final @NonNull Type[] arguments) {
-        if (arguments.length == 0) {
+    private String getReferenceString(final StringBuilder sb, final Type type, final List<Type> arguments) {
+        if (arguments.isEmpty()) {
             return sb.append("<?>").toString();
         }
 
         sb.append('<');
-        for (int i = 0; i < arguments.length; i++) {
-            final Type arg = arguments[i];
+        final var it = arguments.iterator();
+        while (true) {
+            final var arg = it.next();
             if (arg instanceof WildcardType) {
                 sb.append("? extends ");
             }
             sb.append(getReferenceString(arg));
-            if (i != arguments.length - 1) {
-                sb.append(", ");
+            if (!it.hasNext()) {
+                return sb.append('>').toString();
             }
+            sb.append(", ");
         }
-        return sb.append('>').toString();
     }
 
     final String getReferenceString(final JavaTypeName type) {

@@ -14,7 +14,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesStringTest {
@@ -46,19 +45,18 @@ class GeneratedTypesStringTest {
                         }
                         paramType = parameterized;
 
-                        Type[] types;
                         if (!paramType.simpleName().equals("List")) {
                             break;
                         }
                         constantRegExListTypeContainer = true;
-                        types = paramType.getActualTypeArguments();
+                        final var types = paramType.getActualTypeArguments();
 
-                        if (types.length != 1) {
+                        if (types.size() != 1) {
                             break;
                         }
                         constantRegExListTypeOneGeneric = true;
 
-                        if (!types[0].simpleName().equals("String")) {
+                        if (!types.getFirst().simpleName().equals("String")) {
                             break;
                         }
                         constantRegExListTypeGeneric = true;
