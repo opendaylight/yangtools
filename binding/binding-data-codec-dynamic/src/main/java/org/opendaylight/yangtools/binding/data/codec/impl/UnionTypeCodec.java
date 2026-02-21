@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.RuntimeGeneratedUnion;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.runtime.api.RuntimeGeneratedUnion;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
@@ -56,12 +57,13 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
     }
 
     private static List<String> extractUnionProperties(final Type type) {
-        verify(type instanceof GeneratedTransferObject, "Unexpected runtime type %s", type);
+        if (!(type instanceof GeneratedTransferObject gto)) {
+            throw new VerifyException("Unexpected runtime type " + type);
+        }
 
-        GeneratedTransferObject gto = (GeneratedTransferObject) type;
         while (true) {
-            if (gto instanceof RuntimeGeneratedUnion) {
-                return ((RuntimeGeneratedUnion) gto).typePropertyNames();
+            if (gto instanceof RuntimeGeneratedUnion rgo) {
+                return rgo.typePropertyNames();
             }
             gto = verifyNotNull(gto.getSuperType(), "Cannot find union type information for %s", type);
         }

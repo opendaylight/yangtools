@@ -804,7 +804,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                             }
 
                             // ... otherwise generate this weird property name
-                            propSource = getUnionLeafrefMemberName(builder.getName(), baseType.getName());
+                            propSource = getUnionLeafrefMemberName(builder.typeName().simpleName(), baseType.getName());
                         }
                     }
 

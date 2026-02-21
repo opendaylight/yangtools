@@ -40,7 +40,7 @@ class SerialVersionHelperTest {
             JavaTypeName.create("org.opendaylight.yangtools.test", "TestType"));
         genTypeBuilder.addMethod("testMethod");
         genTypeBuilder.addAnnotation("org.opendaylight.yangtools.test.annotation", "AnnotationTest");
-        genTypeBuilder.addEnclosingTransferObject(new CodegenGeneratedTOBuilder(genTypeBuilder.getIdentifier()
+        genTypeBuilder.addEnclosingTransferObject(new CodegenGeneratedTOBuilder(genTypeBuilder.typeName()
             .createEnclosed("testObject")).build());
         genTypeBuilder.addProperty("newProp");
         final var genType = new CodegenGeneratedTypeBuilder(

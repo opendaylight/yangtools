@@ -29,7 +29,7 @@ final class KeyedListNotificationGenerator extends AbstractNotificationGenerator
 
     @Override
     Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        return BindingTypes.keyedListNotification(builder, Type.of(getParent().typeName()),
+        return BindingTypes.keyedListNotification(Type.of(builder.typeName()), Type.of(getParent().typeName()),
             keyGen.getGeneratedType(builderFactory));
     }
 }

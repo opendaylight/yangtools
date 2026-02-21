@@ -12,6 +12,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 
 /**
  * The {@link Archetype} for {@link DataRoot} specializations.
@@ -23,7 +24,7 @@ public non-sealed interface DataRootArchetype extends Archetype {
      * A builder of {@link DataRootArchetype} instances.
      */
     @Beta
-    interface Builder extends GeneratedTypeBuilderBase<Builder> {
+    sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits DataRootArchetypeBuilder {
         @Override
         DataRootArchetype build();
     }

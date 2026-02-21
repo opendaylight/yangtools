@@ -51,8 +51,9 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
 
     @Override
     GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTOBuilder(typeName());
-        builder.addImplementsType(BindingTypes.yangFeature(builder, Type.of(getParent().typeName())));
+        final var typeName = typeName();
+        final var builder = builderFactory.newGeneratedTOBuilder(typeName)
+            .addImplementsType(BindingTypes.yangFeature(Type.of(typeName), Type.of(getParent().typeName())));
 
         annotateDeprecatedIfNecessary(statement(), builder);
 
@@ -60,7 +61,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
         module.addQNameConstant(builder, localName());
 
         // Constant implementation
-        builder.addConstant(Type.of(builder), Naming.VALUE_STATIC_FIELD_NAME, YangFeature.class);
+        builder.addConstant(builder, Naming.VALUE_STATIC_FIELD_NAME, YangFeature.class);
 
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
