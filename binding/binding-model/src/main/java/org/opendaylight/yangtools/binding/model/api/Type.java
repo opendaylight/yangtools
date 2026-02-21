@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * The Type interface defines the base type for all types defined in java. Each
@@ -17,19 +17,33 @@ import org.opendaylight.yangtools.concepts.Identifiable;
  * name MUST be left as empty string.
  */
 @NonNullByDefault
-public interface Type extends Identifiable<JavaTypeName> {
+public interface Type extends Immutable {
+    /**
+     * {@return this type's {@link JavaTypeName}}
+     */
+    JavaTypeName name();
+
+    /**
+     * {@return this type's {@link JavaTypeName}}
+     * @deprecated Use {@link #name()} instead.
+     */
+    @Deprecated(since = "15.0.0")
+    default JavaTypeName getIdentifier() {
+        return name();
+    }
+
     /**
      * {@return name of the package that interface belongs to}
      */
     default String packageName() {
-        return getIdentifier().packageName();
+        return name().packageName();
     }
 
     /**
      * {@return name of the interface}
      */
     default String simpleName() {
-        return getIdentifier().simpleName();
+        return name().simpleName();
     }
 
     /**
@@ -43,17 +57,15 @@ public interface Type extends Identifiable<JavaTypeName> {
      * </ul>
      *
      * @return fully qualified name of Type.
+     * @deprecated Use {@code name().fullyQualifiedName()} instead.
      */
+    @Deprecated(since = "15.0.0")
     default String fullyQualifiedName() {
-        return getIdentifier().toString();
+        return name().fullyQualifiedName();
     }
 
     static Type of(final JavaTypeName identifier) {
         return new DefaultType(identifier);
-    }
-
-    static Type of(final Identifiable<JavaTypeName> type) {
-        return of(type.getIdentifier());
     }
 
     static Type of(final Class<?> type) {

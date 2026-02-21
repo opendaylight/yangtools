@@ -129,11 +129,13 @@ final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder implements Ann
         }
 
         @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return super.addToStringAttributes(toStringHelper)
-                .omitNullValues()
-                .add("annotations", annotations)
-                .add("parameters", parameters);
+        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            super.addToStringAttributes(helper);
+
+            addToStringAttribute(helper, "annotations", annotations);
+            addToStringAttribute(helper, "parameters", parameters);
+
+            return helper;
         }
     }
 
