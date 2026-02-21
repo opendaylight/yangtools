@@ -83,8 +83,9 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
-        builder.addImplementsType(BindingTypes.opaqueObject(builder));
+        final var typeName = typeName();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName);
+        builder.addImplementsType(BindingTypes.opaqueObject(Type.of(typeName)));
         defaultImplementedInterace(builder);
         annotateDeprecatedIfNecessary(builder);
 

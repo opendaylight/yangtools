@@ -19,7 +19,8 @@ class ConstantImplTest {
     @Test
     void testMethodsOfConstantImpl() {
         final var type = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test.v1", "BaseType"));
+            JavaTypeName.create("org.opendaylight.yangtools.test.v1", "BaseType"))
+            .build();
         final var constImpl = new ConstantImpl(type, "IpAddress", "127.0.0.1");
         final var constImpl2 = new ConstantImpl(type, "IpAddress", "127.0.0.1");
         final var constImpl3 = new ConstantImpl(type, "IpAddress", "127.0.0.0");
@@ -31,9 +32,9 @@ class ConstantImplTest {
         assertEquals("IpAddress", constImpl.getName());
         assertEquals("127.0.0.1", constImpl.getValue());
         assertEquals("""
-            Constant [type=CodegenGeneratedTypeBuilder{identifier=org.opendaylight.yangtools.test.v1.BaseType, \
-            constants=[], enumerations=[], methods=[], annotations=[], implements=[]}, name=IpAddress, \
-            value=127.0.0.1]""", constImpl.toString());
+            Constant [type=GeneratedTypeImpl{identifier=org.opendaylight.yangtools.test.v1.BaseType, \
+            annotations=[], enclosedTypes=[], enumerations=[], constants=[], methodSignatures=[]}, \
+            name=IpAddress, value=127.0.0.1]""", constImpl.toString());
         assertEquals(constImpl.hashCode(), constImpl2.hashCode());
         assertNotNull(constImpl.getType());
         assertNotNull(constImpl.getName());

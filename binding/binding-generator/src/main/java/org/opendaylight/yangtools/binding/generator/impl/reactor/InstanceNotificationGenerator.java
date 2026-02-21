@@ -24,6 +24,6 @@ final class InstanceNotificationGenerator extends AbstractNotificationGenerator 
 
     @Override
     Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        return BindingTypes.instanceNotification(builder, Type.of(getParent().typeName()));
+        return BindingTypes.instanceNotification(Type.of(builder.typeName()), Type.of(getParent().typeName()));
     }
 }

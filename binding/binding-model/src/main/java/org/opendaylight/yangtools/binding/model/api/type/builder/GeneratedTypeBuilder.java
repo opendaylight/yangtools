@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 
 /**
  * Generated Type Builder interface is helper interface for building and
@@ -15,6 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
  *
  * @see GeneratedType
  */
-public interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<GeneratedTypeBuilder> {
+public sealed interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<GeneratedTypeBuilder>
+    permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder {
     // Nothing else
 }
