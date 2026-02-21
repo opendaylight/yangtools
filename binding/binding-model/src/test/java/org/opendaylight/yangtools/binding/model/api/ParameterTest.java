@@ -23,7 +23,7 @@ class ParameterTest {
 
     @Test
     void testToString() {
-        assertEquals("Parameter[name=customParameter, type=ConcreteTypeImpl{name=java.lang.String}]",
+        assertEquals("Parameter[name=customParameter, type=ConcreteType{name=java.lang.String}]",
             new Parameter("customParameter", Types.STRING).toString());
     }
 }

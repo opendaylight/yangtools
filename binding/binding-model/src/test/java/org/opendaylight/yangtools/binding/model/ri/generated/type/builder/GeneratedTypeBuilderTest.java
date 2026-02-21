@@ -63,7 +63,7 @@ class GeneratedTypeBuilderTest {
         assertNotEquals(constant.hashCode(), constant4.hashCode());
         assertEquals(constant.hashCode(), constant5.hashCode());
 
-        assertEquals("Constant [type=ConcreteTypeImpl{name=java.lang.String}, name=myConstant, value=myConstantValue]",
+        assertEquals("Constant [type=ConcreteType{name=java.lang.String}, name=myConstant, value=myConstantValue]",
             constant.toString());
 
         var instance = generatedTypeBuilder.build();

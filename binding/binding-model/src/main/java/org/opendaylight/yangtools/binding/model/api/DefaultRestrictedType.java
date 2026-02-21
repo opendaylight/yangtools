@@ -16,9 +16,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 record DefaultRestrictedType(JavaTypeName name, Restrictions restrictions) implements RestrictedType {
     DefaultRestrictedType {
         requireNonNull(name);
-        if (restrictions.isEmpty()) {
-            throw new IllegalArgumentException("empty restrictions");
-        }
+        // FIXME: require non-empty
+        requireNonNull(restrictions);
     }
 
     @Override
