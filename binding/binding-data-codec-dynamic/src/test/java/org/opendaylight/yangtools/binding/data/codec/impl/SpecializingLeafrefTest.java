@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BarContBuilder;
@@ -18,21 +20,22 @@ import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanCont;
 import org.opendaylight.yang.gen.v1.mdsal426.norev.BooleanContBuilder;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 
+@NonNullByDefault
 class SpecializingLeafrefTest extends AbstractBindingCodecTest {
     private static final DataObjectIdentifier<BooleanCont> BOOLEAN_CONT_II =
         DataObjectIdentifier.builder(BooleanCont.class).build();
-
     private static final DataObjectIdentifier<BarCont> BAR_CONT_II =
         DataObjectIdentifier.builder(BarCont.class).build();
 
     @Test
     void specifiedBooleanLeafTest() {
-        final BooleanCont booleanCont  = new BooleanContBuilder().setIsFoo(true).build();
+        final var booleanCont  = new BooleanContBuilder().setIsFoo(true).build();
 
         final var res = codecContext.toNormalizedDataObject(BOOLEAN_CONT_II, booleanCont);
+        final var entry = codecContext.fromNormalizedNode(res.path(), res.node());
+        assertNotNull(entry);
 
-        final var booleanContBinding = (BooleanCont) codecContext.fromNormalizedNode(res.path(), res.node()).getValue();
-
+        final var booleanContBinding = assertInstanceOf(BooleanCont.class, entry.getValue());
         assertEquals(Boolean.TRUE, booleanContBinding.getIsFoo());
     }
 
@@ -41,10 +44,10 @@ class SpecializingLeafrefTest extends AbstractBindingCodecTest {
         final var barCont  = new BarContBuilder().setLeaf2("foo").build();
 
         final var res = codecContext.toNormalizedDataObject(BAR_CONT_II, barCont);
+        final var entry = codecContext.fromNormalizedNode(res.path(), res.node());
+        assertNotNull(entry);
 
-        final var booleanContBinding = assertInstanceOf(BarCont.class,
-            codecContext.fromNormalizedNode(res.path(), res.node()).getValue());
-
+        final var booleanContBinding = assertInstanceOf(BarCont.class, entry.getValue());
         assertEquals(booleanContBinding.getLeaf2(), "foo");
     }
 
@@ -54,10 +57,10 @@ class SpecializingLeafrefTest extends AbstractBindingCodecTest {
         final var barCont  = new BarContBuilder().setLeafList1(testSet).build();
 
         final var res = codecContext.toNormalizedDataObject(BAR_CONT_II, barCont);
+        final var entry = codecContext.fromNormalizedNode(res.path(), res.node());
+        assertNotNull(entry);
 
-        final var barContAfterConverting = assertInstanceOf(BarCont.class,
-            codecContext.fromNormalizedNode(res.path(), res.node()).getValue());
-
+        final var barContAfterConverting = assertInstanceOf(BarCont.class, entry.getValue());
         assertEquals(barContAfterConverting.getLeafList1(), testSet);
     }
 }
