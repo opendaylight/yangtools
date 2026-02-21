@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
+public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
         implements GeneratedTOBuilder permits CodegenGeneratedTOBuilder, RuntimeGeneratedTOBuilder {
     // FIXME are these three referenced anywhere at runtime?
     private List<GeneratedPropertyBuilder> equalsProperties = Collections.emptyList();
@@ -33,8 +33,8 @@ abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBu
     private boolean isUnionType = false;
     private TypeDefinition<?> baseType = null;
 
-    AbstractGeneratedTOBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    AbstractGeneratedTOBuilder(final JavaTypeName typeName) {
+        super(typeName);
         setAbstract(false);
     }
 

@@ -12,14 +12,18 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 
-public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>> extends Type, AnnotableTypeBuilder {
+public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
+        extends TypeBuilder, AnnotableTypeBuilder
+        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, GeneratedTOBuilder, GeneratedTypeBuilder {
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into definition of Generated Type.
      *
