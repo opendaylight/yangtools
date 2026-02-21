@@ -71,7 +71,7 @@ public final class IdentityGenerator
         module.addQNameConstant(builder, localName());
 
         // Constant implementation
-        builder.addConstant(Type.of(builder), Naming.VALUE_STATIC_FIELD_NAME, BaseIdentity.class);
+        builder.addConstant(builder, Naming.VALUE_STATIC_FIELD_NAME, BaseIdentity.class);
 
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());

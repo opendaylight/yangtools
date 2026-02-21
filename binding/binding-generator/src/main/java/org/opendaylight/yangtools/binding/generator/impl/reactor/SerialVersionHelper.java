@@ -47,7 +47,7 @@ public final class SerialVersionHelper {
     public static long computeDefaultSUID(final GeneratedTypeBuilderBase<?> to) {
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try (DataOutputStream dout = new DataOutputStream(bout)) {
-            dout.writeUTF(to.getName());
+            dout.writeUTF(to.typeName().simpleName());
             dout.writeInt(to.isAbstract() ? 3 : 7);
 
             for (final Type ifc : sortedCollection(SUID_NAME_COMPARATOR, filteredImplementsTypes(to))) {
