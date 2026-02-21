@@ -24,6 +24,6 @@ final class NotificationGenerator extends AbstractNotificationGenerator {
 
     @Override
     Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        return BindingTypes.notification(builder);
+        return BindingTypes.notification(Type.of(builder.typeName()));
     }
 }

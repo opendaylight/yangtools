@@ -12,14 +12,18 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 
-public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>> extends Type, AnnotableTypeBuilder {
+public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
+        extends TypeBuilder, AnnotableTypeBuilder
+        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, GeneratedTOBuilder, GeneratedTypeBuilder {
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into definition of Generated Type.
      *
@@ -64,6 +68,16 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
     T addImplementsType(Type genType);
 
     /**
+     * Add Type to implements.
+     *
+     * @param builder builder for the Type to implement
+     * @return <code>true</code> if the addition of type is successful.
+     */
+    default T addImplementsType(final TypeBuilder builder) {
+        return addImplementsType(Type.of(builder.typeName()));
+    }
+
+    /**
      * Adds Constant definition and returns <code>new</code> Constant instance.<br>
      * By definition Constant MUST be defined by return Type, Name and assigned value. The name SHOULD be defined
      * with capital letters. Neither of method parameters can be <code>null</code> and the method SHOULD throw
@@ -75,6 +89,21 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @return <code>new</code> Constant instance.
      */
     Constant addConstant(Type type, String name, Object value);
+
+    /**
+     * Adds Constant definition and returns <code>new</code> Constant instance.<br>
+     * By definition Constant MUST be defined by return Type, Name and assigned value. The name SHOULD be defined
+     * with capital letters. Neither of method parameters can be <code>null</code> and the method SHOULD throw
+     * {@link IllegalArgumentException} if the contract is broken.
+     *
+     * @param builder builder for Constant Type
+     * @param name Name of Constant
+     * @param value Assigned Value
+     * @return <code>new</code> Constant instance.
+     */
+    default Constant addConstant(final TypeBuilder builder, final String name, final Object value) {
+        return addConstant(Type.of(builder.typeName()), name, value);
+    }
 
     /**
      * Adds new Enumeration definition for Generated Type Builder and returns Enum Builder for specifying all Enum

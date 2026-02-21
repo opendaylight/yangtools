@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.runtime.api;
+package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 
 /**
  * A {@link GeneratedTransferObject} created for run-time representation of a {@code union}.

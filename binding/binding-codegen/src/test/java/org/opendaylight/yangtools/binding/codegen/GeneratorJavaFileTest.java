@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
@@ -27,9 +28,9 @@ class GeneratorJavaFileTest extends BaseCompilationTest {
 
     @Test
     void test() throws IOException {
-        final GeneratedTypeBuilder gtb = new CodegenGeneratedTypeBuilder(JavaTypeName.create(
-            "org.opendaylight.controller.gen", "Type4"));
-        gtb.addImplementsType(BindingTypes.augmentable(gtb));
+        final var typeName = JavaTypeName.create("org.opendaylight.controller.gen", "Type4");
+        final GeneratedTypeBuilder gtb = new CodegenGeneratedTypeBuilder(typeName);
+        gtb.addImplementsType(BindingTypes.augmentable(Type.of(typeName)));
 
         generateTestSources(Arrays.asList(
             createGeneratedType("org.opendaylight.controller.gen", "Type1"),

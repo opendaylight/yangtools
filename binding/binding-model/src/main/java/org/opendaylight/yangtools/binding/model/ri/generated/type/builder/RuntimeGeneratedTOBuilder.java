@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
+// FIXME: final
 public non-sealed class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     public RuntimeGeneratedTOBuilder(final JavaTypeName identifier) {
         super(identifier);
@@ -48,6 +49,7 @@ public non-sealed class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBui
         return new GTO(this);
     }
 
+    // Note: non-final for UnionGTO
     protected static class GTO extends AbstractGeneratedTransferObject {
         protected GTO(final RuntimeGeneratedTOBuilder builder) {
             super(builder);

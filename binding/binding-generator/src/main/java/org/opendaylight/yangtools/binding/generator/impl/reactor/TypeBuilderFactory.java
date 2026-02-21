@@ -8,20 +8,19 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedUnionBuilder;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedUnionBuilder.CodegenBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRo
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.runtime.api.RuntimeGeneratedUnion;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -73,7 +71,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
         @Override
         GeneratedUnionBuilder newGeneratedUnionBuilder(final JavaTypeName identifier) {
-            return new UnionBuilder(identifier);
+            return new CodegenBuilder(identifier);
         }
 
         @Override
@@ -113,19 +111,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
                 YangSourceDefinition.of(module.statement(), schema).ifPresent(builder::setYangSourceDefinition);
             }
         }
-
-        private static final class UnionBuilder extends CodegenGeneratedTOBuilder implements GeneratedUnionBuilder {
-            UnionBuilder(final JavaTypeName identifier) {
-                super(identifier);
-                setIsUnion(true);
-            }
-
-            @Override
-            public void setTypePropertyNames(final List<String> propertyNames) {
-                // No-op, really
-                requireNonNull(propertyNames);
-            }
-        }
     }
 
     private static final class Runtime extends TypeBuilderFactory {
@@ -157,7 +142,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
         @Override
         GeneratedUnionBuilder newGeneratedUnionBuilder(final JavaTypeName identifier) {
-            return new UnionBuilder(identifier);
+            return new GeneratedUnionBuilder.RuntimeBuilder(identifier);
         }
 
         @Override
@@ -179,40 +164,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
                 final GeneratedTypeBuilderBase<?> builder) {
             // No-op
-        }
-
-        private static final class UnionBuilder extends RuntimeGeneratedTOBuilder implements GeneratedUnionBuilder {
-            private List<String> typePropertyNames;
-
-            UnionBuilder(final JavaTypeName identifier) {
-                super(identifier);
-                setIsUnion(true);
-            }
-
-            @Override
-            public void setTypePropertyNames(final List<String> propertyNames) {
-                typePropertyNames = List.copyOf(propertyNames);
-            }
-
-            @Override
-            public GeneratedTransferObject build() {
-                return typePropertyNames == null || typePropertyNames.isEmpty()
-                    ? super.build() : new UnionGTO(this, typePropertyNames);
-            }
-
-            private static final class UnionGTO extends GTO implements RuntimeGeneratedUnion {
-                private final @NonNull List<String> typePropertyNames;
-
-                UnionGTO(final RuntimeGeneratedTOBuilder builder, final List<String> typePropertyNames) {
-                    super(builder);
-                    this.typePropertyNames = requireNonNull(typePropertyNames);
-                }
-
-                @Override
-                public List<String> typePropertyNames() {
-                    return typePropertyNames;
-                }
-            }
         }
     }
 
