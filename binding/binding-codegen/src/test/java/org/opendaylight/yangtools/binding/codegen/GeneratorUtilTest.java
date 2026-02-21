@@ -56,22 +56,20 @@ class GeneratorUtilTest {
     @Mock
     private GeneratedProperty property;
     @Mock
-    private ParameterizedType parameterizedType;
-    @Mock
     private Constant constant;
     @Mock
     private GeneratedTransferObject superType;
 
+    private ParameterizedType parameterizedType;
+
     @BeforeEach
     void before() {
-        doReturn("tst.package").when(parameterizedType).packageName();
-        doReturn("tstParametrizedType").when(parameterizedType).simpleName();
-        doReturn(PARAMETERIZED_TYPE).when(parameterizedType).name();
+        parameterizedType = ParameterizedType.of(Type.of(PARAMETERIZED_TYPE), type);
+
         doReturn("tst.package").when(type).packageName();
         doReturn("tstName").when(type).simpleName();
         doReturn(TYPE).when(type).name();
         doReturn(parameterizedType).when(property).getReturnType();
-        doReturn(new Type[] { type }).when(parameterizedType).getActualTypeArguments();
         doReturn(List.of(property)).when(enclosedType).getProperties();
         doReturn(Boolean.TRUE).when(property).isReadOnly();
         doReturn("tst.package").when(enclosedType).packageName();

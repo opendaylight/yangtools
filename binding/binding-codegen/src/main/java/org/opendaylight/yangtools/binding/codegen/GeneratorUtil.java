@@ -134,11 +134,8 @@ public final class GeneratorUtil {
             imports.put(typeName, type.name());
         }
         if (type instanceof ParameterizedType paramType) {
-            final Type[] params = paramType.getActualTypeArguments();
-            if (params != null) {
-                for (Type param : params) {
-                    putTypeIntoImports(parentGenType, param, imports);
-                }
+            for (var param : paramType.getActualTypeArguments()) {
+                putTypeIntoImports(parentGenType, param, imports);
             }
         }
     }
@@ -235,7 +232,7 @@ public final class GeneratorUtil {
      * Adds actual type parameters from <code>type</code> to <code>builder</code> if <code>type</code> is
      * <code>ParametrizedType</code>.
      *
-     * @param builder string builder which contains type name
+     * @param sb string builder which contains type name
      * @param type JAVA <code>Type</code> for which is the string with type info generated
      * @param parentGenType generated type which contains <code>type</code>
      * @param imports map of necessary imports for <code>parentGenType</code>
@@ -243,13 +240,12 @@ public final class GeneratorUtil {
      *         <li>then <code>builder</code> + actual <code>type</code>
      *         parameters</li> <li>else only <code>builder</code></li>
      */
-    private static StringBuilder addActualTypeParameters(final StringBuilder builder, final Type type,
+    private static StringBuilder addActualTypeParameters(final StringBuilder sb, final Type type,
             final GeneratedType parentGenType, final Map<String, JavaTypeName> imports) {
         if (type instanceof ParameterizedType pType) {
-            final Type[] pTypes = pType.getActualTypeArguments();
-            builder.append('<').append(getParameters(parentGenType, pTypes, imports)).append('>');
+            sb.append('<').append(getParameters(parentGenType, pType.getActualTypeArguments(), imports)).append('>');
         }
-        return builder;
+        return sb;
     }
 
     /**
@@ -260,29 +256,29 @@ public final class GeneratorUtil {
      * @param availableImports map of imports for <code>parentGenType</code>
      * @return string with all actual type parameters from <code>pTypes</code>
      */
-    private static String getParameters(final GeneratedType parentGenType, final Type[] paramTypes,
+    private static String getParameters(final GeneratedType parentGenType, final List<Type> paramTypes,
                                         final Map<String, JavaTypeName> availableImports) {
-
-        if (paramTypes == null || paramTypes.length == 0) {
+        if (paramTypes == null || paramTypes.isEmpty()) {
             return "?";
         }
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < paramTypes.length; i++) {
-            final Type t = paramTypes[i];
+        final var sb = new StringBuilder();
+        final var it = paramTypes.iterator();
+        while (true) {
+            final var type = it.next();
 
-            if (Types.voidType().equals(t)) {
-                builder.append("java.lang.Void");
+            if (Types.voidType().equals(type)) {
+                sb.append("java.lang.Void");
             } else {
-                if (t instanceof WildcardType) {
-                    builder.append("? extends ");
+                if (type instanceof WildcardType) {
+                    sb.append("? extends ");
                 }
-                builder.append(getExplicitType(parentGenType, t, availableImports));
+                sb.append(getExplicitType(parentGenType, type, availableImports));
             }
-            if (i != paramTypes.length - 1) {
-                builder.append(',');
+            if (!it.hasNext()) {
+                return sb.toString();
             }
+            sb.append(", ");
         }
-        return builder.toString();
     }
 
     /**

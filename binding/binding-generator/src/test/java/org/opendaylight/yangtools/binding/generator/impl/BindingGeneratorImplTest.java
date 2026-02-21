@@ -64,7 +64,7 @@ class BindingGeneratorImplTest {
         Type childOfParamType = null;
         for (var type : myContainer.getImplements()) {
             if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
                 break;
             }
         }
@@ -74,7 +74,7 @@ class BindingGeneratorImplTest {
         childOfParamType = null;
         for (var type : myList.getImplements()) {
             if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
                 break;
             }
         }
@@ -84,7 +84,7 @@ class BindingGeneratorImplTest {
         childOfParamType = null;
         for (var type : myContainer2.getImplements()) {
             if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
                 break;
             }
         }
@@ -94,7 +94,7 @@ class BindingGeneratorImplTest {
         childOfParamType = null;
         for (var type : myList2.getImplements()) {
             if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
                 break;
             }
         }

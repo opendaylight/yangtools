@@ -7,24 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
-import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -57,8 +52,8 @@ public final class Types {
     private static final @NonNull ConcreteType SERIALIZABLE = typeForClass(Serializable.class);
     private static final @NonNull ConcreteType SET_TYPE = typeForClass(Set.class);
     private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = typeForClass(ImmutableSet.class);
-    private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = parameterizedTypeFor(LIST_TYPE);
-    private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = parameterizedTypeFor(SET_TYPE);
+    private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
+    private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = ParameterizedType.of(SET_TYPE);
 
     /**
      * It is not desirable to create instance of this class.
@@ -74,8 +69,9 @@ public final class Types {
      * @return A parameterized type corresponding to {@code Class<Type>}
      * @throws NullPointerException if {@code type} is null
      */
-    public static @NonNull ParameterizedType classType(final Type type) {
-        return parameterizedTypeFor(CLASS, type);
+    @NonNullByDefault
+    public static ParameterizedType classType(final Type type) {
+        return ParameterizedType.of(CLASS, type);
     }
 
     /**
@@ -173,8 +169,9 @@ public final class Types {
      * @param valueType Value Type
      * @return Description of generic type instance
      */
-    public static @NonNull ParameterizedType mapTypeFor(final Type keyType, final Type valueType) {
-        return parameterizedTypeFor(MAP_TYPE, keyType, valueType);
+    @NonNullByDefault
+    public static ParameterizedType mapTypeFor(final Type keyType, final Type valueType) {
+        return ParameterizedType.of(MAP_TYPE, keyType, valueType);
     }
 
     public static boolean isMapType(final ParameterizedType type) {
@@ -188,8 +185,9 @@ public final class Types {
      * @param valueType Value Type
      * @return Description of generic type instance of Set
      */
-    public static @NonNull ParameterizedType setTypeFor(final Type valueType) {
-        return parameterizedTypeFor(SET_TYPE, valueType);
+    @NonNullByDefault
+    public static ParameterizedType setTypeFor(final Type valueType) {
+        return ParameterizedType.of(SET_TYPE, valueType);
     }
 
     /**
@@ -199,8 +197,9 @@ public final class Types {
      * @param valueType Value Type
      * @return Description of generic type instance of ImmutableSet
      */
-    public static @NonNull ParameterizedType immutableSetTypeFor(final Type valueType) {
-        return parameterizedTypeFor(IMMUTABLE_SET_TYPE, valueType);
+    @NonNullByDefault
+    public static ParameterizedType immutableSetTypeFor(final Type valueType) {
+        return ParameterizedType.of(IMMUTABLE_SET_TYPE, valueType);
     }
 
     /**
@@ -223,8 +222,9 @@ public final class Types {
      * @param valueType Value Type
      * @return Description of type instance of List
      */
-    public static @NonNull ParameterizedType listTypeFor(final Type valueType) {
-        return parameterizedTypeFor(LIST_TYPE, valueType);
+    @NonNullByDefault
+    public static ParameterizedType listTypeFor(final Type valueType) {
+        return ParameterizedType.of(LIST_TYPE, valueType);
     }
 
     /**
@@ -247,21 +247,9 @@ public final class Types {
      * @param valueType Value Type
      * @return Description of type instance of ListenableFuture
      */
-    public static @NonNull ParameterizedType listenableFutureTypeFor(final Type valueType) {
-        return parameterizedTypeFor(LISTENABLE_FUTURE, valueType);
-    }
-
-    /**
-     * Creates instance of type
-     * {@link org.opendaylight.yangtools.binding.model.api.ParameterizedType ParameterizedType}.
-     *
-     * @param type JAVA <code>Type</code> for raw type
-     * @param parameters JAVA <code>Type</code>s for actual parameter types
-     * @return <code>ParametrizedType</code> representation of <code>type</code> and its <code>parameters</code>
-     * @throws NullPointerException if any argument or any member of {@code parameters} is null
-     */
-    public static @NonNull ParameterizedType parameterizedTypeFor(final Type type, final Type... parameters) {
-        return new ParametrizedTypeImpl(type, parameters);
+    @NonNullByDefault
+    public static ParameterizedType listenableFutureTypeFor(final Type valueType) {
+        return ParameterizedType.of(LISTENABLE_FUTURE, valueType);
     }
 
     public static boolean strictTypeEquals(final Type type1, final Type type2) {
@@ -269,56 +257,13 @@ public final class Types {
             return false;
         }
         if (type1 instanceof ParameterizedType param1) {
-            if (type2 instanceof ParameterizedType param2) {
-                return Arrays.equals(param1.getActualTypeArguments(), param2.getActualTypeArguments());
-            }
-            return false;
+            return type2 instanceof ParameterizedType param2
+                && param1.getActualTypeArguments().equals(param2.getActualTypeArguments());
         }
         return !(type2 instanceof ParameterizedType);
     }
 
     public static @Nullable String getOuterClassName(final Type valueType) {
         return valueType.name().immediatelyEnclosingClass().map(Object::toString).orElse(null);
-    }
-
-    /**
-     * Represents a parameterized Java type.
-     */
-    private static class ParametrizedTypeImpl extends AbstractType implements ParameterizedType {
-        /**
-         * Array of JAVA actual type parameters.
-         */
-        private final Type[] actualTypes;
-
-        /**
-         * JAVA raw type (like List, Set, Map...).
-         */
-        private final Type rawType;
-
-        /**
-         * Creates instance of this class with concrete rawType and array of actual parameters.
-         *
-         * @param rawType Java {@link Type} for raw type
-         * @param actTypes array of actual parameters
-         */
-        ParametrizedTypeImpl(final Type rawType, final Type[] actTypes) {
-            super(rawType.name());
-            this.rawType = requireNonNull(rawType);
-            actualTypes = actTypes.clone();
-            if (Arrays.stream(actualTypes).anyMatch(Objects::isNull)) {
-                throw new NullPointerException("actTypes contains a null");
-            }
-        }
-
-        @Override
-        public Type[] getActualTypeArguments() {
-
-            return actualTypes;
-        }
-
-        @Override
-        public Type getRawType() {
-            return rawType;
-        }
     }
 }

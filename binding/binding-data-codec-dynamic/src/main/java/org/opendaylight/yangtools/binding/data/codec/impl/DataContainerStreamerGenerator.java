@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.getField;
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.invokeMethod;
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.putField;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -251,16 +251,19 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             return containerChildStream(getter);
         }
         if (childSchema instanceof ListSchemaNode listSchema) {
-            final String getterName = getter.getName();
-            final Type childType = props.get(getterName);
-            verify(childType instanceof ParameterizedType, "Unexpected type %s for %s", childType, getterName);
-            final Type[] params = ((ParameterizedType) childType).getActualTypeArguments();
+            final var getterName = getter.getName();
+            final var childType = props.get(getterName);
+            if (!(childType instanceof ParameterizedType paramType)) {
+                throw new VerifyException("Unexpected type " + childType + " for " + getterName);
+            }
+
+            final var params = paramType.getActualTypeArguments();
             final Class<?> valueClass;
             if (!listSchema.isUserOrdered() && !listSchema.getKeyDefinition().isEmpty()) {
-                loadTypeClass(loader, params[0]);
-                valueClass = loadTypeClass(loader, params[1]);
+                loadTypeClass(loader, params.getFirst());
+                valueClass = loadTypeClass(loader, params.get(1));
             } else {
-                valueClass = loadTypeClass(loader, params[0]);
+                valueClass = loadTypeClass(loader, params.getFirst());
             }
 
             return listChildStream(getter, valueClass.asSubclass(DataObject.class), listSchema);

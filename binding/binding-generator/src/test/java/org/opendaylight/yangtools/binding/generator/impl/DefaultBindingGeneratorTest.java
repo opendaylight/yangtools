@@ -83,8 +83,8 @@ public class DefaultBindingGeneratorTest {
 
         assertEquals(Types.typeForClass(Set.class), enumsType.getRawType());
         final var enumsTypeArgs = enumsType.getActualTypeArguments();
-        assertEquals(1, enumsTypeArgs.length);
-        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs[0].fullyQualifiedName());
+        assertEquals(1, enumsTypeArgs.size());
+        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs.getFirst().fullyQualifiedName());
     }
 
     @Test
