@@ -44,7 +44,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     val BuilderTemplate builder;
 
     new(BuilderTemplate builder, GeneratedType type) {
-        super(builder.javaType.getEnclosedType(type.identifier), type, builder.targetType, builder.properties,
+        super(builder.javaType.getEnclosedType(type.name), type, builder.targetType, builder.properties,
             builder.augmentType, builder.keyType)
         this.builder = builder
     }

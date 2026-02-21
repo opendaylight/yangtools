@@ -131,7 +131,7 @@ public final class GeneratorUtil {
             return;
         }
         if (!imports.containsKey(typeName)) {
-            imports.put(typeName, type.getIdentifier());
+            imports.put(typeName, type.name());
         }
         if (type instanceof ParameterizedType paramType) {
             final Type[] params = paramType.getActualTypeArguments();
@@ -213,22 +213,22 @@ public final class GeneratorUtil {
         checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
         checkArgument(imports != null, "Imports Map cannot be NULL!");
 
-        final JavaTypeName importedType = imports.get(type.simpleName());
-        final StringBuilder builder = new StringBuilder();
-        if (type.getIdentifier().equals(importedType)) {
-            builder.append(type.simpleName());
-            addActualTypeParameters(builder, type, parentGenType, imports);
-            if (builder.toString().equals("Void")) {
+        final var importedType = imports.get(type.simpleName());
+        final var sb = new StringBuilder();
+        if (type.name().equals(importedType)) {
+            sb.append(type.simpleName());
+            addActualTypeParameters(sb, type, parentGenType, imports);
+            if (sb.toString().equals("Void")) {
                 return "void";
             }
         } else {
             if (type.equals(Types.voidType())) {
                 return "void";
             }
-            builder.append(type.fullyQualifiedName());
-            addActualTypeParameters(builder, type, parentGenType, imports);
+            sb.append(type.fullyQualifiedName());
+            addActualTypeParameters(sb, type, parentGenType, imports);
         }
-        return builder.toString();
+        return sb.toString();
     }
 
     /**

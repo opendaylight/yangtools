@@ -381,12 +381,12 @@ class AnnotationBuilderTest {
             annotationTypeBuilder.toString());
 
         final var annotationTypeInstance = annotationTypeBuilder.build();
-        assertSame(typeName, annotationTypeInstance.getIdentifier());
+        assertSame(typeName, annotationTypeInstance.name());
         assertEquals("""
-            AnnotationTypeImpl{identifier=my.package.MyAnnotationName, \
-            annotations=[AnnotationTypeImpl{identifier=my.package.MySubAnnotationName, annotations=[], \
-            parameters=[]}], parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
-            annotationTypeInstance.toString());
+            AnnotationTypeImpl{name=my.package.MyAnnotationName, \
+            annotations=[AnnotationTypeImpl{name=my.package.MySubAnnotationName}], \
+            parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
+                annotationTypeInstance.toString());
     }
 
     @Test
@@ -447,18 +447,13 @@ class AnnotationBuilderTest {
 
     @Test
     void testMethodsForAnnotationTypeImpl() {
-        final var annotBuilderImpl = new AnnotationTypeBuilderImpl(
-            JavaTypeName.create("org.opedaylight.yangtools.test", "AnnotationTest"));
+        final var builderName = JavaTypeName.create("org.opedaylight.yangtools.test", "AnnotationTest");
+        final var annotBuilderImpl = new AnnotationTypeBuilderImpl(builderName);
         annotBuilderImpl.addParameter("testParam", "test value");
         final var annotationType = annotBuilderImpl.build();
-
-        final var annotBuilderImpl2 = new AnnotationTypeBuilderImpl(
-            JavaTypeName.create("org.opedaylight.yangtools.test", "AnnotationTest"));
-        final var annotationType2 = annotBuilderImpl2.build();
-
+        assertSame(builderName, annotationType.name());
         assertTrue(annotationType.containsParameters());
-        assertTrue(annotationType.getAnnotations().isEmpty());
-        assertNotNull(annotationType.fullyQualifiedName());
+        assertEquals(List.of(), annotationType.getAnnotations());
         assertNotNull(annotationType.simpleName());
         assertNotNull(annotationType.packageName());
         assertNull(annotationType.getParameter(null));
@@ -466,6 +461,9 @@ class AnnotationBuilderTest {
         assertFalse(annotationType.getParameterNames().isEmpty());
         assertFalse(annotationType.getParameters().isEmpty());
 
+        final var annotBuilderImpl2 = new AnnotationTypeBuilderImpl(
+            JavaTypeName.create("org.opedaylight.yangtools.test", "AnnotationTest"));
+        final var annotationType2 = annotBuilderImpl2.build();
         assertTrue(annotationType.hashCode() == annotationType2.hashCode());
         assertTrue(annotationType.equals(annotationType2));
         assertNotNull(annotationType.toString());

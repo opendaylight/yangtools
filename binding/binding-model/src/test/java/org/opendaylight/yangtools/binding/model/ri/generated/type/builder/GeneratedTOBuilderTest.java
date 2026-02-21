@@ -52,6 +52,6 @@ class GeneratedTOBuilderTest {
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
         var genTO = genTypeBuilder1.build();
-        assertThat(genTO.toString()).startsWith("GTO{identifier=org.opendaylight.controller.AnnotClassCache");
+        assertThat(genTO.toString()).startsWith("GTO{name=org.opendaylight.controller.AnnotClassCache");
     }
 }

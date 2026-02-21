@@ -115,7 +115,7 @@ class InterfaceTemplate extends BaseTemplate {
          «val annotations = method.annotations»
          «IF annotations !== null && !annotations.empty»
              «FOR annotation : annotations»
-                  «IF !BOOLEAN.equals(method.returnType) || !OVERRIDE.equals(annotation.identifier)»
+                  «IF !BOOLEAN.equals(method.returnType) || !OVERRIDE.equals(annotation.name)»
                       «annotation.generateAnnotation»
                   «ENDIF»
              «ENDFOR»
@@ -158,7 +158,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateEnums() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
-                «val enumTemplate = new EnumTemplate(javaType.getEnclosedType(e.identifier), e)»
+                «val enumTemplate = new EnumTemplate(javaType.getEnclosedType(e.name), e)»
                 «enumTemplate.generateAsInnerClass»
             «ENDFOR»
         «ENDIF»
@@ -212,7 +212,7 @@ class InterfaceTemplate extends BaseTemplate {
             switch method.name {
                 case BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME : generateDefaultImplementedInterface
                 default :
-                    if (VOID.equals(method.returnType.identifier)) {
+                    if (VOID.equals(method.returnType.name)) {
                         generateNoopVoidInterfaceMethod(method)
                     }
             }

@@ -168,7 +168,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     private static def findDeprecatedAnnotation(List<AnnotationType> annotations) {
         if (annotations !== null) {
             for (annotation : annotations) {
-                if (DEPRECATED.equals(annotation.identifier)) {
+                if (DEPRECATED.equals(annotation.name)) {
                     return annotation
                 }
             }

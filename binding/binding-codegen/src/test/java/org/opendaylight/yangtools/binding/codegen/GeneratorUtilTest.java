@@ -66,10 +66,10 @@ class GeneratorUtilTest {
     void before() {
         doReturn("tst.package").when(parameterizedType).packageName();
         doReturn("tstParametrizedType").when(parameterizedType).simpleName();
-        doReturn(PARAMETERIZED_TYPE).when(parameterizedType).getIdentifier();
+        doReturn(PARAMETERIZED_TYPE).when(parameterizedType).name();
         doReturn("tst.package").when(type).packageName();
         doReturn("tstName").when(type).simpleName();
-        doReturn(TYPE).when(type).getIdentifier();
+        doReturn(TYPE).when(type).name();
         doReturn(parameterizedType).when(property).getReturnType();
         doReturn(new Type[] { type }).when(parameterizedType).getActualTypeArguments();
         doReturn(List.of(property)).when(enclosedType).getProperties();
@@ -81,7 +81,7 @@ class GeneratorUtilTest {
 
         doReturn("tst.package").when(annotationType).packageName();
         doReturn("tstAnnotationName").when(annotationType).simpleName();
-        doReturn(ANNOTATION).when(annotationType).getIdentifier();
+        doReturn(ANNOTATION).when(annotationType).name();
 
         doReturn(type).when(methodSignature).getReturnType();
         doReturn(List.of(annotationType)).when(methodSignature).getAnnotations();

@@ -101,7 +101,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
     public int compare(final T member1, final T member2) {
         final Type type1 = getConcreteType(member1.getReturnType());
         final Type type2 = getConcreteType(member2.getReturnType());
-        if (!type1.getIdentifier().equals(type2.getIdentifier())) {
+        if (!type1.name().equals(type2.name())) {
             final int cmp = rankOf(type1) - rankOf(type2);
             if (cmp != 0) {
                 return cmp;

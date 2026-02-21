@@ -242,7 +242,7 @@ class JavaFileTemplate {
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
         final var optEnc = name.immediatelyEnclosingClass();
-        return optEnc.isPresent() && type.getIdentifier().equals(optEnc.orElseThrow());
+        return optEnc.isPresent() && type.name().equals(optEnc.orElseThrow());
     }
 
     final CharSequence generateInnerClass(final GeneratedType innerClass) {
@@ -250,7 +250,7 @@ class JavaFileTemplate {
             return "";
         }
 
-        final var innerJavaType = javaType.getEnclosedType(innerClass.getIdentifier());
+        final var innerJavaType = javaType.getEnclosedType(innerClass.name());
         return gto.isUnionType() ? new UnionTemplate(innerJavaType, gto).generateAsInnerClass()
                 : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
     }
@@ -409,7 +409,7 @@ class JavaFileTemplate {
      */
     static boolean hasOverrideAnnotation(final MethodSignature method) {
         for (var annotation : method.getAnnotations()) {
-            if (OVERRIDE.equals(annotation.getIdentifier())) {
+            if (OVERRIDE.equals(annotation.name())) {
                 return true;
             }
         }

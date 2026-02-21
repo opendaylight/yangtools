@@ -43,10 +43,10 @@ abstract class AbstractJavaGeneratedType {
     private final JavaTypeName name;
 
     AbstractJavaGeneratedType(final GeneratedType genType) {
-        name = genType.getIdentifier();
+        name = genType.name();
         final Builder<String, NestedJavaGeneratedType> b = ImmutableMap.builder();
         for (GeneratedType type : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
-            b.put(type.getIdentifier().simpleName(), new NestedJavaGeneratedType(this, type));
+            b.put(type.name().simpleName(), new NestedJavaGeneratedType(this, type));
         }
         enclosedTypes = b.build();
 
@@ -61,10 +61,10 @@ abstract class AbstractJavaGeneratedType {
     }
 
     private void collectAccessibleTypes(final Set<String> set, final GeneratedType type) {
-        for (Type impl : type.getImplements()) {
+        for (var impl : type.getImplements()) {
             if (impl instanceof GeneratedType genType) {
-                for (GeneratedType inner : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
-                    set.add(inner.getIdentifier().simpleName());
+                for (var inner : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
+                    set.add(inner.name().simpleName());
                 }
                 collectAccessibleTypes(set, genType);
             }
@@ -91,7 +91,7 @@ abstract class AbstractJavaGeneratedType {
     }
 
     final String getReferenceString(final Type type) {
-        final String ref = getReferenceString(type.getIdentifier());
+        final String ref = getReferenceString(type.name());
         return type instanceof ParameterizedType parameterized
             ? getReferenceString(new StringBuilder(ref), type, parameterized.getActualTypeArguments())
                 : ref;
@@ -100,7 +100,7 @@ abstract class AbstractJavaGeneratedType {
     final String getReferenceString(final Type type, final String annotation) {
         // Package-private method, all callers who would be passing an empty array are bound to the more special
         // case above, hence we know annotations.length >= 1
-        final String ref = getReferenceString(type.getIdentifier());
+        final String ref = getReferenceString(type.name());
         return annotateReference(ref, type, annotation);
     }
 
