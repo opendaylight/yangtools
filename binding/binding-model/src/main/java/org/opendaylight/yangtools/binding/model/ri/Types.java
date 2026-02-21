@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -26,7 +25,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
-import org.opendaylight.yangtools.binding.model.api.BaseTypeWithRestrictions;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -35,11 +33,12 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
 
 public final class Types {
+    @NonNullByDefault
     private static final LoadingCache<Class<?>, ConcreteType> TYPE_CACHE = CacheBuilder.newBuilder().weakKeys()
         .build(new CacheLoader<>() {
             @Override
             public ConcreteType load(final Class<?> key) {
-                return new ConcreteTypeImpl(JavaTypeName.create(key));
+                return ConcreteType.ofClass(key);
             }
         });
 
@@ -165,17 +164,8 @@ public final class Types {
 
     public static @NonNull ConcreteType typeForClass(final @NonNull Class<?> cls,
             final @Nullable Restrictions restrictions) {
-        return restrictions == null ? typeForClass(cls) : restrictedType(JavaTypeName.create(cls), restrictions);
-    }
-
-    @Beta
-    public static @NonNull ConcreteType restrictedType(final Type type, final @NonNull Restrictions restrictions) {
-        return restrictedType(type.name(), restrictions);
-    }
-
-    private static @NonNull ConcreteType restrictedType(final JavaTypeName identifier,
-            final @NonNull Restrictions restrictions) {
-        return new BaseTypeWithRestrictionsImpl(identifier, restrictions);
+        final var type = typeForClass(cls);
+        return restrictions == null ? type : type.withRestrictions(restrictions);
     }
 
     /**
@@ -282,6 +272,7 @@ public final class Types {
      * @param identifier JavaTypeName of the type
      * @return <code>WildcardType</code> representation of specified identifier
      */
+    @NonNullByDefault
     public static WildcardType wildcardTypeFor(final JavaTypeName identifier) {
         return new WildcardTypeImpl(identifier);
     }
@@ -301,46 +292,6 @@ public final class Types {
 
     public static @Nullable String getOuterClassName(final Type valueType) {
         return valueType.name().immediatelyEnclosingClass().map(Object::toString).orElse(null);
-    }
-
-    /**
-     * Represents a concrete Java type.
-     */
-    private static final class ConcreteTypeImpl extends AbstractType implements ConcreteType {
-        /**
-         * Default constructor.
-         *
-         * @param identifier type identifier
-         * @param restrictions optional {@link Restrictions}
-         */
-        ConcreteTypeImpl(final JavaTypeName identifier) {
-            super(identifier);
-        }
-    }
-
-    /**
-     * Represents a concrete Java type with changed restriction values.
-     */
-    @NonNullByDefault
-    private static final class BaseTypeWithRestrictionsImpl extends AbstractType
-            implements BaseTypeWithRestrictions {
-        private final Restrictions restrictions;
-
-        /**
-         * Default constructor.
-         *
-         * @param identifier type identifier
-         * @param restrictions optional {@link Restrictions}
-         */
-        BaseTypeWithRestrictionsImpl(final JavaTypeName identifier, final Restrictions restrictions) {
-            super(identifier);
-            this.restrictions = requireNonNull(restrictions);
-        }
-
-        @Override
-        public Restrictions restrictions() {
-            return restrictions;
-        }
     }
 
     /**
@@ -387,6 +338,7 @@ public final class Types {
     /**
      * Represents a Java bounded wildcard type.
      */
+    @NonNullByDefault
     private static class WildcardTypeImpl extends AbstractType implements WildcardType {
         /**
          * Default constructor.

@@ -334,14 +334,14 @@ public class BuilderGeneratorTest {
         doReturn(TEST).when(genType).simpleName();
         doReturn(TEST).when(genType).packageName();
 
-        final List<MethodSignature> listMethodSign = new ArrayList<>();
+        final var listMethodSign = new ArrayList<MethodSignature>();
         for (int i = 0; i < 2; i++) {
             final MethodSignature methSign = mockMethSign(methodeName + (i + 1));
             listMethodSign.add(methSign);
         }
         doReturn(listMethodSign).when(genType).getMethodDefinitions();
 
-        final List<Type> impls = new ArrayList<>();
+        final var impls = new ArrayList<Type>();
         doReturn(impls).when(genType).getImplements();
         return genType;
     }
