@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.WildcardType;
 
 class TypesTest {
     @Test
@@ -63,8 +65,8 @@ class TypesTest {
 
     @Test
     void testWildcardTypeFor() {
-        final var wildcardType = Types.wildcardTypeFor(JavaTypeName.create("org.opendaylight.yangtools.test",
-            "WildcardTypeTest"));
-        assertEquals("WildcardTypeTest", wildcardType.simpleName());
+        final var name = JavaTypeName.create("org.opendaylight.yangtools.test", "WildcardTypeTest");
+        final var wildcardType = WildcardType.ofName(name);
+        assertSame(name, wildcardType.name());
     }
 }

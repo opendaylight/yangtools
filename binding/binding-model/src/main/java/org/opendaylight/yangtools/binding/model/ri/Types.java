@@ -26,11 +26,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.WildcardType;
 
 public final class Types {
     @NonNullByDefault
@@ -266,17 +264,6 @@ public final class Types {
         return new ParametrizedTypeImpl(type, parameters);
     }
 
-    /**
-     * Creates instance of type {@link org.opendaylight.yangtools.binding.model.api.WildcardType}.
-     *
-     * @param identifier JavaTypeName of the type
-     * @return <code>WildcardType</code> representation of specified identifier
-     */
-    @NonNullByDefault
-    public static WildcardType wildcardTypeFor(final JavaTypeName identifier) {
-        return new WildcardTypeImpl(identifier);
-    }
-
     public static boolean strictTypeEquals(final Type type1, final Type type2) {
         if (!type1.equals(type2)) {
             return false;
@@ -332,21 +319,6 @@ public final class Types {
         @Override
         public Type getRawType() {
             return rawType;
-        }
-    }
-
-    /**
-     * Represents a Java bounded wildcard type.
-     */
-    @NonNullByDefault
-    private static class WildcardTypeImpl extends AbstractType implements WildcardType {
-        /**
-         * Default constructor.
-         *
-         * @param identifier type identifier
-         */
-        WildcardTypeImpl(final JavaTypeName identifier) {
-            super(identifier);
         }
     }
 }
