@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedUnionBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;

@@ -14,7 +14,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
@@ -29,8 +28,8 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
-abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractType
-        implements GeneratedTypeBuilderBase<T>
+public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>>
+        extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
         permits AbstractGeneratedTOBuilder, CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder,
                 DataRootArchetypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
@@ -44,8 +43,8 @@ abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilde
     private boolean isAbstract;
     private YangSourceDefinition yangSourceDefinition;
 
-    AbstractGeneratedTypeBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    AbstractGeneratedTypeBuilder(final JavaTypeName typeName) {
+        super(typeName);
     }
 
     protected @Nullable TypeComment getComment() {
@@ -117,8 +116,7 @@ abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilde
 
     @Override
     public T addImplementsType(final Type genType) {
-        checkArgument(genType != null, "Type cannot be null");
-        checkArgument(!implementsTypes.contains(genType),
+        checkArgument(!implementsTypes.contains(requireNonNull(genType)),
             "This generated type already contains equal implements type.");
         implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);
         return thisInstance();
@@ -131,7 +129,7 @@ abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilde
         checkArgument(!containsConstant(name),
             "This generated type already contains a \"%s\" constant", name);
 
-        final Constant constant = new ConstantImpl(type, name, value);
+        final var constant = new ConstantImpl(type, name, value);
         constants = LazyCollections.lazyAdd(constants, constant);
         return constant;
     }

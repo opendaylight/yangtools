@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype.Builder;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
@@ -87,7 +88,7 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
     DataRootArchetypeBuilder(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
         super(typeName);
         this.yangModuleInfo = requireNonNull(yangModuleInfo);
-        addImplementsType(BindingTypes.dataRoot(this));
+        addImplementsType(BindingTypes.dataRoot(Type.of(typeName)));
     }
 
     @Override
@@ -97,7 +98,7 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
 
     final @NonNull DataRootArchetype build(final @Nullable String description, final @Nullable String reference,
             final @Nullable String moduleName) {
-        return new DataRootArchetypeImpl(getIdentifier(), yangModuleInfo, getImplementsTypes(),
+        return new DataRootArchetypeImpl(typeName(), yangModuleInfo, getImplementsTypes(),
             AbstractGeneratedType.toUnmodifiableMethods(getMethodDefinitions()),
             List.copyOf(getEnclosedTransferObjects()), getEnumerations(), getYangSourceDefinition().orElse(null),
             getComment(), description, reference, moduleName);
