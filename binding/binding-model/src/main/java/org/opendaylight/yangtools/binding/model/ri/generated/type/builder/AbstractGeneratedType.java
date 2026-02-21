@@ -206,8 +206,8 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper)
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return super.addToStringAttributes(helper)
             .omitNullValues()
             .add("comment", comment)
             .add("annotations", annotations)

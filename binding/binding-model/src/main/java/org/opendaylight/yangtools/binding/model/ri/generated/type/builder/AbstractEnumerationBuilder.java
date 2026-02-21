@@ -17,8 +17,8 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
@@ -76,17 +76,18 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
             String reference);
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("values", values);
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        super.addToStringAttributes(helper);
+        addToStringAttribute(helper, "values", values);
+        return helper;
     }
 
     @Override
     public final void updateEnumPairsFromEnumTypeDef(final EnumTypeDefinition enumTypeDef) {
-        final List<EnumPair> enums = enumTypeDef.getValues();
-        final Map<String, String> valueIds = mapEnumAssignedNames(enums.stream().map(EnumPair::getName)
-            .collect(Collectors.toList()));
+        final var enums = enumTypeDef.getValues();
+        final var valueIds = mapEnumAssignedNames(enums.stream().map(EnumPair::getName).collect(Collectors.toList()));
 
-        for (EnumPair enumPair : enums) {
+        for (var enumPair : enums) {
             addValue(enumPair.getName(), valueIds.get(enumPair.getName()), enumPair.getValue(), enumPair.getStatus(),
                 enumPair.getDescription().orElse(null), enumPair.getReference().orElse(null));
         }
@@ -112,7 +113,7 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
          *
          * Note that assignedNames can contain duplicates, which must not trigger a duplication fallback.
          */
-        final BiMap<String, String> javaToYang = HashBiMap.create(assignedNames.size());
+        final var javaToYang = HashBiMap.<String, String>create(assignedNames.size());
         boolean valid = true;
         for (final String name : assignedNames) {
             checkArgument(!name.isEmpty());
@@ -180,8 +181,8 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
     }
 
     abstract static class AbstractEnumeration extends AbstractType implements Enumeration {
-        private final List<AnnotationType> annotations;
-        private final List<Pair> values;
+        private final @NonNull List<AnnotationType> annotations;
+        private final @NonNull List<Pair> values;
 
         AbstractEnumeration(final AbstractEnumerationBuilder builder) {
             super(builder.typeName());
@@ -215,8 +216,10 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
         }
 
         @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return super.addToStringAttributes(toStringHelper).add("values", values);
+        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            super.addToStringAttributes(helper);
+            addToStringAttribute(helper, "values", values);
+            return helper;
         }
 
         @Override
