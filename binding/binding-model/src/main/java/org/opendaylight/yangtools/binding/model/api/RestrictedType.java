@@ -14,9 +14,14 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * concrete type only with changed restriction values.
  */
 @NonNullByDefault
-public interface BaseTypeWithRestrictions extends ConcreteType {
+public sealed interface RestrictedType extends ConcreteType permits DefaultRestrictedType {
     /**
      * {@return the {@link Restrictions} applicable to this type}
      */
     Restrictions restrictions();
+
+    /**
+     * {@return this type's equivalent without {link #restrictions()}}
+     */
+    ConcreteType withoutRestrictions();
 }

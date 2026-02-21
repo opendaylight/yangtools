@@ -32,8 +32,8 @@ class GeneratedPropertyBuilderImplTest {
 
         assertEquals("""
             GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, \
-            returnType=ConcreteTypeImpl{name=java.lang.Boolean}, isFinal=true, isReadOnly=false, \
-            modifier=PUBLIC]""", generatedPropertyBuilderImpl.toString());
+            returnType=ConcreteType{name=java.lang.Boolean}, isFinal=true, isReadOnly=false, modifier=PUBLIC]""",
+            generatedPropertyBuilderImpl.toString());
 
         var instance = generatedPropertyBuilderImpl.toInstance();
 
