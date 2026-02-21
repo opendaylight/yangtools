@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
-import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -25,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
         implements GeneratedTOBuilder permits CodegenGeneratedTOBuilder, RuntimeGeneratedTOBuilder {
     // FIXME are these three referenced anywhere at runtime?
-    private List<GeneratedPropertyBuilder> equalsProperties = Collections.emptyList();
-    private List<GeneratedPropertyBuilder> hashProperties = Collections.emptyList();
-    private List<GeneratedPropertyBuilder> toStringProperties = Collections.emptyList();
+    private List<GeneratedPropertyBuilder> equalsProperties = List.of();
+    private List<GeneratedPropertyBuilder> hashProperties = List.of();
+    private List<GeneratedPropertyBuilder> toStringProperties = List.of();
     private GeneratedTransferObject extendsType;
     private boolean isTypedef = false;
     private boolean isUnionType = false;
@@ -90,11 +89,20 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper)
-            .add("equalsProperties", equalsProperties)
-            .add("hashCodeProperties", hashProperties)
-            .add("stringProperties", toStringProperties);
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        super.addToStringAttributes(helper);
+
+        if (!equalsProperties.isEmpty()) {
+            helper.add("equalsProperties", equalsProperties);
+        }
+        if (!hashProperties.isEmpty()) {
+            helper.add("hashCodeProperties", hashProperties);
+        }
+        if (!toStringProperties.isEmpty()) {
+            helper.add("stringProperties", toStringProperties);
+        }
+
+        return helper;
     }
 
     @Override

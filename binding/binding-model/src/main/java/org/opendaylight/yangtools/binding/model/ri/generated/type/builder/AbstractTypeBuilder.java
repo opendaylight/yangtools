@@ -47,10 +47,10 @@ public abstract sealed class AbstractTypeBuilder implements TypeBuilder
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
-    ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("typeName", typeName);
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("typeName", typeName);
     }
 }

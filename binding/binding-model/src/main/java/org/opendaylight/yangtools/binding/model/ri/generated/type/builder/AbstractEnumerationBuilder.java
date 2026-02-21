@@ -76,8 +76,8 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
             String reference);
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("values", values);
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return super.addToStringAttributes(helper).add("values", values);
     }
 
     @Override

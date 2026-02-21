@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -43,6 +44,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     private boolean isAbstract;
     private YangSourceDefinition yangSourceDefinition;
 
+    @NonNullByDefault
     AbstractGeneratedTypeBuilder(final JavaTypeName typeName) {
         super(typeName);
     }
@@ -220,15 +222,29 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        final var local = comment;
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        super.addToStringAttributes(helper);
 
-        return super.addToStringAttributes(toStringHelper)
-            .add("comment", local == null ? null : local.getJavadoc())
-            .add("constants", constants)
-            .add("enumerations", enumDefinitions)
-            .add("methods", methodDefinitions)
-            .add("annotations", annotationBuilders)
-            .add("implements", implementsTypes);
+        final var local = comment;
+        if (local != null) {
+            helper.add("comment", local.getJavadoc());
+        }
+        if (!constants.isEmpty()) {
+            helper.add("constants", constants);
+        }
+        if (!enumDefinitions.isEmpty()) {
+            helper.add("enumerations", enumDefinitions);
+        }
+        if (!methodDefinitions.isEmpty()) {
+            helper.add("methods", methodDefinitions);
+        }
+        if (!annotationBuilders.isEmpty()) {
+            helper.add("annotations", annotationBuilders);
+        }
+        if (!implementsTypes.isEmpty()) {
+            helper.add("implements", implementsTypes);
+        }
+
+        return helper;
     }
 }
