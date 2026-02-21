@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Identifiable;
 
 /**
@@ -16,22 +16,19 @@ import org.opendaylight.yangtools.concepts.Identifiable;
  * types like int, byte etc. In case of mapping of primitive type the package
  * name MUST be left as empty string.
  */
+@NonNullByDefault
 public interface Type extends Identifiable<JavaTypeName> {
     /**
-     * Returns name of the package that interface belongs to.
-     *
-     * @return name of the package that interface belongs to
+     * {@return name of the package that interface belongs to}
      */
-    default String getPackageName() {
+    default String packageName() {
         return getIdentifier().packageName();
     }
 
     /**
-     * Returns name of the interface.
-     *
-     * @return name of the interface.
+     * {@return name of the interface}
      */
-    default String getName() {
+    default String simpleName() {
         return getIdentifier().simpleName();
     }
 
@@ -47,19 +44,19 @@ public interface Type extends Identifiable<JavaTypeName> {
      *
      * @return fully qualified name of Type.
      */
-    default String getFullyQualifiedName() {
+    default String fullyQualifiedName() {
         return getIdentifier().toString();
     }
 
-    static @NonNull Type of(final JavaTypeName identifier) {
+    static Type of(final JavaTypeName identifier) {
         return new DefaultType(identifier);
     }
 
-    static @NonNull Type of(final Identifiable<JavaTypeName> type) {
+    static Type of(final Identifiable<JavaTypeName> type) {
         return of(type.getIdentifier());
     }
 
-    static @NonNull Type of(final Class<?> type) {
+    static Type of(final Class<?> type) {
         return of(JavaTypeName.create(type));
     }
 }

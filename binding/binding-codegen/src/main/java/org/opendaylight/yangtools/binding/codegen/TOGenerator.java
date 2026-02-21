@@ -26,13 +26,13 @@ public final class TOGenerator implements CodeGenerator {
         if (type instanceof GeneratedTransferObject genTO) {
             if (genTO.isUnionType()) {
                 return new UnionTemplate(genTO).generate();
-            } else if (genTO.isTypedef()) {
-                return new ClassTemplate(genTO).generate();
-            } else {
-                final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(genTO);
-                return featureDataRoot == null ? new ListKeyTemplate(genTO).generate()
-                    : new FeatureTemplate(genTO, featureDataRoot).generate();
             }
+            if (genTO.isTypedef()) {
+                return new ClassTemplate(genTO).generate();
+            }
+            final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(genTO);
+            return featureDataRoot == null ? new ListKeyTemplate(genTO).generate()
+                : new FeatureTemplate(genTO, featureDataRoot).generate();
         }
         return "";
     }
@@ -44,6 +44,6 @@ public final class TOGenerator implements CodeGenerator {
 
     @Override
     public String getUnitName(final Type type) {
-        return type.getName();
+        return type.simpleName();
     }
 }

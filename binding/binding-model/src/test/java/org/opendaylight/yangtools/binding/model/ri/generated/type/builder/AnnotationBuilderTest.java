@@ -39,11 +39,11 @@ class AnnotationBuilderTest {
 
         int annotCount = 0;
         for (var annotation : genType.getAnnotations()) {
-            if (annotation.getPackageName().equals("javax.management") && annotation.getName().equals("MXBean")) {
+            if (annotation.packageName().equals("javax.management") && annotation.simpleName().equals("MXBean")) {
                 annotCount++;
                 assertEquals(0, annotation.getParameters().size());
             }
-            if (annotation.getPackageName().equals("javax.management") && annotation.getName().equals("Description")) {
+            if (annotation.packageName().equals("javax.management") && annotation.simpleName().equals("Description")) {
                 annotCount++;
                 assertEquals(1, annotation.getParameters().size());
                 final var param = annotation.getParameter("description");
@@ -90,8 +90,8 @@ class AnnotationBuilderTest {
 
         int annotCount = 0;
         for (var annotation : annotations) {
-            if (annotation.getPackageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.getName().equals("ManagedAttribute")) {
+            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
+                    && annotation.simpleName().equals("ManagedAttribute")) {
                 annotCount++;
                 assertEquals(4, annotation.getParameters().size());
 
@@ -104,8 +104,8 @@ class AnnotationBuilderTest {
                 assertEquals("\"bar\"", annotation.getParameter("defaultValue").getValue());
                 assertEquals("\"OnUpdate\"", annotation.getParameter("persistPolicy").getValue());
             }
-            if (annotation.getPackageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.getName().equals("ManagedOperation")) {
+            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
+                    && annotation.simpleName().equals("ManagedOperation")) {
                 annotCount++;
 
                 assertEquals(1, annotation.getParameters().size());
@@ -148,8 +148,8 @@ class AnnotationBuilderTest {
 
         int annotCount = 0;
         for (var annotation : annotations) {
-            if (annotation.getPackageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.getName().equals("ManagedAttribute")) {
+            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
+                    && annotation.simpleName().equals("ManagedAttribute")) {
                 annotCount++;
                 assertEquals(4, annotation.getParameters().size());
 
@@ -162,8 +162,8 @@ class AnnotationBuilderTest {
                 assertEquals("\"bar\"", annotation.getParameter("defaultValue").getValue());
                 assertEquals("\"OnUpdate\"", annotation.getParameter("persistPolicy").getValue());
             }
-            if (annotation.getPackageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.getName().equals("ManagedOperation")) {
+            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
+                    && annotation.simpleName().equals("ManagedOperation")) {
                 annotCount++;
 
                 assertEquals(1, annotation.getParameters().size());
@@ -193,12 +193,12 @@ class AnnotationBuilderTest {
 
         int annotCount = 0;
         for (var annotation : genTO.getAnnotations()) {
-            if (annotation.getPackageName().equals("javax.management") && annotation.getName().equals("MBean")) {
+            if (annotation.packageName().equals("javax.management") && annotation.simpleName().equals("MBean")) {
                 annotCount++;
                 assertEquals(0, annotation.getParameters().size());
             }
-            if (annotation.getPackageName().equals("javax.management")
-                    && annotation.getName().equals("NotificationInfo")) {
+            if (annotation.packageName().equals("javax.management")
+                    && annotation.simpleName().equals("NotificationInfo")) {
                 annotCount++;
                 assertEquals(2, annotation.getParameters().size());
                 var param = annotation.getParameter("types");
@@ -236,8 +236,8 @@ class AnnotationBuilderTest {
 
         assertEquals(2, annotationTypeInstance.getAnnotations().size());
 
-        assertEquals("my.package", annotationTypeInstance.getPackageName());
-        assertEquals("MyName", annotationTypeInstance.getName());
+        assertEquals("my.package", annotationTypeInstance.packageName());
+        assertEquals("MyName", annotationTypeInstance.simpleName());
 
     }
 
@@ -458,9 +458,9 @@ class AnnotationBuilderTest {
 
         assertTrue(annotationType.containsParameters());
         assertTrue(annotationType.getAnnotations().isEmpty());
-        assertNotNull(annotationType.getFullyQualifiedName());
-        assertNotNull(annotationType.getName());
-        assertNotNull(annotationType.getPackageName());
+        assertNotNull(annotationType.fullyQualifiedName());
+        assertNotNull(annotationType.simpleName());
+        assertNotNull(annotationType.packageName());
         assertNull(annotationType.getParameter(null));
         assertNotNull(annotationType.getParameter("testParam"));
         assertFalse(annotationType.getParameterNames().isEmpty());

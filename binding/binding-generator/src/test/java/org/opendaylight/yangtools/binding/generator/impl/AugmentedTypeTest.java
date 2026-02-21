@@ -41,19 +41,19 @@ class AugmentedTypeTest {
         GeneratedType gtNetworkLink2 = null;
 
         for (var type : genTypes) {
-            if (!type.getPackageName().contains("augment._abstract.topology")) {
+            if (!type.packageName().contains("augment._abstract.topology")) {
                 continue;
             }
 
-            if (type.getName().equals("InterfaceKey")) {
+            if (type.simpleName().equals("InterfaceKey")) {
                 gtInterfaceKey = assertInstanceOf(GeneratedTransferObject.class, type);
-            } else if (type.getName().equals("Interface")) {
+            } else if (type.simpleName().equals("Interface")) {
                 gtInterface = type;
-            } else if (type.getName().equals("Tunnel")) {
+            } else if (type.simpleName().equals("Tunnel")) {
                 gtTunnel = type;
-            } else if (type.getName().equals("TunnelKey")) {
+            } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(GeneratedTransferObject.class, type);
-            } else if (type.getName().equals("NetworkLink2")) {
+            } else if (type.simpleName().equals("NetworkLink2")) {
                 gtNetworkLink2 = type;
             }
         }
@@ -63,7 +63,7 @@ class AugmentedTypeTest {
         final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
         assertNotNull(gtInterfaceMethods, "gtInterfaceMethods is null");
         MethodSignature getIfcKeyMethod = null;
-        for (final MethodSignature method : gtInterfaceMethods) {
+        for (var method : gtInterfaceMethods) {
             if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                 getIfcKeyMethod = method;
                 break;

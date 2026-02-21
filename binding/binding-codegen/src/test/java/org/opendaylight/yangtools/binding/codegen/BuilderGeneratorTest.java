@@ -300,7 +300,7 @@ public class BuilderGeneratorTest {
         assertEquals(27, types.size());
 
         final BuilderTemplate bt = BuilderGenerator.templateForType(
-            types.stream().filter(t -> t.getName().equals("Nodes")).findFirst().orElseThrow());
+            types.stream().filter(t -> t.simpleName().equals("Nodes")).findFirst().orElseThrow());
 
         final List<String> sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())
@@ -331,8 +331,8 @@ public class BuilderGeneratorTest {
     private static GeneratedType mockGenTypeMoreMeth(final String methodeName) {
         final GeneratedType genType = spy(GeneratedType.class);
         doReturn(TYPE_NAME).when(genType).getIdentifier();
-        doReturn(TEST).when(genType).getName();
-        doReturn(TEST).when(genType).getPackageName();
+        doReturn(TEST).when(genType).simpleName();
+        doReturn(TEST).when(genType).packageName();
 
         final List<MethodSignature> listMethodSign = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -357,8 +357,8 @@ public class BuilderGeneratorTest {
     private static GeneratedType mockGenType(final String methodeName) {
         final GeneratedType genType = spy(GeneratedType.class);
         doReturn(TYPE_NAME).when(genType).getIdentifier();
-        doReturn(TEST).when(genType).getName();
-        doReturn(TEST).when(genType).getPackageName();
+        doReturn(TEST).when(genType).simpleName();
+        doReturn(TEST).when(genType).packageName();
 
         final List<MethodSignature> listMethodSign = new ArrayList<>();
         final MethodSignature methSign = mockMethSign(methodeName);
@@ -374,9 +374,9 @@ public class BuilderGeneratorTest {
         final MethodSignature methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
         final Type methType = mock(Type.class);
-        doCallRealMethod().when(methType).getFullyQualifiedName();
+        doCallRealMethod().when(methType).fullyQualifiedName();
         doReturn(TYPE_NAME).when(methType).getIdentifier();
-        doReturn(TEST).when(methType).getName();
+        doReturn(TEST).when(methType).simpleName();
         doReturn(methType).when(methSign).getReturnType();
         doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;

@@ -102,7 +102,7 @@ class YT1681Test {
         assertEquals(2, types.size());
 
         final var neighborMethods = types.stream()
-            .filter(type -> type.getName().equals("Neighbor"))
+            .filter(type -> type.simpleName().equals("Neighbor"))
             .findFirst()
             .orElseThrow()
             .getMethodDefinitions();

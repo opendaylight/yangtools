@@ -87,7 +87,7 @@ class InterfaceTemplate extends BaseTemplate {
         «type.formatDataForJavaDoc.wrapToDocumentation»
         «type.annotations.generateAnnotations»
         «generatedAnnotation»
-        public interface «type.name»
+        public interface «type.simpleName»
             «superInterfaces»
         {
 
@@ -356,7 +356,7 @@ class InterfaceTemplate extends BaseTemplate {
          * @throws «NPE.importedName» if {@code obj} is {@code null}
          */
         static «STRING.importedName» «BINDING_TO_STRING_NAME»(final «type.fullyQualifiedNonNull» obj) {
-            final var helper = «MOREOBJECTS.importedName».toStringHelper("«type.name»");
+            final var helper = «MOREOBJECTS.importedName».toStringHelper("«type.simpleName»");
             «FOR property : typeAnalysis.value»
                 «CODEHELPERS.importedName».appendValue(helper, "«property.name»", obj.«property.getterName»());
             «ENDFOR»
@@ -399,7 +399,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     def private static boolean isObject(Type type) {
         // The return type has a package, so it's not a primitive type
-        return !type.getPackageName().isEmpty()
+        return !type.packageName().isEmpty()
     }
 
     private def boolean analyzeType() {

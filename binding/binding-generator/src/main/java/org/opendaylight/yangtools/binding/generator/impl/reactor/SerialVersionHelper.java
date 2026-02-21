@@ -20,9 +20,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
@@ -31,7 +29,7 @@ public final class SerialVersionHelper {
         Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<TypeMemberBuilder<?>> SUID_MEMBER_COMPARATOR =
         Comparator.comparing(TypeMemberBuilder::getName);
-    private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::getFullyQualifiedName);
+    private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::fullyQualifiedName);
     private static final ThreadLocal<MessageDigest> SHA1_MD = ThreadLocal.withInitial(() -> {
         try {
             return MessageDigest.getInstance("SHA");
@@ -50,18 +48,18 @@ public final class SerialVersionHelper {
             dout.writeUTF(to.typeName().simpleName());
             dout.writeInt(to.isAbstract() ? 3 : 7);
 
-            for (final Type ifc : sortedCollection(SUID_NAME_COMPARATOR, filteredImplementsTypes(to))) {
-                dout.writeUTF(ifc.getFullyQualifiedName());
+            for (var iface : sortedCollection(SUID_NAME_COMPARATOR, filteredImplementsTypes(to))) {
+                dout.writeUTF(iface.fullyQualifiedName());
             }
 
-            for (final GeneratedPropertyBuilder gp : sortedCollection(SUID_MEMBER_COMPARATOR, to.getProperties())) {
-                dout.writeUTF(gp.getName());
+            for (var property : sortedCollection(SUID_MEMBER_COMPARATOR, to.getProperties())) {
+                dout.writeUTF(property.getName());
             }
 
-            for (final MethodSignatureBuilder m : sortedCollection(SUID_MEMBER_COMPARATOR, to.getMethodDefinitions())) {
-                if (!m.getAccessModifier().equals(AccessModifier.PRIVATE)) {
-                    dout.writeUTF(m.getName());
-                    dout.write(m.getAccessModifier().ordinal());
+            for (var method : sortedCollection(SUID_MEMBER_COMPARATOR, to.getMethodDefinitions())) {
+                if (!method.getAccessModifier().equals(AccessModifier.PRIVATE)) {
+                    dout.writeUTF(method.getName());
+                    dout.write(method.getAccessModifier().ordinal());
                 }
             }
 

@@ -43,10 +43,10 @@ class GeneratedTypesLeafrefTest {
         GeneratedTransferObject gtTunnelKey = null;
         GeneratedType gtTopology = null;
         for (final Type type : genTypes) {
-            String name = type.getName();
+            String name = type.simpleName();
             if ("InterfaceKey".equals(name)
                     && "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces".equals(
-                        type.getPackageName())) {
+                        type.packageName())) {
                 gtIfcKey = (GeneratedTransferObject) type;
             } else {
                 switch (name) {
@@ -100,7 +100,7 @@ class GeneratedTypesLeafrefTest {
         Type condLeafRT = condLeafref.getReturnType();
         assertNotNull(condLeafRT);
         assertEquals("org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Uri",
-            condLeafRT.getFullyQualifiedName());
+            condLeafRT.fullyQualifiedName());
 
         // InterfaceId
         final var gtIfcKeyProps = gtIfcKey.getProperties();
@@ -114,7 +114,7 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(ifcIdProp);
         Type ifcIdPropType = ifcIdProp.getReturnType();
         assertNotNull(ifcIdPropType);
-        assertEquals("java.lang.String", ifcIdPropType.getFullyQualifiedName());
+        assertEquals("java.lang.String", ifcIdPropType.fullyQualifiedName());
 
         // Interface
         final var gtIfcMethods = gtIfc.getMethodDefinitions();
@@ -136,13 +136,13 @@ class GeneratedTypesLeafrefTest {
         final var getIfcKeyType = getIfcKey.getReturnType();
         assertNotNull(getIfcKeyType);
         assertNotSame("java.lang.Void", getIfcKeyType);
-        assertEquals("InterfaceKey", getIfcKeyType.getName());
+        assertEquals("InterfaceKey", getIfcKeyType.simpleName());
 
         assertNotNull(getHigherLayerIf);
         final var getHigherLayerIfType = getHigherLayerIf.getReturnType();
         assertNotNull(getHigherLayerIfType);
         assertNotSame("java.lang.Void", getHigherLayerIfType);
-        assertEquals("Set", getHigherLayerIfType.getName());
+        assertEquals("Set", getHigherLayerIfType.simpleName());
 
         // NetworkLink
         final var gtNetworkLinkMethods = gtNetworkLink.getMethodDefinitions();
@@ -157,7 +157,7 @@ class GeneratedTypesLeafrefTest {
         final var getIfcType = getIfc.getReturnType();
         assertNotNull(getIfcType);
         assertNotSame("java.lang.Void", getIfcType);
-        assertEquals("String", getIfcType.getName());
+        assertEquals("String", getIfcType.simpleName());
 
         // SourceNode
         final var gtSourceMethods = gtSource.getMethodDefinitions();
@@ -172,7 +172,7 @@ class GeneratedTypesLeafrefTest {
         final var getIdType = getIdSource.getReturnType();
         assertNotNull(getIdType);
         assertNotSame("java.lang.Void", getIdType);
-        assertEquals("Uri", getIdType.getName());
+        assertEquals("Uri", getIdType.simpleName());
 
         // DestinationNode
         final var gtDestMethods = gtDest.getMethodDefinitions();
@@ -187,13 +187,13 @@ class GeneratedTypesLeafrefTest {
         final var getIdDestType = getIdDest.getReturnType();
         assertNotNull(getIdDestType);
         assertNotSame("java.lang.Void", getIdDestType);
-        assertEquals("Uri", getIdDestType.getName());
+        assertEquals("Uri", getIdDestType.simpleName());
 
         // Tunnel
         final var gtTunnelMethods = gtTunnel.getMethodDefinitions();
         assertNotNull(gtTunnelMethods);
         MethodSignature getTunnelKey = null;
-        for (MethodSignature method : gtTunnelMethods) {
+        for (var method : gtTunnelMethods) {
             if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
                 getTunnelKey = method;
             }
@@ -202,7 +202,7 @@ class GeneratedTypesLeafrefTest {
         final var getTunnelKeyType = getTunnelKey.getReturnType();
         assertNotNull(getTunnelKeyType);
         assertNotSame("java.lang.Void", getTunnelKeyType);
-        assertEquals("TunnelKey", getTunnelKeyType.getName());
+        assertEquals("TunnelKey", getTunnelKeyType.simpleName());
 
         // TunnelKey
         final var gtTunnelKeyProps = gtTunnelKey.getProperties();
@@ -217,7 +217,7 @@ class GeneratedTypesLeafrefTest {
         final var tunnelIdType = tunnelId.getReturnType();
         assertNotNull(tunnelIdType);
         assertNotSame("java.lang.Void", tunnelIdType);
-        assertEquals("Uri", tunnelIdType.getName());
+        assertEquals("Uri", tunnelIdType.simpleName());
     }
 
     @Test

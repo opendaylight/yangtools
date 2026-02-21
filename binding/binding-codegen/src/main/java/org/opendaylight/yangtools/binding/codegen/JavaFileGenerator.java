@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.generator.BindingGenerator;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
@@ -100,26 +99,26 @@ final class JavaFileGenerator implements FileGenerator {
     @VisibleForTesting
     static Table<GeneratedFileType, GeneratedFilePath, GeneratedFile> generateFiles(final List<GeneratedType> types,
             final boolean ignoreDuplicateFiles) {
-        final Table<GeneratedFileType, GeneratedFilePath, GeneratedFile> result = HashBasedTable.create();
+        final var result = HashBasedTable.<GeneratedFileType, GeneratedFilePath, GeneratedFile>create();
 
-        for (Type type : types) {
-            for (CodeGenerator generator : GENERATORS) {
+        for (var type : types) {
+            for (var generator : GENERATORS) {
                 if (!generator.isAcceptable(type)) {
                     continue;
                 }
 
-                final GeneratedFilePath file =  GeneratedFilePath.ofFilePath(
-                    type.getPackageName().replace('.', File.separatorChar)
+                final var file =  GeneratedFilePath.ofFilePath(
+                    type.packageName().replace('.', File.separatorChar)
                     + File.separator + generator.getUnitName(type) + ".java");
 
                 if (result.contains(GeneratedFileType.SOURCE, file)) {
                     if (ignoreDuplicateFiles) {
                         LOG.warn("Naming conflict for type '{}': file with same name already exists and will not be "
-                                + "generated.", type.getFullyQualifiedName());
+                                + "generated.", type.fullyQualifiedName());
                         continue;
                     }
                     throw new IllegalStateException("Duplicate file '" + file.getPath() + "' for "
-                        + type.getFullyQualifiedName());
+                        + type.fullyQualifiedName());
                 }
 
                 result.put(GeneratedFileType.SOURCE, file,

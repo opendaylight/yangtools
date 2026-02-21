@@ -31,12 +31,12 @@ class GenerateInnerClassForBitsAndUnionInLeavesTest {
 
         for (var type : genTypes) {
             if (!(type instanceof GeneratedTransferObject)) {
-                if (type.getName().equals("ParentContainer")) {
+                if (type.simpleName().equals("ParentContainer")) {
                     parentContainerFound = true;
                     GeneratedType parentContainer = type;
                     for (var genType : parentContainer.getEnclosedTypes()) {
                         if (genType instanceof GeneratedTransferObject gto) {
-                            if (genType.getName().equals("BitLeaf")) {
+                            if (genType.simpleName().equals("BitLeaf")) {
                                 assertFalse(bitLeafTOFound, "Unexpected duplicate BitLeaf");
                                 bitLeafTOFound = true;
 
@@ -61,7 +61,7 @@ class GenerateInnerClassForBitsAndUnionInLeavesTest {
                                 assertTrue(firstBitPropertyFound);
                                 assertTrue(secondBitPropertyFound);
                                 assertTrue(thirdBitPropertyFound);
-                            } else if (genType.getName().equals("UnionLeaf")) {
+                            } else if (genType.simpleName().equals("UnionLeaf")) {
                                 assertFalse(unionLeafTOFound, "Unexpected duplicate UnionLeaf");
                                 unionLeafTOFound = true;
 
