@@ -36,9 +36,9 @@ class GeneratedTypesTest {
         var simpleContainer = genTypes.get(1);
         var nestedContainer = genTypes.get(2);
         for (var t : genTypes) {
-            if ("SimpleContainer".equals(t.getName())) {
+            if ("SimpleContainer".equals(t.simpleName())) {
                 simpleContainer = t;
-            } else if ("NestedContainer".equals(t.getName())) {
+            } else if ("NestedContainer".equals(t.simpleName())) {
                 nestedContainer = t;
             }
         }
@@ -59,17 +59,17 @@ class GeneratedTypesTest {
         for (var method : simpleContainer.getMethodDefinitions()) {
             if (method.getName().equals("getFoo")) {
                 getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().getName();
+                getFooMethodReturnTypeName = method.getReturnType().simpleName();
             }
 
             if (method.getName().equals("getBar")) {
                 getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().getName();
+                getBarMethodReturnTypeName = method.getReturnType().simpleName();
             }
 
             if (method.getName().equals("getNestedContainer")) {
                 getNestedContainerCounter++;
-                getNestedContainerReturnTypeName = method.getReturnType().getName();
+                getNestedContainerReturnTypeName = method.getReturnType().simpleName();
             }
         }
 
@@ -91,12 +91,12 @@ class GeneratedTypesTest {
         for (var method : nestedContainer.getMethodDefinitions()) {
             if (method.getName().equals("getFoo")) {
                 getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().getName();
+                getFooMethodReturnTypeName = method.getReturnType().simpleName();
             }
 
             if (method.getName().equals("getBar")) {
                 getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().getName();
+                getBarMethodReturnTypeName = method.getReturnType().simpleName();
             }
         }
 
@@ -118,9 +118,9 @@ class GeneratedTypesTest {
         var simpleContainer = genTypes.get(1);
         var nestedContainer = genTypes.get(2);
         for (var t : genTypes) {
-            if ("SimpleContainer".equals(t.getName())) {
+            if ("SimpleContainer".equals(t.simpleName())) {
                 simpleContainer = t;
-            } else if ("NestedContainer".equals(t.getName())) {
+            } else if ("NestedContainer".equals(t.simpleName())) {
                 nestedContainer = t;
             }
         }
@@ -144,17 +144,17 @@ class GeneratedTypesTest {
             }
             if (method.getName().equals("getFoo")) {
                 getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().getName();
+                getFooMethodReturnTypeName = method.getReturnType().simpleName();
             }
 
             if (method.getName().equals("getBar")) {
                 getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().getName();
+                getBarMethodReturnTypeName = method.getReturnType().simpleName();
             }
 
             if (method.getName().equals("getNestedContainer")) {
                 getNestedContainerCounter++;
-                getNestedContainerReturnTypeName = method.getReturnType().getName();
+                getNestedContainerReturnTypeName = method.getReturnType().simpleName();
             }
         }
 
@@ -176,12 +176,12 @@ class GeneratedTypesTest {
         for (var method : nestedContainer.getMethodDefinitions()) {
             if (method.getName().equals("getFoo")) {
                 getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().getName();
+                getFooMethodReturnTypeName = method.getReturnType().simpleName();
             }
 
             if (method.getName().equals("getBar")) {
                 getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().getName();
+                getBarMethodReturnTypeName = method.getReturnType().simpleName();
             }
         }
 
@@ -218,19 +218,19 @@ class GeneratedTypesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject genTO)) {
-                if (genType.getName().equals("ListParentContainer")) {
+                if (genType.simpleName().equals("ListParentContainer")) {
                     listParentContainerMethodsCount = genType.getMethodDefinitions().size();
-                } else if (genType.getName().equals("SimpleList")) {
+                } else if (genType.simpleName().equals("SimpleList")) {
                     simpleListMethodsCount = genType.getMethodDefinitions().size();
                     for (var method : genType.getMethodDefinitions()) {
                         switch (method.getName()) {
                             case Naming.KEY_AWARE_KEY_NAME:
                                 getSimpleListKeyMethodCount++;
-                                getSimpleListKeyMethodReturnTypeName = method.getReturnType().getName();
+                                getSimpleListKeyMethodReturnTypeName = method.getReturnType().simpleName();
                                 break;
                             case "getListChildContainer":
                                 getListChildContainerMethodCount++;
-                                getListChildContainerMethodReturnTypeName = method.getReturnType().getName();
+                                getListChildContainerMethodReturnTypeName = method.getReturnType().simpleName();
                                 break;
                             case "getFoo":
                                 getFooMethodCount++;
@@ -250,7 +250,7 @@ class GeneratedTypesTest {
                             default:
                         }
                     }
-                } else if (genType.getName().equals("ListChildContainer")) {
+                } else if (genType.simpleName().equals("ListChildContainer")) {
                     listChildContainerMethodsCount = genType.getMethodDefinitions().size();
                 }
             } else {
@@ -261,16 +261,16 @@ class GeneratedTypesTest {
                 assertEquals(0, listKeyClassCount++, "Unexpected key");
                 assertEquals(1, properties.size());
                 assertEquals("listKey", properties.getFirst().getName());
-                assertEquals("Byte", properties.getFirst().getReturnType().getName());
+                assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
                 assertTrue(properties.getFirst().isReadOnly());
 
                 assertEquals(1, hashProps.size());
                 assertEquals("listKey", hashProps.getFirst().getName());
-                assertEquals("Byte", hashProps.getFirst().getReturnType().getName());
+                assertEquals("Byte", hashProps.getFirst().getReturnType().simpleName());
 
                 assertEquals(1, equalProps.size());
                 assertEquals("listKey", equalProps.getFirst().getName());
-                assertEquals("Byte",  equalProps.getFirst().getReturnType().getName());
+                assertEquals("Byte",  equalProps.getFirst().getReturnType().simpleName());
             }
         }
 
@@ -313,7 +313,7 @@ class GeneratedTypesTest {
         for (var type : genTypes) {
             if (!(type instanceof GeneratedTransferObject genTO)) {
                 genTypesCount++;
-            } else if (genTO.getName().equals("CompositeKeyListKey")) {
+            } else if (genTO.simpleName().equals("CompositeKeyListKey")) {
                 compositeKeyListKeyCount++;
                 for (var prop : genTO.getProperties()) {
                     if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
@@ -321,7 +321,7 @@ class GeneratedTypesTest {
                     }
                 }
                 genTOsCount++;
-            } else if (genTO.getName().equals("InnerListKey")) {
+            } else if (genTO.simpleName().equals("InnerListKey")) {
                 innerListKeyPropertyCount =  genTO.getProperties().size();
                 genTOsCount++;
             }

@@ -67,7 +67,7 @@ public final class BuilderGenerator implements CodeGenerator {
 
     @Override
     public String getUnitName(final Type type) {
-        return type.getName() + Naming.BUILDER_SUFFIX;
+        return type.simpleName() + Naming.BUILDER_SUFFIX;
     }
 
     @VisibleForTesting

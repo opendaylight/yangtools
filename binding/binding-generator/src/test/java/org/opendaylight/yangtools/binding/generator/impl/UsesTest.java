@@ -35,13 +35,13 @@ class UsesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("GroupingU")) {
+                if (genType.simpleName().equals("GroupingU")) {
                     groupingU = genType;
                     groupingUCounter++;
-                } else if (genType.getName().equals("GroupingV")) {
+                } else if (genType.simpleName().equals("GroupingV")) {
                     groupingV = genType;
                     groupingVCounter++;
-                } else if (genType.getName().equals("GroupingX")) {
+                } else if (genType.simpleName().equals("GroupingX")) {
                     groupingX = genType;
                     groupingXCounter++;
                 }
@@ -50,17 +50,17 @@ class UsesTest {
 
         assertNotNull(groupingU, "Generated type for grouping-U wasn't generated.");
         assertEquals(1, groupingUCounter, "GroupingU interface generated more than one time.");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingU.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingU.packageName(),
             "GroupingU is in wrong package.");
 
         assertNotNull(groupingV, "Generated type for grouping-V wasn't generated.");
         assertEquals(1, groupingVCounter, "GroupingV interface generated more than one time.");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingV.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingV.packageName(),
             "GroupingV is in wrong package.");
 
         assertNotNull(groupingX, "Generated type for grouping-X wasn't generated.");
         assertEquals(1, groupingXCounter, "GroupingX interface generated more than one time.");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingX.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.dependencies.rev130718", groupingX.packageName(),
             "GroupingX is in wrong package.");
 
         containsInterface("GroupingV", groupingU);
@@ -81,10 +81,10 @@ class UsesTest {
         int caseCCounter = 0;
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("C")) {
+                if (genType.simpleName().equals("C")) {
                     caseC = genType;
                     caseCCounter++;
-                } else if (genType.getName().equals("GroupingCaseTest")) {
+                } else if (genType.simpleName().equals("GroupingCaseTest")) {
                     groupingCaseTest = genType;
                     groupingCaseTestCounter++;
                 }
@@ -95,13 +95,13 @@ class UsesTest {
         assertEquals(1, caseCCounter, "Case C interface generated more than one time.");
         assertEquals(
             "org.opendaylight.yang.gen.v1.urn.grouping.uses._case.rev130718.container.with.choicetest.choice.test",
-            caseC.getPackageName(),
+            caseC.packageName(),
             "Case C is in wrong package.");
 
         assertNotNull(groupingCaseTest, "Generated type for grouping-case-test wasn't generated.");
         assertEquals(1, groupingCaseTestCounter, "GroupingCaseTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses._case.rev130718",
-            groupingCaseTest.getPackageName(), "GroupingCaseTest is in wrong package.");
+            groupingCaseTest.packageName(), "GroupingCaseTest is in wrong package.");
 
         containsInterface("GroupingCaseTest", caseC);
         // FIXME: split this into getter/default/static asserts
@@ -126,10 +126,10 @@ class UsesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("GroupingContainerTest")) {
+                if (genType.simpleName().equals("GroupingContainerTest")) {
                     groupingContainerTest = genType;
                     groupingContainerTestCounter++;
-                } else if (genType.getName().equals("ContainerTest")) {
+                } else if (genType.simpleName().equals("ContainerTest")) {
                     containerTest = genType;
                     containerTestCount++;
                 }
@@ -140,12 +140,12 @@ class UsesTest {
         assertEquals(1, groupingContainerTestCounter,
             "GroupingContainerTest interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.container.rev130718",
-            groupingContainerTest.getPackageName(), "GroupingContainerTest isn't in correct package");
+            groupingContainerTest.packageName(), "GroupingContainerTest isn't in correct package");
 
         assertNotNull(containerTest, "Generated type for container-test wasn't generated");
         assertEquals(1, containerTestCount, "ContainerTest interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.container.rev130718",
-            containerTest.getPackageName(), "ContainerTest isn't in correct package");
+            containerTest.packageName(), "ContainerTest isn't in correct package");
 
         containsInterface("GroupingContainerTest", containerTest);
 
@@ -177,10 +177,10 @@ class UsesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("GroupingGroupingTest")) {
+                if (genType.simpleName().equals("GroupingGroupingTest")) {
                     groupingGroupingTest = genType;
                     groupingGroupingTestCounter++;
-                } else if (genType.getName().equals("GroupingTest")) {
+                } else if (genType.simpleName().equals("GroupingTest")) {
                     groupingTest = genType;
                     groupingTestCount++;
                 }
@@ -190,11 +190,11 @@ class UsesTest {
         assertNotNull(groupingGroupingTest, "Generated type for grouping-grouping-test wasn't generated");
         assertEquals(1, groupingGroupingTestCounter, "GroupingGroupingTest interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.grouping.rev130718",
-            groupingGroupingTest.getPackageName(), "GroupingGroupingTest isn't in correct package");
+            groupingGroupingTest.packageName(), "GroupingGroupingTest isn't in correct package");
 
         assertNotNull(groupingTest, "Generated type for grouping-test wasn't generated");
         assertEquals(1, groupingTestCount, "GroupingTest interface - incorrect number of occurences");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.grouping.rev130718", groupingTest.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.grouping.rev130718", groupingTest.packageName(),
             "GroupingTest isn't in correct package");
 
         containsInterface("GroupingGroupingTest", groupingTest);
@@ -228,16 +228,16 @@ class UsesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("GroupingListTest")) {
+                if (genType.simpleName().equals("GroupingListTest")) {
                     groupingListTest = genType;
                     groupingListTestCounter++;
-                } else if (genType.getName().equals("ListTest")) {
+                } else if (genType.simpleName().equals("ListTest")) {
                     listTest = genType;
                     listTestCounter++;
-                } else if (genType.getName().equals("ContainerGroupingListTest")) {
+                } else if (genType.simpleName().equals("ContainerGroupingListTest")) {
                     containerGroupingListTest = genType;
                     containerGroupingListTestCounter++;
-                } else if (genType.getName().equals("ListGroupingListTest")) {
+                } else if (genType.simpleName().equals("ListGroupingListTest")) {
                     listGroupingListTest = genType;
                     listGroupingListTestCounter++;
                 }
@@ -246,24 +246,23 @@ class UsesTest {
 
         assertNotNull(groupingListTest, "Generated type for grouping-list-test wasn't generated");
         assertEquals(1, groupingListTestCounter, "GroupingListTest interface - incorrect number of occurences");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718", groupingListTest.getPackageName(),
-            "GroupingListTest isn't in correct package");
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718", groupingListTest.packageName());
 
         assertNotNull(listTest, "Generated type for list-test wasn't generated");
         assertEquals(1, listTestCounter, "ListTest interface - incorrect number of occurences");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718", listTest.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718", listTest.packageName(),
             "ListTest isn't in correct package");
 
         assertNotNull(containerGroupingListTest, "Generated type for container-grouping-list-test wasn't generated");
         assertEquals(1, containerGroupingListTestCounter,
             "ContainerGroupingListTest interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718.grouping.list.test",
-            containerGroupingListTest.getPackageName(), "ContainerGroupingListTest isn't in correct package");
+            containerGroupingListTest.packageName(), "ContainerGroupingListTest isn't in correct package");
 
         assertNotNull(listGroupingListTest, "Generated type for list-grouping-list-test wasn't generated");
         assertEquals(1, listGroupingListTestCounter, "ListGroupingListTest interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.list.rev130718.grouping.list.test",
-            listGroupingListTest.getPackageName(), "ListGroupingListTest isn't in correct package");
+            listGroupingListTest.packageName(), "ListGroupingListTest isn't in correct package");
 
         containsInterface("GroupingListTest", listTest);
 
@@ -302,10 +301,10 @@ class UsesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("GroupingModulTest")) {
+                if (genType.simpleName().equals("GroupingModulTest")) {
                     groupingModulTest = genType;
                     groupingModulTestCounter++;
-                } else if (genType.getName().equals("GroupingUsesModulData")) {
+                } else if (genType.simpleName().equals("GroupingUsesModulData")) {
                     groupingUsesModulData = assertInstanceOf(DataRootArchetype.class, genType);
                     groupingUsesModulDataCounter++;
                 }
@@ -315,13 +314,13 @@ class UsesTest {
         assertNotNull(groupingModulTest, "Generated type for grouping-list-test wasn't generated");
         assertEquals(1, groupingModulTestCounter, "GroupingModulTest interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.modul.rev130718",
-            groupingModulTest.getPackageName(), "GroupingModulTest isn't in correct package");
+            groupingModulTest.packageName(), "GroupingModulTest isn't in correct package");
 
         assertNotNull(groupingUsesModulData, "Generated type for modul wasn't generated");
         assertEquals(1, groupingUsesModulDataCounter,
             "GroupingUsesModulData interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.modul.rev130718",
-            groupingUsesModulData.getPackageName(), "GroupingUsesModulData isn't in correct package");
+            groupingUsesModulData.packageName(), "GroupingUsesModulData isn't in correct package");
 
         containsInterface("GroupingModulTest", groupingUsesModulData);
 
@@ -354,19 +353,19 @@ class UsesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("RpcTestInput")) {
+                if (genType.simpleName().equals("RpcTestInput")) {
                     rpcTestInput = genType;
                     rpcTestInputCounter++;
-                } else if (genType.getName().equals("RpcTestOutput")) {
+                } else if (genType.simpleName().equals("RpcTestOutput")) {
                     rpcTestOutput = genType;
                     rpcTestOutputCounter++;
-                } else if (genType.getName().equals("GroupingRpcInputTest")) {
+                } else if (genType.simpleName().equals("GroupingRpcInputTest")) {
                     groupingRpcInputTest = genType;
                     groupingRpcInputTestCounter++;
-                } else if (genType.getName().equals("GroupingRpcOutputTest")) {
+                } else if (genType.simpleName().equals("GroupingRpcOutputTest")) {
                     groupingRpcOutputTest = genType;
                     groupingRpcOutputTestCounter++;
-                } else if (genType.getName().equals("ContainerGroupingRpcInputTest")) {
+                } else if (genType.simpleName().equals("ContainerGroupingRpcInputTest")) {
                     containerGroupingRpcInputTest = genType;
                     containerGroupingRpcInputTestCounter++;
                 }
@@ -376,30 +375,30 @@ class UsesTest {
 
         assertNotNull(rpcTestInput, "Generated type for RPC test input was not generated");
         assertEquals(1, rpcTestInputCounter, "RpcTestInput interface - incorrect number of occurences");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", rpcTestInput.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", rpcTestInput.packageName(),
             "RpcTestInput is not in correct package");
 
         assertNotNull(rpcTestOutput, "Generated type for RPC test output was not generated");
         assertEquals(1, rpcTestOutputCounter, "RpcTestOutput interface - incorrect number of occurences");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", rpcTestOutput.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718", rpcTestOutput.packageName(),
             "RpcTestOutput is not in correct package");
 
         assertNotNull(groupingRpcInputTest, "Generated type for grouping-rpc-input-test was not generated");
         assertEquals(1, groupingRpcInputTestCounter, "RpcTestOutput interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718",
-            groupingRpcInputTest.getPackageName(), "GroupingRpcInputTest isn't in correct package");
+            groupingRpcInputTest.packageName(), "GroupingRpcInputTest isn't in correct package");
 
         assertNotNull(groupingRpcOutputTest, "Generated type for grouping-rpc-output-test was not generated");
         assertEquals(1, groupingRpcOutputTestCounter, "RpcTestOutput interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718",
-            groupingRpcOutputTest.getPackageName(), "GroupingRpcOutputTest isn't in correct package");
+            groupingRpcOutputTest.packageName(), "GroupingRpcOutputTest isn't in correct package");
 
         assertNotNull(containerGroupingRpcInputTest,
             "Generated type for container-grouping-rpc-input-test wasn't generated");
         assertEquals(1, containerGroupingRpcInputTestCounter,
             "ContainerGroupingRpcInputTest interface - incorrect number of occurences");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.rpc.rev130718.grouping.rpc.input.test",
-            containerGroupingRpcInputTest.getPackageName(), "ContainerGroupingRpcInputTest is not in correct package");
+            containerGroupingRpcInputTest.packageName(), "ContainerGroupingRpcInputTest is not in correct package");
 
         containsInterface("GroupingRpcInputTest", rpcTestInput);
         containsInterface("GroupingRpcOutputTest", rpcTestOutput);
@@ -437,10 +436,10 @@ class UsesTest {
 
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals("ContainerAugment1")) {
+                if (genType.simpleName().equals("ContainerAugment1")) {
                     containerAugment1 = genType;
                     containerAugment1Counter++;
-                } else if (genType.getName().equals("GroupingAugmentTest")) {
+                } else if (genType.simpleName().equals("GroupingAugmentTest")) {
                     groupingAugmentTest = genType;
                     groupingAugmentTestCounter++;
                 }
@@ -450,12 +449,12 @@ class UsesTest {
         assertNotNull(containerAugment1, "Generated type for augment /container-augment wasn't generated.");
         assertEquals(1, containerAugment1Counter, "ContainerAugment1 interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.augment.rev130718",
-            containerAugment1.getPackageName(), "ContainerAugment1 is in wrong package.");
+            containerAugment1.packageName(), "ContainerAugment1 is in wrong package.");
 
         assertNotNull(groupingAugmentTest, "Generated type for grouping-augment-test wasn't generated.");
         assertEquals(1, groupingAugmentTestCounter, "GroupingAugmentTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.augment.rev130718",
-            groupingAugmentTest.getPackageName(), "groupingAugmentTest is in wrong package.");
+            groupingAugmentTest.packageName(), "groupingAugmentTest is in wrong package.");
 
         containsInterface("GroupingAugmentTest", containerAugment1);
 
@@ -485,13 +484,13 @@ class UsesTest {
 
         for (var type : genTypes) {
             if (!(type instanceof GeneratedTransferObject)) {
-                if (type.getName().equals("NotificationTest")) {
+                if (type.simpleName().equals("NotificationTest")) {
                     notificationTest = type;
                     notificationTestCounter++;
-                } else if (type.getName().equals("GroupingNotificationTest")) {
+                } else if (type.simpleName().equals("GroupingNotificationTest")) {
                     groupingNotificationTest = type;
                     groupingNotificationTestCounter++;
-                } else if (type.getName().equals("ContainerGroupingNotificationTest")) {
+                } else if (type.simpleName().equals("ContainerGroupingNotificationTest")) {
                     containerGroupingNotificationTest = type;
                     containerGroupingNotificationTestCounter++;
                 }
@@ -501,20 +500,20 @@ class UsesTest {
         assertNotNull(notificationTest, "Generated type for notification-test wasn't generated.");
         assertEquals(1, notificationTestCounter, "NotificationTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718",
-            notificationTest.getPackageName(), "NotificationTest is in wrong package.");
+            notificationTest.packageName(), "NotificationTest is in wrong package.");
 
         assertNotNull(groupingNotificationTest, "Generated type for grouping-notification-test wasn't generated.");
         assertEquals(1, groupingNotificationTestCounter,
             "GroupingNotificationTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718",
-            groupingNotificationTest.getPackageName(), "groupingNotificationTest is in wrong package.");
+            groupingNotificationTest.packageName(), "groupingNotificationTest is in wrong package.");
 
         assertNotNull(containerGroupingNotificationTest,
             "Generated type for container-grouping-notification-test wasn't generated.");
         assertEquals(1, containerGroupingNotificationTestCounter,
             "ContainerGroupingNotificationTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718.grouping.notification.test",
-            containerGroupingNotificationTest.getPackageName(),
+            containerGroupingNotificationTest.packageName(),
             "ContainerGroupingNotificationTest is in wrong package.");
 
         containsInterface("GroupingNotificationTest", notificationTest);

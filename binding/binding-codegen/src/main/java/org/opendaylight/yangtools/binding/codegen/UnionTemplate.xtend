@@ -66,7 +66,7 @@ class UnionTemplate extends ClassTemplate {
             «ENDIF»
             «val propertyAndTopParentProperties = parentProperties + #[property]»
             «val propFieldName = property.fieldName»
-            public «type.name»(«propertyAndTopParentProperties.asArgumentsDeclaration») {
+            public «type.simpleName»(«propertyAndTopParentProperties.asArgumentsDeclaration») {
                 «IF !parentProperties.empty»
                     super(«parentProperties.asArguments»);
                 «ENDIF»
@@ -87,14 +87,14 @@ class UnionTemplate extends ClassTemplate {
     def typeBuilder() {
         val outerCls = getOuterClassName(type);
         if (outerCls !== null) {
-            return outerCls + type.name + BUILDER_SUFFIX
+            return outerCls + type.simpleName + BUILDER_SUFFIX
         }
-        return type.name + BUILDER_SUFFIX
+        return type.simpleName + BUILDER_SUFFIX
     }
 
     private def unionConstructorsParentProperties() '''
         «FOR property : parentProperties SEPARATOR "\n"»
-            public «type.name»(«property.returnType.importedName» «property.fieldName») {
+            public «type.simpleName»(«property.returnType.importedName» «property.fieldName») {
                 super(«property.fieldName»);
             }
         «ENDFOR»
@@ -125,7 +125,7 @@ class UnionTemplate extends ClassTemplate {
                     ««« type int* or enumeration*
                 return «field».toString();
                 «ELSEIF "org.opendaylight.yangtools.yang.common".equals(propRet.packageName)
-                        && (propRet.name.startsWith("Uint") || "Decimal64".equals(propRet.name))»
+                        && (propRet.simpleName.startsWith("Uint") || "Decimal64".equals(propRet.simpleName))»
                     ««« type uint*, decimal64
                 return «field».toCanonicalString();
                 «ELSEIF propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).unionType»
@@ -177,13 +177,13 @@ class UnionTemplate extends ClassTemplate {
          *
          * @param source Source object
          */
-        public «type.name»(«type.name» source) {
+        public «type.simpleName»(«type.simpleName» source) {
             «IF !parentProperties.empty»
                 super(source);
             «ENDIF»
             «FOR p : properties»
                 «val fieldName = p.fieldName»
-                «IF p.returnType.name.endsWith("[]")»
+                «IF p.returnType.simpleName.endsWith("[]")»
                 this.«fieldName» = source.«fieldName» == null ? null : source.«fieldName».clone();
                 «ELSE»
                 this.«fieldName» = source.«fieldName»;

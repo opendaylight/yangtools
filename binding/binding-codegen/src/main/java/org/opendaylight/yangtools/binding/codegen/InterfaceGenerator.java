@@ -39,6 +39,6 @@ public final class InterfaceGenerator implements CodeGenerator {
 
     @Override
     public String getUnitName(final Type type) {
-        return type.getName();
+        return type.simpleName();
     }
 }

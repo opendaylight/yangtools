@@ -87,7 +87,7 @@ abstract class AbstractJavaGeneratedType {
     }
 
     final String getFullyQualifiedReference(final Type type, final String annotation) {
-        return annotateReference(type.getFullyQualifiedName(), type ,annotation);
+        return annotateReference(type.fullyQualifiedName(), type ,annotation);
     }
 
     final String getReferenceString(final Type type) {

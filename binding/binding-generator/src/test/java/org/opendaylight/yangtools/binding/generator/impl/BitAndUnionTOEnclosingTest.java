@@ -31,7 +31,7 @@ class BitAndUnionTOEnclosingTest {
         genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/bit_and_union.yang"));
 
         for (var genType : genTypes) {
-            if (genType.getName().equals("ParentContainer") && !(genType instanceof GeneratedTransferObject)) {
+            if (genType.simpleName().equals("ParentContainer") && !(genType instanceof GeneratedTransferObject)) {
                 parentContainer = genType;
             }
         }
@@ -44,7 +44,7 @@ class BitAndUnionTOEnclosingTest {
 
         // nested types in leaf
         final var lfLeafs = enclosedTypes.stream()
-            .filter(genType -> genType.getName().equals("Lf"))
+            .filter(genType -> genType.simpleName().equals("Lf"))
             .map(genType -> assertInstanceOf(GeneratedTransferObject.class, genType))
             .collect(Collectors.toList());
         assertEquals(1, lfLeafs.size(), "Lf TO has incorrect number of occurences.");
@@ -62,7 +62,7 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(1, lfTypes.size());
 
         final var lf1Leaf = lfTypes.getFirst();
-        assertEquals("Lf$1", lf1Leaf.getName());
+        assertEquals("Lf$1", lf1Leaf.simpleName());
         assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer.Lf",
             lf1Leaf.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString(),
             "Lf$1 has incorrect package name.");
@@ -79,7 +79,7 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(1, lf1Types.size());
 
         final var lf2Leaf = lf1Types.get(0);
-        assertEquals("Lf$2", lf2Leaf.getName());
+        assertEquals("Lf$2", lf2Leaf.simpleName());
         assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer.Lf.Lf$1",
             lf2Leaf.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString(),
             "Lf$2 has incorrect package name.");
@@ -97,7 +97,7 @@ class BitAndUnionTOEnclosingTest {
         int typeUnionTypedefCounter = 0;
 
         for (var genType : genTypes) {
-            if (genType.getName().equals("TypeUnion") && genType instanceof GeneratedTransferObject gto) {
+            if (genType.simpleName().equals("TypeUnion") && genType instanceof GeneratedTransferObject gto) {
                 typeUnionTypedef = gto;
                 typeUnionTypedefCounter++;
             }
@@ -108,7 +108,7 @@ class BitAndUnionTOEnclosingTest {
 
         assertNotNull(typeUnionTypedef, "TypeUnion TO wasn't found.");
         assertEquals(1, typeUnionTypedefCounter, "TypeUnion TO has incorrect number of occurences.");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnionTypedef.getPackageName(),
+        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnionTypedef.packageName(),
             "TypeUnion has incorrect package name.");
 
         assertEquals(2, typeUnionTypedef.getProperties().size(),
@@ -120,8 +120,8 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(1, nestedUnions.size(), "Incorrect number of nested unions");
 
         final var typeUnion1 = nestedUnions.getFirst();
-        assertEquals("TypeUnion$1", typeUnion1.getName());
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion1.getPackageName(),
+        assertEquals("TypeUnion$1", typeUnion1.simpleName());
+        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion1.packageName(),
             "TypeUnion$1 has incorrect package name.");
         assertEquals(4, typeUnion1.getProperties().size(),
             "TypeUnion1 generated TO has incorrect number of properties");
@@ -137,8 +137,8 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(1, nestedUnions1.size());
 
         final var typeUnion2 = nestedUnions1.get(0);
-        assertEquals("TypeUnion$2", typeUnion2.getName());
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion2.getPackageName(),
+        assertEquals("TypeUnion$2", typeUnion2.simpleName());
+        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion2.packageName(),
             "TypeUnion$2 has incorrect package name.");
         assertEquals(2, typeUnion2.getProperties().size(),
             "TypeUnion2 generated TO has incorrect number of properties");
@@ -157,9 +157,9 @@ class BitAndUnionTOEnclosingTest {
         GeneratedTransferObject unionLeaf = null;
         for (var genType : parentContainer.getEnclosedTypes()) {
             if (genType instanceof GeneratedTransferObject gto) {
-                if (gto.getName().equals("BitLeaf")) {
+                if (gto.simpleName().equals("BitLeaf")) {
                     bitLeaf = gto;
-                } else if (gto.getName().equals("UnionLeaf")) {
+                } else if (gto.simpleName().equals("UnionLeaf")) {
                     unionLeaf = gto;
                 }
             }
@@ -189,11 +189,11 @@ class BitAndUnionTOEnclosingTest {
         }
 
         assertNotNull(firstBitProperty, "firstBit property wasn't found");
-        assertEquals("boolean", firstBitProperty.getReturnType().getName(), "firstBit property has incorrect type");
+        assertEquals("boolean", firstBitProperty.getReturnType().simpleName());
         assertNotNull(secondBitProperty, "secondBit property wasn't found");
-        assertEquals("boolean", secondBitProperty.getReturnType().getName(), "secondBit property has incorrect type");
+        assertEquals("boolean", secondBitProperty.getReturnType().simpleName());
         assertNotNull(thirdBitProperty, "thirdBit property wasn't found");
-        assertEquals("boolean", thirdBitProperty.getReturnType().getName(), "thirdBit property has incorrect type");
+        assertEquals("boolean", thirdBitProperty.getReturnType().simpleName());
 
         GeneratedProperty uint32Property = null;
         GeneratedProperty stringProperty = null;
@@ -209,10 +209,10 @@ class BitAndUnionTOEnclosingTest {
         }
 
         assertNotNull(uint32Property, "uint32 property wasn't found");
-        assertEquals("Integer", uint32Property.getReturnType().getName(), "uint32 property has incorrect type");
+        assertEquals("Integer", uint32Property.getReturnType().simpleName());
         assertNotNull(stringProperty, "string property wasn't found");
-        assertEquals("String", stringProperty.getReturnType().getName(), "string property has incorrect type");
+        assertEquals("String", stringProperty.getReturnType().simpleName());
         assertNotNull(uint8Property, "uint8 property wasn't found");
-        assertEquals("Uint8", uint8Property.getReturnType().getName(), "uint8 property has incorrect type");
+        assertEquals("Uint8", uint8Property.getReturnType().simpleName());
     }
 }

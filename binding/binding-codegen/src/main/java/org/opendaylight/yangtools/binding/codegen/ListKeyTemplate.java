@@ -52,7 +52,7 @@ final class ListKeyTemplate extends ClassTemplate {
              * @throws NullPointerException if any of the arguments are null
              */
             public \
-            """).append(type().getName()).append('(').append(asNonNullArgumentsDeclaration(allProperties))
+            """).append(type().simpleName()).append('(').append(asNonNullArgumentsDeclaration(allProperties))
                 .append(") {\n");
 
         for (var prop : allProperties) {

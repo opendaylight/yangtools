@@ -41,7 +41,7 @@ class BindingGeneratorImplTest {
         GeneratedType myContainer2 = null;
 
         for (var type : generateTypes) {
-            switch (type.getName()) {
+            switch (type.simpleName()) {
                 case "ChoiceTestData" -> choiceTestData = type;
                 case "Myrootcontainer" -> myRootContainer = type;
                 case "Mylist" -> myList = type;
@@ -63,43 +63,43 @@ class BindingGeneratorImplTest {
 
         Type childOfParamType = null;
         for (var type : myContainer.getImplements()) {
-            if (type.getName().equals("ChildOf")) {
+            if (type.simpleName().equals("ChildOf")) {
                 childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
                 break;
             }
         }
         assertNotNull(childOfParamType);
-        assertEquals("ChoiceTestData", childOfParamType.getName());
+        assertEquals("ChoiceTestData", childOfParamType.simpleName());
 
         childOfParamType = null;
         for (var type : myList.getImplements()) {
-            if (type.getName().equals("ChildOf")) {
+            if (type.simpleName().equals("ChildOf")) {
                 childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
                 break;
             }
         }
         assertNotNull(childOfParamType);
-        assertEquals("ChoiceTestData", childOfParamType.getName());
+        assertEquals("ChoiceTestData", childOfParamType.simpleName());
 
         childOfParamType = null;
         for (var type : myContainer2.getImplements()) {
-            if (type.getName().equals("ChildOf")) {
+            if (type.simpleName().equals("ChildOf")) {
                 childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
                 break;
             }
         }
         assertNotNull(childOfParamType);
-        assertEquals("Myrootcontainer", childOfParamType.getName());
+        assertEquals("Myrootcontainer", childOfParamType.simpleName());
 
         childOfParamType = null;
-        for (Type type : myList2.getImplements()) {
-            if (type.getName().equals("ChildOf")) {
-                childOfParamType = ((ParameterizedType) type).getActualTypeArguments()[0];
+        for (var type : myList2.getImplements()) {
+            if (type.simpleName().equals("ChildOf")) {
+                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments()[0];
                 break;
             }
         }
         assertNotNull(childOfParamType);
-        assertEquals("Myrootcontainer", childOfParamType.getName());
+        assertEquals("Myrootcontainer", childOfParamType.simpleName());
     }
 
     @Test
@@ -109,7 +109,7 @@ class BindingGeneratorImplTest {
 
         GeneratedType foo = null;
         for (var type : generateTypes) {
-            if (type.getName().equals("Foo")) {
+            if (type.simpleName().equals("Foo")) {
                 foo = type;
                 break;
             }
@@ -120,7 +120,7 @@ class BindingGeneratorImplTest {
         Type childOf = null;
         Type dataObject = null;
         for (var type :  foo.getImplements()) {
-            switch (type.getName()) {
+            switch (type.simpleName()) {
                 case "ChildOf":
                     childOf = type;
                     break;

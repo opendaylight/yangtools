@@ -22,7 +22,7 @@ class Mdsal269Test {
             YangParserTestUtils.parseYangResource("/mdsal269.yang"));
         assertEquals(4, generateTypes.size());
 
-        final var mplsLabelType = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
+        final var mplsLabelType = generateTypes.stream().filter(type -> type.fullyQualifiedName()
             .equals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabel")).findFirst().orElseThrow();
 
         final var gto = assertInstanceOf(GeneratedTransferObject.class, mplsLabelType);
@@ -33,10 +33,10 @@ class Mdsal269Test {
 
         assertEquals("mplsLabelGeneralUse", general.getName());
         assertEquals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabelGeneralUse",
-            general.getReturnType().getFullyQualifiedName());
+            general.getReturnType().fullyQualifiedName());
 
         assertEquals("mplsLabelSpecialPurpose", special.getName());
         assertEquals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabelSpecialPurposeValue",
-            special.getReturnType().getFullyQualifiedName());
+            special.getReturnType().fullyQualifiedName());
     }
 }

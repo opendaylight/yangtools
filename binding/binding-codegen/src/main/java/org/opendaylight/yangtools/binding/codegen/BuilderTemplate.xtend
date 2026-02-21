@@ -64,7 +64,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «wrapToDocumentation(formatDataForJavaDoc(targetType))»
         «targetType.annotations.generateDeprecatedAnnotation»
         «generatedAnnotation»
-        public class «type.name» {
+        public class «type.simpleName» {
 
             «generateFields(false)»
 
@@ -79,7 +79,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             /**
              * Construct an empty builder.
              */
-            public «type.name»() {
+            public «type.simpleName»() {
                 // No-op
             }
 
@@ -151,7 +151,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                  *
                  * @param arg «typeName» from which the builder should be initialized
                  */
-                public «type.name»(«typeName» arg) {
+                public «type.simpleName»(«typeName» arg) {
                     «printConstructorPropertySetter(impl)»
                 }
 
@@ -228,7 +228,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private generateEmptyInstance() '''
         «val nonnullTarget = targetType.importedNonNull»
         private static final class LazyEmpty {
-            static final «nonnullTarget» INSTANCE = new «type.name»().build();
+            static final «nonnullTarget» INSTANCE = new «type.simpleName»().build();
 
             private LazyEmpty() {
                 // Hidden on purpose
@@ -236,9 +236,9 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         }
 
         /**
-         * Get empty instance of «targetType.name».
+         * Get empty instance of «targetType.simpleName».
          *
-         * @return An empty {@link «targetType.name»}
+         * @return An empty {@link «targetType.simpleName»}
          */
         public static «nonnullTarget» empty() {
             return LazyEmpty.INSTANCE;
@@ -397,7 +397,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
          * @param values desired value
          * @return this builder
          */
-        public «type.getName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
+        public «type.simpleName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
         «IF restrictions !== null»
             if (values != null) {
                for («actualType.importedName» value : values) {
@@ -424,7 +424,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
          * @param values desired value
          * @return this builder
          */
-        public «type.getName» set«field.name.toFirstUpper»(final «field.returnType.importedName» values) {
+        public «type.simpleName» set«field.name.toFirstUpper»(final «field.returnType.importedName» values) {
         «IF restrictions !== null»
             if (values != null) {
                for («actualType.importedName» value : values.values()) {
@@ -452,7 +452,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
          * @return this builder
          */
         «val setterName = "set" + field.getName.toFirstUpper»
-        public «type.getName» «setterName»(final «field.returnType.importedName» value) {
+        public «type.simpleName» «setterName»(final «field.returnType.importedName» value) {
             «IF restrictions !== null»
                 if (value != null) {
                     «checkArgument(field, restrictions, actualType, "value")»
@@ -477,7 +477,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              * @param key desired value
              * @return this builder
              */
-            public «type.getName» withKey(final «keyType.importedName» key) {
+            public «type.simpleName» withKey(final «keyType.importedName» key) {
                 this.key = key;
                 return this;
             }
@@ -496,7 +496,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               * @return this builder
               * @throws «NPE.importedName» if {@code augmentation} is null
               */
-            public «type.name» addAugmentation(«augmentTypeRef» augmentation) {
+            public «type.simpleName» addAugmentation(«augmentTypeRef» augmentation) {
                 if (!(this.«AUGMENTATION_FIELD» instanceof «hashMapRef»)) {
                     this.«AUGMENTATION_FIELD» = new «hashMapRef»<>();
                 }
@@ -512,7 +512,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
               * @param augmentationType augmentation type to be removed
               * @return this builder
               */
-            public «type.name» removeAugmentation(«CLASS.importedName»<? extends «augmentTypeRef»> augmentationType) {
+            public «type.simpleName» removeAugmentation(«CLASS.importedName»<? extends «augmentTypeRef»> augmentationType) {
                 if (this.«AUGMENTATION_FIELD» instanceof «hashMapRef») {
                     this.«AUGMENTATION_FIELD».remove(augmentationType);
                 }

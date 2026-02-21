@@ -51,7 +51,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     override body() '''
         «targetType.annotations.generateDeprecatedAnnotation»
-        private static final class «type.name»
+        private static final class «type.simpleName»
             «val impIface = targetType.importedName»
             «IF keyType !== null»
                 extends «ABSTRACT_ENTRY_OBJECT.importedName»<«impIface», «keyType.importedName»>
@@ -136,7 +136,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         @«OVERRIDE.importedName»
         public «field.returnType.importedName» «field.getterMethodName»() {
             «val fieldName = field.fieldName»
-            «IF field.returnType.name.endsWith("[]")»
+            «IF field.returnType.simpleName.endsWith("[]")»
                 return «fieldName» == null ? null : «fieldName».clone();
             «ELSE»
                 return «fieldName»;
