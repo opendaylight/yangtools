@@ -118,8 +118,8 @@ class InterfaceGeneratorTest {
     private static GeneratedType mockGenType(final MethodSignature methSign) {
         final GeneratedType genType = spy(GeneratedType.class);
         doReturn(TYPE_NAME).when(genType).getIdentifier();
-        doReturn(TEST).when(genType).getName();
-        doReturn(TEST).when(genType).getPackageName();
+        doReturn(TEST).when(genType).simpleName();
+        doReturn(TEST).when(genType).packageName();
         final List<MethodSignature> listMethodSign = new ArrayList<>();
         listMethodSign.add(methSign);
         doReturn(listMethodSign).when(genType).getMethodDefinitions();

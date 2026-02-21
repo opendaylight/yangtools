@@ -76,7 +76,7 @@ public class DefaultBindingGeneratorTest {
 
         final var bEnumType = assertInstanceOf(Enumeration.class,
             assertGeneratedMethod(bDataMethods, "getEnum").getReturnType());
-        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ResolveDirectUseOfEnum", bEnumType.getFullyQualifiedName());
+        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ResolveDirectUseOfEnum", bEnumType.fullyQualifiedName());
 
         final var enumsType = assertInstanceOf(ParameterizedType.class,
             assertGeneratedMethod(bDataMethods, "getEnums").getReturnType());
@@ -84,7 +84,7 @@ public class DefaultBindingGeneratorTest {
         assertEquals(Types.typeForClass(Set.class), enumsType.getRawType());
         final var enumsTypeArgs = enumsType.getActualTypeArguments();
         assertEquals(1, enumsTypeArgs.length);
-        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs[0].getFullyQualifiedName());
+        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs[0].fullyQualifiedName());
     }
 
     @Test
@@ -136,14 +136,14 @@ public class DefaultBindingGeneratorTest {
         assertEquals(1, enclosed.size());
 
         final var union1 = assertInstanceOf(GeneratedTransferObject.class, enclosed.get(0));
-        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1", union1.getFullyQualifiedName());
+        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1", union1.fullyQualifiedName());
         assertEquals(1, union1.getProperties().size());
         assertEquals(List.of(), union1.getEnclosedTypes());
 
         final var enums = union1.getEnumerations();
         assertEquals(1, enums.size());
         assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1.Enumeration",
-            enums.get(0).getFullyQualifiedName());
+            enums.getFirst().fullyQualifiedName());
     }
 
     @Test

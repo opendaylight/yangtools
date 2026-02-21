@@ -30,7 +30,7 @@ class UnionTypeDefTest {
         assertEquals(5, generateTypes.size());
 
         final var cont = generateTypes.stream()
-            .filter(type -> type.getName().equals("Cont"))
+            .filter(type -> type.simpleName().equals("Cont"))
             .findFirst()
             .orElseThrow();
 

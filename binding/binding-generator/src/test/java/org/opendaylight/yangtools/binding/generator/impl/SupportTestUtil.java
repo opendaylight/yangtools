@@ -99,16 +99,16 @@ final class SupportTestUtil {
     static String resolveFullNameOfReturnType(final Type type) {
         final var sb = new StringBuilder();
         if (type instanceof ParameterizedType parameterizedTypes) {
-            sb.append(type.getName()).append('<');
+            sb.append(type.simpleName()).append('<');
             for (var parameterizedType : parameterizedTypes.getActualTypeArguments()) {
-                sb.append(parameterizedType.getName()).append(',');
+                sb.append(parameterizedType.simpleName()).append(',');
             }
             if (sb.charAt(sb.length() - 1) == ',') {
                 sb.deleteCharAt(sb.length() - 1);
             }
             sb.append(">");
         } else {
-            sb.append(type.getName());
+            sb.append(type.simpleName());
         }
         return sb.toString();
     }
@@ -123,6 +123,6 @@ final class SupportTestUtil {
             }
         }
         assertTrue(interfaceFound,
-            "Generated type " + genType.getName() + " doesn't implement interface " + interfaceNameSearched);
+            "Generated type " + genType.simpleName() + " doesn't implement interface " + interfaceNameSearched);
     }
 }

@@ -204,7 +204,7 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
 
         @Override
         public final String toFormattedString() {
-            final var sb = new StringBuilder().append("public enum ").append(getName()).append(" {\n");
+            final var sb = new StringBuilder().append("public enum ").append(simpleName()).append(" {\n");
 
             int offset = 0;
             for (var valPair : values) {

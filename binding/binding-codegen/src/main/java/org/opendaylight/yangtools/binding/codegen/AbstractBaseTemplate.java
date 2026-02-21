@@ -54,7 +54,7 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
 
     final @NonNull String generate() {
         final var sb = new StringBuilder()
-            .append("package ").append(type().getPackageName()).append(";\n");
+            .append("package ").append(type().packageName()).append(";\n");
 
         // Has side-effects
         final var body = body();
@@ -216,7 +216,7 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         final var returnType = field.getReturnType();
         final var importedName = importedName(returnType);
         // any Java array type needs to be duplicated to prevent modification
-        final var copy = returnType.getName().endsWith("[]");
+        final var copy = returnType.simpleName().endsWith("[]");
 
         // emit separately
         final var sb = new StringBuilder()
@@ -241,7 +241,7 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         final var fieldName = fieldName(field);
         final var fieldType = importedName(field.getReturnType());
         final var suffix = StringExtensions.toFirstUpper(field.getName());
-        final var typeName = type().getName();
+        final var typeName = type().simpleName();
 
         return new StringBuilder()
             .append("public ").append(typeName).append(" set").append(suffix).append('(').append(fieldType)

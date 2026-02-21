@@ -49,7 +49,7 @@ class BindingTypesTest {
     @Test
     void testAugmentable() {
         final var augmentableType = BindingTypes.augmentable(Types.objectType());
-        assertEquals("Augmentable", augmentableType.getName());
+        assertEquals("Augmentable", augmentableType.simpleName());
     }
 
     @Test
@@ -65,7 +65,7 @@ class BindingTypesTest {
     @Test
     void testAugmentation() {
         final var augmentationType = BindingTypes.augmentation(Types.objectType());
-        assertEquals("Augmentation", augmentationType.getName());
+        assertEquals("Augmentation", augmentationType.simpleName());
     }
 
     @Test

@@ -33,11 +33,11 @@ class AugmentRelativeXPathTest {
         GeneratedTransferObject gtTunnelKey = null;
 
         for (var type : genTypes) {
-            if (!type.getPackageName().contains("augment._abstract.topology")) {
+            if (!type.packageName().contains("augment._abstract.topology")) {
                 continue;
             }
 
-            if (type.getName().equals("InterfaceKey")) {
+            if (type.simpleName().equals("InterfaceKey")) {
                 gtInterfaceKey = assertInstanceOf(GeneratedTransferObject.class, type);
 
                 final var properties = gtInterfaceKey.getProperties();
@@ -48,7 +48,7 @@ class AugmentRelativeXPathTest {
                 assertEquals("interfaceId", property.getName());
                 assertNotNull(property.getReturnType(), "interfaceId return type is null");
                 assertEquals(JavaTypeName.create(String.class), property.getReturnType().getIdentifier());
-            } else if (type.getName().equals("Interface")) {
+            } else if (type.simpleName().equals("Interface")) {
                 gtInterface = type;
 
                 final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
@@ -68,7 +68,7 @@ class AugmentRelativeXPathTest {
                     "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
                     "InterfaceKey"),
                     getIfcKeyMethod.getReturnType().getIdentifier());
-            } else if (type.getName().equals("Tunnel")) {
+            } else if (type.simpleName().equals("Tunnel")) {
                 gtTunnel = type;
 
                 final var tunnelMethods = gtTunnel.getMethodDefinitions();
@@ -87,7 +87,7 @@ class AugmentRelativeXPathTest {
                 assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology"
                     + ".rev130503.topology.network.links.network.link.tunnels", "TunnelKey"),
                     getTunnelKeyMethod.getReturnType().getIdentifier());
-            } else if (type.getName().equals("TunnelKey")) {
+            } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(GeneratedTransferObject.class, type);
 
                 final var properties = gtTunnelKey.getProperties();

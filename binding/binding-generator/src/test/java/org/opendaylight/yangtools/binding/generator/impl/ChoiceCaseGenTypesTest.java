@@ -161,7 +161,7 @@ class ChoiceCaseGenTypesTest {
         int searchedGenTypeCounter = 0;
         for (var genType : genTypes) {
             if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.getName().equals(genTypeName) && genType.getPackageName().equals(packageName)) {
+                if (genType.simpleName().equals(genTypeName) && genType.packageName().equals(packageName)) {
                     searchedGenType = genType;
                     searchedGenTypeCounter++;
                 }

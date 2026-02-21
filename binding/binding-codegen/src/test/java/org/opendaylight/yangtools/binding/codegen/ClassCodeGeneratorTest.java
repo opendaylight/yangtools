@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -36,9 +35,8 @@ class ClassCodeGeneratorTest {
         int genTOsCount = 0;
         for (var type : genTypes) {
             if (type instanceof GeneratedTransferObject genTO) {
-                if (genTO.getName().equals("CompositeKeyListKey")) {
-                    final List<GeneratedProperty> properties = genTO
-                            .getProperties();
+                if (genTO.simpleName().equals("CompositeKeyListKey")) {
+                    final var properties = genTO.getProperties();
                     int propertyCount = 0;
                     for (final GeneratedProperty prop : properties) {
                         if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
@@ -55,9 +53,8 @@ class ClassCodeGeneratorTest {
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;
-                } else if (genTO.getName().equals("InnerListKey")) {
-                    final List<GeneratedProperty> properties = genTO
-                            .getProperties();
+                } else if (genTO.simpleName().equals("InnerListKey")) {
+                    final var properties = genTO.getProperties();
                     assertEquals(1, properties.size());
                     genTOsCount++;
                 }
