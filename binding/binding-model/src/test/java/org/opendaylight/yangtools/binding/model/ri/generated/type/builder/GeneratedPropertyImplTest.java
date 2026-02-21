@@ -43,10 +43,9 @@ class GeneratedPropertyImplTest {
         assertEquals(Types.BOOLEAN, instance.getReturnType());
 
         assertEquals("""
-            GeneratedPropertyImpl [name=myPropertyName, annotations=[], \
-            comment=TypeMemberComment{contract=myComment}, \
-            returnType=ConcreteTypeImpl{name=java.lang.Boolean}, isFinal=true, isReadOnly=false, \
-            modifier=PUBLIC]""", instance.toString());
+            GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=TypeMemberComment{contract=myComment}, \
+            returnType=ConcreteType{name=java.lang.Boolean}, isFinal=true, isReadOnly=false, modifier=PUBLIC]""",
+            instance.toString());
     }
 
     @Test

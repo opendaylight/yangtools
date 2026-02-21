@@ -39,13 +39,13 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
-import org.opendaylight.yangtools.binding.model.api.BaseTypeWithRestrictions;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
@@ -299,8 +299,8 @@ class JavaFileTemplate {
 
     static final Restrictions getRestrictions(final Type type) {
         return switch (type) {
-            case BaseTypeWithRestrictions base -> base.restrictions();
             case GeneratedTransferObject gto -> gto.getRestrictions();
+            case RestrictedType restricted -> restricted.restrictions();
             case null, default -> null;
         };
     }

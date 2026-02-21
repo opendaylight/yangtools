@@ -41,14 +41,13 @@ public abstract class AbstractType implements Type {
 
     @Override
     public final int hashCode() {
-        return name().hashCode();
+        return name.hashCode();
     }
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Type type && name().equals(type.name());
+        return this == obj || obj instanceof Type other && name.equals(other.name());
     }
-
 
     @Override
     public final String toString() {
