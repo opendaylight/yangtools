@@ -10,22 +10,28 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
+@ExtendWith(MockitoExtension.class)
 class TypeUtilsTest {
+    @Mock
+    private GeneratedTransferObject rootType;
+    @Mock
+    private GeneratedTransferObject innerType;
+    @Mock
+    private GeneratedProperty property;
+
     @Test
     void getBaseYangTypeTest() {
-        final GeneratedTransferObject rootType = mock(GeneratedTransferObject.class);
-        final GeneratedTransferObject innerType = mock(GeneratedTransferObject.class);
-        final GeneratedProperty property = mock(GeneratedProperty.class);
-        final Type type = mock(ConcreteType.class);
+        final var type = ConcreteType.ofClass(Object.class);
         assertEquals(type, TypeUtils.getBaseYangType(type));
 
         doReturn("value").when(property).getName();
@@ -37,10 +43,6 @@ class TypeUtilsTest {
 
     @Test
     void getBaseYangTypeWithExceptionTest() {
-        final GeneratedTransferObject rootType = mock(GeneratedTransferObject.class);
-        final GeneratedTransferObject innerType = mock(GeneratedTransferObject.class);
-        final GeneratedProperty property = mock(GeneratedProperty.class);
-
         doReturn("test").when(property).getName();
         doReturn(rootType).when(innerType).getSuperType();
         doReturn(List.of(property)).when(rootType).getProperties();

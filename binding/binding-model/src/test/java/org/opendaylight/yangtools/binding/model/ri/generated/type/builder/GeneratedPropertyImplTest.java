@@ -44,9 +44,8 @@ class GeneratedPropertyImplTest {
 
         assertEquals("""
             GeneratedPropertyImpl [name=myPropertyName, annotations=[], \
-            comment=TypeMemberComment{contract=myComment}, \
-            returnType=ConcreteTypeImpl{name=java.lang.Boolean}, isFinal=true, isReadOnly=false, \
-            modifier=PUBLIC]""", instance.toString());
+            comment=TypeMemberComment{contract=myComment}, returnType=ConcreteType{name=java.lang.Boolean}, \
+            isFinal=true, isReadOnly=false, modifier=PUBLIC]""", instance.toString());
     }
 
     @Test

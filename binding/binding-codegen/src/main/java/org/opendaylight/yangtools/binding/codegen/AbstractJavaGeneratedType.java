@@ -87,11 +87,11 @@ abstract class AbstractJavaGeneratedType {
     }
 
     final String getFullyQualifiedReference(final Type type, final String annotation) {
-        return annotateReference(type.fullyQualifiedName(), type ,annotation);
+        return annotateReference(type.name().fullyQualifiedName(), type ,annotation);
     }
 
     final String getReferenceString(final Type type) {
-        final String ref = getReferenceString(type.getIdentifier());
+        final String ref = getReferenceString(type.name());
         return type instanceof ParameterizedType parameterized
             ? getReferenceString(new StringBuilder(ref), type, parameterized.getActualTypeArguments())
                 : ref;
@@ -100,7 +100,7 @@ abstract class AbstractJavaGeneratedType {
     final String getReferenceString(final Type type, final String annotation) {
         // Package-private method, all callers who would be passing an empty array are bound to the more special
         // case above, hence we know annotations.length >= 1
-        final String ref = getReferenceString(type.getIdentifier());
+        final String ref = getReferenceString(type.name());
         return annotateReference(ref, type, annotation);
     }
 

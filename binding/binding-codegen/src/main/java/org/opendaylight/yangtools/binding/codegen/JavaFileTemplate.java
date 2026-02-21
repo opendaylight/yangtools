@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.RuntimeGeneratedUnion;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
@@ -242,17 +243,17 @@ class JavaFileTemplate {
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
         final var optEnc = name.immediatelyEnclosingClass();
-        return optEnc.isPresent() && type.getIdentifier().equals(optEnc.orElseThrow());
+        return optEnc.isPresent() && type.name().equals(optEnc.orElseThrow());
     }
 
     final CharSequence generateInnerClass(final GeneratedType innerClass) {
-        if (!(innerClass instanceof GeneratedTransferObject gto)) {
-            return "";
-        }
-
-        final var innerJavaType = javaType.getEnclosedType(innerClass.getIdentifier());
-        return gto.isUnionType() ? new UnionTemplate(innerJavaType, gto).generateAsInnerClass()
-                : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
+        return switch (innerClass) {
+            case RuntimeGeneratedUnion union ->
+                new UnionTemplate(javaType.getEnclosedType(union.name()), union).generateAsInnerClass();
+            case GeneratedTransferObject gto ->
+                new ClassTemplate(javaType.getEnclosedType(gto.name()), gto).generateAsInnerClass();
+            default -> "";
+        };
     }
 
     /**
