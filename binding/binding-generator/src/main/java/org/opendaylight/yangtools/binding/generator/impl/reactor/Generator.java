@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.classType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveBooleanType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveIntType;
-import static org.opendaylight.yangtools.binding.model.ri.Types.wildcardTypeFor;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -31,6 +30,7 @@ import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -327,7 +327,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     static final void narrowImplementedInterface(final GeneratedTypeBuilder builder) {
-        defineImplementedInterfaceMethod(builder, wildcardTypeFor(builder.typeName()));
+        defineImplementedInterfaceMethod(builder, WildcardType.ofName(builder.typeName()));
     }
 
     /**
