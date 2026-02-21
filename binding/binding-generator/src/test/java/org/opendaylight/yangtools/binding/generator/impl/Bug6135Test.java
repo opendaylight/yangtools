@@ -23,7 +23,7 @@ class Bug6135Test {
 
         GeneratedType genInterface = null;
         for (var type : generateTypes) {
-            if (type.getName().equals("TestLeafrefData")) {
+            if (type.simpleName().equals("TestLeafrefData")) {
                 genInterface = type;
                 break;
             }

@@ -83,12 +83,12 @@ class EnumerationBuilderImplTest {
 
     @Test
     void testEnumeration() {
-        assertEquals(name, enumeration.getName());
-        assertEquals(packageName, enumeration.getPackageName());
+        assertEquals(name, enumeration.simpleName());
+        assertEquals(packageName, enumeration.packageName());
         assertEquals(null, enumeration.getComment());
         assertEquals(DESCRIPTION, enumeration.getDescription());
         assertEquals(moduleName, enumeration.getModuleName());
-        assertEquals(packageName + '.' + name, enumeration.getFullyQualifiedName());
+        assertEquals(packageName + '.' + name, enumeration.fullyQualifiedName());
         assertEquals(reference, enumeration.getReference());
         assertEquals(List.of(), enumeration.getEnclosedTypes());
         assertEquals(List.of(), enumeration.getEnumerations());

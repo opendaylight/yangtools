@@ -28,7 +28,7 @@ class ConstantImplTest {
         final var constImpl5 = new ConstantImpl(type, null, "127.0.0.0");
         final var constImpl6 = new ConstantImpl(type, "IpAddress", null);
 
-        assertEquals("BaseType", constImpl.getType().getName());
+        assertEquals("BaseType", constImpl.getType().simpleName());
         assertEquals("IpAddress", constImpl.getName());
         assertEquals("127.0.0.1", constImpl.getValue());
         assertEquals("""

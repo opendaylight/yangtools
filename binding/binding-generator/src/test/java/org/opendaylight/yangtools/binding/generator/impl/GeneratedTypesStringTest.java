@@ -32,47 +32,41 @@ class GeneratedTypesStringTest {
         boolean constantRegExListTypeOneGeneric = false;
         for (var type : genTypes) {
             if (type instanceof GeneratedTransferObject genTO) {
-                if (genTO.getName().equals("TypedefString")) {
+                if (genTO.simpleName().equals("TypedefString")) {
                     typedefStringFound = true;
 
                     for (var con : genTO.getConstantDefinitions()) {
-                        if (con.getName().equals("PATTERN_CONSTANTS")) {
-                            constantRegExListFound = true;
-                        } else {
+                        if (!con.getName().equals("PATTERN_CONSTANTS")) {
                             break;
                         }
+                        constantRegExListFound = true;
                         ParameterizedType paramType;
-                        if (con.getType() instanceof ParameterizedType parameterized) {
-                            paramType = parameterized;
-                        } else {
+                        if (!(con.getType() instanceof ParameterizedType parameterized)) {
                             break;
                         }
+                        paramType = parameterized;
 
                         Type[] types;
-                        if (paramType.getName().equals("List")) {
-                            constantRegExListTypeContainer = true;
-                            types = paramType.getActualTypeArguments();
-                        } else {
+                        if (!paramType.simpleName().equals("List")) {
                             break;
                         }
+                        constantRegExListTypeContainer = true;
+                        types = paramType.getActualTypeArguments();
 
-                        if (types.length == 1) {
-                            constantRegExListTypeOneGeneric = true;
-                        } else {
+                        if (types.length != 1) {
                             break;
                         }
+                        constantRegExListTypeOneGeneric = true;
 
-                        if (types[0].getName().equals("String")) {
-                            constantRegExListTypeGeneric = true;
-                        } else {
+                        if (!types[0].simpleName().equals("String")) {
                             break;
                         }
+                        constantRegExListTypeGeneric = true;
 
-                        if (con.getValue() instanceof Map<?, ?> mapValue) {
-                            constantRegExListValueOK = true;
-                        } else {
+                        if (!(con.getValue() instanceof Map<?, ?> mapValue)) {
                             break;
                         }
+                        constantRegExListValueOK = true;
 
                         for (var e : mapValue.entrySet()) {
                             if (!(e.getKey() instanceof String) || !(e.getValue() instanceof String)) {
