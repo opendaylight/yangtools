@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
@@ -17,8 +18,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -30,7 +33,7 @@ class Mdsal675Test {
     private static final String PACKAGE2 = "org.opendaylight.yang.gen.v1.urn.test.yang.data.naming.norev.";
     private static final String MODULE_CLASS_NAME = PACKAGE + "YangDataDemoData";
     private static final String ROOT_CONTAINER_CLASS_NAME = PACKAGE + "RootContainer";
-    private static final Map<String, Type> INTERFACE_METHODS =
+    private static final Map<String, ConcreteType> INTERFACE_METHODS =
             Map.of("implementedInterface", Types.typeForClass(Class.class));
 
     @Test
@@ -41,7 +44,7 @@ class Mdsal675Test {
         assertNotNull(allGenTypes);
         assertEquals(29, allGenTypes.size());
         final var genTypesMap = allGenTypes.stream()
-            .collect(ImmutableMap.toImmutableMap(type -> type.getIdentifier().toString(), Function.identity()));
+            .collect(ImmutableMap.toImmutableMap(type -> type.name().fullyQualifiedName(), Function.identity()));
 
         // ensure generated yang-data classes contain getters for inner structure types
 
@@ -136,7 +139,7 @@ class Mdsal675Test {
                         "/yang-data-models/ietf-restconf.yang", "/yang-data-models/yang-data-naming.yang"));
         assertNotNull(allGenTypes);
         assertEquals(22, allGenTypes.size());
-        final var genTypeNames = allGenTypes.stream().map(type -> type.getIdentifier().toString())
+        final var genTypeNames = allGenTypes.stream().map(type -> type.name().fullyQualifiedName())
             .collect(Collectors.toSet());
 
         // template name is not compliant to YANG identifier -> char encoding used, name starts with $ char
@@ -180,7 +183,7 @@ class Mdsal675Test {
             final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
-        for (final String methodName : getterMethods) {
+        for (var methodName : getterMethods) {
             assertHasMethod(yangDataType, methodName, contentType);
         }
     }
@@ -190,15 +193,24 @@ class Mdsal675Test {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         assertImplements(yangDataType, groupType);
         INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
-        for (final String methodName : getterMethods) {
+        for (var methodName : getterMethods) {
             assertHasMethod(groupType, methodName, contentType);
         }
     }
 
     private static void assertHasMethod(final GeneratedType genType, final String methodName,
             final Type returnType) {
-        assertThat(genType.getMethodDefinitions())
-            .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
+        for (var method : genType.getMethodDefinitions()) {
+            if (methodName.equals(method.getName())) {
+                final var type = method.getReturnType();
+                if (returnType.equals(type)
+                    || returnType instanceof ConcreteType concrete && type instanceof ParameterizedType parameterized
+                    && parameterized.getRawType().equals(concrete)) {
+                    return;
+                }
+            }
+        }
+        fail("no " + returnType + " " + methodName + "() in " + genType);
     }
 
     private static void assertImplements(final GeneratedType genType, final Type implementedType) {

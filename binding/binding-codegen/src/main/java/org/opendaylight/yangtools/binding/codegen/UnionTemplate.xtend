@@ -20,6 +20,7 @@ import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes
 
 import org.opendaylight.yangtools.binding.model.api.Enumeration
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
+import org.opendaylight.yangtools.binding.model.api.RuntimeGeneratedUnion
 import org.opendaylight.yangtools.binding.model.api.Type
 
 /**
@@ -31,7 +32,7 @@ class UnionTemplate extends ClassTemplate {
      *
      * @param genType generated transfer object which will be transformed to JAVA class source code
      */
-    new(NestedJavaGeneratedType javaType, GeneratedTransferObject genType) {
+    new(NestedJavaGeneratedType javaType, RuntimeGeneratedUnion genType) {
         super(javaType, genType)
     }
 

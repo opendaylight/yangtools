@@ -13,7 +13,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -299,10 +298,10 @@ public class BuilderGeneratorTest {
         final var types = new DefaultBindingGenerator().generateTypes(context);
         assertEquals(27, types.size());
 
-        final BuilderTemplate bt = BuilderGenerator.templateForType(
+        final var bt = BuilderGenerator.templateForType(
             types.stream().filter(t -> t.simpleName().equals("Nodes")).findFirst().orElseThrow());
 
-        final List<String> sortedProperties = bt.properties.stream()
+        final var sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())
                 .map(BuilderGeneratedProperty::getName)
                 .collect(Collectors.toList());
@@ -329,20 +328,15 @@ public class BuilderGeneratorTest {
     }
 
     private static GeneratedType mockGenTypeMoreMeth(final String methodeName) {
-        final GeneratedType genType = spy(GeneratedType.class);
-        doReturn(TYPE_NAME).when(genType).getIdentifier();
-        doReturn(TEST).when(genType).simpleName();
-        doReturn(TEST).when(genType).packageName();
+        final var genType = spy(GeneratedType.class);
+        doReturn(TYPE_NAME).when(genType).name();
+        doCallRealMethod().when(genType).simpleName();
+        doCallRealMethod().when(genType).packageName();
 
-        final var listMethodSign = new ArrayList<MethodSignature>();
-        for (int i = 0; i < 2; i++) {
-            final MethodSignature methSign = mockMethSign(methodeName + (i + 1));
-            listMethodSign.add(methSign);
-        }
-        doReturn(listMethodSign).when(genType).getMethodDefinitions();
+        doReturn(List.of(mockMethSign(methodeName + 1), mockMethSign(methodeName + 2)))
+            .when(genType).getMethodDefinitions();
 
-        final var impls = new ArrayList<Type>();
-        doReturn(impls).when(genType).getImplements();
+        doReturn(List.of()).when(genType).getImplements();
         return genType;
     }
 
@@ -355,27 +349,21 @@ public class BuilderGeneratorTest {
     }
 
     private static GeneratedType mockGenType(final String methodeName) {
-        final GeneratedType genType = spy(GeneratedType.class);
-        doReturn(TYPE_NAME).when(genType).getIdentifier();
-        doReturn(TEST).when(genType).simpleName();
-        doReturn(TEST).when(genType).packageName();
-
-        final List<MethodSignature> listMethodSign = new ArrayList<>();
-        final MethodSignature methSign = mockMethSign(methodeName);
-        listMethodSign.add(methSign);
-        doReturn(listMethodSign).when(genType).getMethodDefinitions();
-
-        final List<Type> impls = new ArrayList<>();
-        doReturn(impls).when(genType).getImplements();
+        final var genType = spy(GeneratedType.class);
+        doReturn(TYPE_NAME).when(genType).name();
+        doCallRealMethod().when(genType).simpleName();
+        doCallRealMethod().when(genType).packageName();
+        doReturn(List.of(mockMethSign(methodeName))).when(genType).getMethodDefinitions();
+        doReturn(List.of()).when(genType).getImplements();
         return genType;
     }
 
     private static MethodSignature mockMethSign(final String methodeName) {
-        final MethodSignature methSign = mock(MethodSignature.class);
+        final var methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
-        final Type methType = mock(Type.class);
+        final var methType = mock(Type.class);
         doCallRealMethod().when(methType).fullyQualifiedName();
-        doReturn(TYPE_NAME).when(methType).getIdentifier();
+        doReturn(TYPE_NAME).when(methType).name();
         doReturn(TEST).when(methType).simpleName();
         doReturn(methType).when(methSign).getReturnType();
         doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
