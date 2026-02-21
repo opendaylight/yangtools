@@ -22,7 +22,7 @@ class Mdsal335Test {
         assertEquals(3, generateTypes.size());
 
         final var gen = generateTypes.stream()
-            .filter(type -> type.getFullyQualifiedName()
+            .filter(type -> type.fullyQualifiedName()
                 .equals("org.opendaylight.yang.gen.v1.mdsal335.norev.Ipv4AddressNoZone"))
             .findFirst().orElseThrow();
         assertEquals(1, gen.getConstantDefinitions().size());

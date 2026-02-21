@@ -48,7 +48,7 @@ class IdentityrefTypeTest {
         assertEquals(2, genTypes.size());
 
         var moduleGenType = assertInstanceOf(DataRootArchetype.class, genTypes.stream()
-            .filter(type -> type.getName().equals("ModuleIdentityrefData"))
+            .filter(type -> type.simpleName().equals("ModuleIdentityrefData"))
             .findFirst()
             .orElseThrow());
 
@@ -60,6 +60,6 @@ class IdentityrefTypeTest {
         assertEquals("requireLf", methodSignatures.get(1).getName());
 
         assertEquals("org.opendaylight.yang.gen.v1.urn.identityref.module.rev131109.SomeIdentity",
-            methodSignature.getReturnType().getFullyQualifiedName());
+            methodSignature.getReturnType().fullyQualifiedName());
     }
 }

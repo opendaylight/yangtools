@@ -274,7 +274,7 @@ class JavaFileTemplate {
      * @return Imported class name
      */
     final String importedUtilClass(final Type returnType) {
-        return importedName(returnType.getName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
+        return importedName(returnType.simpleName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
     }
 
     final String generatedAnnotation() {
@@ -312,7 +312,7 @@ class JavaFileTemplate {
      * @return The string used to clone the property, or an empty string
      */
     static final String cloneCall(final GeneratedProperty property) {
-        return property.getReturnType().getName().endsWith("[]") ? ".clone()" : "";
+        return property.getReturnType().simpleName().endsWith("[]") ? ".clone()" : "";
     }
 
     /**
@@ -437,15 +437,15 @@ class JavaFileTemplate {
 
                     if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
                         || schema instanceof NotificationDefinition && !BindingTypes.isNotificationBody(genType)) {
-                        final String builderName = genType.getName() + Naming.BUILDER_SUFFIX;
+                        final String builderName = genType.simpleName() + Naming.BUILDER_SUFFIX;
 
                         sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
                         .append("}.\n")
                         .append("@see ").append(builderName).append('\n');
-                        if (node instanceof ListSchemaNode) {
-                            final var keyDef = ((ListSchemaNode) node).getKeyDefinition();
+                        if (node instanceof ListSchemaNode list) {
+                            final var keyDef = list.getKeyDefinition();
                             if (!keyDef.isEmpty()) {
-                                sb.append("@see ").append(genType.getName()).append(Naming.KEY_SUFFIX);
+                                sb.append("@see ").append(genType.simpleName()).append(Naming.KEY_SUFFIX);
                             }
                             sb.append('\n');
                         }
@@ -462,7 +462,7 @@ class JavaFileTemplate {
                     final var augType = genTO.getSuperType();
                     if (augType != null) {
                         sb.append("\n\n")
-                        .append("@see ").append(augType.getName());
+                        .append("@see ").append(augType.simpleName());
                     }
                 }
             } else if (def instanceof Multiple multiple) {

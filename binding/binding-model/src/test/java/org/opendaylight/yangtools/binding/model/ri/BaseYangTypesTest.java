@@ -18,14 +18,14 @@ class BaseYangTypesTest {
     @Test
     void test() {
         final var stringType = assertInstanceOf(ConcreteType.class, BaseYangTypes.javaTypeForYangType("string"));
-        assertEquals("java.lang", stringType.getPackageName());
-        assertEquals("String", stringType.getName());
+        assertEquals("java.lang", stringType.packageName());
+        assertEquals("String", stringType.simpleName());
         final var stringBooleanMap = Types.mapTypeFor(
             BaseYangTypes.javaTypeForYangType("string"),
             BaseYangTypes.javaTypeForYangType("boolean"));
 
-        assertEquals("java.util", stringBooleanMap.getPackageName());
-        assertEquals("Map", stringBooleanMap.getName());
+        assertEquals("java.util", stringBooleanMap.packageName());
+        assertEquals("Map", stringBooleanMap.simpleName());
         assertEquals(2, stringBooleanMap.getActualTypeArguments().length);
 
         assertEquals(Types.typeForClass(BindingInstanceIdentifier.class), BaseYangTypes.INSTANCE_IDENTIFIER);

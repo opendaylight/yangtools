@@ -23,7 +23,7 @@ class Mdsal554Test {
 
         // status deprecated
         final var deprecated = genTypes.get(1);
-        assertEquals("DeprecatedNotification", deprecated.getName());
+        assertEquals("DeprecatedNotification", deprecated.simpleName());
         final var deprecatedAnnotations = deprecated.getAnnotations();
         assertEquals(1, deprecatedAnnotations.size());
 
@@ -33,7 +33,7 @@ class Mdsal554Test {
 
         // status obsolete
         final var obsolete = genTypes.get(2);
-        assertEquals("ObsoleteNotification", obsolete.getName());
+        assertEquals("ObsoleteNotification", obsolete.simpleName());
 
         final var obsoleteAnnotations = obsolete.getAnnotations();
         assertEquals(1, obsoleteAnnotations.size());
@@ -49,7 +49,7 @@ class Mdsal554Test {
 
         // status current
         final var current = genTypes.get(3);
-        assertEquals("TestNotification", current.getName());
+        assertEquals("TestNotification", current.simpleName());
         assertEquals(List.of(), current.getAnnotations());
     }
 }

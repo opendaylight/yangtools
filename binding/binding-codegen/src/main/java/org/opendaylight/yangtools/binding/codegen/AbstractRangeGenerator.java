@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -51,8 +50,8 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     }
 
     static @NonNull AbstractRangeGenerator<?> forType(final @NonNull Type type) {
-        final ConcreteType javaType = TypeUtils.getBaseYangType(type);
-        return forName(javaType.getFullyQualifiedName());
+        final var javaType = TypeUtils.getBaseYangType(type);
+        return forName(javaType.fullyQualifiedName());
     }
 
     private static @NonNull AbstractRangeGenerator<?> forName(final String fqcn) {

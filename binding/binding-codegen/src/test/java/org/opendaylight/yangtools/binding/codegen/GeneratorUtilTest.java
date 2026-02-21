@@ -64,23 +64,23 @@ class GeneratorUtilTest {
 
     @BeforeEach
     void before() {
-        doReturn("tst.package").when(parameterizedType).getPackageName();
-        doReturn("tstParametrizedType").when(parameterizedType).getName();
+        doReturn("tst.package").when(parameterizedType).packageName();
+        doReturn("tstParametrizedType").when(parameterizedType).simpleName();
         doReturn(PARAMETERIZED_TYPE).when(parameterizedType).getIdentifier();
-        doReturn("tst.package").when(type).getPackageName();
-        doReturn("tstName").when(type).getName();
+        doReturn("tst.package").when(type).packageName();
+        doReturn("tstName").when(type).simpleName();
         doReturn(TYPE).when(type).getIdentifier();
         doReturn(parameterizedType).when(property).getReturnType();
         doReturn(new Type[] { type }).when(parameterizedType).getActualTypeArguments();
         doReturn(List.of(property)).when(enclosedType).getProperties();
         doReturn(Boolean.TRUE).when(property).isReadOnly();
-        doReturn("tst.package").when(enclosedType).getPackageName();
-        doReturn("tstName").when(enclosedType).getName();
+        doReturn("tst.package").when(enclosedType).packageName();
+        doReturn("tstName").when(enclosedType).simpleName();
 
         doReturn(List.of(new Parameter("foo", type))).when(methodSignature).getParameters();
 
-        doReturn("tst.package").when(annotationType).getPackageName();
-        doReturn("tstAnnotationName").when(annotationType).getName();
+        doReturn("tst.package").when(annotationType).packageName();
+        doReturn("tstAnnotationName").when(annotationType).simpleName();
         doReturn(ANNOTATION).when(annotationType).getIdentifier();
 
         doReturn(type).when(methodSignature).getReturnType();
@@ -96,8 +96,8 @@ class GeneratorUtilTest {
 
     @Test
     void createChildImportsTest() {
-        doReturn("tst.package").when(enclosedType).getPackageName();
-        doReturn("tstName").when(enclosedType).getName();
+        doReturn("tst.package").when(enclosedType).packageName();
+        doReturn("tstName").when(enclosedType).simpleName();
         doReturn(List.of()).when(enclosedType).getEnclosedTypes();
         doReturn(List.of(enclosedType)).when(generatedType).getEnclosedTypes();
         final var generated = GeneratorUtil.createChildImports(generatedType);
@@ -139,10 +139,10 @@ class GeneratorUtilTest {
 
     @Test
     void getExplicitTypeTest() {
-        assertEquals(annotationType.getName(), GeneratorUtil.getExplicitType(
+        assertEquals(annotationType.simpleName(), GeneratorUtil.getExplicitType(
                 generatedType, annotationType, createImports(generatedType)));
 
         assertTrue(GeneratorUtil.getExplicitType(generatedType, parameterizedType,
-                createImports(generatedType)).contains(parameterizedType.getName()));
+                createImports(generatedType)).contains(parameterizedType.simpleName()));
     }
 }

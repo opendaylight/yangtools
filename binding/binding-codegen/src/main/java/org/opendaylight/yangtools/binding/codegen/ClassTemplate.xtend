@@ -296,7 +296,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def package allValuesConstructor() '''
-    public «type.name»(«allProperties.asArgumentsDeclaration») {
+    public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
@@ -306,7 +306,7 @@ class ClassTemplate extends BaseTemplate {
 
         «FOR p : properties»
             «val fieldName = p.fieldName»
-            «IF p.returnType.name.endsWith("[]")»
+            «IF p.returnType.simpleName.endsWith("[]")»
                 this.«fieldName» = «fieldName» == null ? null : «fieldName».clone();
             «ELSE»
                 this.«fieldName» = «fieldName»;
@@ -317,7 +317,7 @@ class ClassTemplate extends BaseTemplate {
 
     def private typedefConstructor() '''
     @«CONSTRUCTOR_PARAMETERS.importedName»("«TypeConstants.VALUE_PROP»")
-    public «type.name»(«allProperties.asArgumentsDeclaration») {
+    public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
@@ -355,7 +355,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def protected genConstructor(GeneratedProperty property, Iterable<GeneratedProperty> other) '''
-    public «type.name»(«property.returnType.importedName + " " + property.name») {
+    public «type.simpleName»(«property.returnType.importedName + " " + property.name») {
         «IF !parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
@@ -412,7 +412,7 @@ class ClassTemplate extends BaseTemplate {
      *
      * @param source Source object
      */
-    public «type.name»(«type.name» source) {
+    public «type.simpleName»(«type.simpleName» source) {
         «IF !parentProperties.empty»
             super(source);
         «ENDIF»
@@ -429,7 +429,7 @@ class ClassTemplate extends BaseTemplate {
      *
      * @param source Source object
      */
-    public «type.name»(«genTO.superType.importedName» source) {
+    public «type.simpleName»(«genTO.superType.importedName» source) {
         super(source);
         «genPatternEnforcer("getValue()")»
     }
@@ -440,19 +440,19 @@ class ClassTemplate extends BaseTemplate {
             «val prop = allProperties.first»
             «val propType = prop.returnType»
             «IF !(INSTANCE_IDENTIFIER.identifier.equals(propType.identifier))»
-            public static «genTO.name» getDefaultInstance(final String defaultValue) {
+            public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
                 «IF propType.equals(Types.primitiveBooleanType())»
                     «bitsArgs»
                 «ELSEIF VALUEOF_TYPES.contains(propType)»
-                    return new «genTO.name»(«propType.importedName».valueOf(defaultValue));
+                    return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
                 «ELSEIF STRING_TYPE.equals(propType)»
-                    return new «genTO.name»(defaultValue);
+                    return new «genTO.simpleName»(defaultValue);
                 «ELSEIF BINARY_TYPE.equals(propType)»
-                    return new «genTO.name»(«JU_BASE64.importedName».getDecoder().decode(defaultValue));
+                    return new «genTO.simpleName»(«JU_BASE64.importedName».getDecoder().decode(defaultValue));
                 «ELSEIF EMPTY_TYPE.equals(propType)»
-                    return new «genTO.name»(«CODEHELPERS.importedName».emptyFor(defaultValue));
+                    return new «genTO.simpleName»(«CODEHELPERS.importedName».emptyFor(defaultValue));
                 «ELSE»
-                    return new «genTO.name»(new «propType.importedName»(defaultValue));
+                    return new «genTO.simpleName»(new «propType.importedName»(defaultValue));
                 «ENDIF»
             }
             «ENDIF»
@@ -466,7 +466,7 @@ class ClassTemplate extends BaseTemplate {
             throw new «IAE.importedName»("invalid default parameter");
         }
         int i = 0;
-        return new «genTO.name»(
+        return new «genTO.simpleName»(
         «FOR prop : allProperties SEPARATOR ","»
             properties.get(i++).equals(defaultValue) ? true : false
         «ENDFOR»
@@ -493,7 +493,7 @@ class ClassTemplate extends BaseTemplate {
             " abstract "»«
         ELSE»«
             finalClass()»«
-        ENDIF»class «type.name»«
+        ENDIF»class «type.simpleName»«
         IF (genTO.superType !== null)»«
             " extends "»«genTO.superType.importedName»«
         ENDIF»
@@ -532,7 +532,7 @@ class ClassTemplate extends BaseTemplate {
     def protected annotationDeclaration() '''
         «IF genTO.getAnnotations !== null»
             «FOR e : genTO.getAnnotations»
-                @«e.getName»
+                @«e.simpleName»
             «ENDFOR»
         «ENDIF»
     '''
@@ -637,7 +637,7 @@ class ClassTemplate extends BaseTemplate {
         «IF !genTO.equalsIdentifiers.empty»
             @«OVERRIDE.importedName»
             public final boolean equals(«OBJECT.importedName» obj) {
-                return this == obj || obj instanceof «type.name» other
+                return this == obj || obj instanceof «type.simpleName» other
                     «FOR property : genTO.equalsIdentifiers»
                         «val fieldName = property.fieldName»
                         «val type = property.returnType»
