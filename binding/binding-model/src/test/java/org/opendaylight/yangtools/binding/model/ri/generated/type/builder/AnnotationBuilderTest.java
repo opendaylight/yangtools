@@ -376,13 +376,13 @@ class AnnotationBuilderTest {
 
         assertEquals("""
             AnnotationTypeBuilderImpl{typeName=my.package.MyAnnotationName, \
-            annotationBuilders=[AnnotationTypeBuilderImpl{typeName=my.package.MySubAnnotationName, \
-            annotationBuilders=[], parameters=[]}], parameters=[ParameterImpl [name=MyParameter, value=myValue, \
-            values=[]]]}""", annotationTypeBuilder.toString());
+            annotationBuilders=[AnnotationTypeBuilderImpl{typeName=my.package.MySubAnnotationName}], \
+            parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
+            annotationTypeBuilder.toString());
 
         var annotationTypeInstance = annotationTypeBuilder.build();
 
-        assertEquals("my.package.MyAnnotationName", annotationTypeInstance.getFullyQualifiedName());
+        assertEquals("my.package.MyAnnotationName", annotationTypeInstance.fullyQualifiedName());
         assertEquals("""
             AnnotationTypeImpl{identifier=my.package.MyAnnotationName, \
             annotations=[AnnotationTypeImpl{identifier=my.package.MySubAnnotationName, annotations=[], \

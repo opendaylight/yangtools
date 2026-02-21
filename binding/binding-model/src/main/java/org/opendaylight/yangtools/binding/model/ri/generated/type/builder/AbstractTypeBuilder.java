@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -47,10 +48,17 @@ public abstract sealed class AbstractTypeBuilder implements TypeBuilder
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
-    ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("typeName", typeName);
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("typeName", typeName);
+    }
+
+    static final void addToStringAttribute(final ToStringHelper helper, final String name,
+            final @Nullable Collection<?> value) {
+        if (value != null && !value.isEmpty()) {
+            helper.add(name, value);
+        }
     }
 }
