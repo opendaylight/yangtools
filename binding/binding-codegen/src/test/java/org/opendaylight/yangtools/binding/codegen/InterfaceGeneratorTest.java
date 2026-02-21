@@ -12,7 +12,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -33,8 +32,8 @@ class InterfaceGeneratorTest {
 
     @Test
     void builderTemplateListenerMethodTest() {
-        final MethodSignature methSign = mockMethSign("on" + TEST);
-        final GeneratedType genType = mockGenType(methSign);
+        final var methSign = mockMethSign("on" + TEST);
+        final var genType = mockGenType(methSign);
 
         String expected = String.join(System.lineSeparator(),
             "package test;",
@@ -58,9 +57,9 @@ class InterfaceGeneratorTest {
 
     @Test
     void builderTemplateDeprecatedListenerMethodTest() {
-        final MethodSignature methSign = mockMethSign("on" + TEST);
+        final var methSign = mockMethSign("on" + TEST);
         addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
-        final GeneratedType genType = mockGenType(methSign);
+        final var genType = mockGenType(methSign);
 
         String expected = String.join(System.lineSeparator(),
             "package test;",
@@ -86,10 +85,10 @@ class InterfaceGeneratorTest {
 
     @Test
     void builderTemplateGenerateObsoleteListenerMethodTest() {
-        final MethodSignature methSign = mockMethSign("on" + TEST);
+        final var methSign = mockMethSign("on" + TEST);
         addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
         doReturn(true).when(methSign).isDefault();
-        final GeneratedType genType = mockGenType(methSign);
+        final var genType = mockGenType(methSign);
 
         String expected = String.join(System.lineSeparator(),
             "package test;",
@@ -116,31 +115,27 @@ class InterfaceGeneratorTest {
     }
 
     private static GeneratedType mockGenType(final MethodSignature methSign) {
-        final GeneratedType genType = spy(GeneratedType.class);
-        doReturn(TYPE_NAME).when(genType).getIdentifier();
+        final var genType = spy(GeneratedType.class);
+        doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();
         doReturn(TEST).when(genType).packageName();
-        final List<MethodSignature> listMethodSign = new ArrayList<>();
-        listMethodSign.add(methSign);
-        doReturn(listMethodSign).when(genType).getMethodDefinitions();
-
-        final List<Type> impls = new ArrayList<>();
-        doReturn(impls).when(genType).getImplements();
+        doReturn(List.of(methSign)).when(genType).getMethodDefinitions();
+        doReturn(List.of()).when(genType).getImplements();
         return genType;
     }
 
     private static MethodSignature mockMethSign(final String methodeName) {
-        final MethodSignature methSign = mock(MethodSignature.class);
+        final var methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
-        final Type methType = Types.typeForClass(void.class);
+        final var methType = Types.typeForClass(void.class);
         doReturn(methType).when(methSign).getReturnType();
         doReturn(MethodSignature.ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;
     }
 
     private static void addMethodStatus(final MethodSignature methSign, final JavaTypeName annotationJavaType) {
-        final AnnotationType annotationType = mock(AnnotationType.class);
-        doReturn(annotationJavaType).when(annotationType).getIdentifier();
+        final var annotationType = mock(AnnotationType.class);
+        doReturn(annotationJavaType).when(annotationType).name();
         doReturn(List.of(annotationType)).when(methSign).getAnnotations();
     }
 }

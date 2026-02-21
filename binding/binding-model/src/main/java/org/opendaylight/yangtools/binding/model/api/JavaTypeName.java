@@ -82,7 +82,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
         }
 
         @Override
-        public String toString() {
+        public String fullyQualifiedName() {
             return simpleName();
         }
     }
@@ -107,7 +107,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
         }
 
         @Override
-        public final String toString() {
+        public final String fullyQualifiedName() {
             return appendClass(new StringBuilder()).toString();
         }
 
@@ -325,6 +325,11 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     public abstract JavaTypeName createSibling(String simpleName);
 
     /**
+     * {@return the Fully-Qualified Class Name string of this name}
+     */
+    public abstract String fullyQualifiedName();
+
+    /**
      * Return the simple name of the class.
      *
      * @return Simple name of the class.
@@ -382,11 +387,8 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
             && immediatelyEnclosingClass().equals(other.immediatelyEnclosingClass());
     }
 
-    /**
-     * Return the Fully-Qualified Class Name string of this TypeName.
-     *
-     * @return Fully-Qualified Class Name string of this TypeName.
-     */
     @Override
-    public abstract String toString();
+    public final String toString() {
+        return fullyQualifiedName();
+    }
 }

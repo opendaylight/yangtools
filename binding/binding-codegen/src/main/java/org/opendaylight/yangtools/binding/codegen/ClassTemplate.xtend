@@ -203,7 +203,7 @@ class ClassTemplate extends BaseTemplate {
 
     def private isScalarTypeObject() {
         for (impl : genTO.implements) {
-            if (SCALAR_TYPE_OBJECT.identifier.equals(impl.identifier)) {
+            if (SCALAR_TYPE_OBJECT.name.equals(impl.name)) {
                 return true
             }
         }
@@ -214,7 +214,7 @@ class ClassTemplate extends BaseTemplate {
         var wlk = genTO
         while (wlk !== null) {
             for (impl : wlk.implements) {
-                if (BITS_TYPE_OBJECT.identifier.equals(impl.identifier)) {
+                if (BITS_TYPE_OBJECT.name.equals(impl.name)) {
                     return true
                 }
             }
@@ -439,7 +439,7 @@ class ClassTemplate extends BaseTemplate {
         «IF genTO.typedef && !allProperties.empty && !genTO.unionType»
             «val prop = allProperties.first»
             «val propType = prop.returnType»
-            «IF !(INSTANCE_IDENTIFIER.identifier.equals(propType.identifier))»
+            «IF !(INSTANCE_IDENTIFIER.name.equals(propType.name))»
             public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
                 «IF propType.equals(Types.primitiveBooleanType())»
                     «bitsArgs»
@@ -517,7 +517,7 @@ class ClassTemplate extends BaseTemplate {
     def protected enumDeclarations() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
-                «new EnumTemplate(javaType.getEnclosedType(e.identifier), e).generateAsInnerClass»
+                «new EnumTemplate(javaType.getEnclosedType(e.name), e).generateAsInnerClass»
             «ENDFOR»
         «ENDIF»
     '''

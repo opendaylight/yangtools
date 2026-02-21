@@ -43,7 +43,7 @@ public final class BuilderGenerator implements CodeGenerator {
         if (type instanceof GeneratedType generated && !(type instanceof GeneratedTransferObject)) {
             for (var impl : generated.getImplements()) {
                 // "rpc" and "grouping" elements do not implement Augmentable
-                final var name = impl.getIdentifier();
+                final var name = impl.name();
                 if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION) || name.equals(ENTRY_OBJECT)
                     || name.equals(YANG_DATA)) {
                     return true;
@@ -72,8 +72,8 @@ public final class BuilderGenerator implements CodeGenerator {
 
     @VisibleForTesting
     static BuilderTemplate templateForType(final GeneratedType type) {
-        final JavaTypeName origName = type.getIdentifier();
-        final JavaTypeName builderName = origName.createSibling(origName.simpleName() + Naming.BUILDER_SUFFIX);
+        final var origName = type.name();
+        final var builderName = origName.createSibling(origName.simpleName() + Naming.BUILDER_SUFFIX);
 
         return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
             .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(
