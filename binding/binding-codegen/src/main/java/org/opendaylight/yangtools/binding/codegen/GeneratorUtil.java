@@ -116,17 +116,17 @@ public final class GeneratorUtil {
                                    final Map<String, JavaTypeName> imports) {
         checkArgument(parentGenType != null, "Parent Generated Type parameter MUST be specified and cannot be "
                 + "NULL!");
-        checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
-        checkArgument(parentGenType.getPackageName() != null,
+        checkArgument(parentGenType.simpleName() != null, "Parent Generated Type name cannot be NULL!");
+        checkArgument(parentGenType.packageName() != null,
                 "Parent Generated Type cannot have Package Name referenced as NULL!");
         checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
 
-        checkArgument(type.getName() != null, "Type name cannot be NULL!");
-        checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
+        checkArgument(type.simpleName() != null, "Type name cannot be NULL!");
+        checkArgument(type.packageName() != null, "Type cannot have Package Name referenced as NULL!");
 
-        final String typeName = type.getName();
-        final String typePackageName = type.getPackageName();
-        final String parentTypeName = parentGenType.getName();
+        final String typeName = type.simpleName();
+        final String typePackageName = type.packageName();
+        final String parentTypeName = parentGenType.simpleName();
         if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
             return;
         }
@@ -182,10 +182,10 @@ public final class GeneratorUtil {
      * @return map of the package names for all the enclosed types and recursively their enclosed types
      */
     static Map<String, String> createChildImports(final GeneratedType genType) {
-        Map<String, String> childImports = new LinkedHashMap<>();
-        for (GeneratedType genTypeChild : genType.getEnclosedTypes()) {
+        final var childImports = new LinkedHashMap<String, String>();
+        for (var genTypeChild : genType.getEnclosedTypes()) {
             createChildImports(genTypeChild);
-            childImports.put(genTypeChild.getName(), genTypeChild.getPackageName());
+            childImports.put(genTypeChild.simpleName(), genTypeChild.packageName());
         }
         return childImports;
     }
@@ -213,10 +213,10 @@ public final class GeneratorUtil {
         checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
         checkArgument(imports != null, "Imports Map cannot be NULL!");
 
-        final JavaTypeName importedType = imports.get(type.getName());
+        final JavaTypeName importedType = imports.get(type.simpleName());
         final StringBuilder builder = new StringBuilder();
         if (type.getIdentifier().equals(importedType)) {
-            builder.append(type.getName());
+            builder.append(type.simpleName());
             addActualTypeParameters(builder, type, parentGenType, imports);
             if (builder.toString().equals("Void")) {
                 return "void";
@@ -225,7 +225,7 @@ public final class GeneratorUtil {
             if (type.equals(Types.voidType())) {
                 return "void";
             }
-            builder.append(type.getFullyQualifiedName());
+            builder.append(type.fullyQualifiedName());
             addActualTypeParameters(builder, type, parentGenType, imports);
         }
         return builder.toString();

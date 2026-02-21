@@ -71,13 +71,13 @@ class EnumTemplate extends BaseTemplate {
     override body() '''
         «enums.formatDataForJavaDoc.wrapToDocumentation»
         «generatedAnnotation»
-        public enum «enums.name» implements «ENUM_TYPE_OBJECT.importedName» {
+        public enum «enums.simpleName» implements «ENUM_TYPE_OBJECT.importedName» {
             «writeEnumeration(enums)»
 
             private final «STRING.importedNonNull» name;
             private final int value;
 
-            private «enums.name»(int value, «STRING.importedNonNull» name) {
+            private «enums.simpleName»(int value, «STRING.importedNonNull» name) {
                 this.value = value;
                 this.name = name;
             }
@@ -96,7 +96,7 @@ class EnumTemplate extends BaseTemplate {
              * Return the enumeration member whose {@link #getName()} matches specified assigned name.
              *
              * @param name YANG assigned name
-             * @return corresponding «enums.name» item, or {@code null} if no such item exists
+             * @return corresponding «enums.simpleName» item, or {@code null} if no such item exists
              * @throws «NPE.importedName» if {@code name} is null
              */
             public static «enums.importedNullable» forName(«STRING.importedName» name) {
@@ -112,7 +112,7 @@ class EnumTemplate extends BaseTemplate {
              * Return the enumeration member whose {@link #getIntValue()} matches specified value.
              *
              * @param intValue integer value
-             * @return corresponding «enums.name» item, or {@code null} if no such item exists
+             * @return corresponding «enums.simpleName» item, or {@code null} if no such item exists
              */
             public static «enums.importedNullable» forValue(int intValue) {
                 return switch (intValue) {
@@ -127,7 +127,7 @@ class EnumTemplate extends BaseTemplate {
              * Return the enumeration member whose {@link #getName()} matches specified assigned name.
              *
              * @param name YANG assigned name
-             * @return corresponding «enums.name» item
+             * @return corresponding «enums.simpleName» item
              * @throws «NPE.importedName» if {@code name} is null
              * @throws «IAE.importedName» if {@code name} does not match any item
              */
@@ -139,7 +139,7 @@ class EnumTemplate extends BaseTemplate {
              * Return the enumeration member whose {@link #getIntValue()} matches specified value.
              *
              * @param intValue integer value
-             * @return corresponding «enums.name» item
+             * @return corresponding «enums.simpleName» item
              * @throws «IAE.importedName» if {@code intValue} does not match any item
              */
             public static «enums.importedNonNull» ofValue(int intValue) {

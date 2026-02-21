@@ -25,21 +25,21 @@ class Mdsal320Test {
             YangParserTestUtils.parseYangResource("/mdsal320.yang"));
         assertEquals(2, generateTypes.size());
 
-        final var foo = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
+        final var foo = generateTypes.stream().filter(type -> type.fullyQualifiedName()
             .equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo")).findFirst().orElseThrow();
 
         final var fooTypes = foo.getEnclosedTypes();
         assertEquals(1, fooTypes.size());
 
         final var bar = assertInstanceOf(GeneratedTransferObject.class, fooTypes.getFirst());
-        assertEquals("Bar", bar.getName());
+        assertEquals("Bar", bar.simpleName());
         assertTrue(bar.isUnionType());
 
         final var barTypes = bar.getEnclosedTypes();
         assertEquals(1, barTypes.size());
 
         final var bar1 = assertInstanceOf(GeneratedTransferObject.class, barTypes.getFirst());
-        assertEquals("Bar$1", bar1.getName());
+        assertEquals("Bar$1", bar1.simpleName());
         assertTrue(bar1.isUnionType());
 
         final var it = foo.getMethodDefinitions().iterator();

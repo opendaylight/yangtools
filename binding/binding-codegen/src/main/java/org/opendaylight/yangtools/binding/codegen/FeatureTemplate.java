@@ -30,7 +30,7 @@ final class FeatureTemplate extends ClassTemplate {
 
     @Override
     protected String generateClassDeclaration(final boolean isInnerClass) {
-        final var typeName = type().getName();
+        final var typeName = type().simpleName();
 
         return "@" + importedName(NONNULL_BY_DEFAULT) + '\n'
             + "public final class " + typeName + " extends " + importedName(YANG_FEATURE) + '<' + typeName + ", "
@@ -39,7 +39,7 @@ final class FeatureTemplate extends ClassTemplate {
 
     @Override
     protected String constructors() {
-        final var typeName = type().getName();
+        final var typeName = type().simpleName();
 
         return "private " + typeName + "() {\n"
             + "    // Hidden on purpose\n"
@@ -58,7 +58,7 @@ final class FeatureTemplate extends ClassTemplate {
     @Override
     protected String propertyMethods() {
         final var override = importedName(OVERRIDE);
-        final var typeName = type().getName();
+        final var typeName = type().simpleName();
         final var clazz = importedName(CLASS);
         final var rootName = importedName(dataRoot);
 

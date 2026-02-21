@@ -39,13 +39,13 @@ class Mdsal406TypeObjectTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(CONTEXT);
         assertNotNull(generateTypes);
 
-        final var typedefType = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
+        final var typedefType = generateTypes.stream().filter(type -> type.fullyQualifiedName()
             .equals("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.MyBinary")).findFirst()
             .orElseThrow();
 
         assertNotNull(typedefType.getImplements());
         final var objectType = typedefType.getImplements().stream()
-                .filter(type -> type.getFullyQualifiedName()
+                .filter(type -> type.fullyQualifiedName()
                 .equals("org.opendaylight.yangtools.binding.ScalarTypeObject")).findAny().orElseThrow();
         assertEquals(BindingTypes.scalarTypeObject(Types.BYTE_ARRAY), objectType);
     }
@@ -55,13 +55,13 @@ class Mdsal406TypeObjectTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(CONTEXT);
         assertNotNull(generateTypes);
 
-        final var typedefType = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
+        final var typedefType = generateTypes.stream().filter(type -> type.fullyQualifiedName()
                 .equals("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.MyBits")).findFirst()
                 .orElseThrow();
 
         assertNotNull(typedefType.getImplements());
         final var objectType = typedefType.getImplements().stream()
-                .filter(type -> type.getFullyQualifiedName()
+                .filter(type -> type.fullyQualifiedName()
                         .equals("org.opendaylight.yangtools.binding.BitsTypeObject")).findAny().orElseThrow();
         assertEquals(BITS_TYPE_OBJECT, objectType);
     }
@@ -71,13 +71,13 @@ class Mdsal406TypeObjectTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(CONTEXT);
         assertNotNull(generateTypes);
 
-        final var typedefType = generateTypes.stream().filter(type -> type.getFullyQualifiedName()
+        final var typedefType = generateTypes.stream().filter(type -> type.fullyQualifiedName()
                 .equals("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.MyUnion")).findFirst()
                 .orElseThrow();
 
         assertNotNull(typedefType.getImplements());
         final var objectType = typedefType.getImplements().stream()
-                .filter(type -> type.getFullyQualifiedName()
+                .filter(type -> type.fullyQualifiedName()
                         .equals("org.opendaylight.yangtools.binding.UnionTypeObject")).findAny().orElseThrow();
         assertEquals(UNION_TYPE_OBJECT, objectType);
     }

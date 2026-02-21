@@ -28,7 +28,7 @@ class GenEnumResolvingTest {
 
         GeneratedType genInterface = null;
         for (var type : genTypes) {
-            if (type.getName().equals("Interface")) {
+            if (type.simpleName().equals("Interface")) {
                 genInterface = type;
             }
         }
@@ -40,9 +40,9 @@ class GenEnumResolvingTest {
         assertNotNull(enums, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
         assertEquals(2, enums.size(), "Generated Type Interface MUST contain 2 Enumeration Types");
         for (var e : enums) {
-            if (e.getName().equals("LinkUpDownTrapEnable")) {
+            if (e.simpleName().equals("LinkUpDownTrapEnable")) {
                 linkUpDownTrapEnable = e;
-            } else if (e.getName().equals("OperStatus")) {
+            } else if (e.simpleName().equals("OperStatus")) {
                 operStatus = e;
             }
         }
@@ -97,7 +97,7 @@ class GenEnumResolvingTest {
 
         GeneratedType genInterface = null;
         for (var type : genTypes) {
-            if (type.getName().equals("Interface") && type.getPackageName().equals(
+            if (type.simpleName().equals("Interface") && type.packageName().equals(
                 "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces")) {
                 genInterface = type;
             }

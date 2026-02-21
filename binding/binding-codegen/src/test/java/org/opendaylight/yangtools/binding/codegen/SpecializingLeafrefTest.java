@@ -295,7 +295,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static GeneratedType typeByName(final List<GeneratedType> types, final String name) {
         for (var type : types) {
-            if (type.getName().equals(name)) {
+            if (type.simpleName().equals(name)) {
                 return type;
             }
         }

@@ -43,7 +43,7 @@ class GeneratedTypesBitsTest {
 
         for (var genType : genTypes) {
             if (genType instanceof GeneratedTransferObject genTO) {
-                if (genTO.getName().equals("ByteType")) {
+                if (genTO.simpleName().equals("ByteType")) {
                     byteTypeFound = true;
                     var genProperties = genTO.getProperties();
                     classPropertiesNumb = genProperties.size();
@@ -58,7 +58,7 @@ class GeneratedTypesBitsTest {
                     hashPropertiesNum = genProperties.size();
 
                 }
-            } else if (genType.getName().equals("LeafParentContainer")) {
+            } else if (genType.simpleName().equals("LeafParentContainer")) {
                 leafParentFound = true;
                 // check of methods
                 methodSignaturesList = genType.getMethodDefinitions();
@@ -68,7 +68,7 @@ class GeneratedTypesBitsTest {
                         if (methodSignature.getName().equals("getByteLeaf")) {
                             getByteLeafMethodFound = true;
 
-                            nameReturnParamType = methodSignature.getReturnType().getName();
+                            nameReturnParamType = methodSignature.getReturnType().simpleName();
                         } else if (methodSignature.getName().equals("setByteLeaf")) {
                             setByteLeafMethodFound = true;
 

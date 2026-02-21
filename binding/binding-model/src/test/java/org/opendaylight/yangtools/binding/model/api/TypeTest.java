@@ -15,7 +15,7 @@ class TypeTest {
     @Test
     void testCreateNewReferencedType() {
         final var refType = Type.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
-        assertEquals("RefTypeTest", refType.getName());
+        assertEquals("RefTypeTest", refType.simpleName());
     }
 
     @Test

@@ -30,7 +30,7 @@ abstract class BaseCompilationTest {
 
     static final void generateTestSources(final List<GeneratedType> types, final Path sourcesOutputDir)
             throws IOException {
-        types.sort(Comparator.comparing(GeneratedType::getName).reversed());
+        types.sort(Comparator.comparing(GeneratedType::simpleName).reversed());
 
         final var generatedFiles = JavaFileGenerator.generateFiles(types, true);
         for (var cell : generatedFiles.cellSet()) {

@@ -34,7 +34,7 @@ class GeneratedTOBuilderImplTest {
         genTOBuilder.setExtendsType(extendedType);
         final var genTO = genTOBuilder.build();
 
-        assertEquals("ExtendedType", genTO.getSuperType().getName());
+        assertEquals("ExtendedType", genTO.getSuperType().simpleName());
     }
 
     @Test

@@ -36,6 +36,6 @@ public class EnumGenerator implements CodeGenerator {
 
     @Override
     public String getUnitName(final Type type) {
-        return type.getName();
+        return type.simpleName();
     }
 }
