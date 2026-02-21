@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -300,9 +299,7 @@ public abstract class Generator implements Iterable<Generator> {
         typedef.getUnits().ifPresent(units -> {
             if (!units.isEmpty()) {
                 builder.addConstant(Types.STRING, "_UNITS", "\"" + units + "\"");
-                final GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("UNITS");
-                prop.setReturnType(Types.STRING);
-                builder.addToStringProperty(prop);
+                builder.addToStringProperty(new GeneratedPropertyBuilderImpl("UNITS").setReturnType(Types.STRING));
             }
         });
     }
@@ -330,7 +327,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     static final void narrowImplementedInterface(final GeneratedTypeBuilder builder) {
-        defineImplementedInterfaceMethod(builder, wildcardTypeFor(builder.getIdentifier()));
+        defineImplementedInterfaceMethod(builder, wildcardTypeFor(builder.typeName()));
     }
 
     /**
@@ -339,7 +336,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     static final void defaultImplementedInterace(final GeneratedTypeBuilder builder) {
-        defineImplementedInterfaceMethod(builder, Type.of(builder)).setDefault(true);
+        defineImplementedInterfaceMethod(builder, Type.of(builder.typeName())).setDefault(true);
     }
 
     static final <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Generator parent,

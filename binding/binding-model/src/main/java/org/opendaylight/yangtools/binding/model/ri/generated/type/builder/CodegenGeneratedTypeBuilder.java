@@ -11,9 +11,8 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 
-public final class CodegenGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder> implements
-        GeneratedTypeBuilder {
-
+public final class CodegenGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder>
+        implements GeneratedTypeBuilder {
     private String description;
     private String reference;
     private String moduleName;

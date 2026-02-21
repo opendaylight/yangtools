@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
+// FIXME: final
 public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private Restrictions restrictions;
     private GeneratedPropertyBuilder suid;
@@ -22,8 +23,8 @@ public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBui
     private String description;
     private String moduleName;
 
-    public CodegenGeneratedTOBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    public CodegenGeneratedTOBuilder(final JavaTypeName typeName) {
+        super(typeName);
     }
 
     @Override

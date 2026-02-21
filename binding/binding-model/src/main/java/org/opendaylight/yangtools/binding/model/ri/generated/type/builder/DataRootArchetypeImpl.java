@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 
 /**
  * The default implementation {@link DataRootArchetype}.
@@ -39,14 +38,6 @@ record DataRootArchetypeImpl(
         @Nullable String getDescription,
         @Nullable String getReference,
         @Nullable String getModuleName) implements DataRootArchetype {
-    /**
-     * A builder of {@link DataRootArchetype} instances.
-     */
-    public interface Builder extends GeneratedTypeBuilderBase<Builder> {
-        @Override
-        DataRootArchetype build();
-    }
-
     DataRootArchetypeImpl {
         requireNonNull(getIdentifier);
         requireNonNull(yangModuleInfo);
