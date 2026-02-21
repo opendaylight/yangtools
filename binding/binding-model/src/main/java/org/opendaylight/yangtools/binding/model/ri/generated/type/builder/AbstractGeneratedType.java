@@ -207,13 +207,20 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper)
-            .omitNullValues()
-            .add("comment", comment)
-            .add("annotations", annotations)
-            .add("enclosedTypes", enclosedTypes)
-            .add("enumerations", enumerations)
-            .add("constants", constants)
-            .add("methodSignatures", methodSignatures);
+        super.addToStringAttributes(helper);
+
+        final var local = comment;
+        if (local != null) {
+            helper.add("comment", local);
+        }
+        addToStringAttribute(helper, "annotations", annotations);
+        addToStringAttribute(helper, "implements", implementsTypes);
+        addToStringAttribute(helper, "enclosedTypes", enclosedTypes);
+        addToStringAttribute(helper, "enumerations", enumerations);
+        addToStringAttribute(helper, "constants", constants);
+        addToStringAttribute(helper, "methods", methodSignatures);
+        addToStringAttribute(helper, "properties", properties);
+
+        return helper;
     }
 }
