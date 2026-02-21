@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -541,28 +540,30 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return baseType;
         }
 
-        if (!(baseType instanceof GeneratedTransferObject gto)) {
+        return switch (baseType) {
             // This is a simple Java type, just wrap it with new restrictions
-            return Types.restrictedType(baseType, restrictions);
-        }
-
-        // Base type is a GTO, we need to re-adjust it with new restrictions
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(gto.getIdentifier());
-        final GeneratedTransferObject parent = gto.getSuperType();
-        if (parent != null) {
-            builder.setExtendsType(parent);
-        }
-        builder.setRestrictions(restrictions);
-        for (GeneratedProperty gp : gto.getProperties()) {
-            builder.addProperty(gp.getName())
-                .setValue(gp.getValue())
-                .setReadOnly(gp.isReadOnly())
-                .setAccessModifier(gp.getAccessModifier())
-                .setReturnType(gp.getReturnType())
-                .setFinal(gp.isFinal())
-                .setStatic(gp.isStatic());
-        }
-        return builder.build();
+            case ConcreteType concrete -> concrete.withRestrictions(restrictions);
+            case GeneratedTransferObject gto -> {
+                // Base type is a GTO, we need to re-adjust it with new restrictions
+                final var builder = builderFactory.newGeneratedTOBuilder(gto.getIdentifier());
+                final var parent = gto.getSuperType();
+                if (parent != null) {
+                    builder.setExtendsType(parent);
+                }
+                builder.setRestrictions(restrictions);
+                for (var gp : gto.getProperties()) {
+                    builder.addProperty(gp.getName())
+                        .setValue(gp.getValue())
+                        .setReadOnly(gp.isReadOnly())
+                        .setAccessModifier(gp.getAccessModifier())
+                        .setReturnType(gp.getReturnType())
+                        .setFinal(gp.isFinal())
+                        .setStatic(gp.isStatic());
+                }
+                yield builder.build();
+            }
+            default -> throw new VerifyException("Unhandled base type " + baseType);
+        };
     }
 
     @Override
