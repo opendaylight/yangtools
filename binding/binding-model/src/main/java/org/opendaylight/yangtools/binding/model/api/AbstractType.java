@@ -7,31 +7,62 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * It is used only as ancestor for other <code>Type</code>s. Note this forms the equality domain over most types, please
  * consider joining the party.
  */
 @Beta
-public abstract class AbstractType extends AbstractSimpleIdentifiable<JavaTypeName> implements Type {
+@NonNullByDefault
+public abstract class AbstractType implements Type {
+    private final JavaTypeName name;
+
     /**
      * Constructs the instance of this class with a JavaTypeName.
      *
      * @param identifier for this <code>Type</code>
      */
-    protected AbstractType(final JavaTypeName identifier) {
-        super(identifier);
+    protected AbstractType(final JavaTypeName name) {
+        this.name = requireNonNull(name);
+    }
+
+    @Override
+    public final JavaTypeName name() {
+        return name;
     }
 
     @Override
     public final int hashCode() {
-        return getIdentifier().hashCode();
+        return name().hashCode();
     }
 
     @Override
-    public final boolean equals(final Object obj) {
-        return this == obj || obj instanceof Type type && getIdentifier().equals(type.getIdentifier());
+    public final boolean equals(final @Nullable Object obj) {
+        return this == obj || obj instanceof Type type && name().equals(type.name());
+    }
+
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("name", name);
+    }
+
+    protected static final void addToStringAttribute(final ToStringHelper helper, final String name,
+            final @Nullable Collection<?> value) {
+        if (value != null && !value.isEmpty()) {
+            helper.add(name, value);
+        }
     }
 }

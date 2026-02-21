@@ -181,36 +181,29 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
         }
 
         @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return super.addToStringAttributes(toStringHelper)
-                .omitNullValues()
-                .add("annotations", getAnnotations())
-                .add("comment", getComment())
-                .add("extends", getSuperType())
-                .add("implements", getImplements())
-                .add("enclosedTypes", getEnclosedTypes())
-                .add("constants", getConstantDefinitions())
-                .add("enumerations", getEnumerations())
-                .add("properties", getProperties())
-                .add("equalsProperties", equalsProperties)
-                .add("hashCodeProperties", hashCodeProperties)
-                .add("stringProperties", stringProperties)
-                .add("methods", getMethodDefinitions());
+        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            super.addToStringAttributes(helper).add("extends", getSuperType());
+
+            addToStringAttribute(helper, "equalsProperties", equalsProperties);
+            addToStringAttribute(helper, "hashCodeProperties", hashCodeProperties);
+            addToStringAttribute(helper, "stringProperties", stringProperties);
+
+            return helper;
         }
 
         public static final String serializeTypedef(final Type type) {
             if (!(type instanceof ParameterizedType parameterizedType)) {
-                return type.fullyQualifiedName();
+                return type.name().fullyQualifiedName();
             }
 
-            final StringBuilder sb = new StringBuilder();
-            sb.append(parameterizedType.getRawType().fullyQualifiedName()).append('<');
+            final var sb = new StringBuilder();
+            sb.append(parameterizedType.getRawType().name().fullyQualifiedName()).append('<');
             boolean first = true;
-            for (final Type parameter : parameterizedType.getActualTypeArguments()) {
+            for (var parameter : parameterizedType.getActualTypeArguments()) {
                 if (first) {
                     first = false;
                 } else {
-                    sb.append(',');
+                    sb.append(", ");
                 }
                 sb.append(serializeTypedef(parameter));
             }
