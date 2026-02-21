@@ -369,25 +369,24 @@ class AnnotationBuilderTest {
 
     @Test
     void annotationTypeBuilderToStringTest() {
-        var annotationTypeBuilder = new AnnotationTypeBuilderImpl(
-            JavaTypeName.create("my.package", "MyAnnotationName"));
+        final var typeName = JavaTypeName.create("my.package", "MyAnnotationName");
+        var annotationTypeBuilder = new AnnotationTypeBuilderImpl(typeName);
         annotationTypeBuilder.addAnnotation("my.package", "MySubAnnotationName");
         annotationTypeBuilder.addParameter("MyParameter", "myValue");
 
         assertEquals("""
             AnnotationTypeBuilderImpl{typeName=my.package.MyAnnotationName, \
-            annotationBuilders=[AnnotationTypeBuilderImpl{typeName=my.package.MySubAnnotationName, \
-            annotationBuilders=[], parameters=[]}], parameters=[ParameterImpl [name=MyParameter, value=myValue, \
-            values=[]]]}""", annotationTypeBuilder.toString());
+            annotationBuilders=[AnnotationTypeBuilderImpl{typeName=my.package.MySubAnnotationName}], \
+            parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
+            annotationTypeBuilder.toString());
 
-        var annotationTypeInstance = annotationTypeBuilder.build();
-
-        assertEquals("my.package.MyAnnotationName", annotationTypeInstance.getFullyQualifiedName());
+        final var annotationTypeInstance = annotationTypeBuilder.build();
+        assertSame(typeName, annotationTypeInstance.getIdentifier());
         assertEquals("""
             AnnotationTypeImpl{identifier=my.package.MyAnnotationName, \
             annotations=[AnnotationTypeImpl{identifier=my.package.MySubAnnotationName, annotations=[], \
             parameters=[]}], parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
-                annotationTypeInstance.toString());
+            annotationTypeInstance.toString());
     }
 
     @Test
