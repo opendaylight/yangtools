@@ -54,17 +54,21 @@ public abstract sealed class AbstractPair implements Pair {
 
         @Override
         public Optional<String> getDescription() {
-            throw RuntimeEnumerationBuilder.unsupported();
+            throw uoe();
         }
 
         @Override
         public Optional<String> getReference() {
-            throw RuntimeEnumerationBuilder.unsupported();
+            throw uoe();
         }
 
         @Override
         public Status getStatus() {
-            throw RuntimeEnumerationBuilder.unsupported();
+            throw uoe();
+        }
+
+        private static UnsupportedOperationException uoe() {
+            return new UnsupportedOperationException("Not available at runtime");
         }
     }
 
@@ -106,7 +110,7 @@ public abstract sealed class AbstractPair implements Pair {
     @Override
     public final String toString() {
         return new StringBuilder().append("EnumPair [name=").append(name)
-            .append(", mappedName=").append(getMappedName())
+            .append(", mappedName=").append(mappedName)
             .append(", value=").append(value)
             .append("]").toString();
     }

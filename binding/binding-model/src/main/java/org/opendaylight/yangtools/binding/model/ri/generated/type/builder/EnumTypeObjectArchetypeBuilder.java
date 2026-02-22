@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -18,14 +17,16 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype.Pair;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.CodegenPair;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.RuntimePair;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -35,8 +36,91 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
  * Base class for {@link EnumTypeObjectArchetype.Builder} implementations.
  */
 public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractTypeBuilder
-        implements EnumTypeObjectArchetype.Builder
-        permits CodegenEnumerationBuilder, RuntimeEnumerationBuilder {
+        implements EnumTypeObjectArchetype.Builder {
+    public static final class Codegen extends EnumTypeObjectArchetypeBuilder {
+        private String description;
+        private String reference;
+        private String moduleName;
+        private YangSourceDefinition definition;
+
+        @NonNullByDefault
+        public Codegen(final JavaTypeName typeName) {
+            super(typeName);
+        }
+
+        @Override
+        public void setReference(final String reference) {
+            this.reference = reference;
+        }
+
+        @Override
+        public void setModuleName(final String moduleName) {
+            this.moduleName = moduleName;
+        }
+
+        @Override
+        public void setDescription(final String description) {
+            this.description = description;
+        }
+
+        @Override
+        public void setYangSourceDefinition(final YangSourceDefinition yangSourceDefinition) {
+            definition = yangSourceDefinition;
+        }
+
+        @Override
+        CodegenPair createEnumPair(final String name, final String mappedName, final int value, final Status status,
+                final String enumDescription, final String enumReference) {
+            return new CodegenPair(name, mappedName, value, status, enumDescription, enumReference);
+        }
+
+        @Override
+        @NonNullByDefault
+        EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
+            return new CodegenEnumTypeObjectArchetype(typeName(), values, annotations, description, reference,
+                moduleName, definition);
+        }
+    }
+
+    public static final class Runtime extends EnumTypeObjectArchetypeBuilder {
+        @NonNullByDefault
+        public Runtime(final JavaTypeName typeName) {
+            super(typeName);
+        }
+
+        @Override
+        public void setReference(final String reference) {
+            // No-op
+        }
+
+        @Override
+        public void setModuleName(final String moduleName) {
+            // No-op
+        }
+
+        @Override
+        public void setDescription(final String description) {
+            // No-op
+        }
+
+        @Override
+        public void setYangSourceDefinition(final YangSourceDefinition definition) {
+            // No-op
+        }
+
+        @Override
+        RuntimePair createEnumPair(final String name, final String mappedName, final int value, final Status status,
+                final String description, final String reference) {
+            return new RuntimePair(name, mappedName, value);
+        }
+
+        @Override
+        @NonNullByDefault
+        EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
+            return new RuntimeEnumTypeObjectArchetype(typeName(), values, annotations);
+        }
+    }
+
     private List<EnumTypeObjectArchetype.Pair> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
 
@@ -132,34 +216,5 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
             }
         }
         return javaToYang.inverse();
-    }
-
-    abstract static class AbstractEnumeration extends AbstractType implements EnumTypeObjectArchetype {
-        private final @NonNull List<AnnotationType> annotations;
-        private final @NonNull List<Pair> values;
-
-        @NonNullByDefault
-        AbstractEnumeration(final JavaTypeName name, final List<Pair> values, final List<AnnotationType> annotations) {
-            super(name);
-            this.values = requireNonNull(values);
-            this.annotations = requireNonNull(annotations);
-        }
-
-        @Override
-        public final List<Pair> getValues() {
-            return values;
-        }
-
-        @Override
-        public final List<AnnotationType> getAnnotations() {
-            return annotations;
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            super.addToStringAttributes(helper);
-            addToStringAttribute(helper, "values", values);
-            return helper;
-        }
     }
 }

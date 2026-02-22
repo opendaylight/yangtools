@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumPairBuilder;
 
-class EnumerationBuilderImplTest {
+class EnumTypeObjectArchetypeBuilderTest {
     private static final String DESCRIPTION = "Test description of Enum";
     private final String packageName = "org.opendaylight.test";
     private final String name = "TestName";
@@ -34,23 +34,24 @@ class EnumerationBuilderImplTest {
     private final int value = 12;
 
     private EnumTypeObjectArchetype enumeration;
-    private CodegenEnumerationBuilder enumerationBuilder;
-    private CodegenEnumerationBuilder enumerationBuilderSame;
-    private CodegenEnumerationBuilder enumerationBuilderOtherName;
-    private CodegenEnumerationBuilder enumerationBuilderOtherPackage;
+    private EnumTypeObjectArchetypeBuilder enumerationBuilder;
+    private EnumTypeObjectArchetypeBuilder enumerationBuilderSame;
+    private EnumTypeObjectArchetypeBuilder enumerationBuilderOtherName;
+    private EnumTypeObjectArchetypeBuilder enumerationBuilderOtherPackage;
 
     @BeforeEach
     void setup() {
-        enumerationBuilder = new CodegenEnumerationBuilder(JavaTypeName.create(packageName, name));
+        enumerationBuilder = new EnumTypeObjectArchetypeBuilder.Codegen(JavaTypeName.create(packageName, name));
         enumerationBuilder.setDescription(DESCRIPTION);
         enumerationBuilder.setModuleName(moduleName);
         enumerationBuilder.setReference(reference);
         enumerationBuilder.addValue(valueName, valueName, value, Status.CURRENT, valueDescription, null);
         enumerationBuilder.addAnnotation(packageName, "TestAnnotation");
-        enumerationBuilderSame = new CodegenEnumerationBuilder(JavaTypeName.create(packageName, name));
-        enumerationBuilderOtherName = new CodegenEnumerationBuilder(JavaTypeName.create(packageName, "SomeOtherName"));
-        enumerationBuilderOtherPackage = new CodegenEnumerationBuilder(JavaTypeName.create("org.opendaylight.other",
-            name));
+        enumerationBuilderSame = new EnumTypeObjectArchetypeBuilder.Codegen(JavaTypeName.create(packageName, name));
+        enumerationBuilderOtherName = new EnumTypeObjectArchetypeBuilder.Codegen(
+            JavaTypeName.create(packageName, "SomeOtherName"));
+        enumerationBuilderOtherPackage = new EnumTypeObjectArchetypeBuilder.Codegen(
+            JavaTypeName.create("org.opendaylight.other", name));
         enumeration = enumerationBuilder.build();
     }
 
@@ -112,7 +113,8 @@ class EnumerationBuilderImplTest {
         final var enumerationSame = enumerationBuilderSame.build();
         assertEquals(enumeration, enumerationSame);
 
-        final var enumerationBuilderSame1 = new CodegenEnumerationBuilder(JavaTypeName.create(packageName, name));
+        final var enumerationBuilderSame1 = new EnumTypeObjectArchetypeBuilder.Codegen(
+            JavaTypeName.create(packageName, name));
         final var enumerationSame1 = enumerationBuilderSame1.build();
         enumerationBuilderSame1.addValue(valueName, valueName, 14, Status.CURRENT, valueDescription, null);
         // Enums are equal thanks to same package name and local name

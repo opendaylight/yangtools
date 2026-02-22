@@ -22,11 +22,10 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedUnionBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedUnionBuilder.CodegenBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeEnumerationBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -55,8 +54,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(final JavaTypeName identifier) {
-            return new CodegenEnumerationBuilder(identifier);
+        EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(final JavaTypeName typeName) {
+            return new EnumTypeObjectArchetypeBuilder.Codegen(typeName);
         }
 
         @Override
@@ -126,8 +125,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(final JavaTypeName identifier) {
-            return new RuntimeEnumerationBuilder(identifier);
+        EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(final JavaTypeName typeName) {
+            return new EnumTypeObjectArchetypeBuilder.Runtime(typeName);
         }
 
         @Override
@@ -181,7 +180,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, JavaTypeName yangModuleInfo);
 
     @NonNullByDefault
-    abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName identifier);
+    abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName typeName);
 
     @NonNullByDefault
     abstract GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);
