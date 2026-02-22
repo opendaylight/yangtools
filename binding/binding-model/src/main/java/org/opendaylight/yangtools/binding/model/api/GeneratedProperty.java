@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyImpl;
+
 /**
  * Generated Property extends {@link TypeMember} interface with additional information about fields (and other members)
  * declared in Java Transfer Objects (or any java classes) and their access counterparts (getters and setters).
@@ -16,7 +18,7 @@ package org.opendaylight.yangtools.binding.model.api;
 // FIXME: 7.0.0: this interface (and others) need to be refactored:
 //               - getValue() is pretty much unused and its semantics are undefined
 //               - isReadOnly() is not related to getValue() and is not used together
-public interface GeneratedProperty extends TypeMember {
+public sealed interface GeneratedProperty extends TypeMember permits GeneratedPropertyImpl {
 
     String getValue();
 
