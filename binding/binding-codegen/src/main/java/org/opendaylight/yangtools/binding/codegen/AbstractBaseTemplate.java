@@ -427,12 +427,15 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             .collect(Collectors.toList());
     }
 
+    // FIXME: allow a indent constant
     @NonNullByDefault
     static final String wrapToDocumentation(final String text) {
+        // TODO: isBlank()?
         if (text.isEmpty()) {
             return text;
         }
 
+        // FIXME: do not use a splitter here
         final var sb = new StringBuilder().append("/**\n");
         for (var line : NL_SPLITTER.split(text)) {
             sb.append(" *");
