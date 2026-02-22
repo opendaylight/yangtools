@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen
 import static java.util.Objects.requireNonNull
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.DECIMAL64_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT16_TYPE
@@ -35,6 +34,7 @@ import java.util.Map
 import java.util.Set
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Constant
+import org.opendaylight.yangtools.binding.model.api.Decimal64Type
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
@@ -51,7 +51,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 class ClassTemplate extends AbstractClassTemplate {
     static val VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE,
-        DECIMAL64_TYPE,
         INT8_TYPE,
         INT16_TYPE,
         INT32_TYPE,
@@ -410,7 +409,7 @@ class ClassTemplate extends AbstractClassTemplate {
             public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
                 «IF propType.equals(Types.primitiveBooleanType())»
                     «bitsDefaultInstanceBody»
-                «ELSEIF VALUEOF_TYPES.contains(propType)»
+                «ELSEIF VALUEOF_TYPES.contains(propType) || propType instanceof Decimal64Type»
                     return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
                 «ELSEIF STRING_TYPE.equals(propType)»
                     return new «genTO.simpleName»(defaultValue);

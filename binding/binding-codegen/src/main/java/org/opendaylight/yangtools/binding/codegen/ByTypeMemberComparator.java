@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -60,7 +61,6 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         BaseYangTypes.INT16_TYPE,
         BaseYangTypes.INT32_TYPE,
         BaseYangTypes.INT64_TYPE,
-        BaseYangTypes.DECIMAL64_TYPE,
         BaseYangTypes.UINT8_TYPE,
         BaseYangTypes.UINT16_TYPE,
         BaseYangTypes.UINT32_TYPE,
@@ -137,7 +137,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
     }
 
     private static int rankOf(final Type type) {
-        if (FIXED_TYPES.contains(type) || BindingTypes.isIdentityType(type)) {
+        if (FIXED_TYPES.contains(type) || BindingTypes.isIdentityType(type) || type instanceof Decimal64Type) {
             return RANK_FIXED_SIZE;
         }
         if (type.equals(BaseYangTypes.STRING_TYPE) || type.equals(Types.BYTE_ARRAY)) {
