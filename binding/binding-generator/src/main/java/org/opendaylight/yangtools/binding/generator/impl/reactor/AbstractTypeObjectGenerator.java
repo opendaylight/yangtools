@@ -669,7 +669,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName,
             final ModuleGenerator module, final EnumTypeDefinition typedef) {
         // TODO units for typedef enum
-        final var builder = builderFactory.newEnumerationBuilder(typeName);
+        final var builder = builderFactory.newEnumTypeObjectBuilder(typeName);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
         typedef.getDescription().map(BindingGeneratorUtil::encodeAngleBrackets)

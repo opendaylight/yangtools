@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -61,12 +60,12 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         definition = builder.getYangSourceDefinition().orElse(null);
     }
 
-    AbstractGeneratedType(final JavaTypeName typeName, final TypeComment comment,
+    AbstractGeneratedType(final @NonNull JavaTypeName typeName, final TypeComment comment,
             final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
             final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-            final List<GeneratedTOBuilder> enclosedGenTOBuilders, final List<EnumBuilder> enumBuilders,
-            final List<Constant> constants, final List<MethodSignatureBuilder> methodBuilders,
-            final List<GeneratedPropertyBuilder> propertyBuilders) {
+            final List<GeneratedTOBuilder> enclosedGenTOBuilders,
+            final List<EnumTypeObjectArchetype.Builder> enumBuilders, final List<Constant> constants,
+            final List<MethodSignatureBuilder> methodBuilders, final List<GeneratedPropertyBuilder> propertyBuilders) {
         super(typeName);
         this.comment = comment;
         annotations = toUnmodifiableAnnotations(annotationBuilders);
@@ -143,9 +142,9 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     }
 
     protected static final @NonNull List<EnumTypeObjectArchetype> toUnmodifiableEnumerations(
-            final List<EnumBuilder> enumBuilders) {
+            final List<EnumTypeObjectArchetype.Builder> enumBuilders) {
         return makeUnmodifiable(enumBuilders.stream()
-            .map(EnumBuilder::build)
+            .map(EnumTypeObjectArchetype.Builder::build)
             .collect(Collectors.toUnmodifiableList()));
     }
 

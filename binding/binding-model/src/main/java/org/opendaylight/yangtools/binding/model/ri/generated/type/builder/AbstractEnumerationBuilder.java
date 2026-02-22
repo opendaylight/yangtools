@@ -26,13 +26,12 @@ import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder implements EnumBuilder
+abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder implements EnumTypeObjectArchetype.Builder
         permits CodegenEnumerationBuilder, RuntimeEnumerationBuilder {
     private List<EnumTypeObjectArchetype.Pair> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
