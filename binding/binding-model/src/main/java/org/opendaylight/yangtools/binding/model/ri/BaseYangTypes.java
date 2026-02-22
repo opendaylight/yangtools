@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 
+@NonNullByDefault
 public final class BaseYangTypes {
     /**
      * {@code Type} representation of {@code boolean} YANG type.
@@ -54,11 +56,6 @@ public final class BaseYangTypes {
     public static final ConcreteType STRING_TYPE = typeForBuiltIn(BuiltInType.STRING);
 
     /**
-     * {@code Type} representation of {@code decimal64} YANG type.
-     */
-    public static final ConcreteType DECIMAL64_TYPE = typeForBuiltIn(BuiltInType.DECIMAL64);
-
-    /**
      * {@code Type} representation of {@code uint8} YANG type.
      */
     public static final ConcreteType UINT8_TYPE = typeForBuiltIn(BuiltInType.UINT8);
@@ -90,33 +87,5 @@ public final class BaseYangTypes {
 
     private BaseYangTypes() {
         // Hidden on purpose
-    }
-
-    /**
-     * Searches {@code Type} value to which is YANG {@code type} mapped.
-     *
-     * @param type string with YANG type name
-     * @return Java {@code Type} representation of {@code type}, or null if the type is not mapped.
-     * @throws NullPointerException if type is null
-     */
-    public static ConcreteType javaTypeForYangType(final String type) {
-        return switch (type) {
-            case "binary" -> BINARY_TYPE;
-            case "boolean" -> BOOLEAN_TYPE;
-            case "decimal64" -> DECIMAL64_TYPE;
-            case "empty" -> EMPTY_TYPE;
-            case "enumeration" -> ENUMERATION_TYPE;
-            case "instance-identifier" -> INSTANCE_IDENTIFIER;
-            case "int8" -> INT8_TYPE;
-            case "int16" -> INT16_TYPE;
-            case "int32" -> INT32_TYPE;
-            case "int64" -> INT64_TYPE;
-            case "string" -> STRING_TYPE;
-            case "uint8" -> UINT8_TYPE;
-            case "uint16" -> UINT16_TYPE;
-            case "uint32" -> UINT32_TYPE;
-            case "uint64" -> UINT64_TYPE;
-            default -> null;
-        };
     }
 }
