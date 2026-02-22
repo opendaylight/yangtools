@@ -120,18 +120,6 @@ class EnumerationBuilderImplTest {
     }
 
     @Test
-    void testEnumerationToString() {
-        assertEquals("EnumerationImpl{name=org.opendaylight.test.TestName, "
-            + "values=[EnumPair [name=TestValue, mappedName=TestValue, value=12]]}", enumeration.toString());
-        assertEquals("public enum " + name + " {\n"
-            + "\t TestValue " + "(12 );\n"
-            + "}", enumeration.toFormattedString());
-
-        assertEquals("CodegenEnumerationBuilder{typeName=org.opendaylight.test.TestName, "
-            + "values=[EnumPair [name=TestValue, mappedName=TestValue, value=12]]}", enumerationBuilder.toString());
-    }
-
-    @Test
     void testUpdateEnumPairsFromEnumTypeDef() {
         enumerationBuilder.updateEnumPairsFromEnumTypeDef(BaseTypes.enumerationTypeBuilder(QName.create("test", "test"))
             .addEnum(EnumPairBuilder.create("SomeName", 42)

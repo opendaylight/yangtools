@@ -22,13 +22,6 @@ public interface Enumeration extends GeneratedType {
     List<Pair> getValues();
 
     /**
-     * Formats enumeration according to rules of the programming language.
-     *
-     * @return string with source code in some programming language
-     */
-    String toFormattedString();
-
-    /**
      * Interface is used for reading enumeration item. It means item's name and its value.
      */
     interface Pair extends DocumentedNode.WithStatus {
