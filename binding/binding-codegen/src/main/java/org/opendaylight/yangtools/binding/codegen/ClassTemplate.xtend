@@ -517,7 +517,7 @@ class ClassTemplate extends BaseTemplate {
     def protected enumDeclarations() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
-                «new EnumTemplate(javaType.getEnclosedType(e.name), e).generateAsInnerClass»
+                «new EnumTypeObjectTemplate(javaType.getEnclosedType(e.name), e).generateAsInnerClass»
             «ENDFOR»
         «ENDIF»
     '''

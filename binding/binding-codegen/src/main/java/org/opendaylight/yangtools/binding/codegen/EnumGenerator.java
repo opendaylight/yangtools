@@ -27,7 +27,8 @@ public class EnumGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        return type instanceof EnumTypeObjectArchetype enums ?  new EnumTemplate(enums).generate() : "";
+        return type instanceof EnumTypeObjectArchetype archetype ? new EnumTypeObjectTemplate(archetype).generate()
+            : "";
     }
 
     @Override
