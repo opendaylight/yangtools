@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
@@ -65,7 +66,7 @@ public interface EnumTypeObjectArchetype extends GeneratedType {
     /**
      * Interface is used for reading enumeration item. It means item's name and its value.
      */
-    interface Pair extends DocumentedNode.WithStatus {
+    sealed interface Pair extends DocumentedNode.WithStatus permits AbstractPair {
         /**
          * {@return the name of the enumeration item as it is specified in the input YANG}
          */

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -119,51 +118,6 @@ abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder imp
             }
         }
         return javaToYang.inverse();
-    }
-
-    abstract static class AbstractPair implements EnumTypeObjectArchetype.Pair {
-        private final String name;
-        private final String mappedName;
-        private final int value;
-
-        AbstractPair(final String name, final String mappedName, final int value) {
-            this.name = requireNonNull(name);
-            this.mappedName = requireNonNull(mappedName);
-            this.value = value;
-        }
-
-        @Override
-        public final String getName() {
-            return name;
-        }
-
-        @Override
-        public final String getMappedName() {
-            return mappedName;
-        }
-
-        @Override
-        public final int getValue() {
-            return value;
-        }
-
-        @Override
-        public final int hashCode() {
-            return name.hashCode() * 31 + value;
-        }
-
-        @Override
-        public final boolean equals(final Object obj) {
-            return obj == this || obj instanceof AbstractPair other && name.equals(other.name) && value == other.value;
-        }
-
-        @Override
-        public final String toString() {
-            return new StringBuilder().append("EnumPair [name=").append(name)
-                .append(", mappedName=").append(getMappedName())
-                .append(", value=").append(value)
-                .append("]").toString();
-        }
     }
 
     abstract static class AbstractEnumeration extends AbstractType implements EnumTypeObjectArchetype {

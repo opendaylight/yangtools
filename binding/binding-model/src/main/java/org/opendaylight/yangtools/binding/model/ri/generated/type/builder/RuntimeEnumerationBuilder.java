@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.RuntimePair;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 public final class RuntimeEnumerationBuilder extends AbstractEnumerationBuilder {
@@ -47,30 +48,9 @@ public final class RuntimeEnumerationBuilder extends AbstractEnumerationBuilder 
     }
 
     @Override
-    EnumPair createEnumPair(final String name, final String mappedName, final int value, final Status status,
+    RuntimePair createEnumPair(final String name, final String mappedName, final int value, final Status status,
             final String description, final String reference) {
-        return new EnumPair(name, mappedName, value);
-    }
-
-    private static final class EnumPair extends AbstractPair {
-        EnumPair(final String name, final String mappedName, final int value) {
-            super(name, mappedName, value);
-        }
-
-        @Override
-        public Optional<String> getDescription() {
-            throw unsupported();
-        }
-
-        @Override
-        public Optional<String> getReference() {
-            throw unsupported();
-        }
-
-        @Override
-        public Status getStatus() {
-            throw unsupported();
-        }
+        return new RuntimePair(name, mappedName, value);
     }
 
     private static final class EnumerationImpl extends AbstractEnumeration {

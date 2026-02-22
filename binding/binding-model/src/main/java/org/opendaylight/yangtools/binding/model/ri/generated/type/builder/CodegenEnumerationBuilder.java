@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.CodegenPair;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder {
@@ -55,38 +53,9 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
     }
 
     @Override
-    EnumPair createEnumPair(final String name, final String mappedName, final int value, final Status status,
+    CodegenPair createEnumPair(final String name, final String mappedName, final int value, final Status status,
             final String enumDescription, final String enumReference) {
-        return new EnumPair(name, mappedName, value, status, enumDescription, enumReference);
-    }
-
-    private static final class EnumPair extends AbstractPair {
-        private final @NonNull Status status;
-        private final String description;
-        private final String reference;
-
-        EnumPair(final String name, final String mappedName, final int value, final Status status,
-                final String description, final String reference) {
-            super(name, mappedName, value);
-            this.status = requireNonNull(status);
-            this.description = description;
-            this.reference = reference;
-        }
-
-        @Override
-        public Optional<String> getDescription() {
-            return Optional.ofNullable(description);
-        }
-
-        @Override
-        public Optional<String> getReference() {
-            return Optional.ofNullable(reference);
-        }
-
-        @Override
-        public Status getStatus() {
-            return status;
-        }
+        return new CodegenPair(name, mappedName, value, status, enumDescription, enumReference);
     }
 
     private static final class EnumerationImpl extends AbstractEnumeration {
