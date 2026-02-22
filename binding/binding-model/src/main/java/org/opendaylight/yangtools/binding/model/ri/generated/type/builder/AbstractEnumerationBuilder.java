@@ -23,13 +23,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
-import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.EnumBuilder;
@@ -207,41 +202,6 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
             super.addToStringAttributes(helper);
             addToStringAttribute(helper, "values", values);
             return helper;
-        }
-
-        @Override
-        public final boolean isAbstract() {
-            return false;
-        }
-
-        @Override
-        public final List<Type> getImplements() {
-            return List.of();
-        }
-
-        @Override
-        public final List<GeneratedType> getEnclosedTypes() {
-            return List.of();
-        }
-
-        @Override
-        public final List<Enumeration> getEnumerations() {
-            return List.of();
-        }
-
-        @Override
-        public final List<Constant> getConstantDefinitions() {
-            return List.of();
-        }
-
-        @Override
-        public final List<MethodSignature> getMethodDefinitions() {
-            return List.of();
-        }
-
-        @Override
-        public final List<GeneratedProperty> getProperties() {
-            return List.of();
         }
     }
 }

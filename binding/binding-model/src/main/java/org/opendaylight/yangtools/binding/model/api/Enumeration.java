@@ -21,6 +21,41 @@ public interface Enumeration extends GeneratedType {
      */
     List<Pair> getValues();
 
+    @Override
+    default boolean isAbstract() {
+        return false;
+    }
+
+    @Override
+    default List<Type> getImplements() {
+        return List.of();
+    }
+
+    @Override
+    default List<GeneratedType> getEnclosedTypes() {
+        return List.of();
+    }
+
+    @Override
+    default List<Enumeration> getEnumerations() {
+        return List.of();
+    }
+
+    @Override
+    default List<Constant> getConstantDefinitions() {
+        return List.of();
+    }
+
+    @Override
+    default List<MethodSignature> getMethodDefinitions() {
+        return List.of();
+    }
+
+    @Override
+    default List<GeneratedProperty> getProperties() {
+        return List.of();
+    }
+
     /**
      * Interface is used for reading enumeration item. It means item's name and its value.
      */
