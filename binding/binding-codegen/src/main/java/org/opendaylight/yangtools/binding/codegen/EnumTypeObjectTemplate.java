@@ -36,12 +36,19 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         this.archetype = requireNonNull(archetype);
     }
 
-    static String generateAsInner(final AbstractJavaGeneratedType javaType, final EnumTypeObjectArchetype archetype) {
-        return new EnumTypeObjectTemplate(javaType, archetype).body();
+    static void generateAsInner(final AbstractJavaGeneratedType javaType, final EnumTypeObjectArchetype archetype,
+            final StringBuilder sb) {
+        new EnumTypeObjectTemplate(javaType, archetype).appendBody(sb);
     }
 
     @Override
     String body() {
+        final var sb = new StringBuilder();
+        appendBody(sb);
+        return sb.toString();
+    }
+
+    private void appendBody(final StringBuilder sb) {
         // calculate imports up front
         final var codeHelpers = importedName(CODEHELPERS);
         final var enumTypeObject = importedName(ENUM_TYPE_OBJECT);
@@ -55,8 +62,6 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         final var typeName = archetype.simpleName();
 
         // now build the body
-        final var sb = new StringBuilder();
-
         final var javadoc = formatDataForJavaDoc(archetype);
         if (!javadoc.isBlank()) {
             sb.append(wrapToDocumentation(javadoc)).append('\n');
@@ -170,7 +175,5 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         sb.append("        return ").append(codeHelpers).append(".checkEnum(forValue(intValue), intValue);\n");
         sb.append("    }\n");
         sb.append("}\n");
-
-        return sb.toString();
     }
 }

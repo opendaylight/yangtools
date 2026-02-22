@@ -494,7 +494,7 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         final var sb = new StringBuilder();
         while (true) {
             final var archetype = it.next();
-            sb.append(EnumTypeObjectTemplate.generateAsInner(javaType().getEnclosedType(archetype.name()), archetype));
+            EnumTypeObjectTemplate.generateAsInner(javaType().getEnclosedType(archetype.name()), archetype, sb);
             if (!it.hasNext()) {
                 return sb.toString();
             }
