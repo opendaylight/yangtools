@@ -17,12 +17,10 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 class BaseYangTypesTest {
     @Test
     void test() {
-        final var stringType = assertInstanceOf(ConcreteType.class, BaseYangTypes.javaTypeForYangType("string"));
+        final var stringType = assertInstanceOf(ConcreteType.class, BaseYangTypes.STRING_TYPE);
         assertEquals("java.lang", stringType.packageName());
         assertEquals("String", stringType.simpleName());
-        final var stringBooleanMap = Types.mapTypeFor(
-            BaseYangTypes.javaTypeForYangType("string"),
-            BaseYangTypes.javaTypeForYangType("boolean"));
+        final var stringBooleanMap = Types.mapTypeFor(BaseYangTypes.STRING_TYPE, BaseYangTypes.BOOLEAN_TYPE);
 
         assertEquals("java.util", stringBooleanMap.packageName());
         assertEquals("Map", stringBooleanMap.simpleName());
