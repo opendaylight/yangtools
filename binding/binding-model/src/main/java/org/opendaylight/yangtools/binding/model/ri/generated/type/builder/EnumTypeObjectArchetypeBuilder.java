@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -18,10 +17,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -132,34 +129,5 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
             }
         }
         return javaToYang.inverse();
-    }
-
-    abstract static class AbstractEnumeration extends AbstractType implements EnumTypeObjectArchetype {
-        private final @NonNull List<AnnotationType> annotations;
-        private final @NonNull List<Pair> values;
-
-        @NonNullByDefault
-        AbstractEnumeration(final JavaTypeName name, final List<Pair> values, final List<AnnotationType> annotations) {
-            super(name);
-            this.values = requireNonNull(values);
-            this.annotations = requireNonNull(annotations);
-        }
-
-        @Override
-        public final List<Pair> getValues() {
-            return values;
-        }
-
-        @Override
-        public final List<AnnotationType> getAnnotations() {
-            return annotations;
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            super.addToStringAttributes(helper);
-            addToStringAttribute(helper, "values", values);
-            return helper;
-        }
     }
 }

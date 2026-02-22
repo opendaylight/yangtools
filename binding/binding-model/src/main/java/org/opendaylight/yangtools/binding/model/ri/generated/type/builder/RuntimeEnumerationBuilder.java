@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -53,37 +52,6 @@ public final class RuntimeEnumerationBuilder extends EnumTypeObjectArchetypeBuil
     @Override
     @NonNullByDefault
     EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
-        return new EnumerationImpl(typeName(), values, annotations);
-    }
-
-    private static final class EnumerationImpl extends AbstractEnumeration {
-        @NonNullByDefault
-        EnumerationImpl(final JavaTypeName name, final List<Pair> values, final List<AnnotationType> annotations) {
-            super(name, values, annotations);
-        }
-
-        @Override
-        public String getDescription() {
-            throw unsupported();
-        }
-
-        @Override
-        public String getReference() {
-            throw unsupported();
-        }
-
-        @Override
-        public String getModuleName() {
-            throw unsupported();
-        }
-
-        @Override
-        public Optional<YangSourceDefinition> getYangSourceDefinition() {
-            throw unsupported();
-        }
-    }
-
-    static UnsupportedOperationException unsupported() {
-        return new UnsupportedOperationException("Not available at runtime");
+        return new RuntimeEnumTypeObjectArchetype(typeName(), values, annotations);
     }
 }

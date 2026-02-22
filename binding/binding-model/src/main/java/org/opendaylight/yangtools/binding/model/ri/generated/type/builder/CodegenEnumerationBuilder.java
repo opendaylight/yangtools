@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -58,43 +57,7 @@ public final class CodegenEnumerationBuilder extends EnumTypeObjectArchetypeBuil
     @Override
     @NonNullByDefault
     EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
-        return new EnumerationImpl(typeName(), values, annotations, this);
-    }
-
-    private static final class EnumerationImpl extends AbstractEnumeration {
-        private final String description;
-        private final String reference;
-        private final String moduleName;
-        private final YangSourceDefinition definition;
-
-        @NonNullByDefault
-        EnumerationImpl(final JavaTypeName name, final List<Pair> values, final List<AnnotationType> annotations,
-                final CodegenEnumerationBuilder builder) {
-            super(name, values, annotations);
-            description = builder.description;
-            moduleName = builder.moduleName;
-            reference = builder.reference;
-            definition = builder.definition;
-        }
-
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getReference() {
-            return reference;
-        }
-
-        @Override
-        public String getModuleName() {
-            return moduleName;
-        }
-
-        @Override
-        public Optional<YangSourceDefinition> getYangSourceDefinition() {
-            return Optional.ofNullable(definition);
-        }
+        return new CodegenEnumTypeObjectArchetype(typeName(), values, annotations, description, reference, moduleName,
+            definition);
     }
 }
