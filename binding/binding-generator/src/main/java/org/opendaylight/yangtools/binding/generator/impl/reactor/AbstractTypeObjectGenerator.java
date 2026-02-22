@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -268,7 +269,6 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     static final ImmutableMap<QName, Type> SIMPLE_TYPES = ImmutableMap.<QName, Type>builder()
         .put(BuiltInType.BINARY.typeName(), BaseYangTypes.BINARY_TYPE)
         .put(BuiltInType.BOOLEAN.typeName(), BaseYangTypes.BOOLEAN_TYPE)
-        .put(BuiltInType.DECIMAL64.typeName(), BaseYangTypes.DECIMAL64_TYPE)
         .put(BuiltInType.EMPTY.typeName(), BaseYangTypes.EMPTY_TYPE)
         .put(BuiltInType.INSTANCE_IDENTIFIER.typeName(), BaseYangTypes.INSTANCE_IDENTIFIER)
         .put(BuiltInType.INT8.typeName(), BaseYangTypes.INT8_TYPE)
@@ -464,8 +464,12 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         //       Which is relatively easy to do for integral types, but is way more problematic for 'pattern'
         //       restrictions. Nevertheless we can define the mapping in a way which can be implemented with relative
         //       ease.
-        return baseGen != null || SIMPLE_TYPES.containsKey(type.argument()) || isAddedByUses() || isAugmenting()
-            ? ClassPlacement.NONE : ClassPlacement.MEMBER;
+        if (baseGen != null) {
+            return ClassPlacement.NONE;
+        }
+        final var arg = type.argument();
+        return SIMPLE_TYPES.containsKey(arg) || arg.equals(BuiltInType.DECIMAL64.typeName()) || isAddedByUses()
+            || isAugmenting() ? ClassPlacement.NONE : ClassPlacement.MEMBER;
     }
 
     @Override
@@ -529,8 +533,18 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         final Type baseType;
         if (baseGen == null) {
-            final QName qname = type.argument();
-            baseType = verifyNotNull(SIMPLE_TYPES.get(qname), "Cannot resolve type %s in %s", qname, this);
+            final var qname = type.argument();
+            final var simple = SIMPLE_TYPES.get(qname);
+            if (simple == null) {
+                verify(qname.equals(BuiltInType.DECIMAL64.typeName()), "Cannot resolve type %s in %s", qname, this);
+                final var typedef = type.typeDefinition();
+                if (!(typedef instanceof DecimalTypeDefinition dtd)) {
+                    throw new VerifyException("Unexpected definition " + typedef + " in" + this);
+                }
+                baseType = Decimal64Type.ofFractionDigits(dtd.getFractionDigits());
+            } else {
+                baseType = simple;
+            }
         } else {
             // We are derived from a base generator. Defer to its type for return.
             baseType = baseGen.getGeneratedType(builderFactory);
@@ -627,6 +641,11 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return createBits(builderFactory, statement(), typeName(), currentModule(),
                 (BitsTypeDefinition) extractTypeDefinition(), isTypedef);
         }
+        if (BuiltInType.DECIMAL64.typeName().equals(arg)) {
+            final var typedef = (DecimalTypeDefinition) extractTypeDefinition();
+            return createSimple(builderFactory, statement(), typeName(), currentModule(),
+                Decimal64Type.ofFractionDigits(typedef.getFractionDigits()), typedef);
+        }
         if (BuiltInType.ENUMERATION.typeName().equals(arg)) {
             return createEnumeration(builderFactory, statement(), typeName(), currentModule(),
                 (EnumTypeDefinition) extractTypeDefinition());
@@ -638,6 +657,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             auxiliaryGeneratedTypes = List.copyOf(tmp);
             return ret;
         }
+
         return createSimple(builderFactory, statement(), typeName(), currentModule(),
             verifyNotNull(SIMPLE_TYPES.get(arg), "Unhandled type %s", arg), extractTypeDefinition());
     }
@@ -785,36 +805,43 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                         "Cannot resolve leafref %s in %s", stmt, definingStatement)
                         .methodReturnType(builderFactory);
                 } else {
+                    final var subDef = subType.typeDefinition();
+
                     Type baseType = SIMPLE_TYPES.get(subName);
                     if (baseType == null) {
-                        // This has to be a reference to a typedef, let's lookup it up and pick up its type
-                        final AbstractTypeObjectGenerator<?, ?> baseGen = verifyNotNull(
-                            dependencies.baseTypes.get(subName), "Cannot resolve base type %s in %s", subName,
-                            definingStatement);
-                        baseType = baseGen.methodReturnType(builderFactory);
+                        if (!BuiltInType.DECIMAL64.typeName().equals(subName)) {
+                            // This has to be a reference to a typedef, let's lookup it up and pick up its type
+                            final AbstractTypeObjectGenerator<?, ?> baseGen = verifyNotNull(
+                                dependencies.baseTypes.get(subName), "Cannot resolve base type %s in %s", subName,
+                                definingStatement);
+                            baseType = baseGen.methodReturnType(builderFactory);
 
-                        // FIXME: This is legacy behaviour for leafrefs:
-                        if (baseGen.refType instanceof TypeReference.Leafref) {
-                            // if there already is a compatible property, do not generate a new one
-                            final Type search = baseType;
+                            // FIXME: This is legacy behaviour for leafrefs:
+                            if (baseGen.refType instanceof TypeReference.Leafref) {
+                                // if there already is a compatible property, do not generate a new one
+                                final Type search = baseType;
 
-                            final String matching = builder.getProperties().stream()
-                                .filter(prop -> search == ((GeneratedPropertyBuilderImpl) prop).getReturnType())
-                                .findFirst()
-                                .map(GeneratedPropertyBuilder::getName)
-                                .orElse(null);
-                            if (matching != null) {
-                                typeProperties.add(matching);
-                                continue;
+                                final String matching = builder.getProperties().stream()
+                                    .filter(prop -> search == ((GeneratedPropertyBuilderImpl) prop).getReturnType())
+                                    .findFirst()
+                                    .map(GeneratedPropertyBuilder::getName)
+                                    .orElse(null);
+                                if (matching != null) {
+                                    typeProperties.add(matching);
+                                    continue;
+                                }
+
+                                // ... otherwise generate this weird property name
+                                propSource = getUnionLeafrefMemberName(builder.typeName().simpleName(),
+                                    baseType.simpleName());
                             }
-
-                            // ... otherwise generate this weird property name
-                            propSource = getUnionLeafrefMemberName(builder.typeName().simpleName(),
-                                baseType.simpleName());
+                        } else {
+                            baseType = Decimal64Type.ofFractionDigits(
+                                ((DecimalTypeDefinition) subDef).getFractionDigits());
                         }
                     }
 
-                    expressions.putAll(resolveRegExpressions(subType.typeDefinition()));
+                    expressions.putAll(resolveRegExpressions(subDef));
 
                     generatedType = restrictType(baseType, getRestrictions(type.typeDefinition()), builderFactory);
                 }
