@@ -16,12 +16,12 @@ import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
+import org.opendaylight.yangtools.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedUnionBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedUnionBuilder.CodegenBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
@@ -65,7 +65,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        AbstractEnumerationBuilder newEnumerationBuilder(final JavaTypeName identifier) {
+        EnumBuilder newEnumerationBuilder(final JavaTypeName identifier) {
             return new CodegenEnumerationBuilder(identifier);
         }
 
@@ -136,7 +136,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        AbstractEnumerationBuilder newEnumerationBuilder(final JavaTypeName identifier) {
+        EnumBuilder newEnumerationBuilder(final JavaTypeName identifier) {
             return new RuntimeEnumerationBuilder(identifier);
         }
 
@@ -181,7 +181,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, JavaTypeName yangModuleInfo);
 
     @NonNullByDefault
-    abstract AbstractEnumerationBuilder newEnumerationBuilder(JavaTypeName identifier);
+    abstract EnumBuilder newEnumerationBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
     abstract GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);

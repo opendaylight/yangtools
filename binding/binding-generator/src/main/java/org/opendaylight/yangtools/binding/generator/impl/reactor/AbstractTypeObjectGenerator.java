@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -670,7 +669,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName,
             final ModuleGenerator module, final EnumTypeDefinition typedef) {
         // TODO units for typedef enum
-        final AbstractEnumerationBuilder builder = builderFactory.newEnumerationBuilder(typeName);
+        final var builder = builderFactory.newEnumerationBuilder(typeName);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
         typedef.getDescription().map(BindingGeneratorUtil::encodeAngleBrackets)

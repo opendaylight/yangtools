@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Enumeration;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
@@ -33,8 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-// FIXME: public because EnumBuilder does not have setters we are exposing
-public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder implements EnumBuilder
+abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder implements EnumBuilder
         permits CodegenEnumerationBuilder, RuntimeEnumerationBuilder {
     private List<Enumeration.Pair> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
@@ -60,12 +58,6 @@ public abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuil
         values = LazyCollections.lazyAdd(values,
             createEnumPair(name, mappedName, value, status, description, reference));
     }
-
-    public abstract void setReference(String reference);
-
-    public abstract void setModuleName(String moduleName);
-
-    public abstract void setYangSourceDefinition(YangSourceDefinition yangSourceDefinition);
 
     abstract AbstractPair createEnumPair(String name, String mappedName, int value, Status status, String description,
             String reference);
