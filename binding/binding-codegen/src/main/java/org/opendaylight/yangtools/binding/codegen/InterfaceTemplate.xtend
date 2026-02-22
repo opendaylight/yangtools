@@ -158,7 +158,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateEnums() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
-                «val enumTemplate = new EnumTemplate(javaType.getEnclosedType(e.name), e)»
+                «val enumTemplate = new EnumTypeObjectTemplate(javaType.getEnclosedType(e.name), e)»
                 «enumTemplate.generateAsInnerClass»
             «ENDFOR»
         «ENDIF»
