@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-final class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
+public final class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
     private final List<Parameter> params;
     private final @NonNull ValueMechanics mechanics;
     private final boolean isAbstract;

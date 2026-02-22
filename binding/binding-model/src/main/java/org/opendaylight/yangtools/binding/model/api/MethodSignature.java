@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.MethodSignatureImpl;
 
 /**
  * The Method Signature interface contains simplified meta model for java method definition. Each method MUST be defined
@@ -22,7 +23,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * <p>The defining Type contains the reference to Generated Type that declares Method Signature.
  */
-public interface MethodSignature extends TypeMember {
+public sealed interface MethodSignature extends TypeMember permits MethodSignatureImpl {
     /**
      * Returns {@code true} if the method signature is defined as abstract.
      *

@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractTypeMember;
 
 /**
  * Common interface for variables and methods in class.
  */
-public interface TypeMember {
+public sealed interface TypeMember permits AbstractTypeMember, GeneratedProperty, MethodSignature {
     /**
      * {@return comment string associated with member}
      */
