@@ -30,13 +30,17 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder implements EnumTypeObjectArchetype.Builder
+/**
+ * Base class for {@link EnumTypeObjectArchetype.Builder} implementations.
+ */
+public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractTypeBuilder
+        implements EnumTypeObjectArchetype.Builder
         permits CodegenEnumerationBuilder, RuntimeEnumerationBuilder {
     private List<EnumTypeObjectArchetype.Pair> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
 
     @NonNullByDefault
-    AbstractEnumerationBuilder(final JavaTypeName tyoeName) {
+    EnumTypeObjectArchetypeBuilder(final JavaTypeName tyoeName) {
         super(tyoeName);
     }
 
@@ -124,7 +128,7 @@ abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder imp
         private final @NonNull List<AnnotationType> annotations;
         private final @NonNull List<Pair> values;
 
-        AbstractEnumeration(final AbstractEnumerationBuilder builder) {
+        AbstractEnumeration(final EnumTypeObjectArchetypeBuilder builder) {
             super(builder.typeName());
             values = ImmutableList.copyOf(builder.values);
             annotations = builder.annotationBuilders.stream()

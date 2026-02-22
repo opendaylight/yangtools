@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.CodegenPair;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
-public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder {
+public final class CodegenEnumerationBuilder extends EnumTypeObjectArchetypeBuilder {
     private String description;
     private String reference;
     private String moduleName;

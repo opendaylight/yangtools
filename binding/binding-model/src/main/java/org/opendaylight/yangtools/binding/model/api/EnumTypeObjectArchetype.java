@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
@@ -86,7 +87,7 @@ public interface EnumTypeObjectArchetype extends GeneratedType {
     /**
      * A {@link TypeBuilder} producing {@link EnumTypeObjectArchetype}.
      */
-    non-sealed interface Builder extends TypeBuilder, AnnotableTypeBuilder {
+    sealed interface Builder extends TypeBuilder, AnnotableTypeBuilder permits EnumTypeObjectArchetypeBuilder {
 
         void setDescription(String description);
 

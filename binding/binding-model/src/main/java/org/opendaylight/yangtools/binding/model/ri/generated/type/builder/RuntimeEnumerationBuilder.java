@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.RuntimePair;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
-public final class RuntimeEnumerationBuilder extends AbstractEnumerationBuilder {
+public final class RuntimeEnumerationBuilder extends EnumTypeObjectArchetypeBuilder {
     @NonNullByDefault
     public RuntimeEnumerationBuilder(final JavaTypeName typeName) {
         super(typeName);
