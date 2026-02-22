@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 
 /**
  * This interface represents a Java type which is expected to be available via  {@code binding-spec} dependencies. This
@@ -17,7 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * specialization.
  */
 @NonNullByDefault
-public sealed interface ConcreteType extends Type permits DefaultConcreteType, RestrictedType {
+public sealed interface ConcreteType extends Type permits Decimal64Type, DefaultConcreteType, RestrictedType {
     /**
      * {@return this type's equivalent with specified {@link Restrictions}}
      * @param newRestrictions the restrictions to apply
@@ -29,6 +30,9 @@ public sealed interface ConcreteType extends Type permits DefaultConcreteType, R
      * @param typeClass the type class
      */
     static ConcreteType ofClass(final Class<?> typeClass) {
+        if (typeClass.equals(Decimal64.class)) {
+            throw new IllegalArgumentException("Cannot instantiate on Decimal64, use Decimal64Type instead");
+        }
         return new DefaultConcreteType(JavaTypeName.create(typeClass));
     }
 }

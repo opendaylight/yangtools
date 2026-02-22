@@ -268,7 +268,6 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     static final ImmutableMap<QName, Type> SIMPLE_TYPES = ImmutableMap.<QName, Type>builder()
         .put(BuiltInType.BINARY.typeName(), BaseYangTypes.BINARY_TYPE)
         .put(BuiltInType.BOOLEAN.typeName(), BaseYangTypes.BOOLEAN_TYPE)
-        .put(BuiltInType.DECIMAL64.typeName(), BaseYangTypes.DECIMAL64_TYPE)
         .put(BuiltInType.EMPTY.typeName(), BaseYangTypes.EMPTY_TYPE)
         .put(BuiltInType.INSTANCE_IDENTIFIER.typeName(), BaseYangTypes.INSTANCE_IDENTIFIER)
         .put(BuiltInType.INT8.typeName(), BaseYangTypes.INT8_TYPE)
@@ -281,6 +280,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         .put(BuiltInType.UINT32.typeName(), BaseYangTypes.UINT32_TYPE)
         .put(BuiltInType.UINT64.typeName(), BaseYangTypes.UINT64_TYPE)
         .build();
+
 
     private final TypeEffectiveStatement type;
 
@@ -464,8 +464,12 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         //       Which is relatively easy to do for integral types, but is way more problematic for 'pattern'
         //       restrictions. Nevertheless we can define the mapping in a way which can be implemented with relative
         //       ease.
-        return baseGen != null || SIMPLE_TYPES.containsKey(type.argument()) || isAddedByUses() || isAugmenting()
-            ? ClassPlacement.NONE : ClassPlacement.MEMBER;
+        if (baseGen != null) {
+            return ClassPlacement.NONE;
+        }
+        final var arg = type.argument();
+        return SIMPLE_TYPES.containsKey(arg) || arg.equals(BuiltInType.DECIMAL64.typeName()) || isAddedByUses()
+            || isAugmenting() ? ClassPlacement.NONE : ClassPlacement.MEMBER;
     }
 
     @Override
@@ -529,8 +533,13 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         final Type baseType;
         if (baseGen == null) {
-            final QName qname = type.argument();
-            baseType = verifyNotNull(SIMPLE_TYPES.get(qname), "Cannot resolve type %s in %s", qname, this);
+            final var qname = type.argument();
+            final var simple = SIMPLE_TYPES.get(qname);
+            if (simple == null) {
+                verify(qname.equals(BuiltInType.DECIMAL64.typeName()), "Cannot resolve type %s in %s", qname, this);
+                throw new UnsupportedOperationException();
+            }
+            baseType = simple;
         } else {
             // We are derived from a base generator. Defer to its type for return.
             baseType = baseGen.getGeneratedType(builderFactory);
@@ -626,6 +635,9 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         if (BuiltInType.BITS.typeName().equals(arg)) {
             return createBits(builderFactory, statement(), typeName(), currentModule(),
                 (BitsTypeDefinition) extractTypeDefinition(), isTypedef);
+        }
+        if (BuiltInType.DECIMAL64.typeName().equals(arg)) {
+            throw new UnsupportedOperationException();
         }
         if (BuiltInType.ENUMERATION.typeName().equals(arg)) {
             return createEnumeration(builderFactory, statement(), typeName(), currentModule(),

@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * concrete type only with changed restriction values.
  */
 @NonNullByDefault
-public sealed interface RestrictedType extends ConcreteType permits DefaultRestrictedType {
+public sealed interface RestrictedType extends ConcreteType permits DefaultRestrictedType, RestrictedDecimal64Type {
     /**
      * {@return the {@link Restrictions} applicable to this type}
      */
