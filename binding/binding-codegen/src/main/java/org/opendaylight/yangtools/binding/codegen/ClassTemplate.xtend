@@ -161,7 +161,7 @@ class ClassTemplate extends BaseTemplate {
         «generateClassDeclaration(isInnerClass)» {
             «suidDeclaration»
             «innerClassesDeclarations»
-            «enumDeclarations»
+            «generateInnerEnumTypeObjects(enums)»
             «constantsDeclarations»
             «generateFields»
 
@@ -508,19 +508,6 @@ class ClassTemplate extends BaseTemplate {
     def package String finalClass() {
         return " "
     }
-
-    /**
-     * Template method which generates JAVA enum type.
-     *
-     * @return string with inner enum source code in JAVA format
-     */
-    def protected enumDeclarations() '''
-        «IF !enums.empty»
-            «FOR e : enums SEPARATOR "\n"»
-                «EnumTypeObjectTemplate.generateAsInner(javaType.getEnclosedType(e.name), e)»
-            «ENDFOR»
-        «ENDIF»
-    '''
 
     def protected suidDeclaration() '''
         «IF genTO.SUID !== null»

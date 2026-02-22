@@ -93,7 +93,7 @@ class InterfaceTemplate extends BaseTemplate {
 
             «generateInnerClasses»
 
-            «generateEnums»
+            «generateInnerEnumTypeObjects(enums)»
 
             «generateConstants»
 
@@ -146,19 +146,6 @@ class InterfaceTemplate extends BaseTemplate {
         «IF !enclosedGeneratedTypes.empty»
             «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
                 «generateInnerClass(innerClass)»
-            «ENDFOR»
-        «ENDIF»
-    '''
-
-    /**
-     * Template method which generates JAVA enum type.
-     *
-     * @return string with inner enum source code in JAVA format
-     */
-    def private generateEnums() '''
-        «IF !enums.empty»
-            «FOR e : enums SEPARATOR "\n"»
-                «EnumTypeObjectTemplate.generateAsInner(javaType.getEnclosedType(e.name), e)»
             «ENDFOR»
         «ENDIF»
     '''

@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -477,5 +478,27 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * {@return a string containing generated code for specified archetypes}
+     * @param archetypes the {@link EnumTypeObjectArchetype}s to generate
+     */
+    @NonNullByDefault
+    final String generateInnerEnumTypeObjects(final List<EnumTypeObjectArchetype> archetypes) {
+        if (archetypes.isEmpty()) {
+            return "";
+        }
+
+        final var it = archetypes.iterator();
+        final var sb = new StringBuilder();
+        while (true) {
+            final var archetype = it.next();
+            sb.append(EnumTypeObjectTemplate.generateAsInner(javaType().getEnclosedType(archetype.name()), archetype));
+            if (!it.hasNext()) {
+                return sb.toString();
+            }
+            sb.append('\n');
+        }
     }
 }
