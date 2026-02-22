@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype.Pair;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.CodegenPair;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -48,14 +50,15 @@ public final class CodegenEnumerationBuilder extends EnumTypeObjectArchetypeBuil
     }
 
     @Override
-    public EnumTypeObjectArchetype build() {
-        return new EnumerationImpl(this);
-    }
-
-    @Override
     CodegenPair createEnumPair(final String name, final String mappedName, final int value, final Status status,
             final String enumDescription, final String enumReference) {
         return new CodegenPair(name, mappedName, value, status, enumDescription, enumReference);
+    }
+
+    @Override
+    @NonNullByDefault
+    EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
+        return new EnumerationImpl(typeName(), values, annotations, this);
     }
 
     private static final class EnumerationImpl extends AbstractEnumeration {
@@ -64,17 +67,14 @@ public final class CodegenEnumerationBuilder extends EnumTypeObjectArchetypeBuil
         private final String moduleName;
         private final YangSourceDefinition definition;
 
-        EnumerationImpl(final CodegenEnumerationBuilder builder) {
-            super(builder);
+        @NonNullByDefault
+        EnumerationImpl(final JavaTypeName name, final List<Pair> values, final List<AnnotationType> annotations,
+                final CodegenEnumerationBuilder builder) {
+            super(name, values, annotations);
             description = builder.description;
             moduleName = builder.moduleName;
             reference = builder.reference;
             definition = builder.definition;
-        }
-
-        @Override
-        public TypeComment getComment() {
-            return null;
         }
 
         @Override

@@ -35,6 +35,11 @@ public interface EnumTypeObjectArchetype extends GeneratedType {
     }
 
     @Override
+    default TypeComment getComment() {
+        return null;
+    }
+
+    @Override
     default List<Type> getImplements() {
         return List.of();
     }

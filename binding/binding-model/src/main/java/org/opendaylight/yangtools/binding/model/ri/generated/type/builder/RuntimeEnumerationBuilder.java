@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype.Pair;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.RuntimePair;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -43,24 +45,21 @@ public final class RuntimeEnumerationBuilder extends EnumTypeObjectArchetypeBuil
     }
 
     @Override
-    public EnumTypeObjectArchetype build() {
-        return new EnumerationImpl(this);
-    }
-
-    @Override
     RuntimePair createEnumPair(final String name, final String mappedName, final int value, final Status status,
             final String description, final String reference) {
         return new RuntimePair(name, mappedName, value);
     }
 
-    private static final class EnumerationImpl extends AbstractEnumeration {
-        EnumerationImpl(final RuntimeEnumerationBuilder builder) {
-            super(builder);
-        }
+    @Override
+    @NonNullByDefault
+    EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
+        return new EnumerationImpl(typeName(), values, annotations);
+    }
 
-        @Override
-        public TypeComment getComment() {
-            throw unsupported();
+    private static final class EnumerationImpl extends AbstractEnumeration {
+        @NonNullByDefault
+        EnumerationImpl(final JavaTypeName name, final List<Pair> values, final List<AnnotationType> annotations) {
+            super(name, values, annotations);
         }
 
         @Override

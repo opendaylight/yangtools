@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -46,7 +47,7 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
 
     @Override
     public final AnnotationTypeBuilder addAnnotation(final JavaTypeName identifier) {
-        final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(identifier);
+        final var builder = new AnnotationTypeBuilderImpl(identifier);
         if (!annotationBuilders.contains(builder)) {
             annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
             return builder;
@@ -81,6 +82,15 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
                 enumPair.getDescription().orElse(null), enumPair.getReference().orElse(null));
         }
     }
+
+    @Override
+    public final EnumTypeObjectArchetype build() {
+        return build(ImmutableList.copyOf(values),
+            annotationBuilders.stream().map(AnnotationTypeBuilder::build).collect(ImmutableList.toImmutableList()));
+    }
+
+    @NonNullByDefault
+    abstract EnumTypeObjectArchetype build(List<EnumTypeObjectArchetype.Pair> values, List<AnnotationType> annotations);
 
     /**
      * Returns Java identifiers, conforming to JLS9 Section 3.8 to use for specified YANG assigned names
@@ -128,12 +138,11 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
         private final @NonNull List<AnnotationType> annotations;
         private final @NonNull List<Pair> values;
 
-        AbstractEnumeration(final EnumTypeObjectArchetypeBuilder builder) {
-            super(builder.typeName());
-            values = ImmutableList.copyOf(builder.values);
-            annotations = builder.annotationBuilders.stream()
-                .map(AnnotationTypeBuilder::build)
-                .collect(ImmutableList.toImmutableList());
+        @NonNullByDefault
+        AbstractEnumeration(final JavaTypeName name, final List<Pair> values, final List<AnnotationType> annotations) {
+            super(name);
+            this.values = requireNonNull(values);
+            this.annotations = requireNonNull(annotations);
         }
 
         @Override
