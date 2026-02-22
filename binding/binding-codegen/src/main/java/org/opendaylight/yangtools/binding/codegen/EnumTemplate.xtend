@@ -102,7 +102,7 @@ class EnumTemplate extends BaseTemplate {
             public static «enums.importedNullable» forName(«STRING.importedName» name) {
                 return switch (name) {
                     «FOR v : enums.values»
-                    case "«v.name»" -> «v.mappedName»;
+                    case "«v.name»" -> «v.constantName»;
                     «ENDFOR»
                     default -> null;
                 };
@@ -117,7 +117,7 @@ class EnumTemplate extends BaseTemplate {
             public static «enums.importedNullable» forValue(int intValue) {
                 return switch (intValue) {
                     «FOR v : enums.values»
-                    case «v.value» -> «v.mappedName»;
+                    case «v.value» -> «v.constantName»;
                     «ENDFOR»
                     default -> null;
                 };
@@ -151,7 +151,7 @@ class EnumTemplate extends BaseTemplate {
     def writeEnumeration(EnumTypeObjectArchetype enumeration)
     '''
     «FOR v : enumeration.values SEPARATOR ",\n" AFTER ";"»
-    «writeEnumItem(v.name, v.mappedName, v.value, v.description.orElse(null))»«
+    «writeEnumItem(v.name, v.constantName, v.value, v.description.orElse(null))»«
     ENDFOR»
     '''
 }

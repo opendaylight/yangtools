@@ -45,7 +45,7 @@ class EnumTypeObjectArchetypeBuilderTest {
         enumerationBuilder.setDescription(DESCRIPTION);
         enumerationBuilder.setModuleName(moduleName);
         enumerationBuilder.setReference(reference);
-        enumerationBuilder.addValue(valueName, valueName, value, Status.CURRENT, valueDescription, null);
+        enumerationBuilder.addValue(value, valueName, valueName, Status.CURRENT, valueDescription, null);
         enumerationBuilder.addAnnotation(packageName, "TestAnnotation");
         enumerationBuilderSame = new EnumTypeObjectArchetypeBuilder.Codegen(JavaTypeName.create(packageName, name));
         enumerationBuilderOtherName = new EnumTypeObjectArchetypeBuilder.Codegen(
@@ -95,7 +95,7 @@ class EnumTypeObjectArchetypeBuilderTest {
         assertEquals(List.of(), enumeration.getConstantDefinitions());
         assertEquals(List.of(), enumeration.getProperties());
         assertEquals(List.of(), enumeration.getImplements());
-        assertNotNull(enumeration.getValues());
+        assertNotNull(enumeration.values());
         assertNotNull(enumeration.getAnnotations());
 
         assertFalse(enumeration.isAbstract());
@@ -109,14 +109,14 @@ class EnumTypeObjectArchetypeBuilderTest {
         final var enumerationOtherName = enumerationBuilderOtherName.build();
         assertNotEquals(enumeration, enumerationOtherName);
 
-        enumerationBuilderSame.addValue(valueName, valueName, value, Status.CURRENT, valueDescription, null);
+        enumerationBuilderSame.addValue(value, valueName, valueName, Status.CURRENT, valueDescription, null);
         final var enumerationSame = enumerationBuilderSame.build();
         assertEquals(enumeration, enumerationSame);
 
         final var enumerationBuilderSame1 = new EnumTypeObjectArchetypeBuilder.Codegen(
             JavaTypeName.create(packageName, name));
         final var enumerationSame1 = enumerationBuilderSame1.build();
-        enumerationBuilderSame1.addValue(valueName, valueName, 14, Status.CURRENT, valueDescription, null);
+        enumerationBuilderSame1.addValue(14, valueName, valueName, Status.CURRENT, valueDescription, null);
         // Enums are equal thanks to same package name and local name
         assertEquals(enumeration, enumerationSame1);
     }

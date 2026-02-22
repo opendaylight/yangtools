@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeValue;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -22,10 +23,10 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 abstract sealed class AbstractEnumTypeObjectArchetype implements EnumTypeObjectArchetype
         permits CodegenEnumTypeObjectArchetype, RuntimeEnumTypeObjectArchetype {
     private final List<AnnotationType> annotations;
-    private final List<Pair> values;
+    private final List<EnumTypeValue> values;
     private final JavaTypeName name;
 
-    AbstractEnumTypeObjectArchetype(final JavaTypeName name, final List<Pair> values,
+    AbstractEnumTypeObjectArchetype(final JavaTypeName name, final List<EnumTypeValue> values,
             final List<AnnotationType> annotations) {
         this.name = requireNonNull(name);
         this.values = requireNonNull(values);
@@ -38,7 +39,7 @@ abstract sealed class AbstractEnumTypeObjectArchetype implements EnumTypeObjectA
     }
 
     @Override
-    public final List<Pair> getValues() {
+    public final List<EnumTypeValue> values() {
         return values;
     }
 

@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeValue;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 
 @NonNullByDefault
 final class RuntimeEnumTypeObjectArchetype extends AbstractEnumTypeObjectArchetype {
-    RuntimeEnumTypeObjectArchetype(final JavaTypeName name, final List<Pair> values,
+    RuntimeEnumTypeObjectArchetype(final JavaTypeName name, final List<EnumTypeValue> values,
             final List<AnnotationType> annotations) {
         super(name, values, annotations);
     }

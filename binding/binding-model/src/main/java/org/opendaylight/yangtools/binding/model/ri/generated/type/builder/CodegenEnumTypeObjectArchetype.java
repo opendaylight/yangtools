@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeValue;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 
@@ -22,7 +23,7 @@ final class CodegenEnumTypeObjectArchetype extends AbstractEnumTypeObjectArchety
     private final YangSourceDefinition definition;
 
     @NonNullByDefault
-    CodegenEnumTypeObjectArchetype(final JavaTypeName name, final List<Pair> values,
+    CodegenEnumTypeObjectArchetype(final JavaTypeName name, final List<EnumTypeValue> values,
             final List<AnnotationType> annotations, final @Nullable String description,
             final @Nullable String reference, final @Nullable String moduleName,
             final @Nullable YangSourceDefinition definition) {

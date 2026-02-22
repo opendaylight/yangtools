@@ -20,7 +20,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype.Pair;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeValue;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -51,7 +51,7 @@ abstract class AbstractJavaGeneratedType {
 
         final var cb = new HashSet<String>();
         if (genType instanceof EnumTypeObjectArchetype enumeration) {
-            enumeration.getValues().stream().map(Pair::getMappedName).forEach(cb::add);
+            enumeration.values().stream().map(EnumTypeValue::constantName).forEach(cb::add);
         }
         // TODO: perhaps we can do something smarter to actually access the types
         collectAccessibleTypes(cb, genType);

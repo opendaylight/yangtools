@@ -13,9 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
@@ -23,11 +21,11 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  * @since 15.0.0
  */
 @Beta
-public interface EnumTypeObjectArchetype extends GeneratedType {
+public non-sealed interface EnumTypeObjectArchetype extends Archetype {
     /**
-     * {@return list of the enumeration pairs}
+     * {@return the {@link EnumTypeValue}s}
      */
-    @NonNull List<Pair> getValues();
+    @NonNull List<EnumTypeValue> values();
 
     @Override
     default boolean isAbstract() {
@@ -67,26 +65,6 @@ public interface EnumTypeObjectArchetype extends GeneratedType {
     @Override
     default List<GeneratedProperty> getProperties() {
         return List.of();
-    }
-
-    /**
-     * Interface is used for reading enumeration item. It means item's name and its value.
-     */
-    sealed interface Pair extends DocumentedNode.WithStatus permits AbstractPair {
-        /**
-         * {@return the name of the enumeration item as it is specified in the input YANG}
-         */
-        String getName();
-
-        /**
-         * {@return the binding representation for the name of the enumeration item}
-         */
-        String getMappedName();
-
-        /**
-         * {@return the value of the enumeration item}
-         */
-        int getValue();
     }
 
     /**

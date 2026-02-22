@@ -232,27 +232,31 @@ public class DefaultBindingGeneratorTest {
     void javaTypeForSchemaDefinitionEnumExtType() {
         final var expected = assertInstanceOf(EnumTypeObjectArchetype.class,
             assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangEnumeration")));
-        var enumValues = expected.getValues();
+        var enumValues = expected.values();
         assertEquals(2, enumValues.size());
-        assertEquals("a", enumValues.get(0).getName());
-        assertEquals("A", enumValues.get(0).getMappedName());
-        assertEquals("b", enumValues.get(1).getName());
-        assertEquals("B", enumValues.get(1).getMappedName());
+
+        final var first = enumValues.getFirst();
+        assertEquals("a", first.name());
+        assertEquals("A", first.constantName());
+
+        final var second = enumValues.getLast();
+        assertEquals("b", second.name());
+        assertEquals("B", second.constantName());
 
         assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveEnumLeaf").getReturnType());
 
         // Note: this part of the test contained invalid assertion that the return would be java.lang.Enum
         final var type = assertInstanceOf(EnumTypeObjectArchetype.class,
             assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveDirectUseOfEnum").getReturnType());
-        assertEquals(TEST_TYPE_PROVIDER_FOO.createEnclosed("ResolveDirectUseOfEnum"), type.getIdentifier());
-        enumValues = type.getValues();
+        assertEquals(TEST_TYPE_PROVIDER_FOO.createEnclosed("ResolveDirectUseOfEnum"), type.name());
+        enumValues = type.values();
         assertEquals(3, enumValues.size());
-        assertEquals("x", enumValues.get(0).getName());
-        assertEquals("X", enumValues.get(0).getMappedName());
-        assertEquals("y", enumValues.get(1).getName());
-        assertEquals("Y", enumValues.get(1).getMappedName());
-        assertEquals("z", enumValues.get(2).getName());
-        assertEquals("Z", enumValues.get(2).getMappedName());
+        assertEquals("x", enumValues.get(0).name());
+        assertEquals("X", enumValues.get(0).constantName());
+        assertEquals("y", enumValues.get(1).name());
+        assertEquals("Y", enumValues.get(1).constantName());
+        assertEquals("z", enumValues.get(2).name());
+        assertEquals("Z", enumValues.get(2).constantName());
     }
 
     @Test
