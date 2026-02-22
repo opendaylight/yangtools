@@ -67,8 +67,9 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
             sb.append(wrapToDocumentation(javadoc)).append('\n');
         }
 
-        sb.append(generatedAnnotation()).append('\n');
-        sb.append("public enum ").append(typeName).append(" implements ").append(enumTypeObject).append(" {\n");
+        sb
+            .append(generatedAnnotation()).append('\n')
+            .append("public enum ").append(typeName).append(" implements ").append(enumTypeObject).append(" {\n");
 
         final var it = archetype.values().iterator();
         if (it.hasNext()) {
@@ -99,81 +100,84 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
             sb.append(";\n\n");
         }
 
-        sb.append("    private final ").append(nonnullString).append(" name;\n");
-        sb.append("    private final int value;\n\n");
+        sb
+            .append("    private final ").append(nonnullString).append(" name;\n")
+            .append("    private final int value;\n\n")
 
-        sb.append("    private ").append(typeName).append("(int value, ").append(nonnullString).append(" name) {\n");
-        sb.append("        this.value = value;\n");
-        sb.append("        this.name = name;\n");
-        sb.append("    }\n\n");
+            .append("    private ").append(typeName).append("(int value, ").append(nonnullString).append(" name) {\n")
+            .append("        this.value = value;\n")
+            .append("        this.name = name;\n")
+            .append("    }\n\n")
 
-        sb.append("    @").append(override).append('\n');
-        sb.append("    public ").append(nonnullString).append(" getName() {\n");
-        sb.append("        return name;\n");
-        sb.append("    }\n\n");
+            .append("    @").append(override).append('\n')
+            .append("    public ").append(nonnullString).append(" getName() {\n")
+            .append("        return name;\n")
+            .append("    }\n\n")
 
-        sb.append("    @").append(override).append('\n');
-        sb.append("    public int getIntValue() {\n");
-        sb.append("        return value;\n");
-        sb.append("    }\n\n");
+            .append("    @").append(override).append('\n')
+            .append("    public int getIntValue() {\n")
+            .append("        return value;\n")
+            .append("    }\n\n")
 
-        sb.append("    /**\n");
-        sb.append("     * Return the enumeration member whose {@link #getName()} matches specified assigned name.\n");
-        sb.append("     *\n");
-        sb.append("     * @param name YANG assigned name\n");
-        sb.append("     * @return corresponding ").append(typeName)
-            .append(" item, or {@code null} if no such item exists\n");
-        sb.append("     * @throws ").append(npe).append(" if {@code name} is null\n");
-        sb.append("     */\n");
-        sb.append("    public static ").append(nullableSelf).append(" forName(").append(string).append(" name) {\n");
-        sb.append("        return switch (name) {\n");
+            .append("    /**\n")
+            .append("     * Return the enumeration member whose {@link #getName()} matches specified assigned name.\n")
+            .append("     *\n")
+            .append("     * @param name YANG assigned name\n")
+            .append("     * @return corresponding ").append(typeName)
+                .append(" item, or {@code null} if no such item exists\n")
+                .append("     * @throws ").append(npe).append(" if {@code name} is null\n")
+            .append("     */\n")
+            .append("    public static ").append(nullableSelf).append(" forName(").append(string).append(" name) {\n")
+            .append("        return switch (name) {\n");
         for (var value : archetype.values()) {
             sb.append("            case \"").append(value.name()).append("\" -> ").append(value.constantName())
                 .append(";\n");
         }
-        sb.append("            default -> null;\n");
-        sb.append("        };\n");
-        sb.append("    }\n\n");
+        sb
+            .append("            default -> null;\n")
+            .append("        };\n")
+            .append("    }\n\n")
 
-        sb.append("    /**\n");
-        sb.append("     * Return the enumeration member whose {@link #getIntValue()} matches specified value.\n");
-        sb.append("     *\n");
-        sb.append("     * @param intValue integer value\n");
-        sb.append("     * @return corresponding ").append(typeName)
-            .append(" item, or {@code null} if no such item exists\n");
-        sb.append("     */\n");
-        sb.append("    public static ").append(nullableSelf).append(" forValue(int intValue) {\n");
-        sb.append("        return switch (intValue) {\n");
+            .append("    /**\n")
+            .append("     * Return the enumeration member whose {@link #getIntValue()} matches specified value.\n")
+            .append("     *\n")
+            .append("     * @param intValue integer value\n")
+            .append("     * @return corresponding ").append(typeName)
+                .append(" item, or {@code null} if no such item exists\n")
+            .append("     */\n")
+            .append("    public static ").append(nullableSelf).append(" forValue(int intValue) {\n")
+            .append("        return switch (intValue) {\n");
         for (var value : archetype.values()) {
             sb.append("            case ").append(value.value()).append(" -> ").append(value.constantName())
                 .append(";\n");
         }
-        sb.append("            default -> null;\n");
-        sb.append("        };\n");
-        sb.append("    }\n\n");
+        sb
+            .append("            default -> null;\n")
+            .append("        };\n")
+            .append("    }\n\n")
 
-        sb.append("    /**\n");
-        sb.append("     * Return the enumeration member whose {@link #getName()} matches specified assigned name.\n");
-        sb.append("     *\n");
-        sb.append("     * @param name YANG assigned name\n");
-        sb.append("     * @return corresponding ").append(typeName).append(" item\n");
-        sb.append("     * @throws ").append(npe).append(" if {@code name} is null\n");
-        sb.append("     * @throws ").append(iae).append(" if {@code name} does not match any item\n");
-        sb.append("     */\n");
-        sb.append("    public static ").append(nonnullSelf).append(" ofName(").append(string).append(" name) {\n");
-        sb.append("        return ").append(codeHelpers).append(".checkEnum(forName(name), name);\n");
-        sb.append("    }\n\n");
+            .append("    /**\n")
+            .append("     * Return the enumeration member whose {@link #getName()} matches specified assigned name.\n")
+            .append("     *\n")
+            .append("     * @param name YANG assigned name\n")
+            .append("     * @return corresponding ").append(typeName).append(" item\n")
+            .append("     * @throws ").append(npe).append(" if {@code name} is null\n")
+            .append("     * @throws ").append(iae).append(" if {@code name} does not match any item\n")
+            .append("     */\n")
+            .append("    public static ").append(nonnullSelf).append(" ofName(").append(string).append(" name) {\n")
+            .append("        return ").append(codeHelpers).append(".checkEnum(forName(name), name);\n")
+            .append("    }\n\n")
 
-        sb.append("    /**\n");
-        sb.append("     * Return the enumeration member whose {@link #getIntValue()} matches specified value.\n");
-        sb.append("     *\n");
-        sb.append("     * @param intValue integer value\n");
-        sb.append("     * @return corresponding ").append(typeName).append(" item\n");
-        sb.append("     * @throws ").append(iae).append(" if {@code intValue} does not match any item\n");
-        sb.append("     */\n");
-        sb.append("    public static ").append(nonnullSelf).append(" ofValue(int intValue) {\n");
-        sb.append("        return ").append(codeHelpers).append(".checkEnum(forValue(intValue), intValue);\n");
-        sb.append("    }\n");
-        sb.append("}\n");
+            .append("    /**\n")
+            .append("     * Return the enumeration member whose {@link #getIntValue()} matches specified value.\n")
+            .append("     *\n")
+            .append("     * @param intValue integer value\n")
+            .append("     * @return corresponding ").append(typeName).append(" item\n")
+            .append("     * @throws ").append(iae).append(" if {@code intValue} does not match any item\n")
+            .append("     */\n")
+            .append("    public static ").append(nonnullSelf).append(" ofValue(int intValue) {\n")
+            .append("        return ").append(codeHelpers).append(".checkEnum(forValue(intValue), intValue);\n")
+            .append("    }\n")
+            .append("}\n");
     }
 }
