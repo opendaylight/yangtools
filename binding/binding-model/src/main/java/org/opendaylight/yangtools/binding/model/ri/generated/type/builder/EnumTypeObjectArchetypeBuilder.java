@@ -17,16 +17,15 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype.Pair;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeValue;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.CodegenPair;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractPair.RuntimePair;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -69,14 +68,14 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
         }
 
         @Override
-        CodegenPair createEnumPair(final String name, final String mappedName, final int value, final Status status,
+        EnumTypeValue createValue(final int value, final String name, final String constantName, final Status status,
                 final String enumDescription, final String enumReference) {
-            return new CodegenPair(name, mappedName, value, status, enumDescription, enumReference);
+            return new CodegenEnumTypeValue(value, name, constantName, status, enumDescription, enumReference);
         }
 
         @Override
         @NonNullByDefault
-        EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
+        EnumTypeObjectArchetype build(final List<EnumTypeValue> values,  final List<AnnotationType> annotations) {
             return new CodegenEnumTypeObjectArchetype(typeName(), values, annotations, description, reference,
                 moduleName, definition);
         }
@@ -109,19 +108,19 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
         }
 
         @Override
-        RuntimePair createEnumPair(final String name, final String mappedName, final int value, final Status status,
+        EnumTypeValue createValue(final int value, final String name, final String constantName, final Status status,
                 final String description, final String reference) {
-            return new RuntimePair(name, mappedName, value);
+            return new RuntimeEnumTypeValue(value, name, constantName);
         }
 
         @Override
         @NonNullByDefault
-        EnumTypeObjectArchetype build(final List<Pair> values,  final List<AnnotationType> annotations) {
+        EnumTypeObjectArchetype build(final List<EnumTypeValue> values,  final List<AnnotationType> annotations) {
             return new RuntimeEnumTypeObjectArchetype(typeName(), values, annotations);
         }
     }
 
-    private List<EnumTypeObjectArchetype.Pair> values = ImmutableList.of();
+    private List<EnumTypeValue> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
 
     @NonNullByDefault
@@ -140,14 +139,14 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
     }
 
     @VisibleForTesting
-    final void addValue(final String name, final String mappedName, final int value, final Status status,
-            final String description, final String reference) {
+    final void addValue(final int value, final @NonNull String name, final @NonNull String constantName,
+            final Status status, final String description, final String reference) {
         values = LazyCollections.lazyAdd(values,
-            createEnumPair(name, mappedName, value, status, description, reference));
+            createValue(value, name, constantName, status, description, reference));
     }
 
-    abstract AbstractPair createEnumPair(String name, String mappedName, int value, Status status, String description,
-            String reference);
+    abstract @NonNull EnumTypeValue createValue(int value, @NonNull String name, @NonNull String constantName,
+        Status status, String description, String reference);
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
@@ -162,7 +161,7 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
         final var valueIds = mapEnumAssignedNames(enums.stream().map(EnumPair::getName).collect(Collectors.toList()));
 
         for (var enumPair : enums) {
-            addValue(enumPair.getName(), valueIds.get(enumPair.getName()), enumPair.getValue(), enumPair.getStatus(),
+            addValue(enumPair.getValue(), enumPair.getName(), valueIds.get(enumPair.getName()), enumPair.getStatus(),
                 enumPair.getDescription().orElse(null), enumPair.getReference().orElse(null));
         }
     }
@@ -174,7 +173,7 @@ public abstract sealed class EnumTypeObjectArchetypeBuilder extends AbstractType
     }
 
     @NonNullByDefault
-    abstract EnumTypeObjectArchetype build(List<EnumTypeObjectArchetype.Pair> values, List<AnnotationType> annotations);
+    abstract EnumTypeObjectArchetype build(List<EnumTypeValue> values, List<AnnotationType> annotations);
 
     /**
      * Returns Java identifiers, conforming to JLS9 Section 3.8 to use for specified YANG assigned names
