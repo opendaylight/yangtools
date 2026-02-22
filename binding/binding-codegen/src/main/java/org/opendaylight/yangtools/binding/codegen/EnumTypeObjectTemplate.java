@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
@@ -24,22 +26,22 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
 
     private final EnumTypeObjectArchetype archetype;
 
-    EnumTypeObjectTemplate(final AbstractJavaGeneratedType javaType, final EnumTypeObjectArchetype archetype) {
+    private EnumTypeObjectTemplate(final AbstractJavaGeneratedType javaType, final EnumTypeObjectArchetype archetype) {
         super(javaType, archetype);
-        this.archetype = archetype;
+        this.archetype = requireNonNull(archetype);
     }
 
     EnumTypeObjectTemplate(final EnumTypeObjectArchetype archetype) {
         super(archetype);
-        this.archetype = archetype;
+        this.archetype = requireNonNull(archetype);
     }
 
-    CharSequence generateAsInnerClass() {
-        return body();
+    static String generateAsInner(final AbstractJavaGeneratedType javaType, final EnumTypeObjectArchetype archetype) {
+        return new EnumTypeObjectTemplate(javaType, archetype).body();
     }
 
     @Override
-    CharSequence body() {
+    String body() {
         // calculate imports up front
         final var codeHelpers = importedName(CODEHELPERS);
         final var enumTypeObject = importedName(ENUM_TYPE_OBJECT);
