@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
 import com.google.common.base.VerifyException;
 import java.util.Comparator;
 import java.util.List;
@@ -44,7 +43,6 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
 abstract class AbstractBaseTemplate extends JavaFileTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
-    private static final Splitter NL_SPLITTER = Splitter.on('\n');
 
     AbstractBaseTemplate(final @NonNull GeneratedType type) {
         super(type);
@@ -452,15 +450,41 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
     @NonNullByDefault
     static final void appendAsJavadoc(final StringBuilder sb, final String indent, final String text) {
         sb.append(indent).append("/**\n");
-        // FIXME: do not use a splitter here
-        for (var line : NL_SPLITTER.split(text)) {
+
+        final int length = text.length();
+        int begin = 0;
+        while (begin < length) {
             sb.append(indent).append(" *");
-            if (!line.isEmpty()) {
-                sb.append(' ').append(line);
-            }
+
+            final int nl = text.indexOf('\n', begin);
+            final int end = nl != -1 ? nl : length;
+            appendLine(sb, text, begin, end);
             sb.append('\n');
+            begin = end + 1;
         }
+
         sb.append(indent).append(" */");
+    }
+
+    @NonNullByDefault
+    private static void appendLine(final StringBuilder sb, final String str, final int start, final int limit) {
+        // do not emit obvious trailing whitespace
+        int end = limit;
+        while (true) {
+            if (end == start) {
+                return;
+            }
+
+            final int prev = end - 1;
+            final char ch = str.charAt(prev);
+            if (ch != ' ' && ch != '\t') {
+                break;
+            }
+
+            end = prev;
+        }
+
+        sb.append(' ').append(str, start, end);
     }
 
     @NonNullByDefault
