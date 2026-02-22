@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -665,7 +665,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         return builder.build();
     }
 
-    private static @NonNull Enumeration createEnumeration(final TypeBuilderFactory builderFactory,
+    private static @NonNull EnumTypeObjectArchetype createEnumeration(final TypeBuilderFactory builderFactory,
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName,
             final ModuleGenerator module, final EnumTypeDefinition typedef) {
         // TODO units for typedef enum

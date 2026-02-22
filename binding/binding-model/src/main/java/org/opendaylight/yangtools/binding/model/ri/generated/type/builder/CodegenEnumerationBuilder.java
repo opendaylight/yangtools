@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
@@ -50,7 +50,7 @@ public final class CodegenEnumerationBuilder extends AbstractEnumerationBuilder 
     }
 
     @Override
-    public Enumeration build() {
+    public EnumTypeObjectArchetype build() {
         return new EnumerationImpl(this);
     }
 

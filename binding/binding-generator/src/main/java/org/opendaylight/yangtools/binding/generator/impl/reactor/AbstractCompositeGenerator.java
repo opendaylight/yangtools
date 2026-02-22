@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -474,7 +474,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
             final var enclosedType = child.enclosedType(builderFactory);
             switch (enclosedType) {
                 case GeneratedTransferObject gto -> builder.addEnclosingTransferObject(gto);
-                case Enumeration enumeration -> builder.addEnumeration(enumeration);
+                case EnumTypeObjectArchetype enumeration -> builder.addEnumeration(enumeration);
                 case null -> {
                     // No-op
                 }

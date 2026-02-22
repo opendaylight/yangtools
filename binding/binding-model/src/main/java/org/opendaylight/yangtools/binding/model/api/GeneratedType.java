@@ -60,7 +60,7 @@ public interface GeneratedType extends Type, DocumentedType {
     /**
      * {@return List of all Enumerator definitions associated with Generated Type}
      */
-    @NonNull List<Enumeration> getEnumerations();
+    @NonNull List<EnumTypeObjectArchetype> getEnumerations();
 
     /**
      * {@return List of Constant definitions associated with Generated Type}

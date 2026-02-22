@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
  * Enum Builder is interface that contains methods to build and instantiate Enumeration definition.
  *
- * @see Enumeration
+ * @see EnumTypeObjectArchetype
  */
 public non-sealed interface EnumBuilder extends TypeBuilder, AnnotableTypeBuilder {
 
@@ -35,5 +35,5 @@ public non-sealed interface EnumBuilder extends TypeBuilder, AnnotableTypeBuilde
      */
     void updateEnumPairsFromEnumTypeDef(EnumTypeDefinition enumTypeDef);
 
-    @NonNull Enumeration build();
+    @NonNull EnumTypeObjectArchetype build();
 }
