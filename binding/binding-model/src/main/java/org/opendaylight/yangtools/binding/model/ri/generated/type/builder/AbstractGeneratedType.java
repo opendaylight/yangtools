@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -39,7 +39,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     private final @Nullable TypeComment comment;
     private final @NonNull List<AnnotationType> annotations;
     private final @NonNull List<Type> implementsTypes;
-    private final @NonNull List<Enumeration> enumerations;
+    private final @NonNull List<EnumTypeObjectArchetype> enumerations;
     private final @NonNull List<Constant> constants;
     private final @NonNull List<MethodSignature> methodSignatures;
     private final @NonNull List<GeneratedType> enclosedTypes;
@@ -142,7 +142,8 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         return makeUnmodifiable(methods);
     }
 
-    protected static final @NonNull List<Enumeration> toUnmodifiableEnumerations(final List<EnumBuilder> enumBuilders) {
+    protected static final @NonNull List<EnumTypeObjectArchetype> toUnmodifiableEnumerations(
+            final List<EnumBuilder> enumBuilders) {
         return makeUnmodifiable(enumBuilders.stream()
             .map(EnumBuilder::build)
             .collect(Collectors.toUnmodifiableList()));
@@ -181,7 +182,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     }
 
     @Override
-    public final List<Enumeration> getEnumerations() {
+    public final List<EnumTypeObjectArchetype> getEnumerations() {
         return enumerations;
     }
 

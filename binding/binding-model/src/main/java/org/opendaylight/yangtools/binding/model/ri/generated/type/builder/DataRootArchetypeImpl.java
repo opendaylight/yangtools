@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -32,7 +32,7 @@ record DataRootArchetypeImpl(
         @NonNull List<Type> getImplements,
         @NonNull List<MethodSignature> getMethodDefinitions,
         @NonNull List<GeneratedType> getEnclosedTypes,
-        @NonNull List<Enumeration> getEnumerations,
+        @NonNull List<EnumTypeObjectArchetype> getEnumerations,
         @Nullable YangSourceDefinition yangSourceDefinition,
         @Nullable TypeComment getComment,
         @Nullable String getDescription,

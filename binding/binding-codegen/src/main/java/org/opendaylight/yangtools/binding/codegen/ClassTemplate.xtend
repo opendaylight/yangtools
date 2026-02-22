@@ -38,7 +38,7 @@ import java.util.Map
 import java.util.Set
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Constant
-import org.opendaylight.yangtools.binding.model.api.Enumeration
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
@@ -84,7 +84,7 @@ class ClassTemplate extends BaseTemplate {
     /**
      * List of enumeration which are generated as JAVA enum type.
      */
-    protected val List<Enumeration> enums
+    protected val List<EnumTypeObjectArchetype> enums
 
     /**
      * List of constant instances which are generated as JAVA public static final attributes.

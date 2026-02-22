@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.HashMap;
@@ -20,8 +19,8 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
-import org.opendaylight.yangtools.binding.model.api.Enumeration.Pair;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype.Pair;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -44,14 +43,14 @@ abstract class AbstractJavaGeneratedType {
 
     AbstractJavaGeneratedType(final GeneratedType genType) {
         name = genType.name();
-        final Builder<String, NestedJavaGeneratedType> b = ImmutableMap.builder();
-        for (GeneratedType type : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
+        final var b = ImmutableMap.<String, NestedJavaGeneratedType>builder();
+        for (var type : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
             b.put(type.name().simpleName(), new NestedJavaGeneratedType(this, type));
         }
         enclosedTypes = b.build();
 
-        final Set<String> cb = new HashSet<>();
-        if (genType instanceof Enumeration enumeration) {
+        final var cb = new HashSet<String>();
+        if (genType instanceof EnumTypeObjectArchetype enumeration) {
             enumeration.getValues().stream().map(Pair::getMappedName).forEach(cb::add);
         }
         // TODO: perhaps we can do something smarter to actually access the types

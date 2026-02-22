@@ -18,7 +18,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX
 import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isBitsType
 import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isIdentityType
 
-import org.opendaylight.yangtools.binding.model.api.Enumeration
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.Type
 
@@ -121,7 +121,7 @@ class UnionTemplate extends ClassTemplate {
                 «ELSEIF BINARY_TYPE.equals(propRet)»
                     ««« type binary
                 return new «STRING.importedName»(«field»);
-                «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof Enumeration»
+                «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof EnumTypeObjectArchetype»
                     ««« type int* or enumeration*
                 return «field».toString();
                 «ELSEIF "org.opendaylight.yangtools.yang.common".equals(propRet.packageName)

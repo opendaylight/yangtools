@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import com.google.common.annotations.Beta;
 import java.util.List;
+import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
- * Interface provide methods for reading data of enumeration class.
+ * The {@link Archetype} for {@link EnumTypeObject} specializations.
+ * @since 15.0.0
  */
-public interface Enumeration extends GeneratedType {
+@Beta
+public interface EnumTypeObjectArchetype extends GeneratedType {
     /**
      * Returns list of the couples - name and value.
      *
@@ -37,7 +41,7 @@ public interface Enumeration extends GeneratedType {
     }
 
     @Override
-    default List<Enumeration> getEnumerations() {
+    default List<EnumTypeObjectArchetype> getEnumerations() {
         return List.of();
     }
 

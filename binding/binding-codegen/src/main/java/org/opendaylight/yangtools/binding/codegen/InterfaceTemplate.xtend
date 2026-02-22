@@ -29,7 +29,7 @@ import java.util.Set
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.Constant
-import org.opendaylight.yangtools.binding.model.api.Enumeration
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.MethodSignature
@@ -55,7 +55,7 @@ class InterfaceTemplate extends BaseTemplate {
     /**
      * List of enumeration which are generated as JAVA enum type.
      */
-    val List<Enumeration> enums
+    val List<EnumTypeObjectArchetype> enums
 
     /**
      * List of generated types which are enclosed inside <code>genType</code>

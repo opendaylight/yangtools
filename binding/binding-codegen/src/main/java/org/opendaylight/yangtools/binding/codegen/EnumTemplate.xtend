@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.codegen
 import static extension org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
-import org.opendaylight.yangtools.binding.model.api.Enumeration
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.EnumTypeObject
@@ -25,14 +25,14 @@ class EnumTemplate extends BaseTemplate {
     /**
      * Enumeration which will be transformed to JAVA source code for enumeration
      */
-    val Enumeration enums
+    val EnumTypeObjectArchetype enums
 
     /**
      * Constructs instance of this class with concrete <code>enums</code>.
      *
      * @param enums enumeration which will be transformed to JAVA source code
      */
-    new(AbstractJavaGeneratedType javaType, Enumeration enums) {
+    new(AbstractJavaGeneratedType javaType, EnumTypeObjectArchetype enums) {
         super(javaType, enums as GeneratedType)
         this.enums = enums
     }
@@ -42,7 +42,7 @@ class EnumTemplate extends BaseTemplate {
      *
      * @param enums enumeration which will be transformed to JAVA source code
      */
-    new(Enumeration enums) {
+    new(EnumTypeObjectArchetype enums) {
         super(enums as GeneratedType)
         this.enums = enums
     }
@@ -148,7 +148,7 @@ class EnumTemplate extends BaseTemplate {
         }
     '''
 
-    def writeEnumeration(Enumeration enumeration)
+    def writeEnumeration(EnumTypeObjectArchetype enumeration)
     '''
     «FOR v : enumeration.values SEPARATOR ",\n" AFTER ";"»
     «writeEnumItem(v.name, v.mappedName, v.value, v.description.orElse(null))»«

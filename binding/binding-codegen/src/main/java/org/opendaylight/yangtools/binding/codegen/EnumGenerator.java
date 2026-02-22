@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 public class EnumGenerator implements CodeGenerator {
     @Override
     public boolean isAcceptable(final Type type) {
-        return type instanceof Enumeration;
+        return type instanceof EnumTypeObjectArchetype;
     }
 
     /**
@@ -27,11 +27,7 @@ public class EnumGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        if (type instanceof Enumeration enums) {
-            final EnumTemplate enumTemplate = new EnumTemplate(enums);
-            return enumTemplate.generate();
-        }
-        return "";
+        return type instanceof EnumTypeObjectArchetype enums ?  new EnumTemplate(enums).generate() : "";
     }
 
     @Override

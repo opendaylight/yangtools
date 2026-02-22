@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -34,8 +34,8 @@ class GenEnumResolvingTest {
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
 
-        Enumeration linkUpDownTrapEnable = null;
-        Enumeration operStatus = null;
+        EnumTypeObjectArchetype linkUpDownTrapEnable = null;
+        EnumTypeObjectArchetype operStatus = null;
         final var enums = genInterface.getEnumerations();
         assertNotNull(enums, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
         assertEquals(2, enums.size(), "Generated Type Interface MUST contain 2 Enumeration Types");
@@ -62,10 +62,10 @@ class GenEnumResolvingTest {
 
         // FIXME: split this into getter/default/static asserts
         assertEquals(33, methods.size());
-        Enumeration ianaIfType = null;
+        EnumTypeObjectArchetype ianaIfType = null;
         for (var method : methods) {
             if (method.getName().equals("getType")) {
-                if (method.getReturnType() instanceof Enumeration enumeration) {
+                if (method.getReturnType() instanceof EnumTypeObjectArchetype enumeration) {
                     ianaIfType = enumeration;
                 }
             }
@@ -82,7 +82,7 @@ class GenEnumResolvingTest {
         assertNotNull(genTypes);
         assertEquals(2, genTypes.size());
 
-        final var type = assertInstanceOf(Enumeration.class, genTypes.get(1));
+        final var type = assertInstanceOf(EnumTypeObjectArchetype.class, genTypes.get(1));
         assertEquals(272, type.getValues().size(), "Enumeration type MUST contain 272 values!");
     }
 
@@ -104,8 +104,8 @@ class GenEnumResolvingTest {
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
 
-        Enumeration linkUpDownTrapEnable = null;
-        Enumeration operStatus = null;
+        EnumTypeObjectArchetype linkUpDownTrapEnable = null;
+        EnumTypeObjectArchetype operStatus = null;
         final var methods = genInterface.getMethodDefinitions();
         assertNotNull(methods, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
 
@@ -113,9 +113,9 @@ class GenEnumResolvingTest {
         assertEquals(13, methods.size());
         for (var method : methods) {
             if (method.getName().equals("getLinkUpDownTrapEnable")) {
-                linkUpDownTrapEnable = assertInstanceOf(Enumeration.class, method.getReturnType());
+                linkUpDownTrapEnable = assertInstanceOf(EnumTypeObjectArchetype.class, method.getReturnType());
             } else if (method.getName().equals("getOperStatus")) {
-                operStatus = assertInstanceOf(Enumeration.class, method.getReturnType());
+                operStatus = assertInstanceOf(EnumTypeObjectArchetype.class, method.getReturnType());
             }
         }
 

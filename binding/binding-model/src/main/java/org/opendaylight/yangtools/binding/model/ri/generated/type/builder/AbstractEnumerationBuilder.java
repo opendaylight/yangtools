@@ -23,7 +23,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.EnumBuilder;
@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 
 abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder implements EnumBuilder
         permits CodegenEnumerationBuilder, RuntimeEnumerationBuilder {
-    private List<Enumeration.Pair> values = ImmutableList.of();
+    private List<EnumTypeObjectArchetype.Pair> values = ImmutableList.of();
     private List<AnnotationTypeBuilder> annotationBuilders = ImmutableList.of();
 
     @NonNullByDefault
@@ -122,7 +122,7 @@ abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder imp
         return javaToYang.inverse();
     }
 
-    abstract static class AbstractPair implements Enumeration.Pair {
+    abstract static class AbstractPair implements EnumTypeObjectArchetype.Pair {
         private final String name;
         private final String mappedName;
         private final int value;
@@ -167,7 +167,7 @@ abstract sealed class AbstractEnumerationBuilder extends AbstractTypeBuilder imp
         }
     }
 
-    abstract static class AbstractEnumeration extends AbstractType implements Enumeration {
+    abstract static class AbstractEnumeration extends AbstractType implements EnumTypeObjectArchetype {
         private final @NonNull List<AnnotationType> annotations;
         private final @NonNull List<Pair> values;
 

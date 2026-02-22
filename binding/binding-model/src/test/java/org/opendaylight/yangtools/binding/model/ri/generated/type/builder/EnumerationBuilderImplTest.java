@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -33,7 +33,7 @@ class EnumerationBuilderImplTest {
     private final String valueDescription = "Value used for test";
     private final int value = 12;
 
-    private Enumeration enumeration;
+    private EnumTypeObjectArchetype enumeration;
     private CodegenEnumerationBuilder enumerationBuilder;
     private CodegenEnumerationBuilder enumerationBuilderSame;
     private CodegenEnumerationBuilder enumerationBuilderOtherName;

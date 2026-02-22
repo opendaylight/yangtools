@@ -21,7 +21,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -74,7 +74,7 @@ public class DefaultBindingGeneratorTest {
         final var bDataMethods = bData.getMethodDefinitions();
         assertEquals(8, bDataMethods.size());
 
-        final var bEnumType = assertInstanceOf(Enumeration.class,
+        final var bEnumType = assertInstanceOf(EnumTypeObjectArchetype.class,
             assertGeneratedMethod(bDataMethods, "getEnum").getReturnType());
         assertEquals(TEST_TYPE_PROVIDER + ".Foo.ResolveDirectUseOfEnum", bEnumType.fullyQualifiedName());
 
@@ -230,7 +230,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionEnumExtType() {
-        final var expected = assertInstanceOf(Enumeration.class,
+        final var expected = assertInstanceOf(EnumTypeObjectArchetype.class,
             assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangEnumeration")));
         var enumValues = expected.getValues();
         assertEquals(2, enumValues.size());
@@ -242,7 +242,7 @@ public class DefaultBindingGeneratorTest {
         assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveEnumLeaf").getReturnType());
 
         // Note: this part of the test contained invalid assertion that the return would be java.lang.Enum
-        final var type = assertInstanceOf(Enumeration.class,
+        final var type = assertInstanceOf(EnumTypeObjectArchetype.class,
             assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveDirectUseOfEnum").getReturnType());
         assertEquals(TEST_TYPE_PROVIDER_FOO.createEnclosed("ResolveDirectUseOfEnum"), type.getIdentifier());
         enumValues = type.getValues();
@@ -296,8 +296,8 @@ public class DefaultBindingGeneratorTest {
             .orElseThrow(() -> new AssertionError("Generated type " + name + " not present"));
     }
 
-    private static Enumeration assertEnumeration(final JavaTypeName name) {
-        return assertInstanceOf(Enumeration.class, assertGeneratedType(name));
+    private static EnumTypeObjectArchetype assertEnumeration(final JavaTypeName name) {
+        return assertInstanceOf(EnumTypeObjectArchetype.class, assertGeneratedType(name));
     }
 
     private static GeneratedTransferObject assertGTO(final JavaTypeName name) {

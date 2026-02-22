@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -115,7 +115,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      *
      * @param enumeration Enumeration to add
      */
-    void addEnumeration(Enumeration enumeration);
+    void addEnumeration(EnumTypeObjectArchetype enumeration);
 
     List<MethodSignatureBuilder> getMethodDefinitions();
 

@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Constant;
-import org.opendaylight.yangtools.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -35,7 +35,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
                 DataRootArchetypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
     private List<Type> implementsTypes = List.of();
-    private List<Enumeration> enumDefinitions = List.of();
+    private List<EnumTypeObjectArchetype> enumDefinitions = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
     private List<GeneratedTransferObject> enclosedTransferObjects = List.of();
@@ -67,7 +67,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
         return implementsTypes;
     }
 
-    protected List<Enumeration> getEnumerations() {
+    protected List<EnumTypeObjectArchetype> getEnumerations() {
         return enumDefinitions;
     }
 
@@ -147,7 +147,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     }
 
     @Override
-    public void addEnumeration(final Enumeration enumeration) {
+    public void addEnumeration(final EnumTypeObjectArchetype enumeration) {
         checkArgument(enumeration != null, "Enumeration cannot be null!");
 
         // This enumeration may be generated from a leaf, which may end up colliding with its enclosing type
