@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -79,12 +78,8 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
                 value.getDescription().ifPresent(desc -> {
                     final var doc = encodeJavadocSymbols(BindingGeneratorUtil.encodeAngleBrackets(desc.trim()));
                     if (!doc.isEmpty()) {
-                        // deal with indentation in multi-line string via StringConcatenation for now
-                        // TODO: wrapToDocumentation() should learn to do this for us
-                        final var sc = new StringConcatenation();
-                        sc.append("    ");
-                        sc.append(wrapToDocumentation(doc), "    ");
-                        sb.append(sc).append('\n');
+                        appendAsJavadoc(sb, "    ", doc);
+                        sb.append('\n');
                     }
                 });
                 sb.append("    ").append(value.constantName()).append('(').append(value.value()).append(", \"")
