@@ -14,7 +14,6 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSortedSet;
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -30,7 +29,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.annotation.processing.Generated;
 import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNull;
@@ -198,13 +196,6 @@ class JavaFileTemplate {
 
     final @NonNull GeneratedType type() {
         return type;
-    }
-
-    final String generateImportBlock() {
-        if (javaType instanceof TopLevelJavaGeneratedType topLevel) {
-            return topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
-        }
-        throw new VerifyException("Unexpected type " + javaType);
     }
 
     final @NonNull String importedJavadocName(final @NonNull Type intype) {

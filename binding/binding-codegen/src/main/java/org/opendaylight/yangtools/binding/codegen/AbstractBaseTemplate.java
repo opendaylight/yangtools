@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.base.VerifyException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -65,6 +66,14 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
             sb.append(importBlock).append('\n');
         }
         return sb.append(body).toString();
+    }
+
+    private String generateImportBlock() {
+        final var javaType = javaType();
+        if (javaType() instanceof TopLevelJavaGeneratedType topLevel) {
+            return topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
+        }
+        throw new VerifyException("Unexpected type " + javaType);
     }
 
     /**
