@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
@@ -21,7 +18,7 @@ import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
  */
 final class TypeUtils {
     private TypeUtils() {
-
+        // Hidden on purpose
     }
 
     /**
@@ -36,24 +33,25 @@ final class TypeUtils {
         if (type instanceof ConcreteType concrete) {
             return concrete;
         }
-
-        checkArgument(type instanceof GeneratedTransferObject, "Unsupported type %s", type);
+        if (!(type instanceof GeneratedTransferObject gto)) {
+            throw new IllegalArgumentException("Unsupported type " + type);
+        }
 
         // Need to walk up the GTO chain to the root
-        GeneratedTransferObject rootGto = (GeneratedTransferObject) type;
+        var rootGto = gto;
         while (rootGto.getSuperType() != null) {
             rootGto = rootGto.getSuperType();
         }
 
         // Look for the 'value' property and return its type
-        for (GeneratedProperty s : rootGto.getProperties()) {
-            if (TypeConstants.VALUE_PROP.equals(s.getName())) {
-                return (ConcreteType) s.getReturnType();
+        for (var prop : rootGto.getProperties()) {
+            if (TypeConstants.VALUE_PROP.equals(prop.getName())) {
+                return (ConcreteType) prop.getReturnType();
             }
         }
 
         // Should never happen
-        throw new IllegalArgumentException(String.format("Type %s root %s properties %s do not include \"%s\"",
+        throw new IllegalArgumentException("Type %s root %s properties %s do not include \"%s\"".formatted(
             type, rootGto, rootGto.getProperties(), TypeConstants.VALUE_PROP));
     }
 
