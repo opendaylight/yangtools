@@ -13,8 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.List;
@@ -308,7 +306,7 @@ public final class CodeHelpers {
      * @return Input list or an empty list.
      */
     public static <T> @NonNull List<T> nonnull(final @Nullable List<T> input) {
-        return input != null ? input : ImmutableList.of();
+        return input != null ? input : List.of();
     }
 
     /**
@@ -321,7 +319,7 @@ public final class CodeHelpers {
      * @return Input map or an empty map.
      */
     public static <K, V> @NonNull Map<K, V> nonnull(final @Nullable Map<K, V> input) {
-        return input != null ? input : ImmutableMap.of();
+        return input != null ? input : Map.of();
     }
 
     /**
