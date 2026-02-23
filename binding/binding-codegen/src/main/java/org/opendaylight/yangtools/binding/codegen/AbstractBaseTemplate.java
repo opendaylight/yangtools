@@ -202,7 +202,17 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    abstract CharSequence emitNameConstant(String name, Type type, JavaTypeName yangModuleInfo, String yangDataName);
+    final String emitNameConstant(final String name, final Type type, final JavaTypeName yangModuleInfo,
+            final String yangDataName) {
+        return new StringBuilder()
+            .append("/**\n")
+            .append(" * Yang Data template name of the statement represented by this class.\n")
+            .append(" */\n")
+            .append("public static final ").append(importedNonNull(type)).append(' ').append(name).append(" = ")
+                .append(importedName(yangModuleInfo)).append('.').append(Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME)
+                .append("(\"").append(yangDataName).append("\");\n")
+            .toString();
+    }
 
     @NonNullByDefault
     abstract CharSequence emitQNameConstant(String name, Type type, JavaTypeName yangModuleInfo, String localName);

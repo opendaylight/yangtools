@@ -27,14 +27,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
 
     // Helper patterns
 
-    override package final emitNameConstant(String name, Type type, JavaTypeName yangModuleInfo,
-            String yangDataName) '''
-        /**
-         * Yang Data template name of the statement represented by this class.
-         */
-        public static final «type.importedNonNull» «name» = «yangModuleInfo.importedName».«Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME»("«yangDataName»");
-    '''
-
     override package final emitQNameConstant(String name, Type type, JavaTypeName yangModuleInfo, String localName) '''
         /**
          * YANG identifier of the statement represented by this class.
