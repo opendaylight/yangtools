@@ -35,7 +35,7 @@ class GeneratedTypeBuilderTest {
         // generatedTypeBuilder.addConstant(Types.typeForClass(String.class),
         // "myConstant", "myConstantValue");
         var constant2 = generatedTypeBuilder.addConstant(
-                Types.typeForClass(int.class, Restrictions.empty()), "myIntConstant", 1);
+                Types.typeForClass(int.class).withRestrictions(Restrictions.empty()), "myIntConstant", 1);
 
         var constant3 = new ConstantImpl(Types.typeForClass(String.class), "myConstant", "myConstantValue");
         final var constant4 = new ConstantImpl(Types.typeForClass(String.class), "myConstant2", "myConstantValue");
