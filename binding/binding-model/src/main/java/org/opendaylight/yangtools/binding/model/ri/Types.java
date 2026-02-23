@@ -262,8 +262,4 @@ public final class Types {
         }
         return !(type2 instanceof ParameterizedType);
     }
-
-    public static @Nullable String getOuterClassName(final Type valueType) {
-        return valueType.name().immediatelyEnclosingClass().map(Object::toString).orElse(null);
-    }
 }
