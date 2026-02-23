@@ -38,9 +38,6 @@ import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
-/**
- * Intermediate Java-based parts under {@link BaseTemplate}.
- */
 abstract class BaseTemplate extends JavaFileTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
