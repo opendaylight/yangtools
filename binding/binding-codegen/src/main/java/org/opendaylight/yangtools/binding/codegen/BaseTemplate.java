@@ -179,23 +179,21 @@ abstract class BaseTemplate extends JavaFileTemplate {
     @NonNullByDefault
     final CharSequence emitConstant(final Constant constant) {
         final var name = constant.getName();
+        final var type = constant.getType();
+
         return switch (name) {
             case Naming.NAME_STATIC_FIELD_NAME -> {
                 @SuppressWarnings("unchecked")
                 final var entry = (Entry<JavaTypeName, YangDataName>) constant.getValue();
-                yield emitNameConstant(constant.getName(), constant.getType(), entry.getKey(),
-                    entry.getValue().name());
+                yield emitNameConstant(name, type, entry.getKey(), entry.getValue().name());
             }
             case Naming.QNAME_STATIC_FIELD_NAME -> {
                 @SuppressWarnings("unchecked")
                 final var entry = (Entry<JavaTypeName, String>) constant.getValue();
-                yield emitQNameConstant(constant.getName(), constant.getType(), entry.getKey(), entry.getValue());
+                yield emitQNameConstant(name, type, entry.getKey(), entry.getValue());
             }
-            case Naming.VALUE_STATIC_FIELD_NAME -> emitValueConstant(constant.getName(), constant.getType());
-            default -> new StringBuilder()
-                .append("public static final ").append(importedName(constant.getType())).append(' ')
-                .append(constant.getName()).append(" = ").append(constant.getValue()).append(";\n")
-                .toString();
+            case Naming.VALUE_STATIC_FIELD_NAME -> emitValueConstant(name, type);
+            default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.getValue() + ";\n";
         };
     }
 
