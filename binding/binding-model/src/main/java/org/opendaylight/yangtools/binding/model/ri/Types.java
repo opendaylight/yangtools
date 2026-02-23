@@ -18,11 +18,9 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 public final class Types {
@@ -154,12 +152,6 @@ public final class Types {
      */
     public static @NonNull ConcreteType typeForClass(final @NonNull Class<?> cls) {
         return TYPE_CACHE.getUnchecked(cls);
-    }
-
-    public static @NonNull ConcreteType typeForClass(final @NonNull Class<?> cls,
-            final @Nullable Restrictions restrictions) {
-        final var type = typeForClass(cls);
-        return restrictions == null ? type : type.withRestrictions(restrictions);
     }
 
     /**
