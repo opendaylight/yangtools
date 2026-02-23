@@ -24,6 +24,8 @@
     <properties>
         <!-- FIXME: fix these up and set <maven.javadoc.failOnWarnings>true</maven.javadoc.failOnWarnings> -->
         <doclint>all,-missing</doclint>
+        <!-- We do not want to leak @SuppressFBWarnings to the outside world and SpotBugs is too nosy -->
+        <spotbugs.onlyAnalyze>!org.opendaylight.yangtools.binding.lib.CodeHelpers</spotbugs.onlyAnalyze>
     </properties>
 
     <dependencies>

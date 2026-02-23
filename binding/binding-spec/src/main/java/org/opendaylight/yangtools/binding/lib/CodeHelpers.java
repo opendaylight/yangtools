@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -468,7 +469,7 @@ public final class CodeHelpers {
     @SuppressWarnings("unchecked")
     public static <T> @Nullable List<T> checkListFieldCast(final @NonNull Class<T> requiredClass,
             final @NonNull String fieldName, final @Nullable List<?> list) {
-        DoNotLeakSpotbugs.checkCollectionField(requiredClass, fieldName, list);
+        checkCollectionField(requiredClass, fieldName, list);
         return (List<T>) list;
     }
 
@@ -485,8 +486,20 @@ public final class CodeHelpers {
     @SuppressWarnings("unchecked")
     public static <T> @Nullable Set<T> checkSetFieldCast(final @NonNull Class<T> requiredClass,
             final @NonNull String fieldName, final @Nullable Set<?> set) {
-        DoNotLeakSpotbugs.checkCollectionField(requiredClass, fieldName, set);
+        checkCollectionField(requiredClass, fieldName, set);
         return (Set<T>) set;
+    }
+
+    private static void checkCollectionField(final @NonNull Class<?> requiredClass, final @NonNull String fieldName,
+            final @Nullable Collection<?> collection) {
+        if (collection != null) {
+            try {
+                collection.forEach(item -> requiredClass.cast(requireNonNull(item)));
+            } catch (ClassCastException | NullPointerException e) {
+                throw new IllegalArgumentException(
+                    "Invalid input item for property \"" + requireNonNull(fieldName) + "\"", e);
+            }
+        }
     }
 
     /**
@@ -509,7 +522,6 @@ public final class CodeHelpers {
      * @param bytes input bytes
      */
     public static byte @Nullable [] copyArray(final byte @Nullable [] bytes) {
-        // Indirection to deal with SpotBugs being too "helpful" without leaking its annotations
-        return DoNotLeakSpotbugs.copyArray(bytes);
+        return bytes == null ? null : bytes.clone();
     }
 }
