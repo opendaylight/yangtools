@@ -41,15 +41,15 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
 /**
  * Intermediate Java-based parts under {@link BaseTemplate}.
  */
-abstract class AbstractBaseTemplate extends JavaFileTemplate {
+abstract class BaseTemplate extends JavaFileTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 
-    AbstractBaseTemplate(final @NonNull GeneratedType type) {
+    BaseTemplate(final @NonNull GeneratedType type) {
         super(type);
     }
 
-    AbstractBaseTemplate(final AbstractJavaGeneratedType javaType, final GeneratedType type) {
+    BaseTemplate(final AbstractJavaGeneratedType javaType, final GeneratedType type) {
         super(javaType, type);
     }
 
