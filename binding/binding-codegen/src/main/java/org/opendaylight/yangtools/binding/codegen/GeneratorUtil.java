@@ -14,6 +14,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -287,17 +290,11 @@ public final class GeneratorUtil {
      * @param properties list of properties of generated transfer object
      * @return subset of <code>properties</code> which have read only attribute set to true
      */
-    static List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(final List<GeneratedProperty> properties) {
-        List<GeneratedProperty> readOnlyProperties = new ArrayList<>();
-        if (properties != null) {
-            for (final GeneratedProperty property : properties) {
-                if (property.isReadOnly()) {
-                    readOnlyProperties.add(property);
-                }
-            }
-        }
-        return readOnlyProperties;
-    }
+    static @NonNull List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(
+            final @Nullable List<GeneratedProperty> properties) {
+        return properties == null || properties.isEmpty() ? List.of()
+            : properties.stream().filter(GeneratedProperty::isReadOnly).collect(Collectors.toUnmodifiableList());
+   }
 
     /**
      * Returns the list of the read only properties of all extending generated transfer object from <code>genTO</code>
@@ -307,14 +304,15 @@ public final class GeneratorUtil {
      * @return list of all read only properties from actual to highest parent generated transfer object. In case when
      *         extension exists the method is recursive called.
      */
-    static List<GeneratedProperty> getPropertiesOfAllParents(final GeneratedTransferObject genTO) {
-        List<GeneratedProperty> propertiesOfAllParents = new ArrayList<>();
-        if (genTO.getSuperType() != null) {
-            final List<GeneratedProperty> allPropertiesOfTO = genTO.getSuperType().getProperties();
-            List<GeneratedProperty> readOnlyPropertiesOfTO = resolveReadOnlyPropertiesFromTO(allPropertiesOfTO);
-            propertiesOfAllParents.addAll(readOnlyPropertiesOfTO);
-            propertiesOfAllParents.addAll(getPropertiesOfAllParents(genTO.getSuperType()));
+    static @NonNull List<GeneratedProperty> getPropertiesOfAllParents(final @NonNull GeneratedTransferObject genTO) {
+        final var superType = genTO.getSuperType();
+        if (superType == null) {
+            return List.of();
         }
+
+        final var propertiesOfAllParents = new ArrayList<GeneratedProperty>();
+        propertiesOfAllParents.addAll(resolveReadOnlyPropertiesFromTO(superType.getProperties()));
+        propertiesOfAllParents.addAll(getPropertiesOfAllParents(superType));
         return propertiesOfAllParents;
     }
 
