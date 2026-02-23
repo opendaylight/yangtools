@@ -11,7 +11,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.contract.Naming
 
@@ -24,15 +23,6 @@ abstract class BaseTemplate extends AbstractBaseTemplate {
     new(AbstractJavaGeneratedType javaType, GeneratedType type) {
         super(javaType, type)
     }
-
-    // Helper patterns
-
-    override package final emitQNameConstant(String name, Type type, JavaTypeName yangModuleInfo, String localName) '''
-        /**
-         * YANG identifier of the statement represented by this class.
-         */
-        public static final «type.importedNonNull» «name» = «yangModuleInfo.importedName».«Naming.MODULE_INFO_QNAMEOF_METHOD_NAME»("«localName»");
-    '''
 
     override package CharSequence emitValueConstant(String name, Type type) {
         val typeName = type.importedName
