@@ -11,6 +11,9 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
 
 /**
  * An archetype for a {@link UnionTypeObject}.
@@ -25,4 +28,13 @@ public non-sealed interface UnionTypeObjectArchetype extends Archetype, Generate
      * @return A list of property names
      */
     List<String> typePropertyNames();
+
+    sealed interface Builder extends GeneratedTOBuilder
+            permits CodegenUnionTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
+
+        void setTypePropertyNames(List<String> propertyNames);
+
+        @Override
+        UnionTypeObjectArchetype build();
+    }
 }

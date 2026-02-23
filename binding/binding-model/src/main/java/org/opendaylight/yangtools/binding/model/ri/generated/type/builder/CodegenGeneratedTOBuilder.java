@@ -53,18 +53,18 @@ public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBui
     }
 
     @Override
-    public final GeneratedTransferObject build() {
+    public GeneratedTransferObject build() {
         return new GTO(this);
     }
 
-    private static final class GTO extends AbstractGeneratedTransferObject {
+    protected static class GTO extends AbstractGeneratedTransferObject {
         private final Restrictions restrictions;
         private final GeneratedProperty suid;
         private final String reference;
         private final String description;
         private final String moduleName;
 
-        GTO(final CodegenGeneratedTOBuilder builder) {
+        protected GTO(final CodegenGeneratedTOBuilder builder) {
             super(builder);
             restrictions = builder.restrictions;
             reference = builder.reference;
@@ -79,27 +79,27 @@ public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBui
         }
 
         @Override
-        public Restrictions getRestrictions() {
+        public final Restrictions getRestrictions() {
             return restrictions;
         }
 
         @Override
-        public GeneratedProperty getSUID() {
+        public final GeneratedProperty getSUID() {
             return suid;
         }
 
         @Override
-        public String getDescription() {
+        public final String getDescription() {
             return description;
         }
 
         @Override
-        public String getReference() {
+        public final String getReference() {
             return reference;
         }
 
         @Override
-        public String getModuleName() {
+        public final String getModuleName() {
             return moduleName;
         }
     }
