@@ -308,7 +308,7 @@ class ClassTemplate extends BaseTemplate {
         «FOR p : properties»
             «val fieldName = p.fieldName»
             «IF p.returnType.simpleName.endsWith("[]")»
-                this.«fieldName» = «fieldName» == null ? null : «fieldName».clone();
+                this.«fieldName» = «CODEHELPERS.importedName».copyArray(«fieldName»);
             «ELSE»
                 this.«fieldName» = «fieldName»;
             «ENDIF»
