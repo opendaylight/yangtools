@@ -13,15 +13,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.RuntimeGeneratedUnion;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 final class UnionTypeCodec implements ValueCodec<Object, Object> {
@@ -35,20 +32,20 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
     }
 
     static UnionTypeCodec of(final Class<?> unionCls, final UnionTypeDefinition unionType,
-            final BindingCodecContext codecContext) throws Exception {
-        final List<String> unionProperties = extractUnionProperties(codecContext.getRuntimeContext()
-            .getTypeWithSchema(unionCls).javaType());
-        final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
+            final BindingCodecContext codecContext) throws NoSuchMethodException {
+        final var unionProperties = extractUnionProperties(
+            codecContext.getRuntimeContext().getTypeWithSchema(unionCls).javaType());
+        final var unionTypes = unionType.getTypes();
         verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
             unionTypes, unionProperties);
 
-        final List<UnionValueOptionContext> values = new ArrayList<>(unionTypes.size());
-        final Iterator<String> it = unionProperties.iterator();
-        for (final TypeDefinition<?> subtype : unionTypes) {
-            final String getterName = Naming.GETTER_PREFIX + Naming.toFirstUpper(it.next());
-            final Method valueGetter = unionCls.getMethod(getterName);
-            final Class<?> valueType = valueGetter.getReturnType();
-            final ValueCodec<Object, Object> codec = codecContext.getCodec(valueType, subtype);
+        final var values = new ArrayList<UnionValueOptionContext>(unionTypes.size());
+        final var it = unionProperties.iterator();
+        for (var subtype : unionTypes) {
+            final var getterName = Naming.GETTER_PREFIX + Naming.toFirstUpper(it.next());
+            final var valueGetter = unionCls.getMethod(getterName);
+            final var valueType = valueGetter.getReturnType();
+            final var codec = codecContext.getCodec(valueType, subtype);
 
             values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, codec));
         }
@@ -62,8 +59,8 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
         }
 
         while (true) {
-            if (gto instanceof RuntimeGeneratedUnion rgo) {
-                return rgo.typePropertyNames();
+            if (gto instanceof UnionTypeObjectArchetype union) {
+                return union.typePropertyNames();
             }
             gto = verifyNotNull(gto.getSuperType(), "Cannot find union type information for %s", type);
         }
@@ -71,21 +68,21 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
 
     @Override
     public Object deserialize(final Object input) {
-        for (final UnionValueOptionContext member : typeCodecs) {
-            final Object ret = member.deserializeUnion(input);
+        for (var member : typeCodecs) {
+            final var ret = member.deserializeUnion(input);
             if (ret != null) {
                 return ret;
             }
         }
 
-        throw new IllegalArgumentException(String.format("Failed to construct instance of %s for input %s",
+        throw new IllegalArgumentException("Failed to construct instance of %s for input %s".formatted(
             unionClass, input));
     }
 
     @Override
     public Object serialize(final Object input) {
-        for (final UnionValueOptionContext valCtx : typeCodecs) {
-            final Object domValue = valCtx.serialize(input);
+        for (var valCtx : typeCodecs) {
+            final var domValue = valCtx.serialize(input);
             if (domValue != null) {
                 return domValue;
             }

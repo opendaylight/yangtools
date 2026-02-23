@@ -9,18 +9,20 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.UnionTypeObject;
 
 /**
- * A {@link GeneratedTransferObject} created for run-time representation of a {@code union}.
+ * An archetype for a {@link UnionTypeObject}.
  */
 @Beta
-public interface RuntimeGeneratedUnion extends GeneratedTransferObject {
+@NonNullByDefault
+public non-sealed interface UnionTypeObjectArchetype extends Archetype, GeneratedTransferObject {
     /**
      * List of property names corresponding to individual {@code type} statements within this union. The ordering of
      * the returned list matches the ordering of the type statements.
      *
-     * @return A list of property names.
+     * @return A list of property names
      */
-    @NonNull List<String> typePropertyNames();
+    List<String> typePropertyNames();
 }

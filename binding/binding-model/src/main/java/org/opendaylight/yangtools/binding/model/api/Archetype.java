@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @Beta
 @NonNullByDefault
-public sealed interface Archetype extends GeneratedType, Immutable permits DataRootArchetype, EnumTypeObjectArchetype {
+public sealed interface Archetype extends GeneratedType, Immutable
+    permits DataRootArchetype, EnumTypeObjectArchetype, UnionTypeObjectArchetype {
     // Nothing else
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.RuntimeGeneratedUnion;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
 
@@ -52,7 +52,7 @@ public sealed interface GeneratedUnionBuilder extends GeneratedTOBuilder {
                 ? super.build() : new UnionGTO(this, typePropertyNames);
         }
 
-        private static final class UnionGTO extends GTO implements RuntimeGeneratedUnion {
+        private static final class UnionGTO extends GTO implements UnionTypeObjectArchetype {
             private final @NonNull List<String> typePropertyNames;
 
             UnionGTO(final RuntimeGeneratedTOBuilder builder, final List<String> typePropertyNames) {
