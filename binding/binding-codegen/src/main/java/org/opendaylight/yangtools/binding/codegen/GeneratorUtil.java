@@ -332,4 +332,15 @@ public final class GeneratorUtil {
             && single.getNode() instanceof ContainerSchemaNode container
             && !container.isPresenceContainer();
     }
+
+    static boolean strictTypeEquals(final Type type1, final Type type2) {
+        if (!type1.equals(type2)) {
+            return false;
+        }
+        if (type1 instanceof ParameterizedType param1) {
+            return type2 instanceof ParameterizedType param2
+                && param1.getActualTypeArguments().equals(param2.getActualTypeArguments());
+        }
+        return !(type2 instanceof ParameterizedType);
+    }
 }

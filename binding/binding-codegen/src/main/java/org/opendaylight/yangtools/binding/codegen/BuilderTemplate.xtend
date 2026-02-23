@@ -296,7 +296,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private printPropertySetter(MethodSignature getter, String retrieveProperty, String propertyName) {
         val ownGetter = implTemplate.findGetter(getter.name)
         val ownGetterType = ownGetter.returnType
-        if (Types.strictTypeEquals(getter.returnType, ownGetterType)) {
+        if (GeneratorUtil.strictTypeEquals(getter.returnType, ownGetterType)) {
             return "this._" + propertyName + " = " + retrieveProperty
         }
         if (ownGetterType instanceof ParameterizedType) {
