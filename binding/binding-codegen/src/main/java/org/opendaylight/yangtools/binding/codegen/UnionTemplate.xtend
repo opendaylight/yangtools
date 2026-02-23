@@ -12,9 +12,7 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING
-import static org.opendaylight.yangtools.binding.model.ri.Types.getOuterClassName
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX
 import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isBitsType
 import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes.isIdentityType
 
@@ -84,14 +82,6 @@ final class UnionTemplate extends ClassTemplate {
             }
         «ENDFOR»
     '''
-
-    def typeBuilder() {
-        val outerCls = getOuterClassName(type);
-        if (outerCls !== null) {
-            return outerCls + type.simpleName + BUILDER_SUFFIX
-        }
-        return type.simpleName + BUILDER_SUFFIX
-    }
 
     private def unionConstructorsParentProperties() '''
         «FOR property : parentProperties SEPARATOR "\n"»
