@@ -21,17 +21,18 @@ import static extension org.opendaylight.yangtools.binding.model.ri.BindingTypes
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.Type
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype
 
 /**
  * Template for generating JAVA class.
  */
-class UnionTemplate extends ClassTemplate {
+final class UnionTemplate extends ClassTemplate {
     /**
      * Creates instance of this class with concrete <code>genType</code>.
      *
      * @param genType generated transfer object which will be transformed to JAVA class source code
      */
-    new(NestedJavaGeneratedType javaType, GeneratedTransferObject genType) {
+    new(NestedJavaGeneratedType javaType, UnionTypeObjectArchetype genType) {
         super(javaType, genType)
     }
 
@@ -40,7 +41,7 @@ class UnionTemplate extends ClassTemplate {
      *
      * @param genType generated transfer object which will be transformed to JAVA class source code
      */
-    new(GeneratedTransferObject genType) {
+    new(UnionTypeObjectArchetype genType) {
         super(genType)
     }
 
@@ -128,7 +129,7 @@ class UnionTemplate extends ClassTemplate {
                         && (propRet.simpleName.startsWith("Uint") || "Decimal64".equals(propRet.simpleName))»
                     ««« type uint*, decimal64
                 return «field».toCanonicalString();
-                «ELSEIF propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).unionType»
+                «ELSEIF propRet instanceof UnionTypeObjectArchetype»
                     ««« union type
                 return «field».stringValue();
                 «ELSEIF BOOLEAN_TYPE.equals(propRet.typedefReturnType)»

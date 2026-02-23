@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
@@ -24,8 +25,8 @@ public final class TOGenerator implements CodeGenerator {
     @Override
     public String generate(final Type type) {
         if (type instanceof GeneratedTransferObject genTO) {
-            if (genTO.isUnionType()) {
-                return new UnionTemplate(genTO).generate();
+            if (genTO instanceof UnionTypeObjectArchetype union) {
+                return new UnionTemplate(union).generate();
             }
             if (genTO.isTypedef()) {
                 return new ClassTemplate(genTO).generate();

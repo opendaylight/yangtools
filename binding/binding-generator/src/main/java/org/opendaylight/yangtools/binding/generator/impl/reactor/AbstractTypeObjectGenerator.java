@@ -722,7 +722,6 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         final var builder = builderFactory.newUnionTypeObjectBuilder(typeName);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
         builder.addImplementsType(BindingTypes.UNION_TYPE_OBJECT);
-        builder.setIsUnion(true);
 
 //        builder.setSchemaPath(typedef.getPath());
         builder.setModuleName(module.statement().argument().getLocalName());

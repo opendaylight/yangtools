@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.model.ri.Types
 import org.opendaylight.yangtools.binding.contract.Naming
@@ -279,7 +280,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def protected constructors() '''
-        «IF genTO.unionType»
+        «IF genTO instanceof UnionTypeObjectArchetype»
             «genUnionConstructor»
         «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(TypeConstants.VALUE_PROP)»
             «typedefConstructor»
@@ -436,7 +437,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def protected defaultInstance() '''
-        «IF genTO.typedef && !allProperties.empty && !genTO.unionType»
+        «IF genTO.typedef && !allProperties.empty && !(genTO instanceof UnionTypeObjectArchetype)»
             «val prop = allProperties.first»
             «val propType = prop.returnType»
             «IF !(INSTANCE_IDENTIFIER.name.equals(propType.name))»

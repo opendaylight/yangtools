@@ -20,7 +20,6 @@ public final class CodegenUnionTypeObjectArchetypeBuilder extends CodegenGenerat
 
     public CodegenUnionTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
         super(typeName);
-        setIsUnion(true);
     }
 
     @Override

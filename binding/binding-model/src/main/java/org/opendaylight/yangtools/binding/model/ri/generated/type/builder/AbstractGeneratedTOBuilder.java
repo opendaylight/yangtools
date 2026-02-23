@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -29,9 +30,9 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     private List<GeneratedPropertyBuilder> toStringProperties = List.of();
     private GeneratedTransferObject extendsType;
     private boolean isTypedef = false;
-    private boolean isUnionType = false;
     private TypeDefinition<?> baseType = null;
 
+    @NonNullByDefault
     AbstractGeneratedTOBuilder(final JavaTypeName typeName) {
         super(typeName);
         setAbstract(false);
@@ -109,26 +110,14 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
         baseType = typeDef;
     }
 
-    @Override
-    public final void setIsUnion(final boolean newIsUnion) {
-        isUnionType = newIsUnion;
-    }
-
-    @Override
-    public final boolean isUnion() {
-        return isUnionType;
-    }
-
-    abstract static class AbstractGeneratedTransferObject extends AbstractGeneratedType implements
-            GeneratedTransferObject {
-
+    abstract static class AbstractGeneratedTransferObject extends AbstractGeneratedType
+            implements GeneratedTransferObject {
         private final List<GeneratedProperty> equalsProperties;
         private final List<GeneratedProperty> hashCodeProperties;
         private final List<GeneratedProperty> stringProperties;
         private final GeneratedTransferObject extendsType;
         private final boolean isTypedef;
         private final TypeDefinition<?> baseType;
-        private final boolean isUnionType;
 
         AbstractGeneratedTransferObject(final AbstractGeneratedTOBuilder builder) {
             super(builder);
@@ -142,7 +131,6 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
 
             isTypedef = builder.isTypedef;
             baseType = builder.baseType;
-            isUnionType = builder.isUnionType;
         }
 
         @Override
@@ -153,11 +141,6 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
         @Override
         public final TypeDefinition<?> getBaseType() {
             return baseType;
-        }
-
-        @Override
-        public final boolean isUnionType() {
-            return isUnionType;
         }
 
         @Override

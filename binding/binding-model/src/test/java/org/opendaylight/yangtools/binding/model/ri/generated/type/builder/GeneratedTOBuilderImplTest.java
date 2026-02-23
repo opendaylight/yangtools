@@ -101,21 +101,19 @@ class GeneratedTOBuilderImplTest {
 
     @Test
     void testSetterMethods() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
+        final var builder = new CodegenUnionTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
-        genTOBuilder.setTypedef(true);
-        genTOBuilder.setIsUnion(true);
-        genTOBuilder.setDescription("test description");
-        genTOBuilder.setModuleName("test-module");
-        genTOBuilder.setReference("http://tools.ietf.org/html/rfc6020");
+        builder.setTypedef(true);
+        builder.setDescription("test description");
+        builder.setModuleName("test-module");
+        builder.setReference("http://tools.ietf.org/html/rfc6020");
 
-        final var genTO = genTOBuilder.build();
+        final var archetype = builder.build();
 
-        assertTrue(genTO.isTypedef());
-        assertTrue(genTO.isUnionType());
-        assertEquals("test description", genTO.getDescription());
-        assertEquals("test-module", genTO.getModuleName());
-        assertEquals("http://tools.ietf.org/html/rfc6020", genTO.getReference());
+        assertTrue(archetype.isTypedef());
+        assertEquals("test description", archetype.getDescription());
+        assertEquals("test-module", archetype.getModuleName());
+        assertEquals("http://tools.ietf.org/html/rfc6020", archetype.getReference());
     }
 
     @Test

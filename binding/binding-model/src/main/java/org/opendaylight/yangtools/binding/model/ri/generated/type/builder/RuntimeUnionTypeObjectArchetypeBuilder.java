@@ -20,7 +20,6 @@ public final class RuntimeUnionTypeObjectArchetypeBuilder extends RuntimeGenerat
 
     public RuntimeUnionTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
         super(typeName);
-        setIsUnion(true);
     }
 
     @Override

@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -242,8 +243,9 @@ class JavaFileTemplate {
         }
 
         final var innerJavaType = javaType.getEnclosedType(innerClass.name());
-        return gto.isUnionType() ? new UnionTemplate(innerJavaType, gto).generateAsInnerClass()
-                : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
+        return gto instanceof UnionTypeObjectArchetype union
+            ? new UnionTemplate(innerJavaType, union).generateAsInnerClass()
+            : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
     }
 
     /**

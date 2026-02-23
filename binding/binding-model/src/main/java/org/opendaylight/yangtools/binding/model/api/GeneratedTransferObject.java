@@ -62,13 +62,6 @@ public interface GeneratedTransferObject extends GeneratedType {
      */
     TypeDefinition<?> getBaseType();
 
-    /**
-     * Return boolean value which describe whether Generated Transfer Object was created (or not) from union YANG type.
-     *
-     * @return true value if Generated Transfer Object was created from union YANG type.
-     */
-    boolean isUnionType();
-
     Restrictions getRestrictions();
 
     default Optional<? extends GeneratedProperty> findProperty(final String name) {

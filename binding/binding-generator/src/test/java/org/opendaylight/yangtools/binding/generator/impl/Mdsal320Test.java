@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal320Test {
@@ -31,16 +31,14 @@ class Mdsal320Test {
         final var fooTypes = foo.getEnclosedTypes();
         assertEquals(1, fooTypes.size());
 
-        final var bar = assertInstanceOf(GeneratedTransferObject.class, fooTypes.getFirst());
+        final var bar = assertInstanceOf(UnionTypeObjectArchetype.class, fooTypes.getFirst());
         assertEquals("Bar", bar.simpleName());
-        assertTrue(bar.isUnionType());
 
         final var barTypes = bar.getEnclosedTypes();
         assertEquals(1, barTypes.size());
 
-        final var bar1 = assertInstanceOf(GeneratedTransferObject.class, barTypes.getFirst());
+        final var bar1 = assertInstanceOf(UnionTypeObjectArchetype.class, barTypes.getFirst());
         assertEquals("Bar$1", bar1.simpleName());
-        assertTrue(bar1.isUnionType());
 
         final var it = foo.getMethodDefinitions().iterator();
         assertTrue(it.hasNext());
@@ -56,8 +54,7 @@ class Mdsal320Test {
         final var bindingToString = it.next();
         assertEquals(Naming.BINDING_TO_STRING_NAME, bindingToString.getName());
         final var getBar = it.next();
-        final var getBarType = assertInstanceOf(GeneratedTransferObject.class, getBar.getReturnType());
-        assertTrue(getBarType.isUnionType());
+        final var getBarType = assertInstanceOf(UnionTypeObjectArchetype.class, getBar.getReturnType());
         assertEquals(bar, getBarType);
         final var requireBar = it.next();
         assertThat(requireBar.getName()).startsWith(Naming.REQUIRE_PREFIX);

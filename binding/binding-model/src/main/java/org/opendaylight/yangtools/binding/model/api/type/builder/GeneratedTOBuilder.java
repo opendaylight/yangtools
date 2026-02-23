@@ -76,15 +76,6 @@ public sealed interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<Gene
      */
     void setBaseType(TypeDefinition<?> typeDef);
 
-    boolean isUnion();
-
-    /**
-     * Sets the union flag.
-     *
-     * @param isUnion true if the result is a union type.
-     */
-    void setIsUnion(boolean isUnion);
-
     void setSUID(GeneratedPropertyBuilder suid);
 
     /**
