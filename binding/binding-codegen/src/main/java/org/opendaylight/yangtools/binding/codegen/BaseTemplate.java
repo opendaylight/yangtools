@@ -229,45 +229,42 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var typeName = importedName(type);
         final var override = importedName(OVERRIDE);
 
-        return new StringBuilder()
-            .append("/**\n")
-            .append(" * Singleton value representing the {@link ").append(typeName).append("} identity.\n")
-            .append(" */\n")
-            .append("public static final ").append(importedNonNull(type)).append(' ').append(name).append(" = new ")
-                .append(typeName).append("() {\n")
-            .append("    @java.io.Serial\n")
-            .append("    private static final long serialVersionUID = 1L;\n\n")
-
-            .append("    @").append(override).append('\n')
-            .append("    public ").append(importedName(CLASS)).append('<').append(typeName).append("> ")
-                .append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME).append("() {\n")
-            .append("        return ").append(typeName).append(".class;\n")
-            .append("    }\n\n")
-
-            .append("    @").append(override).append('\n')
-            .append("    public int hashCode() {\n")
-            .append("        return ").append(typeName).append(".class.hashCode();\n")
-            .append("    }\n\n")
-
-            .append("    @").append(override).append('\n')
-            .append("    public boolean equals(final ").append(importedName(Types.objectType())).append(" obj) {\n")
-            .append("        return obj == this || obj instanceof ").append(typeName).append(" other\n")
-            .append("            && ").append(typeName).append(".class.equals(other.")
-                .append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME).append("());\n")
-            .append("    }\n\n")
-
-            .append("    @").append(override).append('\n')
-            .append("    public ").append(importedName(Types.STRING)).append(" toString() {\n")
-            .append("        return ").append(importedName(MOREOBJECTS)).append(".toStringHelper(\"").append(typeName)
-                .append("\").add(\"qname\", QNAME).toString();\n")
-            .append("    }\n\n")
-
-            .append("    @java.io.Serial\n")
-            .append("    private Object readResolve() throws java.io.ObjectStreamException {\n")
-            .append("        return ").append(name).append(";\n")
-            .append("    }\n")
-            .append("};\n")
-            .toString();
+        return "/**\n"
+            +  " * Singleton value representing the {@link " + typeName + "} identity.\n"
+            +  " */\n"
+            +  "public static final " + importedNonNull(type) + ' ' + name + " = new " + typeName + "() {\n"
+            +  "    @java.io.Serial\n"
+            +  "    private static final long serialVersionUID = 1L;\n"
+            +  '\n'
+            +  "    @" + override + '\n'
+            +  "    public " + importedName(CLASS) + '<' + typeName+ "> "
+                + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {\n"
+            +  "        return " + typeName + ".class;\n"
+            +  "    }\n"
+            +  '\n'
+            +  "    @" + override + '\n'
+            +  "    public int hashCode() {\n"
+            +  "        return " + typeName + ".class.hashCode();\n"
+            +  "    }\n"
+            +  '\n'
+            +  "    @" + override + '\n'
+            +  "    public boolean equals(final " + importedName(Types.objectType()) + " obj) {\n"
+            +  "        return obj == this || obj instanceof " + typeName + " other\n"
+            +  "            && " + typeName + ".class.equals(other."
+                + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "());\n"
+            +  "    }\n"
+            +  '\n'
+            +  "    @" + override + '\n'
+            +  "    public " + importedName(Types.STRING) + " toString() {\n"
+            +  "        return " + importedName(MOREOBJECTS) + ".toStringHelper(\"" + typeName
+                + "\").add(\"qname\", QNAME).toString();\n"
+            +  "    }\n"
+            +  '\n'
+            +  "    @java.io.Serial\n"
+            +  "    private Object readResolve() throws java.io.ObjectStreamException {\n"
+            +  "        return " + name + ";\n"
+            +  "    }\n"
+            +  "};\n";
     }
 
     /**
