@@ -29,10 +29,7 @@ import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
 import com.google.common.base.Verify
 import com.google.common.collect.ImmutableSet
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
-import java.util.ArrayList
 import java.util.Collection
-import java.util.Comparator
 import java.util.List
 import java.util.Map
 import java.util.Set
@@ -42,7 +39,6 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
-import org.opendaylight.yangtools.binding.model.api.Restrictions
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.model.ri.Types
@@ -52,8 +48,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 /**
  * Template for generating JAVA class.
  */
-class ClassTemplate extends BaseTemplate {
-    static val Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing([prop | prop.name])
+class ClassTemplate extends AbstractClassTemplate {
     static val VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE,
         DECIMAL64_TYPE,
@@ -75,12 +70,6 @@ class ClassTemplate extends BaseTemplate {
      */
     static val IMMUTABLE_SET = JavaTypeName.create(ImmutableSet)
 
-    protected val List<GeneratedProperty> properties
-    protected val List<GeneratedProperty> finalProperties
-    protected val List<GeneratedProperty> parentProperties
-    protected val List<GeneratedProperty> allProperties
-    protected val Restrictions restrictions
-
     /**
      * List of enumeration which are generated as JAVA enum type.
      */
@@ -90,8 +79,6 @@ class ClassTemplate extends BaseTemplate {
      * List of constant instances which are generated as JAVA public static final attributes.
      */
     protected val List<Constant> consts
-
-    protected val GeneratedTransferObject genTO
 
     val AbstractRangeGenerator<?> rangeGenerator
 
@@ -111,18 +98,7 @@ class ClassTemplate extends BaseTemplate {
      */
     new(AbstractJavaGeneratedType javaType, GeneratedTransferObject genType) {
         super(javaType, genType)
-        this.genTO = genType
-        this.properties = genType.properties
-        this.finalProperties = GeneratorUtil.resolveReadOnlyPropertiesFromTO(genTO.properties)
-        this.parentProperties = GeneratorUtil.getPropertiesOfAllParents(genTO)
-        this.restrictions = genType.restrictions
 
-        val sorted = new ArrayList();
-        sorted.addAll(properties);
-        sorted.addAll(parentProperties);
-        sorted.sort(PROP_COMPARATOR);
-
-        this.allProperties = sorted
         this.enums = genType.enumerations
         this.consts = genType.constantDefinitions
 
@@ -424,6 +400,8 @@ class ClassTemplate extends BaseTemplate {
     }
     '''
 
+    // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
+    //        different from ScalarTypeObjects the rest of this method handles.
     def package defaultInstance() '''
         «IF genTO.typedef && !allProperties.empty»
             «val prop = allProperties.first»
@@ -431,7 +409,7 @@ class ClassTemplate extends BaseTemplate {
             «IF !(INSTANCE_IDENTIFIER.name.equals(propType.name))»
             public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
                 «IF propType.equals(Types.primitiveBooleanType())»
-                    «bitsArgs»
+                    «bitsDefaultInstanceBody»
                 «ELSEIF VALUEOF_TYPES.contains(propType)»
                     return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
                 «ELSEIF STRING_TYPE.equals(propType)»
@@ -446,26 +424,6 @@ class ClassTemplate extends BaseTemplate {
             }
             «ENDIF»
         «ENDIF»
-    '''
-
-    @SuppressFBWarnings(value = "DLS_DEAD_LOCAL_STORE", justification = "FOR with SEPARATOR, not needing for value")
-    def protected bitsArgs() '''
-        var properties = «JU_LIST.importedName».of(«allProperties.propsAsArgs»);
-        if (!properties.contains(defaultValue)) {
-            throw new «IAE.importedName»("invalid default parameter");
-        }
-        int i = 0;
-        return new «genTO.simpleName»(
-        «FOR prop : allProperties SEPARATOR ","»
-            properties.get(i++).equals(defaultValue) ? true : false
-        «ENDFOR»
-        );
-    '''
-
-    def protected propsAsArgs(Iterable<GeneratedProperty> properties) '''
-        «FOR prop : properties SEPARATOR ","»
-            "«prop.name»"
-        «ENDFOR»
     '''
 
     /**

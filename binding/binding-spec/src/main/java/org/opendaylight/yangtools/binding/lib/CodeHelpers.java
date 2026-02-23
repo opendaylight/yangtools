@@ -23,9 +23,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.yang.common.Decimal64;
@@ -523,5 +525,31 @@ public final class CodeHelpers {
      */
     public static byte @Nullable [] copyArray(final byte @Nullable [] bytes) {
         return bytes == null ? null : bytes.clone();
+    }
+
+    /**
+     * Parse a {@link BitsTypeObject} {@code defaultValue} string for the purposes of its generated
+     * {@code getDefaultInstance(String)} method.
+     *
+     * @param defaultValue user-provided value
+     * @param bits bit name strings
+     * @return bit values corresponding to input {@code bits} array with the matching bit set
+     * @throws IllegalArgumentException if {code defaultValue} does not match any of the bits
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    // FIXME: The contract of defaultValue is borderline useless because it allows recovering only a single bit.
+    //        In order to fix this, we actually need to define a string format that the BitsTypeObject gives out
+    //        (by talking to this class). This method would then parse it and set all the present bits.
+    @NonNullByDefault
+    public static boolean[] parseBitsDefaultValue(final String defaultValue, final String... bits) {
+        final var checked = requireNonNull(defaultValue);
+        for (int i = 0; i < bits.length; ++i) {
+            if (checked.equals(bits[i])) {
+                final var ret = new boolean[bits.length];
+                ret[i] = true;
+                return ret;
+            }
+        }
+        throw new IllegalArgumentException("invalid default parameter");
     }
 }

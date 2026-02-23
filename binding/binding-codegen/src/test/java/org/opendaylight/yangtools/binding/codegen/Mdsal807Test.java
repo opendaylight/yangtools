@@ -38,15 +38,9 @@ class Mdsal807Test extends BaseCompilationTest {
 
         FileSearchUtil.assertFileContainsConsecutiveLines(pmDataType, Files.readString(pmDataType),
             "    public static TableConfig getDefaultInstance(final String defaultValue) {",
-            "        var properties = List.of(\"oFPTCDEPRECATEDMASK\"",
-            "        );",
-            "        if (!properties.contains(defaultValue)) {",
-            "            throw new IllegalArgumentException(\"invalid default parameter\");",
-            "        }",
-            "        int i = 0;",
+            "        var values = CodeHelpers.parseBitsDefaultValue(defaultValue, \"oFPTCDEPRECATEDMASK\");",
             "        return new TableConfig(",
-            "        properties.get(i++).equals(defaultValue) ? true : false",
-            "        );",
+            "            values[0]);",
             "    }"
         );
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
