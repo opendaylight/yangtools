@@ -35,4 +35,9 @@ final class DoNotLeakSpotbugs {
             }
         }
     }
+
+    @SuppressFBWarnings(value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS", justification = "This is exactly what we want to do!")
+    static byte @Nullable [] copyArray(final byte @Nullable [] bytes) {
+        return bytes == null ? null : bytes.clone();
+    }
 }

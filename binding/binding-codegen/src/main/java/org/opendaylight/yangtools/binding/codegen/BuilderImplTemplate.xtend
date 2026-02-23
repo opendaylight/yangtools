@@ -137,7 +137,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         public «field.returnType.importedName» «field.getterMethodName»() {
             «val fieldName = field.fieldName»
             «IF field.returnType.simpleName.endsWith("[]")»
-                return «fieldName» == null ? null : «fieldName».clone();
+                return «CODEHELPERS.importedName».copyArray(«fieldName»);
             «ELSE»
                 return «fieldName»;
             «ENDIF»

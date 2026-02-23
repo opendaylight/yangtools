@@ -276,16 +276,16 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var returnType = field.getReturnType();
         final var importedName = importedName(returnType);
         // any Java array type needs to be duplicated to prevent modification
-        final var copy = returnType.simpleName().endsWith("[]");
+        final var codeHelpers = returnType.simpleName().endsWith("[]") ? importedName(CODEHELPERS) : null;
 
         // emit separately
         final var sb = new StringBuilder()
             .append("public ").append(importedName).append(' ').append(methodName).append("() {\n")
-            .append("    return ").append(fieldName);
-        // FIXME: offload this logic to CodeHelpers: this should only apply to byte[] and therefore we can just call
-        //        CodeHelpers.isolatedBytes(byte[]);
-        if (copy) {
-            sb.append(" == null ? null : ").append(fieldName).append(".clone()");
+            .append("    return ");
+        if (codeHelpers != null) {
+            sb.append(codeHelpers).append(".copyArray(").append(fieldName).append(')');
+        } else {
+            sb.append(fieldName);
         }
         return sb.append(";\n}\n").toString();
     }

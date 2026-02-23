@@ -255,10 +255,11 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         }
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
-            sb.append("    this.").append(fieldName).append(" = source.").append(fieldName);
+            sb.append("    this.").append(fieldName).append(" = ");
             if (prop.getReturnType().simpleName().endsWith("[]")) {
-                // FIXME: add a CodeHelpers utility which will do the conditional clone() with a single source access
-                sb.append(" == null ? null : source.").append(fieldName).append(".clone()");
+                sb.append(importedName(CODEHELPERS)).append(".copyArray(source.").append(fieldName).append(')');
+            } else {
+                sb.append("source.").append(fieldName);
             }
             sb.append(";\n");
         }

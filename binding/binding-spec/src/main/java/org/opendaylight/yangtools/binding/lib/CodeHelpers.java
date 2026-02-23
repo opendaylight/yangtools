@@ -503,4 +503,13 @@ public final class CodeHelpers {
         }
         throw new IllegalArgumentException("Invalid value " + str);
     }
+
+    /**
+     * {@return a clone of input bytes or {@code null}}
+     * @param bytes input bytes
+     */
+    public static byte @Nullable [] copyArray(final byte @Nullable [] bytes) {
+        // Indirection to deal with SpotBugs being too "helpful" without leaking its annotations
+        return DoNotLeakSpotbugs.copyArray(bytes);
+    }
 }
