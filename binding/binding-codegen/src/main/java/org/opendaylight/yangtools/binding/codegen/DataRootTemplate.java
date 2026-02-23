@@ -37,14 +37,11 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var moduleInfo = importedName(archetype.yangModuleInfo());
         final var type = importedName(archetype);
 
-        return new StringBuilder("""
-            /**
-             * The {@link\s""").append(rootMetaRaw).append("} associated with this module root.\n").append("""
-             */
-            @""").append(nonNullByDefault).append('\n')
-            .append(rootMeta).append(" META = new ").append(rootMetaRaw).append("<>(")
-            .append(type).append(".class, ").append(moduleInfo).append(".INSTANCE);\n")
-            .toString();
+        return "/**\n"
+            +  " * The {@link " + rootMetaRaw + "} associated with this module root.\n"
+            +  " */\n"
+            +  " @" + nonNullByDefault + '\n'
+            +  rootMeta + " META = new " + rootMetaRaw + "<>(" + type + ".class, " + moduleInfo + ".INSTANCE);\n";
     }
 
     @Override
