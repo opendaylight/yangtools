@@ -216,14 +216,12 @@ abstract class BaseTemplate extends JavaFileTemplate {
     @NonNullByDefault
     final CharSequence emitQNameConstant(final String name, final Type type, final JavaTypeName yangModuleInfo,
             final String localName) {
-        return new StringBuilder()
-            .append("/**\n")
-            .append(" * YANG identifier of the statement represented by this class.\n")
-            .append(" */\n")
-            .append("public static final ").append(importedNonNull(type)).append(' ').append(name).append(" = ")
-                .append(importedName(yangModuleInfo)).append('.').append(Naming.MODULE_INFO_QNAMEOF_METHOD_NAME)
-                .append("(\"").append(localName).append("\");\n")
-            .toString();
+        return """
+            /**
+             * YANG identifier of the statement represented by this class.
+             */
+            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo) + '.'
+                + Naming.MODULE_INFO_QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
     }
 
     @NonNullByDefault
