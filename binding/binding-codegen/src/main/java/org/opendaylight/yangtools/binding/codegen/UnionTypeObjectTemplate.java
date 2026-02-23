@@ -265,4 +265,9 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         }
         return sb.append("}\n").toString();
     }
+
+    @Override
+    String defaultInstance() {
+        return "";
+    }
 }
