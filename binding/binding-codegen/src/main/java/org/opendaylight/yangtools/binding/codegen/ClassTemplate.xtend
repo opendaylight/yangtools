@@ -280,9 +280,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def protected constructors() '''
-        «IF genTO instanceof UnionTypeObjectArchetype»
-            «genUnionConstructor»
-        «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(TypeConstants.VALUE_PROP)»
+        «IF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(TypeConstants.VALUE_PROP)»
             «typedefConstructor»
         «ELSE»
             «allValuesConstructor»
@@ -345,15 +343,6 @@ class ClassTemplate extends BaseTemplate {
         Verify.verify(TypeConstants.VALUE_PROP.equals(prop.name), "Unexpected property %s", prop)
         return prop
     }
-
-    def protected genUnionConstructor() '''
-    «FOR p : allProperties»
-        «val List<GeneratedProperty> other = new ArrayList(properties)»
-        «IF other.remove(p)»
-            «genConstructor(p, other)»
-        «ENDIF»
-    «ENDFOR»
-    '''
 
     def protected genConstructor(GeneratedProperty property, Iterable<GeneratedProperty> other) '''
     public «type.simpleName»(«property.returnType.importedName + " " + property.name») {
