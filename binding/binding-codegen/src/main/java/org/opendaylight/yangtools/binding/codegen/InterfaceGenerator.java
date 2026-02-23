@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
-public final class InterfaceGenerator implements CodeGenerator {
+final class InterfaceGenerator implements CodeGenerator {
     @Override
     public boolean isAcceptable(final Type type) {
         return type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -17,7 +16,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
  * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA class.
  * For generating of the source code is used the template written in XTEND language.
  */
-public final class TOGenerator implements CodeGenerator {
+final class TOGenerator implements CodeGenerator {
     /**
      * Generates JAVA source code for generated type <code>Type</code>. The code is generated according to the template
      * source code template which is written in XTEND language.

@@ -5,12 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.codegen;
+
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Transforms virtual data to the concrete code in programming language.
  */
-public interface CodeGenerator {
+interface CodeGenerator {
     /**
      * Generates code for <code>type</code>.
      *

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -15,7 +14,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA
  * enumeration. For generation of the source code is used the template written in XTEND language.
  */
-public class EnumGenerator implements CodeGenerator {
+final class EnumGenerator implements CodeGenerator {
     @Override
     public boolean isAcceptable(final Type type) {
         return type instanceof EnumTypeObjectArchetype;

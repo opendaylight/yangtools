@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -26,7 +25,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
  * Transformator of the data from the virtual form to JAVA programming language. The result source code represent java
  * class. For generation of the source code is used the template written in XTEND language.
  */
-public final class BuilderGenerator implements CodeGenerator {
+final class BuilderGenerator implements CodeGenerator {
     private static final JavaTypeName AUGMENTABLE = JavaTypeName.create(Augmentable.class);
     private static final JavaTypeName AUGMENTATION = JavaTypeName.create(Augmentation.class);
     private static final JavaTypeName ENTRY_OBJECT = JavaTypeName.create(EntryObject.class);

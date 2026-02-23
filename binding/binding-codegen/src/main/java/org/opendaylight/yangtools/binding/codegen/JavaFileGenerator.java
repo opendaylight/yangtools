@@ -23,7 +23,6 @@ import java.util.Set;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGenerator;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
-import org.opendaylight.yangtools.binding.model.api.CodeGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
