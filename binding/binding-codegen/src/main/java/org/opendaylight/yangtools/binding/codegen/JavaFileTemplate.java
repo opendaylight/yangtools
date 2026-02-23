@@ -244,7 +244,7 @@ class JavaFileTemplate {
 
         final var innerJavaType = javaType.getEnclosedType(innerClass.name());
         return gto instanceof UnionTypeObjectArchetype union
-            ? new UnionTemplate(innerJavaType, union).generateAsInnerClass()
+            ? UnionTypeObjectTemplate.generateAsInner(innerJavaType, union)
             : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
     }
 
