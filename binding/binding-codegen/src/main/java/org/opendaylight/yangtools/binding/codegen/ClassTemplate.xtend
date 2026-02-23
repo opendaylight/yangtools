@@ -278,7 +278,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def protected constructors() '''
+    def package constructors() '''
         «IF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(TypeConstants.VALUE_PROP)»
             «typedefConstructor»
         «ELSE»
@@ -395,7 +395,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def protected copyConstructor() '''
+    def package copyConstructor() '''
     /**
      * Creates a copy from Source Object.
      *

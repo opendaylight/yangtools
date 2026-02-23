@@ -42,9 +42,8 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         return new UnionTypeObjectTemplate(javaType, archetype).generateAsInnerClass();
     }
 
-
     @Override
-    public CharSequence constructors() {
+    CharSequence constructors() {
         //      «unionConstructorsParentProperties»
         //      «unionConstructors»
         //      «IF !allProperties.empty»
@@ -237,7 +236,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    protected String copyConstructor() {
+    String copyConstructor() {
         final var type = type();
         final var simpleName = type.simpleName();
 

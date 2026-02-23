@@ -38,7 +38,7 @@ final class FeatureTemplate extends ClassTemplate {
     }
 
     @Override
-    protected String constructors() {
+    String constructors() {
         final var typeName = type().simpleName();
 
         return "private " + typeName + "() {\n"
