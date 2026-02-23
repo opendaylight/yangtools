@@ -42,17 +42,17 @@ final class FeatureTemplate extends ClassTemplate {
         final var typeName = type().simpleName();
 
         return "private " + typeName + "() {\n"
-            + "    // Hidden on purpose\n"
-            + "}";
+            +  "    // Hidden on purpose\n"
+            +  "}";
     }
 
     @Override
     String emitValueConstant(final String name, final Type type) {
         final var typeName = importedName(type());
         return "/**\n"
-            + " * {@link " + typeName + "} singleton instance.\n"
-            + " */\n"
-            + "public static final " + typeName + ' ' + Naming.VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();";
+            +  " * {@link " + typeName + "} singleton instance.\n"
+            +  " */\n"
+            +  "public static final " + typeName + ' ' + Naming.VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();";
     }
 
     @Override
@@ -63,18 +63,18 @@ final class FeatureTemplate extends ClassTemplate {
         final var rootName = importedName(dataRoot);
 
         return '@' + override + '\n'
-            + "public " + clazz + '<' + typeName + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {\n"
-            + "    return " + typeName + ".class;\n"
-            + "}\n"
-            + '\n'
-            + '@' + override + '\n'
-            + "public " + importedName(QNAME) + " qname() {\n"
-            + "    return " + Naming.QNAME_STATIC_FIELD_NAME + ";\n"
-            + "}\n"
-            + '\n'
-            + '@' + override + '\n'
-            + "public " + clazz + '<' + rootName + "> definingModule() {\n"
-            + "    return " + rootName + ".class;\n"
-            + "}\n";
+            +  "public " + clazz + '<' + typeName + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {\n"
+            +  "    return " + typeName + ".class;\n"
+            +  "}\n"
+            +  '\n'
+            +  '@' + override + '\n'
+            +  "public " + importedName(QNAME) + " qname() {\n"
+            +  "    return " + Naming.QNAME_STATIC_FIELD_NAME + ";\n"
+            +  "}\n"
+            +  '\n'
+            +  '@' + override + '\n'
+            +  "public " + clazz + '<' + rootName + "> definingModule() {\n"
+            +  "    return " + rootName + ".class;\n"
+            +  "}\n";
     }
 }
