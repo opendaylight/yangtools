@@ -47,7 +47,7 @@ final class FeatureTemplate extends ClassTemplate {
     }
 
     @Override
-    CharSequence emitValueConstant(final String name, final Type type) {
+    String emitValueConstant(final String name, final Type type) {
         final var typeName = importedName(type());
         return "/**\n"
             + " * {@link " + typeName + "} singleton instance.\n"

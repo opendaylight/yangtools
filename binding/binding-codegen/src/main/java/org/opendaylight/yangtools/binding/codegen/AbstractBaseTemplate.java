@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**
@@ -228,7 +229,50 @@ abstract class AbstractBaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    abstract CharSequence emitValueConstant(String name, Type type);
+    String emitValueConstant(final String name, final Type type) {
+        final var typeName = importedName(type);
+        final var override = importedName(OVERRIDE);
+
+        return new StringBuilder()
+            .append("/**\n")
+            .append(" * Singleton value representing the {@link ").append(typeName).append("} identity.\n")
+            .append(" */\n")
+            .append("public static final ").append(importedNonNull(type)).append(' ').append(name).append(" = new ")
+                .append(typeName).append("() {\n")
+            .append("    @java.io.Serial")
+            .append("    private static final long serialVersionUID = 1L;\n\n")
+
+            .append("    @").append(override).append('\n')
+            .append("    public ").append(importedName(CLASS)).append('<').append(typeName).append("> ")
+                .append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME).append("() {\n")
+            .append("        return ").append(typeName).append(".class;\n")
+            .append("    }\n\n")
+
+            .append("    @").append(override).append('\n')
+            .append("    public int hashCode() {\n")
+            .append("        return ").append(typeName).append(".class.hashCode();\n")
+            .append("    }\n\n")
+
+            .append("    @").append(override).append('\n')
+            .append("    public boolean equals(final ").append(importedName(Types.objectType())).append(" obj) {\n")
+            .append("        return obj == this || obj instanceof ").append(typeName).append(" other\n")
+            .append("            && ").append(typeName).append(".class.equals(other.")
+                .append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME).append("());\n")
+            .append("    }\n\n")
+
+            .append("    @").append(override).append('\n')
+            .append("    public ").append(importedName(Types.STRING)).append(" toString() {\n")
+            .append("        return ").append(importedName(MOREOBJECTS)).append(".toStringHelper(\"").append(typeName)
+                .append("\").add(\"qname\", QNAME).toString();\n")
+            .append("    }\n\n")
+
+            .append("    @java.io.Serial\n")
+            .append("    private Object readResolve() throws java.io.ObjectStreamException {\n")
+            .append("        return ").append(name).append(";\n")
+            .append("    }\n")
+            .append("};\n")
+            .toString();
+    }
 
     /**
      * Template method which generates the getter method for {@code field}.
