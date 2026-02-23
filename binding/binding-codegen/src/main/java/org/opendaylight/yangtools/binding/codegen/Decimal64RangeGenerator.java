@@ -48,12 +48,13 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
             final RangeConstraint<?> constraint, final Function<JavaTypeName, String> classImporter) {
         final var constraints = constraint.getAllowedRanges().asRanges();
         final var scale = getValue(constraints.iterator().next().upperEndpoint()).scale();
+        final var codeHelpers = classImporter.apply(JavaFileTemplate.CODEHELPERS);
 
         final var sb = new StringBuilder();
         sb.append("private static void ").append(checkerName).append("(final ").append(classImporter.apply(DECIMAL64))
             .append(" value) {\n");
-        sb.append("    final var unscaled = ").append(classImporter.apply(JavaFileTemplate.CODEHELPERS))
-            .append(".checkScale(value, ").append(scale).append(");\n");
+        sb.append("    final var unscaled = ").append(codeHelpers).append(".checkScale(value, ").append(scale)
+            .append(");\n");
 
         final var msg = new StringBuilder().append("\"[");
         final var it = constraints.iterator();
@@ -74,8 +75,7 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
             msg.append(", ");
         }
 
-        sb.append("    ").append(classImporter.apply(JavaFileTemplate.CODEHELPERS)).append(".throwInvalidRange(")
-            .append(msg).append("]\", value);\n");
+        sb.append("    ").append(codeHelpers).append(".throwInvalidRange(").append(msg).append("]\", value);\n");
         sb.append("}\n");
 
         return sb.toString();
