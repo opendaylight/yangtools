@@ -38,12 +38,11 @@ final class ListKeyTemplate extends ClassTemplate {
 
     @Override
     String allValuesConstructor() {
-        final var sb = new StringBuilder()
-            .append("""
-                /**
-                 * Constructs an instance.
-                 *
-                """);
+        final var sb = new StringBuilder().append("""
+            /**
+             * Constructs an instance.
+             *
+            """);
         for (var prop : allProperties) {
             sb.append(" * @param ").append(fieldName(prop)).append(" the entity ").append(prop.getName()).append('\n');
         }
@@ -51,8 +50,7 @@ final class ListKeyTemplate extends ClassTemplate {
         sb.append("""
              * @throws NullPointerException if any of the arguments are null
              */
-            public \
-            """).append(type().simpleName()).append('(').append(asNonNullArgumentsDeclaration(allProperties))
+            public\s""").append(type().simpleName()).append('(').append(asNonNullArgumentsDeclaration(allProperties))
                 .append(") {\n");
 
         for (var prop : allProperties) {
@@ -74,20 +72,14 @@ final class ListKeyTemplate extends ClassTemplate {
         final var fieldName = field.getName();
         final var returnType = field.getReturnType();
 
-        return new StringBuilder().append("""
-            /**
-             * Return \
-            """).append(fieldName).append(", guaranteed to be non-null.\n").append("""
-             *
-             * @return {@code \
-            """).append(importedName(returnType)).append("} ").append(fieldName).append("""
-            , guaranteed to be non-null.
-             */
-            public \
-            """).append(importedNonNull(returnType)).append(' ').append(getterMethodName(field)).append("() {\n")
-            .append("    return ").append(fieldName(field)).append(cloneCall(field)).append(";\n")
-            .append("}\n")
-            .toString();
+        return "/**\n"
+            +  " * Return " + fieldName + ", guaranteed to be non-null.\n"
+            +  " *\n"
+            +  " * @return {@code " + importedName(returnType) + "} " + fieldName + ", guaranteed to be non-null.\n"
+            +  " */\n"
+            +  "public " + importedNonNull(returnType) + ' ' + getterMethodName(field) + "() {\n"
+            +  "    return " + fieldName(field) + cloneCall(field) + ";\n"
+            + "}\n";
     }
 
     @Override
@@ -98,14 +90,9 @@ final class ListKeyTemplate extends ClassTemplate {
         }
 
         final var importedName = importedName(listType);
-
-        return new StringBuilder()
-            .append("This class represents the key of {@link ").append(importedName).append("""
-                } class.
-
-                @see \
-                """).append(importedName).append('\n')
-            .toString();
+        return "This class represents the key of {@link " + importedName + "} class.\n"
+            +  '\n'
+            +  "@see " + importedName + '\n';
     }
 
     private static @Nullable Type findListType(final @NonNull GeneratedType type) {
