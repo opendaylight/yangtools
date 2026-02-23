@@ -105,7 +105,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
             .append("    }\n\n")
 
             .append("    @").append(override).append('\n')
-            .append("    public ").append(nonnullString).append(" getName() {\n")
+            .append("    public ").append(string).append(" getName() {\n")
             .append("        return name;\n")
             .append("    }\n\n")
 
