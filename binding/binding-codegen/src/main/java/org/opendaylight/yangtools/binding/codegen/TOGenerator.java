@@ -24,18 +24,18 @@ public final class TOGenerator implements CodeGenerator {
      */
     @Override
     public String generate(final Type type) {
-        if (type instanceof GeneratedTransferObject genTO) {
-            if (genTO instanceof UnionTypeObjectArchetype union) {
-                return new UnionTemplate(union).generate();
+        return switch (type) {
+            case UnionTypeObjectArchetype union -> new UnionTypeObjectTemplate(union).generate();
+            case GeneratedTransferObject gto -> {
+                if (gto.isTypedef()) {
+                    yield new ClassTemplate(gto).generate();
+                }
+                final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(gto);
+                yield featureDataRoot == null ? new ListKeyTemplate(gto).generate()
+                    : new FeatureTemplate(gto, featureDataRoot).generate();
             }
-            if (genTO.isTypedef()) {
-                return new ClassTemplate(genTO).generate();
-            }
-            final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(genTO);
-            return featureDataRoot == null ? new ListKeyTemplate(genTO).generate()
-                : new FeatureTemplate(genTO, featureDataRoot).generate();
-        }
-        return "";
+            default -> "";
+        };
     }
 
     @Override
