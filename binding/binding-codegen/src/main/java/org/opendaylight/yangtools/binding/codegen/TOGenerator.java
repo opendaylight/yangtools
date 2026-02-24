@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.MoreObjects;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
@@ -16,34 +19,41 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
  * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA class.
  * For generating of the source code is used the template written in XTEND language.
  */
-final class TOGenerator implements CodeGenerator {
-    /**
-     * Generates JAVA source code for generated type <code>Type</code>. The code is generated according to the template
-     * source code template which is written in XTEND language.
-     */
+@NonNullByDefault
+record TOGenerator(GeneratedTransferObject type) implements Generator {
+    TOGenerator {
+        requireNonNull(type);
+    }
+
     @Override
-    public String generate(final Type type) {
+    public GeneratedTransferObject type() {
+        return type;
+    }
+
+    @Override
+    public String generate() {
         return switch (type) {
+            // FIXME: split out into separate generator
             case UnionTypeObjectArchetype union -> new UnionTypeObjectTemplate(union).generate();
-            case GeneratedTransferObject gto -> {
-                if (gto.isTypedef()) {
-                    yield new ClassTemplate(gto).generate();
+            default -> {
+                if (type.isTypedef()) {
+                    yield new ClassTemplate(type).generate();
                 }
-                final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(gto);
-                yield featureDataRoot == null ? new ListKeyTemplate(gto).generate()
-                    : new FeatureTemplate(gto, featureDataRoot).generate();
+                final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(type);
+                yield featureDataRoot == null ? new ListKeyTemplate(type).generate()
+                    : new FeatureTemplate(type, featureDataRoot).generate();
             }
-            default -> "";
         };
     }
 
+
     @Override
-    public boolean isAcceptable(final Type type) {
-        return type instanceof GeneratedTransferObject;
+    public String getUnitName() {
+        return type.name().simpleName();
     }
 
     @Override
-    public String getUnitName(final Type type) {
-        return type.simpleName();
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("type", type).toString();
     }
 }
