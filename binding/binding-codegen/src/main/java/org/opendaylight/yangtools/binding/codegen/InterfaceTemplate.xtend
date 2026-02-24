@@ -26,7 +26,6 @@ import java.util.List
 import java.util.Locale
 import java.util.Map.Entry
 import java.util.Set
-import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.Enumeration
@@ -202,7 +201,6 @@ class InterfaceTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    @SuppressModernizer
     def private generateDefaultMethod(MethodSignature method) {
         if (method.name.isNonnullMethodName) {
             generateNonnullMethod(method)
@@ -219,7 +217,6 @@ class InterfaceTemplate extends BaseTemplate {
         }
     }
 
-    @SuppressModernizer
     def private generateStaticMethod(MethodSignature method) {
         switch method.name {
             case BINDING_EQUALS_NAME : generateBindingEquals
