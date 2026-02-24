@@ -7,37 +7,40 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import static java.util.Objects.requireNonNull;
 
-final class InterfaceGenerator implements CodeGenerator {
-    @Override
-    public boolean isAcceptable(final Type type) {
-        return type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)
-                && !(type instanceof EnumTypeObjectArchetype);
+import com.google.common.base.MoreObjects;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+
+@NonNullByDefault
+record InterfaceGenerator(GeneratedType type) implements Generator {
+    InterfaceGenerator(final GeneratedType type) {
+        this.type = requireNonNull(type);
     }
 
-    /**
-     * Generates JAVA source code for generated type <code>Type</code>. The code
-     * is generated according to the template source code template which is
-     * written in XTEND language.
-     */
     @Override
-    public String generate(final Type type) {
+    public GeneratedType type() {
+        return type;
+    }
+
+    @Override
+    public String generate() {
         return switch (type) {
+            // FIXME: split out into separate generator
             case DataRootArchetype dataRoot -> new DataRootTemplate(dataRoot).generate();
-            // Note: unfortunate class hierarchy design
-            case GeneratedTransferObject gto -> "";
-            case GeneratedType gt -> new InterfaceTemplate(gt).generate();
-            default -> "";
+            default -> new InterfaceTemplate(type).generate();
         };
     }
 
     @Override
-    public String getUnitName(final Type type) {
-        return type.simpleName();
+    public String getUnitName() {
+        return type.name().simpleName();
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("type", type).toString();
     }
 }

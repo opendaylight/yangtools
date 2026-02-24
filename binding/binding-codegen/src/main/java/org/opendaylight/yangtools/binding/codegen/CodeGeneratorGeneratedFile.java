@@ -12,27 +12,26 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.Writer;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.plugin.generator.api.AbstractGeneratedTextFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
 
+@NonNullByDefault
 final class CodeGeneratorGeneratedFile extends AbstractGeneratedTextFile {
-    private final CodeGenerator generator;
-    private final Type type;
+    private final Generator generator;
 
-    CodeGeneratorGeneratedFile(final GeneratedFileLifecycle lifecycle, final CodeGenerator generator, final Type type) {
+    CodeGeneratorGeneratedFile(final GeneratedFileLifecycle lifecycle, final Generator generator) {
         super(lifecycle);
         this.generator = requireNonNull(generator);
-        this.type = requireNonNull(type);
     }
 
     @Override
     protected void writeBody(final Writer output) throws IOException {
-        output.write(generator.generate(type));
+        output.write(generator.generate());
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper).add("generator", generator).add("type", type);
+        return super.addToStringAttributes(helper).add("generator", generator);
     }
 }
