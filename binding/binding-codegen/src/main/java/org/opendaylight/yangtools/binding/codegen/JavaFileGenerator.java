@@ -64,14 +64,14 @@ final class JavaFileGenerator implements FileGenerator {
         for (final var module : localModules) {
             final var template = new YangModuleInfoTemplate(module, context,
                 mod -> moduleResourcePathResolver.findModuleResourcePath(mod, YangTextSource.class));
-            final var path = DOT_MATCHER.replaceFrom(template.getPackageName(), '/') + "/";
+            final var path = DOT_MATCHER.replaceFrom(template.packageName(), '/') + "/";
 
             result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofPath(path + MODULE_INFO),
                 new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, template::generate));
             result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofPath(path + MODEL_BINDING_PROVIDER),
                 new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, template::generateModelProvider));
 
-            bindingProviders.add(template.getModelBindingProviderName());
+            bindingProviders.add(template.modelBindingProviderName());
         }
 
         // META-INF/services entries, sorted to make the build predictable
