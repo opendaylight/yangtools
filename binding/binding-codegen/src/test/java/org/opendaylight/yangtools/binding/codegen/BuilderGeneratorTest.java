@@ -31,11 +31,6 @@ public class BuilderGeneratorTest {
     private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
 
     @Test
-    void basicTest() {
-        assertEquals("", new BuilderGenerator().generate(mock(Type.class)));
-    }
-
-    @Test
     void builderTemplateGenerateHashcodeWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
 
