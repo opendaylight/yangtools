@@ -18,17 +18,11 @@ import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class InterfaceGeneratorTest {
     private static final String TEST = "test";
     private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
-
-    @Test
-    void basicTest() {
-        assertEquals("", new InterfaceGenerator().generate(mock(Type.class)));
-    }
 
     @Test
     void builderTemplateListenerMethodTest() {
@@ -52,7 +46,7 @@ class InterfaceGeneratorTest {
             "",
             ""
         );
-        assertEquals(expected, new InterfaceGenerator().generate(genType));
+        assertEquals(expected, new InterfaceGenerator(genType).generate());
     }
 
     @Test
@@ -80,7 +74,7 @@ class InterfaceGeneratorTest {
             "",
             ""
         );
-        assertEquals(expected, new InterfaceGenerator().generate(genType));
+        assertEquals(expected, new InterfaceGenerator(genType).generate());
     }
 
     @Test
@@ -111,7 +105,7 @@ class InterfaceGeneratorTest {
             "",
             ""
         );
-        assertEquals(expected, new InterfaceGenerator().generate(genType));
+        assertEquals(expected, new InterfaceGenerator(genType).generate());
     }
 
     private static GeneratedType mockGenType(final MethodSignature methSign) {
