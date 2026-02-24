@@ -22,6 +22,6 @@ class EnumGeneratorTest {
 
     @Test
     void basicTest() {
-        assertEquals("", new EnumGenerator().generate(type));
+        assertEquals("", new EnumTypeObjectGenerator().generate(type));
     }
 }
