@@ -44,8 +44,7 @@ class ClassCodeGeneratorTest {
                         }
                     }
 
-                    final TOGenerator clsGen = new TOGenerator();
-                    final String outputStr = clsGen.generate(genTO);
+                    final String outputStr = new TOGenerator(genTO).generate();
 
                     assertNotNull(outputStr);
                     assertThat(outputStr)
@@ -83,10 +82,9 @@ class ClassCodeGeneratorTest {
         propBuilder.setReturnType(Types.typeForClass(Integer.class));
         propBuilder.setReadOnly(false);
 
-        final GeneratedTransferObject genTO = toBuilder.build();
+        final var genTO = toBuilder.build();
 
-        final TOGenerator clsGen = new TOGenerator();
-        final String outputStr = clsGen.generate(genTO);
+        final String outputStr = new TOGenerator(genTO).generate();
 
         assertNotNull(outputStr);
         assertFalse(outputStr.contains("public DefCtor()"));
@@ -105,9 +103,6 @@ class ClassCodeGeneratorTest {
         propBuilder.setReturnType(Types.typeForClass(Integer.class));
         propBuilder.setReadOnly(false);
         toBuilder.addToStringProperty(propBuilder);
-        final GeneratedTransferObject genTO = toBuilder.build();
-        final TOGenerator clsGen = new TOGenerator();
-        assertEquals("", clsGen.generate(Types.typeForClass(String.class)));
-        assertNotNull(clsGen.generate(genTO));
+        assertNotNull(new TOGenerator(toBuilder.build()).generate());
     }
 }
