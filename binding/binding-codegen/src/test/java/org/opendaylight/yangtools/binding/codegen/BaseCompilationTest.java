@@ -32,7 +32,7 @@ abstract class BaseCompilationTest {
             throws IOException {
         types.sort(Comparator.comparing(GeneratedType::simpleName).reversed());
 
-        final var generatedFiles = JavaFileGenerator.generateFiles(types, true);
+        final var generatedFiles = BindingJavaFileGenerator.generateFiles(true, types);
         for (var cell : generatedFiles.cellSet()) {
             final var target = sourcesOutputDir.resolve(cell.getColumnKey().getPath());
             Files.createDirectories(target.getParent());
