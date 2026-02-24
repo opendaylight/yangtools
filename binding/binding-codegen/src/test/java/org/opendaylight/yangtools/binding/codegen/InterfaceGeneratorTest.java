@@ -46,7 +46,7 @@ class InterfaceGeneratorTest {
             "",
             ""
         );
-        assertEquals(expected, new InterfaceGenerator().generate(genType));
+        assertEquals(expected, new InterfaceGenerator(genType).generate());
     }
 
     @Test
@@ -74,7 +74,7 @@ class InterfaceGeneratorTest {
             "",
             ""
         );
-        assertEquals(expected, new InterfaceGenerator().generate(genType));
+        assertEquals(expected, new InterfaceGenerator(genType).generate());
     }
 
     @Test
@@ -105,7 +105,7 @@ class InterfaceGeneratorTest {
             "",
             ""
         );
-        assertEquals(expected, new InterfaceGenerator().generate(genType));
+        assertEquals(expected, new InterfaceGenerator(genType).generate());
     }
 
     private static GeneratedType mockGenType(final MethodSignature methSign) {
