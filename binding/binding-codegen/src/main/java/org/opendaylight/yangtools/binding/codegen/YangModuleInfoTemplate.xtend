@@ -16,7 +16,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNA
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
 
 import com.google.common.collect.ImmutableSet
-import java.util.HashSet
+import java.util.LinkedHashSet
 import java.util.Optional
 import java.util.Set
 import java.util.TreeMap
@@ -82,7 +82,7 @@ final class YangModuleInfoTemplate {
     }
 
     def String generate() {
-        val Set<Submodule> submodules = new HashSet
+        val Set<Submodule> submodules = new LinkedHashSet
         collectSubmodules(submodules, module)
 
         val body = '''
