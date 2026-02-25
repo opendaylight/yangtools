@@ -1,0 +1,5 @@
+submodule yt1778-sub {
+  belongs-to yt1778 {
+    prefix yt1778;
+  }
+}

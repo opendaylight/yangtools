@@ -1,0 +1,6 @@
+module yt1778 {
+  namespace yt1778;
+  prefix yt1778;
+
+  include yt1778-sub;
+}
