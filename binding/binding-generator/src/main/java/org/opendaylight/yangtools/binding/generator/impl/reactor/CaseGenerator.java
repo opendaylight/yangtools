@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import java.util.List;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -45,21 +43,23 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)
         // - being a child of an augment (i.e. augmented into a choice)
-        final AbstractCompositeGenerator<?, ?> parent = getParent();
-        final ChoiceGenerator choice;
-        if (parent instanceof AbstractAugmentGenerator augGen) {
-            final AbstractCompositeGenerator<?, ?> target = augGen.targetGenerator();
-            verify(target instanceof ChoiceGenerator, "Unexpected parent augment %s target %s", parent, target);
-            choice = (ChoiceGenerator) target;
-        } else {
-            verify(parent instanceof ChoiceGenerator, "Unexpected parent %s", parent);
-            choice = (ChoiceGenerator) parent;
-        }
+        final var parent = getParent();
+        final var choice = switch (parent) {
+            case AbstractAugmentGenerator augmentGen -> {
+                final var target = augmentGen.targetGenerator();
+                if (!(target instanceof ChoiceGenerator targetChoice)) {
+                    throw new VerifyException("Unexpected parent augment " + parent + " target " + target);
+                }
+                yield targetChoice;
+            }
+            case ChoiceGenerator choiceGen -> choiceGen;
+            default -> throw new VerifyException("Unexpected parent " + parent);
+        };
 
         // Most generators have a parent->child dependency due to parent methods' return types and therefore children
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
         // go through DefaultType here
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         // Note: this needs to be the first type we mention as we are relying on that fact for global runtime type
         //       choice/case indexing.
         builder.addImplementsType(choice.getGeneratedType(builderFactory));
@@ -69,7 +69,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
 
-        final ModuleGenerator module = currentModule();
+        final var module = currentModule();
         module.addQNameConstant(builder, localName());
 
         addGetterMethods(builder, builderFactory);
