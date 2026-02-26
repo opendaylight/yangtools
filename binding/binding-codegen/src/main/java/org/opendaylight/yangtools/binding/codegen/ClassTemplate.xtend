@@ -297,7 +297,7 @@ class ClassTemplate extends AbstractClassTemplate {
         «val value = Verify.verifyNotNull(allProperties.valueProperty)»
         «val fieldName = value.fieldName»
         «IF properties.valueProperty !== null»
-        this.«fieldName» = «CODEHELPERS.importedName».requireValue(«fieldName»)«value.cloneCall»;
+            this.«fieldName» = «CODEHELPERS.importedName».requireValue(«fieldName»«value.assignFieldTail»);
         «ENDIF»
         «generateRestrictions(type, fieldName, value.returnType)»
         «/*
@@ -308,12 +308,20 @@ class ClassTemplate extends AbstractClassTemplate {
     }
     '''
 
+    def private String assignFieldTail(GeneratedProperty valueProp) {
+        val returnType = valueProp.returnType
+        if (returnType instanceof Decimal64Type) {
+            return ", " + (returnType as Decimal64Type).fractionDigits
+        }
+        return ""
+    }
+
     def private GeneratedProperty valueProperty(List<GeneratedProperty> props) {
         if (props.empty) {
             return null
         }
         Verify.verify(props.size() == 1, "Unexpected properties %s", props);
-        val prop = props.get(0)
+        val prop = props.first
         Verify.verify(TypeConstants.VALUE_PROP.equals(prop.name), "Unexpected property %s", prop)
         return prop
     }

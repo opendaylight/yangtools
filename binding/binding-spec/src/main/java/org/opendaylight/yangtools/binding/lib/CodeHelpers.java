@@ -99,6 +99,32 @@ public final class CodeHelpers {
     }
 
     /**
+     * A shortcut for {@code Objects.requireNonNull(value, "Supplied value may not be null").clone()}.
+     *
+     * @param value Value itself
+     * @return Non-null value
+     * @throws NullPointerException if value is {@code null}
+     */
+    public static byte @NonNull [] requireValue(final byte @Nullable [] value) {
+        return requireNonNull(value, "Supplied value may not be null").clone();
+    }
+
+    /**
+     * A shortcut for {@link #requireValue(Object)} combined with {@link #checkScale(Decimal64, int)}.
+     *
+     * @param value Value itself
+     * @param expectedScale the expected scale
+     * @return Non-null value
+     * @throws NullPointerException if value is {@code null}
+     * @throws IllegalArgumentException if the value has unexpected scale
+     */
+    public static @NonNull Decimal64 requireValue(final @Nullable Decimal64 value, final int expectedScale) {
+        final var ret = requireValue(value);
+        checkScale(ret, expectedScale);
+        return ret;
+    }
+
+    /**
      * Append a {@code bits} individual value. If the value is {@code false}, this method does nothing.
      *
      * @param helper Helper to append to
