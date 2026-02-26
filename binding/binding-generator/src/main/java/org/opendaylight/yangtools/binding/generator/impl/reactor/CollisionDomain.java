@@ -13,16 +13,11 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 final class CollisionDomain {
@@ -60,16 +55,16 @@ final class CollisionDomain {
 
         abstract boolean equalRoot(@NonNull Member other);
 
-        abstract String computeCurrentClass();
+        abstract @NonNull String computeCurrentClass();
 
-        abstract String computeCurrentPackage();
+        abstract @NonNull String computeCurrentPackage();
 
         boolean signalConflict() {
             solved = false;
             currentClass = null;
             currentPackage = null;
 
-            for (Secondary secondary : secondaries) {
+            for (var secondary : secondaries) {
                 secondary.primaryConflict();
             }
 
@@ -106,7 +101,7 @@ final class CollisionDomain {
 
         @Override
         final boolean signalConflict() {
-            final ClassNamingStrategy newStrategy = strategy.fallback();
+            final var newStrategy = strategy.fallback();
             if (newStrategy == null) {
                 return false;
             }
@@ -202,10 +197,10 @@ final class CollisionDomain {
 
         @Override
         String computeCurrentPackage() {
-            final Iterator<QName> it = packageSuffix.getNodeIdentifiers().iterator();
+            final var it = packageSuffix.getNodeIdentifiers().iterator();
 
-            final StringBuilder sb = new StringBuilder();
-            sb.append(packageString(it.next()));
+            final var sb = new StringBuilder()
+                .append(packageString(it.next()));
             while (it.hasNext()) {
                 sb.append('.').append(packageString(it.next()));
             }
@@ -279,8 +274,8 @@ final class CollisionDomain {
         boolean result = false;
         do {
             // Construct mapping to discover any naming overlaps.
-            final Multimap<String, Member> toAssign = ArrayListMultimap.create();
-            for (Member member : members) {
+            final var toAssign = ArrayListMultimap.<String, Member>create();
+            for (var member : members) {
                 toAssign.put(member.currentClass(), member);
             }
 
@@ -288,8 +283,8 @@ final class CollisionDomain {
             // run into conflicts.
             final var it = toAssign.asMap().entrySet().iterator();
             while (it.hasNext()) {
-                final Entry<String, Collection<Member>> entry = it.next();
-                final Collection<Member> assignees = entry.getValue();
+                final var entry = it.next();
+                final var assignees = entry.getValue();
                 if (assignees.size() == 1) {
                     it.remove();
                 }
@@ -302,9 +297,9 @@ final class CollisionDomain {
             if (!toAssign.isEmpty()) {
                 result = true;
                 // We still have some assignments we need to resolve -- which means we need to change their strategy.
-                for (Collection<Member> conflicting : toAssign.asMap().values()) {
+                for (var conflicting : toAssign.asMap().values()) {
                     int remaining = 0;
-                    for (Member member : conflicting) {
+                    for (var member : conflicting) {
                         if (!member.signalConflict()) {
                             remaining++;
                         }
