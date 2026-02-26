@@ -231,9 +231,8 @@ class TypedefCompilationTest extends BaseCompilationTest {
             "Invalid range: 1.4, expected: %s.".formatted(decimalRangeConstraints),
             Decimal64.valueOf("1.4").scaleTo(6));
 
-        // FIXME: defaultInstance should scale appropriately
-        obj = expectedConstructor.newInstance(Decimal64.valueOf("3.141592"));
-        assertEquals(obj, defInst.invoke(null, "3.141592"));
+        assertEquals(expectedConstructor.newInstance(Decimal64.valueOf("3.14").scaleTo(6)),
+            defInst.invoke(null, "3.14"));
 
         // typedef my-decimal-type2
         assertFalse(myDecimalType2Class.isInterface());
@@ -256,9 +255,8 @@ class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor,
             "Invalid range: %s, expected: %s.".formatted(arg, decimal2RangeConstraints), arg);
 
-        // FIXME: defaultInstance should scale appropriately
-        obj = expectedConstructor.newInstance(Decimal64.valueOf("0.123456789012345678"));
-        assertEquals(obj, defInst.invoke(null, "0.123456789012345678"));
+        assertEquals(expectedConstructor.newInstance(Decimal64.valueOf("0.14").scaleTo(18)),
+            defInst.invoke(null, "0.14"));
 
         // typedef union-ext1
         assertFalse(unionExt1Class.isInterface());

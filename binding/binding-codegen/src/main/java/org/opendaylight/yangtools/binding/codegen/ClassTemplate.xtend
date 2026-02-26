@@ -409,8 +409,10 @@ class ClassTemplate extends AbstractClassTemplate {
             public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
                 «IF propType.equals(Types.primitiveBooleanType())»
                     «bitsDefaultInstanceBody»
-                «ELSEIF VALUEOF_TYPES.contains(propType) || propType instanceof Decimal64Type»
+                «ELSEIF VALUEOF_TYPES.contains(propType)»
                     return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
+                «ELSEIF propType instanceof Decimal64Type»
+                    return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue).scaleTo(«(propType as Decimal64Type).fractionDigits»));
                 «ELSEIF STRING_TYPE.equals(propType)»
                     return new «genTO.simpleName»(defaultValue);
                 «ELSEIF BINARY_TYPE.equals(propType)»
