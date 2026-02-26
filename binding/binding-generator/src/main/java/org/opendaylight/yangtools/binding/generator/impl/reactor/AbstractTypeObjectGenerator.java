@@ -12,12 +12,15 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -37,7 +40,6 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
@@ -57,12 +59,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -503,7 +510,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private @NonNull Type createMethodReturnElementType(final @NonNull TypeBuilderFactory builderFactory) {
-        final GeneratedType generatedType = tryGeneratedType(builderFactory);
+        final var generatedType = tryGeneratedType(builderFactory);
         if (generatedType != null) {
             // We have generated a type here, so return it. This covers 'bits', 'enumeration' and 'union'.
             return generatedType;
@@ -514,7 +521,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return refType.methodReturnType(builderFactory);
         }
 
-        final AbstractExplicitGenerator<?, ?> prev = previous();
+        final var prev = previous();
         if (prev != null) {
             // We have been added through augment/uses, defer to the original definition
             return prev.methodReturnType(builderFactory);
@@ -573,7 +580,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return;
         }
 
-        final AbstractTypeObjectGenerator<?, ?> prev =
+        final var prev =
             (AbstractTypeObjectGenerator<?, ?>) verifyNotNull(previous(), "Missing previous link in %s", this);
         if (prev.refType instanceof ResolvedLeafref) {
             // We should be already inheriting the correct type
@@ -581,9 +588,9 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         }
 
         // Note: this may we wrapped for leaf-list, hence we need to deal with that
-        final Type myType = methodReturnType(builderFactory);
+        final var myType = methodReturnType(builderFactory);
         LOG.trace("Override of {} to {}", this, myType);
-        final MethodSignatureBuilder getter = constructGetter(builder, myType);
+        final var getter = constructGetter(builder, myType);
         getter.addAnnotation(OVERRIDE_ANNOTATION);
         annotateDeprecatedIfNecessary(getter);
     }
@@ -599,19 +606,18 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             .map(PatternEffectiveStatement::argument)
             .collect(Collectors.toUnmodifiableList());
 
-        if (length.isEmpty() && range.isEmpty() && patterns.isEmpty()) {
-            return null;
-        }
-
-        return BindingGeneratorUtil.getRestrictions(extractTypeDefinition());
+        return length.isEmpty() && range.isEmpty() && patterns.isEmpty() ? null
+            : getRestrictions(extractTypeDefinition());
     }
 
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         if (baseGen != null) {
-            final GeneratedType baseType = baseGen.getGeneratedType(builderFactory);
-            verify(baseType instanceof GeneratedTransferObject, "Unexpected base type %s", baseType);
-            return createDerivedType(builderFactory, (GeneratedTransferObject) baseType);
+            final var baseType = baseGen.getGeneratedType(builderFactory);
+            if (!(baseType instanceof GeneratedTransferObject gto)) {
+                throw new VerifyException("Unexpected base type " + baseType);
+            }
+            return createDerivedType(builderFactory, gto);
         }
 
         // FIXME: why do we need this boolean?
@@ -626,9 +632,9 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                 (EnumTypeDefinition) extractTypeDefinition());
         }
         if (BuiltInType.UNION.typeName().equals(arg)) {
-            final List<GeneratedType> tmp = new ArrayList<>(1);
-            final GeneratedTransferObject ret = createUnion(tmp, builderFactory, statement(), unionDependencies,
-                typeName(), currentModule(), type, isTypedef, extractTypeDefinition());
+            final var tmp = new ArrayList<GeneratedType>(1);
+            final var ret = createUnion(tmp, builderFactory, statement(), unionDependencies, typeName(),
+                currentModule(), type, isTypedef, extractTypeDefinition());
             auxiliaryGeneratedTypes = List.copyOf(tmp);
             return ret;
         }
@@ -639,7 +645,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     private static @NonNull GeneratedTransferObject createBits(final TypeBuilderFactory builderFactory,
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final BitsTypeDefinition typedef, final boolean isTypedef) {
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName);
+        final var builder = builderFactory.newGeneratedTOBuilder(typeName);
         builder.setTypedef(isTypedef);
         builder.addImplementsType(BindingTypes.BITS_TYPE_OBJECT);
         builder.setBaseType(typedef);
@@ -647,7 +653,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         for (Bit bit : typedef.getBits()) {
             final String name = bit.getName();
-            GeneratedPropertyBuilder genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
+            var genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
             genPropertyBuilder.setReadOnly(true);
             genPropertyBuilder.setReturnType(Types.primitiveBooleanType());
 
@@ -685,18 +691,18 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final Type javaType, final TypeDefinition<?> typedef) {
         final String moduleName = module.statement().argument().getLocalName();
-        final GeneratedTOBuilder builder = builderFactory.newGeneratedTOBuilder(typeName);
+        final var builder = builderFactory.newGeneratedTOBuilder(typeName);
         builder.setTypedef(true);
         builder.addImplementsType(BindingTypes.scalarTypeObject(javaType));
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
-        final GeneratedPropertyBuilder genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
+        final var genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
         genPropBuilder.setReturnType(javaType);
         builder.addEqualsIdentity(genPropBuilder);
         builder.addHashIdentity(genPropBuilder);
         builder.addToStringProperty(genPropBuilder);
 
-        builder.setRestrictions(BindingGeneratorUtil.getRestrictions(typedef));
+        builder.setRestrictions(getRestrictions(typedef));
 
 //        builder.setSchemaPath(typedef.getPath());
         builder.setModuleName(moduleName);
@@ -810,8 +816,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
                     expressions.putAll(resolveRegExpressions(subType.typeDefinition()));
 
-                    generatedType = restrictType(baseType,
-                        BindingGeneratorUtil.getRestrictions(type.typeDefinition()), builderFactory);
+                    generatedType = restrictType(baseType, getRestrictions(type.typeDefinition()), builderFactory);
                 }
 
                 final String propName = Naming.getPropertyName(propSource);
@@ -951,5 +956,130 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         return switch (modifier) {
             case INVERT_MATCH -> RegexPatterns.negatePatternString(pattern);
         };
+    }
+
+    @VisibleForTesting
+    static @NonNull Restrictions getRestrictions(final @Nullable TypeDefinition<?> type) {
+        // Old parser generated types which actually contained based restrictions, but our code deals with that when
+        // binding to core Java types. Hence we'll emit empty restrictions for base types.
+        if (type == null || type.getBaseType() == null) {
+            // Handling of decimal64 has changed in the new parser. It contains range restrictions applied to the type
+            // directly, without an extended type. We need to capture such constraints. In order to retain behavior we
+            // need to analyze the new semantics and see if the constraints have been overridden. To do that we
+            // instantiate a temporary unconstrained type and compare them.
+            //
+            // FIXME: looking at the generated code it looks as though we need to pass the restrictions without
+            //        comparison
+            if (type instanceof DecimalTypeDefinition decimal) {
+                final var tmp = BaseTypes.decimalTypeBuilder(decimal.getQName())
+                    .setFractionDigits(decimal.getFractionDigits())
+                    .build();
+
+                if (!tmp.getRangeConstraint().equals(decimal.getRangeConstraint())) {
+                    return Restrictions.of(decimal.getRangeConstraint().orElse(null));
+                }
+            }
+
+            return Restrictions.empty();
+        }
+
+        /*
+         * Take care of extended types.
+         *
+         * Other types which support constraints are check afterwards. There is a slight twist with them, as returned
+         * constraints are the effective view, e.g. they are inherited from base type. Since the constraint is already
+         * enforced by the base type, we want to skip them and not perform duplicate checks.
+         *
+         * We end up emitting ConcreteType instances for YANG base types, which leads to their constraints not being
+         * enforced (most notably decimal64). Therefore we need to make sure we do not strip the next-to-last
+         * restrictions.
+         *
+         * FIXME: this probably not the best solution and needs further analysis.
+         */
+        return switch (type) {
+            case BinaryTypeDefinition binary -> {
+                final var base = binary.getBaseType();
+                final var length = base != null && base.getBaseType() != null
+                    ? currentOrEmpty(binary.getLengthConstraint(), base.getLengthConstraint())
+                    : binary.getLengthConstraint();
+                yield Restrictions.of(length.orElse(null));
+            }
+            case DecimalTypeDefinition decimal -> {
+                final var base = decimal.getBaseType();
+                final var range = base != null && base.getBaseType() != null
+                    ? currentOrEmpty(decimal.getRangeConstraint(), base.getRangeConstraint())
+                    : decimal.getRangeConstraint();
+                yield Restrictions.of(range.orElse(null));
+            }
+            case RangeRestrictedTypeDefinition<?, ?> range ->
+                // Integer-like types
+                Restrictions.of(extractRangeConstraint(range).orElse(null));
+            case StringTypeDefinition string -> {
+                final var base = string.getBaseType();
+                final var length = base != null && base.getBaseType() != null
+                    ? currentOrEmpty(string.getLengthConstraint(), base.getLengthConstraint())
+                    : string.getLengthConstraint();
+                yield Restrictions.of(uniquePatterns(string), length.orElse(null));
+            }
+            default -> Restrictions.empty();
+        };
+    }
+
+    private static <T> Optional<T> currentOrEmpty(final Optional<T> current, final Optional<?> base) {
+        return current.equals(base) ? Optional.empty() : current;
+    }
+
+    /*
+     * We don't want to include redundant range constraints in Restrictions we emit.
+     *
+     * Range constraints are inherited from base type and range statement is not mandatory or can contain same
+     * range constraints as base type. In these cases range constraints are same as in base type, and we don't want
+     * to perform duplicate checks.
+     *
+     * If range constraints are the same as in base type we emit empty Restrictions. We can do it like this since
+     * range constraints can only be same or stricter than in base type. And in case range constraints are the same,
+     * we already enforce them in base type.
+    */
+    private static <T extends RangeRestrictedTypeDefinition<?, ?>> Optional<? extends RangeConstraint<?>>
+            extractRangeConstraint(final @NonNull T def) {
+        @SuppressWarnings("unchecked")
+        final var base = (T) def.getBaseType();
+        if (base != null) {
+            final var defConstrains = def.getRangeConstraint().orElse(null);
+            final var baseConstrains = base.getRangeConstraint().orElse(null);
+            if (defConstrains != null && baseConstrains != null) {
+                return defConstrains.getAllowedRanges().equals(baseConstrains.getAllowedRanges())
+                        ? Optional.empty() : def.getRangeConstraint();
+            }
+        }
+        return def.getRangeConstraint();
+    }
+
+    private static List<PatternConstraint> uniquePatterns(final StringTypeDefinition type) {
+        final var constraints = type.getPatternConstraints();
+        if (constraints.isEmpty()) {
+            return constraints;
+        }
+
+        final var builder = ImmutableList.<PatternConstraint>builder();
+        boolean filtered = false;
+        for (var constraint : constraints) {
+            if (containsConstraint(type.getBaseType(), constraint)) {
+                filtered = true;
+            } else {
+                builder.add(constraint);
+            }
+        }
+
+        return filtered ? builder.build() : constraints;
+    }
+
+    private static boolean containsConstraint(final StringTypeDefinition type, final PatternConstraint constraint) {
+        for (var wlk = type; wlk != null; wlk = wlk.getBaseType()) {
+            if (wlk.getPatternConstraints().contains(constraint)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
