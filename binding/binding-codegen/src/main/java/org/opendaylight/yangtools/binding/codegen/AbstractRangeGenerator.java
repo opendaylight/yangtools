@@ -14,8 +14,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,6 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         addGenerator(b, new ShortRangeGenerator());
         addGenerator(b, new IntegerRangeGenerator());
         addGenerator(b, new LongRangeGenerator());
-        addGenerator(b, new Decimal64RangeGenerator());
         addGenerator(b, new Uint8RangeGenerator());
         addGenerator(b, new Uint16RangeGenerator());
         addGenerator(b, new Uint32RangeGenerator());
@@ -50,6 +51,10 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     }
 
     static @NonNull AbstractRangeGenerator<?> forType(final @NonNull Type type) {
+        if (type instanceof Decimal64Type decimal64) {
+            return new Decimal64RangeGenerator(decimal64);
+        }
+
         final var javaType = TypeUtils.getBaseYangType(type);
         return forName(javaType.fullyQualifiedName());
     }
@@ -82,8 +87,9 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         final T ret = convert(value);
 
         // Check if the conversion lost any precision by performing conversion the other way around
-        final AbstractRangeGenerator<?> gen = forName(value.getClass().getName());
-        final Number check = gen.convert(ret);
+        final var gen = value instanceof Decimal64 decimal64 ? new Decimal64RangeGenerator(decimal64)
+            : forName(value.getClass().getName());
+        final var check = gen.convert(ret);
         if (!value.equals(check)) {
             LOG.warn("Number class conversion from {} to {} truncated value {} to {}", value.getClass(), type, value,
                 ret);
