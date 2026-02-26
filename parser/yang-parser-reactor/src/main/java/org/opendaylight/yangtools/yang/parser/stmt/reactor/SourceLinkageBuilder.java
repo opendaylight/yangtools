@@ -20,19 +20,20 @@ import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.source.SourceLinkageResolver;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 @NonNullByDefault
 final class SourceLinkageBuilder {
-    private final HashSet<BuildSource<?>> sources = new HashSet<>();
+    private final HashSet<ReactorSource> sources = new HashSet<>();
     private final HashSet<BuildSource<?>> libSources = new HashSet<>();
 
     <S extends SourceRepresentation & MaterializedSourceRepresentation<S, ?>> void addSource(final S source,
             final StatementStreamSource.Support<S> streamSupport) throws IOException, SourceSyntaxException {
         final var buildSource = BuildSource.ofMaterialized(source, streamSupport);
         // eagerly initialize, so that any source-related problem is reported now rather than later
-        buildSource.ensureReactorSource();
-        sources.add(buildSource);
+        sources.add(buildSource.ensureReactorSource());
     }
 
     <I extends SourceRepresentation, O extends SourceRepresentation & MaterializedSourceRepresentation<O, ?>>
@@ -48,6 +49,18 @@ final class SourceLinkageBuilder {
     }
 
     Map<ReactorSource, ResolvedSourceInfo> build() throws ReactorException, SourceSyntaxException {
-        return SourceLinkageResolver.resolveInvolvedSources(sources, libSources);
+        // FIXME: do not materialize libSources until needed
+        final var libReactorSources = HashSet.<ReactorSource>newHashSet(libSources.size());
+        for (final var buildSource : libSources) {
+            final ReactorSource reactorSource;
+            try {
+                reactorSource = buildSource.ensureReactorSource();
+            } catch (IOException e) {
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.INIT, buildSource.sourceId(), e);
+            }
+            libReactorSources.add(reactorSource);
+        }
+
+        return SourceLinkageResolver.resolveInvolvedSources(sources, libReactorSources);
     }
 }

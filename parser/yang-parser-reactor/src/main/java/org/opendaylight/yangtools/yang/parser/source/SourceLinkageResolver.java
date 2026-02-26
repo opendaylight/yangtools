@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.source;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,26 +89,9 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private SourceLinkageResolver(final Collection<ReactorSource> withMainSources,
-            // FIXME: this forces libSource materialzation -- we want to do that lazily
             final Collection<ReactorSource> withLibSources) {
         mainSources.addAll(requireNonNull(withMainSources));
         libSources.addAll(requireNonNull(withLibSources));
-    }
-
-    @NonNullByDefault
-    private static Collection<ReactorSource> initializeSources(final Collection<BuildSource<?>> buildSources)
-            throws ReactorException, SourceSyntaxException {
-        final var contexts = new HashSet<ReactorSource>();
-        for (final var buildSource : buildSources) {
-            final ReactorSource reactorSource;
-            try {
-                reactorSource = buildSource.ensureReactorSource();
-            } catch (IOException e) {
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.INIT, buildSource.sourceId(), e);
-            }
-            contexts.add(reactorSource);
-        }
-        return contexts;
     }
 
     /**
@@ -123,17 +105,15 @@ public final class SourceLinkageResolver {
      * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
+    @NonNullByDefault
     public static Map<ReactorSource, ResolvedSourceInfo> resolveInvolvedSources(
-            final Collection<BuildSource<?>> mainSources, final Collection<BuildSource<?>> libSources)
+            final Collection<ReactorSource> mainSources, final Collection<ReactorSource> libSources)
                 throws ReactorException, SourceSyntaxException {
-        if (mainSources.isEmpty()) {
-            return Map.of();
-        }
-
-        return new SourceLinkageResolver(initializeSources(mainSources), initializeSources(libSources))
-            .resolveInvolvedSources();
+        return mainSources.isEmpty() ? Map.of()
+            : new SourceLinkageResolver(mainSources, libSources).resolveInvolvedSources();
     }
 
+    @NonNullByDefault
     private Map<ReactorSource, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         mapSources(mainSources);
         mapSources(libSources);
