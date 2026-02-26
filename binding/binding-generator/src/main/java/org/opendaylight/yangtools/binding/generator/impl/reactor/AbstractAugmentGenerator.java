@@ -11,9 +11,9 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -72,17 +71,17 @@ abstract class AbstractAugmentGenerator
      * We solve this by using {@link QName#compareTo(QName)} to determine order.
      */
     static final Comparator<? super AbstractAugmentGenerator> COMPARATOR = (o1, o2) -> {
-        final Iterator<QName> thisIt = o1.statement().argument().getNodeIdentifiers().iterator();
-        final Iterator<QName> otherIt = o2.statement().argument().getNodeIdentifiers().iterator();
+        final var thisIt = o1.statement().argument().getNodeIdentifiers().iterator();
+        final var otherIt = o2.statement().argument().getNodeIdentifiers().iterator();
 
         while (thisIt.hasNext()) {
             if (!otherIt.hasNext()) {
                 return 1;
             }
 
-            final int comp = thisIt.next().compareTo(otherIt.next());
-            if (comp != 0) {
-                return comp;
+            final int cmp = thisIt.next().compareTo(otherIt.next());
+            if (cmp != 0) {
+                return cmp;
             }
         }
 
@@ -114,8 +113,7 @@ abstract class AbstractAugmentGenerator
     ClassPlacement classPlacement() {
         // if the target is a choice we are NOT creating an explicit augmentation, but we still need a phantom to
         // reserve the appropriate package name
-        final AbstractCompositeGenerator<?, ?> target = targetGenerator();
-        return target instanceof ChoiceGenerator ? ClassPlacement.PHANTOM : super.classPlacement();
+        return targetGenerator() instanceof ChoiceGenerator ? ClassPlacement.PHANTOM : super.classPlacement();
     }
 
     @Override
@@ -135,7 +133,7 @@ abstract class AbstractAugmentGenerator
 
         final Member target = targetGenerator().getMember();
         int offset = 1;
-        for (Generator gen : getParent()) {
+        for (var gen : getParent()) {
             if (gen == this) {
                 break;
             }
@@ -149,7 +147,7 @@ abstract class AbstractAugmentGenerator
 
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
 
         YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
         builder.addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType(builderFactory)));
@@ -173,9 +171,10 @@ abstract class AbstractAugmentGenerator
 
     final @NonNull AugmentRuntimeType runtimeTypeIn(final AugmentResolver resolver,
             final EffectiveStatement<?, ?> stmt) {
-        verify(stmt instanceof SchemaTreeAwareEffectiveStatement, "Unexpected target statement %s", stmt);
-        return verifyNotNull(createInternalRuntimeType(resolver,
-            effectiveIn((SchemaTreeAwareEffectiveStatement<?, ?>) stmt)));
+        if (!(stmt instanceof SchemaTreeAwareEffectiveStatement aware)) {
+            throw new VerifyException("Unexpected target statement " + stmt);
+        }
+        return verifyNotNull(createInternalRuntimeType(resolver, effectiveIn(aware)));
     }
 
     abstract @NonNull TargetAugmentEffectiveStatement effectiveIn(SchemaTreeAwareEffectiveStatement<?, ?> target);
