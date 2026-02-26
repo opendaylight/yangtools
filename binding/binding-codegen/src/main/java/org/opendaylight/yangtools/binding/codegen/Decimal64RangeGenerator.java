@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import com.google.common.collect.Range;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
@@ -27,8 +28,19 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
      */
     private static final @NonNull JavaTypeName DECIMAL64 = JavaTypeName.create(Decimal64.class);
 
-    Decimal64RangeGenerator() {
+    private final int fractionDigits;
+
+    private Decimal64RangeGenerator(final int fractionDigits) {
         super(Decimal64.class);
+        this.fractionDigits = fractionDigits;
+    }
+
+    Decimal64RangeGenerator(final Decimal64Type type) {
+        this(type.fractionDigits());
+    }
+
+    Decimal64RangeGenerator(final Decimal64 value) {
+        this(value.scale());
     }
 
     @Override
@@ -36,24 +48,21 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
     protected Decimal64 convert(final Number value) {
         if (value instanceof Byte || value instanceof Short || value instanceof Integer
             || value instanceof Uint8 || value instanceof Uint16) {
-            // FIXME: this is not quite right
-            return Decimal64.valueOf(1, value.intValue());
+            return Decimal64.valueOf(fractionDigits, value.intValue());
         }
-        // FIXME: this is not quite right
-        return Decimal64.valueOf(1, value.longValue());
+        return Decimal64.valueOf(fractionDigits, value.longValue());
     }
 
     @Override
     protected String generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraint, final Function<JavaTypeName, String> classImporter) {
         final var constraints = constraint.getAllowedRanges().asRanges();
-        final var scale = getValue(constraints.iterator().next().upperEndpoint()).scale();
         final var codeHelpers = classImporter.apply(JavaFileTemplate.CODEHELPERS);
 
         final var sb = new StringBuilder();
         sb.append("private static void ").append(checkerName).append("(final ").append(classImporter.apply(DECIMAL64))
             .append(" value) {\n");
-        sb.append("    final var unscaled = ").append(codeHelpers).append(".checkScale(value, ").append(scale)
+        sb.append("    final var unscaled = ").append(codeHelpers).append(".checkScale(value, ").append(fractionDigits)
             .append(");\n");
 
         final var msg = new StringBuilder().append("\"[");

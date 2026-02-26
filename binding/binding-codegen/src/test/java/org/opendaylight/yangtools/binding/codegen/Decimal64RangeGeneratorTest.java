@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
 class Decimal64RangeGeneratorTest {
     @Test
     void convertTest() {
-        Decimal64RangeGenerator generator = new Decimal64RangeGenerator();
-        Decimal64 one = Decimal64.valueOf(1, 1);
+        final var one = Decimal64.valueOf(1, 1);
+        final var generator = new Decimal64RangeGenerator(one);
         assertEquals(one, generator.convert(1L));
         assertEquals(one, generator.convert(new BigInteger("1")));
         assertEquals(one, generator.convert(Byte.valueOf("1")));
