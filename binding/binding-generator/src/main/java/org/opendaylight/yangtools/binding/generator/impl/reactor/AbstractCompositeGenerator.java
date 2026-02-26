@@ -216,18 +216,18 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         if (stmt instanceof SchemaTreeEffectiveStatement) {
             // grouping -> uses instantiation changes the namespace to the local namespace of the uses site. We are
             // going the opposite direction, hence we are changing namespace from local to the grouping's namespace.
-            for (GroupingGenerator gen : groupings) {
-                final MatchStrategy strat = MatchStrategy.grouping(gen);
-                ret = gen.findGenerator(strat, stmtPath, offset);
+            for (var grouping : groupings) {
+                final var strat = MatchStrategy.grouping(grouping);
+                ret = grouping.findGenerator(strat, stmtPath, offset);
                 if (ret != null) {
                     return ret;
                 }
             }
 
             // All augments are dead simple: they need to match on argument (which we expect to be a QName)
-            final MatchStrategy strat = MatchStrategy.augment();
-            for (AbstractAugmentGenerator gen : augments) {
-                ret = gen.findGenerator(strat, stmtPath, offset);
+            final var strat = MatchStrategy.augment();
+            for (var augment : augments) {
+                ret = augment.findGenerator(strat, stmtPath, offset);
                 if (ret != null) {
                     return ret;
                 }
@@ -254,7 +254,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
 
                 // Trigger resolution of uses/augment statements. This looks like guesswork, but there may be multiple
                 // 'augment' statements in a 'uses' statement and keeping a ListMultimap here seems wasteful.
-                for (Generator gen : this) {
+                for (var gen : this) {
                     if (gen instanceof UsesAugmentGenerator usesGen) {
                         usesGen.resolveGrouping(uses, grouping);
                     }
@@ -269,20 +269,23 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     final void linkUsedGroupings(final Set<GroupingGenerator> skippedChildren) {
         // Link to used groupings IFF we have a corresponding generated Java class
         switch (classPlacement()) {
-            case NONE:
-            case PHANTOM:
-                break;
-            default:
+            case NONE, PHANTOM -> {
+                // No-op
+            }
+            default -> {
                 for (var grouping : groupings()) {
                     grouping.addUser(this);
                 }
+            }
         }
 
         for (var child : childGenerators) {
-            if (child instanceof GroupingGenerator grouping) {
-                skippedChildren.add(grouping);
-            } else if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
-                composite.linkUsedGroupings(skippedChildren);
+            switch (child) {
+                case GroupingGenerator grouping -> skippedChildren.add(grouping);
+                case AbstractCompositeGenerator<?, ?> composite -> composite.linkUsedGroupings(skippedChildren);
+                default -> {
+                    // no-op
+                }
             }
         }
     }
@@ -392,7 +395,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         // ... no luck, we really need to start looking at our origin
         final var prev = previous();
         if (prev != null) {
-            final QName prevQName = childQName.bindTo(prev.getQName().getModule());
+            final var prevQName = childQName.bindTo(prev.getQName().getModule());
             found = prev.findSchemaTreeGenerator(prevQName);
             if (found != null) {
                 return (OriginalLink<X, Y>) found.originalLink();
