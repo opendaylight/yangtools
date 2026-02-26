@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 
 /**
  * Interface indicating an entity which acts as a holder of a {@link TypeDefinition}.
  */
+@NonNullByDefault
 public sealed interface TypeDefinitionAware permits TypedDataSchemaNode, TypeDefinitionCompat {
     /**
      * {@return the effective {@link QNameModule} of this statement}
