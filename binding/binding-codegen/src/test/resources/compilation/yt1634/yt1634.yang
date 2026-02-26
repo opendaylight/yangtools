@@ -1,0 +1,10 @@
+module yt1634 {
+  namespace yt1634;
+  prefix yt1634;
+
+  typedef foo {
+    type decimal64 {
+      fraction-digits 5;
+    }
+  }
+}
