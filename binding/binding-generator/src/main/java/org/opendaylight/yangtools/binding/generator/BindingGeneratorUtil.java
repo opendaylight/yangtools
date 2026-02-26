@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
@@ -80,39 +79,33 @@ public final class BindingGeneratorUtil {
          *
          * FIXME: this probably not the best solution and needs further analysis.
          */
-        if (type instanceof BinaryTypeDefinition binary) {
-            final var base = binary.getBaseType();
-            final Optional<LengthConstraint> length;
-            if (base != null && base.getBaseType() != null) {
-                length = currentOrEmpty(binary.getLengthConstraint(), base.getLengthConstraint());
-            } else {
-                length = binary.getLengthConstraint();
+        return switch (type) {
+            case BinaryTypeDefinition binary -> {
+                final var base = binary.getBaseType();
+                final var length = base != null && base.getBaseType() != null
+                    ? currentOrEmpty(binary.getLengthConstraint(), base.getLengthConstraint())
+                    : binary.getLengthConstraint();
+                yield Restrictions.of(length.orElse(null));
             }
-            return Restrictions.of(length.orElse(null));
-        } else if (type instanceof DecimalTypeDefinition decimal) {
-            final var base = decimal.getBaseType();
-            final Optional<? extends RangeConstraint<?>> range;
-            if (base != null && base.getBaseType() != null) {
-                range = currentOrEmpty(decimal.getRangeConstraint(), base.getRangeConstraint());
-            } else {
-                range = decimal.getRangeConstraint();
+            case DecimalTypeDefinition decimal -> {
+                final var base = decimal.getBaseType();
+                final var range = base != null && base.getBaseType() != null
+                    ? currentOrEmpty(decimal.getRangeConstraint(), base.getRangeConstraint())
+                    : decimal.getRangeConstraint();
+                yield Restrictions.of(range.orElse(null));
             }
-            return Restrictions.of(range.orElse(null));
-        } else if (type instanceof RangeRestrictedTypeDefinition<?, ?> range) {
-            // Integer-like types
-            return Restrictions.of(extractRangeConstraint(range).orElse(null));
-        } else if (type instanceof StringTypeDefinition string) {
-            final var base = string.getBaseType();
-            final Optional<LengthConstraint> length;
-            if (base != null && base.getBaseType() != null) {
-                length = currentOrEmpty(string.getLengthConstraint(), base.getLengthConstraint());
-            } else {
-                length = string.getLengthConstraint();
+            case RangeRestrictedTypeDefinition<?, ?> range ->
+                // Integer-like types
+                Restrictions.of(extractRangeConstraint(range).orElse(null));
+            case StringTypeDefinition string -> {
+                final var base = string.getBaseType();
+                final var length = base != null && base.getBaseType() != null
+                    ? currentOrEmpty(string.getLengthConstraint(), base.getLengthConstraint())
+                    : string.getLengthConstraint();
+                yield Restrictions.of(uniquePatterns(string), length.orElse(null));
             }
-            return Restrictions.of(uniquePatterns(string), length.orElse(null));
-        } else {
-            return Restrictions.empty();
-        }
+            default -> Restrictions.empty();
+        };
     }
 
     /*
@@ -127,8 +120,9 @@ public final class BindingGeneratorUtil {
      * we already enforce them in base type.
     */
     private static <T extends RangeRestrictedTypeDefinition<?, ?>> Optional<? extends RangeConstraint<?>>
-            extractRangeConstraint(final T def) {
-        final T base = (T) def.getBaseType();
+            extractRangeConstraint(final @NonNull T def) {
+        @SuppressWarnings("unchecked")
+        final var base = (T) def.getBaseType();
         if (base != null) {
             final var defConstrains = def.getRangeConstraint().orElse(null);
             final var baseConstrains = base.getRangeConstraint().orElse(null);
@@ -162,11 +156,11 @@ public final class BindingGeneratorUtil {
 
         final var builder = ImmutableList.<PatternConstraint>builder();
         boolean filtered = false;
-        for (final PatternConstraint c : constraints) {
-            if (containsConstraint(type.getBaseType(), c)) {
+        for (var constraint : constraints) {
+            if (containsConstraint(type.getBaseType(), constraint)) {
                 filtered = true;
             } else {
-                builder.add(c);
+                builder.add(constraint);
             }
         }
 
