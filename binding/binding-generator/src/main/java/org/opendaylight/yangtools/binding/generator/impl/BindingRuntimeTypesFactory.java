@@ -288,8 +288,8 @@ final class BindingRuntimeTypesFactory implements Mutable {
         }
 
         // augmentation has exactly 1 argument ... Augmentation<T> (we want the T), we can access it on index 0
-        final var typeAugTarget = typeAugmentation.orElseThrow().getActualTypeArguments()[0];
-        final var substitutionAugTarget = substitutionAugmentation.orElseThrow().getActualTypeArguments()[0];
+        final var typeAugTarget = typeAugmentation.orElseThrow().getActualTypeArguments().getFirst();
+        final var substitutionAugTarget = substitutionAugmentation.orElseThrow().getActualTypeArguments().getFirst();
 
         return typeAugTarget.equals(substitutionAugTarget);
     }
