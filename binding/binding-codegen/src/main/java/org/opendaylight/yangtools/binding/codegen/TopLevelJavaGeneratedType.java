@@ -7,10 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -23,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
  */
 @NonNullByDefault
 final class TopLevelJavaGeneratedType extends AbstractJavaGeneratedType {
-    private final BiMap<JavaTypeName, String> importedTypes = HashBiMap.create();
+    private final HashBiMap<JavaTypeName, String> importedTypes = HashBiMap.create();
 
     TopLevelJavaGeneratedType(final GeneratedType genType) {
         super(genType);
@@ -32,10 +30,10 @@ final class TopLevelJavaGeneratedType extends AbstractJavaGeneratedType {
     @Override
     String localTypeName(final JavaTypeName type) {
         // Locally-anchored type, this is simple: just strip the first local name component and concat the others
-        final Iterator<String> it = type.localNameComponents().iterator();
+        final var it = type.localNameComponents().iterator();
         it.next();
 
-        final StringBuilder sb = new StringBuilder().append(it.next());
+        final var sb = new StringBuilder().append(it.next());
         while (it.hasNext()) {
             sb.append('.').append(it.next());
         }
@@ -61,14 +59,14 @@ final class TopLevelJavaGeneratedType extends AbstractJavaGeneratedType {
     }
 
     private boolean needsExplicitImport(final Entry<JavaTypeName, String> entry) {
-        final JavaTypeName name = entry.getKey();
+        final var name = entry.getKey();
 
         if (!getName().packageName().equals(name.packageName())) {
             // Different package: need to import it
             return true;
         }
 
-        if (!name.immediatelyEnclosingClass().isPresent()) {
+        if (name.immediatelyEnclosingClass() == null) {
             // This a top-level class import, we can skip it
             return false;
         }
