@@ -29,6 +29,8 @@ final class DataRootTemplate extends InterfaceTemplate {
     String generateConstants() {
         final var archetype = archetype();
 
+        // FIXME: add a test for clash of NonNullByDefault, RootMeta
+
         // pre-compute constants: split out for future isolation
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
         final var rootMetaType = BindingTypes.rootMeta(archetype);

@@ -1,0 +1,14 @@
+module evil {
+  namespace evil;
+  prefix evil;
+
+  grouping grp {
+    leaf evil-data {
+      type enumeration {
+        enum foo;
+      }
+    }
+  }
+
+  uses grp;
+}
