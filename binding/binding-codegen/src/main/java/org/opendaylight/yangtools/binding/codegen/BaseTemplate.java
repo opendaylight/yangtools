@@ -177,7 +177,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    final CharSequence emitConstant(final Constant constant) {
+    final String emitConstant(final Constant constant) {
         final var name = constant.getName();
         final var type = constant.getType();
 
@@ -209,7 +209,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    final CharSequence emitQNameConstant(final String name, final Type type, final JavaTypeName yangModuleInfo,
+    final String emitQNameConstant(final String name, final Type type, final JavaTypeName yangModuleInfo,
             final String localName) {
         return """
             /**

@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.Types
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 
 /**
  * Template for generating JAVA interfaces.
@@ -120,21 +119,6 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
         «IF !enclosedGeneratedTypes.empty»
             «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
                 «generateInnerClass(innerClass)»
-            «ENDFOR»
-        «ENDIF»
-    '''
-
-    /**
-     * Template method which generates JAVA constants.
-     *
-     * @return string with constants in JAVA format
-     */
-    def package generateConstants() '''
-        «IF !consts.empty»
-            «FOR c : consts»
-                «IF !c.name.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)»
-                    «emitConstant(c)»
-                «ENDIF»
             «ENDFOR»
         «ENDIF»
     '''

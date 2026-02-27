@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 
 /**
  * Java parts of {@link InterfaceTemplate}.
@@ -46,6 +47,24 @@ abstract class AbstractInterfaceTemplate extends BaseTemplate {
         methods = type.getMethodDefinitions();
         enums = type.getEnumerations();
         enclosedGeneratedTypes = type.getEnclosedTypes();
+    }
+
+    /**
+     * {@return the code block containing this type's singleton constant declarations}
+     */
+    String generateConstants() {
+        if (consts.isEmpty()) {
+            return "";
+        }
+
+        final var sb = new StringBuilder();
+        for (var constant : consts) {
+            // Pattern constants are emitted separately
+            if (!constant.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
+                sb.append(emitConstant(constant));
+            }
+        }
+        return sb.toString();
     }
 
     final String generateDefaultImplementedInterface() {
