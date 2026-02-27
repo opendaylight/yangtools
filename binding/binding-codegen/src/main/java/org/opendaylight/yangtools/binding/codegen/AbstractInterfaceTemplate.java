@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -45,5 +46,16 @@ abstract class AbstractInterfaceTemplate extends BaseTemplate {
         methods = type.getMethodDefinitions();
         enums = type.getEnumerations();
         enclosedGeneratedTypes = type.getEnclosedTypes();
+    }
+
+    final String generateDefaultImplementedInterface() {
+        // TODO: can we use a short name?
+        final var fqcn = type().name().fullyQualifiedName();
+
+        return '@' + importedName(OVERRIDE) + '\n'
+            +  "default " + importedName(CLASS) + '<' + fqcn + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+                + "() {\n"
+            +  "    return " + fqcn + ".class;\n"
+            +  "}\n";
     }
 }
