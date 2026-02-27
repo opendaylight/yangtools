@@ -232,8 +232,8 @@ class JavaFileTemplate {
 
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
-        final var optEnc = name.immediatelyEnclosingClass();
-        return optEnc.isPresent() && type.name().equals(optEnc.orElseThrow());
+        final var enclosing = name.immediatelyEnclosingClass();
+        return enclosing != null && type.name().equals(enclosing);
     }
 
     final CharSequence generateInnerClass(final GeneratedType innerClass) {
