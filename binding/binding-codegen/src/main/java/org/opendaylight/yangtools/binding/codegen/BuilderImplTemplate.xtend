@@ -31,7 +31,8 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechani
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.Types
 
-class BuilderImplTemplate extends AbstractBuilderTemplate {
+// FIXME: YANGTOOLS-1803: convert to Java
+final class BuilderImplTemplate extends AbstractBuilderTemplate {
     /**
      * {@code AbstractAugmentable} as a JavaTypeName.
      */

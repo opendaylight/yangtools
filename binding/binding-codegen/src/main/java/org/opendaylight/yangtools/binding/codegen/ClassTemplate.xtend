@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 /**
  * Template for generating JAVA class.
  */
+// FIXME: YANGTOOLS-1806: convert to Java
 class ClassTemplate extends AbstractClassTemplate {
     static val VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE,

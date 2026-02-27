@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 /**
  * Template for generating JAVA interfaces.
  */
+ // FIXME: YANGTOOLS-1805: convert to Java
 class InterfaceTemplate extends BaseTemplate {
     /**
      * List of constant instances which are generated as JAVA public static final attributes.

@@ -38,7 +38,8 @@ import org.opendaylight.yangtools.binding.contract.Naming
 /**
  * Template for generating JAVA builder classes.
  */
-class BuilderTemplate extends AbstractBuilderTemplate {
+ // FIXME: YANGTOOLS-1804: convert to Java
+final class BuilderTemplate extends AbstractBuilderTemplate {
     val BuilderImplTemplate implTemplate
 
     /**
