@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -49,7 +46,7 @@ final class NestedJavaGeneratedType extends AbstractJavaGeneratedType {
             return enclosingType.getSimpleName();
         }
 
-        final @Nullable List<String> descendant = findDescandantPath(type);
+        final var descendant = findDescandantPath(type);
         if (descendant == null) {
             // The type is not present in our hierarchy, defer to our immediately-enclosing type, which may be able
             // to find the target.
@@ -57,8 +54,8 @@ final class NestedJavaGeneratedType extends AbstractJavaGeneratedType {
         }
 
         // Target type is a declared as a enclosed type of us and we have the path where it lurks.
-        final Iterator<String> it = descendant.iterator();
-        final StringBuilder sb = new StringBuilder().append(it.next());
+        final var it = descendant.iterator();
+        final var sb = new StringBuilder().append(it.next());
         while (it.hasNext()) {
             sb.append('.').append(it.next());
         }
@@ -66,19 +63,17 @@ final class NestedJavaGeneratedType extends AbstractJavaGeneratedType {
     }
 
     private @Nullable List<String> findDescandantPath(final JavaTypeName type) {
-        Optional<JavaTypeName> optEnclosing = type.immediatelyEnclosingClass();
-        verify(optEnclosing.isPresent());
+        var enclosing = verifyNotNull(type.immediatelyEnclosingClass());
 
-        final Deque<String> queue = new ArrayDeque<>();
+        final var queue = new ArrayDeque<String>();
         queue.addFirst(type.simpleName());
-        while (optEnclosing.isPresent()) {
-            final JavaTypeName enclosing = optEnclosing.orElseThrow();
+        while (enclosing != null) {
             if (enclosing.equals(getName())) {
                 return ImmutableList.copyOf(queue);
             }
 
             queue.addFirst(enclosing.simpleName());
-            optEnclosing = enclosing.immediatelyEnclosingClass();
+            enclosing = enclosing.immediatelyEnclosingClass();
         }
 
         return null;

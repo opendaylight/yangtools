@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class JavaTypeNameTest {
@@ -24,7 +24,7 @@ class JavaTypeNameTest {
         assertEquals("", byteName.packageName());
         assertEquals("byte", byteName.simpleName());
         assertEquals("byte", byteName.toString());
-        assertEquals(Optional.empty(), byteName.immediatelyEnclosingClass());
+        assertNull(byteName.immediatelyEnclosingClass());
         assertSame(byteName, byteName.topLevelClass());
         assertEquals(List.of("byte"), byteName.localNameComponents());
         assertEquals("byte", byteName.localName());
@@ -33,7 +33,7 @@ class JavaTypeNameTest {
         assertEquals("", charName.packageName());
         assertEquals("char", charName.simpleName());
         assertEquals("char", charName.toString());
-        assertEquals(Optional.empty(), charName.immediatelyEnclosingClass());
+        assertNull(charName.immediatelyEnclosingClass());
         assertSame(charName, charName.topLevelClass());
         assertEquals(List.of("char"), charName.localNameComponents());
         assertEquals("char", charName.localName());
@@ -42,7 +42,7 @@ class JavaTypeNameTest {
         assertEquals("java.lang", threadName.packageName());
         assertEquals("Thread", threadName.simpleName());
         assertEquals("java.lang.Thread", threadName.toString());
-        assertEquals(Optional.empty(), threadName.immediatelyEnclosingClass());
+        assertNull(threadName.immediatelyEnclosingClass());
         assertTrue(threadName.canCreateEnclosed("Foo"));
         assertFalse(threadName.canCreateEnclosed("Thread"));
         assertEquals(threadName, JavaTypeName.create("java.lang", "Thread"));
@@ -54,14 +54,14 @@ class JavaTypeNameTest {
         assertEquals("java.lang", stringName.packageName());
         assertEquals("String", stringName.simpleName());
         assertEquals("java.lang.String", stringName.toString());
-        assertEquals(Optional.empty(), stringName.immediatelyEnclosingClass());
+        assertNull(stringName.immediatelyEnclosingClass());
         assertEquals(stringName, JavaTypeName.create("java.lang", "String"));
 
         final var enclosedName = threadName.createEnclosed("Foo");
         assertEquals("java.lang", enclosedName.packageName());
         assertEquals("Foo", enclosedName.simpleName());
         assertEquals("java.lang.Thread.Foo", enclosedName.toString());
-        assertEquals(Optional.of(threadName), enclosedName.immediatelyEnclosingClass());
+        assertEquals(threadName, enclosedName.immediatelyEnclosingClass());
         assertSame(threadName, enclosedName.topLevelClass());
         assertEquals(List.of("Thread", "Foo"), enclosedName.localNameComponents());
         assertEquals("Thread.Foo", enclosedName.localName());
@@ -70,7 +70,7 @@ class JavaTypeNameTest {
         assertEquals("java.lang", uehName.packageName());
         assertEquals("UncaughtExceptionHandler", uehName.simpleName());
         assertEquals("java.lang.Thread.UncaughtExceptionHandler", uehName.toString());
-        assertEquals(Optional.of(threadName), uehName.immediatelyEnclosingClass());
+        assertEquals(threadName, uehName.immediatelyEnclosingClass());
         assertTrue(uehName.canCreateEnclosed("Foo"));
         assertFalse(uehName.canCreateEnclosed("Thread"));
         assertFalse(uehName.canCreateEnclosed("UncaughtExceptionHandler"));
@@ -79,7 +79,7 @@ class JavaTypeNameTest {
         assertEquals("java.lang", siblingName.packageName());
         assertEquals("Foo", siblingName.simpleName());
         assertEquals("java.lang.Thread.Foo", siblingName.toString());
-        assertEquals(Optional.of(threadName), siblingName.immediatelyEnclosingClass());
+        assertEquals(threadName, siblingName.immediatelyEnclosingClass());
         assertTrue(siblingName.canCreateEnclosed("UncaughtExceptionHandler"));
         assertFalse(siblingName.canCreateEnclosed("Thread"));
         assertFalse(siblingName.canCreateEnclosed("Foo"));
