@@ -236,13 +236,6 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
         '''
     }
 
-    def package final generateDefaultImplementedInterface() '''
-        @«OVERRIDE.importedName»
-        default «CLASS.importedName»<«type.fullyQualifiedName»> «BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME»() {
-            return «type.fullyQualifiedName».class;
-        }
-    '''
-
     @VisibleForTesting
     def package generateBindingHashCode() '''
         «val augmentable = analyzeType»
