@@ -27,8 +27,6 @@ import java.util.Locale
 import java.util.Map.Entry
 import java.util.Set
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
-import org.opendaylight.yangtools.binding.model.api.Constant
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.MethodSignature
@@ -41,28 +39,8 @@ import org.opendaylight.yangtools.binding.model.ri.TypeConstants
  * Template for generating JAVA interfaces.
  */
  // FIXME: YANGTOOLS-1805: convert to Java
-class InterfaceTemplate extends BaseTemplate {
-    /**
-     * List of constant instances which are generated as JAVA public static final attributes.
-     */
-    package val List<Constant> consts
-
-    /**
-     * List of method signatures which are generated as method declarations.
-     */
-    val List<MethodSignature> methods
-
-    /**
-     * List of enumeration which are generated as JAVA enum type.
-     */
-    val List<EnumTypeObjectArchetype> enums
-
-    /**
-     * List of generated types which are enclosed inside <code>genType</code>
-     */
-    val List<GeneratedType> enclosedGeneratedTypes
-
-    var Entry<Type, Set<BuilderGeneratedProperty>> typeAnalysis
+package class InterfaceTemplate extends AbstractInterfaceTemplate {
+    package var Entry<Type, Set<BuilderGeneratedProperty>> typeAnalysis
 
     /**
      * Creates the instance of this class which is used for generating the interface file source
@@ -72,10 +50,6 @@ class InterfaceTemplate extends BaseTemplate {
      */
     new(GeneratedType genType) {
         super(genType)
-        consts = genType.constantDefinitions
-        methods = genType.methodDefinitions
-        enums = genType.enumerations
-        enclosedGeneratedTypes = genType.enclosedTypes
     }
 
     /**
@@ -270,7 +244,7 @@ class InterfaceTemplate extends BaseTemplate {
     '''
 
     @VisibleForTesting
-    def generateBindingHashCode() '''
+    def package generateBindingHashCode() '''
         «val augmentable = analyzeType»
         «IF augmentable || !typeAnalysis.value.empty»
             /**
@@ -328,7 +302,8 @@ class InterfaceTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def generateBindingToString() '''
+    @VisibleForTesting
+    def package generateBindingToString() '''
         «val augmentable = analyzeType»
         /**
          * Default implementation of {@link «OBJECT.importedName»#toString()} contract for this interface.
