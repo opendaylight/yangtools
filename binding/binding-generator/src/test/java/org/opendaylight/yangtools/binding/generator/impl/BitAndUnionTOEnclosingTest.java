@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BitAndUnionTOEnclosingTest {
@@ -49,9 +50,9 @@ class BitAndUnionTOEnclosingTest {
             .collect(Collectors.toList());
         assertEquals(1, lfLeafs.size(), "Lf TO has incorrect number of occurences.");
         final var lfLeaf = lfLeafs.getFirst();
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
-            lfLeaf.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString(),
-            "Lf has incorrect package name.");
+        assertEquals(
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
+            lfLeaf.name().immediatelyEnclosingClass());
 
         assertEquals(2, lfLeaf.getProperties().size(), "Lf generated TO has incorrect number of properties");
         containsAttributes(lfLeaf, true, true, true, new NameTypePattern("string", "String"));
@@ -63,9 +64,9 @@ class BitAndUnionTOEnclosingTest {
 
         final var lf1Leaf = lfTypes.getFirst();
         assertEquals("Lf$1", lf1Leaf.simpleName());
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer.Lf",
-            lf1Leaf.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString(),
-            "Lf$1 has incorrect package name.");
+        assertEquals(
+            "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer.Lf",
+            lf1Leaf.name().immediatelyEnclosingClass().toString());
 
         final var lf1gto = assertInstanceOf(GeneratedTransferObject.class, lf1Leaf);
         assertEquals(4, lf1Leaf.getProperties().size(), "Lf$1 generated TO has incorrect number of properties");
@@ -81,8 +82,7 @@ class BitAndUnionTOEnclosingTest {
         final var lf2Leaf = lf1Types.get(0);
         assertEquals("Lf$2", lf2Leaf.simpleName());
         assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer.Lf.Lf$1",
-            lf2Leaf.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString(),
-            "Lf$2 has incorrect package name.");
+            lf2Leaf.name().immediatelyEnclosingClass().toString());
 
 
         final var lf2gto = assertInstanceOf(GeneratedTransferObject.class, lf2Leaf);
@@ -168,12 +168,12 @@ class BitAndUnionTOEnclosingTest {
         assertNotNull(bitLeaf, "BitLeaf TO wasn't found.");
         assertNotNull(unionLeaf, "UnionLeaf TO wasn't found.");
 
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
-            bitLeaf.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString(),
-            "BitLeaf has incorrect package name.");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
-            unionLeaf.getIdentifier().immediatelyEnclosingClass().orElseThrow().toString(),
-            "UnionLeaf has incorrect package name.");
+        assertEquals(
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
+            bitLeaf.name().immediatelyEnclosingClass());
+        assertEquals(
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
+            unionLeaf.name().immediatelyEnclosingClass());
 
         GeneratedProperty firstBitProperty = null;
         GeneratedProperty secondBitProperty = null;

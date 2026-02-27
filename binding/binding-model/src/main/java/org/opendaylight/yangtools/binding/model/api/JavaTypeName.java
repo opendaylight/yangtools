@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -45,8 +45,8 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
         }
 
         @Override
-        public Optional<JavaTypeName> immediatelyEnclosingClass() {
-            return Optional.empty();
+        public @Nullable JavaTypeName immediatelyEnclosingClass() {
+            return null;
         }
 
         @Override
@@ -144,8 +144,8 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
         }
 
         @Override
-        public Optional<JavaTypeName> immediatelyEnclosingClass() {
-            return Optional.empty();
+        public @Nullable JavaTypeName immediatelyEnclosingClass() {
+            return null;
         }
 
         @Override
@@ -193,8 +193,8 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
         }
 
         @Override
-        public Optional<JavaTypeName> immediatelyEnclosingClass() {
-            return Optional.of(immediatelyEnclosingClass);
+        public @NonNull JavaTypeName immediatelyEnclosingClass() {
+            return immediatelyEnclosingClass;
         }
 
         @Override
@@ -349,9 +349,9 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     /**
      * Return the enclosing class JavaTypeName, if present.
      *
-     * @return Enclosing class JavaTypeName.
+     * @return enclosing class JavaTypeName, or {@code null}
      */
-    public abstract Optional<JavaTypeName> immediatelyEnclosingClass();
+    public abstract @Nullable JavaTypeName immediatelyEnclosingClass();
 
     /**
      * Return the top-level class JavaTypeName which is containing this type, or self if this type is a top-level
@@ -384,7 +384,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     public final boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof JavaTypeName other
             && simpleName.equals(other.simpleName) && packageName().equals(other.packageName())
-            && immediatelyEnclosingClass().equals(other.immediatelyEnclosingClass());
+            && Objects.equals(immediatelyEnclosingClass(), other.immediatelyEnclosingClass());
     }
 
     @Override
