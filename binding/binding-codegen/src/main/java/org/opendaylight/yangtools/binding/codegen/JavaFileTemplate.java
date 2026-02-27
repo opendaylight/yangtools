@@ -326,7 +326,7 @@ class JavaFileTemplate {
      * @param methods set of method signatures
      * @param implementedIfcs list of implemented interfaces
      */
-    private static ParameterizedType collectImplementedMethods(final GeneratedType type,
+    private static @Nullable ParameterizedType collectImplementedMethods(final GeneratedType type,
             final Set<MethodSignature> methods, final List<Type> implementedIfcs) {
         if (implementedIfcs == null || implementedIfcs.isEmpty()) {
             return null;
