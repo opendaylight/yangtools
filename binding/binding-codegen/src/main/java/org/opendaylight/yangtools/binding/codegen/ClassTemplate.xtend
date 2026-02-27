@@ -312,7 +312,7 @@ class ClassTemplate extends AbstractClassTemplate {
     def private String assignFieldTail(GeneratedProperty valueProp) {
         val returnType = valueProp.returnType
         if (returnType instanceof Decimal64Type) {
-            return ", " + (returnType as Decimal64Type).fractionDigits
+            return ", " + returnType.fractionDigits
         }
         return ""
     }
@@ -421,7 +421,7 @@ class ClassTemplate extends AbstractClassTemplate {
                 «ELSEIF VALUEOF_TYPES.contains(propType)»
                     return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
                 «ELSEIF propType instanceof Decimal64Type»
-                    return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue).scaleTo(«(propType as Decimal64Type).fractionDigits»));
+                    return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue).scaleTo(«propType.fractionDigits»));
                 «ELSEIF STRING_TYPE.equals(propType)»
                     return new «genTO.simpleName»(defaultValue);
                 «ELSEIF BINARY_TYPE.equals(propType)»
