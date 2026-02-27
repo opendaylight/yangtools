@@ -123,19 +123,27 @@ abstract class AbstractJavaGeneratedType {
         }
     }
 
+    /**
+     * {@return a shortest possible reference to this type}
+     */
+    final String selfRef() {
+        // FIXME: YANGTOOLS-1808: check for clashes
+        return name.simpleName();
+    }
+
     final String getReferenceString(final JavaTypeName type) {
         if (type.packageName().isEmpty()) {
             // This is a packageless primitive type, refer to it directly
             return type.simpleName();
         }
 
-        // Self-reference, return simple name
+        // Self-reference, delegate to selfRef()
         if (name.equals(type)) {
-            return name.simpleName();
+            return selfRef();
         }
 
         // Fast path: we have already resolved how to refer to this type
-        final String existing = nameCache.get(type);
+        final var existing = nameCache.get(type);
         if (existing != null) {
             return existing;
         }
