@@ -24,17 +24,17 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
      */
-    protected val Type augmentType
+    package val Type augmentType
 
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
      */
-    protected val Set<BuilderGeneratedProperty> properties
+    package val Set<BuilderGeneratedProperty> properties
 
     /**
      * GeneratedTransferObject for key type, {@code null} if this type does not have a key.
      */
-    protected val GeneratedTransferObject keyType
+    package val GeneratedTransferObject keyType
 
     protected val GeneratedType targetType;
 
@@ -63,7 +63,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      * @param makeFinal value which specify whether field is|isn't final
      * @return string with class attributes and their types
      */
-    def protected final generateFields(boolean makeFinal) '''
+    def package final generateFields(boolean makeFinal) '''
         «IF properties !== null»
             «FOR f : properties»
                 private«IF makeFinal» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
@@ -79,7 +79,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      *
      * @return string with getter methods
      */
-    def final generateGetters(boolean addOverride) '''
+    def package final generateGetters(boolean addOverride) '''
         «IF keyType !== null»
             «IF addOverride»
             @«OVERRIDE.importedName»
@@ -111,7 +111,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def protected final CharSequence generateCopyConstructor(Type fromType, Type implType) '''
+    def package final CharSequence generateCopyConstructor(Type fromType, Type implType) '''
         «type.simpleName»(final «fromType.importedName» base) {
             «IF augmentType !== null»
                 «generateCopyAugmentation(implType)»
@@ -130,7 +130,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         }
     '''
 
-    def protected final CharSequence generateDeprecatedAnnotation(List<AnnotationType> annotations) {
+    def package final CharSequence generateDeprecatedAnnotation(List<AnnotationType> annotations) {
         var AnnotationType found = annotations.findDeprecatedAnnotation
         if (found === null) {
             return ""
@@ -138,15 +138,15 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         return generateDeprecatedAnnotation(found)
     }
 
-    def protected abstract CharSequence generateCopyKeys(List<GeneratedProperty> keyProps)
+    def package abstract CharSequence generateCopyKeys(List<GeneratedProperty> keyProps)
 
-    def protected abstract CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props)
+    def package abstract CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props)
 
-    def protected abstract CharSequence generateCopyAugmentation(Type implType)
+    def package abstract CharSequence generateCopyAugmentation(Type implType)
 
-    def protected abstract CharSequence generateDeprecatedAnnotation(AnnotationType ann)
+    def package abstract CharSequence generateDeprecatedAnnotation(AnnotationType ann)
 
-    private def boolean implementsIfc(GeneratedType type, Type impl) {
+    def private boolean implementsIfc(GeneratedType type, Type impl) {
         for (Type ifc : type.implements) {
             if (ifc.equals(impl)) {
                 return true;
@@ -155,7 +155,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         return false;
     }
 
-    private def void removeProperty(Collection<BuilderGeneratedProperty> props, String name) {
+    def private void removeProperty(Collection<BuilderGeneratedProperty> props, String name) {
         val iter = props.iterator
         while (iter.hasNext) {
             if (name.equals(iter.next.name)) {
@@ -165,7 +165,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         }
     }
 
-    private static def findDeprecatedAnnotation(List<AnnotationType> annotations) {
+    def private static findDeprecatedAnnotation(List<AnnotationType> annotations) {
         if (annotations !== null) {
             for (annotation : annotations) {
                 if (DEPRECATED.equals(annotation.name)) {
@@ -176,11 +176,11 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         return null
     }
 
-    package static def hasNonDefaultMethods(GeneratedType type) {
+    def package static hasNonDefaultMethods(GeneratedType type) {
         !type.methodDefinitions.isEmpty && type.methodDefinitions.exists([def | !def.isDefault])
     }
 
-    package static def nonDefaultMethods(GeneratedType type) {
+    def package static nonDefaultMethods(GeneratedType type) {
         type.methodDefinitions.filter([def | !def.isDefault])
     }
 }

@@ -117,7 +117,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         «ENDIF»
     '''
 
-    private static def Optional<MethodSignature> findGetter(GeneratedType implType, String getterName) {
+    def private static Optional<MethodSignature> findGetter(GeneratedType implType, String getterName) {
         val getter = getterByName(implType.nonDefaultMethods, getterName);
         if (getter.isPresent) {
             return getter;
@@ -157,7 +157,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         return '''«NONNULL_PREFIX»«field.name.toFirstUpper»'''
     }
 
-    package def findGetter(String getterName) {
+    def package findGetter(String getterName) {
         val ownGetter = getterByName(type.nonDefaultMethods, getterName);
         if (ownGetter.isPresent) {
             return ownGetter.orElseThrow
@@ -180,7 +180,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
      *
      * @return string with the <code>hashCode()</code> method definition in JAVA format
      */
-    def protected generateHashCode() '''
+    def private generateHashCode() '''
         «IF !properties.empty || augmentType !== null»
             private int hash = 0;
             private volatile boolean hashValid = false;
@@ -204,7 +204,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
      *
      * @return string with the <code>equals()</code> method definition in JAVA format
      */
-    def protected generateEquals() '''
+    def private generateEquals() '''
         «IF !properties.empty || augmentType !== null»
             @«OVERRIDE.importedName»
             public boolean equals(«Types.objectType().importedName» obj) {
@@ -218,7 +218,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
      *
      * @return string with the <code>toString()</code> method definition in JAVA format
      */
-    def protected generateToString() '''
+    def private generateToString() '''
         @«OVERRIDE.importedName»
         public «STRING.importedName» toString() {
             return «targetType.importedName».«BINDING_TO_STRING_NAME»(this);
