@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
@@ -283,7 +282,7 @@ class JavaFileTemplate {
         final var augmentType = createMethods(type, methods);
         final var sortedMethods = ImmutableSortedSet.orderedBy(METHOD_COMPARATOR).addAll(methods).build();
 
-        return new AbstractMap.SimpleImmutableEntry<>(augmentType, propertiesFromMethods(sortedMethods));
+        return Map.entry(augmentType, propertiesFromMethods(sortedMethods));
     }
 
     static final Restrictions restrictionsForSetter(final Type actualType) {
