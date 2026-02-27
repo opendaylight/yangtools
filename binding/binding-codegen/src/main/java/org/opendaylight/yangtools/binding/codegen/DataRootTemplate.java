@@ -33,15 +33,17 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
         final var rootMetaType = BindingTypes.rootMeta(archetype);
         final var rootMetaRaw = importedName(rootMetaType.getRawType());
-        final var rootMeta = importedName(rootMetaType);
         final var moduleInfo = importedName(archetype.yangModuleInfo());
-        final var type = importedName(archetype);
+        // FIXME: YANGTOOLS-1808: use importedName()
+        final var type = archetype.name().fullyQualifiedName();
 
         return "/**\n"
             +  " * The {@link " + rootMetaRaw + "} associated with this module root.\n"
             +  " */\n"
             +  '@' + nonNullByDefault + '\n'
-            +  rootMeta + " META = new " + rootMetaRaw + "<>(" + type + ".class, " + moduleInfo + ".INSTANCE);\n";
+            // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
+            +  rootMetaRaw + '<' + type + "> META = new " + rootMetaRaw + "<>(" + type + ".class, " + moduleInfo
+                + ".INSTANCE);\n";
     }
 
     @Override
@@ -49,13 +51,17 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var archetype = archetype();
 
         // pre-compute constants: split out for future isolation
-        final var rootMetaType = importedName(BindingTypes.rootMeta(archetype));
+        final var rootMetaType = BindingTypes.rootMeta(archetype);
+        final var rootMeta = importedName(rootMetaType.getRawType());
         final var override = importedName(OVERRIDE);
+        final var type = archetype.name().fullyQualifiedName();
 
         final var sb = new StringBuilder()
             .append(generateDefaultImplementedInterface()).append('\n')
             .append('@').append(override).append('\n')
-            .append("default ").append(rootMetaType).append(' ').append(Naming.DATA_ROOT_META_NAME).append("() {\n")
+            // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
+            .append("default ").append(rootMeta).append('<').append(type).append("> ")
+                .append(Naming.DATA_ROOT_META_NAME).append("() {\n")
             .append("    return ").append(Naming.META_STATIC_FIELD_NAME).append(";\n")
             .append("}\n");
 
