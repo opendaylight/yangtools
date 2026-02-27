@@ -30,8 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.WildcardType;
 /**
  * Abstract class representing a generated type, either top-level or nested. It takes care of tracking references
  * to other Java types and resolving them as best as possible. This class is NOT thread-safe.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 abstract class AbstractJavaGeneratedType {
@@ -129,13 +127,13 @@ abstract class AbstractJavaGeneratedType {
             return type.simpleName();
         }
 
-        // Self-reference, return simple name
+        // Self-reference, delegate to selfRef()
         if (name.equals(type)) {
-            return name.simpleName();
+            return selfRef();
         }
 
         // Fast path: we have already resolved how to refer to this type
-        final String existing = nameCache.get(type);
+        final var existing = nameCache.get(type);
         if (existing != null) {
             return existing;
         }
@@ -154,15 +152,36 @@ abstract class AbstractJavaGeneratedType {
         return result;
     }
 
+    /**
+     * {@return a shortest possible reference to this type}
+     */
+    final String selfRef() {
+        // Fast path: we have already resolved how to refer to this type
+        final var existing = nameCache.get(name);
+        return existing != null ? existing : loadSelfRef();
+    }
+
+    private String loadSelfRef() {
+        final var simpleName = name.simpleName();
+        final var selfRef = canUseSimple(simpleName) && !hasImported(simpleName) ? simpleName : name.canonicalName();
+        nameCache.put(name, selfRef);
+        return selfRef;
+    }
+
+    abstract boolean hasImported(String simpleName);
+
     final NestedJavaGeneratedType getEnclosedType(final JavaTypeName type) {
         return requireNonNull(enclosedTypes.get(type.simpleName()));
     }
 
     final boolean checkAndImportType(final JavaTypeName type) {
         // We can import the type only if it does not conflict with us or our immediately-enclosed types
-        final String simpleName = type.simpleName();
-        return !simpleName.equals(getSimpleName()) && !enclosedTypes.containsKey(simpleName)
-                && !conflictingNames.contains(simpleName) && importCheckedType(type);
+        final var simpleName = type.simpleName();
+        return !simpleName.equals(getSimpleName()) && canUseSimple(simpleName) && importCheckedType(type);
+    }
+
+    private boolean canUseSimple(final String simpleName) {
+        return !enclosedTypes.containsKey(simpleName) && !conflictingNames.contains(simpleName);
     }
 
     abstract boolean importCheckedType(JavaTypeName type);
@@ -179,7 +198,7 @@ abstract class AbstractJavaGeneratedType {
     }
 
     private static StringBuilder annotate(final String ref, final String annotation) {
-        final StringBuilder sb = new StringBuilder();
+        final var sb = new StringBuilder();
         final int dot = ref.lastIndexOf('.');
         if (dot != -1) {
             sb.append(ref, 0, dot + 1);

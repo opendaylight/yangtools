@@ -68,13 +68,12 @@ abstract class AbstractInterfaceTemplate extends BaseTemplate {
     }
 
     final String generateDefaultImplementedInterface() {
-        // Note: we cannot use importedName() or short name due to shadowing explained in MDSAL-365
-        final var fqcn = type().canonicalName();
+        final var self = selfRef();
 
         return '@' + importedName(OVERRIDE) + '\n'
-            +  "default " + importedName(CLASS) + '<' + fqcn + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+            +  "default " + importedName(CLASS) + '<' + self + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
                 + "() {\n"
-            +  "    return " + fqcn + ".class;\n"
+            +  "    return " + self + ".class;\n"
             +  "}\n";
     }
 }

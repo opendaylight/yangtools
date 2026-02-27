@@ -33,17 +33,15 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
         final var rootMetaType = BindingTypes.rootMeta(archetype);
         final var rootMetaRaw = importedName(rootMetaType.getRawType());
+        final var rootMeta = importedName(rootMetaType);
         final var moduleInfo = importedName(archetype.yangModuleInfo());
-        // FIXME: YANGTOOLS-1808: use importedName()
-        final var type = archetype.canonicalName();
+        final var self = selfRef();
 
         return "/**\n"
             +  " * The {@link " + rootMetaRaw + "} associated with this module root.\n"
             +  " */\n"
             +  '@' + nonNullByDefault + '\n'
-            // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
-            +  rootMetaRaw + '<' + type + "> META = new " + rootMetaRaw + "<>(" + type + ".class, " + moduleInfo
-                + ".INSTANCE);\n";
+            +  rootMeta + " META = new " + rootMetaRaw + "<>(" + self + ".class, " + moduleInfo + ".INSTANCE);\n";
     }
 
     @Override

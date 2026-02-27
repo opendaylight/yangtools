@@ -232,6 +232,10 @@ class JavaFileTemplate {
         return javaType.getFullyQualifiedReference(intype, annotation);
     }
 
+    final @NonNull String selfRef() {
+        return javaType.selfRef();
+    }
+
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
         final var enclosing = name.immediatelyEnclosingClass();

@@ -45,12 +45,17 @@ final class TopLevelJavaGeneratedType extends AbstractJavaGeneratedType {
         if (importedTypes.containsKey(type)) {
             return true;
         }
-        final String simpleName = type.simpleName();
-        if (importedTypes.containsValue(simpleName)) {
+        final var simpleName = type.simpleName();
+        if (hasImported(simpleName)) {
             return false;
         }
         importedTypes.put(type, simpleName);
         return true;
+    }
+
+    @Override
+    boolean hasImported(final String simpleName) {
+        return importedTypes.containsValue(simpleName);
     }
 
     Stream<JavaTypeName> imports() {

@@ -21,8 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 /**
  * A type which is nested inside some other type. It defers import decisions to its enclosing type, eventually arriving
  * at a {@link TopLevelJavaGeneratedType}.
- *
- * @author Robert Varga
  */
 @NonNullByDefault
 final class NestedJavaGeneratedType extends AbstractJavaGeneratedType {
@@ -37,6 +35,11 @@ final class NestedJavaGeneratedType extends AbstractJavaGeneratedType {
     boolean importCheckedType(final JavaTypeName type) {
         // Defer to enclosing type, which needs to re-run its checks
         return enclosingType.checkAndImportType(type);
+    }
+
+    @Override
+    boolean hasImported(final String simpleName) {
+        return enclosingType.hasImported(simpleName);
     }
 
     @Override
