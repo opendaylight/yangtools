@@ -94,7 +94,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
 
     private final ImmutableListMultimap<Class<?>, CommonDataObjectCodecPrototype<?>> ambiguousByCaseChildClass;
     private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byCaseChildClass;
-    private final ImmutableMap<NodeIdentifier, CaseCodecPrototype> byYangCaseChild;
+    private final ImmutableMap<NodeIdentifier, CaseCodecPrototype<?>> byYangCaseChild;
     private final ImmutableMap<Class<?>, CommonDataObjectCodecPrototype<?>> byClass;
     private final Set<Class<?>> ambiguousByCaseChildWarnings;
 
@@ -105,7 +105,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
 
     ChoiceCodecContext(final ChoiceCodecPrototype<T> prototype) {
         super(prototype);
-        final var byYangCaseChildBuilder = new HashMap<NodeIdentifier, CaseCodecPrototype>();
+        final var byYangCaseChildBuilder = new HashMap<NodeIdentifier, CaseCodecPrototype<?>>();
         final var byClassBuilder = new HashMap<Class<?>, CommonDataObjectCodecPrototype<?>>();
         final var childToCase = SetMultimapBuilder.hashKeys().hashSetValues()
             .<Class<?>, CommonDataObjectCodecPrototype<?>>build();
