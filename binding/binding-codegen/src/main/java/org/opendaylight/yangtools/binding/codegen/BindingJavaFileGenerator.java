@@ -59,11 +59,10 @@ final class BindingJavaFileGenerator {
         if (result.contains(GeneratedFileType.SOURCE, file)) {
             if (ignoreDuplicateFiles) {
                 LOG.warn("Naming conflict for type '{}': file with same name already exists and will not be "
-                        + "generated.", type.fullyQualifiedName());
+                        + "generated.", type.name());
                 return;
             }
-            throw new IllegalStateException("Duplicate file '" + file.getPath() + "' for "
-                + type.fullyQualifiedName());
+            throw new IllegalStateException("Duplicate file '" + file.getPath() + "' for " + type.name());
         }
 
         result.put(GeneratedFileType.SOURCE, file,

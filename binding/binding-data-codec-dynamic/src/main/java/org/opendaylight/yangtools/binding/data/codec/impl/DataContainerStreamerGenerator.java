@@ -378,7 +378,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
     private static Class<?> loadTypeClass(final BindingClassLoader loader, final Type type) {
         try {
-            return loader.loadClass(type.fullyQualifiedName());
+            return loader.loadClass(type.name().canonicalName());
         } catch (ClassNotFoundException e) {
             throw new LinkageError("Failed to load " + type, e);
         }
