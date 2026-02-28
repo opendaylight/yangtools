@@ -57,11 +57,11 @@ public interface Type extends Immutable {
      * </ul>
      *
      * @return fully qualified name of Type.
-     * @deprecated Use {@code name().fullyQualifiedName()} instead.
+     * @deprecated Use {@code name().canonicalName()} instead.
      */
     @Deprecated(since = "15.0.0")
     default String fullyQualifiedName() {
-        return name().fullyQualifiedName();
+        return name().canonicalName();
     }
 
     static Type of(final JavaTypeName identifier) {

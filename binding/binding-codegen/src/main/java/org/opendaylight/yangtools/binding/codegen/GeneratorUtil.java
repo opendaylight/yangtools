@@ -225,7 +225,7 @@ public final class GeneratorUtil {
             if (type.equals(Types.voidType())) {
                 return "void";
             }
-            sb.append(type.fullyQualifiedName());
+            sb.append(type.name());
             addActualTypeParameters(sb, type, parentGenType, imports);
         }
         return sb.toString();
