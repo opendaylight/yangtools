@@ -29,7 +29,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * <p>By the definition of the interface constant, enum, enclosed types and method definitions MUST be public, so there
  * is no need to specify the scope of visibility.
  */
-public interface GeneratedType extends Type, DocumentedType {
+public non-sealed interface GeneratedType extends Type, DocumentedType {
     /**
      * Returns comment string associated with Generated Type.
      *

@@ -7,17 +7,22 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.AbstractType;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType.Parameter;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
@@ -83,17 +88,23 @@ final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder implements Ann
         return helper;
     }
 
-    private static final class AnnotationTypeImpl extends AbstractType implements AnnotationType {
+    private static final class AnnotationTypeImpl implements AnnotationType {
+        private final @NonNull JavaTypeName name;
         private final List<AnnotationType> annotations;
         private final List<Parameter> parameters;
 
-        AnnotationTypeImpl(final JavaTypeName identifier, final List<AnnotationTypeBuilder> annotationBuilders,
+        AnnotationTypeImpl(final JavaTypeName name, final List<AnnotationTypeBuilder> annotationBuilders,
                 final List<Parameter> parameters) {
-            super(identifier);
+            this.name = requireNonNull(name);
             annotations = annotationBuilders.stream()
                 .map(AnnotationTypeBuilder::build)
                 .collect(ImmutableList.toImmutableList());
             this.parameters = ImmutableList.copyOf(parameters);
+        }
+
+        @Override
+        public JavaTypeName name() {
+            return name;
         }
 
         @Override
@@ -129,13 +140,23 @@ final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder implements Ann
         }
 
         @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            super.addToStringAttributes(helper);
+        public int hashCode() {
+            return name.hashCode();
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return this == obj || obj instanceof Type other && name.equals(other.name());
+        }
+
+        @Override
+        public String toString() {
+            final var helper = MoreObjects.toStringHelper(AnnotationType.class).add("name", name);
 
             addToStringAttribute(helper, "annotations", annotations);
             addToStringAttribute(helper, "parameters", parameters);
 
-            return helper;
+            return helper.toString();
         }
     }
 

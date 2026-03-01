@@ -15,7 +15,7 @@ import java.util.List;
  * For sake of simplicity the Annotation Type is not designed to model exact behaviour of annotation mechanism,
  * but just to hold information needed to model annotation over java Type definition.
  */
-public interface AnnotationType extends Type {
+public non-sealed interface AnnotationType extends Type {
     /**
      * Returns the List of Annotations. Each Annotation Type MAY have defined multiple Annotations.
      *

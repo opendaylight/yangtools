@@ -383,8 +383,8 @@ class AnnotationBuilderTest {
         final var annotationTypeInstance = annotationTypeBuilder.build();
         assertSame(typeName, annotationTypeInstance.name());
         assertEquals("""
-            AnnotationTypeImpl{name=my.package.MyAnnotationName, \
-            annotations=[AnnotationTypeImpl{name=my.package.MySubAnnotationName}], \
+            AnnotationType{name=my.package.MyAnnotationName, \
+            annotations=[AnnotationType{name=my.package.MySubAnnotationName}], \
             parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
                 annotationTypeInstance.toString());
     }
