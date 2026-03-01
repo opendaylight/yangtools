@@ -36,7 +36,7 @@ class Mdsal161Test {
     }
 
     private static void assertKeyStructure(final Collection<GeneratedType> types, final String className) {
-        final var optType = types.stream().filter(t -> t.fullyQualifiedName().equals(className)).findFirst();
+        final var optType = types.stream().filter(type -> type.canonicalName().equals(className)).findFirst();
         final var gto = assertInstanceOf(GeneratedTransferObject.class, optType.orElseThrow());
         assertEquals(2, gto.getEqualsIdentifiers().size());
     }

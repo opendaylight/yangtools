@@ -25,7 +25,7 @@ class Mdsal320Test {
             YangParserTestUtils.parseYangResource("/mdsal320.yang"));
         assertEquals(2, generateTypes.size());
 
-        final var foo = generateTypes.stream().filter(type -> type.fullyQualifiedName()
+        final var foo = generateTypes.stream().filter(type -> type.canonicalName()
             .equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo")).findFirst().orElseThrow();
 
         final var fooTypes = foo.getEnclosedTypes();

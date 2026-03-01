@@ -60,6 +60,6 @@ class IdentityrefTypeTest {
         assertEquals("requireLf", methodSignatures.get(1).getName());
 
         assertEquals("org.opendaylight.yang.gen.v1.urn.identityref.module.rev131109.SomeIdentity",
-            methodSignature.getReturnType().fullyQualifiedName());
+            methodSignature.getReturnType().canonicalName());
     }
 }

@@ -269,7 +269,7 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
                 if (thisObj == obj) {
                     return true;
                 }
-                final var other = «CODEHELPERS.importedName».checkCast(«type.fullyQualifiedName».class, obj);
+                final var other = «CODEHELPERS.importedName».checkCast(«type.canonicalName».class, obj);
                 return other != null
                     «FOR property : ByTypeMemberComparator.sort(typeAnalysis.value)»
                         && «property.importedUtilClass».equals(thisObj.«property.getterName»(), other.«property.getterName»())

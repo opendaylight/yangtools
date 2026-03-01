@@ -100,7 +100,7 @@ class GeneratedTypesLeafrefTest {
         Type condLeafRT = condLeafref.getReturnType();
         assertNotNull(condLeafRT);
         assertEquals("org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Uri",
-            condLeafRT.fullyQualifiedName());
+            condLeafRT.canonicalName());
 
         // InterfaceId
         final var gtIfcKeyProps = gtIfcKey.getProperties();
@@ -114,7 +114,7 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(ifcIdProp);
         Type ifcIdPropType = ifcIdProp.getReturnType();
         assertNotNull(ifcIdPropType);
-        assertEquals("java.lang.String", ifcIdPropType.fullyQualifiedName());
+        assertEquals("java.lang.String", ifcIdPropType.canonicalName());
 
         // Interface
         final var gtIfcMethods = gtIfc.getMethodDefinitions();

@@ -29,7 +29,7 @@ public final class SerialVersionHelper {
         Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<TypeMemberBuilder<?>> SUID_MEMBER_COMPARATOR =
         Comparator.comparing(TypeMemberBuilder::getName);
-    private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::fullyQualifiedName);
+    private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::canonicalName);
     private static final ThreadLocal<MessageDigest> SHA1_MD = ThreadLocal.withInitial(() -> {
         try {
             return MessageDigest.getInstance("SHA");
@@ -49,7 +49,7 @@ public final class SerialVersionHelper {
             dout.writeInt(to.isAbstract() ? 3 : 7);
 
             for (var iface : sortedCollection(SUID_NAME_COMPARATOR, filteredImplementsTypes(to))) {
-                dout.writeUTF(iface.fullyQualifiedName());
+                dout.writeUTF(iface.canonicalName());
             }
 
             for (var property : sortedCollection(SUID_MEMBER_COMPARATOR, to.getProperties())) {

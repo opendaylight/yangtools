@@ -76,7 +76,7 @@ public class DefaultBindingGeneratorTest {
 
         final var bEnumType = assertInstanceOf(EnumTypeObjectArchetype.class,
             assertGeneratedMethod(bDataMethods, "getEnum").getReturnType());
-        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ResolveDirectUseOfEnum", bEnumType.fullyQualifiedName());
+        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ResolveDirectUseOfEnum", bEnumType.canonicalName());
 
         final var enumsType = assertInstanceOf(ParameterizedType.class,
             assertGeneratedMethod(bDataMethods, "getEnums").getReturnType());
@@ -84,7 +84,7 @@ public class DefaultBindingGeneratorTest {
         assertEquals(Types.typeForClass(Set.class), enumsType.getRawType());
         final var enumsTypeArgs = enumsType.getActualTypeArguments();
         assertEquals(1, enumsTypeArgs.size());
-        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs.getFirst().fullyQualifiedName());
+        assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs.getFirst().canonicalName());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class DefaultBindingGeneratorTest {
     void generatedTypeForExtendedDefinitionTypeWithLeafrefBaseType() {
         final var gto = assertInstanceOf(GeneratedTransferObject.class,
             assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getBarId").getReturnType());
-        assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16"), gto.getIdentifier());
+        assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16"), gto.name());
     }
 
     @Test
@@ -136,14 +136,13 @@ public class DefaultBindingGeneratorTest {
         assertEquals(1, enclosed.size());
 
         final var union1 = assertInstanceOf(GeneratedTransferObject.class, enclosed.get(0));
-        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1", union1.fullyQualifiedName());
+        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1", union1.canonicalName());
         assertEquals(1, union1.getProperties().size());
         assertEquals(List.of(), union1.getEnclosedTypes());
 
         final var enums = union1.getEnumerations();
         assertEquals(1, enums.size());
-        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1.Enumeration",
-            enums.getFirst().fullyQualifiedName());
+        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1.Enumeration", enums.getFirst().canonicalName());
     }
 
     @Test
@@ -158,21 +157,21 @@ public class DefaultBindingGeneratorTest {
     void javaTypeForSchemaDefinitionForExtUnionWithSimpleTypes() {
         final var type = assertInstanceOf(GeneratedTransferObject.class, assertGeneratedMethod(
             JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getSimpleIntTypesUnion").getReturnType());
-        assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangUnion"), type.getIdentifier());
+        assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangUnion"), type.name());
     }
 
     @Test
     void javaTypeForSchemaDefinitionForExtUnionWithInnerUnionAndSimpleType() {
         final var type = assertInstanceOf(GeneratedTransferObject.class, assertGeneratedMethod(
             JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getComplexStringIntUnion").getReturnType());
-        assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion"), type.getIdentifier());
+        assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion"), type.name());
     }
 
     @Test
     void javaTypeForSchemaDefinitionForExtComplexUnionWithInnerUnionTypes() {
         final var type = assertInstanceOf(GeneratedTransferObject.class, assertGeneratedMethod(
             JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getComplexUnion").getReturnType());
-        assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion"), type.getIdentifier());
+        assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion"), type.name());
     }
 
     @Test
@@ -295,7 +294,7 @@ public class DefaultBindingGeneratorTest {
 
     private static GeneratedType assertGeneratedType(final JavaTypeName name) {
         return TYPES.stream()
-            .filter(type -> name.equals(type.getIdentifier()))
+            .filter(type -> name.equals(type.name()))
             .findFirst()
             .orElseThrow(() -> new AssertionError("Generated type " + name + " not present"));
     }

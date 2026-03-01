@@ -176,11 +176,11 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
 
         public static final String serializeTypedef(final Type type) {
             if (!(type instanceof ParameterizedType parameterizedType)) {
-                return type.name().canonicalName();
+                return type.canonicalName();
             }
 
             final var sb = new StringBuilder();
-            sb.append(parameterizedType.getRawType().name().canonicalName()).append('<');
+            sb.append(parameterizedType.getRawType().canonicalName()).append('<');
             boolean first = true;
             for (var parameter : parameterizedType.getActualTypeArguments()) {
                 if (first) {

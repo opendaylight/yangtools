@@ -23,7 +23,7 @@ class Bug1862Test {
             "/base-yang-types.yang", "/test-type-provider.yang"));
         assertEquals(35, types.size());
         final var fooGetter = types.stream()
-            .filter(type -> type.fullyQualifiedName().equals(
+            .filter(type -> type.canonicalName().equals(
                 "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.model.rev140912.Foo"))
             .findFirst().orElseThrow()
             .getMethodDefinitions().stream()

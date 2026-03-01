@@ -360,7 +360,7 @@ public class BuilderGeneratorTest {
         final var methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
         final var methType = mock(Type.class);
-        doCallRealMethod().when(methType).fullyQualifiedName();
+        doCallRealMethod().when(methType).canonicalName();
         doReturn(TYPE_NAME).when(methType).name();
         doReturn(TEST).when(methType).simpleName();
         doReturn(methType).when(methSign).getReturnType();

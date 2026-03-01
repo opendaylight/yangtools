@@ -56,7 +56,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         }
 
         final var javaType = TypeUtils.getBaseYangType(type);
-        return forName(javaType.fullyQualifiedName());
+        return forName(javaType.canonicalName());
     }
 
     private static @NonNull AbstractRangeGenerator<?> forName(final String fqcn) {

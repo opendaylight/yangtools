@@ -167,7 +167,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         for (var prop : finalProperties) {
             final var field = fieldName(prop);
             final var type = prop.getReturnType();
-            final var fqcn = type.name().canonicalName();
+            final var fqcn = type.canonicalName();
 
             sb
                 .append("    if (").append(field).append(" != null) {\n")

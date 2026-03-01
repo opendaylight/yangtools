@@ -27,7 +27,7 @@ public interface Type extends Immutable {
      * {@return this type's {@link JavaTypeName}}
      * @deprecated Use {@link #name()} instead.
      */
-    @Deprecated(since = "15.0.0")
+    @Deprecated(since = "15.0.0", forRemoval = true)
     default JavaTypeName getIdentifier() {
         return name();
     }
@@ -40,27 +40,16 @@ public interface Type extends Immutable {
     }
 
     /**
-     * {@return name of the interface}
+     * {@return the {@code simple name} of this type}
      */
     default String simpleName() {
         return name().simpleName();
     }
 
     /**
-     * Returns fully qualified name of Type. <br>
-     * The fully qualified name of Type MUST be returned in following format:
-     * <ul>
-     * <li>If does not contains package name: [type name] (e.g. int, byte,
-     * byte[],...)</li>
-     * <li>If Type contains package name: [package name].[type name] (e.g
-     * java.lang.Byte, org.opendaylight.controller.gen.GenType)</li>
-     * </ul>
-     *
-     * @return fully qualified name of Type.
-     * @deprecated Use {@code name().canonicalName()} instead.
+     * {@return the {@code canonical name} of this type}
      */
-    @Deprecated(since = "15.0.0")
-    default String fullyQualifiedName() {
+    default String canonicalName() {
         return name().canonicalName();
     }
 
