@@ -25,7 +25,7 @@ class Mdsal459Test {
         assertNotNull(types);
         assertEquals(7, types.size());
 
-        final var typeNames = types.stream().map(GeneratedType::getIdentifier).collect(Collectors.toSet());
+        final var typeNames = types.stream().map(GeneratedType::name).collect(Collectors.toSet());
         assertEquals(Set.of(
             JavaTypeName.create("org.opendaylight.yang.gen.v1.base.norev", "Foo"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.base.norev", "BaseData"),

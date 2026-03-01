@@ -565,7 +565,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             case ConcreteType concrete -> concrete.withRestrictions(restrictions);
             case GeneratedTransferObject gto -> {
                 // Base type is a GTO, we need to re-adjust it with new restrictions
-                final var builder = builderFactory.newGeneratedTOBuilder(gto.getIdentifier());
+                final var builder = builderFactory.newGeneratedTOBuilder(gto.name());
                 final var parent = gto.getSuperType();
                 if (parent != null) {
                     builder.setExtendsType(parent);

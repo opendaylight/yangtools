@@ -25,7 +25,7 @@ class Mdsal666Test {
     @Test
     void rpcPushesGrouping() {
         final var generatedNames = DefaultBindingGenerator.generateFor(
-            YangParserTestUtils.parseYangResource("/mdsal666.yang")).stream().map(GeneratedType::getIdentifier)
+            YangParserTestUtils.parseYangResource("/mdsal666.yang")).stream().map(GeneratedType::name)
             .collect(Collectors.toUnmodifiableList());
         assertEquals(10, generatedNames.size());
 

@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal810Test {
@@ -76,6 +77,6 @@ class Mdsal810Test {
     private static void assertGeneratedNames(final String yangFile, final String... fqcns) {
         assertEquals(List.of(fqcns),
             DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/mdsal-810/" + yangFile))
-                .stream().map(type -> type.getIdentifier().toString()).toList());
+                .stream().map(GeneratedType::canonicalName).toList());
     }
 }

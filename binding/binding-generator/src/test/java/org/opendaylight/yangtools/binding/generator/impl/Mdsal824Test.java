@@ -48,11 +48,11 @@ class Mdsal824Test {
         final var barInput = assertInstanceOf(InputRuntimeType.class,
             barAction.schemaTreeChild(QName.create("bar", "input")));
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooInput"),
-            barInput.javaType().getIdentifier());
+            barInput.javaType().name());
 
         final var barOutput = assertInstanceOf(OutputRuntimeType.class,
             barAction.schemaTreeChild(QName.create("bar", "output")));
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooOutput"),
-            barOutput.javaType().getIdentifier());
+            barOutput.javaType().name());
     }
 }

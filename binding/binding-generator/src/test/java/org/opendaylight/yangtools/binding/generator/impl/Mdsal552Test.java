@@ -29,19 +29,19 @@ class Mdsal552Test {
         assertEquals(5, types.size());
 
         final var baz = types.stream()
-                .filter(type -> BAZ.equals(type.getIdentifier()))
+                .filter(type -> BAZ.equals(type.name()))
                 .findFirst().orElseThrow();
         final var bazGetRef = baz.getMethodDefinitions().stream()
                 .filter(method -> method.getName().equals("getRef"))
                 .findFirst().orElseThrow();
-        assertEquals(ENUMERATION, bazGetRef.getReturnType().getIdentifier());
+        assertEquals(ENUMERATION, bazGetRef.getReturnType().name());
 
         final var input = types.stream()
-                .filter(type -> BAR_INPUT.equals(type.getIdentifier()))
+                .filter(type -> BAR_INPUT.equals(type.name()))
                 .findFirst().orElseThrow();
         final var inputGetRef = input.getMethodDefinitions().stream()
                 .filter(method -> method.getName().equals("getRef"))
                 .findFirst().orElseThrow();
-        assertEquals(ENUMERATION, inputGetRef.getReturnType().getIdentifier());
+        assertEquals(ENUMERATION, inputGetRef.getReturnType().name());
     }
 }

@@ -113,7 +113,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                 // calling iterator() returns, in case of an AbstractCompositeGenerator, its childGenerators
                 final var childGenIt = gen.iterator();
                 if (type != null && type.javaType() instanceof GeneratedType genType) {
-                    final var name = genType.getIdentifier();
+                    final var name = genType.name();
                     final var prev = allTypes.put(name, type);
                     verify(prev == null || prev == type, "Conflict on runtime type mapping of %s between %s and %s",
                         name, prev, type);
@@ -127,7 +127,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                         // The appropriate choice and DataObject at the very least. The choice interface is the first
                         // one mentioned.
                         verify(ifaces.size() >= 2, "Unexpected implemented interfaces %s", ifaces);
-                        choiceToCases.put(ifaces.getFirst().getIdentifier(), caseType);
+                        choiceToCases.put(ifaces.getFirst().name(), caseType);
                     }
 
                     if (type instanceof AugmentRuntimeType augmentType) {
@@ -300,7 +300,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
         // get all interfaces
         final var interfaces = runtimeType.javaType().getImplements();
         // filter them to get just the augmentation
-        final var augmentation = interfaces.stream().filter(i -> i.getIdentifier().equals(augBase)).findFirst();
+        final var augmentation = interfaces.stream().filter(iface -> iface.name().equals(augBase)).findFirst();
 
         return augmentation.map(ParameterizedType.class::cast);
     }

@@ -28,7 +28,7 @@ class Mdsal554Test {
         assertEquals(1, deprecatedAnnotations.size());
 
         var annotation = deprecatedAnnotations.get(0);
-        assertEquals(JavaTypeName.create(Deprecated.class), annotation.getIdentifier());
+        assertEquals(JavaTypeName.create(Deprecated.class), annotation.name());
         assertEquals(List.of(), annotation.getParameters());
 
         // status obsolete
@@ -39,7 +39,7 @@ class Mdsal554Test {
         assertEquals(1, obsoleteAnnotations.size());
 
         annotation = obsoleteAnnotations.get(0);
-        assertEquals(JavaTypeName.create(Deprecated.class), annotation.getIdentifier());
+        assertEquals(JavaTypeName.create(Deprecated.class), annotation.name());
 
         final var annotationParameters = annotation.getParameters();
         assertEquals(1, annotationParameters.size());

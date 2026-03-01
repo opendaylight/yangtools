@@ -36,9 +36,6 @@ abstract class AbstractRuntimeType<S extends EffectiveStatement<?, ?>, T extends
 
     @Override
     public final String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("javaType", javaType.getIdentifier())
-            .add("statement", statement)
-            .toString();
+        return MoreObjects.toStringHelper(this).add("javaType", javaType.name()).add("statement", statement).toString();
     }
 }

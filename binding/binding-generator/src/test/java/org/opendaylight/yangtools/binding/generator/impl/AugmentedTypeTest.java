@@ -73,7 +73,7 @@ class AugmentedTypeTest {
         var retType = assertInstanceOf(GeneratedTransferObject.class, getIfcKeyMethod.getReturnType());
         assertEquals(JavaTypeName.create(
             "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-            "InterfaceKey"), retType.getIdentifier());
+            "InterfaceKey"), retType.name());
 
         MethodSignature getHigherLayerIfMethod = null;
         for (var method : gtInterfaceMethods) {
@@ -114,7 +114,7 @@ class AugmentedTypeTest {
 
         retType = assertInstanceOf(GeneratedTransferObject.class, getTunnelKeyMethod.getReturnType());
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503"
-            + ".topology.network.links.network.link.tunnels", "TunnelKey"), retType.getIdentifier());
+            + ".topology.network.links.network.link.tunnels", "TunnelKey"), retType.name());
 
         // 'TunnelKey'
         assertNotNull(gtTunnelKey, "TunnelKey is null");

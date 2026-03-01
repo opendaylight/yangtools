@@ -47,7 +47,7 @@ class AugmentRelativeXPathTest {
                 final var property = properties.getFirst();
                 assertEquals("interfaceId", property.getName());
                 assertNotNull(property.getReturnType(), "interfaceId return type is null");
-                assertEquals(JavaTypeName.create(String.class), property.getReturnType().getIdentifier());
+                assertEquals(JavaTypeName.create(String.class), property.getReturnType().name());
             } else if (type.simpleName().equals("Interface")) {
                 gtInterface = type;
 
@@ -67,7 +67,7 @@ class AugmentRelativeXPathTest {
                 assertEquals(JavaTypeName.create(
                     "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
                     "InterfaceKey"),
-                    getIfcKeyMethod.getReturnType().getIdentifier());
+                    getIfcKeyMethod.getReturnType().name());
             } else if (type.simpleName().equals("Tunnel")) {
                 gtTunnel = type;
 
@@ -86,7 +86,7 @@ class AugmentRelativeXPathTest {
                 assertNotNull(getTunnelKeyMethod.getReturnType(), "getKey method return type");
                 assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology"
                     + ".rev130503.topology.network.links.network.link.tunnels", "TunnelKey"),
-                    getTunnelKeyMethod.getReturnType().getIdentifier());
+                    getTunnelKeyMethod.getReturnType().name());
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(GeneratedTransferObject.class, type);
 
@@ -99,7 +99,7 @@ class AugmentRelativeXPathTest {
                 assertNotNull(property.getReturnType(), "tunnelId return type is null");
                 assertEquals(
                     JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208", "Uri"),
-                    property.getReturnType().getIdentifier());
+                    property.getReturnType().name());
             }
         }
 

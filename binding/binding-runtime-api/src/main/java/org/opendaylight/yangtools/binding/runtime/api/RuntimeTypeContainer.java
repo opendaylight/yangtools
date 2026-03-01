@@ -49,6 +49,6 @@ public interface RuntimeTypeContainer extends Immutable {
 
     // FIXME: consider removing this method
     default @Nullable RuntimeType bindingChild(final Type type) {
-        return bindingChild(type.getIdentifier());
+        return bindingChild(type.name());
     }
 }

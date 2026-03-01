@@ -41,7 +41,7 @@ class Mdsal675Test {
         assertNotNull(allGenTypes);
         assertEquals(29, allGenTypes.size());
         final var genTypesMap = allGenTypes.stream()
-            .collect(ImmutableMap.toImmutableMap(type -> type.getIdentifier().toString(), Function.identity()));
+            .collect(ImmutableMap.toImmutableMap(GeneratedType::canonicalName, Function.identity()));
 
         // ensure generated yang-data classes contain getters for inner structure types
 
@@ -136,7 +136,7 @@ class Mdsal675Test {
                         "/yang-data-models/ietf-restconf.yang", "/yang-data-models/yang-data-naming.yang"));
         assertNotNull(allGenTypes);
         assertEquals(22, allGenTypes.size());
-        final var genTypeNames = allGenTypes.stream().map(type -> type.getIdentifier().toString())
+        final var genTypeNames = allGenTypes.stream().map(GeneratedType::canonicalName)
             .collect(Collectors.toSet());
 
         // template name is not compliant to YANG identifier -> char encoding used, name starts with $ char

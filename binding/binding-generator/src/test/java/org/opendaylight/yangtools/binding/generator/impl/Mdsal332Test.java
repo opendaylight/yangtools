@@ -24,7 +24,7 @@ class Mdsal332Test {
         assertNotNull(generateTypes);
         assertEquals(5, generateTypes.size());
 
-        final var names = generateTypes.stream().map(GeneratedType::getIdentifier).toList();
+        final var names = generateTypes.stream().map(GeneratedType::name).toList();
         final var uniqueNames = ImmutableSet.copyOf(names);
         assertEquals(List.copyOf(uniqueNames), names);
     }

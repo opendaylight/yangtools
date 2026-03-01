@@ -24,15 +24,6 @@ public interface Type extends Immutable {
     JavaTypeName name();
 
     /**
-     * {@return this type's {@link JavaTypeName}}
-     * @deprecated Use {@link #name()} instead.
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    default JavaTypeName getIdentifier() {
-        return name();
-    }
-
-    /**
      * {@return name of the package that interface belongs to}
      */
     default String packageName() {

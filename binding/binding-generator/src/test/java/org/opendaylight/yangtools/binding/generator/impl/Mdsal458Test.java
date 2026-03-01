@@ -23,7 +23,7 @@ class Mdsal458Test {
             YangParserTestUtils.parseYangResource("/mdsal458.yang"));
         assertEquals(2, types.size());
 
-        final var typeNames = types.stream().map(GeneratedType::getIdentifier).collect(Collectors.toSet());
+        final var typeNames = types.stream().map(GeneratedType::name).collect(Collectors.toSet());
         assertEquals(Set.of(
             JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal458.norev", "ExportedTo"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal458.norev", "Mdsal458Data")), typeNames);
