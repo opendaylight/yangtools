@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -56,8 +57,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * <p>Overall the tree layout guides the allocation of Java package and top-level class namespaces.
  */
 public abstract class Generator implements Iterable<Generator> {
-    static final JavaTypeName DEPRECATED_ANNOTATION = JavaTypeName.create(Deprecated.class);
-    static final JavaTypeName OVERRIDE_ANNOTATION = JavaTypeName.create(Override.class);
+    static final @NonNull JavaTypeName DEPRECATED_ANNOTATION = JavaTypeName.create(Deprecated.class);
+    static final @NonNull JavaTypeName OVERRIDE_ANNOTATION = JavaTypeName.create(Override.class);
 
     private final AbstractCompositeGenerator<?, ?> parent;
 
@@ -249,7 +250,7 @@ public abstract class Generator implements Iterable<Generator> {
             break;
         }
 
-        builder.addImplementsType(BindingTypes.childOf(Type.of(ancestor.typeName())));
+        builder.addImplementsType(BindingTypes.childOf(TypeRef.of(ancestor.typeName())));
     }
 
     /**
@@ -336,7 +337,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     static final void defaultImplementedInterace(final GeneratedTypeBuilder builder) {
-        defineImplementedInterfaceMethod(builder, Type.of(builder.typeName())).setDefault(true);
+        defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
     static final <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Generator parent,

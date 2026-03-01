@@ -33,7 +33,8 @@ import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingExcepti
 import org.opendaylight.yangtools.binding.data.codec.api.MissingClassInLoadingStrategyException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaForClassException;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -48,7 +49,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizationResultHolde
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -223,7 +223,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
         }
 
         try {
-            runtimeContext.loadClass(Type.of(childClass));
+            runtimeContext.loadClass(TypeRef.of(JavaTypeName.create(childClass)));
         } catch (final ClassNotFoundException e) {
             return new MissingClassInLoadingStrategyException(
                 "User supplied class " + childClass.getName() + " is not available in " + runtimeContext, e);
@@ -330,19 +330,19 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
             final ChoiceSchemaNode choice) {
         boolean haveAddressable = false;
         boolean haveUnaddressable = false;
-        for (CaseSchemaNode child : choice.getCases()) {
+        for (var child : choice.getCases()) {
             switch (computeChildAddressabilitySummary(child)) {
-                case ADDRESSABLE:
+                case ADDRESSABLE -> {
                     haveAddressable = true;
-                    break;
-                case UNADDRESSABLE:
+                }
+                case UNADDRESSABLE -> {
                     haveUnaddressable = true;
-                    break;
-                case MIXED:
+                }
+                case MIXED -> {
                     // A child is mixed, which means we are mixed, too
                     return ChildAddressabilitySummary.MIXED;
-                default:
-                    throw new IllegalStateException("Unhandled accessibility summary for " + child);
+                }
+                default -> throw new IllegalStateException("Unhandled accessibility summary for " + child);
             }
         }
 

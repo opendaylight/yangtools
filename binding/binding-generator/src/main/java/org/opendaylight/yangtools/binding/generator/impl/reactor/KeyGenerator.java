@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultKeyRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
@@ -51,7 +52,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTOBuilder(typeName());
 
-        builder.addImplementsType(BindingTypes.key(Type.of(listGen.typeName())));
+        builder.addImplementsType(BindingTypes.key(TypeRef.of(listGen.typeName())));
 
         final var leafNames = statement().argument();
         for (var listChild : listGen) {

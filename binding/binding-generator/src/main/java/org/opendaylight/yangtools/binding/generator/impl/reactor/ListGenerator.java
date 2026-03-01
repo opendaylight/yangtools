@@ -69,7 +69,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         if (local != null) {
             // Add yang.binding.Identifiable and its key() method
             final var keyType = local.getGeneratedType(builderFactory);
-            builder.addImplementsType(BindingTypes.entryObject(Type.of(builder.typeName()), keyType));
+            builder.addImplementsType(BindingTypes.entryObject(builder.typeRef(), keyType));
             builder.addMethod(Naming.KEY_AWARE_KEY_NAME)
                 .setReturnType(keyType)
                 .addAnnotation(OVERRIDE_ANNOTATION);

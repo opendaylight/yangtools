@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 class TypeTest {
     @Test
     void testCreateNewReferencedType() {
-        final var refType = Type.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
+        final var refType = TypeRef.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
         assertEquals("RefTypeTest", refType.simpleName());
     }
 
     @Test
     void testToStringMethod() {
-        final var refType = Type.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
-        assertEquals("DefaultType{name=org.opendaylight.yangtools.test.RefTypeTest}", refType.toString());
+        final var refType = TypeRef.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
+        assertEquals("TypeRef{name=org.opendaylight.yangtools.test.RefTypeTest}", refType.toString());
     }
 }

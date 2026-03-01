@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractTypeBuilder;
 import org.opendaylight.yangtools.concepts.Mutable;
 
@@ -24,4 +25,11 @@ public sealed interface TypeBuilder extends Mutable
      * {@return the name of the type this builder produces}
      */
     JavaTypeName typeName();
+
+    /**
+     * {@return a {@link TypeRef} to the type this builder produces}
+     */
+    default TypeRef typeRef() {
+        return TypeRef.of(typeName());
+    }
 }

@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.opendaylight.yangtools.binding.InstanceNotification;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -23,7 +24,7 @@ final class InstanceNotificationGenerator extends AbstractNotificationGenerator 
     }
 
     @Override
-    Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        return BindingTypes.instanceNotification(Type.of(builder.typeName()), Type.of(getParent().typeName()));
+    ParameterizedType notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
+        return BindingTypes.instanceNotification(builder.typeRef(), TypeRef.of(getParent().typeName()));
     }
 }

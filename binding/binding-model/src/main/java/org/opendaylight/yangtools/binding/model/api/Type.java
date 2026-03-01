@@ -11,10 +11,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * The Type interface defines the base type for all types defined in java. Each
- * Type defined in java MUST contain name and package name, except of primitive
- * types like int, byte etc. In case of mapping of primitive type the package
- * name MUST be left as empty string.
+ * The Type interface defines the base type for all types defined in java. Each Type defined in java MUST contain name
+ * and package name, except of primitive types like int, byte etc. In case of mapping of primitive type the package name
+ * MUST be left as empty string.
  */
 @NonNullByDefault
 public interface Type extends Immutable {
@@ -42,13 +41,5 @@ public interface Type extends Immutable {
      */
     default String canonicalName() {
         return name().canonicalName();
-    }
-
-    static Type of(final JavaTypeName identifier) {
-        return new DefaultType(identifier);
-    }
-
-    static Type of(final Class<?> type) {
-        return of(JavaTypeName.create(type));
     }
 }

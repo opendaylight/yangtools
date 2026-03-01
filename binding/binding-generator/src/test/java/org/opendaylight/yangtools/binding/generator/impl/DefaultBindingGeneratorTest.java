@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -89,7 +89,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void generatedTypeForExtendedDefinitionTypeWithIdentityrefBaseType() {
-        assertEquals(Type.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "Aes")),
+        assertEquals(TypeRef.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "Aes")),
             assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getAesIdentityrefType").getReturnType());
     }
 
@@ -176,7 +176,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionIdentityrefExtType() {
-        assertEquals(Type.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "CryptoAlg")),
+        assertEquals(TypeRef.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "CryptoAlg")),
             assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getCrypto").getReturnType());
     }
 

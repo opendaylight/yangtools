@@ -35,9 +35,10 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
-@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class GeneratorUtilTest {
     private static final JavaTypeName ANNOTATION = JavaTypeName.create("tst.package", "tstAnnotationName");
     private static final JavaTypeName PARAMETERIZED_TYPE = JavaTypeName.create("tst.package", "tstParametrizedType");
@@ -64,7 +65,7 @@ class GeneratorUtilTest {
 
     @BeforeEach
     void before() {
-        parameterizedType = ParameterizedType.of(Type.of(PARAMETERIZED_TYPE), type);
+        parameterizedType = ParameterizedType.of(TypeRef.of(PARAMETERIZED_TYPE), type);
 
         doReturn("tst.package").when(type).packageName();
         doReturn("tstName").when(type).simpleName();

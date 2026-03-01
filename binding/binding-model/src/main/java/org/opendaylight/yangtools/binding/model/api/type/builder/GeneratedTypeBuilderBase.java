@@ -74,7 +74,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @return <code>true</code> if the addition of type is successful.
      */
     default T addImplementsType(final TypeBuilder builder) {
-        return addImplementsType(Type.of(builder.typeName()));
+        return addImplementsType(builder.typeRef());
     }
 
     /**
@@ -102,7 +102,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @return <code>new</code> Constant instance.
      */
     default Constant addConstant(final TypeBuilder builder, final String name, final Object value) {
-        return addConstant(Type.of(builder.typeName()), name, value);
+        return addConstant(builder.typeRef(), name, value);
     }
 
     /**

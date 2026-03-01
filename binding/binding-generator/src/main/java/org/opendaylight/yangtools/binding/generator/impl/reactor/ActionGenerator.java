@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -45,7 +45,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
             final GeneratedType input, final GeneratedType output) {
         final var parent = getParent();
-        final var parentType = Type.of(parent.typeName());
+        final var parentType = TypeRef.of(parent.typeName());
         if (parent instanceof ListGenerator list) {
             final var keyGen = list.keyGenerator();
             if (keyGen != null) {

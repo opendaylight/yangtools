@@ -14,7 +14,7 @@ import java.util.List;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -77,7 +77,7 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
-        builder.addImplementsType(BindingTypes.choiceIn(Type.of(getParent().typeName())));
+        builder.addImplementsType(BindingTypes.choiceIn(TypeRef.of(getParent().typeName())));
 
         final ModuleGenerator module = currentModule();
         module.addQNameConstant(builder, localName());
