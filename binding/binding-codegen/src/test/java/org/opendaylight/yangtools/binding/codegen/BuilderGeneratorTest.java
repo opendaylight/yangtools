@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -22,18 +21,13 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderGeneratorTest {
     private static final String TEST = "test";
     private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
-
-    @Test
-    void basicTest() {
-        assertEquals("", new BuilderGenerator().generate(mock(Type.class)));
-    }
 
     @Test
     void builderTemplateGenerateHashcodeWithPropertyTest() {
@@ -359,10 +353,7 @@ public class BuilderGeneratorTest {
     private static MethodSignature mockMethSign(final String methodeName) {
         final var methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
-        final var methType = mock(Type.class);
-        doCallRealMethod().when(methType).canonicalName();
-        doReturn(TYPE_NAME).when(methType).name();
-        doReturn(TEST).when(methType).simpleName();
+        final var methType = TypeRef.of(TYPE_NAME);
         doReturn(methType).when(methSign).getReturnType();
         doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;

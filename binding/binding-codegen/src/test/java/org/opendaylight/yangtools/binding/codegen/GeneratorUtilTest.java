@@ -18,6 +18,7 @@ import static org.opendaylight.yangtools.binding.codegen.GeneratorUtil.createImp
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,15 +35,15 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class GeneratorUtilTest {
-    private static final JavaTypeName ANNOTATION = JavaTypeName.create("tst.package", "tstAnnotationName");
-    private static final JavaTypeName PARAMETERIZED_TYPE = JavaTypeName.create("tst.package", "tstParametrizedType");
-    private static final JavaTypeName TYPE = JavaTypeName.create("tst.package", "tstName");
+    private static final @NonNull JavaTypeName ANNOTATION = JavaTypeName.create("tst.package", "tstAnnotationName");
+    private static final @NonNull JavaTypeName PARAMETERIZED_TYPE =
+        JavaTypeName.create("tst.package", "tstParametrizedType");
+    private static final @NonNull JavaTypeName TYPE = JavaTypeName.create("tst.package", "tstName");
 
     @Mock
     private GeneratedType generatedType;
@@ -50,8 +51,6 @@ class GeneratorUtilTest {
     private GeneratedTransferObject enclosedType;
     @Mock
     private MethodSignature methodSignature;
-    @Mock
-    private Type type;
     @Mock
     private AnnotationType annotationType;
     @Mock
@@ -65,11 +64,9 @@ class GeneratorUtilTest {
 
     @BeforeEach
     void before() {
+        final var type = TypeRef.of(TYPE);
         parameterizedType = ParameterizedType.of(TypeRef.of(PARAMETERIZED_TYPE), type);
 
-        doReturn("tst.package").when(type).packageName();
-        doReturn("tstName").when(type).simpleName();
-        doReturn(TYPE).when(type).name();
         doReturn(parameterizedType).when(property).getReturnType();
         doReturn(List.of(property)).when(enclosedType).getProperties();
         doReturn(Boolean.TRUE).when(property).isReadOnly();

@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -16,8 +20,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AbstractType;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -34,8 +38,8 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuil
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 
-abstract class AbstractGeneratedType extends AbstractType implements GeneratedType {
-    private final @Nullable TypeComment comment;
+abstract class AbstractGeneratedType implements GeneratedType {
+    private final @NonNull JavaTypeName name;
     private final @NonNull List<AnnotationType> annotations;
     private final @NonNull List<Type> implementsTypes;
     private final @NonNull List<EnumTypeObjectArchetype> enumerations;
@@ -43,11 +47,12 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     private final @NonNull List<MethodSignature> methodSignatures;
     private final @NonNull List<GeneratedType> enclosedTypes;
     private final @NonNull List<GeneratedProperty> properties;
+    private final @Nullable YangSourceDefinition definition;
+    private final @Nullable TypeComment comment;
     private final boolean isAbstract;
-    private final YangSourceDefinition definition;
 
     AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?> builder) {
-        super(builder.typeName());
+        name = builder.typeName();
         comment = builder.getComment();
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
@@ -66,7 +71,7 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
             final List<GeneratedTOBuilder> enclosedGenTOBuilders,
             final List<EnumTypeObjectArchetype.Builder> enumBuilders, final List<Constant> constants,
             final List<MethodSignatureBuilder> methodBuilders, final List<GeneratedPropertyBuilder> propertyBuilders) {
-        super(typeName);
+        name = requireNonNull(typeName);
         this.comment = comment;
         annotations = toUnmodifiableAnnotations(annotationBuilders);
         this.implementsTypes = makeUnmodifiable(implementsTypes);
@@ -156,6 +161,11 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     }
 
     @Override
+    public final JavaTypeName name() {
+        return name;
+    }
+
+    @Override
     public final TypeComment getComment() {
         return comment;
     }
@@ -206,8 +216,23 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
     }
 
     @Override
+    public final int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public final boolean equals(final @Nullable Object obj) {
+        return this == obj || obj instanceof Type other && name.equals(other.name());
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    @NonNullByDefault
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        super.addToStringAttributes(helper);
+        helper.add("name", name);
 
         final var local = comment;
         if (local != null) {
@@ -222,5 +247,13 @@ abstract class AbstractGeneratedType extends AbstractType implements GeneratedTy
         addToStringAttribute(helper, "properties", properties);
 
         return helper;
+    }
+
+    @NonNullByDefault
+    protected static final void addToStringAttribute(final ToStringHelper helper, final String name,
+            final @Nullable Collection<?> value) {
+        if (value != null && !value.isEmpty()) {
+            helper.add(name, value);
+        }
     }
 }
