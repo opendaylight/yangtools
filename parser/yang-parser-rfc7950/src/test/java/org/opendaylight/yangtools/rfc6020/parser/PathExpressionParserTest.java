@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6020.parser;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -18,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,25 +63,21 @@ class PathExpressionParserTest {
     void testInvalidLeftParent() {
         final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo("));
         assertSame(ref, ex.sourceRef());
-        assertThat(ex.getMessage(), allOf(
-            startsWith("extraneous input '(' expecting "),
-            containsString(" at 1:3 [at ")));
+        assertEquals("extraneous input '(' expecting <EOF> at 1:3 [at ref]", ex.getMessage());
     }
 
     @Test
     void testInvalidRightParent() {
         final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo)"));
         assertSame(ref, ex.sourceRef());
-        assertThat(ex.getMessage(), allOf(
-            startsWith("extraneous input ')' expecting "),
-            containsString(" at 1:3 [at ")));
+        assertEquals("extraneous input ')' expecting <EOF> at 1:3 [at ref]", ex.getMessage());
     }
 
     @Test
     void testInvalidIdentifier() {
         final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo%"));
         assertSame(ref, ex.sourceRef());
-        assertThat(ex.getMessage(), startsWith("token recognition error at: '%' at 1:3 [at "));
+        assertEquals("token recognition error at: '%' at 1:3 [at ref]", ex.getMessage());
     }
 
     @Test
@@ -95,10 +87,10 @@ class PathExpressionParserTest {
             .locationPath();
         assertTrue(path.isAbsolute());
 
-        assertEquals(ImmutableList.of(
+        assertEquals(List.of(
             YangXPathAxis.CHILD.asStep(Unqualified.of("device_types")),
             YangXPathAxis.CHILD.asStep(Unqualified.of("device_type"),
-                ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(
+                Set.of(YangBinaryOperator.EQUALS.exprWith(
                     YangQNameExpr.of(Unqualified.of("type")),
                     YangPathExpr.of(YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier()), Relative.relative(
                         YangXPathAxis.PARENT.asStep(),
