@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,42 +56,38 @@ class ActionStatementTest extends AbstractYangTest {
         final var actionQNames = new HashSet<QName>();
         actions.forEach(n -> actionQNames.add(n.getQName()));
 
-        for (final String actionName : actionNames) {
+        for (var actionName : actionNames) {
             assertTrue(actionQNames.contains(QName.create(FOO_NS, FOO_REV, actionName)));
         }
     }
 
     @Test
     void testActionUnsupportedInYang10() {
-        assertSourceException(startsWith("action is not a YANG statement or use of extension"),
-            "/rfc7950/action-stmt/foo10.yang");
+        assertThat(assertSourceException("/rfc7950/action-stmt/foo10.yang").getMessage())
+            .startsWith("action is not a YANG statement or use of extension");
     }
 
     @Test
     void testActionWithinIllegalAncestor() {
-        assertSourceException(startsWith(
-            "Action (foo-namespace?revision=2016-12-13)action-in-grouping is defined within another structure"),
-            "/rfc7950/action-stmt/foo-invalid.yang");
+        assertThat(assertSourceException("/rfc7950/action-stmt/foo-invalid.yang").getMessage()).startsWith(
+            "Action (foo-namespace?revision=2016-12-13)action-in-grouping is defined within another structure");
     }
 
     @Test
     void testActionWithinListWithoutKey() {
-        assertSourceException(startsWith(
-            "Action (bar-namespace?revision=2016-12-13)my-action is defined within a list that has no key statement"),
-            "/rfc7950/action-stmt/bar-invalid.yang");
+        assertThat(assertSourceException("/rfc7950/action-stmt/bar-invalid.yang").getMessage()).startsWith(
+            "Action (bar-namespace?revision=2016-12-13)my-action is defined within a list that has no key statement");
     }
 
     @Test
     void testActionInUsedGroupingWithinCase() {
-        assertSourceException(startsWith(
-            "Action (baz-namespace?revision=2016-12-13)action-in-grouping is defined within a case statement"),
-            "/rfc7950/action-stmt/baz-invalid.yang");
+        assertThat(assertSourceException("/rfc7950/action-stmt/baz-invalid.yang").getMessage()).startsWith(
+            "Action (baz-namespace?revision=2016-12-13)action-in-grouping is defined within a case statement");
     }
 
     @Test
     void testActionInUsedGroupingAtTopLevelOfModule() {
-        assertSourceException(startsWith(
-            "Action (foobar-namespace?revision=2016-12-13)my-action is defined at the top level of a source file"),
-            "/rfc7950/action-stmt/foobar-invalid.yang");
+        assertThat(assertSourceException("/rfc7950/action-stmt/foobar-invalid.yang").getMessage()).startsWith(
+            "Action (foobar-namespace?revision=2016-12-13)my-action is defined at the top level of a source file");
     }
 }
