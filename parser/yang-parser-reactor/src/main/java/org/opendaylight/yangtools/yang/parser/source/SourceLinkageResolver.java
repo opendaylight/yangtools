@@ -210,8 +210,11 @@ public final class SourceLinkageResolver {
         final var workChain = new ArrayDeque<SourceIdentifier>();
         workChain.add(rootId);
 
-        while (!workChain.isEmpty()) {
-            final SourceIdentifier current = workChain.pollFirst();
+        while (true) {
+            final var current = workChain.pollFirst();
+            if (current == null) {
+                break;
+            }
             if (visitedSources.contains(current)) {
                 continue;
             }
