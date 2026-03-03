@@ -123,7 +123,8 @@ public final class SourceLinkageResolver {
         tryResolveBelongsTo();
         tryResolveSiblings();
 
-        final var allResolved = new LinkedHashMap<SourceInfoRef, ResolvedSourceInfo>(involvedSourcesMap.size());
+        final var allResolved =
+            LinkedHashMap.<SourceInfoRef, ResolvedSourceInfo>newLinkedHashMap(involvedSourcesMap.size());
         for (var involvedSource : involvedSourcesMap.values()) {
             final var fullyResolved = involvedSource.build(allResolved);
             allResolved.put(involvedSource.infoRef(), fullyResolved);
