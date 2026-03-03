@@ -34,6 +34,9 @@ public sealed interface ReactorSource extends BuildSource.Stage permits ReactorS
      */
     SourceInfoRef infoRef();
 
+    /**
+     * {@return the {@link SourceInfo} for this source}
+     */
     default SourceInfo sourceInfo() {
         return infoRef().info();
     }
