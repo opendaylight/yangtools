@@ -106,14 +106,14 @@ public final class SourceLinkageResolver {
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
     @NonNullByDefault
-    public static Map<SourceInfoRef, ResolvedSourceInfo> resolveInvolvedSources(final Set<SourceInfoRef> mainSources,
+    public static List<ResolvedSourceInfo> resolveInvolvedSources(final Set<SourceInfoRef> mainSources,
             final Set<SourceInfoRef> libSources) throws ReactorException, SourceSyntaxException {
-        return mainSources.isEmpty() ? Map.of()
+        return mainSources.isEmpty() ? List.of()
             : new SourceLinkageResolver(mainSources, libSources).resolveInvolvedSources();
     }
 
     @NonNullByDefault
-    private Map<SourceInfoRef, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
+    private List<ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         mapSources(mainSources);
         mapSources(libSources);
         mapSubmodulesToParents();
@@ -130,7 +130,7 @@ public final class SourceLinkageResolver {
             allResolved.put(involvedSource.infoRef(), fullyResolved);
         }
 
-        return allResolved;
+        return List.copyOf(allResolved.values());
     }
 
     private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
