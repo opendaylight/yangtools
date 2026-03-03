@@ -263,7 +263,11 @@ public final class SourceLinkageResolver {
             }
 
             if (allResolved) {
-                final var newResolved = addResolvedSource(current);
+                final var newResolved = involvedSourcesMap.computeIfAbsent(current, key -> {
+                    final var builder = new ResolvedSourceBuilder(allSources.get(key));
+                    involvedSourcesGrouped.put(key.name(), key);
+                    return builder;
+                });
 
                 for (var resolvedDep : resolvedDependencies.entrySet()) {
                     final var dep = resolvedDep.getKey();
@@ -391,23 +395,6 @@ public final class SourceLinkageResolver {
             }
             iterator.remove();
         }
-    }
-
-    /**
-     * Creates a new {@link ResolvedSourceBuilder} for this Source and adds it to the map of Involved-Sources and
-     * Involved-Sources-Grouped. It's inclusion in these maps signifies that all the dependencies of this Source had
-     * been resolved.
-     * @param sourceId of the resolved Source
-     * @return ResolvedSourceBuilder of the Source.
-     */
-    private ResolvedSourceBuilder addResolvedSource(final SourceIdentifier sourceId) {
-        if (involvedSourcesMap.containsKey(sourceId)) {
-            return involvedSourcesMap.get(sourceId);
-        }
-        final var newResolvedBuilder = new ResolvedSourceBuilder(allSources.get(sourceId));
-        involvedSourcesMap.put(sourceId, newResolvedBuilder);
-        involvedSourcesGrouped.put(sourceId.name(), sourceId);
-        return newResolvedBuilder;
     }
 
     private Include asIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
