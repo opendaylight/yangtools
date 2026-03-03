@@ -37,8 +37,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
-import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
+import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -142,29 +142,30 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @NonNullByDefault
-    void linkSources(final Map<ReactorSource, ResolvedSourceInfo> linkage) throws ReactorException {
+    void linkSources(final Map<ResolvedSourceInfo, StatementStreamSource.Factory> linkage) throws ReactorException {
         final var linkedSources = new ArrayList<SourceSpecificContext>(linkage.size());
         for (var entry : linkage.entrySet()) {
-            final var source = entry.getKey();
-            final var resolved = entry.getValue();
+            final var resolved = entry.getKey();
 
             final var prefixToModule = new HashMap<Unqualified, QNameModule>();
             // all resolved imports
             for (var dep : resolved.imports()) {
-                putPrefix(prefixToModule, dep.source().prefix(), dep.qname());
+                putPrefix(prefixToModule, dep.dependency().prefix(), dep.qname());
             }
 
             // the module the source belongs to
+            final var sourceInfo = resolved.infoRef().info();
             final QNameModule definingModule;
-            switch (source.sourceInfo()) {
+            switch (sourceInfo) {
                 case SourceInfo.Module info -> {
                     definingModule = resolved.qnameModule();
                     // Reject any source whose namespace would collide with YIN and could define constructs which
                     // conflict with YANG specification: 'typedef uint8', 'extension list' and similar
                     if (YangConstants.RFC6020_YIN_NAMESPACE.equals(definingModule.namespace())) {
                         // FIXME: better exception
-                        throw new IllegalArgumentException("Source " + source + " resolves to reserved namespace "
-                            + YangConstants.RFC6020_YIN_NAMESPACE);
+                        throw new IllegalArgumentException(
+                            "Source " + info.sourceId() + " resolves to reserved namespace "
+                                + YangConstants.RFC6020_YIN_NAMESPACE);
                     }
 
                     putPrefix(prefixToModule, info.prefix(), definingModule);
@@ -173,16 +174,16 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
                     // FIXME: missing @NonNull: this should be ensured through class hierarchy
                     final var belongsTo = resolved.belongsTo();
                     definingModule = belongsTo.parentModuleQname();
-                    putPrefix(prefixToModule, belongsTo.source().prefix(), definingModule);
+                    putPrefix(prefixToModule, belongsTo.dependency().prefix(), definingModule);
                 }
             }
 
             // a weird thing: this source's name bound to defining module
-            final var moduleName = source.sourceId().name().bindTo(definingModule).intern();
+            final var moduleName = sourceInfo.sourceId().name().bindTo(definingModule).intern();
 
-            linkedSources.add(new SourceSpecificContext(this, source.sourceInfo(), definingModule,
+            linkedSources.add(new SourceSpecificContext(this, sourceInfo, definingModule,
                 new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
-                source.streamFactory().newStreamSource(prefixToModule)));
+                entry.getValue().newStreamSource(prefixToModule)));
         }
         sources = List.copyOf(linkedSources);
     }

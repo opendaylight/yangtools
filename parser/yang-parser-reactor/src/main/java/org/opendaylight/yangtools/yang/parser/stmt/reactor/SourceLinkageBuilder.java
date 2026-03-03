@@ -52,7 +52,7 @@ final class SourceLinkageBuilder {
         libSources.add(BuildSource.ofMaterialized(source, streamSupport));
     }
 
-    Map<ReactorSource, ResolvedSourceInfo> build() throws ReactorException, SourceSyntaxException {
+    Map<ResolvedSourceInfo, StatementStreamSource.Factory> build() throws ReactorException, SourceSyntaxException {
         // FIXME: do not materialize libSources until needed
         final var libReactorSources = HashSet.<ReactorSource>newHashSet(libSources.size());
         for (final var buildSource : libSources) {
@@ -66,17 +66,17 @@ final class SourceLinkageBuilder {
         }
 
         // Index sources by their SourceInfoRef and build up the arguments for SourceLinkageResolver
-        final var refToSource = new HashMap<SourceInfoRef, ReactorSource>();
+        final var refToFactory = new HashMap<SourceInfoRef, StatementStreamSource.Factory>();
         final var mainRefs = new HashSet<SourceInfoRef>();
         final var libRefs = new HashSet<SourceInfoRef>();
         for (var src : sources) {
             final var infoRef = src.infoRef();
-            refToSource.put(infoRef, src);
+            refToFactory.put(infoRef, src.streamFactory());
             mainRefs.add(infoRef);
         }
         for (var src : libReactorSources) {
             final var infoRef = src.infoRef();
-            refToSource.put(infoRef, src);
+            refToFactory.put(infoRef, src.streamFactory());
             libRefs.add(infoRef);
         }
 
@@ -84,9 +84,9 @@ final class SourceLinkageBuilder {
         final var resolved = SourceLinkageResolver.resolveInvolvedSources(mainRefs, libRefs);
 
         // Resolved SourceInfoRefs back to their ReactorSource
-        final var ret = HashMap.<ReactorSource, ResolvedSourceInfo>newHashMap(resolved.size());
+        final var ret = HashMap.<ResolvedSourceInfo, StatementStreamSource.Factory>newHashMap(resolved.size());
         for (var entry : resolved.entrySet()) {
-            ret.put(verifyNotNull(refToSource.get(entry.getKey())), entry.getValue());
+            ret.put(entry.getValue(), verifyNotNull(refToFactory.get(entry.getKey())));
         }
         return ret;
     }

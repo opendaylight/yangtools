@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 
 /**
  * A resolved {@link SourceDependency}.
@@ -26,9 +26,14 @@ public sealed interface ResolvedDependency extends Immutable {
     /**
      * A resolved {@link BelongsTo}.
      */
-    record ResolvedBelongsTo(BelongsTo source, QNameModule parentModuleQname) implements ResolvedDependency {
+    record ResolvedBelongsTo(
+            BelongsTo dependency,
+            // FIXME: SourceRef.ToModule
+            SourceRef sourceRef,
+            QNameModule parentModuleQname) implements ResolvedDependency {
         public ResolvedBelongsTo {
-            requireNonNull(source);
+            requireNonNull(dependency);
+            requireNonNull(sourceRef);
             requireNonNull(parentModuleQname);
         }
     }
@@ -37,12 +42,13 @@ public sealed interface ResolvedDependency extends Immutable {
      * A resolved {@link Import}.
      */
     record ResolvedImport(
-            Import source,
-            SourceIdentifier sourceId,
+            Import dependency,
+            // FIXME: SourceRef.ToModule
+            SourceRef sourceRef,
             QNameModule qname) implements ResolvedDependency {
         public ResolvedImport {
-            requireNonNull(source);
-            requireNonNull(sourceId);
+            requireNonNull(dependency);
+            requireNonNull(sourceRef);
             requireNonNull(qname);
         }
     }
@@ -51,12 +57,13 @@ public sealed interface ResolvedDependency extends Immutable {
      * A resolved {@link Include}.
      */
     record ResolvedInclude(
-            Include source,
-            SourceIdentifier sourceId,
+            Include dependency,
+            // FIXME: SourceRef.ToSubmodule
+            SourceRef sourceRef,
             QNameModule qname) implements ResolvedDependency {
         public ResolvedInclude {
-            requireNonNull(source);
-            requireNonNull(sourceId);
+            requireNonNull(dependency);
+            requireNonNull(sourceRef);
             requireNonNull(qname);
         }
     }
@@ -64,5 +71,10 @@ public sealed interface ResolvedDependency extends Immutable {
     /**
      * {@return the {@link SourceDependency} which is resolved}
      */
-    SourceDependency source();
+    SourceDependency dependency();
+
+    /**
+     * {@return the {@link SourceRef} to which the dependency was resolved}
+     */
+    SourceRef sourceRef();
 }
