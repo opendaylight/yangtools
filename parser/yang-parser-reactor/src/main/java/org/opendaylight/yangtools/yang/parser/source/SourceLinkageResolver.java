@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -38,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -58,10 +57,10 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
-    private final List<ReactorSource> mainSources = new ArrayList<>();
-    private final List<ReactorSource> libSources = new ArrayList<>();
+    private final List<SourceInfoRef> mainSources = new ArrayList<>();
+    private final List<SourceInfoRef> libSources = new ArrayList<>();
 
-    private final Map<SourceIdentifier, ReactorSource> allSources = new HashMap<>();
+    private final Map<SourceIdentifier, SourceInfoRef> allSources = new HashMap<>();
 
     /**
      * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
@@ -90,8 +89,8 @@ public final class SourceLinkageResolver {
     private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
-    private SourceLinkageResolver(final Collection<ReactorSource> withMainSources,
-            final Collection<ReactorSource> withLibSources) {
+    private SourceLinkageResolver(final Collection<SourceInfoRef> withMainSources,
+            final Collection<SourceInfoRef> withLibSources) {
         mainSources.addAll(requireNonNull(withMainSources));
         libSources.addAll(requireNonNull(withLibSources));
     }
@@ -108,15 +107,15 @@ public final class SourceLinkageResolver {
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
     @NonNullByDefault
-    public static Map<ReactorSource, ResolvedSourceInfo> resolveInvolvedSources(
-            final Collection<ReactorSource> mainSources, final Collection<ReactorSource> libSources)
+    public static Map<SourceInfoRef, ResolvedSourceInfo> resolveInvolvedSources(
+            final Collection<SourceInfoRef> mainSources, final Collection<SourceInfoRef> libSources)
                 throws ReactorException, SourceSyntaxException {
         return mainSources.isEmpty() ? Map.of()
             : new SourceLinkageResolver(mainSources, libSources).resolveInvolvedSources();
     }
 
     @NonNullByDefault
-    private Map<ReactorSource, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
+    private Map<SourceInfoRef, ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         mapSources(mainSources);
         mapSources(libSources);
         mapSubmodulesToParents();
@@ -126,10 +125,10 @@ public final class SourceLinkageResolver {
         tryResolveBelongsTo();
         tryResolveSiblings();
 
-        final var allResolved = new LinkedHashMap<ReactorSource, ResolvedSourceInfo>(involvedSourcesMap.size());
+        final var allResolved = new LinkedHashMap<SourceInfoRef, ResolvedSourceInfo>(involvedSourcesMap.size());
         for (var involvedSource : involvedSourcesMap.values()) {
             final var fullyResolved = involvedSource.build(allResolved);
-            allResolved.put(involvedSource.reactorSource(), fullyResolved);
+            allResolved.put(involvedSource.sourceRef(), fullyResolved);
         }
 
         return allResolved;
@@ -137,11 +136,11 @@ public final class SourceLinkageResolver {
 
     private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
         for (var source : allSources.values()) {
-            if (source.sourceInfo() instanceof SourceInfo.Submodule submoduleInfo) {
+            if (source.info() instanceof SourceInfo.Submodule submoduleInfo) {
                 final var belongsTo = submoduleInfo.belongsTo();
                 final var parentName = belongsTo.name();
                 final var parentId = findSatisfied(allSourcesMapped, parentName, belongsTo);
-                final var submoduleId = source.sourceId();
+                final var submoduleId = submoduleInfo.sourceId();
                 if (parentId != null) {
                     submoduleToParentMap.put(submoduleId, parentId);
                     continue;
@@ -154,9 +153,9 @@ public final class SourceLinkageResolver {
         }
     }
 
-    private void mapSources(final Collection<ReactorSource> sources) {
+    private void mapSources(final Collection<SourceInfoRef> sources) {
         for (var source : sources) {
-            final var sourceId = source.sourceId();
+            final var sourceId = source.info().sourceId();
 
             // FIXME: verify no duplicates
             allSources.putIfAbsent(sourceId, source);
@@ -177,7 +176,7 @@ public final class SourceLinkageResolver {
     private void reuniteMainSubmodulesWithParents() {
         // use classic for loop to enable expansion of the mainSources list
         for (int i = 0; i < mainSources.size(); i++) {
-            final var sourceInfo = mainSources.get(i).sourceInfo();
+            final var sourceInfo = mainSources.get(i).info();
 
             if (sourceInfo instanceof Submodule) {
                 final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
@@ -195,20 +194,21 @@ public final class SourceLinkageResolver {
      * Resolves Imports and non-sibling includes. Includes of siblings are only identified here and will be resolved
      * separately.
      */
-    private void tryResolveDependenciesOf(final SourceIdentifier rootId) throws SomeModifiersUnresolvedException {
+    private void tryResolveDependenciesOf(final SourceInfoRef root) throws SomeModifiersUnresolvedException {
+        final var rootId = root.info().sourceId();
         if (involvedSourcesMap.containsKey(rootId)) {
             return;
         }
 
         // Sources already fully resolved
-        final var visitedSources = new HashSet<SourceIdentifier>();
+        final var visitedSources = new HashSet<SourceInfoRef>();
 
         // Sources currently being resolved (active dependency path)
-        final var inProgress = new HashSet<SourceIdentifier>();
+        final var inProgress = new HashSet<SourceInfoRef>();
 
         // Sources that need processing
-        final var workChain = new ArrayDeque<SourceIdentifier>();
-        workChain.add(rootId);
+        final var workChain = new ArrayDeque<SourceInfoRef>();
+        workChain.add(root);
 
         while (true) {
             final var current = workChain.pollFirst();
@@ -221,7 +221,11 @@ public final class SourceLinkageResolver {
 
             inProgress.add(current);
 
-            final var dependencies = getDependenciesOf(current);
+            final var dependencies = new HashSet<SourceDependency>();
+            final var currentInfo = current.info();
+            dependencies.addAll(currentInfo.imports());
+            dependencies.addAll(currentInfo.includes());
+
             final var resolvedDependencies = new HashMap<SourceDependency, Unqualified>();
             final var unresolvedDependencies = new ArrayList<SourceIdentifier>();
             final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
@@ -233,16 +237,18 @@ public final class SourceLinkageResolver {
                 // Find the best match (by revision) among all modules
                 final var match = findSatisfied(allSourcesMapped, dependencyName, dependency);
                 if (match == null) {
+                    final var sourceId = currentInfo.sourceId();
+
                     // Dependency is missing
                     if (dependency instanceof Import) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                            new InferenceException(refOf(current, dependency.sourceRef()),
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                            new InferenceException(refOf(sourceId, dependency.sourceRef()),
                                 "Imported module %s was not found", dependencyName.getLocalName()));
                     }
 
                     // FIXME: also handling of BelongsTo?
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                        new InferenceException(refOf(current, dependency.sourceRef()),
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                        new InferenceException(refOf(sourceId, dependency.sourceRef()),
                             "Included submodule %s was not found", dependencyName.getLocalName()));
                 }
 
@@ -328,10 +334,11 @@ public final class SourceLinkageResolver {
                 for (var dep : unresolvedDependencies) {
                     // Check circular dependency
                     if (inProgress.contains(dep)) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                            new InferenceException(current.toReference(),
+                        final var sourceId = current.info().sourceId();
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                            new InferenceException(sourceId.toReference(),
                                 "Found circular dependency between modules %s and %s",
-                                current.name().getLocalName(), dep.name().getLocalName()));
+                                sourceId.name().getLocalName(), dep.name().getLocalName()));
                     }
 
                     // Not processed yet, add to queue
@@ -358,7 +365,7 @@ public final class SourceLinkageResolver {
             }
 
             // FIXME: ensure this through type safety
-            final var submoduleInfo = (Submodule) resolvedSubmodule.reactorSource().sourceInfo();
+            final var submoduleInfo = (Submodule) resolvedSubmodule.sourceRef().info();
             final var resolvedParent = involvedSourcesMap.get(parentId);
             if (resolvedParent == null) {
                 throw new InferenceException(submoduleId.toReference(),
@@ -382,15 +389,15 @@ public final class SourceLinkageResolver {
         final var iterator = unresolvedSiblingsMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            final Entry<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> entry = iterator.next();
-            final ResolvedSourceBuilder resolvedSource = entry.getKey();
-            final Map<Include, SourceIdentifier> siblings = entry.getValue();
+            final var entry = iterator.next();
+            final var resolvedSource = entry.getKey();
+            final var siblings = entry.getValue();
 
             for (var includeEntry : siblings.entrySet()) {
                 final var sibling = includeEntry.getValue();
                 final var resolvedSibling = involvedSourcesMap.get(sibling);
                 if (resolvedSibling == null) {
-                    final var sourceId = resolvedSource.reactorSource().sourceId();
+                    final var sourceId = resolvedSource.sourceRef().info().sourceId();
                     throw new InferenceException(sourceId.toReference(),
                         "Included submodule %s of module %s was not resolved", sibling, sourceId);
                 }
@@ -400,7 +407,7 @@ public final class SourceLinkageResolver {
         }
     }
 
-    private Include asIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
+    private Include asIncludedSibling(final SourceInfoRef current, final SourceDependency dependency,
             final SourceIdentifier dependencyId) {
         if (!(dependency instanceof Include sibling)) {
             return null;
@@ -413,13 +420,9 @@ public final class SourceLinkageResolver {
         return currentParent != null && currentParent.equals(theirParent) ? sibling : null;
     }
 
-    private @Nullable SourceInfo lookupSourceInfo(final SourceIdentifier sourceId) {
-        final var reactorSource = allSources.get(sourceId);
-        return reactorSource == null ? null : reactorSource.sourceInfo();
-    }
-
-    private @Nullable SourceIdentifier findSatisfyingParentForSubmodule(final SourceIdentifier submoduleId) {
-        if (!(lookupSourceInfo(submoduleId) instanceof SourceInfo.Submodule submodule)) {
+    private @Nullable SourceIdentifier findSatisfyingParentForSubmodule(final SourceInfoRef submoduleId) {
+        final var sourceRef = allSources.get(submoduleId);
+        if (sourceRef == null || !(sourceRef.info() instanceof SourceInfo.Submodule submodule)) {
             return null;
         }
 
@@ -439,14 +442,6 @@ public final class SourceLinkageResolver {
             }
         }
         return null;
-    }
-
-    private Set<SourceDependency> getDependenciesOf(final SourceIdentifier id) {
-        final var sourceInfo = lookupSourceInfo(id);
-        final var dependencies = new HashSet<SourceDependency>();
-        dependencies.addAll(sourceInfo.imports());
-        dependencies.addAll(sourceInfo.includes());
-        return dependencies;
     }
 
     @NonNullByDefault

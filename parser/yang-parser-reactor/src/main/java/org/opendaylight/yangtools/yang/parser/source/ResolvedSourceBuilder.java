@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
@@ -36,18 +37,18 @@ final class ResolvedSourceBuilder {
     // these retain insertion order
     private final ImmutableMap.Builder<Include, ResolvedSourceBuilder> includes = new ImmutableMap.Builder<>();
     private final ImmutableMap.Builder<Import, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
-    private final @NonNull ReactorSource reactorSource;
+    private final @NonNull SourceInfoRef sourceRef;
 
     private ResolvedBelongsTo belongsTo;
     private ResolvedSourceInfo buildFinished;
 
     @NonNullByDefault
-    ResolvedSourceBuilder(final ReactorSource reactorSource) {
-        this.reactorSource = requireNonNull(reactorSource);
+    ResolvedSourceBuilder(final SourceInfoRef sourceRef) {
+        this.sourceRef = requireNonNull(sourceRef);
     }
 
-    @NonNull ReactorSource reactorSource() {
-        return reactorSource;
+    @NonNull SourceInfoRef sourceRef() {
+        return sourceRef;
     }
 
     private @NonNull SourceIdentifier sourceId() {
@@ -55,7 +56,7 @@ final class ResolvedSourceBuilder {
     }
 
     private @NonNull SourceInfo sourceInfo() {
-        return reactorSource.sourceInfo();
+        return sourceRef.info();
     }
 
     @NonNull YangVersion yangVersion() {
@@ -110,7 +111,7 @@ final class ResolvedSourceBuilder {
      * @return ResolvedSourceInfo of this source
      */
     @NonNullByDefault
-    ResolvedSourceInfo build(final Map<ReactorSource, ResolvedSourceInfo> allResolved) {
+    ResolvedSourceInfo build(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
         requireNonNull(allResolved);
 
         if (buildFinished != null) {
@@ -125,15 +126,15 @@ final class ResolvedSourceBuilder {
         return buildFinished;
     }
 
-    private List<ResolvedImport> resolveImports(final Map<ReactorSource, ResolvedSourceInfo> allResolved) {
+    private List<ResolvedImport> resolveImports(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
         final var map = imports.build();
         final var result = new ArrayList<ResolvedImport>(map.size());
 
         for (var entry : map.entrySet()) {
             final var importedModule = entry.getValue();
 
-            final var impContext = importedModule.reactorSource();
-            final var resolved = allResolved.get(impContext);
+            final var importedInfo = importedModule.sourceRef();
+            final var resolved = allResolved.get(importedInfo);
             if (resolved == null) {
                 // FIXME: better exception
                 throw new IllegalStateException("Unresolved import %s of module %s".formatted(
