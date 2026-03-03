@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
@@ -31,17 +30,14 @@ record TOGenerator(GeneratedTransferObject type) implements Generator {
 
     @Override
     public String generate() {
-        return switch (type) {
-            // FIXME: split out into separate generator
-            case UnionTypeObjectArchetype union -> new UnionTypeObjectTemplate(union).generate();
-            default -> {
-                if (type.isTypedef()) {
-                    yield new ClassTemplate(type).generate();
-                }
-                final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(type);
-                yield featureDataRoot == null ? new ListKeyTemplate(type).generate()
-                    : new FeatureTemplate(type, featureDataRoot).generate();
-            }
-        };
+        final ClassTemplate template;
+        if (type.isTypedef()) {
+            template = new ClassTemplate(type);
+        } else {
+            final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(type);
+            template = featureDataRoot == null ? new ListKeyTemplate(type) : new FeatureTemplate(type, featureDataRoot);
+        }
+
+        return template.generate();
     }
 }

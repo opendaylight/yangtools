@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
  * A generator of a single file.
  */
 @NonNullByDefault
-sealed interface Generator permits BuilderGenerator, EnumTypeObjectGenerator, InterfaceGenerator, TOGenerator {
+sealed interface Generator
+        permits BuilderGenerator, EnumTypeObjectGenerator, InterfaceGenerator, TOGenerator, UnionTypeObjectGenerator {
     /**
      * {@return the type this generator is bound to}
      */
