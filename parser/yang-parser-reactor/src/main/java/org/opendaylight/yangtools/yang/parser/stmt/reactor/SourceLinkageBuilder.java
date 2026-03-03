@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
@@ -81,12 +82,14 @@ final class SourceLinkageBuilder {
         }
 
         // Let SourceLinkageResolver do its magic
-        final var resolved = SourceLinkageResolver.resolveInvolvedSources(mainRefs, libRefs);
+        final var resolvedInfos = SourceLinkageResolver.resolveInvolvedSources(mainRefs, libRefs);
 
-        // Resolved SourceInfoRefs back to their ReactorSource
-        final var ret = HashMap.<ResolvedSourceInfo, StatementStreamSource.Factory>newHashMap(resolved.size());
-        for (var entry : resolved.entrySet()) {
-            ret.put(entry.getValue(), verifyNotNull(refToFactory.get(entry.getKey())));
+        // Associate each ResolvedSourceInfo to its StatementStreamSource.Factory, maintaining the order returned from
+        // the resolver.
+        final var ret =
+            LinkedHashMap.<ResolvedSourceInfo, StatementStreamSource.Factory>newLinkedHashMap(resolvedInfos.size());
+        for (var resolvedInfo : resolvedInfos) {
+            ret.put(resolvedInfo, verifyNotNull(refToFactory.get(resolvedInfo.infoRef())));
         }
         return ret;
     }
