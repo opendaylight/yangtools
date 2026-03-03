@@ -27,11 +27,9 @@ class YT1383Test extends AbstractYangTest {
         // Effective view of things
         final var effStatements = foo.effectiveSubstatements();
         assertEquals(2, effStatements.size());
-        final var bar = effStatements.get(0);
-        assertInstanceOf(CaseEffectiveStatement.class, bar);
+        final var bar = assertInstanceOf(CaseEffectiveStatement.class, effStatements.get(0));
         assertNotNull(bar.declared());
-        final var baz = effStatements.get(1);
-        assertInstanceOf(CaseEffectiveStatement.class, baz);
+        final var baz = assertInstanceOf(CaseEffectiveStatement.class, effStatements.get(1));
         assertNull(baz.declared());
 
         // Declared view of things

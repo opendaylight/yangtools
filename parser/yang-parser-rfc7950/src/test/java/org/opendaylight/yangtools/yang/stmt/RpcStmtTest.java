@@ -62,8 +62,9 @@ class RpcStmtTest extends AbstractYangTest {
             }
         }
 
-        assertNotEquals(null, fooRpc1);
+        assertNotNull(fooRpc1);
         assertNotEquals("str", fooRpc1);
+        assertNotNull(fooRpc2);
         assertNotEquals(fooRpc1, fooRpc2);
 
         assertNotEquals(fooRpc1.getInput().hashCode(), fooRpc2.getInput().hashCode());

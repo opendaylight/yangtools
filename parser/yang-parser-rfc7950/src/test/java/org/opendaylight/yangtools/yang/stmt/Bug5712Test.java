@@ -35,6 +35,7 @@ class Bug5712Test extends AbstractYangTest {
 
         assertNotNull(thing2);
         var baseType = thing2.getBaseType();
+        assertNotNull(baseType);
         assertEquals(QName.create("urn:opendaylight:bad", "2016-04-11", "thing"), baseType.getQName());
     }
 }

@@ -211,24 +211,24 @@ public interface DataNodeContainer {
      */
     interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, DataNodeContainer {
         @Override
-        default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
+        default Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions() {
             return Collections2.transform(
                 asEffectiveStatement().filterEffectiveStatements(TypedefEffectiveStatement.class),
                 TypedefEffectiveStatement::typeDefinition);
         }
 
         @Override
-        default Collection<? extends DataSchemaNode> getChildNodes() {
+        default Collection<? extends @NonNull DataSchemaNode> getChildNodes() {
             return asEffectiveStatement().filterEffectiveStatements(DataSchemaNode.class);
         }
 
         @Override
-        default Collection<? extends GroupingDefinition> getGroupings() {
+        default Collection<? extends @NonNull GroupingDefinition> getGroupings() {
             return asEffectiveStatement().filterEffectiveStatements(GroupingDefinition.class);
         }
 
         @Override
-        default Collection<? extends UsesNode> getUses() {
+        default Collection<? extends @NonNull UsesNode> getUses() {
             return asEffectiveStatement().filterEffectiveStatements(UsesNode.class);
         }
     }

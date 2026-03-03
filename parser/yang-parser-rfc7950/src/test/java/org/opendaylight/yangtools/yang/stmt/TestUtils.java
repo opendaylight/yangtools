@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -46,12 +47,14 @@ public final class TestUtils {
         // Hidden on purpose
     }
 
-    public static @NonNull List<YangIRSource> loadSources(final String resourceDirectory)
+    @NonNullByDefault
+    public static List<YangIRSource> loadSources(final String resourceDirectory)
             throws Exception {
         return loadSources(TestUtils.class, resourceDirectory);
     }
 
-    public static @NonNull List<YangIRSource> loadSources(final Class<?> cls, final String resourceDirectory)
+    @NonNullByDefault
+    public static List<YangIRSource> loadSources(final Class<?> cls, final String resourceDirectory)
             throws Exception {
         final var files = Path.of(cls.getResource(resourceDirectory).toURI())
             // FIXME: use Files instead

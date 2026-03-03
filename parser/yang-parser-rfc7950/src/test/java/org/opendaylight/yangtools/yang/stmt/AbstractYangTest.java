@@ -71,8 +71,7 @@ public abstract class AbstractYangTest {
             final String... yangResourceName) {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.parseYangSource(yangResourceName));
-        final var actual = ex.getCause();
-        return assertInstanceOf(cause, actual);
+        return assertInstanceOf(cause, ex.getCause());
     }
 
     public static <E extends StatementSourceException> @NonNull E assertException(final Class<E> cause,
@@ -86,8 +85,7 @@ public abstract class AbstractYangTest {
             final Class<E> cause) {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> TestUtils.loadModules(yangResourceName));
-        final var actual = ex.getCause();
-        return assertInstanceOf(cause, actual);
+        return assertInstanceOf(cause, ex.getCause());
     }
 
     public static <E extends StatementSourceException> @NonNull E assertExceptionDir(final String yangResourceName,

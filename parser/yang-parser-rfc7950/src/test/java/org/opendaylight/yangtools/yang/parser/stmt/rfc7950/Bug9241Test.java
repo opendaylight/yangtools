@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,11 +26,13 @@ class Bug9241Test extends AbstractYangTest {
         final var context = assertEffectiveModel("/rfc7950/bug9241/foo.yang");
 
         final var fooModule = context.findModule("foo", Revision.of("2017-10-13")).orElseThrow();
+        assertNotNull(fooModule);
 
         final var actionCont = assertInstanceOf(ContainerSchemaNode.class,
             fooModule.getDataChildByName(QName.create(fooModule.getQNameModule(), "action-cont")));
 
         final var actionInCont = actionCont.getActions().iterator().next();
+        assertNotNull(actionInCont);
 
         final var input = actionInCont.getInput();
         assertEquals(1, input.getChildNodes().size());

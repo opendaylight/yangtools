@@ -52,7 +52,7 @@ public interface NotificationNodeContainer {
     interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>,
             NotificationNodeContainer {
         @Override
-        default Collection<? extends NotificationDefinition> getNotifications() {
+        default Collection<? extends @NonNull NotificationDefinition> getNotifications() {
             return asEffectiveStatement().filterEffectiveStatements(NotificationDefinition.class);
         }
     }

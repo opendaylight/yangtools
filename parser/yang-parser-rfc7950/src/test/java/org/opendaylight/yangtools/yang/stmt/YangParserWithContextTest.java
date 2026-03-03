@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.ElementCountMatcher;
 import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsArgument;
@@ -202,7 +201,7 @@ class YangParserWithContextTest {
             peer.dataChildByName(QName.create(module.getQNameModule(), "destination")));
         final var usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
-        final UsesNode usesNode = usesNodes.iterator().next();
+        final var usesNode = usesNodes.iterator().next();
 
         // test grouping path
         assertEquals(QName.create(XMLNamespace.of("urn:opendaylight.baz"), Revision.of("2013-02-27"), "target"),

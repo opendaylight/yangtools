@@ -14,23 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collection;
-import java.util.Iterator;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 class YinFileIdentityStmtTest extends AbstractYinModulesTest {
     @Test
     void testIdentity() {
-        Module testModule = context.findModules("config").iterator().next();
+        var testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
-        Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();
+        var identities = testModule.getIdentities();
         assertEquals(2, identities.size());
 
-        Iterator<? extends IdentitySchemaNode> idIterator = identities.iterator();
-        IdentitySchemaNode id = idIterator.next();
+        var idIterator = identities.iterator();
+        var id = idIterator.next();
 
         assertThat(id.getQName().getLocalName(), anyOf(is("module-type"), is("service-type")));
         assertTrue(id.getBaseIdentities().isEmpty());

@@ -13,9 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 class Bug3799Test extends AbstractYangTest {
     @Test
@@ -26,23 +23,23 @@ class Bug3799Test extends AbstractYangTest {
         assertNotNull(modules);
         assertEquals(1, modules.size());
 
-        Module testModule = modules.iterator().next();
+        var testModule = modules.iterator().next();
         var subModules = testModule.getSubmodules();
         assertNotNull(subModules);
         assertEquals(1, subModules.size());
 
-        Submodule testSubmodule = subModules.iterator().next();
+        var testSubmodule = subModules.iterator().next();
 
         var notifications = testSubmodule.getNotifications();
         assertNotNull(notifications);
         assertEquals(1, notifications.size());
 
-        NotificationDefinition bazNotification = notifications.iterator().next();
+        var bazNotification = notifications.iterator().next();
         var childNodes = bazNotification.getChildNodes();
         assertNotNull(childNodes);
         assertEquals(1, childNodes.size());
 
-        LeafSchemaNode leafBar = assertInstanceOf(LeafSchemaNode.class, childNodes.iterator().next());
+        var leafBar = assertInstanceOf(LeafSchemaNode.class, childNodes.iterator().next());
         assertEquals("bar", leafBar.getQName().getLocalName());
     }
 }

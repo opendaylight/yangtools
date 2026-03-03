@@ -41,12 +41,12 @@ final class NotificationAsContainer extends ContainerLikeCompat {
     }
 
     @Override
-    public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
+    public Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions() {
         return delegate.getTypeDefinitions();
     }
 
     @Override
-    public Collection<? extends GroupingDefinition> getGroupings() {
+    public Collection<? extends @NonNull GroupingDefinition> getGroupings() {
         return delegate.getGroupings();
     }
 }

@@ -32,7 +32,7 @@ public interface AugmentationTarget {
      */
     interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, AugmentationTarget {
         @Override
-        default Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
+        default Collection<? extends @NonNull AugmentationSchemaNode> getAvailableAugmentations() {
             return asEffectiveStatement().filterEffectiveStatements(AugmentationSchemaNode.class);
         }
     }

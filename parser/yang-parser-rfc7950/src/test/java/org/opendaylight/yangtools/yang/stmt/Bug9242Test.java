@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 class Bug9242Test extends AbstractYangTest {
@@ -24,9 +23,9 @@ class Bug9242Test extends AbstractYangTest {
     void testDeviateReplaceWithUserDefinedTypes() {
         final var schemaContext = assertEffectiveModelDir("/bugs/bug9242/");
 
-        final Revision revision = Revision.of("2017-10-13");
-        final Module rootModule = schemaContext.findModule("root-module", revision).orElseThrow();
-        final Module impModule = schemaContext.findModule("imp-module", revision).orElseThrow();
+        final var revision = Revision.of("2017-10-13");
+        final var rootModule = schemaContext.findModule("root-module", revision).orElseThrow();
+        final var impModule = schemaContext.findModule("imp-module", revision).orElseThrow();
 
         TypeDefinition<?> deviatedMyLeafType = null;
         TypeDefinition<?> deviatedMyLeaf2Type = null;
@@ -45,11 +44,11 @@ class Bug9242Test extends AbstractYangTest {
         assertNotNull(deviatedMyLeafType);
         assertNotNull(deviatedMyLeaf2Type);
 
-        final LeafSchemaNode myLeaf = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
+        final var myLeaf = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
             impModule.getQNameModule(), "my-leaf"));
         assertSame(deviatedMyLeafType, myLeaf.typeDefinition());
 
-        final LeafSchemaNode myLeaf2 = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
+        final var myLeaf2 = (LeafSchemaNode) impModule.getDataChildByName(QName.create(
             impModule.getQNameModule(), "my-leaf-2"));
         assertSame(deviatedMyLeaf2Type, myLeaf2.typeDefinition());
     }

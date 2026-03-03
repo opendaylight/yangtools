@@ -405,11 +405,11 @@ class UsesAugmentTest extends AbstractYangTest {
 
     @Test
     void testTypedefs() {
-        final Module testModule = CONTEXT.findModules("grouping-definitions").iterator().next();
-        final Collection<? extends TypeDefinition<?>> types = testModule.getTypeDefinitions();
+        final var testModule = CONTEXT.findModules("grouping-definitions").iterator().next();
+        final var types = testModule.getTypeDefinitions();
 
         TypeDefinition<?> intExt = null;
-        for (final TypeDefinition<?> td : types) {
+        for (var td : types) {
             if ("int-ext".equals(td.getQName().getLocalName())) {
                 intExt = td;
             }
@@ -418,11 +418,11 @@ class UsesAugmentTest extends AbstractYangTest {
 
         assertEquals(QName.create(GD, "int-ext"), intExt.getQName());
 
-        final UnionTypeDefinition union = (UnionTypeDefinition) intExt.getBaseType();
+        final var union = assertInstanceOf(UnionTypeDefinition.class, intExt.getBaseType());
 
         TypeDefinition<?> uint8 = null;
         TypeDefinition<?> pv = null;
-        for (final TypeDefinition<?> td : union.getTypes()) {
+        for (var td : union.getTypes()) {
             if ("uint8".equals(td.getQName().getLocalName())) {
                 uint8 = td;
             } else if ("protocol-version".equals(td.getQName().getLocalName())) {

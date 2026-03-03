@@ -30,7 +30,7 @@ public interface MustConstraintAware {
      */
     interface Mixin<E extends EffectiveStatement<?, ?>> extends EffectiveStatementEquivalent<E>, MustConstraintAware {
         @Override
-        default Collection<? extends MustDefinition> getMustConstraints() {
+        default Collection<? extends @NonNull MustDefinition> getMustConstraints() {
             return asEffectiveStatement().filterEffectiveStatements(MustDefinition.class);
         }
     }

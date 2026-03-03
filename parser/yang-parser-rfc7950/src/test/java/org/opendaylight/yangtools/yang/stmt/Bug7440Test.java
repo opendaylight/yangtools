@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,6 +32,7 @@ class Bug7440Test extends AbstractYangTest {
         final var deviateReplace = deviates.iterator().next();
 
         final var deviatedType = deviateReplace.getDeviatedType();
+        assertNotNull(deviatedType);
         assertEquals(QName.create(bar.getQNameModule(), "uint32"), deviatedType.getQName());
     }
 }

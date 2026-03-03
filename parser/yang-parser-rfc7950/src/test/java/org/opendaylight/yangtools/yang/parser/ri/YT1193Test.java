@@ -61,7 +61,7 @@ class YT1193Test {
                 case "foo" -> assertFooReferences(stmt);
                 case "bar" -> assertBarReferences(stmt);
                 case "baz" -> assertBazReferences(stmt);
-                default -> throw new IllegalStateException("Unexpected statement " + stmt);
+                case null, default -> throw new IllegalStateException("Unexpected statement " + stmt);
             }
         }
     }
