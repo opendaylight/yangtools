@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -74,8 +73,9 @@ public final class SourceLinkageResolver {
     /**
      * Map of involved sources with the same name.
      */
-    // TODO: would a SetMultimap work better?
-    private final Map<Unqualified, Set<SourceIdentifier>> involvedSourcesGrouped = new HashMap<>();
+    private final SortedSetMultimap<Unqualified, SourceIdentifier> involvedSourcesGrouped =
+        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
+
     /**
      * Map of involved sources ordered according to the resolution order (LinkedHashMap keeps the insertion order).
      */
@@ -269,7 +269,7 @@ public final class SourceLinkageResolver {
                     final var dep = resolvedDep.getKey();
                     // Find the best match for this dependency among the resolved modules
                     final var satisfiedDepId = requireNonNull(findSatisfied(
-                        findAmongResolved(resolvedDep.getValue()), dep));
+                        involvedSourcesGrouped.get(resolvedDep.getValue()), dep));
                     final var depModule = involvedSourcesMap.get(satisfiedDepId);
 
                     final var currentVersion = newResolved.yangVersion();
@@ -397,21 +397,16 @@ public final class SourceLinkageResolver {
      * Creates a new {@link ResolvedSourceBuilder} for this Source and adds it to the map of Involved-Sources and
      * Involved-Sources-Grouped. It's inclusion in these maps signifies that all the dependencies of this Source had
      * been resolved.
-     * @param id of the resolved Source
+     * @param sourceId of the resolved Source
      * @return ResolvedSourceBuilder of the Source.
      */
-    private ResolvedSourceBuilder addResolvedSource(final SourceIdentifier id) {
-        if (involvedSourcesMap.containsKey(id)) {
-            return involvedSourcesMap.get(id);
+    private ResolvedSourceBuilder addResolvedSource(final SourceIdentifier sourceId) {
+        if (involvedSourcesMap.containsKey(sourceId)) {
+            return involvedSourcesMap.get(sourceId);
         }
-        final var newResolvedBuilder = new ResolvedSourceBuilder(allSources.get(id));
-        involvedSourcesMap.put(id, newResolvedBuilder);
-        final var potentials = involvedSourcesGrouped.get(id.name());
-        if (potentials != null) {
-            potentials.add(id);
-        } else {
-            involvedSourcesGrouped.put(id.name(), newMatchSetWith(id));
-        }
+        final var newResolvedBuilder = new ResolvedSourceBuilder(allSources.get(sourceId));
+        involvedSourcesMap.put(sourceId, newResolvedBuilder);
+        involvedSourcesGrouped.put(sourceId.name(), sourceId);
         return newResolvedBuilder;
     }
 
@@ -426,11 +421,6 @@ public final class SourceLinkageResolver {
         final var theirParent = findSatisfyingParentForSubmodule(dependencyId);
 
         return currentParent != null && currentParent.equals(theirParent) ? sibling : null;
-    }
-
-    private @NonNull Set<SourceIdentifier> findAmongResolved(final Unqualified name) {
-        final var matchingInvolved = involvedSourcesGrouped.get(name);
-        return matchingInvolved != null ? matchingInvolved : Set.of();
     }
 
     private @Nullable SourceInfo lookupSourceInfo(final SourceIdentifier sourceId) {
@@ -457,12 +447,6 @@ public final class SourceLinkageResolver {
             .filter(dependency::isSatisfiedBy)
             .findFirst()
             .orElse(null);
-    }
-
-    private static Set<SourceIdentifier> newMatchSetWith(final SourceIdentifier id) {
-        final var matchSet = new TreeSet<>(BY_REVISION);
-        matchSet.add(id);
-        return matchSet;
     }
 
     private Set<SourceDependency> getDependenciesOf(final SourceIdentifier id) {
