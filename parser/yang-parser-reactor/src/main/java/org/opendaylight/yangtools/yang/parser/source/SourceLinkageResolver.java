@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.source;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SortedSetMultimap;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,8 +68,8 @@ public final class SourceLinkageResolver {
      * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
      * them ordered by Revision.
      */
-    // TODO: would a SetMultimap work better?
-    private final Map<Unqualified, Set<SourceIdentifier>> allSourcesMapped = new HashMap<>();
+    private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
+        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
      * Map of involved sources with the same name.
@@ -159,13 +161,7 @@ public final class SourceLinkageResolver {
             // FIXME: verify no duplicates
             allSources.putIfAbsent(sourceId, source);
 
-            final var sourceName = sourceId.name();
-            final var allOfQname = allSourcesMapped.get(sourceName);
-            if (allOfQname != null) {
-                allOfQname.add(sourceId);
-            } else {
-                allSourcesMapped.put(sourceName, newMatchSetWith(sourceId));
-            }
+            allSourcesMapped.put(sourceId.name(), sourceId);
         }
     }
 
@@ -232,7 +228,7 @@ public final class SourceLinkageResolver {
                 final var dependencyName = dependency.name();
 
                 // Find the best match (by revision) among all modules
-                final var match = findSatisfied(findAmongAll(dependencyName), dependency);
+                final var match = findSatisfied(allSourcesMapped.get(dependencyName), dependency);
                 if (match == null) {
                     // Dependency is missing
                     if (dependency instanceof Import) {
@@ -437,11 +433,6 @@ public final class SourceLinkageResolver {
         return matchingInvolved != null ? matchingInvolved : Set.of();
     }
 
-    private @NonNull Set<SourceIdentifier> findAmongAll(final Unqualified name) {
-        final var matchingMapped = allSourcesMapped.get(name);
-        return matchingMapped != null ? matchingMapped : Set.of();
-    }
-
     private @Nullable SourceInfo lookupSourceInfo(final SourceIdentifier sourceId) {
         final var reactorSource = allSources.get(sourceId);
         return reactorSource == null ? null : reactorSource.sourceInfo();
@@ -460,7 +451,7 @@ public final class SourceLinkageResolver {
         return findSatisfied(allSourcesMapped.get(submoduleBelongsTo.name()), submoduleBelongsTo);
     }
 
-    private static SourceIdentifier findSatisfied(final Set<SourceIdentifier> candidates,
+    private static @Nullable SourceIdentifier findSatisfied(final Set<SourceIdentifier> candidates,
             final SourceDependency dependency) {
         return candidates == null ? null : candidates.stream()
             .filter(dependency::isSatisfiedBy)
