@@ -158,24 +158,15 @@ public final class SourceLinkageResolver {
 
             // FIXME: verify no duplicates
             allSources.putIfAbsent(sourceId, source);
-            final var allOfQname = allSourcesMapped.get(sourceId.name());
+
+            final var sourceName = sourceId.name();
+            final var allOfQname = allSourcesMapped.get(sourceName);
             if (allOfQname != null) {
                 allOfQname.add(sourceId);
             } else {
-                mapSource(sourceId);
+                allSourcesMapped.put(sourceName, newMatchSetWith(sourceId));
             }
         }
-    }
-
-    private void mapSource(final SourceIdentifier sourceId) {
-        final var name = sourceId.name();
-        final var matches = allSourcesMapped.get(name);
-        if (matches != null) {
-            matches.add(sourceId);
-            return;
-        }
-
-        allSourcesMapped.put(name, newMatchSetWith(sourceId));
     }
 
     private void tryResolveDependencies() throws ReactorException {
