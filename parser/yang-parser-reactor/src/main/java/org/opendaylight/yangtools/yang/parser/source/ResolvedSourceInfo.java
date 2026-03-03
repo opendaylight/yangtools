@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
  * used to construct linkage substatements like imports, includes, belongs-to etc...
  */
 public record ResolvedSourceInfo(
-        @NonNull SourceIdentifier sourceId,
+        @NonNull SourceInfoRef infoRef,
         @NonNull QNameModule qnameModule,
         @NonNull List<ResolvedImport> imports,
         @NonNull List<ResolvedInclude> includes,
@@ -35,7 +35,7 @@ public record ResolvedSourceInfo(
 
     @NonNullByDefault
     public ResolvedSourceInfo {
-        requireNonNull(sourceId);
+        requireNonNull(infoRef);
         requireNonNull(qnameModule);
         imports = List.copyOf(imports);
         includes = List.copyOf(includes);

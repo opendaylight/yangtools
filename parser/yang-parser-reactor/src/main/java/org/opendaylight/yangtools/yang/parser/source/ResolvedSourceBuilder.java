@@ -100,7 +100,8 @@ final class ResolvedSourceBuilder {
     @NonNullByDefault
     ResolvedSourceBuilder resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder belongsToModule) {
         ensureBuilderOpened();
-        belongsTo = new ResolvedBelongsTo(dependency, belongsToModule.resolveQnameModule());
+        belongsTo = new ResolvedBelongsTo(dependency, belongsToModule.infoRef.ref(),
+            belongsToModule.resolveQnameModule());
         return this;
     }
 
@@ -114,16 +115,18 @@ final class ResolvedSourceBuilder {
     ResolvedSourceInfo build(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
         requireNonNull(allResolved);
 
-        if (buildFinished != null) {
-            return buildFinished;
+        final var finished = buildFinished;
+        if (finished != null) {
+            return finished;
         }
 
         // TODO: for submodules this should be the 'belongsTo' prefix
         final var prefix = sourceInfo() instanceof SourceInfo.Module module ? module.prefix() : null;
 
-        buildFinished = new ResolvedSourceInfo(sourceInfo().sourceId(), resolveQnameModule(),
-            resolveImports(allResolved), resolveIncludes(), prefix, belongsTo);
-        return buildFinished;
+        final var result = new ResolvedSourceInfo(infoRef, resolveQnameModule(), resolveImports(allResolved),
+            resolveIncludes(), prefix, belongsTo);
+        buildFinished = result;
+        return result;
     }
 
     private List<ResolvedImport> resolveImports(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
@@ -140,7 +143,7 @@ final class ResolvedSourceBuilder {
                 throw new IllegalStateException("Unresolved import %s of module %s".formatted(
                     importedModule.sourceId(), sourceId()));
             }
-            result.add(new ResolvedImport(entry.getKey(), resolved.sourceId(), resolved.qnameModule()));
+            result.add(new ResolvedImport(entry.getKey(), resolved.infoRef().ref(), resolved.qnameModule()));
         }
 
         return result;
@@ -152,7 +155,7 @@ final class ResolvedSourceBuilder {
 
         for (var entry : map.entrySet()) {
             final var builder = entry.getValue();
-            result.add(new ResolvedInclude(entry.getKey(), builder.sourceId(), builder.resolveQnameModule()));
+            result.add(new ResolvedInclude(entry.getKey(), builder.infoRef().ref(), builder.resolveQnameModule()));
         }
 
         return result;
