@@ -140,7 +140,7 @@ public final class SourceLinkageResolver {
             if (source.sourceInfo() instanceof SourceInfo.Submodule submoduleInfo) {
                 final var belongsTo = submoduleInfo.belongsTo();
                 final var parentName = belongsTo.name();
-                final var parentId = findSatisfied(allSourcesMapped.get(parentName), belongsTo);
+                final var parentId = findSatisfied(allSourcesMapped, parentName, belongsTo);
                 final var submoduleId = source.sourceId();
                 if (parentId != null) {
                     submoduleToParentMap.put(submoduleId, parentId);
@@ -231,7 +231,7 @@ public final class SourceLinkageResolver {
                 final var dependencyName = dependency.name();
 
                 // Find the best match (by revision) among all modules
-                final var match = findSatisfied(allSourcesMapped.get(dependencyName), dependency);
+                final var match = findSatisfied(allSourcesMapped, dependencyName, dependency);
                 if (match == null) {
                     // Dependency is missing
                     if (dependency instanceof Import) {
@@ -276,7 +276,7 @@ public final class SourceLinkageResolver {
                     final var dep = resolvedDep.getKey();
                     // Find the best match for this dependency among the resolved modules
                     final var satisfiedDepId = requireNonNull(findSatisfied(
-                        involvedSourcesGrouped.get(resolvedDep.getValue()), dep));
+                        involvedSourcesGrouped, resolvedDep.getValue(), dep));
                     final var depModule = involvedSourcesMap.get(satisfiedDepId);
 
                     final var currentVersion = newResolved.yangVersion();
@@ -424,19 +424,21 @@ public final class SourceLinkageResolver {
         }
 
         final var submoduleBelongsTo = submodule.belongsTo();
-        final var satisfied = findSatisfied(involvedSourcesGrouped.get(submoduleBelongsTo.name()), submoduleBelongsTo);
+        final var satisfied = findSatisfied(involvedSourcesGrouped, submoduleBelongsTo.name(), submoduleBelongsTo);
         if (satisfied != null) {
             return satisfied;
         }
-        return findSatisfied(allSourcesMapped.get(submoduleBelongsTo.name()), submoduleBelongsTo);
+        return findSatisfied(allSourcesMapped, submoduleBelongsTo.name(), submoduleBelongsTo);
     }
 
-    private static @Nullable SourceIdentifier findSatisfied(final Set<SourceIdentifier> candidates,
-            final SourceDependency dependency) {
-        return candidates == null ? null : candidates.stream()
-            .filter(dependency::isSatisfiedBy)
-            .findFirst()
-            .orElse(null);
+    private static @Nullable SourceIdentifier findSatisfied(final SortedSetMultimap<Unqualified, SourceIdentifier> map,
+            final Unqualified key, final SourceDependency dependency) {
+        for (var candidate : map.get(key)) {
+            if (dependency.isSatisfiedBy(candidate)) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     private Set<SourceDependency> getDependenciesOf(final SourceIdentifier id) {
