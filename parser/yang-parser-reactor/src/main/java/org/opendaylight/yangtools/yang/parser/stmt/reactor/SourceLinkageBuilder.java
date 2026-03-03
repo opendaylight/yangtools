@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.parser.source.BuildSource;
 import org.opendaylight.yangtools.yang.parser.source.ReactorSource;
@@ -61,6 +65,29 @@ final class SourceLinkageBuilder {
             libReactorSources.add(reactorSource);
         }
 
-        return SourceLinkageResolver.resolveInvolvedSources(sources, libReactorSources);
+        // Index sources by their SourceInfoRef and build up the arguments for SourceLinkageResolver
+        final var refToSource = new HashMap<SourceInfoRef, ReactorSource>();
+        final var mainRefs = new HashSet<SourceInfoRef>();
+        final var libRefs = new HashSet<SourceInfoRef>();
+        for (var src : sources) {
+            final var infoRef = src.infoRef();
+            refToSource.put(infoRef, src);
+            mainRefs.add(infoRef);
+        }
+        for (var src : libReactorSources) {
+            final var infoRef = src.infoRef();
+            refToSource.put(infoRef, src);
+            libRefs.add(infoRef);
+        }
+
+        // Let SourceLinkageResolver do its magic
+        final var resolved = SourceLinkageResolver.resolveInvolvedSources(mainRefs, libRefs);
+
+        // Resolved SourceInfoRefs back to their ReactorSource
+        final var ret = HashMap.<ReactorSource, ResolvedSourceInfo>newHashMap(resolved.size());
+        for (var entry : resolved.entrySet()) {
+            ret.put(verifyNotNull(refToSource.get(entry.getKey())), entry.getValue());
+        }
+        return ret;
     }
 }
