@@ -58,9 +58,6 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_SUBMODULE_NAME_TO_MODULECTX =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> IMP_PREFIX_TO_NAMESPACE =
-        NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE);
-
     public static final @NonNull NamespaceBehaviour<?, ?> IMPORT_PREFIX_TO_MODULECTX =
         NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
 

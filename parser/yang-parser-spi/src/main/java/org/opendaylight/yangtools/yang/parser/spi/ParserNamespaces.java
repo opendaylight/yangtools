@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
@@ -143,13 +142,6 @@ public final class ParserNamespaces {
     public static final @NonNull ParserNamespace<Unqualified,
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE_FOR_BELONGSTO =
         new ParserNamespace<>("module-belongsto");
-
-    /**
-     * Pre-linkage source-specific mapping of prefixes to module namespaces.
-     */
-    // FIXME: a better name?
-    public static final @NonNull ParserNamespace<String, XMLNamespace> IMP_PREFIX_TO_NAMESPACE =
-        new ParserNamespace<>("prefix-to-xmlnamespace");
 
     /**
      * Source-specific mapping of prefix strings to module context.

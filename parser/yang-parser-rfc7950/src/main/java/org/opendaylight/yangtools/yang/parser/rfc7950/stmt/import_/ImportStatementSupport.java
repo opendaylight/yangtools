@@ -85,7 +85,7 @@ public final class ImportStatementSupport
         final var importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final var imported = importAction.requiresCtx(stmt, ParserNamespaces.PRELINKAGE_MODULE, moduleName,
             SOURCE_PRE_LINKAGE);
-        final Prerequisite<Mutable<?, ?, ?>> rootPrereq = importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
+        final var rootPrereq = importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override
@@ -105,9 +105,6 @@ public final class ImportStatementSupport
                             importedVersion, moduleName.getLocalName());
                     }
                 }
-
-                stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, impPrefix,
-                    importedModuleContext.definingModule().namespace());
             }
 
             @Override

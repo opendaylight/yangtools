@@ -147,18 +147,7 @@ public final class ModuleStatementSupport
 
     @Override
     public void onPreLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final var moduleName = stmt.getArgument();
-
-        final var moduleNs = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
-            "Namespace of the module [%s] is missing", moduleName);
-
-        final var modulePrefix = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
-            "Prefix of the module [%s] is missing", moduleName);
-        stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
-
-        stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
+        stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, stmt.getArgument(), stmt);
     }
 
     @Override
