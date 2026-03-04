@@ -28,7 +28,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
@@ -48,7 +47,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,18 +217,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     @NonNull SourceIdentifier identifySource() {
-        final var arg = root.getArgument();
-        verify(arg instanceof Unqualified, "Unexpected argument %s", arg);
-        final var unqualified = (Unqualified) arg;
-
-        final var module = root.namespaceItem(ParserNamespaces.MODULECTX_TO_QNAME, root);
-        if (module != null) {
-            // creates SourceIdentifier for a module
-            return new SourceIdentifier(unqualified, module.revision());
-        }
-
-        // creates SourceIdentifier for a submodule
-        return new SourceIdentifier(unqualified, StmtContextUtils.latestRevisionIn(root.declaredSubstatements()));
+        return sourceInfo.sourceId();
     }
 
     @NonNull DeclaredStatement<?> declaredRoot() {
