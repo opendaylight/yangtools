@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -35,9 +34,9 @@ class ImportResolutionBasicTest extends AbstractYangTest {
 
     @Test
     void circularImportsTest() {
-        assertThat(assertInferenceException(
+        assertInferenceExceptionMessage(
             "/semantic-statement-parser/import-arg-parsing/cycle-yin.yang",
-            "/semantic-statement-parser/import-arg-parsing/cycle-yang.yang").getMessage())
+            "/semantic-statement-parser/import-arg-parsing/cycle-yang.yang")
             .startsWith("Found circular dependency between modules ")
             .contains("cycle-yang")
             .contains("cycle-yin");

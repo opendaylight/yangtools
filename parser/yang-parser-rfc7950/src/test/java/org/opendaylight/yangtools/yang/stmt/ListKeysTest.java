@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class ListKeysTest extends AbstractYangTest {
@@ -19,25 +17,25 @@ class ListKeysTest extends AbstractYangTest {
 
     @Test
     void incorrectListKeysTest1() {
-        assertInferenceException(startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"),
-            "/list-keys-test/incorrect-list-keys-test.yang");
+        assertInferenceExceptionMessage("/list-keys-test/incorrect-list-keys-test.yang")
+            .startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'");
     }
 
     @Test
     void incorrectListKeysTest2() {
-        assertInferenceException(startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"),
-            "/list-keys-test/incorrect-list-keys-test2.yang");
+        assertInferenceExceptionMessage("/list-keys-test/incorrect-list-keys-test2.yang")
+            .startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'");
     }
 
     @Test
     void incorrectListKeysTest3() {
-        assertInferenceException(startsWith("Key 'grp_list' misses node 'grp_list'"),
-            "/list-keys-test/incorrect-list-keys-test3.yang");
+        assertInferenceExceptionMessage("/list-keys-test/incorrect-list-keys-test3.yang")
+            .startsWith("Key 'grp_list' misses node 'grp_list'");
     }
 
     @Test
     void incorrectListKeysTest4()  {
-        assertInferenceException(startsWith("Key 'grp_leaf' misses node 'grp_leaf'"),
-            "/list-keys-test/incorrect-list-keys-test4.yang");
+        assertInferenceExceptionMessage("/list-keys-test/incorrect-list-keys-test4.yang")
+            .startsWith("Key 'grp_leaf' misses node 'grp_leaf'");
     }
 }

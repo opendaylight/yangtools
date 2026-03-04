@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -19,15 +18,16 @@ class YangParserIdentityTest extends AbstractYangTest {
     // base identity name equals identity name
     @Test
     void testParsingIdentityTestModule() {
-        assertInferenceException(startsWith("Unable to resolve identity (urn:test.identitytest?revision="
-            + "2014-09-17)test and base identity"), "/identity/identitytest.yang");
+        assertInferenceExceptionMessage("/identity/identitytest.yang")
+            .startsWith("Unable to resolve identity (urn:test.identitytest?revision=2014-09-17)test and base identity");
     }
 
     // same module prefixed base identity name equals identity name
     @Test
     void testParsingPrefixIdentityTestModule() {
-        assertInferenceException(startsWith("Unable to resolve identity (urn:test.prefixidentitytest?revision="
-            + "2014-09-24)prefixtest and base identity"), "/identity/prefixidentitytest.yang");
+        assertInferenceExceptionMessage("/identity/prefixidentitytest.yang")
+            .startsWith("Unable to resolve identity (urn:test.prefixidentitytest?revision=2014-09-24)prefixtest and "
+                + "base identity");
     }
 
     // imported module prefixed base identity name equals identity name, but
