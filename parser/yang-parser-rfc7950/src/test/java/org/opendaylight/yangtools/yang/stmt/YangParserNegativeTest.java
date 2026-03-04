@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -22,21 +20,19 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testTypeNotFound() {
-        assertInferenceException(
-            startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."),
-            "/negative-scenario/testfile2.yang");
+        assertInferenceExceptionMessage("/negative-scenario/testfile2.yang")
+            .startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found.");
     }
 
     @Test
     void testInvalidAugmentTarget() {
-        assertInferenceException(
-            startsWith("Augment target 'Absolute{qnames=[(urn:simple.container.demo)unknown]}' not found"),
-            "/negative-scenario/testfile0.yang", "/negative-scenario/testfile3.yang");
+        assertInferenceExceptionMessage("/negative-scenario/testfile0.yang", "/negative-scenario/testfile3.yang")
+            .startsWith("Augment target 'Absolute{qnames=[(urn:simple.container.demo)unknown]}' not found");
     }
 
     @Test
     void testInvalidRefine() {
-        assertThat(assertInferenceException("/negative-scenario/testfile4.yang").getMessage()).contains("""
+        assertInferenceExceptionMessage("/negative-scenario/testfile4.yang").contains("""
             unsupported statement presence in target leaf-list while refining uses \
             Descendant{qnames=[(urn:simple.container.demo)node]} [at """);
     }
@@ -82,9 +78,9 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testDuplicityInAugmentTarget1() {
-        assertInferenceException(
-            startsWith("An augment cannot add node named 'id' because this name is already used in target"),
-            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang");
+        assertInferenceExceptionMessage(
+            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang")
+            .startsWith("An augment cannot add node named 'id' because this name is already used in target");
     }
 
     @Test
@@ -99,15 +95,14 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testMandatoryInAugment() {
-        assertInferenceException(startsWith(
-            "An augment cannot add node 'linkleaf' because it is mandatory and in module different than target"),
-            "/negative-scenario/testfile8.yang", "/negative-scenario/testfile7.yang");
+        assertInferenceExceptionMessage(
+            "/negative-scenario/testfile8.yang", "/negative-scenario/testfile7.yang").startsWith(
+            "An augment cannot add node 'linkleaf' because it is mandatory and in module different than target");
     }
 
     @Test
     void testInvalidListKeyDefinition() {
-        assertInferenceException(startsWith(
-            "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'"),
-            "/negative-scenario/invalid-list-key-def.yang");
+        assertInferenceExceptionMessage("/negative-scenario/invalid-list-key-def.yang").startsWith(
+            "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'");
     }
 }

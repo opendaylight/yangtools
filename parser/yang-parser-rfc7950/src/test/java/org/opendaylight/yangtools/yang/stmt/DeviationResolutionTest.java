@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -199,54 +198,55 @@ class DeviationResolutionTest extends AbstractYangTest {
 
     @Test
     void shouldFailOnInvalidDeviationTarget() {
-        assertInferenceException(startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation "
-            + "target for substatement (urn:ietf:params:xml:ns:yang:yin:1)max-elements."),
+        assertInferenceExceptionMessage(
             "/deviation-resolution-test/foo-invalid-deviation-target.yang",
-            "/deviation-resolution-test/bar.yang");
+            "/deviation-resolution-test/bar.yang").startsWith("""
+                (bar?revision=2017-01-20)my-cont is not a valid deviation target for substatement \
+                (urn:ietf:params:xml:ns:yang:yin:1)max-elements.""");
     }
 
     @Test
     void shouldFailOnInvalidDeviationPath() {
-        assertInferenceException(startsWith(
-            "Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)invalid, path]}' not found"),
+        assertInferenceExceptionMessage(
             "/deviation-resolution-test/foo-invalid-deviation-path.yang",
-            "/deviation-resolution-test/bar.yang");
+            "/deviation-resolution-test/bar.yang")
+            .startsWith("Deviation target 'Absolute{qnames=[(bar?revision=2017-01-20)invalid, path]}' not found");
     }
 
     @Test
     void shouldFailOnInvalidDeviateAdd() {
-        assertInferenceException(startsWith("""
-            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)config to target node \
-            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""),
+        assertInferenceExceptionMessage(
             "/deviation-resolution-test/deviation-add/foo-invalid.yang",
-            "/deviation-resolution-test/deviation-add/bar-invalid.yang");
+            "/deviation-resolution-test/deviation-add/bar-invalid.yang").startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)config to target node \
+            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once.""");
     }
 
     @Test
     void shouldFailOnInvalidDeviateAdd2() {
-        assertInferenceException(startsWith("""
-            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
-            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once."""),
+        assertInferenceExceptionMessage(
             "/deviation-resolution-test/deviation-add/foo-invalid-2.yang",
-            "/deviation-resolution-test/deviation-add/bar-invalid-2.yang");
+            "/deviation-resolution-test/deviation-add/bar-invalid-2.yang").startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
+            (bar?revision=2017-01-20)my-leaf because it is already defined in target and can appear only once.""");
     }
 
     @Test
     void shouldFailOnInvalidDeviateAdd3() {
-        assertInferenceException(startsWith("""
-            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
-            (bar?revision=2017-02-01)my-used-leaf because it is already defined in target and can appear only once."""),
+        assertInferenceExceptionMessage(
             "/deviation-resolution-test/deviation-add/foo-invalid-4.yang",
-            "/deviation-resolution-test/deviation-add/bar-invalid-4.yang");
+            "/deviation-resolution-test/deviation-add/bar-invalid-4.yang").startsWith("""
+            Deviation cannot add substatement (urn:ietf:params:xml:ns:yang:yin:1)default to target node \
+            (bar?revision=2017-02-01)my-used-leaf because it is already defined in target and can appear only once.""");
     }
 
     @Test
     void shouldFailOnInvalidDeviateReplace() {
-        assertInferenceException(startsWith("""
-            Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)units in target node \
-            (bar?revision=2017-01-20)my-leaf because it does not exist in target node."""),
+        assertInferenceExceptionMessage(
             "/deviation-resolution-test/deviation-replace/foo-invalid.yang",
-            "/deviation-resolution-test/deviation-replace/bar-invalid.yang");
+            "/deviation-resolution-test/deviation-replace/bar-invalid.yang").startsWith("""
+            Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)units in target node \
+            (bar?revision=2017-01-20)my-leaf because it does not exist in target node.""");
     }
 
     @Test
