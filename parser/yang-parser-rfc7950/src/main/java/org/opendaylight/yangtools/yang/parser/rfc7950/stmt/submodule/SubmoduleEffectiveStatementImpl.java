@@ -101,16 +101,6 @@ final class SubmoduleEffectiveStatementImpl
     }
 
     @Override
-    public Collection<Entry<String, ModuleEffectiveStatement>> reachableModules() {
-        return prefixToModule.entrySet();
-    }
-
-    @Override
-    public Optional<ModuleEffectiveStatement> findReachableModule(final String prefix) {
-        return findValue(prefixToModule, prefix);
-    }
-
-    @Override
     public Collection<Entry<QNameModule, String>> namespacePrefixes() {
         return namespaceToPrefix.entrySet();
     }
