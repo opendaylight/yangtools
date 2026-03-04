@@ -159,11 +159,6 @@ public final class ModuleStatementSupport
         stmt.addToNs(ParserNamespaces.IMP_PREFIX_TO_NAMESPACE, modulePrefix, moduleNs);
 
         stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, moduleName, stmt);
-
-        final var revisionDate = StmtContextUtils.latestRevisionIn(stmt.declaredSubstatements());
-        final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
-
-        stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
     }
 
     @Override
@@ -193,7 +188,6 @@ public final class ModuleStatementSupport
 
         stmt.addToNs(QNameModuleNamespace.INSTANCE, Empty.value(), qNameModule);
         stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
-        stmt.addToNs(ParserNamespaces.MODULECTX_TO_QNAME, stmt, qNameModule);
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_SOURCE, stmt, moduleIdentifier);
         stmt.addToNs(ParserNamespaces.MODULE_NAMESPACE_TO_NAME, qNameModule, moduleName);
         stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, modulePrefix, stmt);

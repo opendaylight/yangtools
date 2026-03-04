@@ -182,12 +182,6 @@ public final class ParserNamespaces {
     public static final @NonNull ParserNamespace<Unqualified, QNameModule> MODULE_NAME_TO_QNAME =
         new ParserNamespace<>("module-name-to-qnamemodule");
 
-    /**
-     * Global mapping of modules to QNameModules.
-     */
-    public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, QNameModule> MODULECTX_TO_QNAME =
-        new ParserNamespace<>("modulectx-to-qnamemodule");
-
     public static final @NonNull ParserNamespace<Empty, FeatureSet> SUPPORTED_FEATURES =
         new ParserNamespace<>("supportedFeatures");
 
