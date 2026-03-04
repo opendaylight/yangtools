@@ -216,7 +216,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
                 final var importedCtx =
                     verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
                         "Failed to resolve prefix %s", pfx);
-                builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
+                builder.put(pfx, importedCtx.buildEffective());
             });
     }
 

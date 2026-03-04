@@ -154,8 +154,8 @@ public final class ParserNamespaces {
     /**
      * Source-specific mapping of prefix strings to module context.
      */
-    // FIXME: the context should expose ModuleStatement
-    public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> IMPORT_PREFIX_TO_MODULECTX =
+    public static final @NonNull ParserNamespace<String,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORT_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("import-prefix-to-modulectx");
 
     // FIXME: document this

@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -38,9 +36,9 @@ final class RevisionImport {
     }
 
     static void onLinkageDeclared(final Mutable<Unqualified, ImportStatement, ImportEffectiveStatement> stmt) {
-        final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-        final Unqualified moduleName = stmt.getArgument();
-        final Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+        final var importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
+        final var moduleName = stmt.getArgument();
+        final var revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
         final Prerequisite<StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> imported;
         if (revision == null) {
             imported = importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
@@ -50,20 +48,20 @@ final class RevisionImport {
                 new SourceIdentifier(moduleName, revision), SOURCE_LINKAGE);
         }
 
-        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
+        final var linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
+                final var importedModule = imported.resolve(ctx);
 
-                final SourceIdentifier importedModuleIdentifier = stmt.namespaceItem(
+                final var importedModuleIdentifier = stmt.namespaceItem(
                     ParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
                 stmt.addToNs(ImportedVersionNamespace.INSTANCE, Empty.value(), importedModuleIdentifier);
 
                 linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,
                     importedModule);
-                final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+                final var impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                 stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
             }
 
