@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
@@ -26,10 +27,10 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -90,8 +91,15 @@ public final class ImportStatementSupport
     @Override
     protected ImportEffectiveStatement createEffective(final Current<Unqualified, ImportStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");
-        return EffectiveStatements.createImport(stmt.declared(), substatements,
-            verifyNotNull(stmt.namespaceItem(ImportedVersionNamespace.INSTANCE, Empty.value())));
+        for (var substatement : substatements) {
+            if (substatement instanceof PrefixEffectiveStatement prefix) {
+                return EffectiveStatements.createImport(stmt.declared(), substatements,
+                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix.argument()))
+                        .buildEffective());
+            }
+        }
+
+        // should never happen
+        throw new VerifyException("Missing effective prefix statement");
     }
 }

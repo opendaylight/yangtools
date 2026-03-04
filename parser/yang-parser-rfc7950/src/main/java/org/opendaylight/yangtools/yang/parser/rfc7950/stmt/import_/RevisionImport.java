@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -55,12 +54,8 @@ final class RevisionImport {
             public void apply(final InferenceContext ctx) {
                 final var importedModule = imported.resolve(ctx);
 
-                final var importedModuleIdentifier = stmt.namespaceItem(
-                    ParserNamespaces.MODULECTX_TO_SOURCE, importedModule);
-                stmt.addToNs(ImportedVersionNamespace.INSTANCE, Empty.value(), importedModuleIdentifier);
-
-                linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE, importedModuleIdentifier,
-                    importedModule);
+                linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE,
+                    stmt.namespaceItem(ParserNamespaces.MODULECTX_TO_SOURCE, importedModule), importedModule);
                 final var impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                 stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
             }

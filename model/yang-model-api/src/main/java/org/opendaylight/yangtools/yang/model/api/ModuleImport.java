@@ -37,7 +37,9 @@ public interface ModuleImport extends DocumentedNode.Mixin<ImportEffectiveStatem
      *
      * @return Revision of module to import
      */
-    Optional<Revision> getRevision();
+    default Optional<Revision> getRevision() {
+        return asEffectiveStatement().importedModule().localQNameModule().findRevision();
+    }
 
     /**
      * Returns the prefix associated with the imported module.
