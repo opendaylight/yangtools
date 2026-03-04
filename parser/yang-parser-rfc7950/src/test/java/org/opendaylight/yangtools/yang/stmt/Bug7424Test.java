@@ -7,32 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class Bug7424Test extends AbstractYangTest {
     @Test
     void testRpc() {
-        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
-            + " '(foo)name' already declared"), "/bugs/bug7424/foo-rpc.yang");
+        assertSourceExceptionMessage("/bugs/bug7424/foo-rpc.yang").startsWith(
+            "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared");
     }
 
     @Test
     void testNotification() {
-        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
-            + " '(foo)name' already declared"), "/bugs/bug7424/foo-notification.yang");
+        assertSourceExceptionMessage("/bugs/bug7424/foo-notification.yang").startsWith(
+            "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared");
     }
 
     @Test
     void testData() {
-        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
-            + " '(foo)name' already declared"), "/bugs/bug7424/foo-data.yang");
+        assertSourceExceptionMessage("/bugs/bug7424/foo-data.yang").startsWith(
+            "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared");
     }
 
     @Test
     void testRpcUses() {
-        assertSourceException(startsWith("Error in module 'foo': cannot add '(foo)name'. Node name collision:"
-            + " '(foo)name' already declared"), "/bugs/bug7424/foo-rpc-uses.yang");
+        assertSourceExceptionMessage("/bugs/bug7424/foo-rpc-uses.yang").startsWith(
+            "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared");
     }
 }

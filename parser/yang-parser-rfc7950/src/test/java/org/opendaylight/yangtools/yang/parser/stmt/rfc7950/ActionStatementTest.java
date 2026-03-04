@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,31 +62,31 @@ class ActionStatementTest extends AbstractYangTest {
 
     @Test
     void testActionUnsupportedInYang10() {
-        assertThat(assertSourceException("/rfc7950/action-stmt/foo10.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/action-stmt/foo10.yang")
             .startsWith("action is not a YANG statement or use of extension");
     }
 
     @Test
     void testActionWithinIllegalAncestor() {
-        assertThat(assertSourceException("/rfc7950/action-stmt/foo-invalid.yang").getMessage()).startsWith(
+        assertSourceExceptionMessage("/rfc7950/action-stmt/foo-invalid.yang").startsWith(
             "Action (foo-namespace?revision=2016-12-13)action-in-grouping is defined within another structure");
     }
 
     @Test
     void testActionWithinListWithoutKey() {
-        assertThat(assertSourceException("/rfc7950/action-stmt/bar-invalid.yang").getMessage()).startsWith(
+        assertSourceExceptionMessage("/rfc7950/action-stmt/bar-invalid.yang").startsWith(
             "Action (bar-namespace?revision=2016-12-13)my-action is defined within a list that has no key statement");
     }
 
     @Test
     void testActionInUsedGroupingWithinCase() {
-        assertThat(assertSourceException("/rfc7950/action-stmt/baz-invalid.yang").getMessage()).startsWith(
+        assertSourceExceptionMessage("/rfc7950/action-stmt/baz-invalid.yang").startsWith(
             "Action (baz-namespace?revision=2016-12-13)action-in-grouping is defined within a case statement");
     }
 
     @Test
     void testActionInUsedGroupingAtTopLevelOfModule() {
-        assertThat(assertSourceException("/rfc7950/action-stmt/foobar-invalid.yang").getMessage()).startsWith(
+        assertSourceExceptionMessage("/rfc7950/action-stmt/foobar-invalid.yang").startsWith(
             "Action (foobar-namespace?revision=2016-12-13)my-action is defined at the top level of a source file");
     }
 }

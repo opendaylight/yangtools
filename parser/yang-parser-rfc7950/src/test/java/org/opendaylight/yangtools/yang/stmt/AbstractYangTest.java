@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.google.common.base.Throwables;
 import java.util.List;
 import java.util.Set;
+import org.assertj.core.api.AbstractStringAssert;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.hamcrest.Matcher;
@@ -104,9 +106,12 @@ public abstract class AbstractYangTest {
         return assertException(InferenceException.class, matcher, yangResourceName);
     }
 
-    public static @NonNull InferenceException assertInferenceExceptionDir(final String yangResourceName,
-            final Matcher<String> matcher) {
-        return assertExceptionDir(yangResourceName, InferenceException.class, matcher);
+    public static @NonNull InferenceException assertInferenceExceptionDir(final String yangResourceName) {
+        return assertExceptionDir(yangResourceName, InferenceException.class);
+    }
+
+    public static AbstractStringAssert<?> assertInferenceExceptionDirMessage(final String yangResourceName) {
+        return assertThat(assertInferenceExceptionDir(yangResourceName).getMessage());
     }
 
     public static @NonNull InvalidSubstatementException assertInvalidSubstatementException(
@@ -129,19 +134,16 @@ public abstract class AbstractYangTest {
         return assertExceptionDir(yangResourceName, InvalidSubstatementException.class, matcher);
     }
 
-    public static @NonNull SourceException assertSourceException(final String... yangResourceName) {
+    private static @NonNull SourceException assertSourceException(final String... yangResourceName) {
         final var ret = assertException(SourceException.class, yangResourceName);
         // SourceException is the base of the hierarchy, we should normally assert subclasses
         assertEquals(SourceException.class, ret.getClass());
         return ret;
     }
 
-    public static @NonNull SourceException assertSourceException(final Matcher<String> matcher,
+    public static @NonNull AbstractStringAssert<@NonNull ?> assertSourceExceptionMessage(
             final String... yangResourceName) {
-        final var ret = assertException(SourceException.class, matcher, yangResourceName);
-        // SourceException is the base of the hierarchy, we should normally assert subclasses
-        assertEquals(SourceException.class, ret.getClass());
-        return ret;
+        return assertThat(assertSourceException(yangResourceName).getMessage());
     }
 
     public static @NonNull SourceException assertSourceExceptionDir(final String yangResourceName,

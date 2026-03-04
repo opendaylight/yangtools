@@ -7,26 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class NameCollisionWithinCaseTest extends AbstractYangTest {
     @Test
     void testChildNameCollisionOfAugmentCase() {
-        assertSourceException(startsWith("Cannot add data tree child with name (foo?revision=2018-02-11)bar, "
-            + "a conflicting child already exists [at "), "/bugs/name-collision-within-case/foo.yang");
+        assertSourceExceptionMessage("/bugs/name-collision-within-case/foo.yang").startsWith(
+            "Cannot add data tree child with name (foo?revision=2018-02-11)bar, "
+                + "a conflicting child already exists [at ");
     }
 
     @Test
     void testChildNameCollisionOfAugmentChoice() {
-        assertSourceException(startsWith("Cannot add data tree child with name (bar?revision=2018-02-11)bar, "
-            + "a conflicting child already exists [at "), "/bugs/name-collision-within-case/bar.yang");
+        assertSourceExceptionMessage("/bugs/name-collision-within-case/bar.yang").startsWith(
+            "Cannot add data tree child with name (bar?revision=2018-02-11)bar, "
+                + "a conflicting child already exists [at ");
     }
 
     @Test
     void testChildNameCollisionNormal() {
-        assertSourceException(startsWith("Error in module 'baz': cannot add '(baz?revision=2018-02-28)bar'."
-            + " Node name collision: "), "/bugs/name-collision-within-case/baz.yang");
+        assertSourceExceptionMessage("/bugs/name-collision-within-case/baz.yang").startsWith(
+            "Error in module 'baz': cannot add '(baz?revision=2018-02-28)bar'. Node name collision: ");
     }
 }

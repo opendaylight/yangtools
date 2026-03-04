@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -529,13 +528,13 @@ class CaseStmtTest extends AbstractYangTest {
 
     @Test
     void testInferenceExceptionChoice() {
-        assertInferenceExceptionDir("/case-test/case-test-exceptions/choice",
-            startsWith("Parent node has config=false, this node must not be specifed as config=true [at "));
+        assertInferenceExceptionDirMessage("/case-test/case-test-exceptions/choice")
+            .startsWith("Parent node has config=false, this node must not be specifed as config=true [at ");
     }
 
     @Test
     void testInferenceExceptionCase() {
-        assertInferenceExceptionDir("/case-test/case-test-exceptions/case",
-            startsWith("Parent node has config=false, this node must not be specifed as config=true [at "));
+        assertInferenceExceptionDirMessage("/case-test/case-test-exceptions/case")
+            .startsWith("Parent node has config=false, this node must not be specifed as config=true [at ");
     }
 }

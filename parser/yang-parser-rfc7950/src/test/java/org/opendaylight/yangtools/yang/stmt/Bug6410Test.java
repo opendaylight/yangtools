@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,6 @@ class Bug6410Test extends AbstractYangTest {
 
     @Test
     void shouldFailOnDuplicateTypedefs() {
-        assertSourceException(containsString("Duplicate name for typedef"), "/bugs/bug6410/bar.yang");
+        assertSourceExceptionMessage("/bugs/bug6410/bar.yang").contains("Duplicate name for typedef");
     }
 }

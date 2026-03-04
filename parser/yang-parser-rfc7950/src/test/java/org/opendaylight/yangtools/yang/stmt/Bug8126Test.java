@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -40,20 +39,20 @@ class Bug8126Test extends AbstractYangTest {
 
     @Test
     void testAugmentMandatoryChoice() {
-        assertInferenceExceptionDir("/bugs/bug8126/inv-choice", startsWith(
-            "An augment cannot add node 'mandatory-choice' because it is mandatory and in module different than "));
+        assertInferenceExceptionDirMessage("/bugs/bug8126/inv-choice").startsWith(
+            "An augment cannot add node 'mandatory-choice' because it is mandatory and in module different than ");
     }
 
     @Test
     void testAugmentMandatoryList() {
-        assertInferenceExceptionDir("/bugs/bug8126/inv-list", startsWith(
-            "An augment cannot add node 'mandatory-list' because it is mandatory and in module different than "));
+        assertInferenceExceptionDirMessage("/bugs/bug8126/inv-list").startsWith(
+            "An augment cannot add node 'mandatory-list' because it is mandatory and in module different than ");
     }
 
     @Test
     void testAugmentMandatoryContainer() {
-        assertInferenceExceptionDir("/bugs/bug8126/inv-cont", startsWith(
-            "An augment cannot add node 'mandatory-leaf-3' because it is mandatory and in module different than "));
+        assertInferenceExceptionDirMessage("/bugs/bug8126/inv-cont").startsWith(
+            "An augment cannot add node 'mandatory-leaf-3' because it is mandatory and in module different than ");
     }
 
     private static QName foo(final String localName) {

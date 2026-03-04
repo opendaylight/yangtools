@@ -7,22 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class YT1189Test extends AbstractYangTest {
     @Test
     void testDescendantAugment() {
-        assertSourceException(startsWith("""
-            'cont' is not a valid augment target-node on position 1: 'c' is not '/' as required by augment-arg [at """),
-            "/bugs/YT1189/foo.yang");
+        assertSourceExceptionMessage("/bugs/YT1189/foo.yang").startsWith("""
+            'cont' is not a valid augment target-node on position 1: 'c' is not '/' as required by augment-arg [at """);
     }
 
     @Test
     void testAbsoluteUsesAugment() {
-        assertSourceException(startsWith("""
+        assertSourceExceptionMessage("/bugs/YT1189/bar.yang").startsWith("""
             '/grp-cont' is not a valid augment target-node on position 1: '/' is not a valid prefix nor identifier [at \
-            """), "/bugs/YT1189/bar.yang");
+            """);
     }
 }

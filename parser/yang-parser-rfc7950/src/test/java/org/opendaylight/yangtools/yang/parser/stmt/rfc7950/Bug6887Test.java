@@ -72,8 +72,9 @@ class Bug6887Test extends AbstractYangTest {
 
     @Test
     void testInvalidRestrictedEnumeration() {
-        assertSourceException(startsWith("Enum 'purple' is not a subset of its base enumeration type "
-            + "(foo?revision=2017-02-02)my-derived-enumeration-type."), "/rfc7950/bug6887/foo-invalid.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6887/foo-invalid.yang").startsWith("""
+            Enum 'purple' is not a subset of its base enumeration type \
+            (foo?revision=2017-02-02)my-derived-enumeration-type.""");
     }
 
     @Test
@@ -103,14 +104,14 @@ class Bug6887Test extends AbstractYangTest {
 
     @Test
     void testInvalidYang10RestrictedEnumeration() {
-        assertSourceException(startsWith("Restricted enumeration type is not allowed in YANG version 1 [at "),
-            "/rfc7950/bug6887/foo10-invalid.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6887/foo10-invalid.yang")
+            .startsWith("Restricted enumeration type is not allowed in YANG version 1 [at ");
     }
 
     @Test
     void testInvalidYang10RestrictedEnumeration2() {
-        assertSourceException(startsWith("Restricted enumeration type is not allowed in YANG version 1 [at "),
-            "/rfc7950/bug6887/foo10-invalid-2.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6887/foo10-invalid-2.yang")
+            .startsWith("Restricted enumeration type is not allowed in YANG version 1 [at ");
     }
 
     @Test
@@ -160,8 +161,8 @@ class Bug6887Test extends AbstractYangTest {
 
     @Test
     void testInvalidRestrictedBits() {
-        assertSourceException(startsWith("Bit 'bit-w' is not a subset of its base bits type "
-            + "(bar?revision=2017-02-02)my-derived-bits-type."), "/rfc7950/bug6887/bar-invalid.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6887/bar-invalid.yang").startsWith(
+            "Bit 'bit-w' is not a subset of its base bits type (bar?revision=2017-02-02)my-derived-bits-type.");
     }
 
     @Test
@@ -191,14 +192,14 @@ class Bug6887Test extends AbstractYangTest {
 
     @Test
     void testInvalidYang10RestrictedBits() {
-        assertSourceException(startsWith("Restricted bits type is not allowed in YANG version 1 [at "),
-            "/rfc7950/bug6887/bar10-invalid.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6887/bar10-invalid.yang")
+            .startsWith("Restricted bits type is not allowed in YANG version 1 [at ");
     }
 
     @Test
     void testInvalidYang10RestrictedBits2() {
-        assertSourceException(startsWith("Restricted bits type is not allowed in YANG version 1 [at "),
-            "/rfc7950/bug6887/bar10-invalid-2.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6887/bar10-invalid-2.yang")
+            .startsWith("Restricted bits type is not allowed in YANG version 1 [at ");
     }
 
     private static @NonNull InvalidBitDefinitionException assertInvalidBitDefinitionException(

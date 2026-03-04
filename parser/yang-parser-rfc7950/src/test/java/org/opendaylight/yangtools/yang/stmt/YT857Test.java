@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.Matchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class YT857Test extends AbstractYangTest {
     @Test
     void testConflictDetection() {
-        assertSourceException(startsWith("Cannot add data tree child with name (foo)one, a conflicting"
-            + " child already exists"), "/bugs/YT857/foo.yang");
+        assertSourceExceptionMessage("/bugs/YT857/foo.yang").startsWith(
+            "Cannot add data tree child with name (foo)one, a conflicting child already exists");
     }
 }

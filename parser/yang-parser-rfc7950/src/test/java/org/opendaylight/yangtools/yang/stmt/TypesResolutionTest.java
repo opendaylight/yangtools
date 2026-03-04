@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -366,7 +365,7 @@ class TypesResolutionTest extends AbstractYangTest {
 
     @Test
     void testUnionInList() {
-        assertSourceException(startsWith("union is not a YANG statement or use of extension"),
-            "/types/union-in-list/unioninlisttest.yang");
+        assertSourceExceptionMessage("/types/union-in-list/unioninlisttest.yang")
+            .startsWith("union is not a YANG statement or use of extension");
     }
 }

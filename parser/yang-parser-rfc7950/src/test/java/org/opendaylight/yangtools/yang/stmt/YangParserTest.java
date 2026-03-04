@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -547,9 +546,10 @@ class YangParserTest extends AbstractModelTest {
 
     @Test
     void unknownStatementsInStatementsTest() {
-        assertSourceException(startsWith("aaa is not a YANG statement or use of extension"),
+        assertSourceExceptionMessage(
             "/yang-grammar-test/stmtsep-in-statements.yang",
             "/yang-grammar-test/stmtsep-in-statements2.yang",
-            "/yang-grammar-test/stmtsep-in-statements-sub.yang");
+            "/yang-grammar-test/stmtsep-in-statements-sub.yang")
+            .startsWith("aaa is not a YANG statement or use of extension");
     }
 }

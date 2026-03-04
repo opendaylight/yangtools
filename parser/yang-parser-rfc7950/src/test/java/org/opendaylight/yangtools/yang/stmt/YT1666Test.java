@@ -7,36 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class YT1666Test extends AbstractYangTest {
     @Test
     void testNegativeMaxElements() {
-        assertSourceException(
-            startsWith("Invalid max-elements argument \"-1\" at offset 0: '-' is not a valid non-zero-digit [at "),
-            "/bugs/YT1666/foo.yang");
+        assertSourceExceptionMessage("/bugs/YT1666/foo.yang")
+            .startsWith("Invalid max-elements argument \"-1\" at offset 0: '-' is not a valid non-zero-digit [at ");
     }
 
     @Test
     void testLeadingZeroMaxElements() {
-        assertSourceException(
-            startsWith("Invalid max-elements argument \"01\" at offset 0: '0' is not a valid non-zero-digit [at "),
-            "/bugs/YT1666/bar.yang");
+        assertSourceExceptionMessage("/bugs/YT1666/bar.yang")
+            .startsWith("Invalid max-elements argument \"01\" at offset 0: '0' is not a valid non-zero-digit [at ");
     }
 
     @Test
     void testMalformedMaxElements() {
-        assertSourceException(
-            startsWith("Invalid max-elements argument \"1a\" at offset 1: 'a' is not a valid DIGIT [at "),
-            "/bugs/YT1666/baz.yang");
+        assertSourceExceptionMessage("/bugs/YT1666/baz.yang")
+            .startsWith("Invalid max-elements argument \"1a\" at offset 1: 'a' is not a valid DIGIT [at ");
     }
 
     @Test
     void testZeroMaxElements() {
-        assertSourceException(
-            startsWith("Invalid max-elements argument \"0\" at offset 0: '0' is not a valid non-zero-digit [at "),
-            "/bugs/YT1666/xyzzy.yang");
+        assertSourceExceptionMessage("/bugs/YT1666/xyzzy.yang")
+            .startsWith("Invalid max-elements argument \"0\" at offset 0: '0' is not a valid non-zero-digit [at ");
     }
 }

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,11 +71,9 @@ class Bug5946Test extends AbstractYangTest {
 
     @Test
     void testInvalid() {
-        assertSourceException(
-            startsWith("""
-                '/simple-unique/l1' is not a valid unique tag on position 1: '/' is not a valid prefix nor identifier \
-                [at """),
-            "/bugs/bug5946/foo-invalid.yang");
+        assertSourceExceptionMessage("/bugs/bug5946/foo-invalid.yang").startsWith("""
+            '/simple-unique/l1' is not a valid unique tag on position 1: '/' is not a valid prefix nor identifier \
+            [at """);
     }
 
     private static  @NonNull Collection<? extends @NonNull UniqueEffectiveStatement> getListConstraints(

@@ -10,18 +10,15 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collection;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 class Bug4933Test extends AbstractYangTest {
     @Test
     void test() {
         final var context = assertEffectiveModelDir("/bugs/bug4933/correct");
 
-        final Module foo = context.findModules("foo").iterator().next();
-        Collection<? extends Deviation> deviations = foo.getDeviations();
+        final var foo = context.findModules("foo").iterator().next();
+        var deviations = foo.getDeviations();
         assertEquals(4, deviations.size());
     }
 

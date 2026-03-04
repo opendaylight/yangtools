@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class YT838Test extends AbstractYangTest {
@@ -33,12 +31,12 @@ class YT838Test extends AbstractYangTest {
     }
 
     private static void testGrouping(final String model) {
-        assertSourceException(startsWith("Duplicate name for grouping (grouping?revision=2017-12-20)foo [at "),
-            "/bugs/YT838/" + model);
+        assertSourceExceptionMessage("/bugs/YT838/" + model)
+            .startsWith("Duplicate name for grouping (grouping?revision=2017-12-20)foo [at ");
     }
 
     private static void testTypedef(final String model) {
-        assertSourceException(startsWith("Duplicate name for typedef (typedef?revision=2017-12-20)foo [at "),
-            "/bugs/YT838/" + model);
+        assertSourceExceptionMessage("/bugs/YT838/" + model)
+            .startsWith("Duplicate name for typedef (typedef?revision=2017-12-20)foo [at ");
     }
 }

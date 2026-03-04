@@ -47,7 +47,7 @@ class Bug6867BasicTest extends AbstractYangTest {
 
     @Test
     void anyData10Test() {
-        assertThat(assertSourceException("/rfc7950/basic-test/anydata-10.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/basic-test/anydata-10.yang")
             .startsWith("anydata is not a YANG statement or use of extension. [at ")
             .endsWith("/anydata-10.yang:6:5]");
     }

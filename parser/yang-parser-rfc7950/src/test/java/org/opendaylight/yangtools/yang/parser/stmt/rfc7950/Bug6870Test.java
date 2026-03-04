@@ -8,7 +8,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
@@ -43,13 +42,13 @@ class Bug6870Test extends AbstractYangTest {
 
     @Test
     void invalid11Test() {
-        assertSourceException(startsWith("'Invert-match' is not valid argument of modifier statement"),
-            "/rfc7950/bug6870/invalid11.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6870/invalid11.yang")
+            .startsWith("'Invert-match' is not valid argument of modifier statement");
     }
 
     @Test
     void invalid10Test() {
-        assertSourceException(startsWith("modifier is not a YANG statement or use of extension"),
-            "/rfc7950/bug6870/invalid10.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6870/invalid10.yang")
+            .startsWith("modifier is not a YANG statement or use of extension");
     }
 }
