@@ -112,14 +112,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("namespace-to-module");
 
     /**
-     * Intermediate-stage namespace equivalent to {@link #MODULE} except it is keyed by module names. This namespace is
-     * used to resolve inter-module references before actual linkage occurs.
-     */
-    public static final @NonNull ParserNamespace<Unqualified,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> PRELINKAGE_MODULE =
-        new ParserNamespace<>("prelinkage-module");
-
-    /**
      * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
      * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
      * statement.

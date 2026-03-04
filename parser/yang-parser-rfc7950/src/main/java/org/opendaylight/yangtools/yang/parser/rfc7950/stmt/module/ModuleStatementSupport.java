@@ -146,11 +146,6 @@ public final class ModuleStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        stmt.addToNs(ParserNamespaces.PRELINKAGE_MODULE, stmt.getArgument(), stmt);
-    }
-
-    @Override
     public void onLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final var moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,

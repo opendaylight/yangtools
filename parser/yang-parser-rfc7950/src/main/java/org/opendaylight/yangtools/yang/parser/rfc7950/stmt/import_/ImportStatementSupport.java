@@ -7,17 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -31,18 +26,12 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 public final class ImportStatementSupport
         extends AbstractUnqualifiedStatementSupport<ImportStatement, ImportEffectiveStatement> {
@@ -78,41 +67,7 @@ public final class ImportStatementSupport
          * Based on this information, required modules are searched from library
          * sources.
          */
-        final var importId = RevisionImport.getImportedSourceIdentifier(stmt);
-        stmt.addRequiredSource(importId);
-
-        final var moduleName = stmt.getArgument();
-        final var importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
-        final var imported = importAction.requiresCtx(stmt, ParserNamespaces.PRELINKAGE_MODULE, moduleName,
-            SOURCE_PRE_LINKAGE);
-        final var rootPrereq = importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
-
-        importAction.apply(new InferenceAction() {
-            @Override
-            public void apply(final InferenceContext ctx) {
-                final var importedModuleContext = imported.resolve(ctx);
-                verify(moduleName.equals(importedModuleContext.getArgument()));
-                final var impPrefix = SourceException.throwIfNull(
-                    firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
-                    "Missing prefix statement");
-
-                final var root = rootPrereq.resolve(ctx);
-                // Version 1 sources must not import-by-revision Version 1.1 modules
-                if (importId.revision() != null && root.yangVersion() == YangVersion.VERSION_1) {
-                    final var importedVersion = importedModuleContext.yangVersion();
-                    if (importedVersion != YangVersion.VERSION_1) {
-                        throw new YangVersionLinkageException(stmt, "Cannot import by revision version %s module %s",
-                            importedVersion, moduleName.getLocalName());
-                    }
-                }
-            }
-
-            @Override
-            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(imported), stmt, "Imported module [%s] was not found.",
-                    moduleName.getLocalName());
-            }
-        });
+        stmt.addRequiredSource(RevisionImport.getImportedSourceIdentifier(stmt));
     }
 
     @Override
