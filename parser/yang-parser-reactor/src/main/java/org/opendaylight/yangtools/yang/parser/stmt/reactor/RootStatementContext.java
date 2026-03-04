@@ -116,6 +116,11 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         return identifierBinding;
     }
 
+    @Override
+    public QNameModule effectiveNamespace() {
+        return definingModule;
+    }
+
     /**
      * Return the {@link QNameModule} corresponding to a prefix The lookup consults {@code import} and
      * {@code belongs-to} statements.
