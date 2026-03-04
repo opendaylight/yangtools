@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.VerifyException;
@@ -17,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -170,7 +168,6 @@ public final class ModuleStatementSupport
             firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", stmt.argument());
 
-        stmt.addToNs(QNameModuleNamespace.INSTANCE, Empty.value(), qNameModule);
         stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
         stmt.addToNs(ParserNamespaces.MODULECTX_TO_SOURCE, stmt, moduleIdentifier);
         stmt.addToNs(ParserNamespaces.MODULE_NAMESPACE_TO_NAME, qNameModule, moduleName);
@@ -234,9 +231,8 @@ public final class ModuleStatementSupport
             submodules.add(legacy);
         }
 
-        final var qnameModule = verifyNotNull(stmt.namespaceItem(QNameModuleNamespace.INSTANCE, Empty.value()));
         try {
-            return new ModuleEffectiveStatementImpl(stmt, substatements, submodules, qnameModule);
+            return new ModuleEffectiveStatementImpl(stmt, substatements, submodules, stmt.effectiveNamespace());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

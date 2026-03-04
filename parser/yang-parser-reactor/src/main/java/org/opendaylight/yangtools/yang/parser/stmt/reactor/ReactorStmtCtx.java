@@ -672,7 +672,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public final QNameModule effectiveNamespace() {
+    public QNameModule effectiveNamespace() {
         if (producesExtension()) {
             return publicDefinition().statementName().getModule();
         }
@@ -680,18 +680,17 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             return coerceParent().effectiveNamespace();
         }
 
-        final Object argument = argument();
-        if (argument instanceof QName qname) {
-            return qname.getModule();
-        }
-        if (argument instanceof String str) {
-            return qnameFromArgument(originalOrSelf(), str).getModule();
-        }
-        if (argument instanceof SchemaNodeIdentifier sni
-            && producesAnyOf(AugmentStatement.DEF, RefineStatement.DEF, DeviationStatement.DEF)) {
-            return sni.lastNodeIdentifier().getModule();
-        }
+        return switch (argument()) {
+            case QName argument -> argument.getModule();
+            case String argument -> qnameFromArgument(originalOrSelf(), argument).getModule();
+            case SchemaNodeIdentifier argument ->
+                producesAnyOf(AugmentStatement.DEF, RefineStatement.DEF, DeviationStatement.DEF)
+                    ? argument.lastNodeIdentifier().getModule() : parentEffectiveNamespace();
+            case null, default -> parentEffectiveNamespace();
+        };
+    }
 
+    private @NonNull QNameModule parentEffectiveNamespace() {
         return coerceParent().effectiveNamespace();
     }
 

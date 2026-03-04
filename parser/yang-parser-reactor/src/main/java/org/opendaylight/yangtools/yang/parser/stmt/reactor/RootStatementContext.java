@@ -143,6 +143,11 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @Override
+    public QNameModule effectiveNamespace() {
+        return definingModule;
+    }
+
+    @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
         if (ParserNamespaces.INCLUDED_MODULE.equals(type)) {
             if (includedContexts.isEmpty()) {
