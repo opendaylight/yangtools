@@ -7,31 +7,39 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
 public final class ImportEffectiveStatementImpl extends WithSubstatements<Unqualified, @NonNull ImportStatement>
         implements ImportEffectiveStatement, ModuleImport {
-    private final @Nullable Revision revision;
+    private final @NonNull ModuleEffectiveStatement importedModule;
 
     public ImportEffectiveStatementImpl(final @NonNull ImportStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final @Nullable Revision revision) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @NonNull ModuleEffectiveStatement importedModule) {
         super(declared, substatements);
-        this.revision = revision;
+        this.importedModule = requireNonNull(importedModule);
+    }
+
+    @Override
+    public ModuleEffectiveStatement importedModule() {
+        return importedModule;
     }
 
     @Override
     public Optional<Revision> getRevision() {
-        return Optional.ofNullable(revision);
+        return importedModule.localQNameModule().findRevision();
     }
 
     @Override

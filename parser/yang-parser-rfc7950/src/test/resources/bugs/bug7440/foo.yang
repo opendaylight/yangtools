@@ -1,19 +1,19 @@
 module foo {
-    namespace foo-ns;
-    prefix foo-prfx;
+  namespace foo-ns;
+  prefix foo-prfx;
 
-    import bar {
-        prefix bar;
-        revision-date 2016-12-23;
+  import bar {
+    prefix bar;
+    revision-date 2016-12-23;
+  }
+
+  revision 2016-12-23;
+
+  deviation "/bar:test-leaf" {
+    deviate replace {
+      type uint32 {
+        range "5..50";
+      }
     }
-
-    revision 2016-12-23;
-
-    deviation "/bar:test-leaf" {
-        deviate replace {
-            type uint32 {
-                range "5..50";
-            }
-        }
-    }
+  }
 }

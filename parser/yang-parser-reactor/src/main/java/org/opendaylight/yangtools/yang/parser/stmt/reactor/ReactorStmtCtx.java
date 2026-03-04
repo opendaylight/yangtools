@@ -680,19 +680,14 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
             return coerceParent().effectiveNamespace();
         }
 
-        final Object argument = argument();
-        if (argument instanceof QName qname) {
-            return qname.getModule();
-        }
-        if (argument instanceof String str) {
-            return qnameFromArgument(originalOrSelf(), str).getModule();
-        }
-        if (argument instanceof SchemaNodeIdentifier sni
-            && producesAnyOf(AugmentStatement.DEF, RefineStatement.DEF, DeviationStatement.DEF)) {
-            return sni.lastNodeIdentifier().getModule();
-        }
-
-        return coerceParent().effectiveNamespace();
+        return switch (argument()) {
+            case QName qname -> qname.getModule();
+            case String str -> qnameFromArgument(originalOrSelf(), str).getModule();
+            case SchemaNodeIdentifier sni ->
+                producesAnyOf(AugmentStatement.DEF, RefineStatement.DEF, DeviationStatement.DEF)
+                    ? sni.lastNodeIdentifier().getModule() : definingModule();
+            case null, default -> definingModule();
+        };
     }
 
     // FIXME: This may yield illegal argument exceptions

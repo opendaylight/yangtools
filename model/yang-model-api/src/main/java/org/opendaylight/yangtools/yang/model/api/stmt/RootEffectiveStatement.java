@@ -16,7 +16,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Common interface capturing general layout of a top-level YANG declared statement -- either
@@ -29,7 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 @Beta
 public sealed interface RootEffectiveStatement<D extends RootDeclaredStatement>
-        extends EffectiveStatement<Unqualified, D> permits ModuleEffectiveStatement, SubmoduleEffectiveStatement {
+        extends ImportEffectiveStatement.MultipleIn<Unqualified, D>
+        permits ModuleEffectiveStatement, SubmoduleEffectiveStatement {
     /**
      * Find the {@link ModuleEffectiveStatement} statement based on {@link PrefixEffectiveStatement}s, be it direct
      * substatement or a substatement of a {@link ImportEffectiveStatement} substatement.
