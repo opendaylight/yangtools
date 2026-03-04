@@ -80,7 +80,7 @@ jobs:
     steps:
       - name: Gerrit Checkout
         # yamllint disable-line rule:line-length
-        uses: lfit/checkout-gerrit-change-action@568e981b55b112c5085d4946f774ce47f2fa8afa # v0.9.0
+        uses: lfreleng-actions/checkout-gerrit-change-action@54d751e8bd167bc91f7d665dabe33fae87aaaa63 # v0.9
         with:
           gerrit-refspec: ${{ inputs.GERRIT_REFSPEC || 'refs/heads/master' }}
           gerrit-project: ${{ inputs.GERRIT_PROJECT || github.repository }}
