@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.meta.DataContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -85,9 +86,30 @@ public non-sealed interface ModuleEffectiveStatement
      *      Default implementation uses {@link #findFirstEffectiveSubstatement(Class)} and throws a
      *      {@link VerifyException} if a matching substatement is not found.
      * @return A {@link NamespaceEffectiveStatement}
+     * @deprecated Use {@link #namespaceStatement()} or {@link #namespaceArgument()} instead.
      */
+    @Deprecated(since = "15.0.0", forRemoval = true)
     default @NonNull NamespaceEffectiveStatement namespace() {
+        return namespaceStatement();
+    }
+
+    /**
+     * {@return this statement's {@code namespace} substatement}
+     * @since 15.0.0
+     * @implSpec
+     *      Default implementation uses {@link #findFirstEffectiveSubstatement(Class)} and throws a
+     *      {@link VerifyException} if a matching substatement is not found.
+     */
+    default @NonNull NamespaceEffectiveStatement namespaceStatement() {
         return DefaultMethodHelpers.verifySubstatement(this, NamespaceEffectiveStatement.class);
+    }
+
+    /**
+     * {@return the equivalent of {@code namespaceStatement().argument()}}
+     * @since 15.0.0
+     */
+    default @NonNull XMLNamespace namespaceArgument() {
+        return namespaceStatement().argument();
     }
 
     /**

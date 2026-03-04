@@ -13,23 +13,48 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 final class ModuleNamespaceContext implements NamespaceContext {
+    @NonNullByDefault
+    record PrefixAndNamespace(String prefix, XMLNamespace namespace) {
+        static final Comparator<PrefixAndNamespace> COMPARATOR = (o1, o2) -> {
+            final var cmp = o1.prefix().compareTo(o2.prefix());
+            return cmp != 0 ? cmp : o1.namespace().compareTo(o2.namespace());
+        };
+
+        PrefixAndNamespace {
+            requireNonNull(prefix);
+            requireNonNull(namespace);
+        }
+
+        PrefixAndNamespace(final ImportEffectiveStatement stmt) {
+            this(stmt.prefixArgument(), stmt.importedModule().namespaceArgument());
+        }
+
+        PrefixAndNamespace(final ModuleEffectiveStatement stmt) {
+            this(stmt.prefixArgument(), stmt.namespaceArgument());
+        }
+    }
+
     private static final Entry<String, String> YIN_PREFIX_AND_NAMESPACE =
-            Map.entry(XMLConstants.DEFAULT_NS_PREFIX, YangConstants.RFC6020_YIN_NAMESPACE_STRING);
+        Map.entry(XMLConstants.DEFAULT_NS_PREFIX, YangConstants.RFC6020_YIN_NAMESPACE_STRING);
 
     private final ListMultimap<@NonNull String, @NonNull String> namespaceToPrefix;
-    private final ModuleEffectiveStatement module;
+    private final @NonNull ModuleEffectiveStatement module;
 
     ModuleNamespaceContext(final ModuleEffectiveStatement module) {
         this.module = requireNonNull(module);
@@ -49,9 +74,17 @@ final class ModuleNamespaceContext implements NamespaceContext {
             case XMLConstants.DEFAULT_NS_PREFIX -> YangConstants.RFC6020_YIN_NAMESPACE_STRING;
             case XMLConstants.XML_NS_PREFIX -> XMLConstants.XML_NS_URI;
             case XMLConstants.XMLNS_ATTRIBUTE -> XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-            default -> module.findReachableModule(prefix)
-                .map(importedModule -> importedModule.localQNameModule().namespace().toString())
-                .orElse(XMLConstants.NULL_NS_URI);
+            default -> {
+                if (prefix.equals(module.prefixArgument())) {
+                    yield module.namespaceArgument().toString();
+                }
+                for (var stmt : module.importStatements()) {
+                    if (prefix.equals(stmt.prefixArgument())) {
+                        yield stmt.importedModule().namespaceArgument().toString();
+                    }
+                }
+                yield XMLConstants.NULL_NS_URI;
+            }
         };
     }
 
@@ -84,7 +117,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
     }
 
     Entry<String, String> prefixAndNamespaceFor(final QNameModule namespace) {
-        if (YangConstants.RFC6020_YIN_MODULE.equals(namespace)) {
+        if (namespace.equals(YangConstants.RFC6020_YIN_MODULE)) {
             return YIN_PREFIX_AND_NAMESPACE;
         }
 
@@ -93,7 +126,14 @@ final class ModuleNamespaceContext implements NamespaceContext {
         return Map.entry(prefix, namespace.namespace().toString());
     }
 
-    Collection<Entry<String, ModuleEffectiveStatement>> importedModules() {
-        return module.reachableModules();
+    @NonNullByDefault
+    Iterator<PrefixAndNamespace> prefixToNamespaceIterator() {
+        final var list = new ArrayList<PrefixAndNamespace>();
+        list.add(new PrefixAndNamespace(module));
+        for (var stmt : module.importStatements()) {
+            list.add(new PrefixAndNamespace(stmt));
+        }
+        list.sort(PrefixAndNamespace.COMPARATOR);
+        return list.iterator();
     }
 }

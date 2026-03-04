@@ -38,6 +38,13 @@ public interface PrefixEffectiveStatement extends EffectiveStatement<String, @No
         default @NonNull PrefixEffectiveStatement prefixStatement() {
             return DefaultMethodHelpers.verifySubstatement(this, PrefixEffectiveStatement.class);
         }
+
+        /**
+         * {@return the equivalent of {@code prefixStament().argument()}}
+         */
+        default @NonNull String prefixArgument() {
+            return prefixStatement().argument();
+        }
     }
 
     @Override
