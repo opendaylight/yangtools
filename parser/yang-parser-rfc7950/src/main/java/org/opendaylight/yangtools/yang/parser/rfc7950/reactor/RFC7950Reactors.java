@@ -134,7 +134,6 @@ public final class RFC7950Reactors {
             .addSupport(new RevisionDateStatementSupport(config))
             .addSupport(NamespaceBehaviours.PRELINKAGE_MODULE)
             .addSupport(NamespaceBehaviours.IMP_PREFIX_TO_NAMESPACE)
-            .addSupport(NamespaceBehaviours.MODULECTX_TO_QNAME)
             .addSupport(QNameModuleNamespace.BEHAVIOUR)
             .addSupport(ImportedVersionNamespace.BEHAVIOUR)
             .build();
