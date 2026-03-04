@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.containsString;
-
 import org.junit.jupiter.api.Test;
 
 class Bug8831Test extends AbstractYangTest {
@@ -19,13 +17,13 @@ class Bug8831Test extends AbstractYangTest {
 
     @Test
     void invalidModelsTest() {
-        assertSourceException(containsString("has default value 'any' marked with an if-feature statement"),
-            "/bugs/bug8831/invalid/inv-model.yang");
+        assertSourceExceptionMessage("/bugs/bug8831/invalid/inv-model.yang")
+            .contains("has default value 'any' marked with an if-feature statement");
     }
 
     @Test
     void invalidModelsTest2() {
-        assertSourceException(containsString("has default value 'any' marked with an if-feature statement"),
-            "/bugs/bug8831/invalid/inv-model2.yang");
+        assertSourceExceptionMessage("/bugs/bug8831/invalid/inv-model2.yang")
+            .contains("has default value 'any' marked with an if-feature statement");
     }
 }

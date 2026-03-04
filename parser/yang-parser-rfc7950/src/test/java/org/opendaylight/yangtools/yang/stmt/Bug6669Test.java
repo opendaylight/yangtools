@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
@@ -27,20 +26,20 @@ class Bug6669Test extends AbstractYangTest {
 
     @Test
     void testInvalidAugment() {
-        assertInferenceExceptionDir("/bugs/bug6669/invalid/test1", startsWith(
-            "An augment cannot add node 'm' because it is mandatory and in module different than target"));
+        assertInferenceExceptionDirMessage("/bugs/bug6669/invalid/test1").startsWith(
+            "An augment cannot add node 'm' because it is mandatory and in module different than target");
     }
 
     @Test
     void testInvalidAugment2() {
-        assertInferenceExceptionDir("/bugs/bug6669/invalid/test2", startsWith(
-            "An augment cannot add node 'm' because it is mandatory and in module different than target"));
+        assertInferenceExceptionDirMessage("/bugs/bug6669/invalid/test2").startsWith(
+            "An augment cannot add node 'm' because it is mandatory and in module different than target");
     }
 
     @Test
     void testInvalidAugment3() {
-        assertInferenceExceptionDir("/bugs/bug6669/invalid/test3", startsWith(
-            "An augment cannot add node 'l' because it is mandatory and in module different than target"));
+        assertInferenceExceptionDirMessage("/bugs/bug6669/invalid/test3").startsWith(
+            "An augment cannot add node 'l' because it is mandatory and in module different than target");
     }
 
     @Test

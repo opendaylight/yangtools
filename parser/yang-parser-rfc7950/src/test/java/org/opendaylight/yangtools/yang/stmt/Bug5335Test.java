@@ -7,13 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 class Bug5335Test extends AbstractYangTest {
@@ -30,51 +27,47 @@ class Bug5335Test extends AbstractYangTest {
 
     @Test
     void incorrectTest1() {
-        assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-1", startsWith(
-            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
+        assertInferenceExceptionDirMessage("/bugs/bug5335/incorrect/case-1").startsWith(
+            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target");
     }
 
     @Test
     void incorrectTest2() {
-        assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-2", startsWith(
-            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
+        assertInferenceExceptionDirMessage("/bugs/bug5335/incorrect/case-2").startsWith(
+            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target");
     }
 
     @Test
     void incorrectTest3() {
-        assertInferenceExceptionDir("/bugs/bug5335/incorrect/case-3", startsWith(
-            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
+        assertInferenceExceptionDirMessage("/bugs/bug5335/incorrect/case-3").startsWith(
+            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target");
     }
 
     @Test
     void correctTest1() {
-        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-1");
-        final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B)
-            .orElse(null);
-        assertInstanceOf(LeafSchemaNode.class, mandatoryLeaf);
+        final var context = assertEffectiveModelDir("/bugs/bug5335/correct/case-1");
+        assertInstanceOf(LeafSchemaNode.class,
+            context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null));
     }
 
     @Test
     void correctTest2() {
-        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-2");
-        final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
-            NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null);
-        assertInstanceOf(LeafSchemaNode.class, mandatoryLeaf);
+        final var context = assertEffectiveModelDir("/bugs/bug5335/correct/case-2");
+        assertInstanceOf(LeafSchemaNode.class, context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
+            NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null));
     }
 
     @Test
     void correctTest3() {
-        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-3");
-        final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
-            NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null);
-        assertInstanceOf(LeafSchemaNode.class, mandatoryLeaf);
+        final var context = assertEffectiveModelDir("/bugs/bug5335/correct/case-3");
+        assertInstanceOf(LeafSchemaNode.class, context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
+            NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null));
     }
 
     @Test
     void correctTest4() {
-        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug5335/correct/case-4");
-        final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F)
-            .orElse(null);
-        assertInstanceOf(LeafSchemaNode.class, mandatoryLeaf);
+        final var context = assertEffectiveModelDir("/bugs/bug5335/correct/case-4");
+        assertInstanceOf(LeafSchemaNode.class,
+            context.findDataTreeChild(ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F).orElse(null));
     }
 }

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class KeyTest extends AbstractYangTest {
@@ -19,7 +17,7 @@ class KeyTest extends AbstractYangTest {
 
     @Test
     void keyCompositeInvalid() {
-        assertSourceException(startsWith("Key argument 'key1 key2 key2' contains duplicates"),
-            "/semantic-statement-parser/key-arg-parsing/key-comp-duplicate.yang");
+        assertSourceExceptionMessage("/semantic-statement-parser/key-arg-parsing/key-comp-duplicate.yang")
+            .startsWith("Key argument 'key1 key2 key2' contains duplicates");
     }
 }

@@ -7,19 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class YT1385Test extends AbstractYangTest {
     @Test
     void testSameModuleWrongUnique() {
-        assertSourceException(allOf(
-            startsWith("Following components of unique statement argument refer to non-existent nodes: "
-                + "[Descendant{qnames=[(foo)bar]}] [at "),
-            endsWith("YT1385/foo.yang:7:5]")),
-            "/bugs/YT1385/foo.yang");
+        assertSourceExceptionMessage("/bugs/YT1385/foo.yang")
+            .startsWith("Following components of unique statement argument refer to non-existent nodes: "
+                + "[Descendant{qnames=[(foo)bar]}] [at ")
+            .endsWith("YT1385/foo.yang:7:5]");
     }
 }

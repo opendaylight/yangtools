@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
@@ -21,7 +19,7 @@ class Bug6885Test extends AbstractYangTest {
 
     @Test
     void invalidListLeafKeyTest1() {
-        assertThat(assertSourceException("/rfc7950/list-keys-test/incorrect-list-keys-test.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/list-keys-test/incorrect-list-keys-test.yang")
             .startsWith("""
                 leaf statement (incorrect-list-keys-test?revision=2017-02-06)a2 is a key in list statement \
                 (incorrect-list-keys-test?revision=2017-02-06)invalid-list-a: it cannot be conditional on when \
@@ -31,7 +29,7 @@ class Bug6885Test extends AbstractYangTest {
 
     @Test
     void invalidListLeafKeyTest2() {
-        assertThat(assertSourceException("/rfc7950/list-keys-test/incorrect-list-keys-test1.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/list-keys-test/incorrect-list-keys-test1.yang")
             .startsWith("""
                 leaf statement (incorrect-list-keys-test1?revision=2017-02-06)b is a key in list statement \
                 (incorrect-list-keys-test1?revision=2017-02-06)invalid-list-b: it cannot be conditional on if-feature \
@@ -41,7 +39,7 @@ class Bug6885Test extends AbstractYangTest {
 
     @Test
     void invalidListUsesLeafKeyTest() {
-        assertThat(assertSourceException("/rfc7950/list-keys-test/incorrect-list-keys-test2.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/list-keys-test/incorrect-list-keys-test2.yang")
             .startsWith("""
                 leaf statement (incorrect-list-keys-test2?revision=2017-02-06)a1 is a key in list statement \
                 (incorrect-list-keys-test2?revision=2017-02-06)invalid-list-a1: it cannot be conditional on if-feature \
@@ -51,7 +49,7 @@ class Bug6885Test extends AbstractYangTest {
 
     @Test
     void invalidListUsesLeafKeyTest1() {
-        assertThat(assertSourceException("/rfc7950/list-keys-test/incorrect-list-keys-test3.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/list-keys-test/incorrect-list-keys-test3.yang")
             .startsWith("""
                 leaf statement (incorrect-list-keys-test3?revision=2017-02-06)a2 is a key in list statement \
                 (incorrect-list-keys-test3?revision=2017-02-06)invalid-list-a2: it cannot be conditional on when \
@@ -61,7 +59,7 @@ class Bug6885Test extends AbstractYangTest {
 
     @Test
     void invalidListUsesLeafKeyTest2() {
-        assertThat(assertSourceException("/rfc7950/list-keys-test/incorrect-list-keys-test4.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/list-keys-test/incorrect-list-keys-test4.yang")
             .startsWith("""
                 leaf statement (incorrect-list-keys-test4?revision=2017-02-06)a1 is a key in list statement \
                 (incorrect-list-keys-test4?revision=2017-02-06)invalid-list-b1: it cannot be conditional on if-feature \
@@ -71,7 +69,7 @@ class Bug6885Test extends AbstractYangTest {
 
     @Test
     void invalidListUsesRefineLeafKeyTest() {
-        assertThat(assertSourceException("/rfc7950/list-keys-test/incorrect-list-keys-test5.yang").getMessage())
+        assertSourceExceptionMessage("/rfc7950/list-keys-test/incorrect-list-keys-test5.yang")
             .startsWith("""
                 leaf statement (incorrect-list-keys-test5?revision=2017-02-06)a1 is a key in list statement \
                 (incorrect-list-keys-test5?revision=2017-02-06)invalid-list-a1: it cannot be conditional on if-feature \

@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
@@ -22,43 +20,38 @@ class Bug6901Test extends AbstractYangTest {
 
     @Test
     void ifFeatureOnDefaultValueEnumTest() {
-        assertSourceException(
-            startsWith("Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."),
-            "/rfc7950/bug6901/invalid-foo-enum.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6901/invalid-foo-enum.yang")
+            .startsWith("Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement.");
     }
 
     @Test
     void ifFeatureOnDefaultValueEnumTest2() {
-        assertSourceException(
-            startsWith("Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."),
-            "/rfc7950/bug6901/invalid-foo-enum-2.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6901/invalid-foo-enum-2.yang")
+            .startsWith("Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement.");
     }
 
     @Test
     void ifFeatureOnDefaultValueEnumTest3() {
-        assertSourceException(startsWith(
-            "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."),
-            "/rfc7950/bug6901/invalid-foo-enum-3.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6901/invalid-foo-enum-3.yang")
+            .startsWith("Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement.");
     }
 
     @Test
     void ifFeatureOnDefaultValueBitTest() {
-        assertSourceException(
-            startsWith("Typedef '(foo)bits-typedef-2' has default value 'two' marked with an if-feature statement."),
-            "/rfc7950/bug6901/invalid-foo-bit.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6901/invalid-foo-bit.yang")
+            .startsWith("Typedef '(foo)bits-typedef-2' has default value 'two' marked with an if-feature statement.");
     }
 
     @Test
     void ifFeatureOnDefaultValueUnionTest() {
-        assertSourceException(
-            startsWith("Leaf '(foo)union-leaf' has default value 'two' marked with an if-feature statement."),
-            "/rfc7950/bug6901/invalid-foo-union.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6901/invalid-foo-union.yang")
+            .startsWith("Leaf '(foo)union-leaf' has default value 'two' marked with an if-feature statement.");
     }
 
     @Test
     void unsupportedFeatureTest() {
-        assertSourceException(containsString("has default value 'two' marked with an if-feature statement"),
-            "/rfc7950/bug6901/invalid-foo-enum.yang");
+        assertSourceExceptionMessage("/rfc7950/bug6901/invalid-foo-enum.yang")
+            .contains("has default value 'two' marked with an if-feature statement");
     }
 
     @Test
@@ -71,6 +64,5 @@ class Bug6901Test extends AbstractYangTest {
     void ifFeature10BitTest() {
         assertThat(assertInvalidSubstatementException("/rfc7950/bug6901/invalid-foo-10-bit.yang").getMessage())
             .startsWith("statement bit does not allow if-feature substatements: 1 present [at ");
-
     }
 }

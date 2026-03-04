@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 class AugmentToExtensionTest extends AbstractYangTest {
     @Test
     void testIncorrectPath() {
-        assertInferenceExceptionDir("/augment-to-extension-test/incorrect-path",
-            startsWith("""
+        assertInferenceExceptionDirMessage("/augment-to-extension-test/incorrect-path")
+            .startsWith("""
                 Augment target \
                 'Descendant{qnames=[(uri:augment-module?revision=2014-10-07)my-extension-name-a, input]}'\
-                 not found [at """));
+                 not found [at """);
     }
 
     /*

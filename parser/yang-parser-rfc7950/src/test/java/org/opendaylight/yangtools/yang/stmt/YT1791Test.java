@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.jupiter.api.Test;
 
 class YT1791Test extends AbstractYangTest {
     @Test
     void testOverlappingTwo() {
-        assertThat(assertSourceException("/bugs/YT1791/two.yang").getMessage())
+        assertSourceExceptionMessage("/bugs/YT1791/two.yang")
             .startsWith("Some of the value ranges in 120..150|140 are not disjoint [at ")
             .endsWith("/two.yang:8:7]");
     }

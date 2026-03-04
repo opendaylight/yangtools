@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,45 +43,41 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testInvalidLength() {
-        assertSourceException(startsWith("Invalid length constraint [4..10]"),
-            "/negative-scenario/testfile5.yang");
+        assertSourceExceptionMessage("/negative-scenario/testfile5.yang")
+            .startsWith("Invalid length constraint [4..10]");
     }
 
     @Test
     void testInvalidRange() {
-        assertSourceException(startsWith("Invalid range constraint: [[5..20]]"),
-            "/negative-scenario/testfile6.yang");
+        assertSourceExceptionMessage("/negative-scenario/testfile6.yang")
+            .startsWith("Invalid range constraint: [[5..20]]");
     }
 
     @Test
     void testDuplicateContainer() {
-        assertSourceException(startsWith("""
+        assertSourceExceptionMessage("/negative-scenario/duplicity/container.yang").startsWith("""
             Error in module 'container': cannot add '(urn:simple.container.demo)foo'. Node name collision: \
-            '(urn:simple.container.demo)foo' already declared"""),
-            "/negative-scenario/duplicity/container.yang");
+            '(urn:simple.container.demo)foo' already declared""");
     }
 
     @Test
     void testDuplicateContainerList() {
-        assertSourceException(startsWith("""
+        assertSourceExceptionMessage("/negative-scenario/duplicity/container-list.yang").startsWith("""
             Error in module 'container-list': cannot add '(urn:simple.container.demo)foo'. Node name collision: \
-            '(urn:simple.container.demo)foo' already declared"""),
-            "/negative-scenario/duplicity/container-list.yang");
+            '(urn:simple.container.demo)foo' already declared""");
     }
 
     @Test
     void testDuplicateContainerLeaf() {
-        assertSourceException(startsWith("""
+        assertSourceExceptionMessage("/negative-scenario/duplicity/container-leaf.yang").startsWith("""
             Error in module 'container-leaf': cannot add '(urn:simple.container.demo)foo'. Node name collision: \
-            '(urn:simple.container.demo)foo' already declared"""),
-            "/negative-scenario/duplicity/container-leaf.yang");
+            '(urn:simple.container.demo)foo' already declared""");
     }
 
     @Test
     void testDuplicateTypedef() {
-        assertSourceException(
-            startsWith("Duplicate name for typedef (urn:simple.container.demo)int-ext [at"),
-            "/negative-scenario/duplicity/typedef.yang");
+        assertSourceExceptionMessage("/negative-scenario/duplicity/typedef.yang")
+            .startsWith("Duplicate name for typedef (urn:simple.container.demo)int-ext [at");
     }
 
     @Test
@@ -95,13 +89,12 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testDuplicityInAugmentTarget2() {
-        assertSourceException(allOf(
-            startsWith("""
+        assertSourceExceptionMessage(
+            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang").startsWith("""
                 Error in module 'augment0': cannot add \
                 '(urn:simple.augment2.demo?revision=2014-06-02)delta'. Node name collision: \
-                '(urn:simple.augment2.demo?revision=2014-06-02)delta' already declared at """),
-            endsWith("duplicity/augment2.yang:17:9]")),
-            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang");
+                '(urn:simple.augment2.demo?revision=2014-06-02)delta' already declared at """)
+            .endsWith("duplicity/augment2.yang:17:9]");
     }
 
     @Test

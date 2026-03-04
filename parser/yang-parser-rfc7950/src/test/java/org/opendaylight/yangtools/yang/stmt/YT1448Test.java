@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class YT1448Test extends AbstractYangTest {
@@ -19,7 +17,7 @@ class YT1448Test extends AbstractYangTest {
 
     @Test
     void deviationFromSubmoduleTargetedOwnModule() {
-        assertInferenceExceptionDir("/bugs/YT1448/invalid",
-            startsWith("Deviation must not target the same module as the one it is defined in"));
+        assertInferenceExceptionDirMessage("/bugs/YT1448/invalid")
+            .startsWith("Deviation must not target the same module as the one it is defined in");
     }
 }

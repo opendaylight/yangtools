@@ -13,13 +13,9 @@ import static org.hamcrest.collection.IsIn.in;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -36,14 +32,14 @@ class Bug6897Test extends AbstractYangTest {
         assertContainsNotifications(context, "top-list", "top-list-notification");
         assertContainsNotifications(context, "top", "top-notification");
 
-        final Collection<? extends GroupingDefinition> groupings = context.getGroupings();
+        final var groupings = context.getGroupings();
         assertEquals(1, groupings.size());
         assertContainsNotifications(groupings.iterator().next(), "grp-notification");
 
-        final Collection<? extends Module> modules = context.getModules();
+        final var modules = context.getModules();
         assertEquals(1, modules.size());
-        final Module foo = modules.iterator().next();
-        final Collection<? extends AugmentationSchemaNode> augmentations = foo.getAugmentations();
+        final var foo = modules.iterator().next();
+        final var augmentations = foo.getAugmentations();
         assertEquals(1, augmentations.size());
         assertContainsNotifications(augmentations.iterator().next(), "aug-notification", "grp-notification");
     }
@@ -78,23 +74,21 @@ class Bug6897Test extends AbstractYangTest {
 
     @Test
     void invalid11Test() {
-        assertSourceException(startsWith("Notification (foo)grp-notification is defined within another structure"),
-            "/rfc7950/notifications-in-data-nodes/foo-invalid.yang");
+        assertSourceExceptionMessage("/rfc7950/notifications-in-data-nodes/foo-invalid.yang")
+            .startsWith("Notification (foo)grp-notification is defined within another structure");
     }
 
     @Test
     void testNotificationWithinListWithoutKey() {
-        assertSourceException(
-            startsWith("Notification (bar-namespace?revision=2016-12-08)my-notification is defined within a list that "
-                + "has no key statement"),
-            "/rfc7950/notifications-in-data-nodes/bar-invalid.yang");
+        assertSourceExceptionMessage("/rfc7950/notifications-in-data-nodes/bar-invalid.yang")
+            .startsWith("Notification (bar-namespace?revision=2016-12-08)my-notification is defined within a list that "
+                + "has no key statement");
     }
 
     @Test
     void testNotificationInUsedGroupingWithinCase() {
-        assertSourceException(
-            startsWith("Notification (baz-namespace?revision=2016-12-08)notification-in-grouping is defined within a "
-                + "case statement"),
-            "/rfc7950/notifications-in-data-nodes/baz-invalid.yang");
+        assertSourceExceptionMessage("/rfc7950/notifications-in-data-nodes/baz-invalid.yang").startsWith(
+            "Notification (baz-namespace?revision=2016-12-08)notification-in-grouping is defined within a "
+                + "case statement");
     }
 }

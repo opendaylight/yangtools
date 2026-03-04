@@ -7,20 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-
 import org.junit.jupiter.api.Test;
 
 class YT1664Test extends AbstractYangTest {
     @Test
     void testLeafListBadElements() {
-        assertSourceException(startsWith("Conflicting 'min-elements 2' and 'max-elements 1' [at "),
-            "/bugs/YT1664/bar.yang");
+        assertSourceExceptionMessage("/bugs/YT1664/bar.yang")
+            .startsWith("Conflicting 'min-elements 2' and 'max-elements 1' [at ");
     }
 
     @Test
     void testListBadElements() {
-        assertSourceException(startsWith("Conflicting 'min-elements 2' and 'max-elements 1' [at "),
-            "/bugs/YT1664/foo.yang");
+        assertSourceExceptionMessage("/bugs/YT1664/foo.yang")
+            .startsWith("Conflicting 'min-elements 2' and 'max-elements 1' [at ");
     }
 }

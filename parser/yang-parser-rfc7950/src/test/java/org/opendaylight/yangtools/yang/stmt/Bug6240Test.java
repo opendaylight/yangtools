@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,7 +51,7 @@ class Bug6240Test extends AbstractYangTest {
 
     @Test
     void testInvalidModels() {
-        assertInferenceExceptionDir("/bugs/bug6240/incorrect",
-            startsWith("Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
+        assertInferenceExceptionDirMessage("/bugs/bug6240/incorrect")
+            .startsWith("Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved.");
     }
 }

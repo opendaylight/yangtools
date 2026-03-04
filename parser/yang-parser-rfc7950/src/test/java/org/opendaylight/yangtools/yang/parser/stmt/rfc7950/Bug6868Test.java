@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -80,9 +79,8 @@ class Bug6868Test extends AbstractYangTest {
 
     @Test
     void invalidYang10Test() {
-        assertSourceException(startsWith("""
+        assertSourceExceptionMessage("/rfc7950/bug6868/invalid10.yang").startsWith("""
             '(not foo) or (bar and baz)' is not a valid if-feature name on position 1: '(' is not valid as a first \
-            character in identifier [at """),
-            "/rfc7950/bug6868/invalid10.yang");
+            character in identifier [at """);
     }
 }
