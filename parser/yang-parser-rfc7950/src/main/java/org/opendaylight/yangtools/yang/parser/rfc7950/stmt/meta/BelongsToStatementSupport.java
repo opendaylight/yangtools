@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -60,8 +61,7 @@ public final class BelongsToStatementSupport
                 if (prefix == null) {
                     throw new VerifyException("prefix not found in " + belongsToCtx);
                 }
-                belongsToCtx.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, prefix.getArgument(),
-                    belongsToPrereq.resolve(ctx));
+                belongsToCtx.addToNs(ParserNamespaces.IMPORTED_MODULE, belongsToPrereq.resolve(ctx), Empty.value());
             }
 
             @Override
