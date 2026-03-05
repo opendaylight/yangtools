@@ -136,9 +136,12 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> PREFIX_TO_MODULE =
         new ParserNamespace<>("prefix-to-module");
 
-    // FIXME: document this
-    // FIXME: is this 'included submodule' instead?
-    public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> INCLUDED_MODULE =
+    /**
+     * A virtual namespace mediating the set of sources included in a particular source. Note that this namespace always
+     * reports empty contents.
+     */
+    public static final @NonNull ParserNamespace<Empty,
+        StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE =
         new ParserNamespace<>("included-module");
 
     /**
