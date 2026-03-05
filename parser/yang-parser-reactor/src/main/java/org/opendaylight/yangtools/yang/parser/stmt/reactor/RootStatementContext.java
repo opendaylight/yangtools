@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
@@ -68,7 +67,9 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         this.identifierBinding = requireNonNull(identifierBinding);
         this.sourceContext = requireNonNull(sourceContext);
         argument = def.argumentFactory().parseArgumentValue(this, rawArgument());
-        verify(sourceName.equals(argument));
+        if (!sourceName.equals(argument)) {
+            throw new VerifyException("argument mismatch, expected " + sourceName + ", parsed " + argument);
+        }
     }
 
     @Override
@@ -220,7 +221,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @NonNull YangVersion getRootVersionImpl() {
-        return sourceContext.sourceInfo().yangVersion();
+        return sourceContext.yangVersion();
     }
 
     /**
