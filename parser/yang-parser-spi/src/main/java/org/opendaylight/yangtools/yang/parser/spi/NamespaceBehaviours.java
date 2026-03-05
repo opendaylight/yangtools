@@ -43,8 +43,8 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> IMPORTED_MODULE =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.IMPORTED_MODULE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_MODULE =
-        NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_MODULE);
+    public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_SUBMODULE =
+        NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_SUBMODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_SUBMODULE_NAME_TO_MODULECTX =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
