@@ -67,9 +67,6 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> MODULE_NAMESPACE_TO_NAME =
         NamespaceBehaviour.global(ParserNamespaces.MODULE_NAMESPACE_TO_NAME);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> MODULECTX_TO_SOURCE =
-        NamespaceBehaviour.global(ParserNamespaces.MODULECTX_TO_SOURCE);
-
     private NamespaceBehaviours() {
         // Hidden on purpose
     }
