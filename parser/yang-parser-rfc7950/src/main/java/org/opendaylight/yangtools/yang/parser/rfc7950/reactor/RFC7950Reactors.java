@@ -134,7 +134,6 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1, SubmoduleStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, SubmoduleStatementSupport.rfc7950Instance(config))
             .addSupport(new YangVersionStatementSupport(config))
-            .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULE_NAME)
             .addSupport(NamespaceBehaviours.BELONGSTO_PREFIX_TO_MODULECTX)
             .addSupport(NamespaceBehaviours.IMPORT_PREFIX_TO_MODULECTX)
             .addSupport(NamespaceBehaviours.IMPORTED_MODULE)
