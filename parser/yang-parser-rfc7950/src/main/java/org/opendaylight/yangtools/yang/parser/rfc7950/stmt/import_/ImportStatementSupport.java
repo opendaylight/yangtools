@@ -62,16 +62,6 @@ public final class ImportStatementSupport
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, ImportStatement, ImportEffectiveStatement> stmt) {
-        /*
-         * Add ModuleIdentifier of a module which is required by this module.
-         * Based on this information, required modules are searched from library
-         * sources.
-         */
-        stmt.addRequiredSource(RevisionImport.getImportedSourceIdentifier(stmt));
-    }
-
-    @Override
     public void onLinkageDeclared(final Mutable<Unqualified, ImportStatement, ImportEffectiveStatement> stmt) {
         RevisionImport.onLinkageDeclared(stmt);
     }

@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -43,11 +42,6 @@ public final class BelongsToStatementSupport
 
     public BelongsToStatementSupport(final YangParserConfiguration config) {
         super(BelongsToStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
-    }
-
-    @Override
-    public void onPreLinkageDeclared(final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
-        ctx.addRequiredSource(new SourceIdentifier(ctx.getArgument()));
     }
 
     @Override

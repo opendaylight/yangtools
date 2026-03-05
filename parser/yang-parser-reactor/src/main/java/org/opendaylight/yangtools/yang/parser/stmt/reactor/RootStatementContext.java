@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -28,10 +25,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -57,8 +52,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     private final @NonNull QNameModule definingModule;
     private final @NonNull Unqualified sourceName;
     private final A argument;
-
-    private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -239,15 +232,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      */
     void addMutableStmtToSeal(final MutableStatement mutableStatement) {
         sourceContext.globalContext().addMutableStmtToSeal(mutableStatement);
-    }
-
-    void addRequiredSourceImpl(final SourceIdentifier dependency) {
-        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
-        if (requiredSources.isEmpty()) {
-            requiredSources = new HashSet<>();
-        }
-        requiredSources.add(dependency);
     }
 
     @Deprecated
