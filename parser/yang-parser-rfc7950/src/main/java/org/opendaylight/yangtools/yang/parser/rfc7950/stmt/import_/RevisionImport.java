@@ -47,17 +47,11 @@ final class RevisionImport {
                 new SourceIdentifier(moduleName, revision), SOURCE_LINKAGE);
         }
 
-        final var linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
-
         importAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final var importedModule = imported.resolve(ctx);
-
-                linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE,
-                    stmt.namespaceItem(ParserNamespaces.MODULECTX_TO_SOURCE, importedModule), importedModule);
                 final var impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
+                stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, imported.resolve(ctx));
             }
 
             @Override

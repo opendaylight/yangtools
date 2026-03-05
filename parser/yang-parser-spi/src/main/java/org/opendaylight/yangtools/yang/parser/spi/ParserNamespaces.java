@@ -143,10 +143,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("import-prefix-to-modulectx");
 
     // FIXME: document this
-    public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> IMPORTED_MODULE =
-        new ParserNamespace<>("imported-module");
-
-    // FIXME: document this
     // FIXME: is this 'included submodule' instead?
     public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> INCLUDED_MODULE =
         new ParserNamespace<>("included-module");
