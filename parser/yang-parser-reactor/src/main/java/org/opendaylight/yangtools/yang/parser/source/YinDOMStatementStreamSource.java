@@ -42,11 +42,6 @@ record YinDOMStatementStreamSource(@NonNull YinDOMSource source) implements Stat
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
-        YinDOMSourceWalker.walkSource(source, writer, resolver);
-    }
-
-    @Override
     public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
         YinDOMSourceWalker.walkSource(source, writer, resolver);
     }

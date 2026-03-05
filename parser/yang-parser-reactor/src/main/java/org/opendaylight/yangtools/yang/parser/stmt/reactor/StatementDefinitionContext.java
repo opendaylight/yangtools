@@ -75,9 +75,6 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
 
     void onDeclarationFinished(final @NonNull Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
-            case SOURCE_PRE_LINKAGE -> {
-                // No-op
-            }
             case SOURCE_LINKAGE -> support.onLinkageDeclared(statement);
             case STATEMENT_DEFINITION -> support.onStatementDefinitionDeclared(statement);
             case FULL_DECLARATION -> support.onFullDefinitionDeclared(statement);

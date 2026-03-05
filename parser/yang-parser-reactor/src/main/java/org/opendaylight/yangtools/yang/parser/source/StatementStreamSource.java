@@ -102,22 +102,6 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     }
 
     /**
-     * Emits only pre-linkage-related statements to supplied {@code writer}.
-     *
-     * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
-     * @param resolver
-     *            Map of available statement definitions. Only these statements
-     *            may be written to statement writer, source MUST ignore and MUST NOT
-     *            emit any other statements.
-     * @throws SourceException
-     *             If source was is not valid, or provided statement writer
-     *             failed to write statements.
-     */
-    void writePreLinkage(StatementWriter writer, StatementDefinitionResolver resolver);
-
-    /**
      * Emits only linkage-related statements to supplied {@code writer} based on specified YANG version.
      * Default implementation does not make any differences between versions.
      *

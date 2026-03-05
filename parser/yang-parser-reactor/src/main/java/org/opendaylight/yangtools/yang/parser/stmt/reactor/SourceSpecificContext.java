@@ -429,8 +429,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         LOG.trace("Source {} loading statements for phase {}", streamSource, inProgressPhase);
 
         switch (inProgressPhase) {
-            case SOURCE_PRE_LINKAGE ->
-                streamSource.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
             case SOURCE_LINKAGE ->
                 streamSource.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
             case STATEMENT_DEFINITION ->
