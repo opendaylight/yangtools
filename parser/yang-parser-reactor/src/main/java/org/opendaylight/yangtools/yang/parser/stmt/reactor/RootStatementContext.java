@@ -142,18 +142,17 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        if (ParserNamespaces.INCLUDED_MODULE.equals(type)) {
-            if (includedContexts.isEmpty()) {
-                includedContexts = new ArrayList<>(1);
-            }
-
-            if (!(value instanceof RootStatementContext<?, ?, ?> root)) {
-                throw new VerifyException("Unexpected value " + value);
-            }
-            includedContexts.add(root);
+        if (!type.equals(ParserNamespaces.INCLUDED_SUBMODULE)) {
+            return super.putToLocalStorage(type, key, value);
         }
-
-        return super.putToLocalStorage(type, key, value);
+        if (!(value instanceof RootStatementContext<?, ?, ?> root)) {
+            throw new VerifyException("Unexpected value " + value);
+        }
+        if (includedContexts.isEmpty()) {
+            includedContexts = new ArrayList<>(1);
+        }
+        includedContexts.add(root);
+        return null;
     }
 
     @Override

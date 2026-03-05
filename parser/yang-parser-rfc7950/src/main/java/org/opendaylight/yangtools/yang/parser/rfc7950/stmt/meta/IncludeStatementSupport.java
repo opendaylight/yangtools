@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -88,9 +89,7 @@ public final class IncludeStatementSupport
                         "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
                 }
 
-                stmt.addToNs(ParserNamespaces.INCLUDED_MODULE,
-                    new SourceIdentifier(submoduleName, revision != null ? revision.getArgument() : null),
-                    includedSubmodule);
+                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE, includedSubmodule, Empty.value());
                 stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX, stmt.argument(),
                     includedSubmodule);
             }
