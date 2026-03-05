@@ -64,9 +64,6 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> MODULES_DEVIATED_BY =
         NamespaceBehaviour.global(ParserNamespaces.MODULES_DEVIATED_BY);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> MODULE_NAMESPACE_TO_NAME =
-        NamespaceBehaviour.global(ParserNamespaces.MODULE_NAMESPACE_TO_NAME);
-
     private NamespaceBehaviours() {
         // Hidden on purpose
     }
