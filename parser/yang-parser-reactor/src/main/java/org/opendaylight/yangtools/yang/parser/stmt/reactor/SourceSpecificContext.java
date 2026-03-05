@@ -24,16 +24,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.stmt.NamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
@@ -127,7 +131,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
      * - modules imported via 'import' statement
      * - parent module, declared via 'belongs-to' statement
      */
-    private List<RootStatementContext<?, ?, ?>> importedNamespaces = ImmutableList.of();
+    private List<ReactorStmtCtx<?, ?, ?>> importedNamespaces = ImmutableList.of();
     private RootStatementContext<?, ?, ?> root;
     // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -204,17 +208,20 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
          * If root is null or root version is other than default,
          * we need to create new root.
          */
-        if (root == null) {
-            root = new RootStatementContext<>(sourceInfo.sourceId().name(), definingModule, identifierBinding, this,
-                def, ref, argument);
-        } else {
-            final var rootStatement = root.definition().statementName();
-            final var rootArgument = root.rawArgument();
+        final var existing = root;
+        if (existing != null) {
+            final var rootStatement = existing.definition().statementName();
+            final var rootArgument = existing.rawArgument();
 
             checkState(Objects.equals(def.statementName(), rootStatement) && Objects.equals(argument, rootArgument),
                 "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
+            return existing;
         }
-        return root;
+
+        final var ret = new RootStatementContext<>(sourceInfo.sourceId().name(), definingModule, identifierBinding,
+            this, def, ref, argument);
+        root = ret;
+        return ret;
     }
 
     @NonNull SourceIdentifier identifySource() {
@@ -249,12 +256,40 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             if (!(value instanceof RootStatementContext<?, ?, ?> root)) {
                 throw new VerifyException("Unexpected imported value " + value);
             }
-
-            if (importedNamespaces.isEmpty()) {
-                importedNamespaces = new ArrayList<>(1);
-            }
-            importedNamespaces.add(root);
+            addImportedModule(root);
         }
+    }
+
+    @NonNullByDefault
+    void setBelongsTo(final Unqualified prefix, final SourceSpecificContext module) {
+        final var root = module.root.verifyDeclaring(ModuleStatement.DEF);
+        addImportedModule(root);
+        root.resolveLinkage(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, Map.of(prefix.getLocalName(), root));
+    }
+
+    void setImports(final @NonNull Map<Unqualified, SourceSpecificContext> prefixToModule) {
+        root.resolveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX,
+            prefixToModule.entrySet().stream().collect(Collectors.toUnmodifiableMap(
+                entry -> entry.getKey().getLocalName(),
+                entry -> {
+                    final var root = entry.getValue().root.verifyDeclaring(ModuleStatement.DEF);
+                    addImportedModule(root);
+                    return root;
+                })));
+    }
+
+    void setIncludes(final @NonNull Map<Unqualified, SourceSpecificContext> nameToSubmodule) {
+        root.resolveLinkage(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX,
+            nameToSubmodule.entrySet().stream().collect(Collectors.toUnmodifiableMap(
+                Entry::getKey,
+                entry -> entry.getValue().root.verifyDeclaring(SubmoduleStatement.DEF))));
+    }
+
+    private void addImportedModule(final @NonNull ReactorStmtCtx<?, ?, ?> module) {
+        if (importedNamespaces.isEmpty()) {
+            importedNamespaces = new ArrayList<>(1);
+        }
+        importedNamespaces.add(requireNonNull(module));
     }
 
     @Override

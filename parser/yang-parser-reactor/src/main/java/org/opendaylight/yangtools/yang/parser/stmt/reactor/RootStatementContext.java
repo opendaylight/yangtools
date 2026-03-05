@@ -69,6 +69,10 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         this.sourceContext = requireNonNull(sourceContext);
         argument = def.argumentFactory().parseArgumentValue(this, rawArgument());
         verify(sourceName.equals(argument));
+
+        reserveLinkage(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+        reserveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        reserveLinkage(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
     }
 
     @Override
