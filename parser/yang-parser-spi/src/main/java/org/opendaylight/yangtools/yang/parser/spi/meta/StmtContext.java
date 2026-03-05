@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 
 /**
  * An inference context associated with an instance of a statement.
@@ -272,20 +271,6 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
          * @throws NullPointerException if the specified phase is null
          */
         @NonNull ModelActionBuilder newInferenceAction(@NonNull ModelProcessingPhase phase);
-
-        /**
-         * Add required module. Based on these dependencies are collected required sources from library sources.
-         *
-         * @param dependency
-         *            SourceIdentifier of module required by current root
-         *            context
-         */
-        /*
-         * FIXME: this method is used solely during SOURCE_PRE_LINKAGE reactor phase and does not have a corresponding
-         *        getter -- which makes it rather strange. At some point this method needs to be deprecated and its
-         *        users migrated to use proper global namespace.
-         */
-        void addRequiredSource(SourceIdentifier dependency);
 
         /**
          * Adds an effective statement to collection of substatements.
