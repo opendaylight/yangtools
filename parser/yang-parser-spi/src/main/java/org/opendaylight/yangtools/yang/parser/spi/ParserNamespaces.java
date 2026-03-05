@@ -184,12 +184,6 @@ public final class ParserNamespaces {
     public static final @NonNull ParserNamespace<QNameModule, Unqualified> MODULE_NAMESPACE_TO_NAME =
         new ParserNamespace<>("qnamemodule-to-name");
 
-    /**
-     * Global mapping of modules to source identifier.
-     */
-    public static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> MODULECTX_TO_SOURCE =
-        new ParserNamespace<>("modulectx-to-source");
-
     private static final @NonNull ParserNamespace<?, ?> SCHEMA_TREE = new ParserNamespace<>("schemaTree");
 
     /**
