@@ -14,16 +14,17 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -127,7 +128,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
      * - modules imported via 'import' statement
      * - parent module, declared via 'belongs-to' statement
      */
-    private List<RootStatementContext<?, ?, ?>> importedNamespaces = ImmutableList.of();
+    private Set<RootStatementContext<?, ?, ?>> importedNamespaces = Set.of();
     private RootStatementContext<?, ?, ?> root;
     // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -243,37 +244,31 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         LOG.debug("Source {} started phase {}", streamSource, phase);
     }
 
-    private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
-        if (ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX.equals(type)
-            || ParserNamespaces.IMPORTED_MODULE.equals(type)) {
-            if (!(value instanceof RootStatementContext<?, ?, ?> context)) {
-                throw new VerifyException("Unexpected imported value " + value);
-            }
-
-            if (importedNamespaces.isEmpty()) {
-                importedNamespaces = new ArrayList<>(1);
-            }
-            importedNamespaces.add(context);
+    private boolean updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object key) {
+        if (!ParserNamespaces.IMPORTED_MODULE.equals(type)) {
+            return false;
         }
+        if (!(key instanceof RootStatementContext<?, ?, ?> context)) {
+            throw new VerifyException("Unexpected imported key " + key);
+        }
+
+        if (importedNamespaces.isEmpty()) {
+            importedNamespaces = LinkedHashSet.newLinkedHashSet(4);
+        }
+        importedNamespaces.add(context);
+        return true;
     }
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        // RootStatementContext takes care of IncludedModuleContext and the rest...
-        final V ret = root.putToLocalStorage(type, key, value);
-        // FIXME: what about duplicates?
-        updateImportedNamespaces(type, value);
-        return ret;
+        // RootStatementContext takes care of our namespaces, but intercept IMPORTED_MODULE stores
+        return updateImportedNamespaces(type, key) ? null : root.putToLocalStorage(type, key, value);
     }
 
     @Override
     public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
-        // RootStatementContext takes care of IncludedModuleContext and the rest...
-        final V ret = root.putToLocalStorageIfAbsent(type, key, value);
-        if (ret == null) {
-            updateImportedNamespaces(type, value);
-        }
-        return ret;
+        // RootStatementContext takes care of our namespaces, but intercept IMPORTED_MODULE stores
+        return updateImportedNamespaces(type, key) ? null : root.putToLocalStorageIfAbsent(type, key, value);
     }
 
     @Override
