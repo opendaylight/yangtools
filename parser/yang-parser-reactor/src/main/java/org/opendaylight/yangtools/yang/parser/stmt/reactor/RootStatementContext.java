@@ -72,6 +72,9 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         }
 
         resizeSubstatements(expectedSize);
+        reserveLinkage(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
+        reserveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        reserveLinkage(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
     }
 
     @Override

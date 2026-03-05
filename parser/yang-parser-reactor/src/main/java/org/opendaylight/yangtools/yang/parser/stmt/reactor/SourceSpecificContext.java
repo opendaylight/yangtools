@@ -17,6 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,17 +26,21 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.stmt.NamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
@@ -130,7 +135,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
      * - modules imported via 'import' statement
      * - parent module, declared via 'belongs-to' statement
      */
-    private Set<RootStatementContext<?, ?, ?>> importedNamespaces = Set.of();
+    private Set<ReactorStmtCtx<?, ?, ?>> importedNamespaces = Set.of();
 
     // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -259,6 +264,38 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
         importedNamespaces.add(context);
         return true;
+    }
+
+    @NonNullByDefault
+    void setBelongsTo(final Unqualified prefix, final SourceSpecificContext module) {
+        final var root = module.root.verifyDeclaring(ModuleStatement.DEF);
+        addImportedModule(root);
+        root.resolveLinkage(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, Map.of(prefix.getLocalName(), root));
+    }
+
+    void setImports(final @NonNull Map<Unqualified, SourceSpecificContext> prefixToModule) {
+        root.resolveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX,
+            prefixToModule.entrySet().stream().collect(Collectors.toUnmodifiableMap(
+                entry -> entry.getKey().getLocalName(),
+                entry -> {
+                    final var root = entry.getValue().root.verifyDeclaring(ModuleStatement.DEF);
+                    addImportedModule(root);
+                    return root;
+                })));
+    }
+
+    void setIncludes(final @NonNull Map<Unqualified, SourceSpecificContext> nameToSubmodule) {
+        root.resolveLinkage(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX,
+            nameToSubmodule.entrySet().stream().collect(Collectors.toUnmodifiableMap(
+                Entry::getKey,
+                entry -> entry.getValue().root.verifyDeclaring(SubmoduleStatement.DEF))));
+    }
+
+    private void addImportedModule(final @NonNull ReactorStmtCtx<?, ?, ?> module) {
+        if (importedNamespaces.isEmpty()) {
+            importedNamespaces = HashSet.newHashSet(4);
+        }
+        importedNamespaces.add(requireNonNull(module));
     }
 
     @Override
