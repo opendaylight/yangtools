@@ -60,7 +60,7 @@ public final class BelongsToStatementSupport
                 if (prefix == null) {
                     throw new VerifyException("prefix not found in " + belongsToCtx);
                 }
-                belongsToCtx.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, prefix.getArgument(),
+                belongsToCtx.addToNs(ParserNamespaces.PREFIX_TO_MODULE, prefix.getArgument(),
                     belongsToPrereq.resolve(ctx));
             }
 

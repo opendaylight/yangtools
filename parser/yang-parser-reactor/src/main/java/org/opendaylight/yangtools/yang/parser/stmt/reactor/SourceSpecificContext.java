@@ -244,8 +244,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
-        if (ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX.equals(type)
-            || ParserNamespaces.PREFIX_TO_MODULE.equals(type)) {
+        if (ParserNamespaces.PREFIX_TO_MODULE.equals(type)) {
             if (!(value instanceof RootStatementContext<?, ?, ?> context)) {
                 throw new VerifyException("Unexpected imported value " + value);
             }
