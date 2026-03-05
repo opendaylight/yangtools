@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
@@ -245,12 +246,14 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private void updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object value) {
         if (ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX.equals(type)
             || ParserNamespaces.IMPORTED_MODULE.equals(type)) {
-            verify(value instanceof RootStatementContext, "Unexpected imported value %s", value);
+            if (!(value instanceof RootStatementContext<?, ?, ?> context)) {
+                throw new VerifyException("Unexpected imported value " + value);
+            }
 
             if (importedNamespaces.isEmpty()) {
                 importedNamespaces = new ArrayList<>(1);
             }
-            importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
+            importedNamespaces.add(context);
         }
     }
 
