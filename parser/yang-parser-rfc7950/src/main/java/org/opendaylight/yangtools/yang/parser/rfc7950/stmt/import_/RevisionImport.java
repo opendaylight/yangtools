@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPha
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.base.VerifyException;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -47,17 +48,20 @@ final class RevisionImport {
                 new SourceIdentifier(moduleName, revision), SOURCE_LINKAGE);
         }
 
-        final var linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
+        final var importing = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
                 final var importedModule = imported.resolve(ctx);
+                final var importingModule = importing.resolve(ctx);
+                final var prefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+                if (prefix == null) {
+                    throw new VerifyException("prefix not found in " + stmt);
+                }
 
-                linkageTarget.resolve(ctx).addToNs(ParserNamespaces.IMPORTED_MODULE,
-                    stmt.namespaceItem(ParserNamespaces.MODULECTX_TO_SOURCE, importedModule), importedModule);
-                final var impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, impPrefix, importedModule);
+                importingModule.addToNs(ParserNamespaces.PREFIX_TO_MODULE, prefix, importedModule);
+                stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix, importedModule);
             }
 
             @Override

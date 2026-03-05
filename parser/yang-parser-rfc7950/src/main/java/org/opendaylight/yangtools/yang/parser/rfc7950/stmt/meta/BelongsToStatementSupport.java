@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -55,8 +56,11 @@ public final class BelongsToStatementSupport
         belongsToAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                belongsToCtx.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX,
-                    findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.DEF).getArgument(),
+                final var prefix = findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.DEF);
+                if (prefix == null) {
+                    throw new VerifyException("prefix not found in " + belongsToCtx);
+                }
+                belongsToCtx.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX, prefix.getArgument(),
                     belongsToPrereq.resolve(ctx));
             }
 

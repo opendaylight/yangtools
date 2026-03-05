@@ -111,11 +111,7 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> NAMESPACE_TO_MODULE =
         new ParserNamespace<>("namespace-to-module");
 
-    /**
-     * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
-     * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
-     * statement.
-     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("belongsto-prefix-to-module");
 
@@ -142,9 +138,14 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORT_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("import-prefix-to-modulectx");
 
-    // FIXME: document this
-    public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> IMPORTED_MODULE =
-        new ParserNamespace<>("imported-module");
+    /**
+     * Source-specific mapping of {@code belongs-to} and {@code import} prefixes to module identifiers. This mapping
+     * allows source-specific context to correctly populate prefixes map for actual parsing phase and eventually,
+     * resolve QName for any valid declared statement.
+     */
+    public static final @NonNull ParserNamespace<String,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> PREFIX_TO_MODULE =
+        new ParserNamespace<>("prefix-to-module");
 
     // FIXME: document this
     // FIXME: is this 'included submodule' instead?
