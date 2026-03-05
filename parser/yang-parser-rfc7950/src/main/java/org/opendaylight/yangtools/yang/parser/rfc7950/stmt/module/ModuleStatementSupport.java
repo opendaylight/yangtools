@@ -13,7 +13,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -51,6 +50,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
@@ -236,9 +237,13 @@ public final class ModuleStatementSupport
         }
     }
 
-    private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
-        final var submodules = stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
-        return submodules == null ? List.of() : submodules.values();
+    private static Collection<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
+            submoduleContexts(final Current<Unqualified, ModuleStatement> stmt) {
+        final var namespace = stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
+        if (namespace == null) {
+            throw new VerifyException("no namespace in " + stmt);
+        }
+        return namespace.values();
     }
 
     private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {

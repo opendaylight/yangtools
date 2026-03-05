@@ -116,7 +116,8 @@ public final class ParserNamespaces {
      * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
      * statement.
      */
-    public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
+    public static final @NonNull ParserNamespace<String,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> BELONGSTO_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("belongsto-prefix-to-module");
 
     /**
@@ -144,8 +145,9 @@ public final class ParserNamespaces {
      * Source-specific mapping of prefixes to namespaces.
      */
     // FIXME: bad javadoc
-    // FIXME: the context should expose SubmoduleStatement
-    public static final @NonNull ParserNamespace<Unqualified, StmtContext<?, ?, ?>> INCLUDED_SUBMODULE_NAME_TO_MODULECTX
+    // FIXME: rename
+    public static final @NonNull ParserNamespace<Unqualified,
+        StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE_NAME_TO_MODULECTX
         = new ParserNamespace<>("included-submodule-to-modulectx");
 
     /**
