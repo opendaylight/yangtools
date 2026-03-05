@@ -61,7 +61,7 @@ final class RevisionImport {
                     throw new VerifyException("prefix not found in " + stmt);
                 }
 
-                importingModule.addToNs(ParserNamespaces.IMPORTED_MODULE, Empty.value(), importedModule);
+                importingModule.addToNs(ParserNamespaces.IMPORTED_MODULE, importedModule, Empty.value());
                 stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix, importedModule);
             }
 

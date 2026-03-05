@@ -71,22 +71,6 @@ public final class StmtContextUtils {
         return null;
     }
 
-    @SafeVarargs
-    public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
-            int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
-        if (startIndex >= types.length) {
-            return null;
-        }
-
-        for (var subStmtContext : stmtContext.declaredSubstatements()) {
-            if (subStmtContext.producesDeclared(types[startIndex])) {
-                return startIndex + 1 == types.length ? subStmtContext : findFirstDeclaredSubstatement(subStmtContext,
-                        ++startIndex, types);
-            }
-        }
-        return null;
-    }
-
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllDeclaredSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         final var listBuilder = ImmutableList.<StmtContext<A, D, ?>>builder();

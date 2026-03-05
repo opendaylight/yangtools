@@ -111,10 +111,6 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> NAMESPACE_TO_MODULE =
         new ParserNamespace<>("namespace-to-module");
 
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
-        new ParserNamespace<>("belongsto-prefix-to-module");
-
     /**
      * Namespace similar to {@link ParserNamespaces#MODULE} for storing modules into Yang model storage but keyed by
      * plain name.
@@ -138,8 +134,8 @@ public final class ParserNamespaces {
      *
      * <p>This namespace is only ever stored to and trying to access it makes little sense.
      */
-    public static final @NonNull ParserNamespace<Empty,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORTED_MODULE =
+    public static final @NonNull ParserNamespace<
+            StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>, Empty> IMPORTED_MODULE =
         new ParserNamespace<>("imported-module");
 
     // FIXME: document this
