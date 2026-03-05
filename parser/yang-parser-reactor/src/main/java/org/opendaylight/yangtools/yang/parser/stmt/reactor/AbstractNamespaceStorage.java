@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
@@ -27,6 +30,49 @@ import org.slf4j.LoggerFactory;
  * </ol>
  */
 abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permits BuildGlobalContext, ReactorStmtCtx {
+    /**
+     * A namespace that cannot be accessed at this time, but may become accessible in the future.
+     *
+     * @param <K> namespace key type
+     * @param <K> namespace value type
+     */
+    private static final class Reserved<K, V> extends AbstractMap<K, V> {
+        private static final @NonNull Reserved<?, ?> INSTANCE = new Reserved<>();
+
+        private Reserved() {
+            // Hidden on purpose
+        }
+
+        @SuppressWarnings("unchecked")
+        static <K, V> @NonNull Reserved<K, V> of() {
+            return (Reserved<K, V>) INSTANCE;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            // for all intents and purposes we should not be ignored ...
+            return false;
+        }
+
+        @Override
+        public int size() {
+            // ... but then we not only do not have any elements, we do not know whether we'll ever know
+            // this poisons callers
+            return -1;
+        }
+
+        @Override
+        public Set<Entry<K, V>> entrySet() {
+            throw new UnsupportedOperationException("not accessible");
+        }
+
+        @Override
+        public String toString() {
+            // we cannot be mistaken for a plain Map: we are different
+            return Reserved.class.getSimpleName();
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractNamespaceStorage.class);
 
     private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = Map.of();
@@ -64,8 +110,7 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
 
     @SuppressWarnings("unchecked")
     final <K, V> Map<K, V> getLocalNamespace(final ParserNamespace<K, V> type) {
-        final var local = verifyNotNull(namespaces, "Attempted to access swept namespaces of %s", this);
-        return (Map<K, V>) local.get(type);
+        return (Map<K, V>) namespaces().get(type);
     }
 
     final <K, V> void addToNamespace(final ParserNamespace<K, V> type, final K key, final V value) {
@@ -99,6 +144,82 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
         return ret;
     }
 
+    private <K, V> Map<K, V> ensureLocalNamespace(final ParserNamespace<K, V> type) {
+        final var existing = getLocalNamespace(type);
+        if (existing != null) {
+            return existing;
+        }
+
+        final var ret = new HashMap<K, V>(1);
+        setNamespace(type, ret);
+        return ret;
+    }
+
+    final void reserveLinkage(final @NonNull ParserNamespace<?, ?> type) {
+        setNamespace(type, Reserved.of());
+    }
+
+    final <K, V> void resolveLinkage(final @NonNull ParserNamespace<K, V> type, final Map<@NonNull K, @NonNull V> map) {
+        final var namespace = requireNonNull(type);
+        final var contents = requireNonNull(map);
+
+        // mutable or empty
+        if (namespaces.size() != 1) {
+            final var prev = namespaces.replace(namespace, contents);
+            if (!(prev instanceof Reserved)) {
+                throw new VerifyException("replaced unreserved " + prev);
+            }
+            return;
+        }
+
+        // immutable: must match
+        final var entry = namespaces.entrySet().iterator().next();
+        if (!type.equals(entry.getKey())) {
+            throw new VerifyException("unexpected namespace " + namespace);
+        }
+
+        // must be currently inaccessible
+        final var existing = entry.getValue();
+        if (!(existing instanceof Reserved)) {
+            throw new VerifyException("namespace already resovled to " + existing);
+        }
+        namespaces = Map.of(type, contents);
+    }
+
+    private <K, V> void setNamespace(final @NonNull ParserNamespace<K, V> type, final Map<K, V> map) {
+        final var namespace = requireNonNull(type);
+        final var contents = requireNonNull(map);
+        checkLocalNamespaceAllowed(namespace);
+
+        switch (namespaces.size()) {
+            case 0 -> {
+                // We typically have small population of namespaces, use a singleton map
+                namespaces = Map.of(namespace, contents);
+                return;
+            }
+            case 1 -> {
+                // Alright, time to grow to a full HashMap
+                final var newNamespaces = new HashMap<ParserNamespace<?, ?>, Map<?, ?>>(4);
+                final var entry = namespaces.entrySet().iterator().next();
+                newNamespaces.put(entry.getKey(), entry.getValue());
+                namespaces = newNamespaces;
+            }
+            default -> {
+                // Already expanded: no-op
+            }
+        }
+
+        namespaces.put(namespace, contents);
+    }
+
+    private @NonNull Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces() {
+        final var local = namespaces;
+        if (local == null) {
+            throw new VerifyException("Attempted to access swept namespaces of " + this);
+        }
+        return local;
+    }
+
     void sweepNamespaces() {
         namespaces = null;
         LOG.trace("Swept namespace storages of {}", this);
@@ -106,44 +227,17 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
 
     void sweepNamespaces(final Map<ParserNamespace<?, ?>, SweptNamespace> toWipe) {
         switch (namespaces.size()) {
-            case 0:
+            case 0 -> {
                 namespaces = Map.copyOf(toWipe);
                 return;
-            case 1:
-                namespaces = new HashMap<>(namespaces);
-                break;
-            default:
+            }
+            case 1 -> namespaces = new HashMap<>(namespaces);
+            default -> {
                 // No-op, we are ready
+            }
         }
 
         namespaces.putAll(toWipe);
         LOG.trace("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
-    }
-
-    private <K, V> Map<K, V> ensureLocalNamespace(final ParserNamespace<K, V> type) {
-        var ret = getLocalNamespace(type);
-        if (ret == null) {
-            checkLocalNamespaceAllowed(type);
-            ret = new HashMap<>(1);
-
-            switch (namespaces.size()) {
-                case 0:
-                    // We typically have small population of namespaces, use a singleton map
-                    namespaces = Map.of(type, ret);
-                    break;
-                case 1:
-                    // Alright, time to grow to a full HashMap
-                    final var newNamespaces = new HashMap<ParserNamespace<?, ?>, Map<?, ?>>(4);
-                    final var entry = namespaces.entrySet().iterator().next();
-                    newNamespaces.put(entry.getKey(), entry.getValue());
-                    namespaces = newNamespaces;
-                    // fall through
-                default:
-                    // Already expanded, just put the new namespace
-                    namespaces.put(type, ret);
-            }
-        }
-
-        return ret;
     }
 }

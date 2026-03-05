@@ -112,6 +112,14 @@ public final class ParserNamespaces {
         new ParserNamespace<>("namespace-to-module");
 
     /**
+     * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
+     * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
+     * statement.
+     */
+    public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
+        new ParserNamespace<>("belongsto-prefix-to-module");
+
+    /**
      * Namespace similar to {@link ParserNamespaces#MODULE} for storing modules into Yang model storage but keyed by
      * plain name.
      */
@@ -150,8 +158,9 @@ public final class ParserNamespaces {
      * Source-specific mapping of prefixes to namespaces.
      */
     // FIXME: bad javadoc
-    // FIXME: the context should expose SubmoduleStatement
-    public static final @NonNull ParserNamespace<Unqualified, StmtContext<?, ?, ?>> INCLUDED_SUBMODULE_NAME_TO_MODULECTX
+    // FIXME: rename
+    public static final @NonNull ParserNamespace<Unqualified,
+        StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE_NAME_TO_MODULECTX
         = new ParserNamespace<>("included-submodule-to-modulectx");
 
     /**
