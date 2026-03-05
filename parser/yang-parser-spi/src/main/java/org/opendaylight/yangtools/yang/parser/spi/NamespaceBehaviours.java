@@ -37,17 +37,14 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> NAMESPACE_TO_MODULE =
         NamespaceBehaviour.global(ParserNamespaces.NAMESPACE_TO_MODULE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> BELONGSTO_PREFIX_TO_MODULECTX =
-        NamespaceBehaviour.sourceLocal(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
-
     public static final @NonNull NamespaceBehaviour<?, ?> BELONGSTO_PREFIX_TO_MODULE_NAME =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME);
 
     public static final @NonNull NamespaceBehaviour<?, ?> MODULE_NAME_TO_QNAME =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.MODULE_NAME_TO_QNAME);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> IMPORTED_MODULE =
-        NamespaceBehaviour.sourceLocal(ParserNamespaces.IMPORTED_MODULE);
+    public static final @NonNull NamespaceBehaviour<?, ?> PREFIX_TO_MODULE =
+        NamespaceBehaviour.sourceLocal(ParserNamespaces.PREFIX_TO_MODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_MODULE =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_MODULE);
