@@ -115,6 +115,7 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
+    // FIXME: remove
     void writePreLinkage(StatementWriter writer, StatementDefinitionResolver resolver);
 
     /**
