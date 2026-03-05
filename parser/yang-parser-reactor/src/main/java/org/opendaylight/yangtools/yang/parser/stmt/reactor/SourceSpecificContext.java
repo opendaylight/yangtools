@@ -30,12 +30,16 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.stmt.NamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
@@ -259,6 +263,63 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
         importedNamespaces.add(context);
         return true;
+    }
+
+    /**
+     * Set the {@link SourceLinkage} of this {@code module} source.
+     *
+     * @param importedModules the {@link SourceSpecificContext} accessible by being imported
+     * @param includedSubmodules the {@link SourceSpecificContext} accessible by being included
+     */
+    @NonNullByDefault
+    void setLinkage(final Map<Unqualified, SourceSpecificContext> importedModules,
+            final Set<SourceSpecificContext> includedSubmodules) {
+        if (!(sourceInfo instanceof SourceInfo.Module info)) {
+            throw new VerifyException("cannot set linkage on non-module");
+        }
+        setLinkage(info.prefix(), this, importedModules, includedSubmodules);
+    }
+
+    /**
+     * Set the {@link SourceLinkage} of this {@code submodule} source.
+     *
+     * @param importedModules the {@link SourceSpecificContext} accessible by being imported
+     * @param includedSubmodules the {@link SourceSpecificContext} accessible by being included
+     * @param belongsToPrefix the {@code prefix} of {@code belongs-to} statement
+     * @param belongsToSource the {@link SourceSpecificContext} accessible by us belonging to its module
+     */
+    @NonNullByDefault
+    void setLinkage(final Map<Unqualified, SourceSpecificContext> importedModules,
+            final Set<SourceSpecificContext> includedSubmodules, final Unqualified belongsToPrefix,
+            final SourceSpecificContext belongsToSource) {
+        if (!(sourceInfo instanceof SourceInfo.Submodule info)) {
+            throw new VerifyException("cannot set linkage on non-submodule");
+        }
+        if (!belongsToPrefix.equals(info.belongsTo().prefix())) {
+            throw new VerifyException("inconsistent belongs-to prefix");
+        }
+        setLinkage(belongsToPrefix, belongsToSource, importedModules, includedSubmodules);
+    }
+
+    private void setLinkage(final @NonNull Unqualified localPrefix, final @NonNull SourceSpecificContext localModule,
+            final @NonNull Map<Unqualified, SourceSpecificContext> importedModules,
+            final @NonNull Set<SourceSpecificContext> includedSubmodules) {
+        // FIXME: YANGTOOLS-1112: populate namespaces according to linkage
+    }
+
+    private @NonNull RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement> rootAsModule() {
+        return castRoot(root, ModuleStatement.DEF);
+    }
+
+    private static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+            @NonNull RootStatementContext<A, D, E> castRoot(final @NonNull RootStatementContext<?, ?, ?> root,
+                final @NonNull StatementDefinition<A, D, E> def) {
+        if (root.produces(def)) {
+            @SuppressWarnings("unchecked")
+            final var casted = (RootStatementContext<A, D, E>) root;
+            return casted;
+        }
+        throw new VerifyException("unexpected root " + root);
     }
 
     @Override

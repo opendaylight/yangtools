@@ -21,10 +21,12 @@ import com.google.common.collect.Table;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
@@ -81,7 +84,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
-        this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
+        this.supports = requireNonNull(supports);
 
         final var access = accessNamespace(ValidationBundles.NAMESPACE);
         for (var validationBundle : supportedValidation.entrySet()) {
@@ -178,22 +181,24 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     @NonNullByDefault
     void linkSources(final Map<ResolvedSourceInfo, StatementStreamSource.Factory> linkage) throws ReactorException {
-        final var linkedSources = new ArrayList<SourceSpecificContext>(linkage.size());
+        // Step one: create SourceSpecificContexts
+        final var linkedSources = LinkedHashMap.<SourceRef, SourceSpecificContext>newLinkedHashMap(linkage.size());
         for (var entry : linkage.entrySet()) {
-            final var resolved = entry.getKey();
+            final var resolvedInfo = entry.getKey();
+            final var infoRef = resolvedInfo.infoRef();
 
             final var prefixToModule = new HashMap<Unqualified, QNameModule>();
             // all resolved imports
-            for (var dep : resolved.imports()) {
+            for (var dep : resolvedInfo.imports()) {
                 putPrefix(prefixToModule, dep.dependency().prefix(), dep.qname());
             }
 
             // the module the source belongs to
-            final var sourceInfo = resolved.infoRef().info();
+            final var sourceInfo = infoRef.info();
             final QNameModule definingModule;
             switch (sourceInfo) {
                 case SourceInfo.Module info -> {
-                    definingModule = resolved.qnameModule();
+                    definingModule = resolvedInfo.qnameModule();
                     // Reject any source whose namespace would collide with YIN and could define constructs which
                     // conflict with YANG specification: 'typedef uint8', 'extension list' and similar
                     if (YangConstants.RFC6020_YIN_NAMESPACE.equals(definingModule.namespace())) {
@@ -207,20 +212,50 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
                 }
                 case SourceInfo.Submodule info -> {
                     // FIXME: missing @NonNull: this should be ensured through class hierarchy
-                    final var belongsTo = resolved.belongsTo();
+                    final var belongsTo = resolvedInfo.belongsTo();
                     definingModule = belongsTo.parentModuleQname();
                     putPrefix(prefixToModule, belongsTo.dependency().prefix(), definingModule);
                 }
             }
 
-            // a weird thing: this source's name bound to defining module
-            final var moduleName = sourceInfo.sourceId().name().bindTo(definingModule).intern();
-
-            linkedSources.add(new SourceSpecificContext(this, sourceInfo, definingModule,
-                new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
+            linkedSources.put(infoRef.ref(), new SourceSpecificContext(this, sourceInfo, definingModule,
+                new ImmutableNamespaceBinding(
+                    // a weird thing: this source's name bound to defining module
+                    sourceInfo.sourceId().name().bindTo(definingModule).intern(), Map.copyOf(prefixToModule)),
                 entry.getValue().newStreamSource(prefixToModule)));
         }
-        sources = List.copyOf(linkedSources);
+        sources = List.copyOf(linkedSources.values());
+
+        // Step two: resolve linkage between SourceSpecificContexts
+        for (var resolvedInfo : linkage.keySet()) {
+            final var source = contextFor(linkedSources, resolvedInfo.infoRef().ref());
+
+            // imports and includes apply equally to modules and submodules
+            final var importedModules = resolvedInfo.imports().stream().collect(Collectors.toUnmodifiableMap(
+                resolved -> resolved.dependency().prefix(),
+                resolved -> contextFor(linkedSources, resolved.sourceRef())));
+            final var includedSubmodules = resolvedInfo.includes().stream()
+                .map(resolved -> contextFor(linkedSources, resolved.sourceRef()))
+                .collect(Collectors.toUnmodifiableSet());
+
+            // belongs-to applies only to submodules
+            final var belongsTo = resolvedInfo.belongsTo();
+            if (belongsTo != null) {
+                source.setLinkage(importedModules, includedSubmodules, belongsTo.dependency().prefix(),
+                    contextFor(linkedSources, belongsTo.sourceRef()));
+            } else {
+                source.setLinkage(importedModules, includedSubmodules);
+            }
+        }
+    }
+
+    private static @NonNull SourceSpecificContext contextFor(final @NonNull Map<SourceRef, SourceSpecificContext> map,
+            final @NonNull SourceRef sourceRef) {
+        final var result = map.get(sourceRef);
+        if (result == null) {
+            throw new VerifyException("Cannot resolve " + sourceRef);
+        }
+        return result;
     }
 
     // FIXME: this smells of a builder for ImmutablePrefixResolver or similar
