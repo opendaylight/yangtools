@@ -261,6 +261,16 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return true;
     }
 
+    /**
+     * Set the {@link SourceLinkage} of this source.
+     *
+     * @param sourceLinkage the {@link SourceLinkage}
+     */
+    @NonNullByDefault
+    void setLinkage(final SourceLinkage sourceLinkage) {
+        // FIXME: YANGTOOLS-1112: populate namespaces according to linkage
+    }
+
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
         // RootStatementContext takes care of our namespaces, but intercept IMPORTED_MODULE stores
