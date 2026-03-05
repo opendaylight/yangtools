@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
+import java.text.ParseException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -25,7 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.StatementDeclarations;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRModuleSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
+import org.opendaylight.yangtools.yang.model.spi.source.YangIRSubmoduleSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -75,6 +79,28 @@ record YangIRStatementStreamSource(
      */
     @Nullable QNameModule resolvePrefix(final @NonNull String prefix) {
         return prefixToModule.get(prefix);
+    }
+
+    @Override
+    public Root root() {
+        final var statement = source.statement();
+        final var argument = statement.argument();
+        if (argument == null) {
+            throw new VerifyException("missing argument in " + statement);
+        }
+        final String rawArgument;
+        try {
+            rawArgument = argument.asString(escaping);
+        } catch (ParseException e) {
+            throw new VerifyException("Failed to parse argument", e);
+        }
+        final var sourceRef = source.sourceRefOf(statement);
+        final var size = statement.statements().size();
+
+        return switch (source) {
+            case YangIRModuleSource module -> new ModuleRoot(sourceRef, rawArgument, size);
+            case YangIRSubmoduleSource submodule -> new SubmoduleRoot(sourceRef, rawArgument, size);
+        };
     }
 
     @Override

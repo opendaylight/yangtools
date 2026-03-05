@@ -30,6 +30,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
@@ -116,6 +117,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         new ReactorStatementDefinitionResolver();
     private final @NonNull SupportedStatements statementSupports = new SupportedStatements(statementResolver);
     private final @NonNull IdentifierBinding identifierBinding;
+    private final @NonNull RootStatementContext<?, ?, ?> root;
     private final @NonNull BuildGlobalContext globalContext;
     private final @NonNull QNameModule definingModule;
     private final @NonNull SourceInfo sourceInfo;
@@ -129,7 +131,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
      * - parent module, declared via 'belongs-to' statement
      */
     private Set<RootStatementContext<?, ?, ?>> importedNamespaces = Set.of();
-    private RootStatementContext<?, ?, ?> root;
+
     // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase inProgressPhase;
@@ -146,14 +148,24 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         this.definingModule = requireNonNull(definingModule);
         identifierBinding = IdentifierBinding.of(namespaceBinding);
         this.streamSource = requireNonNull(streamSource);
+
+        final var statement = streamSource.root();
+
+        root = new RootStatementContext<>(sourceId().name(), definingModule, identifierBinding, this,
+            globalContext.linkStatementDefinition(statement.definition(), yangVersion()),
+            statement.sourceRef(), statement.rawArgument(), statement.size());
     }
 
     @NonNull BuildGlobalContext globalContext() {
         return globalContext;
     }
 
-    @NonNull SourceInfo sourceInfo() {
-        return sourceInfo;
+    @NonNull SourceIdentifier sourceId() {
+        return sourceInfo.sourceId();
+    }
+
+    @NonNull YangVersion yangVersion() {
+        return sourceInfo.yangVersion();
     }
 
     ModelProcessingPhase getInProgressPhase() {
@@ -201,25 +213,15 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             return current.createSubstatement(childId, def, ref, argument);
         }
 
-        /*
-         * If root is null or root version is other than default,
-         * we need to create new root.
-         */
-        if (root == null) {
-            root = new RootStatementContext<>(sourceInfo.sourceId().name(), definingModule, identifierBinding, this,
-                def, ref, argument);
-        } else {
-            final var rootStatement = root.definition().statementName();
-            final var rootArgument = root.rawArgument();
-
-            checkState(Objects.equals(def.statementName(), rootStatement) && Objects.equals(argument, rootArgument),
-                "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
+        final var rootStatement = root.definition().statementName();
+        if (!rootStatement.equals(def.statementName())) {
+            throw new VerifyException("inconsistent statement name of " + rootStatement);
+        }
+        final var rootArgument = root.getRawArgument();
+        if (!rootArgument.equals(argument)) {
+            throw new VerifyException("inconsistent statement argument of " + rootArgument);
         }
         return root;
-    }
-
-    @NonNull SourceIdentifier identifySource() {
-        return sourceInfo.sourceId();
     }
 
     @NonNull DeclaredStatement<?> declaredRoot() {
@@ -324,8 +326,8 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     PhaseCompletionProgress tryToCompletePhase(final byte executionOrder) {
-        final ModelProcessingPhase phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(executionOrder));
-        final Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
+        final var phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(executionOrder));
+        final var currentPhaseModifiers = modifiers.get(phase);
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
         final boolean phaseCompleted = requireNonNull(root, "Malformed source. Valid root element is missing.")
