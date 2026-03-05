@@ -20,6 +20,7 @@ import com.google.common.collect.Table;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
@@ -142,22 +144,24 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     @NonNullByDefault
     void linkSources(final Map<ResolvedSourceInfo, StatementStreamSource.Factory> linkage) throws ReactorException {
-        final var linkedSources = new ArrayList<SourceSpecificContext>(linkage.size());
+        // Step one: create SourceSpecificContexts
+        final var linkedSources = LinkedHashMap.<SourceRef, SourceSpecificContext>newLinkedHashMap(linkage.size());
         for (var entry : linkage.entrySet()) {
-            final var resolved = entry.getKey();
+            final var resolvedInfo = entry.getKey();
+            final var infoRef = resolvedInfo.infoRef();
 
             final var prefixToModule = new HashMap<Unqualified, QNameModule>();
             // all resolved imports
-            for (var dep : resolved.imports()) {
+            for (var dep : resolvedInfo.imports()) {
                 putPrefix(prefixToModule, dep.dependency().prefix(), dep.qname());
             }
 
             // the module the source belongs to
-            final var sourceInfo = resolved.infoRef().info();
+            final var sourceInfo = infoRef.info();
             final QNameModule definingModule;
             switch (sourceInfo) {
                 case SourceInfo.Module info -> {
-                    definingModule = resolved.qnameModule();
+                    definingModule = resolvedInfo.qnameModule();
                     // Reject any source whose namespace would collide with YIN and could define constructs which
                     // conflict with YANG specification: 'typedef uint8', 'extension list' and similar
                     if (YangConstants.RFC6020_YIN_NAMESPACE.equals(definingModule.namespace())) {
@@ -171,20 +175,20 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
                 }
                 case SourceInfo.Submodule info -> {
                     // FIXME: missing @NonNull: this should be ensured through class hierarchy
-                    final var belongsTo = resolved.belongsTo();
+                    final var belongsTo = resolvedInfo.belongsTo();
                     definingModule = belongsTo.parentModuleQname();
                     putPrefix(prefixToModule, belongsTo.dependency().prefix(), definingModule);
                 }
             }
 
-            // a weird thing: this source's name bound to defining module
-            final var moduleName = sourceInfo.sourceId().name().bindTo(definingModule).intern();
-
-            linkedSources.add(new SourceSpecificContext(this, sourceInfo, definingModule,
-                new ImmutableNamespaceBinding(moduleName, Map.copyOf(prefixToModule)),
+            linkedSources.put(infoRef.ref(), new SourceSpecificContext(this, sourceInfo, definingModule,
+                new ImmutableNamespaceBinding(
+                    // a weird thing: this source's name bound to defining module
+                    sourceInfo.sourceId().name().bindTo(definingModule).intern(), Map.copyOf(prefixToModule)),
                 entry.getValue().newStreamSource(prefixToModule)));
         }
-        sources = List.copyOf(linkedSources);
+
+        sources = List.copyOf(linkedSources.values());
     }
 
     // FIXME: this smells of a builder for ImmutablePrefixResolver or similar
