@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -37,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
@@ -144,14 +140,6 @@ public final class SubmoduleStatementSupport
         }
 
         stmt.addToNs(ParserNamespaces.SUBMODULE, submoduleIdentifier, stmt);
-
-        final var belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
-        final var prefixSubStmtCtx = SourceException.throwIfNull(
-            findFirstDeclaredSubstatement(stmt, 0, BelongsToStatement.class, PrefixStatement.class), stmt,
-            "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());
-
-        final var prefix = prefixSubStmtCtx.rawArgument();
-        stmt.addToNs(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULE_NAME, prefix, belongsToModuleName);
     }
 
     @Override
