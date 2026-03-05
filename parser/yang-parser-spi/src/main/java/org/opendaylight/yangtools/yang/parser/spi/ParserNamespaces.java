@@ -116,13 +116,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("belongsto-prefix-to-module");
 
     /**
-     * Source-specific mapping of prefixes to namespaces.
-     */
-    // FIXME: bad javadoc
-    public static final @NonNull ParserNamespace<String, Unqualified> BELONGSTO_PREFIX_TO_MODULE_NAME =
-        new ParserNamespace<>("belongsto-prefix-to-name");
-
-    /**
      * Namespace similar to {@link ParserNamespaces#MODULE} for storing modules into Yang model storage but keyed by
      * plain name.
      */
