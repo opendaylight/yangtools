@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.ir.IRStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.source.YangSourceRepresentation;
@@ -85,6 +86,15 @@ public abstract sealed class YangIRSource
     @Override
     public final IRStatement statement() {
         return statement;
+    }
+
+    /**
+     * {@return the StatementSourceReference for an IRStatement}
+     * @param stmt the {@link IRStatement}
+     * @since 15.0.0
+     */
+    public final StatementSourceReference sourceRefOf(final IRStatement stmt) {
+        return refOf(sourceId, stmt);
     }
 
     @Override
