@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -34,6 +36,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
@@ -47,6 +50,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalSt
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
@@ -120,16 +124,48 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         return created;
     }
 
-    StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
-        var potential = definitions.get(version, name);
-        if (potential == null) {
-            final var potentialRaw = verifyNotNull(supports.get(currentPhase)).getStatementDefinition(version, name);
-            if (potentialRaw != null) {
-                potential = new StatementDefinitionContext<>(potentialRaw);
-                definitions.put(version, name, potential);
-            }
+    @NonNullByDefault
+    StatementDefinitionContext<?, ?, ?> linkStatementDefinition(final StatementDefinition<?, ?, ?> definition,
+            final YangVersion version) {
+        final var statementName = definition.statementName();
+        final var existing = definitions.get(version, statementName);
+        if (existing != null) {
+            return existing;
         }
-        return potential;
+
+        final var support = lookupSupport(ModelProcessingPhase.SOURCE_LINKAGE, version, statementName);
+        if (support == null) {
+            throw new VerifyException("no " + version.reference() + " support for " + statementName);
+        }
+        return newDefinition(version, statementName, support);
+    }
+
+    @NonNullByDefault
+    @Nullable StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
+        final var existing = definitions.get(version, name);
+        if (existing != null) {
+            return existing;
+        }
+
+        final var support = lookupSupport(currentPhase, version, name);
+        return support == null ? null : newDefinition(version, name, support);
+    }
+
+    @NonNullByDefault
+    private StatementDefinitionContext<?, ?, ?> newDefinition(final YangVersion version, final QName name,
+            final StatementSupport<?, ?, ?> support) {
+        final var ret = new StatementDefinitionContext<>(support);
+        final var prev = definitions.put(version, name, ret);
+        if (prev != null) {
+            throw new VerifyException("redefinition of " + prev);
+        }
+        return ret;
+    }
+
+    @NonNullByDefault
+    private @Nullable StatementSupport<?, ?, ?> lookupSupport(final ModelProcessingPhase phase,
+            final YangVersion version, final QName name) {
+        return verifyNotNull(supports.get(phase)).getStatementDefinition(version, name);
     }
 
     StatementDefinitionContext<?, ?, ?> getModelDefinedStatementDefinition(final QName name) {
@@ -231,7 +267,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
     private @NonNull SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,
             final RuntimeException cause) throws SomeModifiersUnresolvedException {
-        final var sourceId = source.identifySource();
+        final var sourceId = source.sourceId();
         if (!(cause instanceof SourceException)) {
             /*
              * This should not be happening as all our processing should provide SourceExceptions.
@@ -327,7 +363,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
             if (!addedCause) {
                 addedCause = true;
-                final var sourceId = failedSource.identifySource();
+                final var sourceId = failedSource.sourceId();
                 buildFailure = new SomeModifiersUnresolvedException(currentPhase, sourceId, sourceEx);
             } else {
                 buildFailure.addSuppressed(sourceEx);

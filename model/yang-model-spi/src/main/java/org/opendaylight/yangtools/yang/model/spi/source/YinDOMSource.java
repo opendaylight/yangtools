@@ -148,6 +148,16 @@ public abstract sealed class YinDOMSource
     }
 
     /**
+     * {@return the {@link StatementSourceReference} for an Element}
+     * @param stmt the {@link Element}
+     * @since 15.0.0
+     */
+    public final StatementSourceReference sourceRefOf(final Element stmt) {
+        final var ref = refProvider.refOf(stmt);
+        return ref != null ? ref : sourceId.toReference();
+    }
+
+    /**
      * {@return the underlying {@link DOMSource}}
      */
     public final DOMSource domSource() {
