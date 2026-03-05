@@ -43,7 +43,6 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
     CustomCrossSourceStatementReactorBuilder(final Set<YangVersion> supportedVersions) {
         reactorSupportBundles = ImmutableMap.<ModelProcessingPhase, StatementSupportBundle.Builder>builder()
             .put(ModelProcessingPhase.INIT, StatementSupportBundle.builder(supportedVersions))
-            .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
             .put(ModelProcessingPhase.SOURCE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
             .put(ModelProcessingPhase.STATEMENT_DEFINITION, StatementSupportBundle.builder(supportedVersions))
             .put(ModelProcessingPhase.FULL_DECLARATION, StatementSupportBundle.builder(supportedVersions))
@@ -118,8 +117,7 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
      */
     public @NonNull CrossSourceStatementReactor build() {
         final var initBundle = getBuilder(ModelProcessingPhase.INIT).build();
-        final var preLinkageBundle = getBuilder(ModelProcessingPhase.SOURCE_PRE_LINKAGE).setParent(initBundle).build();
-        final var linkageBundle = getBuilder(ModelProcessingPhase.SOURCE_LINKAGE).setParent(preLinkageBundle).build();
+        final var linkageBundle = getBuilder(ModelProcessingPhase.SOURCE_LINKAGE).setParent(initBundle).build();
         final var stmtDefBundle = getBuilder(ModelProcessingPhase.STATEMENT_DEFINITION)
             .setParent(linkageBundle).build();
         final var fullDeclBundle = getBuilder(ModelProcessingPhase.FULL_DECLARATION).setParent(stmtDefBundle).build();
@@ -127,7 +125,6 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
 
         final var reactorBuilder = CrossSourceStatementReactor.builder()
             .setBundle(ModelProcessingPhase.INIT, initBundle)
-            .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, preLinkageBundle)
             .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
             .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, stmtDefBundle)
             .setBundle(ModelProcessingPhase.FULL_DECLARATION, fullDeclBundle)

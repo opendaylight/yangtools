@@ -78,11 +78,6 @@ record YangIRStatementStreamSource(
     }
 
     @Override
-    public void writePreLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
-        new IRStatementVisitor(this, writer, resolver).visit(source.statement());
-    }
-
-    @Override
     public void writeLinkage(final StatementWriter writer, final StatementDefinitionResolver resolver) {
         new IRStatementVisitor(this, writer, resolver) {
             @Override
