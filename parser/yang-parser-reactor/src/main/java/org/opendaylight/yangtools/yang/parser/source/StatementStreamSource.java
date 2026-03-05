@@ -7,12 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReferenceAware;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RootDeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RootEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.MaterializedSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
@@ -79,6 +93,84 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     }
 
     /**
+     * Bare-minimum information about the root of a {@link StatementStreamSource}.
+     */
+    sealed interface Root extends Immutable, StatementSourceReferenceAware {
+        /**
+         * {@return the statement definition}
+         */
+        @NonNull StatementDefinition<Unqualified, ? extends RootDeclaredStatement, ? extends RootEffectiveStatement<?>>
+            definition();
+
+        /**
+         * {@return the statement argument}
+         */
+        @NonNull String rawArgument();
+
+        /**
+         * {@return the number of substatements}
+         */
+        int size();
+    }
+
+    /**
+     * A {@code module} {@link Root}.
+     */
+    record ModuleRoot(
+            @NonNull StatementSourceReference sourceRef,
+            @NonNull String rawArgument,
+            int size) implements Root {
+        public ModuleRoot {
+            requireNonNull(sourceRef);
+            requireNonNull(rawArgument);
+            checkArgument(size > 0);
+        }
+
+        @Override
+        public StatementDefinition<Unqualified, ModuleStatement, ModuleEffectiveStatement> definition() {
+            return ModuleStatement.DEF;
+        }
+    }
+
+    /**
+     * A {@code submodule} {@link Root}.
+     */
+    record SubmoduleRoot(
+            @NonNull StatementSourceReference sourceRef,
+            @NonNull String rawArgument,
+            int size) implements Root {
+        public SubmoduleRoot {
+            requireNonNull(sourceRef);
+            requireNonNull(rawArgument);
+            checkArgument(size > 0);
+        }
+
+        @Override
+        public StatementDefinition<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> definition() {
+            return SubmoduleStatement.DEF;
+        }
+    }
+
+    /**
+     * Bare-minimum information about the root of a {@link StatementStreamSource}.
+     *
+     * @param <D> declared statement type
+     * @param <E> effective statement type
+     * @param definition the {@link StatementDefinition}
+     * @param argument the statement argument
+     * @param size the number of substatements
+     */
+    record RootStatement<D extends RootDeclaredStatement, E extends RootEffectiveStatement<D>>(
+            @NonNull StatementDefinition<Unqualified, D, E> definition,
+            @NonNull Unqualified argument,
+            int size) implements Immutable {
+        public RootStatement {
+            requireNonNull(definition);
+            requireNonNull(argument);
+        }
+    }
+
+    /**
      * The {@link Factory} for {@link YangIRSource}.
      */
     @NonNullByDefault
@@ -93,6 +185,11 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     static Support<YinDOMSource> forYInDOM() {
         return YinDOMStatementStreamSource.SUPPORT;
     }
+
+    /**
+     * {@return the {@link Root}}
+     */
+    @NonNull Root root();
 
     /**
      * Emits only linkage-related statements to supplied {@code writer} based on specified YANG version.
