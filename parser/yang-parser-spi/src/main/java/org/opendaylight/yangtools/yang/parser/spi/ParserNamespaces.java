@@ -177,13 +177,6 @@ public final class ParserNamespaces {
     public static final @NonNull ParserNamespace<Empty, SetMultimap<QNameModule, QNameModule>> MODULES_DEVIATED_BY =
         new ParserNamespace<>("moduleDeviations");
 
-    /**
-     * Source-specific mapping of prefixes to namespaces.
-     */
-    // FIXME: bad javadoc
-    public static final @NonNull ParserNamespace<QNameModule, Unqualified> MODULE_NAMESPACE_TO_NAME =
-        new ParserNamespace<>("qnamemodule-to-name");
-
     private static final @NonNull ParserNamespace<?, ?> SCHEMA_TREE = new ParserNamespace<>("schemaTree");
 
     /**

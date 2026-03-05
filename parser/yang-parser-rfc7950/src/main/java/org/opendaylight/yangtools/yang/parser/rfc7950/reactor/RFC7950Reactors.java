@@ -142,7 +142,6 @@ public final class RFC7950Reactors {
             .addSupport(NamespaceBehaviours.MODULE)
             .addSupport(NamespaceBehaviours.MODULE_FOR_BELONGSTO)
             .addSupport(NamespaceBehaviours.MODULE_NAME_TO_QNAME)
-            .addSupport(NamespaceBehaviours.MODULE_NAMESPACE_TO_NAME)
             .addSupport(NamespaceBehaviours.NAMESPACE_TO_MODULE)
             .addSupport(NamespaceBehaviours.PREFIX_TO_MODULE)
             .addSupport(NamespaceBehaviours.SUBMODULE)
