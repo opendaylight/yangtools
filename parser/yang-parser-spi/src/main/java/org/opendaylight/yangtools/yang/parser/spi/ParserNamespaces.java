@@ -111,11 +111,7 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> NAMESPACE_TO_MODULE =
         new ParserNamespace<>("namespace-to-module");
 
-    /**
-     * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
-     * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
-     * statement.
-     */
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static final @NonNull ParserNamespace<String, StmtContext<?, ?, ?>> BELONGSTO_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("belongsto-prefix-to-module");
 
@@ -142,8 +138,15 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORT_PREFIX_TO_MODULECTX =
         new ParserNamespace<>("import-prefix-to-modulectx");
 
-    // FIXME: document this
-    public static final @NonNull ParserNamespace<SourceIdentifier, StmtContext<?, ?, ?>> IMPORTED_MODULE =
+    /**
+     * Source-specific mapping of {@code belongs-to} and {@code import} prefixes to module identifiers. This mapping
+     * allows source-specific context to correctly populate prefixes map for actual parsing phase and eventually,
+     * resolve QName for any valid declared statement.
+     *
+     * <p>This namespace is only ever stored to and trying to access it makes little sense.
+     */
+    public static final @NonNull ParserNamespace<Empty,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORTED_MODULE =
         new ParserNamespace<>("imported-module");
 
     // FIXME: document this

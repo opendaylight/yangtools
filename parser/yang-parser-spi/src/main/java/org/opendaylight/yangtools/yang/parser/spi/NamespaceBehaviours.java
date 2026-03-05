@@ -37,6 +37,7 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> NAMESPACE_TO_MODULE =
         NamespaceBehaviour.global(ParserNamespaces.NAMESPACE_TO_MODULE);
 
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public static final @NonNull NamespaceBehaviour<?, ?> BELONGSTO_PREFIX_TO_MODULECTX =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.BELONGSTO_PREFIX_TO_MODULECTX);
 
