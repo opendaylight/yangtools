@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -222,6 +223,28 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
                     // a weird thing: this source's name bound to defining module
                     sourceInfo.sourceId().name().bindTo(definingModule).intern(), Map.copyOf(prefixToModule)),
                 entry.getValue().newStreamSource(prefixToModule)));
+        }
+
+        // Step two: populate namespaces
+        for (var resolvedInfo : linkage.keySet()) {
+            final var source = verifyNotNull(linkedSources.get(resolvedInfo.infoRef().ref()));
+
+            // BELONGSTO_PREFIX_TO_MODULECTX
+            final var belongsTo = resolvedInfo.belongsTo();
+            if (belongsTo != null) {
+                source.setBelongsTo(belongsTo.dependency().prefix(),
+                    verifyNotNull(linkedSources.get(belongsTo.sourceRef())));
+            }
+
+            // IMPORT_PREFIX_TO_MODULECTX
+            source.setImports(resolvedInfo.imports().stream().collect(Collectors.toUnmodifiableMap(
+                resolved -> resolved.dependency().prefix(),
+                resolved -> verifyNotNull(linkedSources.get(resolved.sourceRef())))));
+
+            // INCLUDED_SUBMODULE_NAME_TO_MODULECTX
+            source.setIncludes(resolvedInfo.includes().stream().collect(Collectors.toUnmodifiableMap(
+                resolved -> resolved.dependency().name(),
+                resolved -> verifyNotNull(linkedSources.get(resolved.sourceRef())))));
         }
 
         sources = List.copyOf(linkedSources.values());
