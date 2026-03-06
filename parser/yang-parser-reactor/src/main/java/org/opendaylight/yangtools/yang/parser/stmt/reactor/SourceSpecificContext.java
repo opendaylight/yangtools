@@ -41,6 +41,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.stmt.NamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
@@ -308,8 +310,8 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private void setLinkage(final @NonNull Unqualified localPrefix, final @NonNull SourceSpecificContext localModule,
             final @NonNull Map<Unqualified, SourceSpecificContext> importedModules,
             final @NonNull Set<SourceSpecificContext> includedSubmodules) {
-        final var prefixToModule =
-            HashMap.<String, RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>>newHashMap(
+        final var prefixToModule = HashMap.<String,
+            RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>>newHashMap(
                 importedModules.size());
         for (var entry : importedModules.entrySet()) {
             prefixToModule.put(entry.getKey().getLocalName(), entry.getValue().rootAsModule());
@@ -318,11 +320,24 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
         root.resolveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefixToModule);
 
-        // FIXME: YANGTOOLS-1112: populate other namespaces
+        final var nameToSubmodule = HashMap.<Unqualified,
+            RootStatementContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>newHashMap(
+                importedModules.size());
+        for (var includedSubmodule : includedSubmodules) {
+            final var submodule = includedSubmodule.rootAsSubmodule();
+            nameToSubmodule.put(submodule.argument(), submodule);
+        }
+
+        root.setIncludedSubmodules(nameToSubmodule.values());
     }
 
     private @NonNull RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement> rootAsModule() {
         return castRoot(root, ModuleStatement.DEF);
+    }
+
+    private @NonNull RootStatementContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>
+            rootAsSubmodule() {
+        return castRoot(root, SubmoduleStatement.DEF);
     }
 
     private static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>

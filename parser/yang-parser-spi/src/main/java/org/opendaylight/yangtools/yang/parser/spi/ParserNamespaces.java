@@ -139,14 +139,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("imported-module");
 
     /**
-     * A virtual namespace mediating the set of sources included in a particular source. Note that this namespace always
-     * reports empty contents.
-     */
-    public static final @NonNull ParserNamespace<
-            StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>, Empty> INCLUDED_SUBMODULE =
-        new ParserNamespace<>("included-submodule");
-
-    /**
      * Source-specific mapping of prefixes to namespaces.
      */
     // FIXME: bad javadoc

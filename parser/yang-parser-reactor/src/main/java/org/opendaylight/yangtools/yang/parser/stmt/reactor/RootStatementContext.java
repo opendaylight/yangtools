@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,6 +23,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -55,7 +56,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     /**
      * References to RootStatementContext of submodules which are included in this source.
      */
-    private List<RootStatementContext<?, ?, ?>> includedContexts = ImmutableList.of();
+    private Set<RootStatementContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> includedSubmodules;
 
     RootStatementContext(final Unqualified sourceName, final QNameModule definingModule,
             final IdentifierBinding identifierBinding, final SourceSpecificContext sourceContext,
@@ -72,6 +73,14 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         }
 
         resizeSubstatements(expectedSize);
+    }
+
+    void setIncludedSubmodules(
+            final Collection<RootStatementContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> coll) {
+        if (includedSubmodules != null) {
+            throw new VerifyException("cannot replace " + includedSubmodules);
+        }
+        includedSubmodules = Set.copyOf(coll);
     }
 
     @Override
@@ -144,21 +153,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @Override
-    public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        if (!type.equals(ParserNamespaces.INCLUDED_SUBMODULE)) {
-            return super.putToLocalStorage(type, key, value);
-        }
-        if (!(key instanceof RootStatementContext<?, ?, ?> root)) {
-            throw new VerifyException("Unexpected included key " + key);
-        }
-        if (includedContexts.isEmpty()) {
-            includedContexts = new ArrayList<>(1);
-        }
-        includedContexts.add(root);
-        return null;
-    }
-
-    @Override
     public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
         return getFromLocalStorage(type, key, new HashSet<>());
     }
@@ -169,17 +163,17 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      */
     private <K, V> @Nullable V getFromLocalStorage(final ParserNamespace<K, V> type, final K key,
             final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
-        final V potentialLocal = super.getFromLocalStorage(type, key);
+        final var potentialLocal = super.getFromLocalStorage(type, key);
         if (potentialLocal != null) {
             return potentialLocal;
         }
 
         alreadyChecked.add(this);
-        for (final RootStatementContext<?, ?, ?> includedSource : includedContexts) {
-            if (alreadyChecked.contains(includedSource)) {
+        for (var includedSubmodule : includedSubmodules) {
+            if (alreadyChecked.contains(includedSubmodule)) {
                 continue;
             }
-            final V potential = includedSource.getFromLocalStorage(type, key, alreadyChecked);
+            final var potential = includedSubmodule.getFromLocalStorage(type, key, alreadyChecked);
             if (potential != null) {
                 return potential;
             }
@@ -193,22 +187,22 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     /*
-     * We need to track already checked RootStatementContexts due to possible
-     * circular chains of includes between submodules
+     * We need to track already checked RootStatementContexts due to possible circular chains of includes between
+     * submodules
      */
     private <K, V> @Nullable Map<K, V> getAllFromLocalStorage(final ParserNamespace<K, V> type,
             final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
-        final Map<K, V> potentialLocal = super.getAllFromLocalStorage(type);
+        final var potentialLocal = super.getAllFromLocalStorage(type);
         if (potentialLocal != null) {
             return potentialLocal;
         }
 
         alreadyChecked.add(this);
-        for (final RootStatementContext<?, ?, ?> includedSource : includedContexts) {
-            if (alreadyChecked.contains(includedSource)) {
+        for (var includedSubmodule : includedSubmodules) {
+            if (alreadyChecked.contains(includedSubmodule)) {
                 continue;
             }
-            final Map<K, V> potential = includedSource.getAllFromLocalStorage(type, alreadyChecked);
+            final var potential = includedSubmodule.getAllFromLocalStorage(type, alreadyChecked);
             if (potential != null) {
                 return potential;
             }
