@@ -128,17 +128,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("import-prefix-to-modulectx");
 
     /**
-     * Source-specific mapping of {@code belongs-to} and {@code import} prefixes to module identifiers. This mapping
-     * allows source-specific context to correctly populate prefixes map for actual parsing phase and eventually,
-     * resolve QName for any valid declared statement.
-     *
-     * <p>This namespace is only ever stored to and trying to access it makes little sense.
-     */
-    public static final @NonNull ParserNamespace<
-            StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>, Empty> IMPORTED_MODULE =
-        new ParserNamespace<>("imported-module");
-
-    /**
      * Source-specific mapping of prefixes to namespaces.
      */
     // FIXME: bad javadoc

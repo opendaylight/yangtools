@@ -11,16 +11,11 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPha
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.VerifyException;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -40,28 +35,18 @@ final class RevisionImport {
         final var importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final var moduleName = stmt.getArgument();
         final var revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
-        final Prerequisite<StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> imported;
-        if (revision == null) {
-            imported = importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
-                NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);
-        } else {
-            imported = importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
+        final var imported = revision == null
+            ? importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
+                NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE)
+            : importAction.requiresCtx(stmt, ParserNamespaces.MODULE,
                 new SourceIdentifier(moduleName, revision), SOURCE_LINKAGE);
-        }
 
-        final var importing = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
+        importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final var importedModule = imported.resolve(ctx);
-                final var importingModule = importing.resolve(ctx);
-                final var prefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                if (prefix == null) {
-                    throw new VerifyException("prefix not found in " + stmt);
-                }
-
-                importingModule.addToNs(ParserNamespaces.IMPORTED_MODULE, importedModule, Empty.value());
+                // No-op
             }
 
             @Override

@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -137,7 +137,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
      * - modules imported via 'import' statement
      * - parent module, declared via 'belongs-to' statement
      */
-    private Set<RootStatementContext<?, ?, ?>> importedNamespaces = Set.of();
+    private Set<NamespaceStorage> importedNamespaces;
 
     // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -256,21 +256,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         LOG.debug("Source {} started phase {}", streamSource, phase);
     }
 
-    private boolean updateImportedNamespaces(final ParserNamespace<?, ?> type, final Object key) {
-        if (!ParserNamespaces.IMPORTED_MODULE.equals(type)) {
-            return false;
-        }
-        if (!(key instanceof RootStatementContext<?, ?, ?> context)) {
-            throw new VerifyException("Unexpected imported key " + key);
-        }
-
-        if (importedNamespaces.isEmpty()) {
-            importedNamespaces = LinkedHashSet.newLinkedHashSet(4);
-        }
-        importedNamespaces.add(context);
-        return true;
-    }
-
     /**
      * Set the {@link SourceLinkage} of this {@code module} source.
      *
@@ -318,6 +303,10 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
         prefixToModule.put(localPrefix.getLocalName(), localModule.rootAsModule());
 
+        importedNamespaces = prefixToModule.values().stream()
+            // Careful: do not import ourselves
+            .filter(module -> module != root)
+            .collect(Collectors.toUnmodifiableSet());
         root.resolveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefixToModule);
 
         final var nameToSubmodule = HashMap.<Unqualified,
@@ -353,14 +342,14 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        // RootStatementContext takes care of our namespaces, but intercept IMPORTED_MODULE stores
-        return updateImportedNamespaces(type, key) ? null : root.putToLocalStorage(type, key, value);
+        // RootStatementContext takes care of our namespaces
+        return root.putToLocalStorage(type, key, value);
     }
 
     @Override
     public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
-        // RootStatementContext takes care of our namespaces, but intercept IMPORTED_MODULE stores
-        return updateImportedNamespaces(type, key) ? null : root.putToLocalStorageIfAbsent(type, key, value);
+        // RootStatementContext takes care of our namespaces
+        return root.putToLocalStorageIfAbsent(type, key, value);
     }
 
     @Override
@@ -370,13 +359,13 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @Override
     public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
-        final V potentialLocal = root.getFromLocalStorage(type, key);
+        final var potentialLocal = root.getFromLocalStorage(type, key);
         if (potentialLocal != null) {
             return potentialLocal;
         }
 
-        for (final NamespaceStorage importedSource : importedNamespaces) {
-            final V potential = importedSource.getFromLocalStorage(type, key);
+        for (var importedNamespace : importedNamespaces) {
+            final var potential = importedNamespace.getFromLocalStorage(type, key);
             if (potential != null) {
                 return potential;
             }
@@ -386,14 +375,13 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @Override
     public <K, V> Map<K, V> getAllFromLocalStorage(final ParserNamespace<K, V> type) {
-        final Map<K, V> potentialLocal = root.getAllFromLocalStorage(type);
+        final var potentialLocal = root.getAllFromLocalStorage(type);
         if (potentialLocal != null) {
             return potentialLocal;
         }
 
-        for (final NamespaceStorage importedSource : importedNamespaces) {
-            final Map<K, V> potential = importedSource.getAllFromLocalStorage(type);
-
+        for (var importedNamespace : importedNamespaces) {
+            final var potential = importedNamespace.getAllFromLocalStorage(type);
             if (potential != null) {
                 return potential;
             }

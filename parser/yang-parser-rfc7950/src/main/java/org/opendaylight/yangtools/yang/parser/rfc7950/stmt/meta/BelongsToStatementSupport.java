@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatem
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -46,7 +44,7 @@ public final class BelongsToStatementSupport
     @Override
     public void onLinkageDeclared(
             final Mutable<Unqualified, BelongsToStatement, BelongsToEffectiveStatement> belongsToCtx) {
-        ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
+        final var belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
         final var belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx, ParserNamespaces.MODULE_FOR_BELONGSTO,
             belongsToCtx.getArgument(), ModelProcessingPhase.SOURCE_LINKAGE);
@@ -54,7 +52,7 @@ public final class BelongsToStatementSupport
         belongsToAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                belongsToCtx.addToNs(ParserNamespaces.IMPORTED_MODULE, belongsToPrereq.resolve(ctx), Empty.value());
+                // No-op
             }
 
             @Override
