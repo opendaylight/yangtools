@@ -106,14 +106,14 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
 
     void sweepNamespaces(final Map<ParserNamespace<?, ?>, SweptNamespace> toWipe) {
         switch (namespaces.size()) {
-            case 0:
+            case 0 -> {
                 namespaces = Map.copyOf(toWipe);
                 return;
-            case 1:
-                namespaces = new HashMap<>(namespaces);
-                break;
-            default:
+            }
+            case 1 -> namespaces = new HashMap<>(namespaces);
+            default -> {
                 // No-op, we are ready
+            }
         }
 
         namespaces.putAll(toWipe);
