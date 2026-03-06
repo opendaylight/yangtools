@@ -29,13 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  *
  * <p>Steps (in order of invocation) are:
  * <ol>
- * <li>{@link #writePreLinkage(StatementWriter, StatementDefinitionResolver)} -
- * Source MUST emit only statements related in pre-linkage, which are present in
- * supplied statement definition map. This step is used as preparatory cross-source
- * relationship resolution phase which collects available module names and namespaces.
- * It is necessary in order to correct resolution of unknown statements used by linkage
- * phase (e.g. semantic version of yang modules).
- * </li>
  * <li>{@link #writeLinkage(StatementWriter, StatementDefinitionResolver)} -
  * Source MUST emit only statements related in linkage, which are present in
  * supplied statement definition map. This step is used to build cross-source
