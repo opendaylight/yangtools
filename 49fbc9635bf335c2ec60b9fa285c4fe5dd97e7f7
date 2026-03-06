@@ -22,6 +22,30 @@
       },
       "revId": "49fbc9635bf335c2ec60b9fa285c4fe5dd97e7f7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "206375b3_d0dfd975",
+        "filename": "parser/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/meta/BelongsToStatementSupport.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-03-06T10:28:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9fc4c47_483d7449",
+      "range": {
+        "startLine": 60,
+        "startChar": 26,
+        "endLine": 60,
+        "endChar": 32
+      },
+      "revId": "49fbc9635bf335c2ec60b9fa285c4fe5dd97e7f7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
