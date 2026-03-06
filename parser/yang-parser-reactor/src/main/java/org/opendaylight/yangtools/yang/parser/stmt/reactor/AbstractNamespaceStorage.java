@@ -99,26 +99,6 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
         return ret;
     }
 
-    void sweepNamespaces() {
-        namespaces = null;
-        LOG.trace("Swept namespace storages of {}", this);
-    }
-
-    void sweepNamespaces(final Map<ParserNamespace<?, ?>, SweptNamespace> toWipe) {
-        switch (namespaces.size()) {
-            case 0 -> {
-                namespaces = Map.copyOf(toWipe);
-            }
-            case 1 -> namespaces = new HashMap<>(namespaces);
-            default -> {
-                // No-op, we are ready
-            }
-        }
-
-        namespaces.putAll(toWipe);
-        LOG.trace("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
-    }
-
     private <K, V> Map<K, V> ensureLocalNamespace(final ParserNamespace<K, V> type) {
         final var existing = getLocalNamespace(type);
         return existing != null ? existing : allocateLocalNamespace(type);
@@ -146,5 +126,25 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
         }
 
         return ret;
+    }
+
+    void sweepNamespaces() {
+        namespaces = null;
+        LOG.trace("Swept namespace storages of {}", this);
+    }
+
+    void sweepNamespaces(final Map<ParserNamespace<?, ?>, SweptNamespace> toWipe) {
+        switch (namespaces.size()) {
+            case 0 -> {
+                namespaces = Map.copyOf(toWipe);
+            }
+            case 1 -> namespaces = new HashMap<>(namespaces);
+            default -> {
+                // No-op, we are ready
+            }
+        }
+
+        namespaces.putAll(toWipe);
+        LOG.trace("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
     }
 }
