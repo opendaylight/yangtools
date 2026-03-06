@@ -17,6 +17,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,9 +35,12 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.stmt.NamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.StatementDefinitionResolver;
@@ -155,6 +159,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         root = new RootStatementContext<>(sourceId().name(), definingModule, identifierBinding, this,
             globalContext.linkStatementDefinition(statement.definition(), yangVersion()),
             statement.sourceRef(), statement.rawArgument(), statement.size());
+
+        // reserve namespaces for resolution
+        root.reserveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
     }
 
     @NonNull BuildGlobalContext globalContext() {
@@ -301,7 +308,32 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private void setLinkage(final @NonNull Unqualified localPrefix, final @NonNull SourceSpecificContext localModule,
             final @NonNull Map<Unqualified, SourceSpecificContext> importedModules,
             final @NonNull Set<SourceSpecificContext> includedSubmodules) {
-        // FIXME: YANGTOOLS-1112: populate namespaces according to linkage
+        final var prefixToModule =
+            HashMap.<String, RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>>newHashMap(
+                importedModules.size());
+        for (var entry : importedModules.entrySet()) {
+            prefixToModule.put(entry.getKey().getLocalName(), entry.getValue().rootAsModule());
+        }
+        prefixToModule.put(localPrefix.getLocalName(), localModule.rootAsModule());
+
+        root.resolveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefixToModule);
+
+        // FIXME: YANGTOOLS-1112: populate other namespaces
+    }
+
+    private @NonNull RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement> rootAsModule() {
+        return castRoot(root, ModuleStatement.DEF);
+    }
+
+    private static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+            @NonNull RootStatementContext<A, D, E> castRoot(final @NonNull RootStatementContext<?, ?, ?> root,
+                final @NonNull StatementDefinition<A, D, E> def) {
+        if (root.produces(def)) {
+            @SuppressWarnings("unchecked")
+            final var casted = (RootStatementContext<A, D, E>) root;
+            return casted;
+        }
+        throw new VerifyException("unexpected root " + root);
     }
 
     @Override

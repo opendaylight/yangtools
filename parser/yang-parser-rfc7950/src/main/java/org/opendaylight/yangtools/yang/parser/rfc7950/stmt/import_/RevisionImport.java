@@ -62,7 +62,6 @@ final class RevisionImport {
                 }
 
                 importingModule.addToNs(ParserNamespaces.IMPORTED_MODULE, importedModule, Empty.value());
-                stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix, importedModule);
             }
 
             @Override

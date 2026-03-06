@@ -162,14 +162,8 @@ public final class ModuleStatementSupport
 
         stmt.addToNs(ParserNamespaces.MODULE, moduleIdentifier, stmt);
         stmt.addToNs(ParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
-        stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
-
-        final var modulePrefix = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
-            "Prefix of the module [%s] is missing", stmt.argument());
-
         stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
-        stmt.addToNs(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, modulePrefix, stmt);
+        stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
     }
 
     @Override
