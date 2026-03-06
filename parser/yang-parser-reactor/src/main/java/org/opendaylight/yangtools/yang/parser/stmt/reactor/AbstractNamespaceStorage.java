@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permits BuildGlobalContext, ReactorStmtCtx {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractNamespaceStorage.class);
 
-    private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = ImmutableMap.of();
+    private Map<ParserNamespace<?, ?>, Map<?, ?>> namespaces = Map.of();
 
     /**
      * Get access to a {@link ParserNamespace}.
@@ -108,7 +107,7 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
     void sweepNamespaces(final Map<ParserNamespace<?, ?>, SweptNamespace> toWipe) {
         switch (namespaces.size()) {
             case 0:
-                namespaces = ImmutableMap.copyOf(toWipe);
+                namespaces = Map.copyOf(toWipe);
                 return;
             case 1:
                 namespaces = new HashMap<>(namespaces);
@@ -130,7 +129,7 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
             switch (namespaces.size()) {
                 case 0:
                     // We typically have small population of namespaces, use a singleton map
-                    namespaces = ImmutableMap.of(type, ret);
+                    namespaces = Map.of(type, ret);
                     break;
                 case 1:
                     // Alright, time to grow to a full HashMap
