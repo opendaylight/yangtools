@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c85ff41a_c45fbc25",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/AbstractNamespaceStorage.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-03-06T11:13:11Z",
+      "side": 1,
+      "message": "reserved",
+      "range": {
+        "startLine": 181,
+        "startChar": 29,
+        "endLine": 181,
+        "endChar": 41
+      },
+      "revId": "d44f53baf1b2367e45924ded19d2d2ad438ac8fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "112cdf34_aa6d382f",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/RootStatementContext.java",
         "patchSetId": 5
