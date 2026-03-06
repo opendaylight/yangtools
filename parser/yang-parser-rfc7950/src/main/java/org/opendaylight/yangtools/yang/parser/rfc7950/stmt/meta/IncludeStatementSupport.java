@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -23,8 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -38,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
@@ -74,37 +72,30 @@ public final class IncludeStatementSupport
         final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.DEF);
 
         final var includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-        final Prerequisite<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
-            requiresCtxPrerequisite;
-        if (revision == null) {
-            requiresCtxPrerequisite = includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
-                NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
-        } else {
-            requiresCtxPrerequisite = includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
+        final var included = revision == null
+            ? includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
+                NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE)
+            : includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
                 new SourceIdentifier(submoduleName, revision.argument()), SOURCE_LINKAGE);
-        }
 
         includeAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final var includedSubModuleContext = requiresCtxPrerequisite.resolve(ctx);
+                final var includedSubmodule = included.resolve(ctx);
                 final var modVersion = stmt.getRoot().yangVersion();
-                final var subVersion = includedSubModuleContext.yangVersion();
+                final var subVersion = includedSubmodule.yangVersion();
                 if (subVersion != modVersion) {
                     throw new YangVersionLinkageException(stmt,
                         "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
                 }
 
-                stmt.addToNs(ParserNamespaces.INCLUDED_MODULE,
-                    new SourceIdentifier(submoduleName, revision != null ? revision.getArgument() : null),
-                    includedSubModuleContext);
-                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX, stmt.argument(),
-                    includedSubModuleContext);
+                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE, includedSubmodule, Empty.value());
+                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX, stmt.argument(), includedSubmodule);
             }
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(requiresCtxPrerequisite), stmt,
+                InferenceException.throwIf(failed.contains(included), stmt,
                     "Included submodule '%s' was not found", stmt.rawArgument());
             }
         });
