@@ -120,27 +120,29 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
     }
 
     private <K, V> Map<K, V> ensureLocalNamespace(final ParserNamespace<K, V> type) {
-        var ret = getLocalNamespace(type);
-        if (ret == null) {
-            checkLocalNamespaceAllowed(type);
-            ret = new HashMap<>(1);
+        final var existing = getLocalNamespace(type);
+        return existing != null ? existing : allocateLocalNamespace(type);
+    }
 
-            switch (namespaces.size()) {
-                case 0:
-                    // We typically have small population of namespaces, use a singleton map
-                    namespaces = Map.of(type, ret);
-                    break;
-                case 1:
-                    // Alright, time to grow to a full HashMap
-                    final var newNamespaces = new HashMap<ParserNamespace<?, ?>, Map<?, ?>>(4);
-                    final var entry = namespaces.entrySet().iterator().next();
-                    newNamespaces.put(entry.getKey(), entry.getValue());
-                    namespaces = newNamespaces;
-                    // fall through
-                default:
-                    // Already expanded, just put the new namespace
-                    namespaces.put(type, ret);
-            }
+    private <K, V> Map<K, V> allocateLocalNamespace(final ParserNamespace<K, V> type) {
+        checkLocalNamespaceAllowed(type);
+        final var ret = new HashMap<K, V>(1);
+
+        switch (namespaces.size()) {
+            case 0:
+                // We typically have small population of namespaces, use a singleton map
+                namespaces = Map.of(type, ret);
+                break;
+            case 1:
+                // Alright, time to grow to a full HashMap
+                final var newNamespaces = new HashMap<ParserNamespace<?, ?>, Map<?, ?>>(4);
+                final var entry = namespaces.entrySet().iterator().next();
+                newNamespaces.put(entry.getKey(), entry.getValue());
+                namespaces = newNamespaces;
+                // fall through
+            default:
+                // Already expanded, just put the new namespace
+                namespaces.put(type, ret);
         }
 
         return ret;
