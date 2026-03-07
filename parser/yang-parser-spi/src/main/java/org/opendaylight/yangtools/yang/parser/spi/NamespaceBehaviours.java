@@ -46,9 +46,6 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> IMPORT_PREFIX_TO_MODULECTX =
         NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> MODULE_FOR_BELONGSTO =
-        NamespaceBehaviour.global(ParserNamespaces.MODULE_FOR_BELONGSTO);
-
     public static final @NonNull NamespaceBehaviour<?, ?> SUPPORTED_FEATURES =
         NamespaceBehaviour.global(ParserNamespaces.SUPPORTED_FEATURES);
 

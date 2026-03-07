@@ -112,15 +112,6 @@ public final class ParserNamespaces {
         new ParserNamespace<>("namespace-to-module");
 
     /**
-     * Namespace similar to {@link ParserNamespaces#MODULE} for storing modules into Yang model storage but keyed by
-     * plain name.
-     */
-    // FIXME: Better name?
-    public static final @NonNull ParserNamespace<Unqualified,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE_FOR_BELONGSTO =
-        new ParserNamespace<>("module-belongsto");
-
-    /**
      * Source-specific mapping of prefix strings to module context.
      */
     public static final @NonNull ParserNamespace<String,

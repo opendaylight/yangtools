@@ -161,7 +161,6 @@ public final class ModuleStatementSupport
         final var moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
 
         stmt.addToNs(ParserNamespaces.MODULE, moduleIdentifier, stmt);
-        stmt.addToNs(ParserNamespaces.MODULE_FOR_BELONGSTO, moduleName, stmt);
         stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
         stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
     }
