@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageT
  * of a tree of {@link NamespaceStorage} which represents local context of one of types defined in {@link StorageType}.
  *
  * <p>For common behaviour models please use static factories {@link #global(ParserNamespace)},
- * {@link #sourceLocal(ParserNamespace)} and {@link #treeScoped(ParserNamespace)}.
+ * {@link #rootStatementLocal(ParserNamespace)} and {@link #treeScoped(ParserNamespace)}.
  *
  * @param <K> Key type
  * @param <V> Value type
@@ -51,20 +51,6 @@ public abstract class NamespaceBehaviour<K, V> {
      */
     public static <K, V> @NonNull NamespaceBehaviour<K, V> global(final ParserNamespace<K, V> namespace) {
         return new Global<>(namespace);
-    }
-
-    /**
-     * Creates source-local namespace behaviour for supplied namespace type. Source-local namespace behaviour stores
-     * and loads all values from closest {@link NamespaceStorage} ancestor with type
-     * of {@link StorageType#SOURCE_LOCAL_SPECIAL}.
-     *
-     * @param <K> Namespace key type
-     * @param <V> Namespace value type
-     * @param namespace Namespace identifier
-     * @return source-local namespace behaviour for supplied namespace type.
-     */
-    public static <K, V> @NonNull NamespaceBehaviour<K, V> sourceLocal(final ParserNamespace<K, V> namespace) {
-        return new StorageSpecific<>(namespace, StorageType.SOURCE_LOCAL_SPECIAL);
     }
 
     public static <K, V> @NonNull NamespaceBehaviour<K, V> statementLocal(final ParserNamespace<K, V> namespace) {
@@ -236,6 +222,9 @@ public abstract class NamespaceBehaviour<K, V> {
         StorageSpecific(final ParserNamespace<K, V> namespace, final StorageType type) {
             super(namespace);
             this.type = requireNonNull(type);
+            if (type == StorageType.ACCESSIBLE_SOURCES) {
+                throw new IllegalArgumentException("cannot behave on " + type);
+            }
         }
 
         @Override
