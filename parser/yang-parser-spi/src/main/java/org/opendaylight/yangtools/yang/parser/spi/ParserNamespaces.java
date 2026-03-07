@@ -119,12 +119,11 @@ public final class ParserNamespaces {
         new ParserNamespace<>("import-prefix-to-modulectx");
 
     /**
-     * Source-specific mapping of prefixes to namespaces.
+     * Source-specific mapping of included submodule names to submodule.
      */
-    // FIXME: bad javadoc
-    // FIXME: the context should expose SubmoduleStatement
-    public static final @NonNull ParserNamespace<Unqualified, StmtContext<?, ?, ?>> INCLUDED_SUBMODULE_NAME_TO_MODULECTX
-        = new ParserNamespace<>("included-submodule-to-modulectx");
+    public static final @NonNull ParserNamespace<Unqualified,
+        StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE =
+            new ParserNamespace<>("included-submodule-to-modulectx");
 
     /**
      * Source-specific mapping of prefixes to namespaces.
