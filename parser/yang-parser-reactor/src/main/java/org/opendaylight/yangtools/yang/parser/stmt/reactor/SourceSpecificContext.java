@@ -161,7 +161,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             statement.sourceRef(), statement.rawArgument(), statement.size());
 
         // reserve namespaces for resolution
-        root.reserveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        root.reserveLinkage(ParserNamespaces.IMPORTED_MODULE);
         root.reserveLinkage(ParserNamespaces.INCLUDED_SUBMODULE);
     }
 
@@ -306,7 +306,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             // Careful: do not import ourselves
             .filter(module -> module != root)
             .collect(Collectors.toUnmodifiableSet());
-        root.resolveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefixToModule);
+        root.resolveLinkage(ParserNamespaces.IMPORTED_MODULE, prefixToModule);
 
         final var nameToSubmodule = HashMap.<Unqualified,
             RootStatementContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>newHashMap(

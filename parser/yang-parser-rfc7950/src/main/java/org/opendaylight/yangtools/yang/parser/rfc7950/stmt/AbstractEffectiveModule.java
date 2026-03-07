@@ -213,9 +213,8 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         streamEffectiveSubstatements(ImportEffectiveStatement.class)
             .map(ImportEffectiveStatement::prefixArgument)
             .forEach(pfx -> {
-                final var importedCtx =
-                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, pfx),
-                        "Failed to resolve prefix %s", pfx);
+                final var importedCtx = verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORTED_MODULE, pfx),
+                    "Failed to resolve prefix %s", pfx);
                 builder.put(pfx, importedCtx.buildEffective());
             });
     }

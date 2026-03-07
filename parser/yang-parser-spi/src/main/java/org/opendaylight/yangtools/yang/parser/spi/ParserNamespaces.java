@@ -115,8 +115,8 @@ public final class ParserNamespaces {
      * Source-specific mapping of prefix strings to module context.
      */
     public static final @NonNull ParserNamespace<String,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORT_PREFIX_TO_MODULECTX =
-        new ParserNamespace<>("import-prefix-to-modulectx");
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORTED_MODULE =
+        new ParserNamespace<>("imported-module");
 
     /**
      * Source-specific mapping of included submodule names to submodule.
