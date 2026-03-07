@@ -340,19 +340,17 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @Override
     public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        // RootStatementContext takes care of our namespaces
-        return root.putToLocalStorage(type, key, value);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
-        // RootStatementContext takes care of our namespaces
-        return root.putToLocalStorageIfAbsent(type, key, value);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public StorageType getStorageType() {
-        return StorageType.SOURCE_LOCAL_SPECIAL;
+        return StorageType.ACCESSIBLE_SOURCES;
     }
 
     @Override
