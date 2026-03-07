@@ -26,10 +26,10 @@ public interface NamespaceStorage {
          */
         GLOBAL,
         /**
-         * Storage of the root statement of a particular source and any sources it is importing.
+         * Virtual storage providing access for source-visible namespace access, as mediated by {@code belongs-to},
+         * {@code import} and {@code include} statements. This storage is by definition read-only.
          */
-        // FIXME: 7.0.0: this is a misnomer and should be renamed
-        SOURCE_LOCAL_SPECIAL,
+        ACCESSIBLE_SOURCES,
         /**
          * Storage of a single statement.
          */
@@ -57,9 +57,7 @@ public interface NamespaceStorage {
     }
 
     /**
-     * Return the type of this storage.
-     *
-     * @return The type of this storage
+     * {@return the type of this storage}
      */
     @NonNull StorageType getStorageType();
 
@@ -85,6 +83,7 @@ public interface NamespaceStorage {
      * @param key Key
      * @param value Value
      * @return Previously-stored value, or null if the key was not present
+     * @throws UnsupportedOperationException if {@code type} is a read-only namespace
      */
     <K, V> @Nullable V putToLocalStorage(ParserNamespace<K, V> type, K key, V value);
 
@@ -97,7 +96,8 @@ public interface NamespaceStorage {
      * @param type Namespace identifier
      * @param key Key
      * @param value Value
-     * @return Preexisting value or null if there was no previous mapping
+     * @return pre-existing value or {@code null} if there was no previous mapping
+     * @throws UnsupportedOperationException if {@code type} is a read-only namespace
      */
     <K, V> @Nullable V putToLocalStorageIfAbsent(ParserNamespace<K, V> type, K key, V value);
 }

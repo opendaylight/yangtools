@@ -53,20 +53,6 @@ public abstract class NamespaceBehaviour<K, V> {
         return new Global<>(namespace);
     }
 
-    /**
-     * Creates source-local namespace behaviour for supplied namespace type. Source-local namespace behaviour stores
-     * and loads all values from closest {@link NamespaceStorage} ancestor with type
-     * of {@link StorageType#SOURCE_LOCAL_SPECIAL}.
-     *
-     * @param <K> Namespace key type
-     * @param <V> Namespace value type
-     * @param namespace Namespace identifier
-     * @return source-local namespace behaviour for supplied namespace type.
-     */
-    public static <K, V> @NonNull NamespaceBehaviour<K, V> sourceLocal(final ParserNamespace<K, V> namespace) {
-        return new StorageSpecific<>(namespace, StorageType.SOURCE_LOCAL_SPECIAL);
-    }
-
     public static <K, V> @NonNull NamespaceBehaviour<K, V> statementLocal(final ParserNamespace<K, V> namespace) {
         return new StatementLocal<>(namespace);
     }
@@ -236,6 +222,9 @@ public abstract class NamespaceBehaviour<K, V> {
         StorageSpecific(final ParserNamespace<K, V> namespace, final StorageType type) {
             super(namespace);
             this.type = requireNonNull(type);
+            if (type == StorageType.ACCESSIBLE_SOURCES) {
+                throw new IllegalArgumentException("cannot behave on " + type);
+            }
         }
 
         @Override
