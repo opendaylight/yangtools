@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ModuleEffectiveStatementImpl
         extends AbstractEffectiveModule<@NonNull ModuleStatement, ModuleEffectiveStatement>
@@ -69,11 +70,9 @@ final class ModuleEffectiveStatementImpl
         }
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
-        final var includedSubmodules =
-                stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
+        final var includedSubmodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
         nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,
-                    submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
+                : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules, StmtContext::buildEffective));
 
         qnameToExtension = streamEffectiveSubstatements(ExtensionEffectiveStatement.class)
             .collect(ImmutableMap.toImmutableMap(ExtensionEffectiveStatement::argument, Function.identity()));

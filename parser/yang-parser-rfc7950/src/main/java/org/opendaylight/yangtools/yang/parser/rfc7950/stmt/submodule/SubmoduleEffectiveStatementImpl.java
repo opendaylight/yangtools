@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -43,7 +42,7 @@ final class SubmoduleEffectiveStatementImpl
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final QNameModule qnameModule;
 
-    private ImmutableSet<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContexts;
+    private ImmutableSet<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContexts;
     private ImmutableSet<Submodule> submodules;
     private boolean sealed;
 
@@ -73,19 +72,9 @@ final class SubmoduleEffectiveStatementImpl
          * collect only submodule contexts here and then build them during
          * sealing of this statement.
          */
-        final var includedSubmodulesMap = stmt.localNamespacePortion(
-            ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
-        if (includedSubmodulesMap != null) {
-            final var submoduleContextsInit =
-                new HashSet<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>>();
-            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
-                submoduleContextsInit.add(
-                    (StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>)submoduleCtx);
-            }
-            submoduleContexts = ImmutableSet.copyOf(submoduleContextsInit);
-        } else {
-            submoduleContexts = ImmutableSet.of();
-        }
+        final var includedSubmodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
+        submoduleContexts = includedSubmodules == null ? ImmutableSet.of()
+            : ImmutableSet.copyOf(includedSubmodules.values());
 
         if (submoduleContexts.isEmpty()) {
             submodules = ImmutableSet.of();

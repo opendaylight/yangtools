@@ -88,7 +88,7 @@ public final class IncludeStatementSupport
                         "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
                 }
 
-                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX, stmt.argument(), includedSubmodule);
+                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE, stmt.argument(), includedSubmodule);
             }
 
             @Override

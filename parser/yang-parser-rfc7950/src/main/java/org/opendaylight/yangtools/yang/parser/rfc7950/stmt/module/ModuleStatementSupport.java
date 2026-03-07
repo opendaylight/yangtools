@@ -51,6 +51,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
@@ -229,8 +231,9 @@ public final class ModuleStatementSupport
         }
     }
 
-    private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
-        final var submodules = stmt.localNamespacePortion(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
+    private static Collection<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
+            submoduleContexts(final Current<?, ?> stmt) {
+        final var submodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
         return submodules == null ? List.of() : submodules.values();
     }
 
