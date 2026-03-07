@@ -126,7 +126,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     private final @NonNull IdentifierBinding identifierBinding;
     private final @NonNull RootStatementContext<?, ?, ?> root;
     private final @NonNull BuildGlobalContext globalContext;
-    private final @NonNull QNameModule definingModule;
     private final @NonNull SourceInfo sourceInfo;
 
     // Freed as soon as we complete ModelProcessingPhase.EFFECTIVE_MODEL
@@ -152,7 +151,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
             final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
-        this.definingModule = requireNonNull(definingModule);
         identifierBinding = IdentifierBinding.of(namespaceBinding);
         this.streamSource = requireNonNull(streamSource);
 
