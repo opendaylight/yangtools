@@ -126,7 +126,7 @@ class MoreRevisionsTest extends AbstractYangTest {
         var imports = monitoringModule20101004.getImports();
         assertEquals(2, imports.size());
         for (var monitoringImport : imports) {
-            if (monitoringImport.getModuleName().equals("ietf-yang-types")) {
+            if (monitoringImport.getModuleName().getLocalName().equals("ietf-yang-types")) {
                 assertEquals(Optional.of(rev20130715), monitoringImport.getRevision());
             }
         }
