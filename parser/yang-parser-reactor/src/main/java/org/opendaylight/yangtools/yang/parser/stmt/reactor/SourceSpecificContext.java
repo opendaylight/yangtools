@@ -162,6 +162,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
         // reserve namespaces for resolution
         root.reserveLinkage(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
+        root.reserveLinkage(ParserNamespaces.INCLUDED_SUBMODULE);
     }
 
     @NonNull BuildGlobalContext globalContext() {
@@ -316,6 +317,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         }
 
         root.setIncludedSubmodules(nameToSubmodule.values());
+        root.resolveLinkage(ParserNamespaces.INCLUDED_SUBMODULE, nameToSubmodule);
     }
 
     private @NonNull RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement> rootAsModule() {
