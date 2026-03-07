@@ -40,8 +40,8 @@ public final class NamespaceBehaviours {
     public static final @NonNull NamespaceBehaviour<?, ?> MODULE_NAME_TO_QNAME =
         NamespaceBehaviour.sourceLocal(ParserNamespaces.MODULE_NAME_TO_QNAME);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_SUBMODULE_NAME_TO_MODULECTX =
-        NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_SUBMODULE_NAME_TO_MODULECTX);
+    public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_SUBMODULE =
+        NamespaceBehaviour.rootStatementLocal(ParserNamespaces.INCLUDED_SUBMODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> IMPORT_PREFIX_TO_MODULECTX =
         NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX);
