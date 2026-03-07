@@ -22,9 +22,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
@@ -33,12 +30,8 @@ import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class StmtTestUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(StmtTestUtils.class);
-
     public static final FileFilter YANG_FILE_FILTER =
         file -> file.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
 
@@ -47,15 +40,6 @@ public final class StmtTestUtils {
 
     private StmtTestUtils() {
         // Hidden on purpose
-    }
-
-    public static void log(final Throwable exception, final String indent) {
-        LOG.debug("{}{}", indent, exception.getMessage());
-
-        final Throwable[] suppressed = exception.getSuppressed();
-        for (final Throwable throwable : suppressed) {
-            log(throwable, indent + "        ");
-        }
     }
 
     @NonNullByDefault
@@ -88,11 +72,6 @@ public final class StmtTestUtils {
         return build.buildEffective();
     }
 
-    public static EffectiveModelContext parseYangSources(final File... files) throws ReactorException, IOException,
-            YangSyntaxErrorException, SourceSyntaxException {
-        return parseYangSources(YangParserConfiguration.DEFAULT, null, files);
-    }
-
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final File... files)
                 throws ReactorException, IOException, SourceSyntaxException, YangSyntaxErrorException {
@@ -101,13 +80,6 @@ public final class StmtTestUtils {
             sources.add(TestUtils.assertYangSource(file.toPath()));
         }
         return parseYangSources(config, supportedFeatures, sources);
-    }
-
-    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
-            final YangParserConfiguration config)
-                throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException,
-                       SourceSyntaxException {
-        return parseYangSources(yangSourcesDirectoryPath, null, config);
     }
 
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
@@ -134,20 +106,6 @@ public final class StmtTestUtils {
             build.addSource(TestUtils.assertYinSource(file.toPath()));
         }
         return build.buildEffective();
-    }
-
-    public static Module findImportedModule(final SchemaContext context, final Module rootModule,
-            final String importedModuleName) {
-        ModuleImport requestedModuleImport = null;
-        for (var moduleImport : rootModule.getImports()) {
-            if (moduleImport.getModuleName().equals(importedModuleName)) {
-                requestedModuleImport = moduleImport;
-                break;
-            }
-        }
-
-        return context.findModule(requestedModuleImport.getModuleName().getLocalName(),
-            requestedModuleImport.getRevision()).orElse(null);
     }
 
     private static CrossSourceStatementReactor getReactor(final YangParserConfiguration config) {
