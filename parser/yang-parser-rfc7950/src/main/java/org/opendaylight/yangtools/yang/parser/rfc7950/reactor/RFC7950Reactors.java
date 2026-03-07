@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplic
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ActionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.AnydataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.AnyxmlStatementSupport;
@@ -44,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.FeatureStatement
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.FractionDigitsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.GroupingStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IdentityStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ImportStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IncludeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.KeyStatementSupport;
