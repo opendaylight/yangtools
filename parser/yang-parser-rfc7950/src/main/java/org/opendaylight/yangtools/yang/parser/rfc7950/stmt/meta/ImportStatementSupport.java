@@ -78,7 +78,7 @@ public final class ImportStatementSupport
         for (var substatement : substatements) {
             if (substatement instanceof PrefixEffectiveStatement prefix) {
                 return EffectiveStatements.createImport(stmt.declared(), substatements,
-                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORT_PREFIX_TO_MODULECTX, prefix.argument()))
+                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORTED_MODULE, prefix.argument()))
                         .buildEffective());
             }
         }
