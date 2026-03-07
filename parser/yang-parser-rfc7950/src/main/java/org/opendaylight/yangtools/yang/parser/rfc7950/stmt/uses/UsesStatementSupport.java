@@ -240,7 +240,7 @@ public final class UsesStatementSupport
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
         if (targetCtx.getParentContext() == null || targetCtx.produces(AugmentStatement.DEF)) {
-            return targetCtx.definingModule();
+            return targetCtx.currentModule();
         }
         if (targetCtx.argument() instanceof QName targetQName && stmtContext.argument() instanceof QName) {
             return targetQName.getModule();

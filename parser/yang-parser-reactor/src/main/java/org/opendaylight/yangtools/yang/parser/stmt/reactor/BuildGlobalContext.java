@@ -218,7 +218,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
                 }
             }
 
-            linkedSources.put(infoRef.ref(), new SourceSpecificContext(this, sourceInfo, definingModule,
+            linkedSources.put(infoRef.ref(), new SourceSpecificContext(this, sourceInfo,
                 new ImmutableNamespaceBinding(
                     // a weird thing: this source's name bound to defining module
                     sourceInfo.sourceId().name().bindTo(definingModule).intern(), Map.copyOf(prefixToModule)),

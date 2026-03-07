@@ -90,7 +90,7 @@ final class YangDataStatementSupport
 
     @Override
     public YangDataName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final var module = ctx.definingModule();
+        final var module = ctx.currentModule();
         try {
             return new YangDataName(module, value);
         } catch (IllegalArgumentException e) {

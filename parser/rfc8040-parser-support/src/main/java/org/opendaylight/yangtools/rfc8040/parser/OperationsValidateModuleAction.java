@@ -49,7 +49,7 @@ final class OperationsValidateModuleAction implements InferenceAction {
         final var moduleCtx = prereq.resolve(ctx);
 
         // Check namespace and revision first
-        if (!YangDataConstants.RFC8040_MODULE.equals(moduleCtx.definingModule())) {
+        if (!YangDataConstants.RFC8040_MODULE.equals(moduleCtx.currentModule())) {
             return;
         }
 

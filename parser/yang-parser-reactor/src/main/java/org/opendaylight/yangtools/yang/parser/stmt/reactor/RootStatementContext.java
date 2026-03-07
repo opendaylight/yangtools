@@ -49,7 +49,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     private final @NonNull IdentifierBinding identifierBinding;
     private final @NonNull SourceSpecificContext sourceContext;
-    private final @NonNull QNameModule definingModule;
+    private final @NonNull QNameModule currentModule;
     private final @NonNull Unqualified sourceName;
     private final A argument;
 
@@ -58,15 +58,16 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
      */
     private Set<RootStatementContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> includedSubmodules;
 
-    RootStatementContext(final Unqualified sourceName, final QNameModule definingModule,
-            final IdentifierBinding identifierBinding, final SourceSpecificContext sourceContext,
-            final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
-            final String rawArgument, final int expectedSize) {
+    RootStatementContext(final Unqualified sourceName, final IdentifierBinding identifierBinding,
+            final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
+            final StatementSourceReference ref, final String rawArgument, final int expectedSize) {
         super(def, ref, rawArgument);
         this.sourceName = requireNonNull(sourceName);
-        this.definingModule = requireNonNull(definingModule);
         this.identifierBinding = requireNonNull(identifierBinding);
         this.sourceContext = requireNonNull(sourceContext);
+        // cache for frequent access
+        currentModule = identifierBinding.namespaceBinding().currentModule();
+
         argument = def.argumentFactory().parseArgumentValue(this, rawArgument());
         if (!sourceName.equals(argument)) {
             throw new VerifyException("argument mismatch, expected " + sourceName + ", parsed " + argument);
@@ -101,8 +102,8 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @Override
-    public QNameModule definingModule() {
-        return definingModule;
+    public QNameModule currentModule() {
+        return currentModule;
     }
 
     @Override
@@ -149,7 +150,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
 
     @Override
     public QNameModule effectiveNamespace() {
-        return definingModule;
+        return currentModule();
     }
 
     @Override

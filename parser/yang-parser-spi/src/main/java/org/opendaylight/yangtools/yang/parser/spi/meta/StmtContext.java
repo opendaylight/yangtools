@@ -157,13 +157,6 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
 
     ModelProcessingPhase getCompletedPhase();
 
-    /**
-     * {@return the {@link QNameModule} of the module in which this context is resides}
-     * @since 14.0.22
-     */
-    @NonNullByDefault
-    QNameModule definingModule();
-
     @NonNullByDefault
     default IdentifierBinding identifierBinding() {
         return getRoot().identifierBinding();

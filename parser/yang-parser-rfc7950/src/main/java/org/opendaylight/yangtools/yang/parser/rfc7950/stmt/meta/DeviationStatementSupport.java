@@ -52,7 +52,7 @@ public final class DeviationStatementSupport
     public void onFullDefinitionDeclared(final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
         super.onFullDefinitionDeclared(ctx);
 
-        final var currentModule = ctx.definingModule();
+        final var currentModule = ctx.currentModule();
         final var targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx,

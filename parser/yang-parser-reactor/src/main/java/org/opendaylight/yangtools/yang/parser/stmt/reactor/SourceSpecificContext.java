@@ -30,7 +30,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -147,8 +146,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
     @NonNullByDefault
     SourceSpecificContext(final BuildGlobalContext globalContext, final SourceInfo sourceInfo,
-            final QNameModule definingModule, final NamespaceBinding namespaceBinding,
-            final StatementStreamSource streamSource) {
+            final NamespaceBinding namespaceBinding, final StatementStreamSource streamSource) {
         this.globalContext = requireNonNull(globalContext);
         this.sourceInfo = requireNonNull(sourceInfo);
         identifierBinding = IdentifierBinding.of(namespaceBinding);
@@ -156,7 +154,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
 
         final var statement = streamSource.root();
 
-        root = new RootStatementContext<>(sourceId().name(), definingModule, identifierBinding, this,
+        root = new RootStatementContext<>(sourceId().name(), identifierBinding, this,
             globalContext.linkStatementDefinition(statement.definition(), yangVersion()),
             statement.sourceRef(), statement.rawArgument(), statement.size());
 

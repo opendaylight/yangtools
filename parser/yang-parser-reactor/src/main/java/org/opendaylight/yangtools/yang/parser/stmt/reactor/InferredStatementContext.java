@@ -434,9 +434,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             if (!targetModule.equals(requestedNamespace)) {
                 return null;
             }
-            templateQName = qname.bindTo(prototype.definingModule());
+            templateQName = qname.bindTo(prototype.currentModule());
         } else {
-            if (!requestedNamespace.equals(prototype.definingModule())) {
+            if (!requestedNamespace.equals(prototype.currentModule())) {
                 return null;
             }
             templateQName = qname;

@@ -53,7 +53,7 @@ abstract sealed class AbstractOperationContainerStatementSupport<D extends Decla
 
     @Override
     public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return createArgument.apply(ctx.definingModule());
+        return createArgument.apply(ctx.currentModule());
     }
 
     @Override

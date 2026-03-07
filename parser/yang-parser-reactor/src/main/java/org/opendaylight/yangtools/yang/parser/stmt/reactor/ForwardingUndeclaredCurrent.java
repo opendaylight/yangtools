@@ -57,6 +57,11 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
+    public QNameModule currentModule() {
+        return delegate.currentModule();
+    }
+
+    @Override
     public Unqualified sourceName() {
         return delegate.sourceName();
     }
