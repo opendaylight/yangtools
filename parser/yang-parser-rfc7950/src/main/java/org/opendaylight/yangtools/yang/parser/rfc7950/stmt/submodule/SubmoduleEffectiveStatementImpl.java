@@ -50,8 +50,6 @@ final class SubmoduleEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements, findSubmodulePrefix(stmt, substatements));
 
-        final QNameModule belongsToModuleQName = stmt.namespaceItem(ParserNamespaces.MODULE_NAME_TO_QNAME,
-            findBelongsTo(stmt, substatements).argument());
 
         final var prefixToModuleBuilder = ImmutableMap.<String, ModuleEffectiveStatement>builder();
         appendPrefixes(stmt, prefixToModuleBuilder);
@@ -64,8 +62,7 @@ final class SubmoduleEffectiveStatementImpl
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
         final var submoduleRevision = findFirstEffectiveSubstatementArgument(RevisionEffectiveStatement.class);
-        qnameModule = QNameModule.ofRevision(belongsToModuleQName.namespace(), submoduleRevision.orElse(null))
-            .intern();
+        qnameModule = QNameModule.ofRevision(stmt.currentModule().namespace(), submoduleRevision.orElse(null)).intern();
 
         /*
          * Because of possible circular chains of includes between submodules we can

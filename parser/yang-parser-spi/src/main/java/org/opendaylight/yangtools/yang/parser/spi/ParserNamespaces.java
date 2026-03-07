@@ -125,13 +125,6 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE =
             new ParserNamespace<>("included-submodule");
 
-    /**
-     * Source-specific mapping of prefixes to namespaces.
-     */
-    // FIXME: bad javadoc
-    public static final @NonNull ParserNamespace<Unqualified, QNameModule> MODULE_NAME_TO_QNAME =
-        new ParserNamespace<>("module-name-to-qnamemodule");
-
     public static final @NonNull ParserNamespace<Empty, FeatureSet> SUPPORTED_FEATURES =
         new ParserNamespace<>("supportedFeatures");
 

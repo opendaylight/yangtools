@@ -160,10 +160,7 @@ public final class ModuleStatementSupport
         }
 
         final var moduleName = stmt.getArgument();
-        final var moduleIdentifier = new SourceIdentifier(moduleName, revisionDate);
-
-        stmt.addToNs(ParserNamespaces.MODULE, moduleIdentifier, stmt);
-        stmt.addToNs(ParserNamespaces.MODULE_NAME_TO_QNAME, moduleName, qNameModule);
+        stmt.addToNs(ParserNamespaces.MODULE, new SourceIdentifier(moduleName, revisionDate), stmt);
         stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
     }
 

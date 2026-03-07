@@ -259,7 +259,7 @@ public final class DeviateStatementSupport
             return true;
         }
 
-        final var currentModule = deviateStmtCtx.definingModule();
+        final var currentModule = deviateStmtCtx.currentModule();
         final var targetModule = deviationTarget.getNodeIdentifiers().getLast().getModule();
         final var deviationModulesSupportedByTargetModule = modulesDeviatedByModules.get(targetModule);
         if (deviationModulesSupportedByTargetModule != null) {

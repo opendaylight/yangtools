@@ -335,8 +335,8 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     abstract @NonNull StatementDefinitionContext<A, D, E> definition();
 
     @Override
-    public QNameModule definingModule() {
-        return getRoot().definingModule();
+    public QNameModule currentModule() {
+        return getRoot().currentModule();
     }
 
     //
@@ -703,7 +703,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
         switch (namesParts.length) {
             case 1 -> {
                 localName = namesParts[0];
-                qnameModule = ctx.definingModule();
+                qnameModule = ctx.currentModule();
             }
             default -> {
                 final var root = ctx.getRoot();
@@ -713,7 +713,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
                 // in case of unknown statement argument, we're not going to parse it
                 if (qnameModule == null && ctx.producesExtension()) {
                     localName = value;
-                    qnameModule = ctx.definingModule();
+                    qnameModule = ctx.currentModule();
                 }
                 if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                     final var origCtx = ctx.originalCtx();
