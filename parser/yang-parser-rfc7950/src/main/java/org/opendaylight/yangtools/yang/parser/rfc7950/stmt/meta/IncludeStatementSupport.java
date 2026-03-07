@@ -7,17 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
-
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
@@ -27,18 +22,10 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 public final class IncludeStatementSupport
         extends AbstractUnqualifiedStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
@@ -63,40 +50,6 @@ public final class IncludeStatementSupport
 
     public static @NonNull IncludeStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new IncludeStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    public void onLinkageDeclared(final Mutable<Unqualified, IncludeStatement, IncludeEffectiveStatement> stmt) {
-        final var submoduleName = stmt.getArgument();
-        final var revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.DEF);
-
-        final var includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-        final var included = revision == null
-            ? includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
-                NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE)
-            : includeAction.requiresCtx(stmt, ParserNamespaces.SUBMODULE,
-                new SourceIdentifier(submoduleName, revision.argument()), SOURCE_LINKAGE);
-
-        includeAction.apply(new InferenceAction() {
-            @Override
-            public void apply(final InferenceContext ctx) {
-                final var includedSubmodule = included.resolve(ctx);
-                final var modVersion = stmt.getRoot().yangVersion();
-                final var subVersion = includedSubmodule.yangVersion();
-                if (subVersion != modVersion) {
-                    throw new YangVersionLinkageException(stmt,
-                        "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
-                }
-
-                stmt.addToNs(ParserNamespaces.INCLUDED_SUBMODULE, stmt.argument(), includedSubmodule);
-            }
-
-            @Override
-            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(included), stmt,
-                    "Included submodule '%s' was not found", stmt.rawArgument());
-            }
-        });
     }
 
     @Override

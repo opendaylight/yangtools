@@ -11,8 +11,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ModuleEffectiveStatementImpl
         extends AbstractEffectiveModule<@NonNull ModuleStatement, ModuleEffectiveStatement>
@@ -71,9 +70,9 @@ final class ModuleEffectiveStatementImpl
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
         final var includedSubmodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
-        nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules, StmtContext::buildEffective));
-
+        nameToSubmodule = includedSubmodules == null ? ImmutableMap.of() : includedSubmodules.entrySet().stream()
+            .sorted(Comparator.comparing(Entry::getKey))
+            .collect(ImmutableMap.toImmutableMap(Entry::getKey, entry -> entry.getValue().buildEffective()));
         qnameToExtension = streamEffectiveSubstatements(ExtensionEffectiveStatement.class)
             .collect(ImmutableMap.toImmutableMap(ExtensionEffectiveStatement::argument, Function.identity()));
         qnameToFeature = streamEffectiveSubstatements(FeatureEffectiveStatement.class)
