@@ -20,8 +20,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -35,9 +36,10 @@ public final class ModifierStatementSupport
     }
 
     @Override
-    public ModifierKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.unwrap(ModifierKind.parse(value), ctx,
-            "'%s' is not valid argument of modifier statement", value);
+    public ModifierKind parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return SourceException.unwrap(ModifierKind.parse(rawArgument), stmt,
+            "'%s' is not valid argument of modifier statement", rawArgument);
     }
 
     @Override

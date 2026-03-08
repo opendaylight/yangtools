@@ -35,9 +35,10 @@ public abstract class AbstractEmptyStatementSupport<D extends DeclaredStatement<
     }
 
     @Override
-    public final Empty parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        if (value != null) {
-            throw new InferenceException("Unexpected argument value " + value, ctx);
+    public final Empty parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        if (rawArgument != null) {
+            throw new InferenceException("Unexpected argument value " + rawArgument, stmt);
         }
         return Empty.value();
     }

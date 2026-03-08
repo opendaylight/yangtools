@@ -55,13 +55,14 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
     }
 
     @Override
-    public final Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return switch (value) {
+    public final Boolean parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return switch (rawArgument) {
             case "false" -> Boolean.FALSE;
             case "true" -> Boolean.TRUE;
-            case null, default -> throw new SourceException(ctx,
+            case null, default -> throw new SourceException(stmt,
                 "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'", statementName(), argumentName(),
-                value);
+                rawArgument);
         };
     }
 

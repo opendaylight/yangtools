@@ -42,7 +42,9 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -95,11 +97,12 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    public UniqueArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final var uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
-        SourceException.throwIf(uniqueConstraints.isEmpty(), ctx,
+    public UniqueArgument parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        final var uniqueConstraints = parseUniqueConstraintArgument(stmt, binding, rawArgument);
+        SourceException.throwIf(uniqueConstraints.isEmpty(), stmt,
             "Invalid argument value '%s' of unique statement. The value must contains at least one descendant schema "
-                + "node identifier.", value);
+                + "node identifier.", rawArgument);
         return UniqueArgument.of(uniqueConstraints);
     }
 
@@ -140,12 +143,11 @@ public final class UniqueStatementSupport
         return qnames.allMatch(qname -> module.equals(qname.getModule()));
     }
 
-    private static @NonNull List<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
-            final String argumentValue) {
-        final var binding = ctx.identifierBinding();
+    private static @NonNull List<Descendant> parseUniqueConstraintArgument(final CommonStmtCtx stmt,
+            final IdentifierBinding binding, final String argumentValue) {
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         return SEP_SPLITTER.splitToStream(CRLF_PATTERN.matcher(argumentValue).replaceAll("\n"))
-            .map(uniqueArgToken -> binding.parseDescendantSchemaNodeid(ctx, uniqueArgToken))
+            .map(uniqueArgToken -> binding.parseDescendantSchemaNodeid(stmt, uniqueArgToken))
             .collect(Collectors.toUnmodifiableList());
     }
 

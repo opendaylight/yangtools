@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.rfc7950.parser;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -22,8 +23,9 @@ public enum IfFeatureArgumentParser {
      */
     RFC6020 {
         @Override
-        public IfFeatureExpr parseArgument(final StmtContext<?, ?, ?> ctx, final String argument) {
-            return IfFeatureExpr.isPresent(ctx.identifierBinding().parseIdentifierRefArg(ctx, argument));
+        public IfFeatureExpr parseArgument(final CommonStmtCtx stmt, final IdentifierBinding binding,
+                final String rawArgument) {
+            return IfFeatureExpr.isPresent(binding.parseIdentifierRefArg(stmt, rawArgument));
         }
     },
     /**
@@ -31,19 +33,21 @@ public enum IfFeatureArgumentParser {
      */
     RFC7950 {
         @Override
-        public IfFeatureExpr parseArgument(final StmtContext<?, ?, ?> ctx, final String argument) {
-            return IfFeaturePredicateParser.parseIfFeatureExpression(ctx, argument);
+        public IfFeatureExpr parseArgument(final CommonStmtCtx stmt, final IdentifierBinding binding,
+                final String rawArgument) {
+            return IfFeaturePredicateParser.parseIfFeatureExpression(stmt, binding, rawArgument);
         }
     };
 
     /**
      * Parse a statement argument into an {@link IfFeatureExpr} in the context of a particular statement.
      *
-     * @param ctx the {@link StmtContext}
-     * @param argument the argument
+     * @param stmt the {@link CommonStmtCtx}
+     * @param binding the {@link IdentifierBinding}
+     * @param rawArgument the argument
      * @return an IfFeatureExpr
      * @throws SourceException if {@code argument} is not syntactically valid or cannot be resolved
      */
     // FIXME: throws IOExceptiom, YangParserException (perhaps with dedicated type for syntax and resolve)
-    public abstract IfFeatureExpr parseArgument(StmtContext<?, ?, ?> ctx, String argument);
+    public abstract IfFeatureExpr parseArgument(CommonStmtCtx stmt, IdentifierBinding binding, String rawArgument);
 }

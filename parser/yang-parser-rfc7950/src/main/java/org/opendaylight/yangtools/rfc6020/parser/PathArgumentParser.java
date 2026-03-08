@@ -31,7 +31,8 @@ import org.opendaylight.yangtools.rfc6020.parser.antlr.PathArgParser.Relative_pa
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
@@ -50,26 +51,26 @@ final class PathArgumentParser {
     private static final YangFunctionCallExpr CURRENT_CALL =
         YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier());
 
-    private final StmtContext<?, ?, ?> ctx;
+    private final CommonStmtCtx stmt;
+    private final IdentifierBinding binding;
 
-    private PathArgumentParser(final StmtContext<?, ?, ?> ctx) {
-        this.ctx = requireNonNull(ctx);
+    private PathArgumentParser(final CommonStmtCtx stmt, final IdentifierBinding binding) {
+        this.stmt = requireNonNull(stmt);
+        this.binding = requireNonNull(binding);
     }
 
-    static PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
+    static @NonNull PathExpression parseExpression(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         final var pathArgChild = SourceExceptionParser.parseString(PathArgLexer::new, PathArgParser::new,
-            PathArgParser::path_arg, ctx.sourceReference(), pathArg).getChild(0);
+            PathArgParser::path_arg, stmt.sourceReference(), rawArgument).getChild(0);
 
+        final var parser = new PathArgumentParser(stmt, binding);
         return switch (pathArgChild) {
-            case Path_strContext str -> new PathExpression.LocationPath(pathArg,
-                new PathArgumentParser(ctx).parsePathStr(str));
-            case Deref_exprContext deref -> {
-                final var parser = new PathArgumentParser(ctx);
-                yield new PathExpression.Deref(pathArg,
-                    parser.parseRelative(getChild(deref, 0, Deref_function_invocationContext.class)
-                        .getChild(Relative_pathContext.class, 0)),
-                    parser.parseRelative(getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
-            }
+            case Path_strContext str -> new PathExpression.LocationPath(rawArgument, parser.parsePathStr(str));
+            case Deref_exprContext deref -> new PathExpression.Deref(rawArgument,
+                parser.parseRelative(getChild(deref, 0, Deref_function_invocationContext.class)
+                    .getChild(Relative_pathContext.class, 0)),
+                parser.parseRelative(getChild(deref, deref.getChildCount() - 1, Relative_pathContext.class)));
             default -> throw new IllegalStateException("Unsupported child " + pathArgChild);
         };
     }
@@ -204,7 +205,6 @@ final class PathArgumentParser {
     }
 
     private @NonNull QName parseQName(final Node_identifierContext qname) {
-        return ctx.identifierBinding()
-            .createNodeIdentifier(ctx, qname.getChild(0).getText(), qname.getChild(2).getText());
+        return binding.createNodeIdentifier(stmt, qname.getChild(0).getText(), qname.getChild(2).getText());
     }
 }
