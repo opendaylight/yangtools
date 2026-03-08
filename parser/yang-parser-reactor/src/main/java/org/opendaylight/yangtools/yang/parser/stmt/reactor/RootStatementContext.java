@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
  * of this class, hence recursive lookups from them cross this class.
  */
 final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends AbstractResumedStatement<A, D, E> implements RootStmtContext.Mutable<A, D, E> {
+        extends AbstractResumedStatement<A, D, E>
+        implements RootStmtContext.Mutable<A, D, E>, NamespaceStorage.Source {
     private static final Logger LOG = LoggerFactory.getLogger(RootStatementContext.class);
     // These namespaces are well-known and not needed after the root is cleaned up
     private static final Map<ParserNamespace<?, ?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
@@ -91,14 +92,14 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     }
 
     @Override
-    public NamespaceStorage getParentStorage() {
-        // namespace storage of source context
-        return sourceContext;
+    public NamespaceStorage.Level level() {
+        return NamespaceStorage.Level.SOURCE;
     }
 
     @Override
-    public StorageType getStorageType() {
-        return StorageType.ROOT_STATEMENT_LOCAL;
+    public NamespaceStorage getParentStorage() {
+        // namespace storage of source context
+        return sourceContext;
     }
 
     @Override
