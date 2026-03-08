@@ -27,8 +27,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class BitStatementSupport
@@ -62,9 +63,10 @@ public final class BitStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public String parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         // Performs de-duplication and interning in one go
-        return ctx.identifierBinding().parseIdentifierArg(ctx, value).getLocalName();
+        return binding.parseIdentifierArg(stmt, rawArgument).getLocalName();
     }
 
     @Override

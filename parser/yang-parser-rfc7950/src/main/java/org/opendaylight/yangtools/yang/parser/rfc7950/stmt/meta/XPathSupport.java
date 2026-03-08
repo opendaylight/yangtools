@@ -11,7 +11,8 @@ import static java.util.Objects.requireNonNull;
 
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
@@ -28,18 +29,20 @@ public final class XPathSupport {
         this.factory = requireNonNull(factory);
     }
 
-    QualifiedBound parseXPath(final StmtContext<?, ?, ?> ctx, final String xpath) {
-        final var parser = factory.newParser(ctx.identifierBinding().yangNamespaceContext());
+    QualifiedBound parseXPath(final CommonStmtCtx stmt, final YangNamespaceContext namespaceContext,
+            final String rawArgument) {
+        final var parser = factory.newParser(namespaceContext);
         final QualifiedBound parsed;
         try {
-            parsed = parser.parseExpression(xpath);
+            parsed = parser.parseExpression(rawArgument);
         } catch (XPathExpressionException e) {
-            throw new SourceException(ctx, e, "Argument \"%s\" is not valid XPath string", xpath);
+            throw new SourceException(stmt, e, "Argument \"%s\" is not valid XPath string", rawArgument);
         }
 
-        if (ctx.sourceVersion().compareTo(parsed.getYangVersion()) < 0) {
+        final var sourceVersion = stmt.sourceVersion();
+        if (sourceVersion.compareTo(parsed.getYangVersion()) < 0) {
             LOG.warn("{} features required in {} context to parse expression '{}' [at {}]",
-                parsed.getYangVersion().reference(), ctx.sourceVersion().reference(), xpath, ctx.sourceReference());
+                parsed.getYangVersion().reference(), sourceVersion.reference(), rawArgument, stmt.sourceReference());
         }
         return parsed;
     }

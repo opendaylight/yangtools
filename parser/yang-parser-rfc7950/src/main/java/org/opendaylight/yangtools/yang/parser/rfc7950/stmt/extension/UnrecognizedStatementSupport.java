@@ -23,10 +23,11 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 final class UnrecognizedStatementSupport
@@ -44,8 +45,9 @@ final class UnrecognizedStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
+    public String parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return rawArgument;
     }
 
     @Override

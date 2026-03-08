@@ -58,7 +58,8 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
      * @return context of parent of statement
      * @throws VerifyException if this statement is the root statement
      */
-    default @NonNull StmtContext<?, ?, ?> coerceParentContext() {
+    @Override
+    default StmtContext<?, ?, ?> coerceParentContext() {
         final var ret = getParentContext();
         if (ret == null) {
             throw new VerifyException("Root context " + this + " does not have a parent");

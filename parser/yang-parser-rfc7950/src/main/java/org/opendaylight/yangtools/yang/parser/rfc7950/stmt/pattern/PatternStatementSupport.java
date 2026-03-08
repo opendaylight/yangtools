@@ -28,8 +28,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -64,14 +65,15 @@ public final class PatternStatementSupport
     }
 
     @Override
-    public PatternExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final var pattern = RegexUtils.getJavaRegexFromXSD(value);
+    public PatternExpression parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        final var pattern = RegexUtils.getJavaRegexFromXSD(rawArgument);
         try {
             Pattern.compile(pattern);
         } catch (final PatternSyntaxException e) {
-            throw new SourceException(ctx, e, "Pattern \"%s\" failed to compile", pattern);
+            throw new SourceException(stmt, e, "Pattern \"%s\" failed to compile", pattern);
         }
-        return PatternExpression.of(value, pattern).intern();
+        return PatternExpression.of(rawArgument, pattern).intern();
     }
 
     @Override
