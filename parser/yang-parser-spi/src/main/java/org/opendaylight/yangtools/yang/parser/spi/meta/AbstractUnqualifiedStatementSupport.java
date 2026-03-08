@@ -37,11 +37,12 @@ public abstract class AbstractUnqualifiedStatementSupport<D extends DeclaredStat
     }
 
     @Override
-    public final Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public final Unqualified parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return Unqualified.of(value).intern();
+            return Unqualified.of(rawArgument).intern();
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid argument value \"%s\"", value);
+            throw new SourceException(stmt, e, "Invalid argument value \"%s\"", rawArgument);
         }
     }
 }

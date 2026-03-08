@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -54,6 +55,11 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     @SuppressWarnings("unchecked")
     public <X, Y extends DeclaredStatement<X>> ForwardingUndeclaredCurrent<X, Y> tryDeclaring(final Class<Y> type) {
         return producesDeclared(type) ? (ForwardingUndeclaredCurrent<X, Y>) this : null;
+    }
+
+    @Override
+    public CommonStmtCtx coerceParentContext() {
+        return delegate.coerceParentContext();
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.stmt.AbsoluteSchemaNodeidParser;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DescendantSchemaNodeidParser;
@@ -37,7 +38,7 @@ public sealed interface IdentifierBinding extends Immutable permits DefaultIdent
         final var descendantSchemaNodeid = new DescendantSchemaNodeidParser(nodeIdentifier);
         final var absoluteSchemaNodeid = new AbsoluteSchemaNodeidParser(descendantSchemaNodeid);
         return new DefaultIdentifierBinding(descendantSchemaNodeid, absoluteSchemaNodeid, nodeIdentifier,
-            namespaceBinding, identifier);
+            namespaceBinding, namespaceBinding.toYangNamespaceContext(), identifier);
     }
 
     /**
@@ -60,6 +61,12 @@ public sealed interface IdentifierBinding extends Immutable permits DefaultIdent
      * @since 15.0.0
      */
     NamespaceBinding namespaceBinding();
+
+    /**
+     * {@return the backing {@link YangNamespaceContext}}
+     * @since 15.0.0
+     */
+    YangNamespaceContext namespaceContext();
 
     /**
      * {@return the backing {@link IdentifierParser}}

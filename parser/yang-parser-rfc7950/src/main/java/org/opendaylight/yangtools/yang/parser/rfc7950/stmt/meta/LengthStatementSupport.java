@@ -31,9 +31,10 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -52,21 +53,22 @@ public final class LengthStatementSupport
     }
 
     @Override
-    public ValueRanges parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public ValueRanges parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         final var ranges = new ArrayList<ValueRange>();
 
-        for (var singleRange : ArgumentUtils.PIPE_SPLITTER.split(value)) {
+        for (var singleRange : ArgumentUtils.PIPE_SPLITTER.split(rawArgument)) {
             final var boundaries = ArgumentUtils.TWO_DOTS_SPLITTER.split(singleRange).iterator();
-            final var min = parseIntegerConstraintValue(ctx, boundaries.next());
+            final var min = parseIntegerConstraintValue(stmt, boundaries.next());
 
             final Number max;
             if (boundaries.hasNext()) {
-                max = parseIntegerConstraintValue(ctx, boundaries.next());
+                max = parseIntegerConstraintValue(stmt, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx,
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, stmt,
                     "Length constraint %s has descending order of boundaries; should be ascending.", singleRange);
-                SourceException.throwIf(boundaries.hasNext(), ctx,
+                SourceException.throwIf(boundaries.hasNext(), stmt,
                     "Wrong number of boundaries in length constraint %s.", singleRange);
             } else {
                 max = min;
@@ -75,7 +77,7 @@ public final class LengthStatementSupport
             // some of intervals overlapping
             InferenceException.throwIf(
                 ranges.size() > 1 && ArgumentUtils.compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
-                ctx, "Some of the length ranges in %s are not disjoint", value);
+                stmt, "Some of the length ranges in %s are not disjoint", rawArgument);
             ranges.add(ValueRange.of(min, max));
         }
 
@@ -100,7 +102,7 @@ public final class LengthStatementSupport
         return EffectiveStatements.createLength(stmt.declared(), substatements);
     }
 
-    private static @NonNull Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    private static @NonNull Number parseIntegerConstraintValue(final CommonStmtCtx stmt, final String value) {
         if ("max".equals(value)) {
             return UnresolvedNumber.max();
         }
@@ -117,9 +119,9 @@ public final class LengthStatementSupport
         try {
             return Uint64.valueOf(value).intern();
         } catch (NumberFormatException e) {
-            throw new SourceException(ctx, e, "Value %s is not a valid unsigned integer", value);
+            throw new SourceException(stmt, e, "Value %s is not a valid unsigned integer", value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Value %s exceeds maximum supported value %s", value, Uint64.MAX_VALUE);
+            throw new SourceException(stmt, e, "Value %s exceeds maximum supported value %s", value, Uint64.MAX_VALUE);
         }
     }
 }
