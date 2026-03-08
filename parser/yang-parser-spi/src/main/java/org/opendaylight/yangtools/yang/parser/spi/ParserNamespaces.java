@@ -79,17 +79,11 @@ public final class ParserNamespaces {
 
     /**
      * Module namespace. All modules known to the reactor are populated to this namespace. Each module is identified
-     * by a {@link SourceIdentifier}.
+     * by a {@link SourceIdentifier}. This namespace implies that the combination of {@code module name} and
+     * {@code revision} is unique. This is important for JSON parser, which uses module names to identify namespaces.
      */
     public static final @NonNull ParserNamespace<SourceIdentifier,
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE = new ParserNamespace<>("module");
-
-    /**
-     * Submodule equivalent of {@link #MODULE}.
-     */
-    public static final @NonNull ParserNamespace<SourceIdentifier,
-        StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> SUBMODULE =
-        new ParserNamespace<>("submodule");
 
     /**
      * Derived types namespace. All derived type names defined within a parent node or at the top level of the module
