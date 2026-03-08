@@ -175,7 +175,7 @@ final class SourceSpecificContext implements Mutable, NamespaceStorage.Accessibl
         return sourceInfo.yangVersion();
     }
 
-    ModelProcessingPhase getInProgressPhase() {
+    ModelProcessingPhase inProgressPhase() {
         return inProgressPhase;
     }
 
@@ -240,12 +240,12 @@ final class SourceSpecificContext implements Mutable, NamespaceStorage.Accessibl
     }
 
     void startPhase(final ModelProcessingPhase phase) {
-        final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
+        final var previousPhase = phase.getPreviousPhase();
         verify(Objects.equals(previousPhase, finishedPhase),
             "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, streamSource,
             finishedPhase);
 
-        final Collection<ModifierImpl> previousModifiers = modifiers.get(previousPhase);
+        final var previousModifiers = modifiers.get(previousPhase);
         checkState(previousModifiers.isEmpty(), "Previous phase %s has unresolved modifiers %s in source %s",
             previousPhase, previousModifiers, streamSource);
 
@@ -254,22 +254,24 @@ final class SourceSpecificContext implements Mutable, NamespaceStorage.Accessibl
     }
 
     /**
-     * Set the {@link SourceLinkage} of this {@code module} source.
+     * Set the source linkage of this {@code module} source.
      *
      * @param importedModules the {@link SourceSpecificContext} accessible by being imported
      * @param includedSubmodules the {@link SourceSpecificContext} accessible by being included
+     * @return the resulting module {@link RootStatementContext}
      */
-    @NonNullByDefault
-    void setLinkage(final Map<Unqualified, SourceSpecificContext> importedModules,
-            final Set<SourceSpecificContext> includedSubmodules) {
+    @NonNull RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement> setLinkage(
+            final @NonNull Map<Unqualified, SourceSpecificContext> importedModules,
+            final @NonNull Set<SourceSpecificContext> includedSubmodules) {
         if (!(sourceInfo instanceof SourceInfo.Module info)) {
             throw new VerifyException("cannot set linkage on non-module");
         }
         setLinkage(info.prefix(), this, importedModules, includedSubmodules);
+        return rootAsModule();
     }
 
     /**
-     * Set the {@link SourceLinkage} of this {@code submodule} source.
+     * Set the source linkage of this {@code submodule} source.
      *
      * @param importedModules the {@link SourceSpecificContext} accessible by being imported
      * @param includedSubmodules the {@link SourceSpecificContext} accessible by being included

@@ -228,9 +228,10 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
             AbstractResumedStatement<X, Y, Z> createSubstatement(final int offset,
                     final StatementDefinitionContext<X, Y, Z> def, final StatementSourceReference ref,
                     final String argument) {
-        final var inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
-        checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Declared statement cannot be added in effective phase at: %s", sourceReference());
+        if (getRoot().getSourceContext().inProgressPhase() == ModelProcessingPhase.EFFECTIVE_MODEL) {
+            throw new IllegalStateException(
+                "Declared statement cannot be added in effective phase at: " + sourceReference());
+        }
 
         final SubstatementContext<X, Y, Z> ret;
         final var implicitParent = definition().implicitParentFor(this, def.publicView());

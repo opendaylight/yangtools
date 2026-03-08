@@ -407,7 +407,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     final List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatementUnsafe(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final int toAdd) {
-        return switch (getRoot().getSourceContext().getInProgressPhase()) {
+        return switch (getRoot().getSourceContext().inProgressPhase()) {
             case FULL_DECLARATION, EFFECTIVE_MODEL -> effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
             default -> throw new IllegalStateException(
                 "Effective statement cannot be added in declared phase at: " + sourceReference());
