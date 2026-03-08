@@ -105,7 +105,7 @@ public class CustomCrossSourceStatementReactorBuilder implements Mutable {
             final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificSupports) {
         final var stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (var cell : versionSpecificSupports.cellSet()) {
-            stmtBundleBuilder.addVersionSpecificSupport(cell.getRowKey(), cell.getValue());
+            stmtBundleBuilder.addSupport(cell.getValue(), cell.getRowKey());
         }
         return this;
     }

@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,17 +234,7 @@ public final class StatementSupportBundle implements Immutable {
             this.supportedVersions = requireNonNull(supportedVersions);
         }
 
-        public @NonNull Builder addSupport(final StatementSupport<?, ?, ?> support) {
-            final QName identifier = support.statementName();
-            checkNoParentDefinition(identifier);
-
-            checkState(!commonStatements.containsKey(identifier),
-                    "Statement %s already defined in common statement bundle.", identifier);
-            commonStatements.put(identifier, support);
-            return this;
-        }
-
-        public @NonNull Builder addSupport(final NamespaceBehaviour<?, ?> namespaceSupport) {
+        public @NonNull Builder addSupport(final @NonNull NamespaceBehaviour<?, ?> namespaceSupport) {
             final var namespace = namespaceSupport.namespace();
             checkState(!namespaces.containsKey(namespace));
             checkState(!parent.hasNamespaceBehaviour(namespace));
@@ -250,20 +242,39 @@ public final class StatementSupportBundle implements Immutable {
             return this;
         }
 
-        public @NonNull Builder addVersionSpecificSupport(final YangVersion version,
-                final StatementSupport<?, ?, ?> support) {
+        public @NonNull Builder addSupport(final @NonNull StatementSupport<?, ?, ?> support) {
+            final var statementName = support.statementName();
+            checkNoParentDefinition(statementName);
+
+            final var prev = commonStatements.putIfAbsent(statementName, support);
+            if (prev != null) {
+                throw new IllegalStateException("Statement %s already defined as %s".formatted(
+                    support.definition().humanName(), prev));
+            }
+            return this;
+        }
+
+        public @NonNull Builder addSupport(final @NonNull StatementSupport<?, ?, ?> support,
+                final @NonNull YangVersion version) {
             checkArgument(supportedVersions.contains(requireNonNull(version)));
 
-            final var identifier = support.statementName();
-            checkState(!commonStatements.containsKey(identifier),
-                    "Statement %s already defined in common statement bundle.", identifier);
-            checkState(!versionSpecificStatements.contains(version, identifier),
-                    "Statement %s already defined for version %s.", identifier, version);
-            checkNoParentDefinition(identifier);
-            checkState(parent.getVersionSpecificStatementDefinition(version, identifier) == null,
-                    "Statement %s already defined for version %s in parent's statement bundle.", identifier, version);
-            versionSpecificStatements.put(version, identifier, support);
+            final var statementName = support.statementName();
+            checkState(!commonStatements.containsKey(statementName),
+                "Statement %s already defined in common statement bundle.", statementName);
+            checkState(!versionSpecificStatements.contains(version, statementName),
+                "Statement %s already defined for version %s.", statementName, version);
+            checkNoParentDefinition(statementName);
+            checkState(parent.getVersionSpecificStatementDefinition(version, statementName) == null,
+                "Statement %s already defined for version %s in parent's statement bundle.", statementName, version);
+            versionSpecificStatements.put(version, statementName, support);
             return this;
+        }
+
+        public <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+                @NonNull Builder addSupport(final @NonNull StatementSupport<A, D, E> rfc6020,
+                    final @NonNull StatementSupport<A, D, E> rfc7950) {
+            addSupport(rfc6020, YangVersion.VERSION_1);
+            return addSupport(rfc7950, YangVersion.VERSION_1_1);
         }
 
         public @NonNull Set<YangVersion> getSupportedVersions() {

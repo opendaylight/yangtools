@@ -62,7 +62,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ChoiceStatementSupport
-        extends AbstractSchemaTreeStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
+        extends AbstractSchemaTreeStatementSupport<@NonNull ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(ChoiceStatement.DEF)
