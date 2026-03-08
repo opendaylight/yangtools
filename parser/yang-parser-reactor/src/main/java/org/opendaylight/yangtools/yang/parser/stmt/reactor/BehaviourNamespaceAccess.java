@@ -22,20 +22,19 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * A {@link NamespaceAccess} backed by a {@link NamespaceBehaviour}. Also holds reference to {@link BuildGlobalContext}.
  */
 final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
+    private final NamespaceStorage.@NonNull Global globalStorage;
     private final @NonNull NamespaceBehaviour<K, V> behaviour;
-    private final @NonNull GlobalStorage globalStorage;
 
     private Multimap<K, KeyedValueAddedListener<K, V>> keyListeners;
     private List<PredicateValueAddedListener<K, V>> predicateListeners;
 
-    BehaviourNamespaceAccess(final GlobalStorage globalStorage, final NamespaceBehaviour<K, V> behaviour) {
+    BehaviourNamespaceAccess(final NamespaceStorage.Global globalStorage, final NamespaceBehaviour<K, V> behaviour) {
         this.globalStorage = requireNonNull(globalStorage);
         this.behaviour = requireNonNull(behaviour);
     }

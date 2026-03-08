@@ -388,7 +388,7 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
 
     /**
      * Projection of {@link StatementSupport}s available within a particular source. This namespace is purely virtual
-     * and its behaviour corresponds to {@link NamespaceBehaviour#rootStatementLocal(ParserNamespace)} and is always
+     * and its behaviour corresponds to {@link NamespaceBehaviour#sourceLocal(ParserNamespace)} and is always
      * available.
      * Its contents are derived from {@link StatementSupportBundle}s active in the current {@link ModelProcessingPhase}
      * as well as {@link StatementDefinitions} and {@link StmtContext#yangVersion()} of the source root statement.
