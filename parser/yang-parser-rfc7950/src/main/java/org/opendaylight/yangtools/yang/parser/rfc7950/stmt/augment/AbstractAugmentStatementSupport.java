@@ -29,7 +29,9 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -45,7 +47,8 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public final SchemaNodeIdentifier parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         // As per:
         //   https://www.rfc-editor.org/rfc/rfc6020#section-7.15
         //   https://www.rfc-editor.org/rfc/rfc7950#section-7.17
@@ -53,9 +56,9 @@ abstract class AbstractAugmentStatementSupport
         // The argument is either Absolute or Descendant based on whether the statement is declared within a 'uses'
         // statement. The mechanics differs wildly between the two cases, so let's start by ensuring our argument
         // is in the correct domain.
-        return ctx.coerceParentContext().produces(UsesStatement.DEF)
-            ? ctx.identifierBinding().parseDescendantSchemaNodeidAs("uses-augment-arg", ctx, value)
-            : ctx.identifierBinding().parseAbsoluteSchemaNodeidAs("augment-arg", ctx, value);
+        return stmt.coerceParentContext().produces(UsesStatement.DEF)
+            ? binding.parseDescendantSchemaNodeidAs("uses-augment-arg", stmt, rawArgument)
+            : binding.parseAbsoluteSchemaNodeidAs("augment-arg", stmt, rawArgument);
     }
 
     @Override

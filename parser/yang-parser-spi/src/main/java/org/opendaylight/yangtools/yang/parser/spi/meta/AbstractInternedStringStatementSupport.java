@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -36,7 +38,8 @@ public abstract class AbstractInternedStringStatementSupport<D extends DeclaredS
     }
 
     @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
+    public final String parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return verifyNotNull(rawArgument);
     }
 }

@@ -31,6 +31,12 @@ public interface CommonStmtCtx {
     @NonNull StatementDefinition<?, ?, ?> publicDefinition();
 
     /**
+     * {@return the parent context}
+     * @throws VerifyException if this statement is the root statement
+     */
+    @NonNull CommonStmtCtx coerceParentContext();
+
+    /**
      * {@return {@code true} if this context produces the statement corresponding to the specified
      * {@link StatementDefinition}}
      * @param def the {@link StatementDefinition}

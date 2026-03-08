@@ -21,8 +21,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -50,11 +51,12 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public Ordering parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public Ordering parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return Ordering.forArgument(value);
+            return Ordering.forArgument(rawArgument);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid ordered-by argument '%s'", value);
+            throw new SourceException(stmt, e, "Invalid ordered-by argument '%s'", rawArgument);
         }
     }
 
