@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -53,7 +51,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
@@ -170,15 +167,15 @@ public final class ModuleStatementSupport
             final Current<Unqualified, ModuleStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         final var local = super.buildEffectiveSubstatements(stmt, substatements);
-        final var submodules = submoduleContexts(stmt);
+        final var submodules = effectiveSubmodules(stmt);
         if (submodules.isEmpty()) {
             return local;
         }
 
         // Concatenate statements so they appear as if they were part of target module
         final var others = new ArrayList<EffectiveStatement<?, ?>>();
-        for (var submoduleCtx : submodules) {
-            for (var effective : submoduleCtx.buildEffective().effectiveSubstatements()) {
+        for (var submodule : submodules) {
+            for (var effective : submodule.effectiveSubstatements()) {
                 if (effective instanceof SchemaNode || effective instanceof DataNodeContainer) {
                     others.add(effective);
                 }
@@ -213,14 +210,7 @@ public final class ModuleStatementSupport
             throw noNamespace(stmt);
         }
 
-        final var submodules = new ArrayList<Submodule>();
-        for (var submoduleCtx : submoduleContexts(stmt)) {
-            final var submodule = submoduleCtx.buildEffective();
-            if (!(submodule instanceof Submodule legacy)) {
-                throw new VerifyException("Submodule statement " + submodule + " is not a Submodule");
-            }
-            submodules.add(legacy);
-        }
+        final var submodules = effectiveSubmodules(stmt);
 
         try {
             return new ModuleEffectiveStatementImpl(stmt, substatements, submodules, stmt.effectiveNamespace());
@@ -229,11 +219,11 @@ public final class ModuleStatementSupport
         }
     }
 
-    private static List<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
-            submoduleContexts(final Current<?, ?> stmt) {
+    private static List<SubmoduleEffectiveStatement> effectiveSubmodules(final Current<?, ?> stmt) {
         final var submodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
         return submodules == null ? List.of() : submodules.values().stream()
             .sorted(Comparator.comparing(StmtContext::argument))
+            .map(StmtContext::buildEffective)
             .collect(Collectors.toUnmodifiableList());
     }
 

@@ -51,11 +51,13 @@ final class ModuleEffectiveStatementImpl
     private final @NonNull QNameModule qnameModule;
 
     ModuleEffectiveStatementImpl(final Current<Unqualified, ModuleStatement> stmt,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final List<Submodule> submodules,
-            final QNameModule qnameModule) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final List<SubmoduleEffectiveStatement> submodules, final QNameModule qnameModule) {
         super(stmt, substatements, findPrefix(stmt, substatements, "module", stmt.getRawArgument()));
+        this.submodules = submodules.stream()
+            .map(SubmoduleEffectiveStatement::toDataNodeContainer)
+            .collect(ImmutableList.toImmutableList());
         this.qnameModule = requireNonNull(qnameModule);
-        this.submodules = ImmutableList.copyOf(submodules);
 
         final String localPrefix = prefixStatement().argument();
         final var prefixToModuleBuilder = ImmutableMap.<String, ModuleEffectiveStatement>builder();
@@ -101,7 +103,7 @@ final class ModuleEffectiveStatementImpl
     }
 
     @Override
-    public Collection<? extends @NonNull Submodule> getSubmodules() {
+    public List<@NonNull Submodule> getSubmodules() {
         return submodules;
     }
 
