@@ -254,22 +254,24 @@ final class SourceSpecificContext implements Mutable, NamespaceStorage.Accessibl
     }
 
     /**
-     * Set the {@link SourceLinkage} of this {@code module} source.
+     * Set the source linkage of this {@code module} source.
      *
      * @param importedModules the {@link SourceSpecificContext} accessible by being imported
      * @param includedSubmodules the {@link SourceSpecificContext} accessible by being included
+     * @return the resulting module {@link RootStatementContext}
      */
-    @NonNullByDefault
-    void setLinkage(final Map<Unqualified, SourceSpecificContext> importedModules,
-            final Set<SourceSpecificContext> includedSubmodules) {
+    @NonNull RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement> setLinkage(
+            final @NonNull Map<Unqualified, SourceSpecificContext> importedModules,
+            final @NonNull Set<SourceSpecificContext> includedSubmodules) {
         if (!(sourceInfo instanceof SourceInfo.Module info)) {
             throw new VerifyException("cannot set linkage on non-module");
         }
         setLinkage(info.prefix(), this, importedModules, includedSubmodules);
+        return rootAsModule();
     }
 
     /**
-     * Set the {@link SourceLinkage} of this {@code submodule} source.
+     * Set the source linkage of this {@code submodule} source.
      *
      * @param importedModules the {@link SourceSpecificContext} accessible by being imported
      * @param includedSubmodules the {@link SourceSpecificContext} accessible by being included

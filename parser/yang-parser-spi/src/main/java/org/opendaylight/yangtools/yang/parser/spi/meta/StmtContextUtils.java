@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
@@ -254,19 +252,5 @@ public final class StmtContextUtils {
         return new SourceException(leafCtx,
             "leaf statement %s is a key in list statement %s: it cannot be conditional on %s statement",
             leafCtx.argument(), listCtx.argument(), offender.publicDefinition().humanName());
-    }
-
-    public static @Nullable Revision latestRevisionIn(final Collection<? extends @NonNull StmtContext<?, ?, ?>> stmts) {
-        Revision revision = null;
-        for (var subStmt : stmts) {
-            final var revStmt = subStmt.asDeclaring(RevisionStatement.DEF);
-            if (revStmt != null) {
-                final var rev = revStmt.argument();
-                if (Revision.compare(rev, revision) > 0) {
-                    revision = rev;
-                }
-            }
-        }
-        return revision;
     }
 }

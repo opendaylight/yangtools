@@ -60,11 +60,6 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<A, D, E> stmt) {
-        delegate.onLinkageDeclared(stmt);
-    }
-
-    @Override
     public void onStatementDefinitionDeclared(final Mutable<A, D, E> stmt) {
         delegate.onStatementDefinitionDeclared(stmt);
     }
