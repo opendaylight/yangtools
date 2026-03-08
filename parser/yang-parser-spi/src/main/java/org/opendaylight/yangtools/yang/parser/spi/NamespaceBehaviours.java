@@ -38,10 +38,10 @@ public final class NamespaceBehaviours {
         NamespaceBehaviour.global(ParserNamespaces.NAMESPACE_TO_MODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> IMPORTED_MODULE =
-        NamespaceBehaviour.rootStatementLocal(ParserNamespaces.IMPORTED_MODULE);
+        NamespaceBehaviour.sourceLocal(ParserNamespaces.IMPORTED_MODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> INCLUDED_SUBMODULE =
-        NamespaceBehaviour.rootStatementLocal(ParserNamespaces.INCLUDED_SUBMODULE);
+        NamespaceBehaviour.sourceLocal(ParserNamespaces.INCLUDED_SUBMODULE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> SUPPORTED_FEATURES =
         NamespaceBehaviour.global(ParserNamespaces.SUPPORTED_FEATURES);
