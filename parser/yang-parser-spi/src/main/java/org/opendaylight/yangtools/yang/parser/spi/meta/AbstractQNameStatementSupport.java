@@ -37,8 +37,9 @@ public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<
 
     // Non-final to allow customization
     @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ctx.identifierBinding().parseIdentifierArg(ctx, value);
+    public QName parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return binding.parseIdentifierArg(stmt, rawArgument);
     }
 
     @Override

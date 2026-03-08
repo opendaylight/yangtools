@@ -24,7 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
@@ -38,20 +39,22 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 @ExtendWith(MockitoExtension.class)
 class PathExpressionParserTest {
     @Mock
-    public StmtContext<?, ?, ?> ctx;
+    private CommonStmtCtx stmt;
     @Mock
-    public StatementSourceReference ref;
+    private IdentifierBinding binding;
+    @Mock
+    private StatementSourceReference ref;
 
     @BeforeEach
     void before() {
-        doReturn(ref).when(ctx).sourceReference();
+        doReturn(ref).when(stmt).sourceReference();
     }
 
     @Test
     void testDerefPath() {
         // deref() is not valid as per RFC7950, but we tolarate it.
         final var deref = assertInstanceOf(PathExpression.Deref.class,
-            PathArgumentParser.parseExpression(ctx, "deref(../id)/../type"));
+            PathArgumentParser.parseExpression(stmt, binding, "deref(../id)/../type"));
 
         assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
             YangXPathAxis.CHILD.asStep(Unqualified.of("type"))), deref.relativePath());
@@ -61,21 +64,24 @@ class PathExpressionParserTest {
 
     @Test
     void testInvalidLeftParent() {
-        final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo("));
+        final var ex = assertThrows(SourceException.class,
+            () -> PathArgumentParser.parseExpression(stmt, binding, "foo("));
         assertSame(ref, ex.sourceRef());
         assertEquals("extraneous input '(' expecting <EOF> at 1:3 [at ref]", ex.getMessage());
     }
 
     @Test
     void testInvalidRightParent() {
-        final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo)"));
+        final var ex = assertThrows(SourceException.class,
+            () -> PathArgumentParser.parseExpression(stmt, binding, "foo)"));
         assertSame(ref, ex.sourceRef());
         assertEquals("extraneous input ')' expecting <EOF> at 1:3 [at ref]", ex.getMessage());
     }
 
     @Test
     void testInvalidIdentifier() {
-        final var ex = assertThrows(SourceException.class, () -> PathArgumentParser.parseExpression(ctx, "foo%"));
+        final var ex = assertThrows(SourceException.class,
+            () -> PathArgumentParser.parseExpression(stmt, binding, "foo%"));
         assertSame(ref, ex.sourceRef());
         assertEquals("token recognition error at: '%' at 1:3 [at ref]", ex.getMessage());
     }
@@ -83,7 +89,8 @@ class PathExpressionParserTest {
     @Test
     void testCurrentPredicateParsing() {
         final var path = assertInstanceOf(PathExpression.LocationPath.class,
-            PathArgumentParser.parseExpression(ctx, "/device_types/device_type[type = current()/../type_text]/desc"))
+            PathArgumentParser.parseExpression(stmt, binding,
+                "/device_types/device_type[type = current()/../type_text]/desc"))
             .locationPath();
         assertTrue(path.isAbsolute());
 

@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -32,12 +33,13 @@ public final class ValueStatementSupport
     }
 
     @Override
-    public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public Integer parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return Integer.valueOf(value);
+            return Integer.valueOf(rawArgument);
         } catch (NumberFormatException e) {
-            throw new SourceException(ctx, e,
-                "%s is not valid value statement integer argument in a range of -2147483648..2147483647", value);
+            throw new SourceException(stmt, e,
+                "%s is not valid value statement integer argument in a range of -2147483648..2147483647", rawArgument);
         }
     }
 

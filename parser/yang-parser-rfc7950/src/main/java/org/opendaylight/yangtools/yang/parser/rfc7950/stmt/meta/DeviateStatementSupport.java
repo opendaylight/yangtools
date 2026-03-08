@@ -44,8 +44,10 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBund
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -150,9 +152,10 @@ public final class DeviateStatementSupport
     }
 
     @Override
-    public DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(DeviateKind.forArgument(value), ctx,
-            "String '%s' is not valid deviate argument", value);
+    public DeviateKind parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return SourceException.throwIfNull(DeviateKind.forArgument(rawArgument), stmt,
+            "String '%s' is not valid deviate argument", rawArgument);
     }
 
     @Override

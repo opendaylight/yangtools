@@ -69,7 +69,7 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         // cache for frequent access
         currentModule = identifierBinding.namespaceBinding().currentModule();
 
-        argument = def.argumentFactory().parseArgumentValue(this, rawArgument());
+        argument = def.argumentFactory().parseArgumentValue(this, identifierBinding, rawArgument());
         if (!sourceName.equals(argument)) {
             throw new VerifyException("argument mismatch, expected " + sourceName + ", parsed " + argument);
         }

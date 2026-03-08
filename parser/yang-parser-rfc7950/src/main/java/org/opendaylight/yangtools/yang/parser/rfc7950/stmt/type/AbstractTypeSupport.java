@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
@@ -38,16 +39,16 @@ abstract sealed class AbstractTypeSupport extends AbstractQNameStatementSupport<
     }
 
     @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public final QName parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         // RFC7950 section 7.3 states that:
         //
         //      The name of the type MUST NOT be one of the YANG built-in types.
         //
         // Therefore, if the string matches one of built-in types, it cannot legally refer to a typedef. Hence consult
         // built in types and if it's not there parse it as a node identifier.
-        final var rawArgument = ctx.getRawArgument();
         final var builtin = BuiltInType.forSimpleName(rawArgument);
-        return builtin != null ? builtin.typeName() : ctx.identifierBinding().parseIdentifierRefArg(ctx, rawArgument);
+        return builtin != null ? builtin.typeName() : binding.parseIdentifierRefArg(stmt, rawArgument);
     }
 
     @Override

@@ -20,7 +20,8 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -44,11 +45,12 @@ public final class MinElementsStatementSupport extends AbstractInternedStatement
     }
 
     @Override
-    public MinElementsArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public MinElementsArgument parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return MinElementsArgument.parse(value).intern();
+            return MinElementsArgument.parse(rawArgument).intern();
         } catch (ParseException e) {
-            throw new SourceException(ctx, e, "Invalid min-elements argument \"%s\" at offset %s: %s", value,
+            throw new SourceException(stmt, e, "Invalid min-elements argument \"%s\" at offset %s: %s", rawArgument,
                 e.getErrorOffset(), e.getMessage());
         }
     }
