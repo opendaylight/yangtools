@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import java.util.LinkedHashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -57,7 +57,7 @@ public final class YangModuleInfoTemplate {
         import org.opendaylight.yangtools.yang.common.QName;
         """;
 
-    private final @NonNull Function<ModuleLike, Optional<String>> moduleFilePathResolver;
+    private final @NonNull Function<ModuleLike, List<String>> moduleFilePathResolver;
     private final @NonNull EffectiveModelContext modelContext;
     private final @NonNull Module module;
     private final @NonNull String packageName;
@@ -67,7 +67,7 @@ public final class YangModuleInfoTemplate {
     private String importedTypes = CORE_IMPORT_STR;
 
     public YangModuleInfoTemplate(final Module module, final EffectiveModelContext modelContext,
-            final Function<ModuleLike, Optional<String>> moduleFilePathResolver) {
+            final Function<ModuleLike, List<String>> moduleFilePathResolver) {
         this.module = requireNonNull(module);
         this.modelContext = requireNonNull(modelContext);
         this.moduleFilePathResolver = requireNonNull(moduleFilePathResolver);
@@ -246,8 +246,10 @@ public final class YangModuleInfoTemplate {
             sb.append("    importedModules = ImmutableSet.copyOf(set);\n");
         }
 
-        final var sourcePath = moduleFilePathResolver.apply(mod)
-            .orElseThrow(() -> new IllegalStateException("Module " + mod + " does not have a file path"));
+        final var pathItems = moduleFilePathResolver.apply(mod);
+        if (pathItems.isEmpty()) {
+            throw new IllegalStateException("Module " + mod + " does not have a file path");
+        }
 
         sb
             .append("""
@@ -261,7 +263,11 @@ public final class YangModuleInfoTemplate {
                 @Override
                 protected String resourceName() {
                 """)
-            .append("    return \"").append(sourcePath).append("\";\n")
+            .append("    return \"");
+        for (var pathItem : pathItems) {
+            sb.append('/').append(pathItem);
+        }
+        sb.append("\";\n")
             .append("""
                 }
 

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.plugin.generator.api;
 
-import java.util.Optional;
+import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
@@ -22,13 +22,13 @@ public interface ModuleResourceResolver {
      *
      * @param module Requested module
      * @param representation Requested representation
-     * @return Path to packaged resource
+     * @return Path to packaged resource, or empty if not found
      * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if the requested representation is not supported by this resolver
      */
-    Optional<String> findModuleResourcePath(ModuleLike module, Class<? extends SourceRepresentation> representation);
+    List<String> findModuleResourcePath(ModuleLike module, Class<? extends SourceRepresentation> representation);
 
-    default Optional<String> findModuleYangTextResourcePath(final ModuleLike module) {
+    default List<String> findModuleYangTextResourcePath(final ModuleLike module) {
         return findModuleResourcePath(module, YangTextSource.class);
     }
 }

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -33,14 +33,13 @@ record ContextHolder(
     }
 
     @Override
-    public Optional<String> findModuleResourcePath(final ModuleLike module,
+    public List<String> findModuleResourcePath(final ModuleLike module,
             final Class<? extends SourceRepresentation> representation) {
         checkArgument(YangTextSource.class.equals(requireNonNull(representation)),
             "Unsupported representation %s", representation);
         final var id = module.getSourceIdentifier();
         return sources.contains(id)
-                // FIXME: YANGTOOLS-1693: java.nio.file.Path instead
-                ? Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + id.toYangFilename())
-                        : Optional.empty();
+                ? List.of(YangToSourcesProcessor.META_INF_STR, YangToSourcesProcessor.YANG_STR, id.toYangFilename())
+                : List.of();
     }
 }

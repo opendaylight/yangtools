@@ -67,10 +67,6 @@ class YangToSourcesProcessor {
 
     static final String LOG_PREFIX = "yang-to-sources:";
 
-    // FIXME: YANGTOOLS-1693: remove these constants
-    static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
-    static final String META_INF_YANG_SERVICES_STRING_JAR = META_INF_STR + "/" + "services";
-
     private static final YangProvider YANG_PROVIDER = (project, modelsInProject) -> {
         final var generatedYangDir =
             // FIXME: why are we generating these in "generated-sources"? At the end of the day YANG files are more
@@ -319,8 +315,8 @@ class YangToSourcesProcessor {
         // add META_INF/services
         final var generatedServicesDir = Path.of(projectBuildDirectory).resolve("generated-sources").resolve("spi");
         ProjectFileAccess.addResourceDir(project, generatedServicesDir);
-        LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
-            META_INF_YANG_SERVICES_STRING_JAR);
+        LOG.debug("{} Yang services files from: {} marked as resources: {}/services", LOG_PREFIX, generatedServicesDir,
+            META_INF_STR);
 
         final var uniqueOutputFiles = new LinkedHashMap<String, FileState>();
         for (var fileHash : outputFiles.build()) {
