@@ -12,8 +12,9 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -228,10 +229,12 @@ public final class ModuleStatementSupport
         }
     }
 
-    private static Collection<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
+    private static List<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
             submoduleContexts(final Current<?, ?> stmt) {
         final var submodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
-        return submodules == null ? List.of() : submodules.values();
+        return submodules == null ? List.of() : submodules.values().stream()
+            .sorted(Comparator.comparing(StmtContext::argument))
+            .collect(Collectors.toUnmodifiableList());
     }
 
     private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {

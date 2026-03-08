@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
@@ -50,8 +51,8 @@ final class ModuleEffectiveStatementImpl
     private final @NonNull QNameModule qnameModule;
 
     ModuleEffectiveStatementImpl(final Current<Unqualified, ModuleStatement> stmt,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Collection<? extends Submodule> submodules, final QNameModule qnameModule) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final List<Submodule> submodules,
+            final QNameModule qnameModule) {
         super(stmt, substatements, findPrefix(stmt, substatements, "module", stmt.getRawArgument()));
         this.qnameModule = requireNonNull(qnameModule);
         this.submodules = ImmutableList.copyOf(submodules);
