@@ -39,7 +39,10 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
@@ -78,8 +81,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final ImmutableSet<YangVersion> supportedVersions;
 
-    private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
-    private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
+    private @NonNull ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
+    private @NonNull ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private List<SourceSpecificContext> sources = null;
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
@@ -92,6 +95,10 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
         }
 
         supportedVersions = verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions();
+
+        // reserve namespaces for resolution
+        reserveLinkage(ParserNamespaces.MODULE);
+        reserveLinkage(ParserNamespaces.NAMESPACE_TO_MODULE);
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
@@ -130,6 +137,8 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
     @NonNullByDefault
     StatementDefinitionContext<?, ?, ?> linkStatementDefinition(final StatementDefinition<?, ?, ?> definition,
             final YangVersion version) {
+        checkState(currentPhase == ModelProcessingPhase.SOURCE_LINKAGE);
+
         final var statementName = definition.statementName();
         final var existing = definitions.get(version, statementName);
         if (existing != null) {
@@ -179,8 +188,10 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
         modelDefinedStmtDefs.put(name, def);
     }
 
-    @NonNullByDefault
-    void linkSources(final Map<ResolvedSourceInfo, StatementStreamSource.Factory> linkage) throws ReactorException {
+    void linkSources(final @NonNull Map<ResolvedSourceInfo, StatementStreamSource.Factory> linkage)
+            throws ReactorException {
+        currentPhase = ModelProcessingPhase.SOURCE_LINKAGE;
+
         // Step one: create SourceSpecificContexts
         final var linkedSources = LinkedHashMap.<SourceRef, SourceSpecificContext>newLinkedHashMap(linkage.size());
         for (var entry : linkage.entrySet()) {
@@ -227,6 +238,10 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
         sources = List.copyOf(linkedSources.values());
 
         // Step two: resolve linkage between SourceSpecificContexts
+        final var nameToModule = new HashMap<SourceIdentifier,
+                RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>>();
+        final var namespaceToModule = new HashMap<QNameModule,
+                RootStatementContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>>();
         for (var resolvedInfo : linkage.keySet()) {
             final var source = contextFor(linkedSources, resolvedInfo.infoRef().ref());
 
@@ -243,10 +258,22 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
             if (belongsTo != null) {
                 source.setLinkage(importedModules, includedSubmodules, belongsTo.dependency().prefix(),
                     contextFor(linkedSources, belongsTo.sourceRef()));
-            } else {
-                source.setLinkage(importedModules, includedSubmodules);
+                continue;
+            }
+
+            // modules need to do some more work
+            final var module = source.setLinkage(importedModules, includedSubmodules);
+            final var namePrev = nameToModule.putIfAbsent(source.sourceId(), module);
+            if (namePrev != null) {
+                throw new VerifyException("name conflict with " + namePrev);
+            }
+            final var nsPrev = namespaceToModule.putIfAbsent(module.currentModule(), module);
+            if (nsPrev != null) {
+                throw new VerifyException("namespace conflict with " + nsPrev);
             }
         }
+        resolveLinkage(ParserNamespaces.MODULE, nameToModule);
+        resolveLinkage(ParserNamespaces.NAMESPACE_TO_MODULE, namespaceToModule);
     }
 
     private static @NonNull SourceSpecificContext contextFor(final @NonNull Map<SourceRef, SourceSpecificContext> map,

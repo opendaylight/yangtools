@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,14 +14,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -64,8 +60,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -141,25 +135,6 @@ public final class ModuleStatementSupport
 
     public static @NonNull ModuleStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new ModuleStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    public void onLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final var moduleNs = SourceException.throwIfNull(
-            firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
-            "Namespace of the module [%s] is missing", stmt.argument());
-
-        final var revisionDate = StmtContextUtils.latestRevisionIn(stmt.declaredSubstatements());
-        final var qNameModule = QNameModule.ofRevision(moduleNs, revisionDate).intern();
-        final var possibleDuplicateModule = stmt.namespaceItem(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule);
-        if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
-            throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.namespace(),
-                possibleDuplicateModule.sourceReference());
-        }
-
-        final var moduleName = stmt.getArgument();
-        stmt.addToNs(ParserNamespaces.MODULE, new SourceIdentifier(moduleName, revisionDate), stmt);
-        stmt.addToNs(ParserNamespaces.NAMESPACE_TO_MODULE, qNameModule, stmt);
     }
 
     @Override
