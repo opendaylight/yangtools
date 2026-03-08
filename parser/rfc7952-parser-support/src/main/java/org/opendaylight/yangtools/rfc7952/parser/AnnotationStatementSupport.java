@@ -26,7 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -48,8 +50,9 @@ final class AnnotationStatementSupport
     }
 
     @Override
-    public AnnotationName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return new AnnotationName(ctx.identifierBinding().parseIdentifierArg(ctx, value)).intern();
+    public AnnotationName parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return new AnnotationName(binding.parseIdentifierArg(stmt, rawArgument)).intern();
     }
 
     @Override

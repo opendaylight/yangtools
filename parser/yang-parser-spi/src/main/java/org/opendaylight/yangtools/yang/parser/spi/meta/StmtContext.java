@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -58,7 +57,8 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
      * @return context of parent of statement
      * @throws VerifyException if this statement is the root statement
      */
-    default @NonNull StmtContext<?, ?, ?> coerceParentContext() {
+    @Override
+    default StmtContext<?, ?, ?> coerceParentContext() {
         final var ret = getParentContext();
         if (ret == null) {
             throw new VerifyException("Root context " + this + " does not have a parent");
@@ -157,10 +157,7 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
 
     ModelProcessingPhase getCompletedPhase();
 
-    @NonNullByDefault
-    default IdentifierBinding identifierBinding() {
-        return getRoot().identifierBinding();
-    }
+    @NonNull IdentifierBinding identifierBinding();
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.

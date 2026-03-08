@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class OpenConfigVersionSupport
@@ -31,8 +32,10 @@ final class OpenConfigVersionSupport
     }
 
     @Override
-    public SemVer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SemVer.valueOf(value);
+    public SemVer parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        // FIXME: report SourceException on bad values
+        return SemVer.valueOf(rawArgument);
     }
 
     @Override

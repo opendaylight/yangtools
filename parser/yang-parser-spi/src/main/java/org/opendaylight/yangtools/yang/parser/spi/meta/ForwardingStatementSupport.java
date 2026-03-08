@@ -50,8 +50,8 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public A parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return delegate.parseArgumentValue(ctx, value);
+    public A parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding, final String rawArgument) {
+        return delegate.parseArgumentValue(stmt, binding, rawArgument);
     }
 
     @Override

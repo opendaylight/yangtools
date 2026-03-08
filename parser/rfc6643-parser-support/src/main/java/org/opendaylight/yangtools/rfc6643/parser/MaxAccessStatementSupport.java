@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -32,10 +33,11 @@ final class MaxAccessStatementSupport
     }
 
     @Override
-    public MaxAccess parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final var val = MaxAccess.forStringLiteral(value);
+    public MaxAccess parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        final var val = MaxAccess.forStringLiteral(rawArgument);
         if (val == null) {
-            throw new SourceException(ctx, "Invalid max-access value '%s'", value);
+            throw new SourceException(stmt, "Invalid max-access value '%s'", rawArgument);
         }
         return val;
     }

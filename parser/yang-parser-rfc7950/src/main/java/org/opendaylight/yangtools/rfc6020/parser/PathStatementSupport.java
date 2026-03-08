@@ -20,8 +20,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class PathStatementSupport
@@ -35,8 +36,9 @@ public final class PathStatementSupport
     }
 
     @Override
-    public PathExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return PathArgumentParser.parseExpression(ctx, value);
+    public PathExpression parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return PathArgumentParser.parseExpression(stmt, binding, rawArgument);
     }
 
     @Override

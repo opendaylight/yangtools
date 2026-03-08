@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -495,6 +496,11 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     @Override
     public final ModelProcessingPhase getCompletedPhase() {
         return ModelProcessingPhase.ofExecutionOrder(executionOrder());
+    }
+
+    @Override
+    public final IdentifierBinding identifierBinding() {
+        return getRoot().identifierBindingImpl();
     }
 
     abstract byte executionOrder();

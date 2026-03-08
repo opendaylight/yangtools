@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -31,11 +32,12 @@ final class OidStatementSupport
     }
 
     @Override
-    public ObjectIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public ObjectIdentifier parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return ObjectIdentifier.forString(value);
+            return ObjectIdentifier.forString(rawArgument);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid object identifier '%s'", value);
+            throw new SourceException(stmt, e, "Invalid object identifier '%s'", rawArgument);
         }
     }
 

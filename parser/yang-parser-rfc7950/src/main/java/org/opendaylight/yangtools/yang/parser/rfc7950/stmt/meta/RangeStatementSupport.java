@@ -31,8 +31,9 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -51,21 +52,22 @@ public final class RangeStatementSupport
     }
 
     @Override
-    public ValueRanges parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String rangeArgument) {
+    public ValueRanges parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         final var ranges = new ArrayList<ValueRange>();
 
-        for (var singleRange : ArgumentUtils.PIPE_SPLITTER.split(rangeArgument)) {
+        for (var singleRange : ArgumentUtils.PIPE_SPLITTER.split(rawArgument)) {
             final var boundaries = ArgumentUtils.TWO_DOTS_SPLITTER.split(singleRange).iterator();
-            final var min = parseDecimalConstraintValue(ctx, boundaries.next());
+            final var min = parseDecimalConstraintValue(stmt, boundaries.next());
 
             final Number max;
             if (boundaries.hasNext()) {
-                max = parseDecimalConstraintValue(ctx, boundaries.next());
+                max = parseDecimalConstraintValue(stmt, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx,
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, stmt,
                     "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
-                SourceException.throwIf(boundaries.hasNext(), ctx,
+                SourceException.throwIf(boundaries.hasNext(), stmt,
                     "Wrong number of boundaries in range constraint %s", singleRange);
             } else {
                 max = min;
@@ -74,7 +76,7 @@ public final class RangeStatementSupport
             // some of intervals overlapping
             if (!ranges.isEmpty()) {
                 SourceException.throwIf(ArgumentUtils.compareNumbers(min, ranges.getLast().upperBound()) != 1,
-                    ctx, "Some of the value ranges in %s are not disjoint", rangeArgument);
+                    stmt, "Some of the value ranges in %s are not disjoint", rawArgument);
             }
             ranges.add(ValueRange.of(min, max));
         }
@@ -100,7 +102,7 @@ public final class RangeStatementSupport
         return EffectiveStatements.createRange(stmt.declared(), substatements);
     }
 
-    private static @NonNull Number parseDecimalConstraintValue(final @NonNull StmtContext<?, ?, ?> ctx,
+    private static @NonNull Number parseDecimalConstraintValue(final @NonNull CommonStmtCtx stmt,
             final @NonNull String value) {
         if ("max".equals(value)) {
             return UnresolvedNumber.max();
@@ -113,7 +115,7 @@ public final class RangeStatementSupport
             try {
                 return Decimal64.valueOf(value);
             } catch (NumberFormatException e) {
-                throw new SourceException(ctx, e, "Value %s is not a valid decimal number", value);
+                throw new SourceException(stmt, e, "Value %s is not a valid decimal number", value);
             }
         }
 
@@ -122,7 +124,7 @@ public final class RangeStatementSupport
         try {
             return value.startsWith("-") ? Long.valueOf(value) : Uint64.valueOf(value).intern();
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Value %s is not a valid integral range number", value);
+            throw new SourceException(stmt, e, "Value %s is not a valid integral range number", value);
         }
     }
 }

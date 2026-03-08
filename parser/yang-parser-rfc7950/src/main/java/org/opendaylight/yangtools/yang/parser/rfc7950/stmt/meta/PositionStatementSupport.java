@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -33,11 +34,12 @@ public final class PositionStatementSupport
     }
 
     @Override
-    public Uint32 parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public Uint32 parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return Uint32.valueOf(value).intern();
+            return Uint32.valueOf(rawArgument).intern();
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Bit position value %s is not valid integer", value);
+            throw new SourceException(stmt, e, "Bit position value %s is not valid integer", rawArgument);
         }
     }
 

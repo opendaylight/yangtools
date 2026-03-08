@@ -34,7 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -90,12 +92,12 @@ final class YangDataStatementSupport
     }
 
     @Override
-    public YangDataName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final var module = ctx.currentModule();
+    public YangDataName parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return new YangDataName(module, value);
+            return new YangDataName(stmt.currentModule(), rawArgument);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid yang-data argument %s", value);
+            throw new SourceException(stmt, e, "Invalid yang-data argument %s", rawArgument);
         }
     }
 

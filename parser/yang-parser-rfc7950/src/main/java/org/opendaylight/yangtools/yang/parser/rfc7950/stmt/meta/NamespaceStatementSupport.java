@@ -20,8 +20,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -35,11 +36,12 @@ public final class NamespaceStatementSupport
     }
 
     @Override
-    public XMLNamespace parseArgumentValue(final StmtContext<?, ?,?> ctx, final String value) {
+    public XMLNamespace parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         try {
-            return XMLNamespace.of(value).intern();
+            return XMLNamespace.of(rawArgument).intern();
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx, e, "Invalid namespace \"%s\"", value);
+            throw new SourceException(stmt, e, "Invalid namespace \"%s\"", rawArgument);
         }
     }
 
