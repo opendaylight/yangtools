@@ -21,21 +21,25 @@ import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser.If_fe
 import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser.If_feature_factorContext;
 import org.opendaylight.yangtools.rfc7950.parser.antlr.IfFeatureExprParser.If_feature_termContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @NonNullByDefault
 final class IfFeaturePredicateParser {
-    private final StmtContext<?, ?, ?> stmt;
+    private final CommonStmtCtx stmt;
+    private final IdentifierBinding binding;
 
-    private IfFeaturePredicateParser(final StmtContext<?, ?, ?> stmt) {
+    private IfFeaturePredicateParser(final CommonStmtCtx stmt, final IdentifierBinding binding) {
         this.stmt = requireNonNull(stmt);
+        this.binding = requireNonNull(binding);
     }
 
-    static IfFeatureExpr parseIfFeatureExpression(final StmtContext<?, ?, ?> stmt, final String value) {
-        final var expr = SourceExceptionParser.parseString(IfFeatureExprLexer::new,
-            IfFeatureExprParser::new, IfFeatureExprParser::if_feature_expr, stmt.sourceReference(), value);
-        return new IfFeaturePredicateParser(stmt).parseIfFeatureExpr(expr);
+    static IfFeatureExpr parseIfFeatureExpression(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        return new IfFeaturePredicateParser(stmt, binding)
+            .parseIfFeatureExpr(SourceExceptionParser.parseString(IfFeatureExprLexer::new, IfFeatureExprParser::new,
+                IfFeatureExprParser::if_feature_expr, stmt.sourceReference(), rawArgument));
     }
 
     private IfFeatureExpr parseIfFeatureExpr(final If_feature_exprContext expr) {
@@ -62,7 +66,7 @@ final class IfFeaturePredicateParser {
         final var first = factor.getChild(0);
         return switch (first) {
             case Identifier_ref_argContext refArg ->
-                IfFeatureExpr.isPresent(stmt.identifierBinding().parseIdentifierRefArg(stmt, refArg.getText()));
+                IfFeatureExpr.isPresent(binding.parseIdentifierRefArg(stmt, refArg.getText()));
             case TerminalNode terminal ->
                 switch (terminal.getSymbol().getType()) {
                     case IfFeatureExprParser.LP -> parseIfFeatureExpr(factor.getChild(If_feature_exprContext.class, 0));

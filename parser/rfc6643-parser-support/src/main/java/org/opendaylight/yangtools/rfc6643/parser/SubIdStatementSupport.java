@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class SubIdStatementSupport extends AbstractStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
@@ -29,8 +30,10 @@ final class SubIdStatementSupport extends AbstractStatementSupport<Uint32, SubId
     }
 
     @Override
-    public Uint32 parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Uint32.valueOf(value);
+    public Uint32 parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
+        // FIXME: report SourceException on bad values
+        return Uint32.valueOf(rawArgument);
     }
 
     @Override

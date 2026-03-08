@@ -33,12 +33,13 @@ public sealed interface ArgumentFactory<A> permits StatementSupport {
     /**
      * Parses textual representation of argument in object representation.
      *
-     * @param ctx Context, which may be used to access source-specific namespaces required for parsing.
-     * @param value String representation of value, as was present in text source.
-     * @return Parsed value
+     * @param stmt the {@link CommonStmtCtx} in which the the argument is being parsed
+     * @param binding the {@link IdentifierBinding} in which the argument is being parsed
+     * @param rawArgument string representation of value, as was present in text source
+     * @return parsed value
      * @throws SourceException when an inconsistency is detected.
      */
-    @NonNull A parseArgumentValue(@NonNull StmtContext<?, ?, ?> ctx, String value);
+    @NonNull A parseArgumentValue(@NonNull CommonStmtCtx stmt, @NonNull IdentifierBinding binding, String rawArgument);
 
     /**
      * Adapts the argument value to match a new module. Default implementation returns original value stored in context,

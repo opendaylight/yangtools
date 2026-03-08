@@ -27,7 +27,9 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -61,12 +63,12 @@ public final class KeyStatementSupport
     }
 
     @Override
-    public KeyArgument parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public KeyArgument parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+            final String rawArgument) {
         final var nodeIdentifiers = new LinkedHashSet<QName>();
-        final var binding = ctx.identifierBinding();
-        for (var keyToken : KEY_ARG_SPLITTER.split(value)) {
-            if (!nodeIdentifiers.add(binding.parseNodeIdentifierArg(ctx, keyToken))) {
-                throw new SourceException(ctx, "Key argument '%s' contains duplicates", value);
+        for (var keyToken : KEY_ARG_SPLITTER.split(rawArgument)) {
+            if (!nodeIdentifiers.add(binding.parseNodeIdentifierArg(stmt, keyToken))) {
+                throw new SourceException(stmt, "Key argument '%s' contains duplicates", rawArgument);
             }
         }
         return KeyArgument.of(List.copyOf(nodeIdentifiers));
