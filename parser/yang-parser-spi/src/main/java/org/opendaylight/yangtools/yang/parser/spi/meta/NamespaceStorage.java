@@ -17,9 +17,9 @@ import org.eclipse.jdt.annotation.Nullable;
 // TODO: describe how the hierarchy is organized
 public interface NamespaceStorage {
     /**
-     * Enumeration of all possible types of storage.
+     * The {@link NamespaceStorage} levels, in the order of descending scope.
      */
-    enum StorageType {
+    enum Level {
         /**
          * Global storage, visible from all sources. There is exactly one such storage in any {@link NamespaceStorage}
          * hierarchy and it logically sits on top of it.
@@ -31,23 +31,22 @@ public interface NamespaceStorage {
          */
         ACCESSIBLE_SOURCES,
         /**
+         * Storage of a particular source.
+         */
+        SOURCE,
+        /**
          * Storage of a single statement.
          */
-        STATEMENT_LOCAL,
-        /**
-         * Storage of the root statement of a particular source.
-         */
-        ROOT_STATEMENT_LOCAL
+        STATEMENT,
     }
 
     /**
-     * {@link NamespaceStorage} for {@link StorageType#GLOBAL}. This is sufficiently special to warrant a dedicated
-     * interface, as there is only one instance of this storage in every parser build.
+     * {@link NamespaceStorage} for {@link Level#GLOBAL}.
      */
-    interface GlobalStorage extends NamespaceStorage {
+    interface Global extends NamespaceStorage {
         @Override
-        default StorageType getStorageType() {
-            return StorageType.GLOBAL;
+        default Level level() {
+            return Level.GLOBAL;
         }
 
         @Override
@@ -57,12 +56,52 @@ public interface NamespaceStorage {
     }
 
     /**
-     * {@return the type of this storage}
+     * {@link NamespaceStorage} for {@link Level#ACCESSIBLE_SOURCES}.
      */
-    @NonNull StorageType getStorageType();
+    interface AccessibleSources extends NamespaceStorage {
+        @Override
+        default Level level() {
+            return Level.ACCESSIBLE_SOURCES;
+        }
+
+        @Override
+        default <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        default <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
+            throw new UnsupportedOperationException();
+        }
+    }
 
     /**
-     * Return the parent {@link NamespaceStorage}. If this storage is {@link StorageType#GLOBAL}, this method will
+     * {@link NamespaceStorage} for {@link Level#SOURCE}.
+     */
+    interface Source extends NamespaceStorage {
+        @Override
+        default Level level() {
+            return Level.SOURCE;
+        }
+    }
+
+    /**
+     * {@link NamespaceStorage} for {@link Level#STATEMENT}.
+     */
+    interface Statement extends NamespaceStorage {
+        @Override
+        default Level level() {
+            return Level.STATEMENT;
+        }
+    }
+
+    /**
+     * {@return the {@link Level}  of this storage}
+     */
+    @NonNull Level level();
+
+    /**
+     * Return the parent {@link NamespaceStorage}. If this storage is {@link Level#GLOBAL}, this method will
      * return {@code null}.
      *
      * @return Parent storage, if this is not the global storage
