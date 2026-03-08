@@ -36,8 +36,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 @Beta
 public final class StatementDefinitions {
 
-    public static final @NonNull ParserNamespace<QName, StatementSupport<?, ?, ?>> NAMESPACE =
-        new ParserNamespace<>("statementDefinitions");
+    public static final ParserNamespace.@NonNull Writable<QName, StatementSupport<?, ?, ?>> NAMESPACE =
+        ParserNamespace.writable("statementDefinitions");
 
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
 

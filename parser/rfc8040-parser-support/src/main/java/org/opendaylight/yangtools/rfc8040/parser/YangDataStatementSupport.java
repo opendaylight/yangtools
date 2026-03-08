@@ -11,6 +11,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
@@ -45,9 +46,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class YangDataStatementSupport
         extends AbstractStatementSupport<YangDataName, YangDataStatement, YangDataEffectiveStatement> {
-    private static final ParserNamespace<YangDataName,
+    private static final ParserNamespace.@NonNull Writable<YangDataName,
         StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> NAMESPACE =
-        new ParserNamespace<>("yang-data");
+            ParserNamespace.writable("yang-data");
     public static final NamespaceBehaviour<YangDataName,
         StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> BEHAVIOUR =
         NamespaceBehaviour.global(NAMESPACE);

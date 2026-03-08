@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class SourceGroupingNamespace {
-    static final @NonNull ParserNamespace<Empty, StmtContext<?, ?, ?>> INSTANCE =
-        new ParserNamespace<>("sourceGrouping");
+    static final ParserNamespace.@NonNull Writable<Empty, StmtContext<?, ?, ?>> INSTANCE =
+        ParserNamespace.writable("sourceGrouping");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private SourceGroupingNamespace() {

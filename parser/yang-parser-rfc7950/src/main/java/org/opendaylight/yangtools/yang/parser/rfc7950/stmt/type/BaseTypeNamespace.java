@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 public final class BaseTypeNamespace {
-    static final @NonNull ParserNamespace<Empty, Object> INSTANCE = new ParserNamespace<>("baseType");
+    static final ParserNamespace.@NonNull Writable<Empty, Object> INSTANCE = ParserNamespace.writable("baseType");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private BaseTypeNamespace() {

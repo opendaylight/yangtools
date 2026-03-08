@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public final class YangNamespaceContextNamespace {
-    private static final @NonNull ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> INSTANCE =
-        new ParserNamespace<>("yangNamespaceContext");
+    private static final ParserNamespace.@NonNull Writable<StmtContext<?, ?, ?>, YangNamespaceContext> INSTANCE =
+        ParserNamespace.writable("yangNamespaceContext");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(INSTANCE);
 
     private YangNamespaceContextNamespace() {
