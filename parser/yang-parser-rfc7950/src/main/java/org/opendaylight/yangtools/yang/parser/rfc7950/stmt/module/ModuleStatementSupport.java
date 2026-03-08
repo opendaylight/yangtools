@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,8 +51,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
@@ -213,28 +210,17 @@ public final class ModuleStatementSupport
             throw noNamespace(stmt);
         }
 
-        final var submodules = new ArrayList<Submodule>();
-        for (var submoduleCtx : submoduleContexts(stmt)) {
-            final var submodule = submoduleCtx.buildEffective();
-            if (!(submodule instanceof Submodule legacy)) {
-                throw new VerifyException("Submodule statement " + submodule + " is not a Submodule");
-            }
-            submodules.add(legacy);
-        }
+        final var includedSubmodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
+        final var submodules = includedSubmodules == null ? List.<Submodule>of() : includedSubmodules.values().stream()
+            .sorted(Comparator.comparing(StmtContext::argument))
+            .map(ctx -> ctx.buildEffective().toDataNodeContainer())
+            .collect(Collectors.toUnmodifiableList());
 
         try {
             return new ModuleEffectiveStatementImpl(stmt, substatements, submodules, stmt.effectiveNamespace());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
-    }
-
-    private static List<StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>>
-            submoduleContexts(final Current<?, ?> stmt) {
-        final var submodules = stmt.namespace(ParserNamespaces.INCLUDED_SUBMODULE);
-        return submodules == null ? List.of() : submodules.values().stream()
-            .sorted(Comparator.comparing(StmtContext::argument))
-            .collect(Collectors.toUnmodifiableList());
     }
 
     private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {
