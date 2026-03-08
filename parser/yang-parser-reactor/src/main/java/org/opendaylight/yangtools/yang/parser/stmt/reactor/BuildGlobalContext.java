@@ -49,7 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalStorage;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -61,7 +61,7 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles.V
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BuildGlobalContext extends AbstractNamespaceStorage implements GlobalStorage {
+final class BuildGlobalContext extends AbstractNamespaceStorage implements NamespaceStorage.Global {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
