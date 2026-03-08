@@ -16,7 +16,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,11 +35,11 @@ class FilenameResolutionTest extends AbstractCodeGeneratorTest {
                 final ModuleResourceResolver resolver = invocation.getArgument(2);
 
                 final var module = Iterables.getOnlyElement(context.getModules());
-                assertEquals(Optional.of("/META-INF/yang/foo@2020-10-13.yang"),
+                assertEquals(List.of("META-INF", "yang", "foo@2020-10-13.yang"),
                     resolver.findModuleResourcePath(module, YangTextSource.class));
 
                 final var submodule = Iterables.getOnlyElement(module.getSubmodules());
-                assertEquals(Optional.of("/META-INF/yang/foo-submodule@2020-10-12.yang"),
+                assertEquals(List.of("META-INF", "yang", "foo-submodule@2020-10-12.yang"),
                     resolver.findModuleResourcePath(submodule, YangTextSource.class));
 
                 return ImmutableTable.of();

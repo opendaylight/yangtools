@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
@@ -53,8 +52,7 @@ abstract class BaseCompilationTest {
 
         // Also generate YangModuleInfo
         for (var module : context.getModules()) {
-            final var template = new YangModuleInfoTemplate(module, context,
-                mod -> Optional.of("fake/" + mod.getName()));
+            final var template = new YangModuleInfoTemplate(module, context, mod -> List.of("fake", mod.getName()));
 
             final var file = sourcesOutputDir
                 .resolve(Naming.getServicePackageName(module.getQNameModule()).replace('.', File.separatorChar))

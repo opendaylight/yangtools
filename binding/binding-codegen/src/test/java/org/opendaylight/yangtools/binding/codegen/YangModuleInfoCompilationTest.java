@@ -22,8 +22,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
@@ -48,8 +48,8 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
         final var resourceDirPath = "/yang-module-info";
         final var context = YangParserTestUtils.parseYangResourceDirectory(resourceDirPath);
         final var codegen = new JavaFileGenerator(Map.of()).generateFiles(context, Set.copyOf(context.getModules()),
-                (module, representation) -> Optional.of(resourceDirPath + File.separator + module.getName()
-                    + YangConstants.RFC6020_YANG_FILE_EXTENSION));
+                (module, representation) -> List.of("yang-module-info",
+                    module.getName() + YangConstants.RFC6020_YANG_FILE_EXTENSION));
 
         assertEquals(15, codegen.size());
         assertEquals(14, codegen.row(GeneratedFileType.SOURCE).size());
@@ -57,7 +57,7 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
 
         for (var entry : codegen.row(GeneratedFileType.SOURCE).entrySet()) {
             final var path = sourcesOutputDir.resolve(
-                entry.getKey().getPath().replace(GeneratedFilePath.SEPARATOR, File.separatorChar));
+                entry.getKey().path().replace(GeneratedFilePath.SEPARATOR, File.separatorChar));
 
             Files.createDirectories(path.getParent());
             try (var out = Files.newOutputStream(path)) {
@@ -283,7 +283,7 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
         final var context = YangParserTestUtils.parseYangResourceDirectory("/yang-module-info");
         final var codegen = new JavaFileGenerator(Map.of("test", "test"));
         final var files = codegen.generateFiles(context,
-            Set.copyOf(context.getModules()), (module, representation) -> Optional.of(module.getName()));
+            Set.copyOf(context.getModules()), (module, representation) -> List.of(module.getName()));
         assertEquals(15, files.size());
         assertEquals(14, files.row(GeneratedFileType.SOURCE).size());
         assertEquals(1, files.row(GeneratedFileType.RESOURCE).size());
