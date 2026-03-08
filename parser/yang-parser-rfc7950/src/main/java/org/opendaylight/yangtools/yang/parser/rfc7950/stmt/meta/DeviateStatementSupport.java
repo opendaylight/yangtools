@@ -396,7 +396,7 @@ public final class DeviateStatementSupport
     private static void validateDeviationTarget(final StmtContext<?, ?, ?> deviateSubStmtCtx,
             final StmtContext<?, ?, ?> targetCtx) {
         InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
-            targetCtx.yangVersion()), deviateSubStmtCtx,
+            targetCtx.sourceVersion()), deviateSubStmtCtx,
             "%s is not a valid deviation target for substatement %s.", targetCtx.argument(),
             deviateSubStmtCtx.publicDefinition().statementName());
     }

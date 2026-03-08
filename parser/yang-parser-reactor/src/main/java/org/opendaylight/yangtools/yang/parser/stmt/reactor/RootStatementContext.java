@@ -107,6 +107,10 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
         return currentModule;
     }
 
+    @NonNull YangVersion sourceVersionImpl() {
+        return sourceContext.yangVersion();
+    }
+
     @Override
     public Unqualified sourceName() {
         return sourceName;
@@ -215,10 +219,6 @@ final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Ef
     @Override
     protected boolean isParentSupportedByFeatures() {
         return true;
-    }
-
-    @NonNull YangVersion getRootVersionImpl() {
-        return sourceContext.yangVersion();
     }
 
     /**

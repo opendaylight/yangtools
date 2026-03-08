@@ -188,7 +188,7 @@ public final class StmtContextUtils {
      */
     public static void validateIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> ctx) {
         // Preliminary checks
-        if (YangVersion.VERSION_1_1 != ctx.yangVersion()) {
+        if (YangVersion.VERSION_1_1 != ctx.sourceVersion()) {
             return;
         }
         final var parent = ctx.getParentContext();

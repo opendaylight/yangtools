@@ -118,7 +118,7 @@ public final class TypedefStatementSupport extends
         final var typeEffectiveStmt = findFirstStatement(substatements, TypeEffectiveStatement.class);
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeEffectiveStmt, dflt), stmt,
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.sourceVersion(), typeEffectiveStmt, dflt), stmt,
             "Typedef '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
         return EffectiveStatements.createTypedef(declared, computeFlags(substatements), substatements);

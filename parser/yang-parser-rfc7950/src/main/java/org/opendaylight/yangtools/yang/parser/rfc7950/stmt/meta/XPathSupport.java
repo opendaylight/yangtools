@@ -40,9 +40,9 @@ public final class XPathSupport {
             throw new SourceException(ctx, e, "Argument \"%s\" is not valid XPath string", xpath);
         }
 
-        if (ctx.yangVersion().compareTo(parsed.getYangVersion()) < 0) {
+        if (ctx.sourceVersion().compareTo(parsed.getYangVersion()) < 0) {
             LOG.warn("{} features required in {} context to parse expression '{}' [at {}]",
-                parsed.getYangVersion().reference(), ctx.yangVersion().reference(), xpath, ctx.sourceReference());
+                parsed.getYangVersion().reference(), ctx.sourceVersion().reference(), xpath, ctx.sourceReference());
         }
         return parsed;
     }

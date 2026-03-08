@@ -220,8 +220,8 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public final YangVersion yangVersion() {
-        return getRoot().getRootVersionImpl();
+    public final YangVersion sourceVersion() {
+        return getRoot().sourceVersionImpl();
     }
 
     @Override
