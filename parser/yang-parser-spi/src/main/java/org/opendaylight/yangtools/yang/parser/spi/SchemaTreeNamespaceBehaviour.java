@@ -14,8 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.GlobalStorage;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.StorageType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -37,7 +35,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
      * <p>This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
      */
     @Override
-    public StmtContext<QName, D, E> getFrom(final GlobalStorage global, final NamespaceStorage storage,
+    public StmtContext<QName, D, E> getFrom(final NamespaceStorage.Global global, final NamespaceStorage storage,
             final QName key) {
         // Get the backing storage node for the requested storage
         final var storageNode = globalOrStatementSpecific(storage);
@@ -49,13 +47,14 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     }
 
     @Override
-    public Map<QName, StmtContext<QName, D, E>> getAllFrom(final GlobalStorage global, final NamespaceStorage storage) {
+    public Map<QName, StmtContext<QName, D, E>> getAllFrom(final NamespaceStorage.Global global,
+            final NamespaceStorage storage) {
         // FIXME: 7.0.0: this method needs to be well-defined
         return null;
     }
 
     @Override
-    public void addTo(final GlobalStorage global, final NamespaceStorage storage, final QName key,
+    public void addTo(final NamespaceStorage.Global global, final NamespaceStorage storage, final QName key,
             final StmtContext<QName, D, E> value) {
         final var prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(namespace(), key, value);
         if (prev != null) {
@@ -73,7 +72,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     private static NamespaceStorage globalOrStatementSpecific(final NamespaceStorage storage) {
         var current = storage;
         while (true) {
-            if (current.getStorageType() == StorageType.STATEMENT_LOCAL) {
+            if (current.level() == NamespaceStorage.Level.STATEMENT) {
                 return current;
             }
 

@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
  * expanding this namespace on an if-needed basis.
  */
 @Beta
-public interface OnDemandSchemaTreeStorage extends NamespaceStorage {
+public interface OnDemandSchemaTreeStorage extends NamespaceStorage.Statement {
     /**
      * Request that a new member of this node's schema tree statement be added. Implementations are required to
      * perform lookup in their internal structure and create a child if tractable. Resulting node is expected to
