@@ -30,13 +30,13 @@ final class TestFileGenerator implements FileGenerator {
         }
 
         return ImmutableTable.<GeneratedFileType, GeneratedFilePath, GeneratedFile>builder()
-            .put(GeneratedFileType.SOURCE, GeneratedFilePath.ofFilePath(prefix + "Source.test"),
+            .put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(prefix, "Source.test"),
                 GeneratedFile.of(GeneratedFileLifecycle.PERSISTENT, "source"))
-            .put(GeneratedFileType.RESOURCE, GeneratedFilePath.ofFilePath(prefix + "-resource"),
+            .put(GeneratedFileType.RESOURCE, GeneratedFilePath.ofDirectoryFile(prefix, "-resource"),
                 GeneratedFile.of(GeneratedFileLifecycle.PERSISTENT, "test-resource"))
-            .put(GeneratedFileType.SOURCE, GeneratedFilePath.ofFilePath(prefix + "GenSource.test"),
+            .put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(prefix, "GenSource.test"),
                 GeneratedFile.of(GeneratedFileLifecycle.TRANSIENT, "source"))
-            .put(GeneratedFileType.RESOURCE, GeneratedFilePath.ofFilePath(prefix + "-gen-resource"),
+            .put(GeneratedFileType.RESOURCE, GeneratedFilePath.ofDirectoryFile(prefix, "-gen-resource"),
                 GeneratedFile.of(GeneratedFileLifecycle.TRANSIENT, "resource"))
             .build();
     }
