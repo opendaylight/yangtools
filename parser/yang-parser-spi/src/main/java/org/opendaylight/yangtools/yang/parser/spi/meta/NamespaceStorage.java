@@ -72,12 +72,13 @@ public interface NamespaceStorage {
         }
 
         @Override
-        default <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
+        default <K, V> V putToLocalStorage(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        default <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
+        default <K, V> V putToLocalStorageIfAbsent(final ParserNamespace.Writable<K, V> type, final K key,
+                final V value) {
             throw new UnsupportedOperationException();
         }
     }
@@ -131,7 +132,7 @@ public interface NamespaceStorage {
      * @return Previously-stored value, or null if the key was not present
      * @throws UnsupportedOperationException if {@code type} is a read-only namespace
      */
-    <K, V> @Nullable V putToLocalStorage(ParserNamespace<K, V> type, K key, V value);
+    <K, V> @Nullable V putToLocalStorage(ParserNamespace.Writable<K, V> type, K key, V value);
 
     /**
      * Populate specified namespace with a key/value pair unless the key is already associated with a value. Similar
@@ -145,5 +146,5 @@ public interface NamespaceStorage {
      * @return pre-existing value or {@code null} if there was no previous mapping
      * @throws UnsupportedOperationException if {@code type} is a read-only namespace
      */
-    <K, V> @Nullable V putToLocalStorageIfAbsent(ParserNamespace<K, V> type, K key, V value);
+    <K, V> @Nullable V putToLocalStorageIfAbsent(ParserNamespace.Writable<K, V> type, K key, V value);
 }
