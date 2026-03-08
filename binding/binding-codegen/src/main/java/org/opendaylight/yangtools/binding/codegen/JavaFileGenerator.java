@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
@@ -32,11 +31,10 @@ import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 final class JavaFileGenerator implements FileGenerator {
     public static final String CONFIG_IGNORE_DUPLICATE_FILES = "ignoreDuplicateFiles";
 
-    private static final CharMatcher DOT_MATCHER = CharMatcher.is('.');
     private static final String MODULE_INFO = Naming.MODULE_INFO_CLASS_NAME + ".java";
     private static final String MODEL_BINDING_PROVIDER = Naming.MODEL_BINDING_PROVIDER_CLASS_NAME + ".java";
     private static final GeneratedFilePath MODEL_BINDING_PROVIDER_SERVICE =
-        GeneratedFilePath.ofPath("META-INF/services/" + YangModelBindingProvider.class.getName());
+        GeneratedFilePath.ofDirectoryFile("META-INF/services", YangModelBindingProvider.class.getName());
 
     private final BindingGenerator bindingGenerator;
     private final boolean ignoreDuplicateFiles;
@@ -64,11 +62,11 @@ final class JavaFileGenerator implements FileGenerator {
         for (final var module : localModules) {
             final var template = new YangModuleInfoTemplate(module, context,
                 mod -> moduleResourcePathResolver.findModuleResourcePath(mod, YangTextSource.class));
-            final var path = DOT_MATCHER.replaceFrom(template.packageName(), '/') + "/";
+            final var directory = template.packageName().replace('.', GeneratedFilePath.SEPARATOR);
 
-            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofPath(path + MODULE_INFO),
+            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(directory, MODULE_INFO),
                 new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, template::generate));
-            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofPath(path + MODEL_BINDING_PROVIDER),
+            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(directory, MODEL_BINDING_PROVIDER),
                 new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, template::generateModelProvider));
 
             bindingProviders.add(template.modelBindingProviderName());
