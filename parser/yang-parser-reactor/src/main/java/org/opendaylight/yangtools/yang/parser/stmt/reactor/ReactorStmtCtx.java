@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.SubtreePolicy.Normal;
@@ -60,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends AbstractNamespaceStorage implements Mutable<A, D, E>, Current<A, D>
+        extends AbstractNamespaceStorage implements Mutable<A, D, E>, Current<A, D>, NamespaceStorage.Statement
         permits ReplicaStatementContext, StatementContextBase {
     private static final Logger LOG = LoggerFactory.getLogger(ReactorStmtCtx.class);
 
@@ -344,12 +345,6 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     // AbstractNamespaceStorage/Mutable integration methods. Keep these together.
     //
     //
-
-    @Override
-    public StorageType getStorageType() {
-        // Common to all subclasses except RootStatementContext
-        return StorageType.STATEMENT_LOCAL;
-    }
 
     @Override
     public final <K, V> V namespaceItem(final ParserNamespace<K, V> namespace, final K key) {
