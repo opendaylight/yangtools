@@ -59,7 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DeviateStatementSupport
-        extends AbstractStatementSupport<DeviateKind, DeviateStatement, DeviateEffectiveStatement> {
+        extends AbstractStatementSupport<DeviateKind, @NonNull DeviateStatement, DeviateEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(DeviateStatementSupport.class);
 
     // Shared by both

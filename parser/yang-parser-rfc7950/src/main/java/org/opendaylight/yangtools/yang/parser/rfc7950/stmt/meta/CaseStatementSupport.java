@@ -51,7 +51,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class CaseStatementSupport
-        extends AbstractImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
+        extends AbstractImplicitStatementSupport<@NonNull CaseStatement, CaseEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(CaseStatement.DEF)
             .addAny(AnyxmlStatement.DEF)
