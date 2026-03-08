@@ -8,59 +8,47 @@
 package org.opendaylight.yangtools.plugin.generator.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.MoreObjects;
-import java.io.File;
+import java.nio.file.Path;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A relative path to a generated file.
+ *
+ * @param path the path, guaranteed to be non-empty
  */
 @NonNullByDefault
-public final class GeneratedFilePath {
+public record GeneratedFilePath(String path) {
+    /**
+     * The separator used in {@code path()} as a character.
+     */
     public static final char SEPARATOR = '/';
+    /**
+     * The separator used in {@code path()} as a string.
+     */
     public static final String SEPARATOR_STR = "/";
 
-    private static final CharMatcher FS_MATCHER = CharMatcher.is(File.separatorChar);
-
-    private final String path;
-
-    private GeneratedFilePath(final String path) {
-        this.path = requireNonNull(path);
+    /**
+     * Default constructor.
+     *
+     * @param path the path, must not be empty
+     */
+    public GeneratedFilePath {
         checkArgument(!path.isEmpty());
     }
 
-    public static GeneratedFilePath ofPath(final String path) {
-        return new GeneratedFilePath(path);
+    public static GeneratedFilePath ofDirectoryFile(final String directory, final String fileName) {
+        checkArgument(!directory.isEmpty());
+        checkArgument(!fileName.isEmpty());
+        return new GeneratedFilePath(directory + SEPARATOR + fileName);
     }
 
-    public static GeneratedFilePath ofFile(final File file) {
-        return ofFilePath(file.getPath());
+    public static GeneratedFilePath ofPath(final Path path) {
+        return new GeneratedFilePath(path.toString().replace(path.getFileSystem().getSeparator(), SEPARATOR_STR));
     }
 
-    public static GeneratedFilePath ofFilePath(final String filePath) {
-        return ofPath(FS_MATCHER.replaceFrom(filePath, SEPARATOR));
-    }
-
+    @Deprecated(since = "15.0.0", forRemoval = true)
     public String getPath() {
         return path;
-    }
-
-    @Override
-    public int hashCode() {
-        return path.hashCode();
-    }
-
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof GeneratedFilePath other && path.equals(other.path);
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("path", path).toString();
     }
 }

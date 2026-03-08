@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.collect.HashBasedTable;
-import java.io.File;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentable;
@@ -77,8 +76,9 @@ final class BindingJavaFileGenerator {
 
     private void generateFile(final Generator generator) {
         final var typeName = generator.type().name();
-        final var file =  GeneratedFilePath.ofFilePath(typeName.packageName().replace('.', File.separatorChar)
-            + File.separator + generator.getUnitName() + ".java");
+        final var file =  GeneratedFilePath.ofDirectoryFile(
+            typeName.packageName().replace('.', GeneratedFilePath.SEPARATOR),
+            generator.getUnitName() + ".java");
 
         if (result.contains(GeneratedFileType.SOURCE, file)) {
             if (ignoreDuplicateFiles) {
