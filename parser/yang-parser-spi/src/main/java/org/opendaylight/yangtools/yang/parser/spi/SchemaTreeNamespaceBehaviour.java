@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -56,7 +57,11 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
     @Override
     public void addTo(final NamespaceStorage.Global global, final NamespaceStorage storage, final QName key,
             final StmtContext<QName, D, E> value) {
-        final var prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(namespace(), key, value);
+        if (!(namespace() instanceof ParserNamespace.Writable<QName, StmtContext<QName, D, E>> writable)) {
+            throw new UnsupportedOperationException();
+        }
+
+        final var prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(writable, key, value);
         if (prev != null) {
             throw new SourceException(value,
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",

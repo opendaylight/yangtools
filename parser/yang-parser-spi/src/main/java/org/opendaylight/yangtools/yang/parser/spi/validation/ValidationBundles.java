@@ -47,8 +47,8 @@ public final class ValidationBundles {
         SUPPORTED_DATA_NODES
     }
 
-    public static final @NonNull ParserNamespace<ValidationBundleType, Collection<?>> NAMESPACE =
-        new ParserNamespace<>("validationBundles");
+    public static final ParserNamespace.@NonNull Writable<ValidationBundleType, Collection<?>> NAMESPACE =
+        ParserNamespace.writable("validationBundles");
 
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
 

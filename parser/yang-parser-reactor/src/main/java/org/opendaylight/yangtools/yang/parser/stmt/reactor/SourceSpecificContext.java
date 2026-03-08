@@ -157,10 +157,6 @@ final class SourceSpecificContext implements Mutable, NamespaceStorage.Accessibl
         root = new RootStatementContext<>(sourceId().name(), identifierBinding, this,
             globalContext.linkStatementDefinition(statement.definition(), yangVersion()),
             statement.sourceRef(), statement.rawArgument(), statement.size());
-
-        // reserve namespaces for resolution
-        root.reserveLinkage(ParserNamespaces.IMPORTED_MODULE);
-        root.reserveLinkage(ParserNamespaces.INCLUDED_SUBMODULE);
     }
 
     @NonNull BuildGlobalContext globalContext() {

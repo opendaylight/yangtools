@@ -7,12 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import static java.util.Objects.requireNonNull;
-
-import com.google.common.base.MoreObjects;
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Identifier;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * {@link ParserNamespace} serves as common superclass for namespaces used during parser operation. Each such namespace,
@@ -20,23 +16,50 @@ import org.opendaylight.yangtools.concepts.Identifier;
  * {@link NamespaceStmtCtx#namespaceItem(ParserNamespace, Object)} and still allows introduction of new namespaces
  * without need to change APIs.
  *
- * @param <K> Identifier type
- * @param <V> Value type
+ * <p>Each namespace is either {@link ReadOnly} or {@link Writable}.
+ *
+ * @param <K> key type
+ * @param <V> value type
  */
 @NonNullByDefault
-public final class ParserNamespace<K, V> implements Identifier {
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    private final String name;
-
-    // FIXME: hide this constructor once we collapse the type hierarchy
-    public ParserNamespace(final String name) {
-        this.name = requireNonNull(name);
+public sealed interface ParserNamespace<K, V> extends Immutable {
+    /**
+     * A read-only {@link ParserNamespace}, which has fixed contents over the course of an execution.
+     *
+     * @param <K> key type
+     * @param <V> value type
+     */
+    sealed interface ReadOnly<K, V> extends ParserNamespace<K, V> permits ReadOnlyParserNamespace {
+        // Nothing else
     }
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("name", name).toString();
+    /**
+     * A writable {@link ParserNamespace}, which can be modified over the course of an execution.
+     *
+     * @param <K> key type
+     * @param <V> value type
+     */
+    sealed interface Writable<K, V> extends ParserNamespace<K, V> permits WritableParserNamespace {
+        // Nothing else
+    }
+
+    /**
+     * {@return a new {@link ReadOnly} namespace with specified name}
+     * @param <K> key type
+     * @param <V> value type
+     * @param name the name
+     */
+    static <K, V> ReadOnly<K, V> readOnly(final String name) {
+        return new ReadOnlyParserNamespace<>(name);
+    }
+
+    /**
+     * {@return a new {@link Writable} namespace with specified name}
+     * @param <K> key type
+     * @param <V> value type
+     * @param name the name
+     */
+    static <K, V> Writable<K, V> writable(final String name) {
+        return new WritableParserNamespace<>(name);
     }
 }
