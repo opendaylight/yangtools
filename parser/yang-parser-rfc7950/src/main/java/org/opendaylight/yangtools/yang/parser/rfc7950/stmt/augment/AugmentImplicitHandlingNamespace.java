@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * the effective augment has correct implicit statements created.
  */
 public final class AugmentImplicitHandlingNamespace {
-    static final @NonNull ParserNamespace<Empty, Mutable<?, ?, ?>> INSTANCE =
-        new ParserNamespace<>("augment-implicit-handling");
+    static final ParserNamespace.@NonNull Writable<Empty, Mutable<?, ?, ?>> INSTANCE =
+        ParserNamespace.writable("augment-implicit-handling");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private AugmentImplicitHandlingNamespace() {

@@ -95,10 +95,6 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
         }
 
         supportedVersions = verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions();
-
-        // reserve namespaces for resolution
-        reserveLinkage(ParserNamespaces.MODULE);
-        reserveLinkage(ParserNamespaces.NAMESPACE_TO_MODULE);
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
