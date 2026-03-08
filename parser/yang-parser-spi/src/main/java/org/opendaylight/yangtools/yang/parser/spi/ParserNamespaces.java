@@ -85,13 +85,6 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE = new ParserNamespace<>("module");
 
     /**
-     * Submodule equivalent of {@link #MODULE}.
-     */
-    public static final @NonNull ParserNamespace<SourceIdentifier,
-        StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> SUBMODULE =
-        new ParserNamespace<>("submodule");
-
-    /**
      * Derived types namespace. All derived type names defined within a parent node or at the top level of the module
      * (or its submodules) share the same type identifier namespace.
      *

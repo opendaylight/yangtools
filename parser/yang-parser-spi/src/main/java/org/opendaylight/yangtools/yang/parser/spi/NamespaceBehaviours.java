@@ -27,9 +27,6 @@ public final class NamespaceBehaviours {
 
     public static final @NonNull NamespaceBehaviour<?, ?> MODULE = NamespaceBehaviour.global(ParserNamespaces.MODULE);
 
-    public static final @NonNull NamespaceBehaviour<?, ?> SUBMODULE =
-        NamespaceBehaviour.global(ParserNamespaces.SUBMODULE);
-
     public static final @NonNull NamespaceBehaviour<?, ?> TYPE = NamespaceBehaviour.treeScoped(ParserNamespaces.TYPE);
 
     public static final @NonNull NamespaceBehaviour<?, ?> SCHEMA_TREE = new SchemaTreeNamespaceBehaviour<>();

@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -46,13 +45,10 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -126,20 +122,6 @@ public final class SubmoduleStatementSupport
 
     public static @NonNull SubmoduleStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new SubmoduleStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    public void onLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        final var submoduleIdentifier = new SourceIdentifier(stmt.getArgument(),
-            StmtContextUtils.latestRevisionIn(stmt.declaredSubstatements()));
-
-        final var possibleDuplicateSubmodule = stmt.namespaceItem(ParserNamespaces.SUBMODULE, submoduleIdentifier);
-        if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
-            throw new SourceException(stmt, "Submodule name collision: %s. At %s", stmt.rawArgument(),
-                possibleDuplicateSubmodule.sourceReference());
-        }
-
-        stmt.addToNs(ParserNamespaces.SUBMODULE, submoduleIdentifier, stmt);
     }
 
     @Override
