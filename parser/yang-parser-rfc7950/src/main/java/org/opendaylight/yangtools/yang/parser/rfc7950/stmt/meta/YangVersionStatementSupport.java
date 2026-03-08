@@ -52,7 +52,7 @@ public final class YangVersionStatementSupport
             throw new SourceException(stmt, "Cannot declare yang-version outside of root statement");
         }
         final var argVersion = stmt.getArgument();
-        final var rootVersion = root.yangVersion();
+        final var rootVersion = root.sourceVersion();
         if (rootVersion != argVersion) {
             throw new VerifyException(
                 "yang-version mismatch: root says " + rootVersion + " statement says " + argVersion);

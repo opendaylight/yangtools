@@ -122,8 +122,8 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    public YangVersion yangVersion() {
-        return delegate.yangVersion();
+    public YangVersion sourceVersion() {
+        return delegate.sourceVersion();
     }
 
     @Override

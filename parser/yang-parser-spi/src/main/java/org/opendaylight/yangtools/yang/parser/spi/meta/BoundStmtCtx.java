@@ -12,7 +12,6 @@ import com.google.common.base.VerifyException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -57,13 +56,6 @@ public interface BoundStmtCtx<A> extends CommonStmtCtx {
         }
         return ret;
     }
-
-    /**
-     * Return the {@link YangVersion} associated with this statement.
-     *
-     * @return YANG version used to bind this statement
-     */
-    @NonNull YangVersion yangVersion();
 
     /**
      * Search of any child statement context of specified type and return its argument. If such a statement exists, it

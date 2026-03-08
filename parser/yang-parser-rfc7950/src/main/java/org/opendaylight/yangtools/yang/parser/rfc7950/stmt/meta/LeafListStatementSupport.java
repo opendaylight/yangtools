@@ -132,7 +132,7 @@ public final class LeafListStatementSupport
             .collect(ImmutableSet.toImmutableSet());
 
         // FIXME: We need to interpret the default value in terms of supplied element type
-        if (EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, defaultValues)) {
+        if (EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.sourceVersion(), typeStmt, defaultValues)) {
             throw new SourceException(stmt,
                 "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
                 stmt.argument(), defaultValues);

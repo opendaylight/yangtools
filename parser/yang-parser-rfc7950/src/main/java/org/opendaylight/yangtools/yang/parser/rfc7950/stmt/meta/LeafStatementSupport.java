@@ -119,7 +119,7 @@ public final class LeafStatementSupport
         }
 
         final var dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
-        if (EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt)) {
+        if (EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.sourceVersion(), typeStmt, dflt)) {
             throw new SourceException(stmt,
                 "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
         }
