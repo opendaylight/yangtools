@@ -165,19 +165,19 @@ class YangToSourcesPluginTestIT {
         v1.executeGoal("package");
 
         var buildDir = getMavenBuildDirectory(v1);
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
+        v1.verifyFilePresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
+        v1.verifyFilePresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
+        v1.verifyFilePresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
 
         final var v2 = setUp("test-parent/GenerateTest2/", false);
         v2.executeGoal("clean");
         v2.executeGoal("package");
 
         buildDir = getMavenBuildDirectory(v2);
-        v2.assertFilePresent(buildDir + "/classes/META-INF/yang/private@2013-02-27.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
+        v2.verifyFilePresent(buildDir + "/classes/META-INF/yang/private@2013-02-27.yang");
+        v2.verifyFileNotPresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
+        v2.verifyFileNotPresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
+        v2.verifyFileNotPresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
     }
 
     @Test
@@ -188,12 +188,12 @@ class YangToSourcesPluginTestIT {
 
         final var buildDir = getMavenBuildDirectory(v1);
 
-        v1.assertFilePresent(buildDir + "/generated-sources/"
+        v1.verifyFilePresent(buildDir + "/generated-sources/"
                 + "org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator/fooGenSource.test");
-        v1.assertFilePresent(buildDir + "/generated-resources/"
+        v1.verifyFilePresent(buildDir + "/generated-resources/"
                 + "org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator/foo-gen-resource");
-        v1.assertFilePresent(buildDir + "/../src/main/java/fooSource.test");
-        v1.assertFilePresent(buildDir + "/../src/main/resources/foo-resource");
+        v1.verifyFilePresent(buildDir + "/../src/main/java/fooSource.test");
+        v1.verifyFilePresent(buildDir + "/../src/main/resources/foo-resource");
     }
 
     private static String getMavenBuildDirectory(final Verifier verifier) throws Exception {
