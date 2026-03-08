@@ -60,7 +60,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SourceSpecificContext implements NamespaceStorage, Mutable {
+final class SourceSpecificContext implements NamespaceStorage.AccessibleSources, Mutable {
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -339,21 +339,6 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     @Override
-    public <K, V> V putToLocalStorage(final ParserNamespace<K, V> type, final K key, final V value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <K, V> V putToLocalStorageIfAbsent(final ParserNamespace<K, V> type, final K key, final V value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public StorageType getStorageType() {
-        return StorageType.ACCESSIBLE_SOURCES;
-    }
-
-    @Override
     public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
         final var potentialLocal = root.getFromLocalStorage(type, key);
         if (potentialLocal != null) {
@@ -395,7 +380,7 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
     }
 
     @Override
-    public GlobalStorage getParentStorage() {
+    public NamespaceStorage.Global getParentStorage() {
         return globalContext;
     }
 
