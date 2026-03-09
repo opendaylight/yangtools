@@ -178,7 +178,7 @@ public final class RFC7950Reactors {
             .addSupport(new RequireInstanceStatementSupport(config))
             .addSupport(new RevisionStatementSupport(config))
             .addSupport(new RevisionDateStatementSupport(config))
-            .addSupport(new RpcStatementSupport(config), new RpcStatementSupport(config))
+            .addSupport(new RpcStatementSupport(config))
             .addSupport(new StatusStatementSupport(config))
             .addSupport(new TypeStatementRFC6020Support(config), new TypeStatementRFC7950Support(config))
             .addSupport(new TypedefStatementSupport(config))
