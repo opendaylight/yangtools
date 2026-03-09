@@ -46,9 +46,4 @@ public record GeneratedFilePath(String path) {
     public static GeneratedFilePath ofPath(final Path path) {
         return new GeneratedFilePath(path.toString().replace(path.getFileSystem().getSeparator(), SEPARATOR_STR));
     }
-
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public String getPath() {
-        return path;
-    }
 }

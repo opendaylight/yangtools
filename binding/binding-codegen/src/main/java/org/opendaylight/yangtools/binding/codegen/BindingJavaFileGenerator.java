@@ -86,7 +86,7 @@ final class BindingJavaFileGenerator {
                     typeName);
                 return;
             }
-            throw new IllegalStateException("Duplicate file '" + file.getPath() + "' for " + typeName);
+            throw new IllegalStateException("Duplicate file '" + file.path() + "' for " + typeName);
         }
 
         result.put(GeneratedFileType.SOURCE, file,

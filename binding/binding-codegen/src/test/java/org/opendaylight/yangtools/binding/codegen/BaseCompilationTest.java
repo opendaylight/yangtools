@@ -33,7 +33,7 @@ abstract class BaseCompilationTest {
 
         final var generatedFiles = BindingJavaFileGenerator.generateFiles(true, types);
         for (var cell : generatedFiles.cellSet()) {
-            final var target = sourcesOutputDir.resolve(cell.getColumnKey().getPath());
+            final var target = sourcesOutputDir.resolve(cell.getColumnKey().path());
             Files.createDirectories(target.getParent());
             try (var os = Files.newOutputStream(target)) {
                 cell.getValue().writeBody(os);
