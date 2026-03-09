@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Collections2;
@@ -213,9 +212,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         streamEffectiveSubstatements(ImportEffectiveStatement.class)
             .map(ImportEffectiveStatement::prefixArgument)
             .forEach(pfx -> {
-                final var importedCtx = verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORTED_MODULE, pfx),
-                    "Failed to resolve prefix %s", pfx);
-                builder.put(pfx, importedCtx.buildEffective());
+                builder.put(pfx, stmt.getNamespaceItem(ParserNamespaces.IMPORTED_MODULE, pfx).buildEffective());
             });
     }
 

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
@@ -78,8 +76,7 @@ public final class ImportStatementSupport
         for (var substatement : substatements) {
             if (substatement instanceof PrefixEffectiveStatement prefix) {
                 return EffectiveStatements.createImport(stmt.declared(), substatements,
-                    verifyNotNull(stmt.namespaceItem(ParserNamespaces.IMPORTED_MODULE, prefix.argument()))
-                        .buildEffective());
+                    stmt.getNamespaceItem(ParserNamespaces.IMPORTED_MODULE, prefix.argument()).buildEffective());
             }
         }
 

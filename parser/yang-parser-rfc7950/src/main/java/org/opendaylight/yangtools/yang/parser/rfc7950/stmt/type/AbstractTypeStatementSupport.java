@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
@@ -264,7 +262,7 @@ abstract sealed class AbstractTypeStatementSupport extends AbstractTypeSupport
      * @throws SourceException if the target type cannot be found
      */
     private static @NonNull TypeEffectiveStatement resolveType(final NamespaceStmtCtx ctx) {
-        final var obj = verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.INSTANCE, Empty.value()));
+        final var obj = ctx.getNamespaceItem(BaseTypeNamespace.INSTANCE, Empty.value());
         return switch (obj) {
             case BuiltinEffectiveStatement builtin -> builtin;
             case StmtContext<?, ?, ?> stmt ->

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -24,7 +22,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     ThirdPartyExtensionEffectiveStatementImpl(final Current<String, ThirdPartyExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt.declared(), stmt.getArgument(), substatements);
-        valueFromNamespace = verifyNotNull(stmt.namespaceItem(ThirdPartyNamespace.INSTANCE, Empty.value()));
+        valueFromNamespace = stmt.getNamespaceItem(ThirdPartyNamespace.INSTANCE, Empty.value());
     }
 
     @Override

@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -17,7 +14,6 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -137,10 +133,8 @@ public final class UsesStatementSupport
     @Override
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final EffectiveStatement<?, ?> source =
-            verifyNotNull(stmt.namespaceItem(SourceGroupingNamespace.INSTANCE, Empty.value())).buildEffective();
-        verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
-        final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
+        final var source = stmt.getNamespaceItem(SourceGroupingNamespace.INSTANCE, Empty.value()).buildEffective();
+        final var sourceGrouping = source.toDataNodeContainer();
 
         final int flags = EffectiveStmtUtils.historyAndStatusFlags(stmt.history(), substatements);
         final QName argument = stmt.getArgument();

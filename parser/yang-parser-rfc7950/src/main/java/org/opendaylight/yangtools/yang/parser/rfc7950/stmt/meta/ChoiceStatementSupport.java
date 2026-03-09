@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
@@ -126,7 +125,7 @@ public final class ChoiceStatementSupport
     public StatementSupport<?, ?, ?> implicitParentFor(final NamespaceStmtCtx parent,
             final StatementDefinition<?, ?, ?> stmtDef) {
         return caseShorthands.contains(stmtDef)
-            ? verifyNotNull(parent.namespaceItem(StatementSupport.NAMESPACE, CaseStatement.DEF.statementName()))
+            ? parent.getNamespaceItem(StatementSupport.NAMESPACE, CaseStatement.DEF.statementName())
             : null;
     }
 

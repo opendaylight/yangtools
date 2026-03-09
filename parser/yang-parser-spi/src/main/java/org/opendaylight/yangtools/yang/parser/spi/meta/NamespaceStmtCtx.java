@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -48,7 +49,26 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      * @return Value, or {@code null} if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    <K, V> @Nullable V namespaceItem(@NonNull ParserNamespace<K, V> namespace, K key);
+    <K, V> @Nullable V namespaceItem(@NonNull ParserNamespace<K, V> namespace, @NonNull K key);
+
+    /**
+     * Return a value associated with specified key within a namespace.
+     *
+     * @param <K> namespace key type
+     * @param <V> namespace value type
+     * @param namespace Namespace
+     * @param key Key
+     * @return the namespace value
+     * @throws NamespaceNotAvailableException when the namespace is not available
+     * @throws NoSuchElementException when the namespace item is not availabe
+     */
+    default <K, V> @NonNull V getNamespaceItem(final @NonNull ParserNamespace<K, V> namespace, final @NonNull K key) {
+        final var ret = namespaceItem(namespace, key);
+        if (ret == null) {
+            throw new NoSuchElementException(namespace + " has no item for " + key);
+        }
+        return ret;
+    }
 
     /**
      * Return the portion of specified namespace stored in this node. Depending on namespace behaviour this may or may

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
@@ -85,7 +83,7 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport {
         for (var subStmt : substatements) {
             if (subStmt instanceof BaseEffectiveStatement bes) {
                 final var identityQName = bes.argument();
-                final var baseIdentity = verifyNotNull(stmt.namespaceItem(ParserNamespaces.IDENTITY, identityQName))
+                final var baseIdentity = stmt.getNamespaceItem(ParserNamespaces.IDENTITY, identityQName)
                     .buildEffective();
                 if (!(baseIdentity instanceof IdentitySchemaNode isn)) {
                     throw new VerifyException("Statement " + baseIdentity + " is not an IdentitySchemaNode");
