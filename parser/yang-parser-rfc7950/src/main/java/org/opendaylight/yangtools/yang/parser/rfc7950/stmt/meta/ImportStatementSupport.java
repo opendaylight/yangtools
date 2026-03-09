@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ImportStatementSupport
-        extends AbstractUnqualifiedStatementSupport<ImportStatement, ImportEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<@NonNull ImportStatement, ImportEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(ImportStatement.DEF)
             .addMandatory(PrefixStatement.DEF)

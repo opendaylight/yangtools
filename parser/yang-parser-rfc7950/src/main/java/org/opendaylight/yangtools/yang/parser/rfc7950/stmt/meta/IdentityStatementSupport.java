@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class IdentityStatementSupport
-        extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
+        extends AbstractQNameStatementSupport<@NonNull IdentityStatement, IdentityEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(IdentityStatement.DEF)
             .addOptional(BaseStatement.DEF)

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -32,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractNotificationStatementSupport
-        extends AbstractSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
+        extends AbstractSchemaTreeStatementSupport<@NonNull NotificationStatement, NotificationEffectiveStatement> {
     AbstractNotificationStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(NotificationStatement.DEF, uninstantiatedPolicy(), SubtreePolicy.structure(), config, validator);
     }

@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class IncludeStatementSupport
-        extends AbstractUnqualifiedStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<@NonNull IncludeStatement, IncludeEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(IncludeStatement.DEF)
             .addOptional(RevisionDateStatement.DEF)

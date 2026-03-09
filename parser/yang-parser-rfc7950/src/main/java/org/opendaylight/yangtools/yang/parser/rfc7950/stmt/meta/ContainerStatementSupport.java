@@ -54,7 +54,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ContainerStatementSupport
-        extends AbstractSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
+        extends AbstractSchemaTreeStatementSupport<@NonNull ContainerStatement, ContainerEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(ContainerStatement.DEF)
             .addAny(AnyxmlStatement.DEF)
