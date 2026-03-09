@@ -86,7 +86,7 @@ final class GeneratorTask implements Identifiable<String> {
         final var dirs = MultimapBuilder.hashKeys().arrayListValues().<Path, WriteTask>build();
         for (var cell : generatedFiles.cellSet()) {
             final GeneratedFile file = cell.getValue();
-            final String relativePath = cell.getColumnKey().getPath();
+            final String relativePath = cell.getColumnKey().path();
             final Path target;
             switch (file.getLifecycle()) {
                 case PERSISTENT:
