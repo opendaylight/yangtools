@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -82,13 +80,8 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport {
         final var builder = BaseTypes.identityrefTypeBuilder(stmt.argumentAsTypeQName());
         for (var subStmt : substatements) {
             if (subStmt instanceof BaseEffectiveStatement bes) {
-                final var identityQName = bes.argument();
-                final var baseIdentity = stmt.getNamespaceItem(ParserNamespaces.IDENTITY, identityQName)
-                    .buildEffective();
-                if (!(baseIdentity instanceof IdentitySchemaNode isn)) {
-                    throw new VerifyException("Statement " + baseIdentity + " is not an IdentitySchemaNode");
-                }
-                builder.addIdentity(isn);
+                builder.addIdentity(stmt.getNamespaceItem(ParserNamespaces.IDENTITY, bes.argument())
+                    .buildEffective().toSchemaNode());
             }
         }
 

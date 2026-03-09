@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -20,4 +21,9 @@ public interface FeatureEffectiveStatement extends EffectiveStatement<QName, @No
     default StatementDefinition<QName, @NonNull FeatureStatement, ?> statementDefinition() {
         return FeatureStatement.DEF;
     }
+
+    /**
+     * {@return the {@link FeatureDefinition} equivalent of this statement}
+     */
+    @NonNull FeatureDefinition toSchemaNode();
 }

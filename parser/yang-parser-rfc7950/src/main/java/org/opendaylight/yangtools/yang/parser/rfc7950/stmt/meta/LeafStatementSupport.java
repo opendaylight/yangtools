@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -127,9 +125,7 @@ public final class LeafStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final LeafEffectiveStatement stmt) {
-        if (!(stmt instanceof LeafSchemaNode schema)) {
-            throw new VerifyException("Unexpected statement " + stmt);
-        }
+        final var schema = stmt.toDataSchemaNode();
 
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -102,11 +101,7 @@ public final class IdentityStatementSupport
         for (var substatement : substatements) {
             if (substatement instanceof BaseEffectiveStatement base) {
                 final var qname = base.argument();
-                final var identity = stmt.getNamespaceItem(ParserNamespaces.IDENTITY, qname).buildEffective();
-                if (!(identity instanceof IdentitySchemaNode schema)) {
-                    throw new VerifyException(identity + " is not a IdentitySchemaNode");
-                }
-                identities.add(schema);
+                identities.add(stmt.getNamespaceItem(ParserNamespaces.IDENTITY, qname).buildEffective().toSchemaNode());
             }
         }
 

@@ -66,4 +66,9 @@ public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName
     public ExtensionEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public ExtensionDefinition toSchemaNode() {
+        return this;
+    }
 }

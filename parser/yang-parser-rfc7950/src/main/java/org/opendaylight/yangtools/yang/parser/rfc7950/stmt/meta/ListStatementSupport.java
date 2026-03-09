@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.HashSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -32,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -164,8 +162,8 @@ public final class ListStatementSupport
             keyArgument = keyStmt.argument();
             final var possibleLeafQNamesForKey = new HashSet<QName>();
             for (var effectiveStatement : substatements) {
-                if (effectiveStatement instanceof LeafSchemaNode leaf) {
-                    possibleLeafQNamesForKey.add(leaf.getQName());
+                if (effectiveStatement instanceof LeafEffectiveStatement leaf) {
+                    possibleLeafQNamesForKey.add(leaf.argument());
                 }
             }
             for (var keyQName : keyArgument) {
@@ -204,9 +202,7 @@ public final class ListStatementSupport
 
     @Override
     public EffectiveStatementState extractEffectiveState(final ListEffectiveStatement stmt) {
-        if (!(stmt instanceof ListSchemaNode schema)) {
-            throw new VerifyException("Unexpected statement " + stmt);
-        }
+        final var schema = stmt.toDataSchemaNode();
 
         return new QNameWithFlagsEffectiveStatementState(stmt.argument(), new FlagsBuilder()
             .setHistory(schema)

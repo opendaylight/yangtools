@@ -33,4 +33,9 @@ public class EmptyFeatureEffectiveStatement extends DefaultArgument<QName, @NonN
     public final FeatureEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final FeatureDefinition toSchemaNode() {
+        return this;
+    }
 }

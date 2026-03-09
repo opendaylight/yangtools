@@ -25,4 +25,9 @@ abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName,
     public final IdentityEffectiveStatement asEffectiveStatement() {
         return this;
     }
+
+    @Override
+    public final IdentitySchemaNode toSchemaNode() {
+        return this;
+    }
 }
