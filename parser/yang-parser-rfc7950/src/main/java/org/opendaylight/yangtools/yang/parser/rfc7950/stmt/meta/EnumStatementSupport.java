@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class EnumStatementSupport
-        extends AbstractStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
+        extends AbstractStatementSupport<String, @NonNull EnumStatement, EnumEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(EnumStatement.DEF)
             .addOptional(DescriptionStatement.DEF)

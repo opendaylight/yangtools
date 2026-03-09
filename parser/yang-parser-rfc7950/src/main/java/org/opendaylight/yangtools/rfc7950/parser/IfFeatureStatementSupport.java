@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class IfFeatureStatementSupport
-        extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
+        extends AbstractStatementSupport<IfFeatureExpr, @NonNull IfFeatureStatement, IfFeatureEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(IfFeatureStatement.DEF).build();

@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public abstract sealed class RefineStatementSupport
-        extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
+        extends AbstractStatementSupport<Descendant, @NonNull RefineStatement, RefineEffectiveStatement> {
     private static final class Rfc6020 extends RefineStatementSupport {
         private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(RefineStatement.DEF)
             .addOptional(DefaultStatement.DEF)

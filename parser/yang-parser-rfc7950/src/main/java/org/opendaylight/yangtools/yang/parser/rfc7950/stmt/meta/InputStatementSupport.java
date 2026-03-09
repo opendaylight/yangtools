@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class InputStatementSupport
-        extends AbstractOperationContainerStatementSupport<InputStatement, InputEffectiveStatement> {
+        extends AbstractOperationContainerStatementSupport<@NonNull InputStatement, InputEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(InputStatement.DEF)
             .addAny(AnyxmlStatement.DEF)

@@ -64,7 +64,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ModuleStatementSupport
-        extends AbstractUnqualifiedStatementSupport<ModuleStatement, ModuleEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<@NonNull ModuleStatement, ModuleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(ModuleStatement.DEF)
             .addAny(AnyxmlStatement.DEF)
@@ -139,7 +139,7 @@ public final class ModuleStatementSupport
 
     @Override
     protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final Current<Unqualified, ModuleStatement> stmt,
+            final Current<Unqualified, @NonNull ModuleStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         final var local = super.buildEffectiveSubstatements(stmt, substatements);
         final var submodules = effectiveSubmodules(stmt);

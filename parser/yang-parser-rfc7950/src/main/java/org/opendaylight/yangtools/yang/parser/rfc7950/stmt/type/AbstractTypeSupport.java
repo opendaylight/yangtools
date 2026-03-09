@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -23,7 +24,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 /**
  * Abstract base of all type-related statement support classes.
  */
-abstract sealed class AbstractTypeSupport extends AbstractQNameStatementSupport<TypeStatement, TypeEffectiveStatement>
+abstract sealed class AbstractTypeSupport
+        extends AbstractQNameStatementSupport<@NonNull TypeStatement, TypeEffectiveStatement>
         permits AbstractTypeStatementSupport, BitsSpecificationSupport, Decimal64SpecificationSupport,
                 EnumSpecificationSupport, IdentityRefSpecificationSupport, InstanceIdentifierSpecificationSupport,
                 LeafrefSpecificationSupport, UnionSpecificationSupport {

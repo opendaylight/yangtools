@@ -53,7 +53,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class SubmoduleStatementSupport
-        extends AbstractUnqualifiedStatementSupport<SubmoduleStatement, SubmoduleEffectiveStatement> {
+        extends AbstractUnqualifiedStatementSupport<@NonNull SubmoduleStatement, SubmoduleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(SubmoduleStatement.DEF)
             .addAny(AnyxmlStatement.DEF)

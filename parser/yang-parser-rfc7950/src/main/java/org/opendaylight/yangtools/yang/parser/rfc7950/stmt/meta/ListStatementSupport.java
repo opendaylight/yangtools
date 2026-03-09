@@ -66,7 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ListStatementSupport
-        extends AbstractSchemaTreeStatementSupport<ListStatement, ListEffectiveStatement> {
+        extends AbstractSchemaTreeStatementSupport<@NonNull ListStatement, ListEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(ListStatementSupport.class);
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(ListStatement.DEF)

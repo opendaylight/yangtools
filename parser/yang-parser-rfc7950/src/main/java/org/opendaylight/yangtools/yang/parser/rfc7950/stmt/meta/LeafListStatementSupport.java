@@ -51,7 +51,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class LeafListStatementSupport
-        extends AbstractSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
+        extends AbstractSchemaTreeStatementSupport<@NonNull LeafListStatement, LeafListEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(LeafListStatement.DEF)
             .addOptional(ConfigStatement.DEF)

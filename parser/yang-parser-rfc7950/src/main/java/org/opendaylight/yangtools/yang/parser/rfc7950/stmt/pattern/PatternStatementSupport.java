@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class PatternStatementSupport
-        extends AbstractStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
+        extends AbstractStatementSupport<PatternExpression, @NonNull PatternStatement, PatternEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(PatternStatement.DEF)
             .addOptional(DescriptionStatement.DEF)

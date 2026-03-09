@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -36,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractAugmentStatementSupport
-        extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
+        extends AbstractStatementSupport<SchemaNodeIdentifier, @NonNull AugmentStatement, AugmentEffectiveStatement> {
     AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(AugmentStatement.DEF, StatementPolicy.copyDeclared(
             (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
@@ -93,7 +94,7 @@ abstract class AbstractAugmentStatementSupport
 
     @Override
     protected final Stream<? extends StmtContext<?, ?, ?>> statementsToBuild(
-            final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
+            final Current<SchemaNodeIdentifier, @NonNull AugmentStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
         // children through target's implicit wrapping.
