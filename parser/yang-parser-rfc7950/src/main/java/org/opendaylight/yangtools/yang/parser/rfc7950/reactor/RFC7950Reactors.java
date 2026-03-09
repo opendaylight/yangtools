@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6020.parser.PathStatementSupport;
 import org.opendaylight.yangtools.rfc7950.parser.IfFeatureStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC7950Support;
@@ -326,7 +325,6 @@ public final class RFC7950Reactors {
             .addSupport(new FeatureStatementSupport(config))
             .addSupport(new PositionStatementSupport(config))
             .addSupport(new ValueStatementSupport(config))
-            .addSupport(YangNamespaceContextNamespace.BEHAVIOUR)
             .build();
     }
 }

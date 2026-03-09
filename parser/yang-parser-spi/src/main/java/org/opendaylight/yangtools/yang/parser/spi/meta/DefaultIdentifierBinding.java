@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentBindingException;
 import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
@@ -28,13 +29,15 @@ record DefaultIdentifierBinding(
         AbsoluteSchemaNodeidParser absoluteSchemaNodeid,
         NodeIdentifierParser nodeIdentifier,
         NamespaceBinding namespaceBinding,
-        IdentifierParser identifier) implements IdentifierBinding {
+        IdentifierParser identifier,
+        YangNamespaceContext yangNamespaceContext) implements IdentifierBinding {
     DefaultIdentifierBinding {
         requireNonNull(descendantSchemaNodeid);
         requireNonNull(absoluteSchemaNodeid);
         requireNonNull(nodeIdentifier);
         requireNonNull(namespaceBinding);
         requireNonNull(identifier);
+        requireNonNull(yangNamespaceContext);
     }
 
     @Override

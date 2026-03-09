@@ -11,11 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +29,7 @@ public final class XPathSupport {
     }
 
     QualifiedBound parseXPath(final StmtContext<?, ?, ?> ctx, final String xpath) {
-        final YangXPathParser.QualifiedBound parser = factory.newParser(
-            YangNamespaceContextNamespace.computeIfAbsent(ctx));
+        final var parser = factory.newParser(ctx.identifierBinding().yangNamespaceContext());
         final QualifiedBound parsed;
         try {
             parsed = parser.parseExpression(xpath);
