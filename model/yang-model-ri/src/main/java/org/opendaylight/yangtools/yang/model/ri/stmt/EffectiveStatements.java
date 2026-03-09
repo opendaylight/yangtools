@@ -135,6 +135,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
@@ -524,9 +525,10 @@ public final class EffectiveStatements {
     }
 
     public static IncludeEffectiveStatement createInclude(final IncludeStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(declared)
-            : new RegularIncludeEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final SubmoduleEffectiveStatement includedSubmodule) {
+        return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(declared, includedSubmodule)
+            : new RegularIncludeEffectiveStatement(declared, substatements, includedSubmodule);
     }
 
     public static InputEffectiveStatement copyInput(final InputEffectiveStatement original, final QName argument,

@@ -20,4 +20,10 @@ public interface IncludeEffectiveStatement extends EffectiveStatement<Unqualifie
     default StatementDefinition<Unqualified, @NonNull IncludeStatement, ?> statementDefinition() {
         return IncludeStatement.DEF;
     }
+
+    /**
+     * {@return the {@link SubmoduleEffectiveStatement} included by this statement}
+     * @since 15.0.0
+     */
+    @NonNull SubmoduleEffectiveStatement includedSubmodule();
 }

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractUnqualifiedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -67,6 +68,7 @@ public final class IncludeStatementSupport
     @Override
     protected IncludeEffectiveStatement createEffective(final Current<Unqualified, IncludeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return EffectiveStatements.createInclude(stmt.declared(), substatements);
+        return EffectiveStatements.createInclude(stmt.declared(), substatements,
+            stmt.getNamespaceItem(ParserNamespaces.INCLUDED_SUBMODULE, stmt.argument()).buildEffective());
     }
 }
