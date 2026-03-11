@@ -69,8 +69,8 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         /**
          * Invoked whenever a new item is added to a namespace.
          */
-        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, ParserNamespace<?, ?> namespace, Object key,
-            Object value);
+        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, ParserNamespace.Writable<?, ?> namespace,
+            Object key, Object value);
     }
 
     /**
@@ -587,7 +587,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return definition;
     }
 
-    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> namespace, final K key,
+    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace.Writable<K, V> namespace, final K key,
             final OnNamespaceItemAdded listener) {
         final var access = accessNamespace(namespace);
         final var potential = access.valueFrom(this, key);
@@ -605,21 +605,21 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         });
     }
 
-    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace<K, V> namespace,
+    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace.Writable<K, V> namespace,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         final var access = accessNamespace(namespace);
         final var entry = access.entryFrom(this, criterion);
         if (entry != null) {
             LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", namespace, criterion, entry);
-            waitForPhase(entry.getValue(), access, phase, criterion, listener);
+            waitForPhase(entry.getValue(), access, namespace, phase, criterion, listener);
             return;
         }
 
         access.addListener((key, value) -> {
             if (criterion.match(key)) {
                 LOG.debug("Listener on {} criterion {} matched added key {}", namespace, criterion, key);
-                waitForPhase(value, access, phase, criterion, listener);
+                waitForPhase(value, access, namespace, phase, criterion, listener);
                 return true;
             }
             return false;
@@ -627,15 +627,15 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private <K, V> void waitForPhase(final Object value, final NamespaceAccess<K, V> access,
-            final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
-            final OnNamespaceItemAdded listener) {
+            final ParserNamespace.Writable<K, V> namespace, final ModelProcessingPhase phase,
+            final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
         ((StatementContextBase<?, ?, ?>) value).addPhaseCompletedListener(phase, (context, phaseCompleted) -> {
             final var match = access.entryFrom(this, criterion);
             if (match == null) {
                 throw new IllegalStateException("Failed to find a match for criterion %s in namespace %s node %s"
-                    .formatted(criterion, access.namespace(), this));
+                    .formatted(criterion, namespace, this));
             }
-            listener.namespaceItemAdded(this, access.namespace(), match.getKey(), match.getValue());
+            listener.namespaceItemAdded(this, namespace, match.getKey(), match.getValue());
             return true;
         });
     }
