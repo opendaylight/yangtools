@@ -102,12 +102,12 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
     }
 
     void setSupportedFeatures(final FeatureSet supportedFeatures) {
-        addToNamespace(ParserNamespaces.SUPPORTED_FEATURES, Empty.value(), requireNonNull(supportedFeatures));
+        resolveLinkage(ParserNamespaces.SUPPORTED_FEATURES, Map.of(Empty.value(), supportedFeatures));
     }
 
     void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
-        addToNamespace(ParserNamespaces.MODULES_DEVIATED_BY, Empty.value(),
-            ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
+        resolveLinkage(ParserNamespaces.MODULES_DEVIATED_BY,
+            Map.of(Empty.value(), ImmutableSetMultimap.copyOf(modulesDeviatedByModules)));
     }
 
     @Override

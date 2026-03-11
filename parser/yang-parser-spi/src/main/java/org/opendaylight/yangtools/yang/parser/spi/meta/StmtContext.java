@@ -201,7 +201,7 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
          * @param value value
          * @throws NamespaceNotAvailableException when the namespace is not available.
          */
-        <K, V> void addToNs(@NonNull ParserNamespace<K, V> type, K key, V value);
+        <K, V> void addToNs(ParserNamespace.@NonNull Writable<K, V> type, K key, V value);
 
         @Override
         RootStmtContext.Mutable<?, ?, ?> getRoot();

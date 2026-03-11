@@ -263,7 +263,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public final <K, V> void addToNs(final ParserNamespace<K, V> type, final K key, final V value) {
+    public final <K, V> void addToNs(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
         addToNamespace(type, key, value);
     }
 
