@@ -146,7 +146,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, D extends DeclaredStatement<?>> @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, StmtContext<?, ? extends D, ?>> namespace, K key);
+        ParserNamespace.Writable<K, StmtContext<?, ? extends D, ?>> namespace, K key);
 
     /**
      * Action requires that the specified context completes specified phase before {@link #apply(InferenceAction)}
@@ -160,13 +160,14 @@ public interface ModelActionBuilder {
         requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
-        @NonNull ParserNamespace<K, C> namespace, K key, ModelProcessingPhase phase);
+        ParserNamespace.@NonNull Writable<K, C> namespace, K key, ModelProcessingPhase phase);
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
-        @NonNull ParserNamespace<K, C> namespace, NamespaceKeyCriterion<K> criterion, ModelProcessingPhase phase);
+        ParserNamespace.@NonNull Writable<K, C> namespace, NamespaceKeyCriterion<K> criterion,
+        ModelProcessingPhase phase);
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtxPath(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, C> namespace, Iterable<K> keys);
+        ParserNamespace.@NonNull Writable <K, C> namespace, Iterable<K> keys);
 
     /**
      * Action mutates the effective model of specified statement. This is a shorthand for
@@ -180,10 +181,11 @@ public interface ModelActionBuilder {
     }
 
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
-        StmtContext<?, ?, ?> context, ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace, K key);
+        StmtContext<?, ?, ?> context, ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> namespace, K key);
 
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(
-        StmtContext<?, ?, ?> context, ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace, Iterable<K> keys);
+        StmtContext<?, ?, ?> context, ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> namespace,
+        Iterable<K> keys);
 
     /**
      * Action mutates the specified statement in the specified phase. Target statement cannot complete specified
@@ -212,7 +214,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresDeclaredCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, C> namespace, K key);
+        ParserNamespace.Writable<K, C> namespace, K key);
 
     /**
      * Create a requirement on specified statement to become effective.
@@ -230,7 +232,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<E> requiresEffective(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, StmtContext<?, ?, ? extends E>> namespace, K key);
+        ParserNamespace.Writable<K, StmtContext<?, ?, ? extends E>> namespace, K key);
 
     /**
      * Create a requirement on specified statement context to become effective.
@@ -239,7 +241,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, C> namespace, K key);
+        ParserNamespace.Writable<K, C> namespace, K key);
 
     /**
      * Mark the fact that this action is mutating a namespace.
@@ -247,5 +249,5 @@ public interface ModelActionBuilder {
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
-    @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(Mutable<?, ?, ?> ctx, ParserNamespace<?, ?> namespace);
+    @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(Mutable<?, ?, ?> ctx, ParserNamespace.Writable<?, ?> namespace);
 }
