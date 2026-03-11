@@ -200,8 +200,27 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
          * @param key Key
          * @param value value
          * @throws NamespaceNotAvailableException when the namespace is not available.
+         * @deprecated Use {@link #addToNs(ParserNamespace.Writable, Object, Object)} instead.
          */
-        <K, V> void addToNs(@NonNull ParserNamespace<K, V> type, K key, V value);
+        @Deprecated(since = "15.0.1", forRemoval = true)
+        default <K, V> void addToNs(final @NonNull ParserNamespace<K, V> type, final K key, final V value) {
+            if (!(type instanceof ParserNamespace.Writable<K, V> writable)) {
+                throw new NamespaceNotAvailableException("cannot add to " + type);
+            }
+            addToNs(writable, key, value);
+        }
+
+        /**
+         * Associate a value with a key within a namespace.
+         *
+         * @param <K> key type
+         * @param <V> value type
+         * @param type Namespace type
+         * @param key Key
+         * @param value value
+         * @throws NamespaceNotAvailableException when the namespace is not available.
+         */
+        <K, V> void addToNs(ParserNamespace.@NonNull Writable<K, V> type, @NonNull K key, @NonNull V value);
 
         @Override
         RootStmtContext.Mutable<?, ?, ?> getRoot();

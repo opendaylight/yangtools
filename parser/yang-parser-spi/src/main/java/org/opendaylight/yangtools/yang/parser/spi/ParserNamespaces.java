@@ -124,17 +124,17 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE =
             ParserNamespace.readOnly("included-submodule");
 
-    public static final @NonNull Writable<Empty, FeatureSet> SUPPORTED_FEATURES =
-        ParserNamespace.writable("supportedFeatures");
+    public static final @NonNull ReadOnly<Empty, FeatureSet> SUPPORTED_FEATURES =
+        ParserNamespace.readOnly("supportedFeatures");
 
     /**
      * Namespace used for storing information about modules that support deviation resolution.
      * Map key (QNameModule) denotes a module which can be deviated by the modules specified in the Map value.
      */
-    public static final @NonNull Writable<Empty, SetMultimap<QNameModule, QNameModule>> MODULES_DEVIATED_BY =
-        ParserNamespace.writable("moduleDeviations");
+    public static final @NonNull ReadOnly<Empty, SetMultimap<QNameModule, QNameModule>> MODULES_DEVIATED_BY =
+        ParserNamespace.readOnly("moduleDeviations");
 
-    private static final @NonNull ParserNamespace<?, ?> SCHEMA_TREE = ParserNamespace.writable("schemaTree");
+    private static final @NonNull Writable<?, ?> SCHEMA_TREE = ParserNamespace.writable("schemaTree");
 
     /**
      * Statement local namespace, which holds direct schema node descendants. This corresponds to the contents of the
@@ -146,8 +146,8 @@ public final class ParserNamespaces {
      */
     @SuppressWarnings("unchecked")
     public static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-            @NonNull ParserNamespace<QName, StmtContext<QName, D, E>> schemaTree() {
-        return (ParserNamespace<QName, StmtContext<QName, D, E>>) SCHEMA_TREE;
+            @NonNull Writable<QName, StmtContext<QName, D, E>> schemaTree() {
+        return (Writable<QName, StmtContext<QName, D, E>>) SCHEMA_TREE;
     }
 
     private ParserNamespaces() {

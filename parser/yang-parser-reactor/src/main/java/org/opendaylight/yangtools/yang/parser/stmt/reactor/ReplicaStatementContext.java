@@ -159,7 +159,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <K, V> void addToNs(final ParserNamespace<K, V> type, final K key, final V value) {
+    public <K, V> void addToNs(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
         throw new UnsupportedOperationException();
     }
 
