@@ -70,7 +70,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  */
 public interface ModelActionBuilder {
     interface InferenceContext {
-
+        // Nothing else
     }
 
     @FunctionalInterface
@@ -144,9 +144,24 @@ public interface ModelActionBuilder {
      *
      * @deprecated Undocumented method. Use at your own risk.
      */
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, D extends DeclaredStatement<?>> @NonNull Prerequisite<D> requiresDeclared(
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, StmtContext<?, ? extends D, ?>> namespace,
+            final K key) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, StmtContext<?, ? extends D, ?>> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return requiresDeclared(context, writable, key);
+    }
+
+    /**
+     * Create a requirement on specified statement to be declared.
+     *
+     * @deprecated Undocumented method. Use at your own risk.
+     */
     @Deprecated
     <K, D extends DeclaredStatement<?>> @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, StmtContext<?, ? extends D, ?>> namespace, K key);
+        ParserNamespace.Writable<K, StmtContext<?, ? extends D, ?>> namespace, K key);
 
     /**
      * Action requires that the specified context completes specified phase before {@link #apply(InferenceAction)}
@@ -159,14 +174,44 @@ public interface ModelActionBuilder {
     <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull Prerequisite<StmtContext<A, D, E>>
         requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
-    <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
-        @NonNull ParserNamespace<K, C> namespace, K key, ModelProcessingPhase phase);
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(final StmtContext<?, ?, ?> context,
+            final @NonNull ParserNamespace<K, C> namespace, final K key, final ModelProcessingPhase phase) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return requiresCtx(context, writable, key, phase);
+    }
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
-        @NonNull ParserNamespace<K, C> namespace, NamespaceKeyCriterion<K> criterion, ModelProcessingPhase phase);
+        ParserNamespace.@NonNull Writable<K, C> namespace, K key, ModelProcessingPhase phase);
+
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(final StmtContext<?, ?, ?> context,
+            final @NonNull ParserNamespace<K, C> namespace, final NamespaceKeyCriterion<K> criterion,
+            final ModelProcessingPhase phase) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return requiresCtx(context, writable, criterion, phase);
+    }
+
+    <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
+        ParserNamespace.@NonNull Writable<K, C> namespace, NamespaceKeyCriterion<K> criterion,
+        ModelProcessingPhase phase);
+
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtxPath(
+            final StmtContext<?, ?, ?> context, final @NonNull ParserNamespace<K, C> namespace,
+            final Iterable<K> keys) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return requiresEffectiveCtxPath(context, writable, keys);
+    }
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtxPath(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, C> namespace, Iterable<K> keys);
+        ParserNamespace.@NonNull Writable<K, C> namespace, Iterable<K> keys);
 
     /**
      * Action mutates the effective model of specified statement. This is a shorthand for
@@ -179,11 +224,32 @@ public interface ModelActionBuilder {
         return mutatesCtx(context, EFFECTIVE_MODEL);
     }
 
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace,
+            final K key) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return mutatesEffectiveCtx(context, writable, key);
+    }
+
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
-        StmtContext<?, ?, ?> context, ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace, K key);
+        StmtContext<?, ?, ?> context, ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> namespace, K key);
+
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace,
+            final Iterable<K> keys) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return mutatesEffectiveCtxPath(context, writable, keys);
+    }
 
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(
-        StmtContext<?, ?, ?> context, ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace, Iterable<K> keys);
+        StmtContext<?, ?, ?> context, ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> namespace,
+        Iterable<K> keys);
 
     /**
      * Action mutates the specified statement in the specified phase. Target statement cannot complete specified
@@ -210,9 +276,23 @@ public interface ModelActionBuilder {
      *
      * @deprecated Undocumented method. Use at your own risk.
      */
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresDeclaredCtx(
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, C> namespace, final K key) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return requiresDeclaredCtx(context, writable, key);
+    }
+
+    /**
+     * Create a requirement on specified statement context to be declared.
+     *
+     * @deprecated Undocumented method. Use at your own risk.
+     */
     @Deprecated
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresDeclaredCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, C> namespace, K key);
+        ParserNamespace.Writable<K, C> namespace, K key);
 
     /**
      * Create a requirement on specified statement to become effective.
@@ -228,9 +308,38 @@ public interface ModelActionBuilder {
      *
      * @deprecated Undocumented method. Use at your own risk.
      */
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<E> requiresEffective(
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, StmtContext<?, ?, ? extends E>> namespace,
+            final K key) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, StmtContext<?, ?, ? extends E>> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return requiresEffective(context, writable, key);
+    }
+
+    /**
+     * Create a requirement on specified statement to become effective.
+     *
+     * @deprecated Undocumented method. Use at your own risk.
+     */
     @Deprecated
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<E> requiresEffective(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, StmtContext<?, ?, ? extends E>> namespace, K key);
+        ParserNamespace.Writable<K, StmtContext<?, ?, ? extends E>> namespace, K key);
+
+    /**
+     * Create a requirement on specified statement context to become effective.
+     *
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtx(
+            final StmtContext<?, ?, ?> context, final ParserNamespace<K, C> namespace, final K key) {
+        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return requiresEffectiveCtx(context, writable, key);
+    }
 
     /**
      * Create a requirement on specified statement context to become effective.
@@ -239,7 +348,21 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace<K, C> namespace, K key);
+        ParserNamespace.Writable<K, C> namespace, K key);
+
+    /**
+     * Mark the fact that this action is mutating a namespace.
+     *
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated(since = "15.0.1", forRemoval = true)
+    default @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> ctx,
+            final ParserNamespace<?, ?> namespace) {
+        if (!(namespace instanceof ParserNamespace.Writable<?, ?> writable)) {
+            throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
+        }
+        return mutatesNs(ctx, writable);
+    }
 
     /**
      * Mark the fact that this action is mutating a namespace.
@@ -247,5 +370,5 @@ public interface ModelActionBuilder {
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
-    @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(Mutable<?, ?, ?> ctx, ParserNamespace<?, ?> namespace);
+    @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(Mutable<?, ?, ?> ctx, ParserNamespace.Writable<?, ?> namespace);
 }

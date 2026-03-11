@@ -177,7 +177,7 @@ public final class UniqueStatementSupport
                     Maps.uniqueIndex(unique.getArgument(),
                         desc -> action.requiresEffectiveCtxPath(list,
                             // FIXME: why do we need this cast?
-                            (ParserNamespace) ParserNamespaces.schemaTree(), desc.getNodeIdentifiers()))));
+                            (ParserNamespace.Writable) ParserNamespaces.schemaTree(), desc.getNodeIdentifiers()))));
             }
         }
 
