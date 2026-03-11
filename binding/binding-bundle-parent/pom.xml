@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>binding-bundle-parent</artifactId>
-    <version>15.0.0</version>
+    <version>15.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>Binding Bundle parent (felix-based)</description>
@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>bnd-parent</artifactId>
-                <version>15.0.0</version>
+                <version>15.0.1-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -87,12 +87,12 @@
                         <plugin>
                             <groupId>org.opendaylight.yangtools</groupId>
                             <artifactId>yang-maven-plugin</artifactId>
-                            <version>15.0.0</version>
+                            <version>15.0.1-SNAPSHOT</version>
                             <dependencies>
                                 <dependency>
                                     <groupId>org.opendaylight.yangtools</groupId>
                                     <artifactId>binding-codegen</artifactId>
-                                    <version>15.0.0</version>
+                                    <version>15.0.1-SNAPSHOT</version>
                                 </dependency>
                             </dependencies>
                             <executions>
