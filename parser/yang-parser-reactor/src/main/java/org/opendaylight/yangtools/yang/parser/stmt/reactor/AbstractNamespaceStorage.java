@@ -76,7 +76,7 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
         return local;
     }
 
-    final <K, V> void addToNamespace(final ParserNamespace<K, V> type, final K key, final V value) {
+    final <K, V> void addToNamespace(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
         accessNamespace(type).valueTo(this, key, value);
     }
 
