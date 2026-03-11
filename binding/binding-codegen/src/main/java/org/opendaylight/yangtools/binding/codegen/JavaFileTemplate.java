@@ -186,6 +186,7 @@ class JavaFileTemplate {
         this(new TopLevelJavaGeneratedType(type), type);
     }
 
+    @NonNullByDefault
     JavaFileTemplate(final AbstractJavaGeneratedType javaType, final GeneratedType type) {
         this.javaType = requireNonNull(javaType);
         this.type = requireNonNull(type);
