@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -52,8 +55,8 @@ public final class SourceLinkageResolver {
     /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
      */
-    private static final Comparator<SourceIdentifier> BY_REVISION = Comparator.comparing(
-        SourceIdentifier::revision,
+    private static final Comparator<SourceInfoRef> BY_REVISION = Comparator.comparing(
+        source -> source.info().sourceId().revision(),
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
@@ -66,13 +69,13 @@ public final class SourceLinkageResolver {
      * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
      * them ordered by Revision.
      */
-    private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
+    private final SortedSetMultimap<Unqualified, SourceInfoRef> allSourcesMapped =
         Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
      * Map of involved sources with the same name.
      */
-    private final SortedSetMultimap<Unqualified, SourceIdentifier> involvedSourcesGrouped =
+    private final SortedSetMultimap<Unqualified, SourceInfoRef> involvedSourcesGrouped =
         Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
@@ -86,7 +89,7 @@ public final class SourceLinkageResolver {
      * Map of submodules which include other submodules of the same parent module.
      */
     // FIXME: would a HashTable work better?
-    private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
+    private final Map<ResolvedSourceBuilder, Map<Include, SourceInfoRef>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
     private SourceLinkageResolver(final Set<SourceInfoRef> withMainSources, final Set<SourceInfoRef> withLibSources) {
@@ -141,7 +144,7 @@ public final class SourceLinkageResolver {
                 final var parentId = findSatisfied(allSourcesMapped, parentName, belongsTo);
                 final var submoduleId = submoduleInfo.sourceId();
                 if (parentId != null) {
-                    submoduleToParentMap.put(submoduleId, parentId);
+                    submoduleToParentMap.put(submoduleId, parentId.info().sourceId());
                     continue;
                 }
 
@@ -158,14 +161,13 @@ public final class SourceLinkageResolver {
 
             // FIXME: verify no duplicates
             allSources.putIfAbsent(sourceId, source);
-
-            allSourcesMapped.put(sourceId.name(), sourceId);
+            allSourcesMapped.put(sourceId.name(), source);
         }
     }
 
     private void tryResolveDependencies() throws ReactorException {
         for (var mainSource : mainSources) {
-            tryResolveDependenciesOf(mainSource.info().sourceId());
+            tryResolveDependenciesOf(mainSource);
         }
     }
 
@@ -191,20 +193,21 @@ public final class SourceLinkageResolver {
      * Resolves Imports and non-sibling includes. Includes of siblings are only identified here and will be resolved
      * separately.
      */
-    private void tryResolveDependenciesOf(final SourceIdentifier rootId) throws SomeModifiersUnresolvedException {
-        if (involvedSourcesMap.containsKey(rootId)) {
+    private void tryResolveDependenciesOf(final @NonNull SourceInfoRef mainSource)
+            throws SomeModifiersUnresolvedException {
+        if (involvedSourcesMap.containsKey(mainSource.info().sourceId())) {
             return;
         }
 
         // Sources already fully resolved
-        final var visitedSources = new HashSet<SourceIdentifier>();
+        final var visitedSources = new HashSet<SourceInfoRef>();
 
         // Sources currently being resolved (active dependency path)
-        final var inProgress = new HashSet<SourceIdentifier>();
+        final var inProgress = new HashSet<SourceInfoRef>();
 
         // Sources that need processing
-        final var workChain = new ArrayDeque<SourceIdentifier>();
-        workChain.add(rootId);
+        final var workChain = new ArrayDeque<SourceInfoRef>();
+        workChain.add(mainSource);
 
         while (true) {
             final var current = workChain.pollFirst();
@@ -216,11 +219,11 @@ public final class SourceLinkageResolver {
             }
 
             inProgress.add(current);
-
+            final var currentId = current.info().sourceId();
             final var dependencies = getDependenciesOf(current);
             final var resolvedDependencies = new HashMap<SourceDependency, Unqualified>();
-            final var unresolvedDependencies = new ArrayList<SourceIdentifier>();
-            final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
+            final var unresolvedDependencies = new ArrayList<SourceInfoRef>();
+            final var includedSiblings = new LinkedHashMap<Include, SourceInfoRef>();
             boolean allResolved = true;
 
             for (var dependency : dependencies) {
@@ -231,14 +234,14 @@ public final class SourceLinkageResolver {
                 if (match == null) {
                     // Dependency is missing
                     if (dependency instanceof Import) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                            new InferenceException(refOf(current, dependency.sourceRef()),
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, currentId,
+                            new InferenceException(refOf(currentId, dependency.sourceRef()),
                                 "Imported module %s was not found", dependencyName.getLocalName()));
                     }
 
                     // FIXME: also handling of BelongsTo?
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                        new InferenceException(refOf(current, dependency.sourceRef()),
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, currentId,
+                        new InferenceException(refOf(currentId, dependency.sourceRef()),
                             "Included submodule %s was not found", dependencyName.getLocalName()));
                 }
 
@@ -262,9 +265,9 @@ public final class SourceLinkageResolver {
             }
 
             if (allResolved) {
-                final var newResolved = involvedSourcesMap.computeIfAbsent(current, key -> {
+                final var newResolved = involvedSourcesMap.computeIfAbsent(currentId, key -> {
                     final var builder = new ResolvedSourceBuilder(allSources.get(key));
-                    involvedSourcesGrouped.put(key.name(), key);
+                    involvedSourcesGrouped.put(key.name(), builder.infoRef());
                     return builder;
                 });
 
@@ -284,8 +287,8 @@ public final class SourceLinkageResolver {
                             if (importDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
                                 if (dependencyVersion != YangVersion.VERSION_1) {
                                     throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE,
-                                        current,
-                                        new YangVersionLinkageException(refOf(current, importDep.sourceRef()),
+                                        currentId,
+                                        new YangVersionLinkageException(refOf(currentId, importDep.sourceRef()),
                                             "Cannot import by revision version %s module %s", dependencyVersion,
                                                 resolvedDep.getValue().getLocalName()));
                                 }
@@ -294,11 +297,12 @@ public final class SourceLinkageResolver {
                         }
                         case Include includeDep -> {
                             if (currentVersion != dependencyVersion) {
-                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                    new YangVersionLinkageException(refOf(current, dep.sourceRef()),
+                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE,
+                                    currentId,
+                                    new YangVersionLinkageException(refOf(currentId, dep.sourceRef()),
                                         "Cannot include a version %s submodule %s in a version %s module %s",
                                         dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
-                                        current.name().getLocalName()));
+                                        currentId.name().getLocalName()));
                             }
                             newResolved.resolveInclude(includeDep, depModule);
                         }
@@ -324,10 +328,10 @@ public final class SourceLinkageResolver {
                 for (var dep : unresolvedDependencies) {
                     // Check circular dependency
                     if (inProgress.contains(dep)) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                            new InferenceException(current.toReference(),
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, currentId,
+                            new InferenceException(currentId.toReference(),
                                 "Found circular dependency between modules %s and %s",
-                                current.name().getLocalName(), dep.name().getLocalName()));
+                                currentId.name().getLocalName(), dep.info().sourceId().name().getLocalName()));
                     }
 
                     // Not processed yet, add to queue
@@ -380,15 +384,16 @@ public final class SourceLinkageResolver {
         while (iterator.hasNext()) {
             final var entry = iterator.next();
             final var resolvedSource = entry.getKey();
-            final var siblings = entry.getValue();
 
-            for (var includeEntry : siblings.entrySet()) {
+            for (var includeEntry : entry.getValue().entrySet()) {
                 final var sibling = includeEntry.getValue();
-                final var resolvedSibling = involvedSourcesMap.get(sibling);
+                final var siblingId = sibling.info().sourceId();
+
+                final var resolvedSibling = involvedSourcesMap.get(siblingId);
                 if (resolvedSibling == null) {
                     final var sourceId = resolvedSource.sourceId();
                     throw new InferenceException(sourceId.toReference(),
-                        "Included submodule %s of module %s was not resolved", sibling, sourceId);
+                        "Included submodule %s of module %s was not resolved", siblingId, sourceId);
                 }
                 resolvedSource.resolveInclude(includeEntry.getKey(), resolvedSibling);
             }
@@ -396,30 +401,26 @@ public final class SourceLinkageResolver {
         }
     }
 
-    private Include asIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
-            final SourceIdentifier dependencyId) {
+    @NonNullByDefault
+    private @Nullable Include asIncludedSibling(final SourceInfoRef current, final SourceDependency dependency,
+            final SourceInfoRef dependencyRef) {
         if (!(dependency instanceof Include sibling)) {
             return null;
         }
 
         final var currentParent = findSatisfyingParentForSubmodule(current);
         // FIXME: not needed if currentParent == null?
-        final var theirParent = findSatisfyingParentForSubmodule(dependencyId);
+        final var theirParent = findSatisfyingParentForSubmodule(dependencyRef);
 
         return currentParent != null && currentParent.equals(theirParent) ? sibling : null;
     }
 
-    private @Nullable SourceInfo lookupSourceInfo(final SourceIdentifier sourceId) {
-        final var reactorSource = allSources.get(sourceId);
-        return reactorSource == null ? null : reactorSource.info();
-    }
-
-    private @Nullable SourceIdentifier findSatisfyingParentForSubmodule(final SourceIdentifier submoduleId) {
-        if (!(lookupSourceInfo(submoduleId) instanceof SourceInfo.Submodule submodule)) {
+    private @Nullable SourceInfoRef findSatisfyingParentForSubmodule(final @NonNull SourceInfoRef submodule) {
+        if (!(submodule.info() instanceof SourceInfo.Submodule submoduleInfo)) {
             return null;
         }
 
-        final var submoduleBelongsTo = submodule.belongsTo();
+        final var submoduleBelongsTo = submoduleInfo.belongsTo();
         final var satisfied = findSatisfied(involvedSourcesGrouped, submoduleBelongsTo.name(), submoduleBelongsTo);
         if (satisfied != null) {
             return satisfied;
@@ -427,22 +428,20 @@ public final class SourceLinkageResolver {
         return findSatisfied(allSourcesMapped, submoduleBelongsTo.name(), submoduleBelongsTo);
     }
 
-    private static @Nullable SourceIdentifier findSatisfied(final SortedSetMultimap<Unqualified, SourceIdentifier> map,
+    private static @Nullable SourceInfoRef findSatisfied(final SortedSetMultimap<Unqualified, SourceInfoRef> map,
             final Unqualified key, final SourceDependency dependency) {
         for (var candidate : map.get(key)) {
-            if (dependency.isSatisfiedBy(candidate)) {
+            if (dependency.isSatisfiedBy(candidate.info().sourceId())) {
                 return candidate;
             }
         }
         return null;
     }
 
-    private Set<SourceDependency> getDependenciesOf(final SourceIdentifier id) {
-        final var sourceInfo = lookupSourceInfo(id);
-        final var dependencies = new HashSet<SourceDependency>();
-        dependencies.addAll(sourceInfo.imports());
-        dependencies.addAll(sourceInfo.includes());
-        return dependencies;
+    private static Set<SourceDependency> getDependenciesOf(final SourceInfoRef source) {
+        final var sourceInfo = source.info();
+        return Stream.concat(sourceInfo.imports().stream(), sourceInfo.includes().stream())
+            .collect(Collectors.toSet());
     }
 
     @NonNullByDefault
