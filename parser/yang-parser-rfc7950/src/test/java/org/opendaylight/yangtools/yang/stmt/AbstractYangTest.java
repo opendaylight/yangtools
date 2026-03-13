@@ -146,11 +146,11 @@ public abstract class AbstractYangTest {
         return assertThat(assertSourceException(yangResourceName).getMessage());
     }
 
-    public static @NonNull SourceException assertSourceExceptionDir(final String yangResourceName,
-            final Matcher<String> matcher) {
-        final var ret = assertExceptionDir(yangResourceName, SourceException.class, matcher);
+    public static @NonNull AbstractStringAssert<@NonNull ?> assertSourceExceptionDirMessage(
+            final String yangResourceName) {
+        final var ret = assertExceptionDir(yangResourceName, SourceException.class);
         // SourceException is the base of the hierarchy, we should normally assert subclasses
         assertEquals(SourceException.class, ret.getClass());
-        return ret;
+        return assertThat(ret.getMessage());
     }
 }

@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
@@ -39,8 +36,8 @@ class YT1481Test extends AbstractYangTest {
 
     @Test
     void testFooFeatureNotSupported() {
-        assertThat(assertFooModule("foo-feature", Set.of()).effectiveSubstatements(),
-            not(hasItem(instanceOf(ContainerEffectiveStatement.class))));
+        assertThat(assertFooModule("foo-feature", Set.of()).effectiveSubstatements())
+            .noneMatch(ContainerEffectiveStatement.class::isInstance);
     }
 
     @Test

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ class Bug4933Test extends AbstractYangTest {
 
     @Test
     void incorrectKeywordTest() {
-        assertSourceExceptionDir("/bugs/bug4933/incorrect",
-            startsWith("String 'not_supported' is not valid deviate argument"));
+        assertSourceExceptionDirMessage("/bugs/bug4933/incorrect")
+            .startsWith("String 'not_supported' is not valid deviate argument");
     }
 }
