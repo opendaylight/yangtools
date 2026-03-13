@@ -81,6 +81,7 @@ public final class StmtContextUtils {
         return listBuilder.build();
     }
 
+    @Deprecated(since = "15.0.1", forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllEffectiveSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> type) {
         final var listBuilder = ImmutableList.<StmtContext<A, D, ?>>builder();
