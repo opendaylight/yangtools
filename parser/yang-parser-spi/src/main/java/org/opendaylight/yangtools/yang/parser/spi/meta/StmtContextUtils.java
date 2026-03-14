@@ -69,10 +69,11 @@ public final class StmtContextUtils {
         return null;
     }
 
+    @Deprecated(since = "15.0.1", forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllDeclaredSubstatements(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
+            final StmtContext<?, ?, ?> stmt, final Class<D> declaredType) {
         final var listBuilder = ImmutableList.<StmtContext<A, D, ?>>builder();
-        for (var subStmtContext : stmtContext.declaredSubstatements()) {
+        for (var subStmtContext : stmt.declaredSubstatements()) {
             final var declaring = subStmtContext.tryDeclaring(declaredType);
             if (declaring != null) {
                 listBuilder.add(declaring);

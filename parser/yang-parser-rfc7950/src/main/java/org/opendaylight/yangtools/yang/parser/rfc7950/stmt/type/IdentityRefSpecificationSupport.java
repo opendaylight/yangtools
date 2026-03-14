@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -51,12 +50,18 @@ final class IdentityRefSpecificationSupport extends AbstractTypeSupport {
     public void onFullDefinitionDeclared(final Mutable<QName, TypeStatement, TypeEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        for (var baseStmt : StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class)) {
-            final var baseIdentity = baseStmt.getArgument();
-            if (stmt.namespaceItem(ParserNamespaces.IDENTITY, baseIdentity) == null) {
+        for (var substatement : stmt.declaredSubstatements()) {
+            final var base = substatement.asDeclaring(BaseStatement.DEF);
+            if (base == null) {
+                continue;
+            }
+
+            final var identity = base.getArgument();
+            if (stmt.namespaceItem(ParserNamespaces.IDENTITY, identity) == null) {
                 throw new InferenceException(stmt,
                     "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
-                    baseIdentity.getLocalName());
+                    // FIXME: report namespace as well
+                    identity.getLocalName());
             }
         }
     }
