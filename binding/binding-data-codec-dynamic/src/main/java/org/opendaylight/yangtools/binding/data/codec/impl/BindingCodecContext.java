@@ -763,59 +763,61 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final ValueCodec<Object, Object> casted = (ValueCodec) identityCodec;
             return casted;
-        } else if (BindingInstanceIdentifier.class.equals(valueType)) {
+        }
+        if (BindingInstanceIdentifier.class.equals(valueType)) {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final ValueCodec<Object, Object> casted = (ValueCodec) instanceIdentifierCodec;
             return casted;
-        } else if (BindingReflections.isBindingClass(valueType)) {
-            return getCodecForBindingClass(valueType, instantiatedType);
-        } else {
-            final var codec = BuiltInValueCodec.forValueType(valueType);
-            if (codec != null) {
-                return codec;
-            }
-
-            // FIXME: YANGTOOLS-1602: we must never return NOOP_CODEC for valueType=Object.class
-            if (Object.class.equals(valueType)) {
-                return NOOP_CODEC;
-            }
-
-            throw new VerifyException("Unsupported type " + valueType.getName());
         }
+        if (BindingReflections.isBindingClass(valueType)) {
+            return getCodecForBindingClass(valueType, instantiatedType);
+        }
+        final var codec = BuiltInValueCodec.forValueType(valueType);
+        if (codec != null) {
+            return codec;
+        }
+        // FIXME: YANGTOOLS-1602: we must never return NOOP_CODEC for valueType=Object.class
+        if (Object.class.equals(valueType)) {
+            return NOOP_CODEC;
+        }
+        throw new VerifyException("Unsupported type " + valueType.getName());
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
     // FIXME: this is probably not right w.r.t. nulls
     private ValueCodec<Object, Object> getCodecForBindingClass(final Class<?> valueType,
             final TypeDefinition<?> typeDef) {
-        if (typeDef instanceof IdentityrefTypeDefinition) {
-            return new CompositeValueCodec.OfIdentity(valueType, identityCodec);
-        } else if (typeDef instanceof InstanceIdentifierTypeDefinition) {
-            return new CompositeValueCodec.OfInstanceIdentifier(valueType, instanceIdentifierCodec);
-        } else if (typeDef instanceof UnionTypeDefinition unionType) {
-            try {
-                return UnionTypeCodec.of(valueType, unionType, this);
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to load codec for " + valueType, e);
+        return switch (typeDef) {
+            case IdentityrefTypeDefinition type ->
+                new CompositeValueCodec.OfIdentity(valueType, identityCodec);
+            case InstanceIdentifierTypeDefinition type ->
+                new CompositeValueCodec.OfInstanceIdentifier(valueType, instanceIdentifierCodec);
+            case UnionTypeDefinition type -> {
+                try {
+                    yield UnionTypeCodec.of(valueType, type, this);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Unable to load codec for " + valueType, e);
+                }
             }
-        } else if (typeDef instanceof LeafrefTypeDefinition) {
-            final var schema = context.getTypeWithSchema(valueType).statement();
-            return getCodec(valueType, switch (schema) {
-                case TypeDefinitionAware typeDefAware -> typeDefAware.typeDefinition();
-                default -> throw new IllegalStateException("Unexpected schema " + schema);
-            });
-        }
-
-        final var cached = SchemaUnawareCodec.of(valueType, typeDef);
-        if (cached != null) {
-            return cached;
-        }
-        final var codec = BuiltInValueCodec.forValueType(valueType);
-        if (codec != null) {
-            return codec;
-        }
-
-        throw new VerifyException("Unsupported type " + valueType.getName());
+            case LeafrefTypeDefinition type -> {
+                final var schema = context.getTypeWithSchema(valueType).statement();
+                yield getCodec(valueType, switch (schema) {
+                    case TypeDefinitionAware typeDefAware -> typeDefAware.typeDefinition();
+                    default -> throw new IllegalStateException("Unexpected schema " + schema);
+                });
+            }
+            default -> {
+                final var cached = SchemaUnawareCodec.of(valueType, typeDef);
+                if (cached != null) {
+                    yield cached;
+                }
+                final var codec = BuiltInValueCodec.forValueType(valueType);
+                if (codec != null) {
+                    yield codec;
+                }
+                throw new VerifyException("Unsupported type " + valueType.getName());
+            }
+        };
     }
 
     @Override
