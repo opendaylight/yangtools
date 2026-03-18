@@ -329,7 +329,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return;
         }
 
-        final AbstractExplicitGenerator<S, R> prev = previous();
+        final var prev = previous();
         if (prev != null) {
             verify(prev instanceof AbstractTypeObjectGenerator, "Unexpected previous %s", prev);
             ((AbstractTypeObjectGenerator<S, R>) prev).linkInferred(this);
@@ -352,8 +352,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
     private void linkBaseGen(final TypedefGenerator upstreamBaseGen) {
         verify(baseGen == null, "Attempted to replace base %s with %s in %s", baseGen, upstreamBaseGen, this);
-        final List<AbstractTypeObjectGenerator<?, ?>> downstreams = verifyNotNull(inferred,
-            "Duplicated linking of %s", this);
+        final var downstreams = verifyNotNull(inferred, "Duplicated linking of %s", this);
         baseGen = verifyNotNull(upstreamBaseGen);
         baseGen.addDerivedGenerator(this);
         inferred = null;
@@ -418,8 +417,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         // At this point we either arrived at some not yet resolved leafref or at non leafref generator
         // we check for circular leafref chain as the not yet resolved leafref could be this
-        checkArgument(current != this, "Circular leafref chain detected at leaf %s",
-                statement().argument());
+        checkArgument(current != this, "Circular leafref chain detected at leaf %s", statement().argument());
         furthestInRefChain = current;
     }
 
@@ -498,11 +496,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return methodReturnTypeElement;
         }
         final var genType = generatedType();
-        if (genType != null) {
-            return genType;
-        }
-        final var prev = verifyNotNull(previous(), "No previous generator for %s", this);
-        return prev.runtimeJavaType();
+        return genType != null ? genType : getPrevious().runtimeJavaType();
     }
 
     final @NonNull Type methodReturnElementType(final @NonNull TypeBuilderFactory builderFactory) {
@@ -594,8 +588,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             return;
         }
 
-        final var prev =
-            (AbstractTypeObjectGenerator<?, ?>) verifyNotNull(previous(), "Missing previous link in %s", this);
+        final var prev = (AbstractTypeObjectGenerator<?, ?>) getPrevious();
         if (prev.refType instanceof ResolvedLeafref) {
             // We should be already inheriting the correct type
             return;

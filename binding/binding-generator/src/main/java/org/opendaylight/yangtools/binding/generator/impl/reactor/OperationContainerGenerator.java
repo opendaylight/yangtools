@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -56,8 +55,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
 
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final AbstractCompositeGenerator<?, ?> parent = getParent();
-        if (parent instanceof ActionGenerator actionParent && actionParent.isAddedByUses()) {
+        if (getParent() instanceof ActionGenerator actionParent && actionParent.isAddedByUses()) {
             //        final ActionDefinition orig = findOrigAction(parentSchema, action).get();
             //        // Original definition may live in a different module, make sure we account for that
             //        final ModuleContext origContext = moduleContext(
@@ -68,7 +66,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
             throw new UnsupportedOperationException("Lookup in original");
         }
 
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.addImplementsType(baseInterface);
         addAugmentable(builder);
 
