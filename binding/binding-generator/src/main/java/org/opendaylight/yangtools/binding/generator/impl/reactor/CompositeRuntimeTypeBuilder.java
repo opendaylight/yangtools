@@ -124,13 +124,12 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
             final AbstractCompositeGenerator<?, ?> parent, final String localName) {
         // Search direct children first ...
         for (var child : parent) {
-            if (child instanceof AbstractExplicitGenerator) {
-                @SuppressWarnings("unchecked")
-                final AbstractExplicitGenerator<S, ?> gen = (AbstractExplicitGenerator<S, ?>) child;
-                final EffectiveStatement<?, ?> genStmt = gen.statement();
-                if (genStmt instanceof SchemaTreeEffectiveStatement<?> schemaStmt
+            if (child instanceof AbstractExplicitGenerator<?, ?> gen) {
+                if (gen.statement() instanceof SchemaTreeEffectiveStatement<?> schemaStmt
                     && localName.equals(schemaStmt.argument().getLocalName())) {
-                    return gen;
+                    @SuppressWarnings("unchecked")
+                    final var ret = (AbstractExplicitGenerator<S, ?>) gen;
+                    return ret;
                 }
             }
         }
