@@ -51,13 +51,24 @@ public interface OrderedByStatement extends DeclaredStatement<Ordering> {
         /**
          * {@return the {@code OrderedByStatement}}
          * @throws NoSuchElementException if not present
+         * @since 15.0.1
          */
-        default @NonNull OrderedByStatement getOrderdByStatement() {
+        default @NonNull OrderedByStatement getOrderedByStatement() {
             final var orderedBy = orderedByStatement();
             if (orderedBy == null) {
                 throw new NoSuchElementException("No ordered-by statement present in " + this);
             }
             return orderedBy;
+        }
+
+        /**
+         * {@return the {@code OrderedByStatement}}
+         * @throws NoSuchElementException if not present
+         * @deprecated Use {@link #getOrderedByStatement()} instead.
+         */
+        @Deprecated(since = "15.0.1", forRemoval = true)
+        default @NonNull OrderedByStatement getOrderdByStatement() {
+            return getOrderedByStatement();
         }
     }
 

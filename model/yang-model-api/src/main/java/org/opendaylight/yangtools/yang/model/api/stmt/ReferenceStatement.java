@@ -54,7 +54,7 @@ public interface ReferenceStatement extends DeclaredHumanTextStatement {
         default @NonNull ReferenceStatement getReferenceStatement() {
             final var reference = referenceStatement();
             if (reference == null) {
-                throw new NoSuchElementException("No status statement present in " + this);
+                throw new NoSuchElementException("No reference statement present in " + this);
             }
             return reference;
         }

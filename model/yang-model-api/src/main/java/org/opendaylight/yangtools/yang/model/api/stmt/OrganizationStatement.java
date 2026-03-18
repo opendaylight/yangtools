@@ -54,7 +54,7 @@ public interface OrganizationStatement extends DeclaredHumanTextStatement {
         default @NonNull OrganizationStatement getOrganizationStatement() {
             final var organization = organizationStatement();
             if (organization == null) {
-                throw new NoSuchElementException("No config statement present in " + this);
+                throw new NoSuchElementException("No organization statement present in " + this);
             }
             return organization;
         }

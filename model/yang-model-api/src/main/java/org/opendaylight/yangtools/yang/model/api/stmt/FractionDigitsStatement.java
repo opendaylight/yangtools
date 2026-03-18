@@ -49,16 +49,25 @@ public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
         /**
          * {@return the {@code FractionDigitsStatement}}
          * @throws NoSuchElementException if not present
+         * @since 15.0.1
          */
-        default @NonNull FractionDigitsStatement getConfigStatement() {
+        default @NonNull FractionDigitsStatement getFractionDigitsStatement() {
             final var fractionDigits = fractionDigitsStatement();
             if (fractionDigits == null) {
                 throw new NoSuchElementException("No fraction-digits statement present in " + this);
             }
             return fractionDigits;
         }
-    }
 
+        /**
+         * {@return the {@code FractionDigitsStatement}}
+         * @throws NoSuchElementException if not present
+         */
+        @Deprecated(since = "15.0.1", forRemoval = true)
+        default @NonNull FractionDigitsStatement getConfigStatement() {
+            return getFractionDigitsStatement();
+        }
+    }
 
     /**
      * The definition of {@code fraction-digits} statement.
