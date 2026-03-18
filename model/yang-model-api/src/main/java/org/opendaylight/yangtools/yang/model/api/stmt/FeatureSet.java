@@ -12,12 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
+import com.google.common.collect.TreeMultimap;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -72,8 +70,8 @@ public abstract sealed class FeatureSet implements Immutable {
         // Note: not a ImmutableSetMultimap because we need to distinguish non-presence vs. empty Set
         private final ImmutableMap<QNameModule, ImmutableSet<String>> featuresByModule;
 
-        Sparse(final Map<QNameModule, ImmutableSet<String>> featuresByModule) {
-            this.featuresByModule = ImmutableMap.copyOf(featuresByModule);
+        Sparse(final ImmutableMap<QNameModule, ImmutableSet<String>> featuresByModule) {
+            this.featuresByModule = requireNonNull(featuresByModule);
         }
 
         @Override
@@ -104,16 +102,17 @@ public abstract sealed class FeatureSet implements Immutable {
      * features are reported as present.
      */
     public static final class Builder {
-        // Note: Tree{Map,Set} so we sort keys/entries by their natural ordering -- which also prevents nulls
-        private final TreeMap<QNameModule, TreeSet<String>> moduleFeatures = new TreeMap<>();
+        // Note: keys/values are sorted by their natural ordering -- which also prevents nulls
+        private final TreeMultimap<QNameModule, String> moduleFeatures = TreeMultimap.create();
 
         public @NonNull Builder addModuleFeatures(final QNameModule module, final Collection<String> names) {
-            moduleFeatures.computeIfAbsent(module, ignored -> new TreeSet<>()).addAll(names);
+            moduleFeatures.putAll(module, names);
             return this;
         }
 
         public @NonNull FeatureSet build() {
-            return new Sparse(Maps.transformValues(moduleFeatures, ImmutableSet::copyOf));
+            return new Sparse(moduleFeatures.asMap().entrySet().stream()
+                .collect(ImmutableMap.toImmutableMap(Entry::getKey, entry -> ImmutableSet.copyOf(entry.getValue()))));
         }
     }
 
