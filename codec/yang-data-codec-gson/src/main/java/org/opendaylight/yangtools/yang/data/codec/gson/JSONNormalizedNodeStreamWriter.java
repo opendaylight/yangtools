@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.w3c.dom.Element;
@@ -296,8 +295,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         final boolean emitIfEmpty = tracker.startContainerNode(name) instanceof ContainerEffectiveStatement container
-            ? container.findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isPresent()
-                : DEFAULT_EMIT_EMPTY_CONTAINERS;
+            ? container.presenceStatement() != null : DEFAULT_EMIT_EMPTY_CONTAINERS;
         context = new JSONStreamWriterNamedObjectContext(context, name, emitIfEmpty);
     }
 

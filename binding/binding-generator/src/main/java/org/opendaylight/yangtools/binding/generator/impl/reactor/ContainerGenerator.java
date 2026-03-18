@@ -14,14 +14,12 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRunt
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -44,13 +42,13 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final GeneratedTypeBuilder builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         addImplementsChildOf(builder);
         addAugmentable(builder);
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
 
-        final ModuleGenerator module = currentModule();
+        final var module = currentModule();
         module.addQNameConstant(builder, localName());
 
         addGetterMethods(builder, builderFactory);
@@ -77,10 +75,9 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
     @Override
     MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
-        final MethodSignatureBuilder ret = super.constructGetter(builder, returnType)
-                .setMechanics(ValueMechanics.NORMAL);
-        if (statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isEmpty()) {
-            final MethodSignatureBuilder nonnull = builder
+        final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NORMAL);
+        if (statement().presenceStatement() == null) {
+            final var nonnull = builder
                     .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
                     .setReturnType(returnType)
                     .setDefault(false);

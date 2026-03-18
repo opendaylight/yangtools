@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,11 +150,9 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
 
         final var item = createItem(caseClass, childClass, child.statement());
         if (child instanceof ContainerLikeRuntimeType containerLike) {
-            if (child instanceof ContainerRuntimeType container
-                && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isEmpty()) {
-                return new StructuralContainerCodecPrototype(item, container, factory);
-            }
-            return new ContainerLikeCodecPrototype(item, containerLike, factory);
+            return child instanceof ContainerRuntimeType container && container.statement().presenceStatement() == null
+                ? new StructuralContainerCodecPrototype(item, container, factory)
+                : new ContainerLikeCodecPrototype(item, containerLike, factory);
         }
         if (child instanceof ListRuntimeType list) {
             return list.keyType() != null ? new MapCodecPrototype(item, list, factory)

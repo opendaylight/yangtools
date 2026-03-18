@@ -186,12 +186,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
                 final var childSchema = context.getTypes().bindingChild(JavaTypeName.create(key));
                 if (childSchema instanceof ContainerLikeRuntimeType containerLike) {
-                    if (childSchema instanceof ContainerRuntimeType container
-                        && container.statement().findFirstEffectiveSubstatement(PresenceEffectiveStatement.class)
-                            .isEmpty()) {
-                        return new StructuralContainerCodecContext<>(key, container, BindingCodecContext.this);
-                    }
-                    return new ContainerLikeCodecContext<>(key, containerLike, BindingCodecContext.this);
+                    return containerLike instanceof ContainerRuntimeType container
+                        && container.statement().presenceStatement() == null
+                        ? new StructuralContainerCodecContext<>(key, container, BindingCodecContext.this)
+                        : new ContainerLikeCodecContext<>(key, containerLike, BindingCodecContext.this);
                 } else if (childSchema instanceof ListRuntimeType list) {
                     return list.keyType() == null ? new ListCodecContext<>(key, list, BindingCodecContext.this)
                         : MapCodecContext.of(key, list, BindingCodecContext.this);
