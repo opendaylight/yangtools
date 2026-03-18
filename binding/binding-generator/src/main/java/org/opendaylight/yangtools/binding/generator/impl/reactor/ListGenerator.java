@@ -80,7 +80,6 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         annotateDeprecatedIfNecessary(builder);
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
-        //    builder.setSchemaPath(node.getPath());
 
         return builder.build();
     }

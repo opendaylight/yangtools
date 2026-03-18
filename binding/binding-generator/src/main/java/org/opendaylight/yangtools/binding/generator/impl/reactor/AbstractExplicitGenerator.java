@@ -234,13 +234,22 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     /**
-     * Return the previous incarnation of this generator, or {@code null} if this is the original generator.
-     *
-     * @return Previous incarnation or {@code null}
+     * {@return the previous incarnation of this generator, or {@code null} if this is the original generator}
      */
     final @Nullable AbstractExplicitGenerator<S, R> previous() {
         final var local = verifyNotNull(prev, "Generator %s does not have linkage to previous instance resolved", this);
         return local == this ? null : local;
+    }
+
+    /**
+     * {@return the previous incarnation of this generator}
+     */
+    final @NonNull AbstractExplicitGenerator<S, R> getPrevious() {
+        final var previous = previous();
+        if (previous == null) {
+            throw new VerifyException("Missing previous link in " + this);
+        }
+        return previous;
     }
 
     /**
