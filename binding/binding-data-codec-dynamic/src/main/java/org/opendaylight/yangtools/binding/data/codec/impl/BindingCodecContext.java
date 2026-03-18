@@ -183,22 +183,21 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
-                final var childSchema = context.getTypes().bindingChild(JavaTypeName.create(key));
-                if (childSchema instanceof ContainerLikeRuntimeType containerLike) {
-                    return containerLike instanceof ContainerRuntimeType container
-                        && container.statement().presenceStatement() == null
-                        ? new StructuralContainerCodecContext<>(key, container, BindingCodecContext.this)
-                        : new ContainerLikeCodecContext<>(key, containerLike, BindingCodecContext.this);
-                } else if (childSchema instanceof ListRuntimeType list) {
-                    return list.keyType() == null ? new ListCodecContext<>(key, list, BindingCodecContext.this)
-                        : MapCodecContext.of(key, list, BindingCodecContext.this);
-                } else if (childSchema instanceof ChoiceRuntimeType choice) {
-                    return new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), choice, BindingCodecContext.this);
-                } else if (childSchema == null) {
-                    throw DataContainerCodecContext.childNullException(context, key, "%s is not top-level item.", key);
-                } else {
-                    throw new IncorrectNestingException("%s is not a valid data tree child of %s", key, this);
-                }
+                return switch (context.getTypes().bindingChild(JavaTypeName.create(key))) {
+                    case ChoiceRuntimeType child ->
+                        new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), child, BindingCodecContext.this);
+                    case ContainerRuntimeType child -> child.statement().presenceStatement() == null
+                        ? new StructuralContainerCodecContext<>(key, child, BindingCodecContext.this)
+                        : new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
+                    case ContainerLikeRuntimeType<?, ?> child ->
+                        new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
+                    case ListRuntimeType child -> child.keyType() == null
+                        ? new ListCodecContext<>(key, child, BindingCodecContext.this)
+                        : MapCodecContext.of(key, child, BindingCodecContext.this);
+                    case null -> throw DataContainerCodecContext.childNullException(context, key,
+                            "%s is not top-level item.", key);
+                    default -> throw new IncorrectNestingException("%s is not a valid data tree child of %s", key, this);
+                };
             }
         });
 
