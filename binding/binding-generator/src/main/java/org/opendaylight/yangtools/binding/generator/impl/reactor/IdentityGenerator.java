@@ -75,7 +75,6 @@ public final class IdentityGenerator
 
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
-//        builder.setSchemaPath(identity.getPath());
 
         return builder.build();
     }
