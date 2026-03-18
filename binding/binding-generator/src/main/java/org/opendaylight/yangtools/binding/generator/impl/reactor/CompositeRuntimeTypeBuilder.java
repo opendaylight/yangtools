@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,8 +56,10 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
     final @NonNull List<CaseRuntimeType> getCaseChilden() {
         return childTypes.stream()
             .map(child -> {
-                verify(child instanceof CaseRuntimeType, "Unexpected child %s in %s", child, statement);
-                return (CaseRuntimeType) child;
+                if (!(child instanceof CaseRuntimeType childCase)) {
+                    throw new VerifyException("Unexpected child " + child + " in " + statement);
+                }
+                return childCase;
             })
             .collect(Collectors.toUnmodifiableList());
     }
