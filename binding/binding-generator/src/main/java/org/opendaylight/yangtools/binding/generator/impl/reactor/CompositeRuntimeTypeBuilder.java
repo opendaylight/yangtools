@@ -98,22 +98,20 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
             }
         }
 
-        // Now construct RuntimeTypes for each schema tree child of stmt
+        // Now construct RuntimeTypes for each schema tree child of stmt.
+        // Try valid augments first: they should be empty most of the time and filter all the cases where we
+        // would not find the streamChild among our local and grouping statements. Note that unlike all others,
+        // such matches are not considered to be children in Binding DataObject tree, they are only considered
+        // such in the schema tree.
+        //
+        // That is in general -- 'choice' statements are doing their own thing separately.
         for (var stmt : statement.effectiveSubstatements()) {
-            if (stmt instanceof SchemaTreeEffectiveStatement<?> child) {
-                // Try valid augments first: they should be empty most of the time and filter all the cases where we
-                // would not find the streamChild among our local and grouping statements. Note that unlike all others,
-                // such matches are not considered to be children in Binding DataObject tree, they are only considered
-                // such in the schema tree.
-                //
-                // That is in general -- 'choice' statements are doing their own thing separately.
-                if (!isAugmentedChild(child.argument())) {
-                    final var childGen = verifyNotNull(findChildGenerator(generator, child.argument().getLocalName()),
-                        "Cannot find child for %s in %s", child, generator);
-                    final var childRuntimeType = childGen.createInternalRuntimeType(resolver, child);
-                    if (childRuntimeType != null) {
-                        childTypes.add(childRuntimeType);
-                    }
+            if (stmt instanceof SchemaTreeEffectiveStatement<?> child && !isAugmentedChild(child.argument())) {
+                final var childGen = verifyNotNull(findChildGenerator(generator, child.argument().getLocalName()),
+                    "Cannot find child for %s in %s", child, generator);
+                final var childRuntimeType = childGen.createInternalRuntimeType(resolver, child);
+                if (childRuntimeType != null) {
+                    childTypes.add(childRuntimeType);
                 }
             }
         }
