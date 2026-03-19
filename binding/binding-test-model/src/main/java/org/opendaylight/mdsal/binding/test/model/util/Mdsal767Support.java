@@ -13,14 +13,15 @@ import org.kohsuke.MetaInfServices;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.Mdsal767Data;
 import org.opendaylight.yang.gen.v1.mdsal767.norev.One$F;
 import org.opendaylight.yangtools.binding.YangFeature;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangFeatureProvider;
 
 @MetaInfServices
 @NonNullByDefault
 public final class Mdsal767Support implements YangFeatureProvider<Mdsal767Data> {
     @Override
-    public Class<Mdsal767Data> boundModule() {
-        return Mdsal767Data.class;
+    public RootMeta<Mdsal767Data> boundModule() {
+        return Mdsal767Data.META;
     }
 
     @Override
