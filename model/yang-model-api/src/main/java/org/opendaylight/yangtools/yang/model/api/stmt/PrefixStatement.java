@@ -25,6 +25,7 @@ public interface PrefixStatement extends DeclaredStatement<String> {
      * A {@link DeclaredStatement} that is a parent of a single {@link PrefixStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
+    // FIXME: 16.0.0: all three users want MandatoryIn
     @Beta
     interface OptionalIn<A> extends DeclaredStatement<A> {
         /**
