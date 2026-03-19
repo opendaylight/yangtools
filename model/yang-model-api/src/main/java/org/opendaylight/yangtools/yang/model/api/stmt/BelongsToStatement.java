@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Declared representation of a {@code belongs-to} statement.
  */
-public interface BelongsToStatement extends PrefixStatement.OptionalIn<Unqualified> {
+public interface BelongsToStatement extends PrefixStatement.MandatoryIn<Unqualified> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link BelongsToStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)

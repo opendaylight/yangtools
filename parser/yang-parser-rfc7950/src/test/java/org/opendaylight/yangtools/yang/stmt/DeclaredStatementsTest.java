@@ -201,7 +201,7 @@ class DeclaredStatementsTest extends AbstractYangTest {
         assertEquals(1, moduleImports.size());
         final var importStatement = moduleImports.iterator().next();
         assertEquals(Unqualified.of("imported-module-declared-test"), importStatement.argument());
-        assertEquals("imdt", importStatement.getPrefixStatement().argument());
+        assertEquals("imdt", importStatement.prefixStatement().argument());
         assertEquals(revision, importStatement.getRevisionDateStatement().argument());
 
         assertEquals("test description", moduleStatement.getDescriptionStatement().argument());
