@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
  */
 @Beta
 public sealed interface RootEffectiveStatement<D extends RootDeclaredStatement>
-        extends ImportEffectiveStatement.MultipleIn<Unqualified, D>
+        extends ImportEffectiveStatement.MultipleIn<Unqualified, D>,
+                ReferenceEffectiveStatement.OptionalIn<Unqualified, D>
         permits ModuleEffectiveStatement, SubmoduleEffectiveStatement {
     /**
      * Find the preferred prefix to use with a particular namespace.

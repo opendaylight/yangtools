@@ -15,7 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code range} statement.
  */
-public interface RangeEffectiveStatement extends ConstraintCompat<ValueRanges, @NonNull RangeStatement> {
+public interface RangeEffectiveStatement
+        extends ReferenceEffectiveStatement.OptionalIn<ValueRanges, @NonNull RangeStatement>,
+                ConstraintCompat<ValueRanges, @NonNull RangeStatement> {
     @Override
     default StatementDefinition<ValueRanges, @NonNull RangeStatement, ?> statementDefinition() {
         return RangeStatement.DEF;

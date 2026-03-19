@@ -24,6 +24,7 @@ public non-sealed interface ListEffectiveStatement extends DataTreeEffectiveStat
         MaxElementsEffectiveStatement.OptionalIn<QName, @NonNull ListStatement>,
         MinElementsEffectiveStatement.OptionalIn<QName, @NonNull ListStatement>,
         OrderedByEffectiveStatement.OptionalIn<QName, @NonNull ListStatement>,
+        ReferenceEffectiveStatement.OptionalIn<QName, @NonNull ListStatement>,
         TypedefEffectiveStatement.MultipleIn<QName, @NonNull ListStatement>, DataCompat<QName, @NonNull ListStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ListStatement, ?> statementDefinition() {

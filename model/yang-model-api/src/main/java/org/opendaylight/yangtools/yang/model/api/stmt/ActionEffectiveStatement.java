@@ -21,6 +21,7 @@ public non-sealed interface ActionEffectiveStatement extends SchemaTreeEffective
         DataTreeAwareEffectiveStatement<QName, @NonNull ActionStatement>,
         InputEffectiveStatement.MandatoryIn<QName, @NonNull ActionStatement>,
         OutputEffectiveStatement.MandatoryIn<QName, @NonNull ActionStatement>,
+        ReferenceEffectiveStatement.OptionalIn<QName, @NonNull ActionStatement>,
         TypedefEffectiveStatement.MultipleIn<QName, @NonNull ActionStatement>,
         DataCompat<QName, @NonNull ActionStatement> {
     @Override

@@ -16,7 +16,9 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 /**
  * Effective representation of a {@code must} statement.
  */
-public interface MustEffectiveStatement extends ConstraintCompat<QualifiedBound, @NonNull MustStatement> {
+public interface MustEffectiveStatement
+        extends ReferenceEffectiveStatement.OptionalIn<QualifiedBound, @NonNull MustStatement>,
+                ConstraintCompat<QualifiedBound, @NonNull MustStatement> {
     @Override
     default StatementDefinition<QualifiedBound, @NonNull MustStatement, ?> statementDefinition() {
         return MustStatement.DEF;

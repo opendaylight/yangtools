@@ -15,7 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 /**
  * Effective representation of a {@code length} statement.
  */
-public interface LengthEffectiveStatement extends ConstraintCompat<ValueRanges, @NonNull LengthStatement> {
+public interface LengthEffectiveStatement
+        extends ReferenceEffectiveStatement.OptionalIn<ValueRanges, @NonNull LengthStatement>,
+                ConstraintCompat<ValueRanges, @NonNull LengthStatement> {
     @Override
     default StatementDefinition<ValueRanges, @NonNull LengthStatement, ?> statementDefinition() {
         return LengthStatement.DEF;

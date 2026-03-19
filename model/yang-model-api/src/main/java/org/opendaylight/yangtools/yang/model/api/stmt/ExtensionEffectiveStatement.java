@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of an {@code extension} statement.
  */
-public interface ExtensionEffectiveStatement extends EffectiveStatement<QName, @NonNull ExtensionStatement> {
+public interface ExtensionEffectiveStatement
+        extends ReferenceEffectiveStatement.OptionalIn<QName, @NonNull ExtensionStatement> {
     @Override
     default StatementDefinition<QName, @NonNull ExtensionStatement, ?> statementDefinition() {
         return ExtensionStatement.DEF;

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Effective representation of a {@code leaf} statement.
  */
 public non-sealed interface LeafEffectiveStatement extends DataTreeEffectiveStatement<@NonNull LeafStatement>,
+        ReferenceEffectiveStatement.OptionalIn<QName, @NonNull LeafStatement>,
         TypeEffectiveStatement.MandatoryIn<QName, @NonNull LeafStatement>,
         DataSchemaCompat<QName, @NonNull LeafStatement> {
     @Override

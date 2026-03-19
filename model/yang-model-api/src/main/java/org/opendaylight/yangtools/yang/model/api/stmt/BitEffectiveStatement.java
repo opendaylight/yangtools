@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code bit} statement.
  */
-public interface BitEffectiveStatement extends EffectiveStatement<String, @NonNull BitStatement> {
+public interface BitEffectiveStatement extends ReferenceEffectiveStatement.OptionalIn<String, @NonNull BitStatement> {
     @Override
     default StatementDefinition<String, @NonNull BitStatement, ?> statementDefinition() {
         return BitStatement.DEF;

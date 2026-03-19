@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Effective representation of a {@code import} statement.
  */
 public interface ImportEffectiveStatement
-        extends PrefixEffectiveStatement.MandatoryIn<Unqualified, @NonNull ImportStatement> {
+        extends PrefixEffectiveStatement.MandatoryIn<Unqualified, @NonNull ImportStatement>,
+                ReferenceEffectiveStatement.OptionalIn<Unqualified, @NonNull ImportStatement> {
     /**
      * An {@link EffectiveStatement} that is a parent of multiple {@link ImportEffectiveStatement}s.
      *

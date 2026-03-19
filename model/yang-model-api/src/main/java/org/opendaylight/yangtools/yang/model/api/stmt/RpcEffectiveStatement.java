@@ -19,6 +19,7 @@ public non-sealed interface RpcEffectiveStatement extends SchemaTreeEffectiveSta
         DataTreeAwareEffectiveStatement<QName, @NonNull RpcStatement>,
         InputEffectiveStatement.MandatoryIn<QName, @NonNull RpcStatement>,
         OutputEffectiveStatement.MandatoryIn<QName, @NonNull RpcStatement>,
+        ReferenceEffectiveStatement.OptionalIn<QName, @NonNull RpcStatement>,
         TypedefEffectiveStatement.MultipleIn<QName, @NonNull RpcStatement>, DataCompat<QName, @NonNull RpcStatement> {
     @Override
     default StatementDefinition<QName, @NonNull RpcStatement, ?> statementDefinition() {

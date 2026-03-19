@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code revision} statement.
  */
-public interface RevisionEffectiveStatement extends EffectiveStatement<Revision, @NonNull RevisionStatement> {
+public interface RevisionEffectiveStatement
+        extends ReferenceEffectiveStatement.OptionalIn<Revision, @NonNull RevisionStatement> {
     @Override
     default StatementDefinition<Revision, @NonNull RevisionStatement, ?> statementDefinition() {
         return RevisionStatement.DEF;

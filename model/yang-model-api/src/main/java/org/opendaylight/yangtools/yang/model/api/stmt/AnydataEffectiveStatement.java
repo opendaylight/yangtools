@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Effective representation of a {@code anydata} statement.
  */
 public non-sealed interface AnydataEffectiveStatement extends DataTreeEffectiveStatement<@NonNull AnydataStatement>,
+        ReferenceEffectiveStatement.OptionalIn<QName, @NonNull AnydataStatement>,
         DataSchemaCompat<QName, @NonNull AnydataStatement> {
     @Override
     default StatementDefinition<QName, @NonNull AnydataStatement, ?> statementDefinition() {

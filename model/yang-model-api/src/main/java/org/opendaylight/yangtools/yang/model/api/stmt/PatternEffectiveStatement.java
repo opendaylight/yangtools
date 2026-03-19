@@ -15,7 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 /**
  * Effective representation of a {@code pattern} statement.
  */
-public interface PatternEffectiveStatement extends ConstraintCompat<PatternExpression, @NonNull PatternStatement> {
+public interface PatternEffectiveStatement
+        extends ReferenceEffectiveStatement.OptionalIn<PatternExpression, @NonNull PatternStatement>,
+                ConstraintCompat<PatternExpression, @NonNull PatternStatement> {
     @Override
     default StatementDefinition<PatternExpression, @NonNull PatternStatement, ?> statementDefinition() {
         return PatternStatement.DEF;

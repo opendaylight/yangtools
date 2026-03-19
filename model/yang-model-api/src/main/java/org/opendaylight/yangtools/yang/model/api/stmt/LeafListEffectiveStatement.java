@@ -22,6 +22,7 @@ public non-sealed interface LeafListEffectiveStatement extends DataTreeEffective
         MaxElementsEffectiveStatement.OptionalIn<QName, @NonNull LeafListStatement>,
         MinElementsEffectiveStatement.OptionalIn<QName, @NonNull LeafListStatement>,
         OrderedByEffectiveStatement.OptionalIn<QName, @NonNull LeafListStatement>,
+        ReferenceEffectiveStatement.OptionalIn<QName, @NonNull LeafListStatement>,
         TypeEffectiveStatement.MandatoryIn<QName, @NonNull LeafListStatement>,
         DataSchemaCompat<QName, @NonNull LeafListStatement> {
     @Override

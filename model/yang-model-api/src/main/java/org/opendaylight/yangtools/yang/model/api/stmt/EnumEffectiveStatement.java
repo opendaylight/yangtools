@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
  * Effective representation of a {@code enum} statement.
  */
-public interface EnumEffectiveStatement extends EffectiveStatement<String, @NonNull EnumStatement> {
+public interface EnumEffectiveStatement extends ReferenceEffectiveStatement.OptionalIn<String, @NonNull EnumStatement> {
     @Override
     default StatementDefinition<String, @NonNull EnumStatement, ?> statementDefinition() {
         return EnumStatement.DEF;
