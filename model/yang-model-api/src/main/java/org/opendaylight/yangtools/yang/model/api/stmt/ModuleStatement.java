@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 public non-sealed interface ModuleStatement extends RootDeclaredStatement,
         // FIXME: 16.0.0: this is not accurate: it should be MandatoryIn
-        NamespaceStatement.OptionalIn<Unqualified>,
-        PrefixStatement.OptionalIn<Unqualified> {
+        NamespaceStatement.OptionalIn<Unqualified>, PrefixStatement.MandatoryIn<Unqualified> {
     /**
      * The definition of {@code module} statement.
      *

@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code import} statement.
  */
 public interface ImportStatement extends DescriptionStatement.OptionalIn<Unqualified>,
-        PrefixStatement.OptionalIn<Unqualified>, ReferenceStatement.OptionalIn<Unqualified>,
+        PrefixStatement.MandatoryIn<Unqualified>, ReferenceStatement.OptionalIn<Unqualified>,
         RevisionDateStatement.OptionalIn<Unqualified> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link ImportStatement}s.
