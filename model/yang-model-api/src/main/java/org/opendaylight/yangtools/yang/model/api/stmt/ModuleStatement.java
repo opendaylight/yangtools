@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Declared representation of a {@code module} statement.
  */
 public non-sealed interface ModuleStatement extends RootDeclaredStatement, NamespaceStatement.MandatoryIn<Unqualified>,
-        PrefixStatement.OptionalIn<Unqualified> {
+        PrefixStatement.MandatoryIn<Unqualified> {
     /**
      * The definition of {@code module} statement.
      *
