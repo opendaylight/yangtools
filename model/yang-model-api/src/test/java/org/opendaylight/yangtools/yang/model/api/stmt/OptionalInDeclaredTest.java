@@ -151,7 +151,6 @@ class OptionalInDeclaredTest {
             arguments(MaxElementsStatement.DEF),
             arguments(MinElementsStatement.DEF),
             arguments(ModifierStatement.DEF),
-            arguments(NamespaceStatement.DEF),
             arguments(OrderedByStatement.DEF),
             arguments(OrganizationStatement.DEF),
             arguments(OutputStatement.DEF),

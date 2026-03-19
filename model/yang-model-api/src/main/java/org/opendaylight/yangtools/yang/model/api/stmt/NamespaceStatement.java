@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -26,39 +24,20 @@ public interface NamespaceStatement extends DeclaredStatement<XMLNamespace> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link NamespaceStatement}.
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     * @since 16.0.0
      */
-    // FIXME: 16.0.0: the sole user of this wants MandatoryIn
     @Beta
-    interface OptionalIn<A> extends DeclaredStatement<A> {
+    interface MandatoryIn<A> extends DeclaredStatement<A> {
         /**
-         * {@return the {@code NamespaceStatement} or {@code null} if not present}
+         * {@return the {@code NamespaceStatement}}
          */
-        default @Nullable NamespaceStatement namespaceStatement() {
+        default @NonNull NamespaceStatement namespaceStatement() {
             for (var stmt : declaredSubstatements()) {
                 if (stmt instanceof NamespaceStatement namespace) {
                     return namespace;
                 }
             }
-            return null;
-        }
-
-        /**
-         * {@return an optional {@code NamespaceStatement}}
-         */
-        default @NonNull Optional<NamespaceStatement> findNamespaceStatement() {
-            return Optional.ofNullable(namespaceStatement());
-        }
-
-        /**
-         * {@return the {@code NamespaceStatement}}
-         * @throws NoSuchElementException if not present
-         */
-        default @NonNull NamespaceStatement getNamespaceStatement() {
-            final var namespace = namespaceStatement();
-            if (namespace == null) {
-                throw new NoSuchElementException("No namespace statement present in " + this);
-            }
-            return namespace;
+            throw new VerifyException(this + " does not define a namespace substatement");
         }
     }
 
