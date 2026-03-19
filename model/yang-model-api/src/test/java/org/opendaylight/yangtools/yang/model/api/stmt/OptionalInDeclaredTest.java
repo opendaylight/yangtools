@@ -156,7 +156,6 @@ class OptionalInDeclaredTest {
             arguments(OutputStatement.DEF),
             arguments(PathStatement.DEF),
             arguments(PositionStatement.DEF),
-            arguments(PrefixStatement.DEF),
             arguments(PresenceStatement.DEF),
             arguments(RangeStatement.DEF),
             arguments(ReferenceStatement.DEF),
