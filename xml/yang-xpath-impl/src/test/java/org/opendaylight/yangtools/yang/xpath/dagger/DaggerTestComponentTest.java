@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class DaggerTestComponentTest {
     @Test
     void factoryIsSingleton() {
-        final var component = DaggerTestComponent.create();
+        final var component = DaggerYangXPathParserFactoryComponent.create();
         final var first = component.factory();
         assertNotNull(first);
         assertSame(first, component.factory());

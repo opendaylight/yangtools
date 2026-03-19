@@ -8,19 +8,19 @@
 package org.opendaylight.yangtools.yang.parser.dagger;
 
 import dagger.Component;
-import jakarta.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
-import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryModule;
+import org.opendaylight.yangtools.yang.xpath.dagger.YangXPathParserFactoryComponent;
 import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
 
-@Singleton
 @Component(
+    dependencies = {
+        YangXPathParserFactoryComponent.class
+    },
     modules = {
         YangIRSourceModule.class,
         YinDOMSourceModule.class,
-        YangXPathParserFactoryModule.class,
         YangLibResolverModule.class,
         EmptyParserExtensionsModule.class,
     })

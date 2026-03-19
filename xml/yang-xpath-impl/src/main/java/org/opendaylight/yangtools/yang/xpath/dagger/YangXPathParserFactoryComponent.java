@@ -12,10 +12,17 @@ import jakarta.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
+/**
+ * A Dagger component providing {@link YangXPathParserFactory}.
+ *
+ * @since 15.0.1
+ */
 @Singleton
-@Component(modules = YangXPathParserFactoryModule.class)
 @NonNullByDefault
-interface TestComponent {
-
+@Component(modules = YangXPathParserFactoryModule.class)
+public interface YangXPathParserFactoryComponent {
+    /**
+     * {@return the YangXPathParserFactory}
+     */
     YangXPathParserFactory factory();
 }
