@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="yt1818">
+    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-binding-runtime/{{versionAsInProject}}/xml/features</repository>
+    <feature name="yt1818">
+        <feature version="{{semVerRange}}">odl-yangtools-binding-runtime</feature>
+        <bundle>mvn:org.opendaylight.yangtools/binding-test-model/{{versionAsInProject}}</bundle>
+    </feature>
+</features>

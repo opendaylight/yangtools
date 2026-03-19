@@ -46,6 +46,7 @@
         <module>model</module>
         <module>parser</module>
         <module>plugin</module>
+        <module>tests/yt1818</module>
         <module>tools</module>
         <module>xml</module>
 
