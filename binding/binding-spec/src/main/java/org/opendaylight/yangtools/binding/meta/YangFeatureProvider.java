@@ -23,9 +23,9 @@ public interface YangFeatureProvider<R extends DataRoot<R>> {
      * Return the module this provider recognizes. It is implied that any feature defined in this module and not
      * advertized by any provider is unavailable.
      *
-     * @return {@link DataRoot} class this provider binds to
+     * @return {@link RootMeta} of the module this provider binds to
      */
-    Class<R> boundModule();
+    RootMeta<R> boundModule();
 
     /**
      * Return the set of supported features.
