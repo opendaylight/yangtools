@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
-import org.opendaylight.yangtools.binding.reflect.BindingReflections;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -112,30 +111,10 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
      * @param module the module's {@link RootMeta}
      * @param supportedFeatures the set of supported features
      * @return a {@link Registration}
-     * @deprecated Use {@link #registerModuleFeatures(RootMeta, Set)} instead.
-     */
-    @Deprecated(since = "15.0.1", forRemoval = true)
-    public <R extends @NonNull DataRoot<R>> Registration registerModuleFeatures(final Class<R> module,
-            final Set<? extends YangFeature<?, R>> supportedFeatures) {
-        return registerModuleFeatures(BindingReflections.getQNameModule(module), supportedFeatures);
-    }
-
-    /**
-     * Register a set of {@link YangFeature}s as supported for a particular YANG module.
-     *
-     * @param <R> the module's {@link DataRoot}
-     * @param module the module's {@link RootMeta}
-     * @param supportedFeatures the set of supported features
-     * @return a {@link Registration}
      */
     public <R extends @NonNull DataRoot<R>> Registration registerModuleFeatures(final RootMeta<R> module,
             final Set<? extends YangFeature<?, R>> supportedFeatures) {
-        return registerModuleFeatures(module.moduleInfo().getName().getModule(), supportedFeatures);
-    }
-
-    private <R extends @NonNull DataRoot<R>> @NonNull Registration registerModuleFeatures(
-            final @NonNull QNameModule module, final Set<? extends YangFeature<?, R>> supportedFeatures) {
-        return registerModuleFeatures(module, supportedFeatures.stream()
+        return registerModuleFeatures(module.moduleInfo().getName().getModule(), supportedFeatures.stream()
             .map(feature -> feature.qname().getLocalName())
             .sorted()
             .collect(ImmutableSet.toImmutableSet()));
