@@ -22,6 +22,7 @@ module org.opendaylight.yangtools.rfc6241.parser.support {
     requires transitive org.opendaylight.yangtools.yang.parser.api;
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
     requires transitive org.opendaylight.yangtools.rfc6241.model.api;
+    requires org.opendaylight.yangtools.rfc6536.model.api;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
