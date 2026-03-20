@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class SubstatementValidator {
@@ -181,7 +180,7 @@ public final class SubstatementValidator {
             final @NonNull StatementDefinition<?, ?, ?> def, final int count, final @Nullable Cardinality cardinality) {
         // FIXME: what does this check do and why?
         if (cardinality == null) {
-            if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.statementName()) != null) {
+            if (def.isExtension()) {
                 return null;
             }
             return new InvalidSubstatementException(ctx, "statement %s does not allow %s substatements: %s present",
