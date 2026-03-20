@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.rfc6536.parser;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
@@ -22,10 +23,14 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 
 final class DefaultDenyAllStatementSupport
-        extends AbstractEmptyStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
+        extends AbstractEmptyStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement>
+        implements UndeclaredStatementFactory<Empty, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(DefaultDenyAllStatement.DEF).build();
 
@@ -75,5 +80,13 @@ final class DefaultDenyAllStatementSupport
     protected DefaultDenyAllEffectiveStatement createEffective(final Current<Empty, DefaultDenyAllStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new DefaultDenyAllEffectiveStatementImpl(stmt.declared(), substatements);
+    }
+
+    @Override
+    public DefaultDenyAllEffectiveStatement createUndeclaredEffective(
+            final UndeclaredCurrent<Empty, DefaultDenyAllStatement> stmt,
+            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        return UndeclaredDefaultDenyAllEffectiveStatement.of(buildEffectiveSubstatements(stmt,
+            statementsToBuild(stmt, effectiveSubstatements.filter(StmtContext::isSupportedToBuildEffective))));
     }
 }
