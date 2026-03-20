@@ -243,13 +243,14 @@ public final class StatementSupportBundle implements Immutable {
         }
 
         public @NonNull Builder addSupport(final @NonNull StatementSupport<?, ?, ?> support) {
-            final var statementName = support.statementName();
+            final var definition = support.definition();
+            final var statementName = definition.statementName();
             checkNoParentDefinition(statementName);
 
             final var prev = commonStatements.putIfAbsent(statementName, support);
             if (prev != null) {
                 throw new IllegalStateException("Statement %s already defined as %s".formatted(
-                    support.definition().humanName(), prev));
+                    definition.humanName(), prev));
             }
             return this;
         }

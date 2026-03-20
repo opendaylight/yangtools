@@ -7,14 +7,18 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -24,14 +28,28 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 
-public final class DefaultDenyAllStatementSupport
+final class DefaultDenyAllStatementSupport
         extends AbstractEmptyStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement>
         implements UndeclaredStatementFactory<Empty, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(DefaultDenyAllStatement.DEF).build();
 
-    public DefaultDenyAllStatementSupport(final YangParserConfiguration config) {
+    private final @NonNull StatementDefinition<Empty, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement>
+        definition;
+
+    DefaultDenyAllStatementSupport(final YangParserConfiguration config,
+            final StatementDefinition<Empty, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> definition) {
         super(DefaultDenyAllStatement.DEF, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        this.definition = requireNonNull(definition);
+    }
+
+    DefaultDenyAllStatementSupport(final YangParserConfiguration config) {
+        this(config, DefaultDenyAllStatement.DEF);
+    }
+
+    @Override
+    public StatementDefinition<Empty, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> definition() {
+        return definition;
     }
 
     // FIXME: not implemented:
