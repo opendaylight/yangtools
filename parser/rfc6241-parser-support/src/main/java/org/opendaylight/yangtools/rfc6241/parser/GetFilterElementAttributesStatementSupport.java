@@ -48,6 +48,9 @@ final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStat
             return;
         }
         super.onFullDefinitionDeclared(stmt);
+
+        // we seem to be in the right place, try to apply the 2013-09-29 quirk
+        Quirk20130929.applyTo(stmt);
     }
 
     @Override
