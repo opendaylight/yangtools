@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 
 public final class SubstatementValidator {
@@ -120,7 +121,7 @@ public final class SubstatementValidator {
             final var cardinality = cardinalityMap.get(def);
 
             if (cardinality == null) {
-                if (ctx.namespaceItem(ParserNamespaces.EXTENSION, def.getStatementName()) == null) {
+                if (!UnknownStatement.class.isAssignableFrom(def.getDeclaredRepresentationClass())) {
                     final var root = ctx.getRoot();
                     throw new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", def,
                         currentStatement, root.rawArgument(),
