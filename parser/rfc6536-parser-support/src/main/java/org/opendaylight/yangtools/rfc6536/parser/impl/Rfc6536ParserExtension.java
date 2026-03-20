@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser.impl;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
@@ -23,7 +22,6 @@ import org.osgi.service.component.annotations.Component;
  *
  * @since 14.0.20
  */
-@NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
 public final class Rfc6536ParserExtension extends AbstractParserExtension {
@@ -31,14 +29,19 @@ public final class Rfc6536ParserExtension extends AbstractParserExtension {
      * Default constructor.
      */
     public Rfc6536ParserExtension() {
-        super(NACMStatements.values());
+        super(NACMStatements.DEFAULT_DENY_ALL, NACMStatements.DEFAULT_DENY_WRITE,
+            DefaultDenyAllStatementSupport.RFC8341_DEF, DefaultDenyWriteStatementSupport.RFC8341_DEF);
     }
 
     @Override
     public StatementSupportBundle configureBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builder()
+            // RFC6536 support
             .addSupport(new DefaultDenyAllStatementSupport(config))
             .addSupport(new DefaultDenyWriteStatementSupport(config))
+            // RFC8341 support
+            .addSupport(new DefaultDenyAllStatementSupport(config, DefaultDenyAllStatementSupport.RFC8341_DEF))
+            .addSupport(new DefaultDenyWriteStatementSupport(config, DefaultDenyWriteStatementSupport.RFC8341_DEF))
             .build();
     }
 }

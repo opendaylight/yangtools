@@ -134,9 +134,13 @@ public final class DefaultReactors {
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                 new GetFilterElementAttributesStatementSupport(config))
 
-            // RFC6536 default-deny-{all,write} support
+            // RFC6536/RFC8341 default-deny-{all,write} support
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefaultDenyAllStatementSupport(config))
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefaultDenyWriteStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new DefaultDenyAllStatementSupport(config, DefaultDenyAllStatementSupport.RFC8341_DEF))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new DefaultDenyWriteStatementSupport(config, DefaultDenyWriteStatementSupport.RFC8341_DEF))
 
             // RFC6643 extensions
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DisplayHintStatementSupport(config))
