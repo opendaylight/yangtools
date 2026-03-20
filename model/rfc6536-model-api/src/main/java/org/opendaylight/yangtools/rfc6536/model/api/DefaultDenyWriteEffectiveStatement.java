@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc6536.model.api;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
@@ -16,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * <a href="https://www.rfc-editor.org/rfc/rfc6536">RFC6536</a>.
  */
 public interface DefaultDenyWriteEffectiveStatement
-        extends UnknownEffectiveStatement<Empty, DefaultDenyWriteStatement> {
+        extends UnknownEffectiveStatement<Empty, @NonNull DefaultDenyWriteStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return NACMStatements.DEFAULT_DENY_WRITE;
