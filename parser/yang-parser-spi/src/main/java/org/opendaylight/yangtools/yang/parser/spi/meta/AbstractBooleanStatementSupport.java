@@ -60,9 +60,11 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
         return switch (rawArgument) {
             case "false" -> Boolean.FALSE;
             case "true" -> Boolean.TRUE;
-            case null, default -> throw new SourceException(stmt,
-                "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'", statementName(), argumentName(),
-                rawArgument);
+            case null, default -> {
+                final var def = definition();
+                throw new SourceException(stmt, "Invalid %s statement %s '%s', it can be either 'true' or 'false'",
+                    def.humanName(), def.getArgumentDefinition().humanName(), rawArgument);
+            }
         };
     }
 
