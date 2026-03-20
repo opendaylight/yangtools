@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.rfc6536.parser;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
@@ -15,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
@@ -26,15 +30,22 @@ public final class DefaultDenyAllStatementSupport
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(NACMStatements.DEFAULT_DENY_ALL).build();
 
-    public DefaultDenyAllStatementSupport(final YangParserConfiguration config) {
+    private final @NonNull StatementDefinition definition;
+
+    public DefaultDenyAllStatementSupport(final YangParserConfiguration config, final StatementDefinition definition) {
         super(NACMStatements.DEFAULT_DENY_ALL, StatementPolicy.contextIndependent(), config, VALIDATOR);
+        this.definition = requireNonNull(definition);
+    }
+
+    @Override
+    public StatementDefinition definition() {
+        return definition;
     }
 
     @Override
     protected DefaultDenyAllStatement createDeclared(final BoundStmtCtx<Empty> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? DefaultDenyAllStatementImpl.EMPTY
-            : new DefaultDenyAllStatementImpl(substatements);
+        return new DefaultDenyAllStatementImpl(substatements, definition);
     }
 
     @Override
@@ -46,6 +57,6 @@ public final class DefaultDenyAllStatementSupport
     @Override
     protected DefaultDenyAllEffectiveStatement createEffective(final Current<Empty, DefaultDenyAllStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DefaultDenyAllEffectiveStatementImpl(stmt, substatements);
+        return new DefaultDenyAllEffectiveStatementImpl(stmt, substatements, definition);
     }
 }
