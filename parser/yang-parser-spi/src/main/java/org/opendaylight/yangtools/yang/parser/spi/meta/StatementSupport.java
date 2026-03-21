@@ -421,7 +421,7 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
     }
 
     /**
-     * Returns public statement definition, which will be present in built statements.
+     * Returns the public statement definition. The public statement defininition.
      *
      * <p>Public statement definition may be used to provide different implementation of statement definition, which
      * will not retain any build specific data or context.
@@ -433,6 +433,11 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
         return publicDefinition;
     }
 
+    /**
+     * Return the actual statement definition.
+     *
+     * @return
+     */
     // Appropriate to most definitions
     // Non-final for compatible extensions
     // FIXME: explain this in detail
@@ -569,15 +574,15 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
     }
 
     public final @NonNull QName statementName() {
-        return publicDefinition.statementName();
+        return definition().statementName();
     }
 
     public final @Nullable QName argumentName() {
-        final var argDef = publicDefinition.argumentDefinition();
+        final var argDef = argumentDefinition();
         return argDef == null ? null : argDef.argumentName();
     }
 
     public final @Nullable ArgumentDefinition<A> argumentDefinition() {
-        return publicDefinition.argumentDefinition();
+        return definition().argumentDefinition();
     }
 }
