@@ -569,15 +569,15 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
     }
 
     public final @NonNull QName statementName() {
-        return publicDefinition.statementName();
+        return definition().statementName();
     }
 
     public final @Nullable QName argumentName() {
-        final var argDef = publicDefinition.argumentDefinition();
+        final var argDef = argumentDefinition();
         return argDef == null ? null : argDef.argumentName();
     }
 
     public final @Nullable ArgumentDefinition<A> argumentDefinition() {
-        return publicDefinition.argumentDefinition();
+        return definition().argumentDefinition();
     }
 }
