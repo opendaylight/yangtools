@@ -421,23 +421,56 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
     }
 
     /**
-     * Returns public statement definition, which will be present in built statements.
+     * Returns the public statement definition supported by this object. The public definition is somewhat
+     * of a misnomer, as a more appropriate description would be "original statement definition".
      *
-     * <p>Public statement definition may be used to provide different implementation of statement definition, which
-     * will not retain any build specific data or context.
+     * <p>The idea is that we have this method and {@link #definition()}. Vast majority of statements return the same
+     * value, as they do not have a revised YANG file of with their corresponding {@code extension} statement.
      *
-     * @return public statement definition, which will be present in built statements.
+     * <p>When a new revision of the extension is published, without incompatibly changing the statement definition, is
+     * where the difference between the two methods surfaces:
+     * <ol>
+     *   <li>this method continues to report the save value</li>
+     *   <li>{@link #definition()} reports the actual {@code extension} that is being bound<li>
+     * </ol>
+     *
+     * @return the public statement definition
      */
-    // FIXME: explain this in detail
     public final @NonNull StatementDefinition<A, D, E> getPublicView() {
         return publicDefinition;
     }
 
-    // Appropriate to most definitions
-    // Non-final for compatible extensions
-    // FIXME: explain this in detail
+    /**
+     * Return the actual statement definition. See the explanation in {@link #getPublicView()} for the semantic
+     * difference.
+     *
+     * @return the actual statement definition
+     */
     public @NonNull StatementDefinition<A, D, E> definition() {
         return publicDefinition;
+    }
+
+    /**
+     * Returns the statement name. This is an alias for {@code definition().statement()}.
+     *
+     * @return the statement name
+     */
+    public final @NonNull QName statementName() {
+        return definition().statementName();
+    }
+
+    /**
+     * Returns the argument definition. This is an alias for {@code definition().argumentDefinition()}.
+     *
+     * @return the argument definition
+     */
+    public final @Nullable ArgumentDefinition<A> argumentDefinition() {
+        return definition().argumentDefinition();
+    }
+
+    public final @Nullable QName argumentName() {
+        final var argDef = argumentDefinition();
+        return argDef == null ? null : argDef.argumentName();
     }
 
     /**
@@ -566,18 +599,5 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
     public @Nullable StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         // Most of statement supports don't have any argument specific supports, so return null.
         return null;
-    }
-
-    public final @NonNull QName statementName() {
-        return publicDefinition.statementName();
-    }
-
-    public final @Nullable QName argumentName() {
-        final var argDef = publicDefinition.argumentDefinition();
-        return argDef == null ? null : argDef.argumentName();
-    }
-
-    public final @Nullable ArgumentDefinition<A> argumentDefinition() {
-        return publicDefinition.argumentDefinition();
     }
 }
