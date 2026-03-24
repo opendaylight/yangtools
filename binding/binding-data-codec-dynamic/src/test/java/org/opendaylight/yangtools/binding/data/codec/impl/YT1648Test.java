@@ -7,42 +7,32 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
-import org.opendaylight.yang.gen.v1.mdsal668.norev.FooBuilder;
+import org.opendaylight.yang.gen.v1.yt1826.norev.Bar;
+import org.opendaylight.yang.gen.v1.yt1826.norev.Baz;
+import org.opendaylight.yang.gen.v1.yt1826.norev.BazBuilder;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer.NodeResult;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
-@ExtendWith(MockitoExtension.class)
 class YT1648Test extends AbstractBindingCodecTest {
-    @Mock
-    private NormalizedNodeStreamWriter writer;
-
     @Test
-    void testStreamTo() throws Exception {
-        final var codec = codecContext.getStreamDataObject(Foo.class);
+    void testToNormalized() throws Exception {
+        final var baz = new BazBuilder()
+            .setXyzzy(new Bar(Uint32.TEN))
+            .build();
 
-        doNothing().when(writer).startContainerNode(new NodeIdentifier(Foo.QNAME), -1);
-        doNothing().when(writer).nextDataSchemaNode(any(LeafSchemaNode.class));
-        doNothing().when(writer).startLeafNode(new NodeIdentifier(Foo.QNAME));
-        doNothing().when(writer).scalarValue(YangInstanceIdentifier.of(Foo.QNAME));
-        doNothing().when(writer).endNode();
-
-        codec.writeTo(writer, new FooBuilder()
-            .setFoo(DataObjectIdentifier.builder(Foo.class).build())
-            .build());
-
-        verify(writer, times(2)).endNode();
+        final var result = assertInstanceOf(NodeResult.class,
+            codecContext.toNormalizedNode(DataObjectIdentifier.builder(Baz.class).build(), baz));
+        assertEquals(ImmutableNodes.newContainerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(Baz.QNAME))
+            .withChild(ImmutableNodes.leafNode(QName.create(Baz.QNAME, "xyzzy"), Uint32.TEN))
+            .build(), result.node());
     }
 }

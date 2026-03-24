@@ -1,0 +1,21 @@
+module yt1826 {
+  namespace yt1826;
+  prefix yt1826;
+
+  typedef foo {
+    type union {
+      type uint32;
+      type string;
+    }
+  }
+
+  typedef bar {
+    type foo;
+  }
+
+  container baz {
+    leaf xyzzy {
+      type bar;
+    }
+  }
+}
