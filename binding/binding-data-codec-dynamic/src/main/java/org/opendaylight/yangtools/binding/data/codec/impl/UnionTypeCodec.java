@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
@@ -16,8 +15,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
@@ -33,8 +30,11 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
 
     static UnionTypeCodec of(final Class<?> unionCls, final UnionTypeDefinition unionType,
             final BindingCodecContext codecContext) throws NoSuchMethodException {
-        final var unionProperties = extractUnionProperties(
-            codecContext.getRuntimeContext().getTypeWithSchema(unionCls).javaType());
+        final var runtimeType = codecContext.getRuntimeContext().getTypeWithSchema(unionCls).javaType();
+        if (!(runtimeType instanceof UnionTypeObjectArchetype unionRuntimeType)) {
+            throw new VerifyException("Unexpected runtime type " + runtimeType);
+        }
+        final var unionProperties = unionRuntimeType.typePropertyNames();
         final var unionTypes = unionType.getTypes();
         verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
             unionTypes, unionProperties);
@@ -51,19 +51,6 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
         }
 
         return new UnionTypeCodec(unionCls, values);
-    }
-
-    private static List<String> extractUnionProperties(final Type type) {
-        if (!(type instanceof GeneratedTransferObject gto)) {
-            throw new VerifyException("Unexpected runtime type " + type);
-        }
-
-        while (true) {
-            if (gto instanceof UnionTypeObjectArchetype union) {
-                return union.typePropertyNames();
-            }
-            gto = verifyNotNull(gto.getSuperType(), "Cannot find union type information for %s", type);
-        }
     }
 
     @Override

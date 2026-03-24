@@ -84,9 +84,14 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     @Override
     GeneratedTransferObject createDerivedType(final TypeBuilderFactory builderFactory,
             final GeneratedTransferObject baseType) {
-        final var builder = baseType instanceof UnionTypeObjectArchetype
-            ? builderFactory.newUnionTypeObjectBuilder(typeName())
-            : builderFactory.newGeneratedTOBuilder(typeName());
+        final GeneratedTOBuilder builder;
+        if (baseType instanceof UnionTypeObjectArchetype baseUnion) {
+            final var unionBuilder = builderFactory.newUnionTypeObjectBuilder(typeName());
+            unionBuilder.setTypePropertyNames(baseUnion.typePropertyNames());
+            builder = unionBuilder;
+        } else {
+            builder = builderFactory.newGeneratedTOBuilder(typeName());
+        }
         builder.setTypedef(true);
         builder.setExtendsType(baseType);
         final var restrictions = computeRestrictions();
