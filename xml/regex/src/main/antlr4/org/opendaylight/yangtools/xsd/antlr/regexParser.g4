@@ -50,14 +50,9 @@ root
     : regExp EOF
     ;
 
-// Regular Expression
+// Regular Expression, with Branch inlined
 regExp
-    : branch (PIPE branch)*
-    ;
-
-// Branch
-branch
-    : piece*
+    : piece* (PIPE piece*)*
     ;
 
 // Piece
