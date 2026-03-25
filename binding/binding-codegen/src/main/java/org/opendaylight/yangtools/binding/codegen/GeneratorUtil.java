@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -182,100 +181,6 @@ public final class GeneratorUtil {
             childImports.put(genTypeChild.simpleName(), genTypeChild.packageName());
         }
         return childImports;
-    }
-
-    /**
-     * Builds the string which contains either the full path to the type (package name with type) or only type name
-     * if the package is among <code>imports</code>.
-     *
-     * @param parentGenType generated type which contains <code>type</code>
-     * @param type JAVA <code>Type</code> for which is the string with type info generated
-     * @param imports map of necessary imports for <code>parentGenType</code>
-     * @return string with type name for <code>type</code> in the full format or in the short format
-     * @throws IllegalArgumentException
-     *             <ul>
-     *             <li>if the <code>type</code> equals <code>null</code></li>
-     *             <li>if the name of the <code>type</code> equals
-     *             <code>null</code></li>
-     *             <li>if the name of the package of the <code>type</code>
-     *             equals <code>null</code></li>
-     *             <li>if the <code>imports</code> equals <code>null</code></li>
-     *             </ul>
-     */
-    static String getExplicitType(final GeneratedType parentGenType, final Type type,
-                                  final Map<String, JavaTypeName> imports) {
-        checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
-        checkArgument(imports != null, "Imports Map cannot be NULL!");
-
-        final var importedType = imports.get(type.simpleName());
-        final var sb = new StringBuilder();
-        if (type.name().equals(importedType)) {
-            sb.append(type.simpleName());
-            addActualTypeParameters(sb, type, parentGenType, imports);
-            if (sb.toString().equals("Void")) {
-                return "void";
-            }
-        } else {
-            if (type.equals(Types.voidType())) {
-                return "void";
-            }
-            sb.append(type.name());
-            addActualTypeParameters(sb, type, parentGenType, imports);
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Adds actual type parameters from <code>type</code> to <code>builder</code> if <code>type</code> is
-     * <code>ParametrizedType</code>.
-     *
-     * @param sb string builder which contains type name
-     * @param type JAVA <code>Type</code> for which is the string with type info generated
-     * @param parentGenType generated type which contains <code>type</code>
-     * @param imports map of necessary imports for <code>parentGenType</code>
-     * @return if <code>type</code> is of the type <code>ParametrizedType</code> <br />
-     *         <li>then <code>builder</code> + actual <code>type</code>
-     *         parameters</li> <li>else only <code>builder</code></li>
-     */
-    private static StringBuilder addActualTypeParameters(final StringBuilder sb, final Type type,
-            final GeneratedType parentGenType, final Map<String, JavaTypeName> imports) {
-        if (type instanceof ParameterizedType pType) {
-            sb.append('<').append(getParameters(parentGenType, pType.getActualTypeArguments(), imports)).append('>');
-        }
-        return sb;
-    }
-
-    /**
-     * Generates the string with all actual type parameters from <code>pTypes</code>.
-     *
-     * @param parentGenType generated type for which is the JAVA code generated
-     * @param paramTypes array of <code>Type</code> instances = actual type parameters
-     * @param availableImports map of imports for <code>parentGenType</code>
-     * @return string with all actual type parameters from <code>pTypes</code>
-     */
-    private static String getParameters(final GeneratedType parentGenType, final List<Type> paramTypes,
-                                        final Map<String, JavaTypeName> availableImports) {
-        if (paramTypes == null || paramTypes.isEmpty()) {
-            return "?";
-        }
-        final var sb = new StringBuilder();
-        final var it = paramTypes.iterator();
-        while (true) {
-            final var type = it.next();
-
-            if (Types.voidType().equals(type)) {
-                sb.append("java.lang.Void");
-            } else {
-                if (type instanceof WildcardType) {
-                    sb.append("? extends ");
-                }
-                sb.append(getExplicitType(parentGenType, type, availableImports));
-            }
-            if (!it.hasNext()) {
-                return sb.toString();
-            }
-            sb.append(", ");
-        }
     }
 
     static boolean strictTypeEquals(final Type type1, final Type type2) {

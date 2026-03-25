@@ -132,12 +132,4 @@ class GeneratorUtilTest {
         doReturn(enclosedType).when(superType).getSuperType();
         assertThat(AbstractClassTemplate.propertiesOfAllParents(superType)).contains(property);
     }
-
-    @Test
-    void getExplicitTypeTest() {
-        assertEquals(annotationType.simpleName(),
-            GeneratorUtil.getExplicitType(generatedType, annotationType, createImports(generatedType)));
-        assertThat(GeneratorUtil.getExplicitType(generatedType, parameterizedType, createImports(generatedType)))
-            .contains(parameterizedType.simpleName());
-    }
 }
