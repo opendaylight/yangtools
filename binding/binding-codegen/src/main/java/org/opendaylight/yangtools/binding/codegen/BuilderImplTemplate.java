@@ -17,8 +17,9 @@ import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
@@ -285,43 +286,33 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         return sb.append(";\n").append("}\n").toString();
     }
 
+    @NonNullByDefault
     MethodSignature findGetter(final String getterName) {
         final var type = type();
-        final var ownGetter = getterByName(nonDefaultMethods(type), getterName);
-        if (ownGetter.isPresent()) {
-            return ownGetter.orElseThrow();
-
+        final var getter = getterByName(type, getterName);
+        if (getter == null) {
+            throw new IllegalStateException(
+                "%s should be present in %s type or in one of its ancestors as getter".formatted(
+                    propertyNameFromGetter(getterName), type));
         }
-        for (var ifc : type.getImplements()) {
-            if (ifc instanceof GeneratedType genInterface) {
-                final var getter = findGetter(genInterface, getterName);
-                if (getter.isPresent()) {
-                    return getter.orElseThrow();
-                }
-            }
-        }
-
-        throw new IllegalStateException(
-            "%s should be present in %s type or in one of its ancestors as getter".formatted(
-                propertyNameFromGetter(getterName), type));
+        return getter;
     }
 
-    // FIXME: ditch Optional and merge with the above method
-    private static Optional<MethodSignature> findGetter(final GeneratedType implType, final String getterName) {
+    private static @Nullable MethodSignature getterByName(final GeneratedType implType, final String getterName) {
         final var getter = getterByName(nonDefaultMethods(implType), getterName);
-        if (getter.isPresent()) {
+        if (getter != null) {
             return getter;
         }
         for (var ifc : implType.getImplements()) {
             if (ifc instanceof GeneratedType genInterface) {
-                final var getterImpl = findGetter(genInterface, getterName);
-                if (getterImpl.isPresent()) {
+                final var getterImpl = getterByName(genInterface, getterName);
+                if (getterImpl != null) {
                     return getterImpl;
                 }
             }
         }
 
-        return Optional.empty();
+        return null;
     }
 
     @Override

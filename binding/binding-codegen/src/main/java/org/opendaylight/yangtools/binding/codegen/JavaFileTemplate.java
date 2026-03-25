@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.processing.Generated;
@@ -358,23 +357,23 @@ class JavaFileTemplate {
             if (hasOverrideAnnotation(implMethod)) {
                 methods.add(implMethod);
             } else {
-                final String implMethodName = implMethod.getName();
-                if (Naming.isGetterMethodName(implMethodName) && getterByName(methods, implMethodName).isEmpty()) {
+                final var implMethodName = implMethod.getName();
+                if (Naming.isGetterMethodName(implMethodName) && getterByName(methods, implMethodName) == null) {
                     methods.add(implMethod);
                 }
             }
         }
     }
 
-    protected static Optional<MethodSignature> getterByName(final Iterable<MethodSignature> methods,
+    static final @Nullable MethodSignature getterByName(final Collection<MethodSignature> methods,
             final String implMethodName) {
         for (var method : methods) {
-            final String methodName = method.getName();
+            final var methodName = method.getName();
             if (Naming.isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
-                return Optional.of(method);
+                return method;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     protected static String propertyNameFromGetter(final MethodSignature getter) {

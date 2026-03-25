@@ -182,7 +182,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
             «val ifc = implementedIfc as GeneratedType»
             «FOR getter : ifc.nonDefaultMethods»
-                «IF Naming.isGetterMethodName(getter.name) && getterByName(alreadySetProperties, getter.name).isEmpty»
+                «IF Naming.isGetterMethodName(getter.name) && getterByName(alreadySetProperties, getter.name) === null»
                     «val propertyName = getter.propertyNameFromGetter»
                     «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
                 «ENDIF»
