@@ -7,70 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.List;
-import java.util.Map;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 public final class GeneratorUtil {
     private GeneratorUtil() {
         // Hidden on purpose
-    }
-
-    /**
-     * Evaluates if it is necessary to add the package name for <code>type</code> to the map of imports for
-     * <code>parentGenType</code>. If it is so the package name is saved to the map <code>imports</code>.
-     *
-     * @param parentGenType generated type for which is the map of the necessary imports built
-     * @param type JAVA <code>Type</code> for which is the necessary of the package import evaluated
-     * @param imports map of the imports for <code>parentGenType</code>
-     * @throws IllegalArgumentException
-     *             <ul>
-     *             <li>if the <code>parentGenType</code> equals
-     *             <code>null</code></li>
-     *             <li>if the name of <code>parentGenType</code> equals
-     *             <code>null</code></li>
-     *             <li>if the name of the package of <code>parentGenType</code>
-     *             equals <code>null</code></li>
-     *             <li>if the <code>type</code> equals <code>null</code></li>
-     *             <li>if the name of <code>type</code> equals <code>null</code>
-     *             </li>
-     *             <li>if the name of the package of <code>type</code> equals
-     *             <code>null</code></li>
-     *             </ul>
-     */
-    static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
-                                   final Map<String, JavaTypeName> imports) {
-        checkArgument(parentGenType != null, "Parent Generated Type parameter MUST be specified and cannot be "
-                + "NULL!");
-        checkArgument(parentGenType.simpleName() != null, "Parent Generated Type name cannot be NULL!");
-        checkArgument(parentGenType.packageName() != null,
-                "Parent Generated Type cannot have Package Name referenced as NULL!");
-        checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
-
-        checkArgument(type.simpleName() != null, "Type name cannot be NULL!");
-        checkArgument(type.packageName() != null, "Type cannot have Package Name referenced as NULL!");
-
-        final String typeName = type.simpleName();
-        final String typePackageName = type.packageName();
-        final String parentTypeName = parentGenType.simpleName();
-        if (typeName.equals(parentTypeName) || typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
-            return;
-        }
-        if (!imports.containsKey(typeName)) {
-            imports.put(typeName, type.name());
-        }
-        if (type instanceof ParameterizedType paramType) {
-            for (var param : paramType.getActualTypeArguments()) {
-                putTypeIntoImports(parentGenType, param, imports);
-            }
-        }
     }
 
     /**
