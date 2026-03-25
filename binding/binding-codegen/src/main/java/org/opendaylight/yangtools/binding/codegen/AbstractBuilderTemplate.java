@@ -68,22 +68,18 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     /**
      * Template method which generates class attributes.
      *
-     * @param makeFinal value which specify whether field is|isn't final
-     * @return string with class attributes and their types
+     * {@return declared builder fields
      */
-    // FIXNE: declareFields() and declareFinalFields() are two distinct operations
-    final String generateFields(final boolean makeFinal) {
+    // FIXME: YANGTOOLS-1804: relocate to BuilderTemplate
+    final String generateBuilderFields() {
         final var sb = new StringBuilder();
         if (properties != null) {
             for (var prop : properties) {
-                sb.append("private ");
-                if (makeFinal) {
-                    sb.append("final ");
-                }
-                sb.append(importedName(prop.getReturnType())).append(' ').append(fieldName(prop)).append(";\n");
+                sb.append("private ").append(importedName(prop.getReturnType())).append(' ').append(fieldName(prop))
+                    .append(";\n");
             }
         }
-        if (keyType != null && !makeFinal) {
+        if (keyType != null) {
             sb.append("private ").append(importedName(keyType)).append(" key;\n");
         }
         return sb.toString();

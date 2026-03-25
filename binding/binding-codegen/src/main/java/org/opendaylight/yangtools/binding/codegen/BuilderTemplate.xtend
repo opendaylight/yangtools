@@ -67,9 +67,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         «generatedAnnotation»
         public class «type.simpleName» {
 
-            «generateFields(false)»
+            «generateBuilderFields»
 
-            «constantsDeclarations()»
+            «constantsDeclarations»
 
             «IF augmentType !== null»
                 «val augmentTypeRef = augmentType.importedName»
