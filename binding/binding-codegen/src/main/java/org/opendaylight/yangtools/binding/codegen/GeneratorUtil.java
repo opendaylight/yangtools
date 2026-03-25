@@ -9,81 +9,18 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 public final class GeneratorUtil {
-    private static final ConcreteType PATTERN = Types.typeForClass(Pattern.class);
-
     private GeneratorUtil() {
         // Hidden on purpose
-    }
-
-    /**
-     * Returns the map of imports. The map maps the type name to the package name. To the map are added packages
-     * for <code>genType</code> and for all enclosed types, constants, methods (parameter types, return values),
-     * implemented types.
-     *
-     * @param genType generated type for which the map of the imports is created
-     * @return map of the necessary imports
-     * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
-     */
-    static Map<String, JavaTypeName> createImports(final GeneratedType genType) {
-        if (genType == null) {
-            throw new IllegalArgumentException("Generated Type cannot be NULL!");
-        }
-        final Map<String, JavaTypeName> imports = new LinkedHashMap<>();
-
-        List<GeneratedType> childGeneratedTypes = genType.getEnclosedTypes();
-        if (!childGeneratedTypes.isEmpty()) {
-            for (GeneratedType genTypeChild : childGeneratedTypes) {
-                imports.putAll(createImports(genTypeChild));
-            }
-        }
-
-        // REGULAR EXPRESSION
-        if (genType instanceof GeneratedTransferObject gto
-                && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, gto)) {
-            putTypeIntoImports(genType, PATTERN, imports);
-        }
-
-        // METHODS
-        final var methods = genType.getMethodDefinitions();
-        if (methods != null) {
-            for (var method : methods) {
-                putTypeIntoImports(genType, method.getReturnType(), imports);
-                for (var methodParam : method.getParameters()) {
-                    putTypeIntoImports(genType, methodParam.type(), imports);
-                }
-                for (var at : method.getAnnotations()) {
-                    putTypeIntoImports(genType, at, imports);
-                }
-            }
-        }
-
-        // PROPERTIES
-        if (genType instanceof GeneratedTransferObject gto) {
-            final List<GeneratedProperty> properties = gto.getProperties();
-            if (properties != null) {
-                for (GeneratedProperty property : properties) {
-                    final Type propertyType = property.getReturnType();
-                    putTypeIntoImports(genType, propertyType, imports);
-                }
-            }
-        }
-        return imports;
     }
 
     /**

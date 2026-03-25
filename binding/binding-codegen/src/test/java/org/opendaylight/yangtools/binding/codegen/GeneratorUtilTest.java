@@ -8,13 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
-import static org.opendaylight.yangtools.binding.codegen.GeneratorUtil.createImports;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import java.util.List;
@@ -88,19 +85,6 @@ class GeneratorUtilTest {
 
         doReturn(List.of()).when(enclosedType).getEnclosedTypes();
         doReturn(List.of(enclosedType)).when(generatedType).getEnclosedTypes();
-    }
-
-    @Test
-    void createImportsWithExceptionTest() {
-        final var iae = assertThrows(IllegalArgumentException.class, () -> GeneratorUtil.createImports(null));
-        assertEquals("Generated Type cannot be NULL!", iae.getMessage());
-    }
-
-    @Test
-    void createImportsTest() {
-        final var generated = createImports(generatedType);
-        assertNotNull(generated);
-        assertEquals(JavaTypeName.create("tst.package", "tstAnnotationName"), generated.get("tstAnnotationName"));
     }
 
     @Test
