@@ -113,7 +113,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         sc.newLineIfNotEmpty();
         sc.newLine();
         sc.append("    ");
-        sc.append(generateFields(true), "    ");
+        sc.append(generateFields(), "    ");
         sc.newLineIfNotEmpty();
         sc.newLine();
         sc.append("    ");
@@ -145,6 +145,17 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         sc.append("}");
         sc.newLine();
         return sc;
+    }
+
+    private String generateFields() {
+        final var sb = new StringBuilder();
+        if (properties != null) {
+            for (var prop : properties) {
+                sb.append("private final ").append(importedName(prop.getReturnType())).append(' ')
+                    .append(fieldName(prop)).append(";\n");
+            }
+        }
+        return sb.toString();
     }
 
     // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining this
