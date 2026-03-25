@@ -202,14 +202,47 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateHashCode(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateEquals(), "    ");
-        sc.newLineIfNotEmpty();
+        // generate hashCode/equals if needed
+        if (!properties.isEmpty() || augmentType != null) {
+            final var override = importedName(OVERRIDE);
+            final var target = importedName(targetType);
+
+            sc.newLine();
+            sc.append("    private int hash = 0;\n");
+            sc.append("    private volatile boolean hashValid = false;\n");
+            sc.newLine();
+            sc.append("    @");
+            sc.append(override);
+            sc.newLine();
+            sc.append("    public int hashCode() {\n");
+            sc.append("        if (hashValid) {\n");
+            sc.append("            return hash;\n");
+            sc.append("        }\n");
+            sc.newLine();
+            sc.append("        final int result = ");
+            sc.append(target);
+            sc.append(".");
+            sc.append(BINDING_HASHCODE_NAME);
+            sc.append("(this);\n");
+            sc.append("        hash = result;\n");
+            sc.append("        hashValid = true;\n");
+            sc.append("        return result;\n");
+            sc.append("    }\n");
+            sc.newLine();
+            sc.append("    @");
+            sc.append(override);
+            sc.newLine();
+            sc.append("    public boolean equals(");
+            sc.append(importedName(Types.objectType()));
+            sc.append(" obj) {\n");
+            sc.append("        return ");
+            sc.append(target);
+            sc.append(".");
+            sc.append(BINDING_EQUALS_NAME);
+            sc.append("(this, obj);\n");
+            sc.append("    }\n");
+        }
+
         sc.newLine();
         sc.append("    ");
         sc.append(generateToString(), "    ");
@@ -280,38 +313,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * {@return string with the {@code hashCode()} method definition in JAVA format}
-     */
-    private @NonNull String generateHashCode() {
-        return properties.isEmpty() && augmentType == null ? ""
-            : "private int hash = 0;\n"
-            + "private volatile boolean hashValid = false;\n"
-            + '\n'
-            + '@' + importedName(OVERRIDE) + '\n'
-            + "public int hashCode() {\n"
-            + "    if (hashValid) {\n"
-            + "        return hash;\n"
-            + "    }\n"
-            + '\n'
-            + "    final int result = " + importedName(targetType) + '.' + BINDING_HASHCODE_NAME + "(this);\n"
-            + "    hash = result;\n"
-            + "    hashValid = true;\n"
-            + "    return result;\n"
-            + "}\n";
-    }
-
-    /**
-     * {@return string with the {@code equals()} method definition in JAVA format}
-     */
-    private @NonNull String generateEquals() {
-        return properties.isEmpty() && augmentType == null ? ""
-            : '@' + importedName(OVERRIDE) + '\n'
-            + "public boolean equals(" + importedName(Types.objectType()) + " obj) {\n"
-            + "    return " + importedName(targetType) + '.' + BINDING_EQUALS_NAME + "(this, obj);\n"
-            + "}\n";
     }
 
     /**
