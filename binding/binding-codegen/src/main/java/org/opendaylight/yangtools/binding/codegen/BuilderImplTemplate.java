@@ -127,9 +127,42 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         sc.append("    ");
         sc.append(generateCopyConstructor(builder.type(), type()), "    ");
         sc.newLineIfNotEmpty();
-        sc.append("    ");
-        sc.append(generateExtractKey(), "    ");
-        sc.newLineIfNotEmpty();
+
+        if (keyType != null) {
+            // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
+            //       this code into the constructor once JEP-482 Flexible Constructor Bodies available. We should
+            //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
+            sc.newLine();
+            sc.append("    private static ");
+            sc.append(importedNonNull(keyType));
+            sc.append(" extractKey(final ");
+            sc.append(importedName(builder.type()));
+            sc.append(" base) {\n");
+            sc.append("        final var key = base.");
+            sc.append(KEY_AWARE_KEY_NAME);
+            sc.append("();\n");
+            sc.append("        return key != null ? key\n");
+            sc.append("            : new ");
+            sc.append(importedName(keyType));
+            sc.append("(");
+
+            // Note: keys have at least one component
+            final var it = keyConstructorArgs(keyType).iterator();
+            while (true) {
+                final var keyProp = it.next();
+                sc.append("base.");
+                sc.append(getterMethodName(keyProp));
+                sc.append("()");
+                if (!it.hasNext()) {
+                    break;
+                }
+                sc.append(", ");
+            }
+
+            sc.append(");\n");
+            sc.append("    }\n");
+        }
+
         sc.newLine();
         sc.append("    ");
         sc.append(generateGetters(), "    ");
@@ -153,36 +186,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         sc.append("}");
         sc.newLine();
         return sc;
-    }
-
-    // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining this
-    //       code into the constructor once JEP-482 Flexible Constructor Bodies available. We should construct the key
-    //       into a 'key' local variable, so that generateCopyKeys() below can reference it
-    private String generateExtractKey() {
-        if (keyType == null) {
-            return "";
-        }
-
-        final var sb = new StringBuilder()
-            .append('\n')
-            .append("private static ").append(importedNonNull(keyType)).append(" extractKey(final ")
-                .append(importedName(builder.type())).append(" base) {\n")
-            .append("    final var key = base.").append(KEY_AWARE_KEY_NAME).append("();\n")
-            .append("    return key != null ? key\n")
-            .append("        : new ").append(importedName(keyType)).append('(');
-
-        // Note: keys have at least one component
-        final var it = keyConstructorArgs(keyType).iterator();
-        while (true) {
-            final var keyProp = it.next();
-            sb.append("base.").append(getterMethodName(keyProp)).append("()");
-            if (!it.hasNext()) {
-                break;
-            }
-            sb.append(", ");
-        }
-
-        return sb.append(");\n").append("}\n").toString();
     }
 
     @Override
