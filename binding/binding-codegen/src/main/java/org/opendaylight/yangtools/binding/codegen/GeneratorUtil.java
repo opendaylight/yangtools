@@ -9,14 +9,10 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -280,38 +276,6 @@ public final class GeneratorUtil {
             }
             sb.append(", ");
         }
-    }
-
-    /**
-     * Selects from input list of properties only those which have read only attribute set to true.
-     *
-     * @param properties list of properties of generated transfer object
-     * @return subset of <code>properties</code> which have read only attribute set to true
-     */
-    static @NonNull List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(
-            final @Nullable List<GeneratedProperty> properties) {
-        return properties == null || properties.isEmpty() ? List.of()
-            : properties.stream().filter(GeneratedProperty::isReadOnly).collect(Collectors.toUnmodifiableList());
-    }
-
-    /**
-     * Returns the list of the read only properties of all extending generated transfer object from <code>genTO</code>
-     * to highest parent generated transfer object.
-     *
-     * @param genTO generated transfer object for which is the list of read only properties generated
-     * @return list of all read only properties from actual to highest parent generated transfer object. In case when
-     *         extension exists the method is recursive called.
-     */
-    static @NonNull List<GeneratedProperty> getPropertiesOfAllParents(final @NonNull GeneratedTransferObject genTO) {
-        final var superType = genTO.getSuperType();
-        if (superType == null) {
-            return List.of();
-        }
-
-        final var propertiesOfAllParents = new ArrayList<GeneratedProperty>();
-        propertiesOfAllParents.addAll(resolveReadOnlyPropertiesFromTO(superType.getProperties()));
-        propertiesOfAllParents.addAll(getPropertiesOfAllParents(superType));
-        return propertiesOfAllParents;
     }
 
     static boolean strictTypeEquals(final Type type1, final Type type2) {

@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.opendaylight.yangtools.binding.codegen.GeneratorUtil.createImports;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
@@ -130,15 +130,14 @@ class GeneratorUtilTest {
     @Test
     void getPropertiesOfAllParentsTest() {
         doReturn(enclosedType).when(superType).getSuperType();
-        assertTrue(GeneratorUtil.getPropertiesOfAllParents(superType).contains(property));
+        assertThat(AbstractClassTemplate.propertiesOfAllParents(superType)).contains(property);
     }
 
     @Test
     void getExplicitTypeTest() {
-        assertEquals(annotationType.simpleName(), GeneratorUtil.getExplicitType(
-                generatedType, annotationType, createImports(generatedType)));
-
-        assertTrue(GeneratorUtil.getExplicitType(generatedType, parameterizedType,
-                createImports(generatedType)).contains(parameterizedType.simpleName()));
+        assertEquals(annotationType.simpleName(),
+            GeneratorUtil.getExplicitType(generatedType, annotationType, createImports(generatedType)));
+        assertThat(GeneratorUtil.getExplicitType(generatedType, parameterizedType, createImports(generatedType)))
+            .contains(parameterizedType.simpleName());
     }
 }
