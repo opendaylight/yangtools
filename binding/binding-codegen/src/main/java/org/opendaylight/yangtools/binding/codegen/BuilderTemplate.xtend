@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen
 
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
-import static extension org.opendaylight.yangtools.binding.codegen.GeneratorUtil.isNonPresenceContainer;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.GROUPING
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD
@@ -84,7 +83,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 // No-op
             }
 
-            «generateConstructorsFromIfcs()»
+            «generateConstructorsFromIfcs»
 
             «val targetTypeName = targetType.importedName»
             /**
@@ -94,16 +93,16 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
              */
             public «generateCopyConstructor(targetType, type.enclosedTypes.first)»
 
-            «generateMethodFieldsFrom()»
+            «generateMethodFieldsFrom»
 
             «IF isNonPresenceContainer(targetType)»
-                «generateEmptyInstance()»
+                «generateEmptyInstance»
             «ENDIF»
 
             «generateGetters(false)»
             «IF augmentType !== null»
 
-                «generateAugmentation()»
+                «generateAugmentation»
             «ENDIF»
 
             «generateSetters»

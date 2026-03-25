@@ -151,14 +151,13 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 sc.append(asGetterMethod(field), "    ");
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof GeneratedType type && GeneratorUtil.isNonPresenceContainer(type)) {
-
+                if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
                     sc.newLine();
                     sc.append("    @");
                     sc.append(override);
                     sc.newLine();
                     sc.append("    public ");
-                    sc.append(importedName(type));
+                    sc.append(importedName(fieldType));
                     sc.append(" ");
                     sc.append(NONNULL_PREFIX);
                     sc.append(StringExtensions.toFirstUpper(field.getName()));
@@ -168,7 +167,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                     sc.append(".requireNonNullElse(");
                     sc.append(getterMethodName(field));
                     sc.append("(), ");
-                    sc.append(type.canonicalName());
+                    sc.append(fieldType.canonicalName());
                     sc.append(BUILDER_SUFFIX);
                     sc.append(".empty());\n");
                     sc.append("}\n");

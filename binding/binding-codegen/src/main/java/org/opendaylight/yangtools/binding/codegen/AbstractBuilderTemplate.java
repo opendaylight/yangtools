@@ -25,7 +25,9 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     /**
@@ -216,5 +218,21 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     static final Collection<MethodSignature> nonDefaultMethods(final GeneratedType type) {
         return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
+    }
+
+    /**
+     * Check if the {@code type} represents non-presence container.
+     *
+     * @param type {@link GeneratedType} to be checked if represents container without presence statement.
+     * @return {@code true} if specified {@code type} is a container without presence statement,
+     *     {@code false} otherwise.
+     */
+    @NonNullByDefault
+    static final boolean isNonPresenceContainer(final GeneratedType type) {
+        final var sourceDefinition = type.getYangSourceDefinition();
+        return sourceDefinition.isPresent()
+            && sourceDefinition.orElseThrow() instanceof YangSourceDefinition.Single singleDefinition
+            && singleDefinition.getNode() instanceof ContainerSchemaNode container
+            && !container.isPresenceContainer();
     }
 }
