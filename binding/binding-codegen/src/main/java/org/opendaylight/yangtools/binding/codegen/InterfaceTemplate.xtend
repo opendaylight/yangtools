@@ -24,8 +24,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRI
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List
 import java.util.Locale
-import java.util.Map.Entry
-import java.util.Set
 import org.opendaylight.yangtools.binding.model.api.AnnotationType
 import org.opendaylight.yangtools.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName
@@ -39,8 +37,6 @@ import org.opendaylight.yangtools.binding.model.ri.Types
  */
  // FIXME: YANGTOOLS-1805: convert to Java
 package class InterfaceTemplate extends AbstractInterfaceTemplate {
-    package var Entry<Type, Set<BuilderGeneratedProperty>> typeAnalysis
-
     /**
      * Creates the instance of this class which is used for generating the interface file source
      * code from <code>genType</code>.
@@ -222,8 +218,10 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
 
     @VisibleForTesting
     def package generateBindingHashCode() '''
-        «val augmentable = analyzeType»
-        «IF augmentable || !typeAnalysis.value.empty»
+        «val analysis = typeAnalysis»
+        «val augmentable = analysis.augmentType !== null»
+        «val props = analysis.properties»
+        «IF augmentable || !props.empty»
             /**
              * Default implementation of {@link «OBJECT.importedName»#hashCode()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent hashing
@@ -235,7 +233,6 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
              */
             static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedNonNull» obj) {
                 int result = 1;
-                «val props = typeAnalysis.value»
                 «IF !props.empty»
                     final int prime = 31;
                     «FOR property : props»
@@ -253,8 +250,10 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
     '''
 
     def private generateBindingEquals() '''
-        «val augmentable = analyzeType»
-        «IF augmentable || !typeAnalysis.value.isEmpty»
+        «val analysis = typeAnalysis»
+        «val augmentable = analysis.augmentType !== null»
+        «val props = analysis.properties»
+        «IF augmentable || !props.isEmpty»
             /**
              * Default implementation of {@link «OBJECT.importedName»#equals(«OBJECT.importedName»)} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent equality
@@ -271,7 +270,7 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
                 }
                 final var other = «CODEHELPERS.importedName».checkCast(«type.canonicalName».class, obj);
                 return other != null
-                    «FOR property : ByTypeMemberComparator.sort(typeAnalysis.value)»
+                    «FOR property : ByTypeMemberComparator.sort(props)»
                         && «property.importedUtilClass».equals(thisObj.«property.getterName»(), other.«property.getterName»())
                     «ENDFOR»
                     «IF augmentable»&& thisObj.augmentations().equals(other.augmentations())«ENDIF»;
@@ -281,7 +280,7 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
 
     @VisibleForTesting
     def package generateBindingToString() '''
-        «val augmentable = analyzeType»
+        «val analysis = typeAnalysis»
         /**
          * Default implementation of {@link «OBJECT.importedName»#toString()} contract for this interface.
          * Implementations of this interface are encouraged to defer to this method to get consistent string
@@ -293,10 +292,10 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
          */
         static «STRING.importedName» «BINDING_TO_STRING_NAME»(final «type.fullyQualifiedNonNull» obj) {
             final var helper = «MOREOBJECTS.importedName».toStringHelper("«type.simpleName»");
-            «FOR property : typeAnalysis.value»
+            «FOR property : analysis.properties»
                 «CODEHELPERS.importedName».appendValue(helper, "«property.name»", obj.«property.getterName»());
             «ENDFOR»
-            «IF augmentable»
+            «IF analysis.augmentType !== null»
                 «CODEHELPERS.importedName».appendAugmentations(helper, "«AUGMENTATION_FIELD»", obj);
             «ENDIF»
             return helper.toString();
@@ -336,12 +335,5 @@ package class InterfaceTemplate extends AbstractInterfaceTemplate {
     def private static boolean isObject(Type type) {
         // The return type has a package, so it's not a primitive type
         return !type.packageName().isEmpty()
-    }
-
-    private def boolean analyzeType() {
-        if (typeAnalysis === null) {
-            typeAnalysis = analyzeTypeHierarchy(type)
-        }
-        typeAnalysis.key !== null
     }
 }

@@ -14,8 +14,6 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSortedSet;
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
@@ -28,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.processing.Generated;
 import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNull;
@@ -68,6 +67,23 @@ import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
  */
 class JavaFileTemplate {
+    @NonNullByDefault
+    sealed interface TypeAnalysis permits DefaultTypeAnalysis {
+
+        Set<BuilderGeneratedProperty> properties();
+
+        @Nullable ParameterizedType augmentType();
+    }
+
+    @NonNullByDefault
+    private record DefaultTypeAnalysis(
+            Set<BuilderGeneratedProperty> properties,
+            @Nullable ParameterizedType augmentType) implements TypeAnalysis {
+        DefaultTypeAnalysis {
+            requireNonNull(properties);
+        }
+    }
+
     /**
      * {@code java.lang.Class} as a JavaTypeName.
      */
@@ -278,12 +294,13 @@ class JavaFileTemplate {
      * Run type analysis, which results in identification of the augmentable type, as well as all methods available
      * to the type, expressed as properties.
      */
-    static Map.Entry<Type, Set<BuilderGeneratedProperty>> analyzeTypeHierarchy(final GeneratedType type) {
+    static @NonNull TypeAnalysis analyzeTypeHierarchy(final GeneratedType type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         final var augmentType = createMethods(type, methods);
-        final var sortedMethods = ImmutableSortedSet.orderedBy(METHOD_COMPARATOR).addAll(methods).build();
 
-        return new AbstractMap.SimpleImmutableEntry<>(augmentType, propertiesFromMethods(sortedMethods));
+        return new DefaultTypeAnalysis(
+            propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).collect(Collectors.toUnmodifiableList())),
+            augmentType);
     }
 
     static final Restrictions restrictionsForSetter(final Type actualType) {
@@ -314,7 +331,8 @@ class JavaFileTemplate {
      *
      * @returns set of method signature instances
      */
-    private static ParameterizedType createMethods(final GeneratedType type, final Set<MethodSignature> methods) {
+    private static @Nullable ParameterizedType createMethods(final GeneratedType type,
+            final Set<MethodSignature> methods) {
         methods.addAll(type.getMethodDefinitions());
         return collectImplementedMethods(type, methods, type.getImplements());
     }
@@ -522,10 +540,12 @@ class JavaFileTemplate {
      * @param methods set of method signature instances which should be transformed to list of properties
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
-    private static Set<BuilderGeneratedProperty> propertiesFromMethods(final Collection<MethodSignature> methods) {
-        if (methods == null || methods.isEmpty()) {
+    @NonNullByDefault
+    private static Set<BuilderGeneratedProperty> propertiesFromMethods(final List<MethodSignature> methods) {
+        if (methods.isEmpty()) {
             return Set.of();
         }
+
         final var result = new LinkedHashSet<BuilderGeneratedProperty>();
         for (var method : methods) {
             final var createdField = propertyFromGetter(method);

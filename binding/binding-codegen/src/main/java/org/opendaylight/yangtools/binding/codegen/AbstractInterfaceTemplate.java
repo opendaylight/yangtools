@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -40,6 +41,8 @@ abstract class AbstractInterfaceTemplate extends BaseTemplate {
      */
     final List<GeneratedType> enclosedGeneratedTypes;
 
+    private TypeAnalysis typeAnalysis;
+
     @NonNullByDefault
     AbstractInterfaceTemplate(final GeneratedType type) {
         super(type);
@@ -47,6 +50,17 @@ abstract class AbstractInterfaceTemplate extends BaseTemplate {
         methods = type.getMethodDefinitions();
         enums = type.getEnumerations();
         enclosedGeneratedTypes = type.getEnclosedTypes();
+    }
+
+    final @NonNull TypeAnalysis typeAnalysis() {
+        final var existing = typeAnalysis;
+        return existing != null ? existing : loadTypeAnalysis();
+    }
+
+    private @NonNull TypeAnalysis loadTypeAnalysis() {
+        final var ret = analyzeTypeHierarchy(type());
+        typeAnalysis = ret;
+        return ret;
     }
 
     /**

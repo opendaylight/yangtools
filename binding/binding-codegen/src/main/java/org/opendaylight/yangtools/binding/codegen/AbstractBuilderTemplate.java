@@ -63,8 +63,8 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         this.targetType = requireNonNull(targetType);
         this.keyType = keyType;
         final var analysis = analyzeTypeHierarchy(targetType);
-        augmentType = analysis.getKey();
-        properties = analysis.getValue();
+        properties = analysis.properties();
+        augmentType = analysis.augmentType();
     }
 
     /**
