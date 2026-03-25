@@ -109,12 +109,20 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         sc.append("    ");
         sc.append("implements ");
         sc.append(impIface, "    ");
-        sc.append(" {");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateFields(), "    ");
-        sc.newLineIfNotEmpty();
+        sc.append(" {\n");
+
+        // generate instance fields
+        if (properties != null && !properties.isEmpty()) {
+            sc.newLine();
+            for (var prop : properties) {
+                sc.append("    private final ");
+                sc.append(importedName(prop.getReturnType()));
+                sc.append(" ");
+                sc.append(fieldName(prop));
+                sc.append(";\n");
+            }
+        }
+
         sc.newLine();
         sc.append("    ");
         sc.append(generateCopyConstructor(builder.type(), type()), "    ");
@@ -145,17 +153,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         sc.append("}");
         sc.newLine();
         return sc;
-    }
-
-    private String generateFields() {
-        final var sb = new StringBuilder();
-        if (properties != null) {
-            for (var prop : properties) {
-                sb.append("private final ").append(importedName(prop.getReturnType())).append(' ')
-                    .append(fieldName(prop)).append(";\n");
-            }
-        }
-        return sb.toString();
     }
 
     // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining this
