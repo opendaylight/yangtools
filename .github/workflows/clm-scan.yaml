@@ -50,7 +50,7 @@ on:
 
 concurrency:
   # yamllint disable-line rule:line-length
-  group: composed-clm-scan-${{ github.workflow }}-${{ github.event.inputs.GERRIT_CHANGE_ID || github.run_id }}
+  group: composed-clm-scan-${{ github.workflow }}-${{ github.event.inputs.GERRIT_BRANCH }}-${{ github.event.inputs.GERRIT_CHANGE_ID || github.run_id }}
   cancel-in-progress: true
 
 jobs:
