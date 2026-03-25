@@ -203,10 +203,9 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         }
 
         // generate hashCode/equals if needed
+        final var override = importedName(OVERRIDE);
+        final var target = importedName(targetType);
         if (!properties.isEmpty() || augmentType != null) {
-            final var override = importedName(OVERRIDE);
-            final var target = importedName(targetType);
-
             sc.newLine();
             sc.append("    private int hash = 0;\n");
             sc.append("    private volatile boolean hashValid = false;\n");
@@ -243,12 +242,22 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             sc.append("    }\n");
         }
 
+        // generate equals()
         sc.newLine();
-        sc.append("    ");
-        sc.append(generateToString(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.append("}");
+        sc.append("    @");
+        sc.append(override);
         sc.newLine();
+        sc.append("    public ");
+        sc.append(importedName(Types.STRING));
+        sc.append(" toString() {\n");
+        sc.append("        return ");
+        sc.append(target);
+        sc.append(".");
+        sc.append(BINDING_TO_STRING_NAME);
+        sc.append("(this);\n");
+        sc.append("    }\n");
+
+        sc.append("}\n");
         return sc;
     }
 
@@ -313,16 +322,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * {@return string with the {@code toString()} method definition in JAVA format}
-     */
-    private @NonNull String generateToString() {
-        return '@' + importedName(OVERRIDE) + '\n'
-            +  "public " + importedName(Types.STRING) + " toString() {\n"
-            +  "    return " + importedName(targetType) + '.' + BINDING_TO_STRING_NAME + "(this);\n"
-            +  "}\n";
     }
 
     @Override
