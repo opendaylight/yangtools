@@ -33,6 +33,11 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechani
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
+/**
+ * A template for the inner implementation class supported by a {@link BuilderTemplate}.
+ */
+// FIXME: consider refactoring as an inner class in BuilderTemplate, as we are never a standalone template, which
+//        would allow proper specialization based on properties.isEmpty(), augmentType != null and keyType != null.
 final class BuilderImplTemplate extends AbstractBuilderTemplate {
     /**
      * {@link AbstractAugmentable} as a {@link JavaTypeName}.
@@ -53,32 +58,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     @Override
     public CharSequence body() {
-        //        «targetType.annotations.generateDeprecatedAnnotation»
-        //        private static final class «type.simpleName»
-        //            «val impIface = targetType.importedName»
-        //            «IF keyType !== null»
-        //                extends «ABSTRACT_ENTRY_OBJECT.importedName»<«impIface», «keyType.importedName»>
-        //            «ELSEIF augmentType !== null»
-        //                extends «ABSTRACT_AUGMENTABLE.importedName»<«impIface»>
-        //            «ENDIF»
-        //            implements «impIface» {
-        //
-        //            «generateFields(true)»
-        //
-        //            «generateCopyConstructor(builder.type, type)»
-        //            «generateExtractKey»
-        //
-        //            «generateGetters()»
-        //
-        //            «generateNonnullGetters()»
-        //
-        //            «generateHashCode()»
-        //
-        //            «generateEquals()»
-        //
-        //            «generateToString()»
-        //        }
-
         final var impIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
 
@@ -88,30 +67,23 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         sc.append("private static final class ");
         sc.append(type().simpleName());
         sc.newLineIfNotEmpty();
-        sc.append("    ");
-        sc.newLineIfNotEmpty();
         if (keyType != null) {
-            sc.append("    ");
-            sc.append("extends ");
-            sc.append(importedName(ABSTRACT_ENTRY_OBJECT), "    ");
+            sc.append("    extends ");
+            sc.append(importedName(ABSTRACT_ENTRY_OBJECT));
             sc.append("<");
-            sc.append(impIface, "    ");
+            sc.append(impIface);
             sc.append(", ");
-            sc.append(importedName(keyType), "    ");
-            sc.append(">");
-            sc.newLineIfNotEmpty();
+            sc.append(importedName(keyType));
+            sc.append(">\n");
         } else if (augmentType != null) {
-            sc.append("    ");
-            sc.append("extends ");
-            sc.append(importedName(ABSTRACT_AUGMENTABLE), "    ");
+            sc.append("    extends ");
+            sc.append(importedName(ABSTRACT_AUGMENTABLE));
             sc.append("<");
-            sc.append(impIface, "    ");
-            sc.append(">");
-            sc.newLineIfNotEmpty();
+            sc.append(impIface);
+            sc.append(">\n");
         }
-        sc.append("    ");
-        sc.append("implements ");
-        sc.append(impIface, "    ");
+        sc.append("    implements ");
+        sc.append(impIface);
         sc.append(" {\n");
 
         // generate instance fields
@@ -166,17 +138,21 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             sc.append("    }\n");
         }
 
-        // generate normal getters
+        // generate getters
         if (!properties.isEmpty()) {
             sc.newLine();
 
             final var it = properties.iterator();
             while (true) {
                 final var field = it.next();
+
+                // getFoo()
                 sc.append("    ");
                 sc.append(asGetterMethod(field), "    ");
 
+                // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType type && GeneratorUtil.isNonPresenceContainer(type)) {
+
                     sc.newLine();
                     sc.append("    @");
                     sc.append(override);
