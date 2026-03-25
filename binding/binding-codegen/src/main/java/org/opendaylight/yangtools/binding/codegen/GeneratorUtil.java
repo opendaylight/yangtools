@@ -167,22 +167,6 @@ public final class GeneratorUtil {
         return false;
     }
 
-    /**
-     * Creates the map which maps the type name to package name and contains only package names for enclosed types
-     * of <code>genType</code> and recursively their enclosed types.
-     *
-     * @param genType JAVA <code>Type</code> for which is the map created
-     * @return map of the package names for all the enclosed types and recursively their enclosed types
-     */
-    static Map<String, String> createChildImports(final GeneratedType genType) {
-        final var childImports = new LinkedHashMap<String, String>();
-        for (var genTypeChild : genType.getEnclosedTypes()) {
-            createChildImports(genTypeChild);
-            childImports.put(genTypeChild.simpleName(), genTypeChild.packageName());
-        }
-        return childImports;
-    }
-
     static boolean strictTypeEquals(final Type type1, final Type type2) {
         if (!type1.equals(type2)) {
             return false;

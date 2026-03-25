@@ -91,17 +91,6 @@ class GeneratorUtilTest {
     }
 
     @Test
-    void createChildImportsTest() {
-        doReturn("tst.package").when(enclosedType).packageName();
-        doReturn("tstName").when(enclosedType).simpleName();
-        doReturn(List.of()).when(enclosedType).getEnclosedTypes();
-        doReturn(List.of(enclosedType)).when(generatedType).getEnclosedTypes();
-        final var generated = GeneratorUtil.createChildImports(generatedType);
-        assertNotNull(generated);
-        assertEquals("tst.package", generated.get("tstName"));
-    }
-
-    @Test
     void createImportsWithExceptionTest() {
         final var iae = assertThrows(IllegalArgumentException.class, () -> GeneratorUtil.createImports(null));
         assertEquals("Generated Type cannot be NULL!", iae.getMessage());
