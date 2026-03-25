@@ -163,14 +163,45 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             sc.append("    }\n");
         }
 
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateGetters(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateNonnullGetters(), "    ");
-        sc.newLineIfNotEmpty();
+        // generate normal getters
+        if (!properties.isEmpty()) {
+            sc.newLine();
+
+            final var it = properties.iterator();
+            while (true) {
+                final var field = it.next();
+                sc.append("    ");
+                sc.append(asGetterMethod(field), "    ");
+
+                if (field.getReturnType() instanceof GeneratedType type && GeneratorUtil.isNonPresenceContainer(type)) {
+                    sc.newLine();
+                    sc.append("    @");
+                    sc.append(importedName(OVERRIDE));
+                    sc.newLine();
+                    sc.append("    public ");
+                    sc.append(importedName(type));
+                    sc.append(" ");
+                    sc.append(NONNULL_PREFIX);
+                    sc.append(StringExtensions.toFirstUpper(field.getName()));
+                    sc.append("() {\n");
+                    sc.append("        return ");
+                    sc.append(importedName(JU_OBJECTS));
+                    sc.append(".requireNonNullElse(");
+                    sc.append(getterMethodName(field));
+                    sc.append("(), ");
+                    sc.append(type.canonicalName());
+                    sc.append(BUILDER_SUFFIX);
+                    sc.append(".empty());\n");
+                    sc.append("}\n");
+                }
+
+                if (!it.hasNext()) {
+                    break;
+                }
+                sc.newLine();
+            }
+        }
+
         sc.newLine();
         sc.append("    ");
         sc.append(generateHashCode(), "    ");
@@ -191,47 +222,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     @Override
     public String generateDeprecatedAnnotation(final AnnotationType ann) {
         return generateAnnotation(ann);
-    }
-
-    private String generateGetters() {
-        if (properties.isEmpty()) {
-            return "";
-        }
-
-        final var sb = new StringBuilder();
-        final var it = properties.iterator();
-        while (true) {
-            final var field = it.next();
-            sb.append(asGetterMethod(field));
-            if (!it.hasNext()) {
-                return sb.toString();
-            }
-            sb.append('\n');
-        }
-    }
-
-    private String generateNonnullGetters() {
-        final var sb = new StringBuilder();
-        var first = true;
-        for (var field : properties) {
-            if (field.getReturnType() instanceof GeneratedType type && GeneratorUtil.isNonPresenceContainer(type)) {
-                if (first) {
-                    first = false;
-                } else {
-                    sb.append('\n');
-                }
-
-                sb
-                    .append('@').append(importedName(OVERRIDE)).append('\n')
-                    .append("public ").append(importedName(type)).append(' ')
-                        .append(NONNULL_PREFIX).append(StringExtensions.toFirstUpper(field.getName())).append("() {\n")
-                    .append("    return ").append(importedName(JU_OBJECTS)).append(".requireNonNullElse(")
-                        .append(getterMethodName(field)).append("(), ")
-                        .append(type.canonicalName()).append(BUILDER_SUFFIX).append(".empty());\n")
-                    .append("}\n");
-            }
-        }
-        return sb.toString();
     }
 
     @Override
