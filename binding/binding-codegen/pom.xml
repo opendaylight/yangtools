@@ -86,25 +86,4 @@
             <artifactId>yang-test-util</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.eclipse.xtext</groupId>
-                <artifactId>xtend-maven-plugin</artifactId>
-                <version>2.42.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <javaSourceVersion>${maven.compiler.release}</javaSourceVersion>
-                            <outputDirectory>${project.build.directory}/generated-sources/xtend</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
