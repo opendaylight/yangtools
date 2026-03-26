@@ -247,28 +247,45 @@ class ClassTemplate extends BaseTemplate {
         sc.append("    ");
         sc.append(defaultInstance(), "    ");
         sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(propertyMethods(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
+
+        final var propertyMethods = propertyMethods();
+        if (!propertyMethods.isEmpty()) {
+            sc.newLine();
+            sc.append("    ");
+            sc.append(propertyMethods, "    ");
+            sc.newLineIfNotEmpty();
+        }
+
         if (isBitsTypeObject()) {
+            sc.newLine();
             sc.append("    ");
             sc.append(validNamesAndValues(), "    ");
             sc.newLineIfNotEmpty();
         }
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateHashCode(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateEquals(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateToString(genTO.getToStringIdentifiers()), "    ");
-        sc.newLineIfNotEmpty();
+
+        final var hashCode = generateHashCode();
+        if (!hashCode.isEmpty()) {
+            sc.newLine();
+            sc.append("    ");
+            sc.append(hashCode, "    ");
+            sc.newLineIfNotEmpty();
+        }
+
+        final var equals = generateEquals();
+        if (!equals.isEmpty()) {
+            sc.newLine();
+            sc.append("    ");
+            sc.append(equals, "    ");
+            sc.newLineIfNotEmpty();
+        }
+
+        final var toString = generateToString(genTO.getToStringIdentifiers());
+        if (!toString.isEmpty()) {
+            sc.newLine();
+            sc.append("    ");
+            sc.append(toString, "    ");
+            sc.newLineIfNotEmpty();
+        }
         sc.append("}\n");
         sc.newLine();
         return sc;
