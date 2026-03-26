@@ -1041,49 +1041,26 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return sc.toString();
     }
 
-    private CharSequence generateAugmentation() {
-        //        /**
-        //         * Return the specified augmentation, if it is present in this builder.
-        //         *
-        //         * @param <E$$> augmentation type
-        //         * @param augmentationType augmentation type class
-        //         * @return Augmentation object from this builder, or {@code null} if not present
-        //         * @throws «NPE.importedName» if {@code augmentType} is {@code null}
-        //         */
-        final var sc = new StringConcatenation();
-        sc.append("/**\n");
-        sc.append(" * Return the specified augmentation, if it is present in this builder.\n");
-        sc.append(" *\n");
-        sc.append(" * @param <E$$> augmentation type\n");
-        sc.append(" * @param augmentationType augmentation type class\n");
-        sc.append(" * @return Augmentation object from this builder, or {@code null} if not present\n");
-        sc.append(" * @throws ");
-        sc.append(importedName(NPE));
-        sc.append(" if {@code augmentType} is {@code null}\n");
-        sc.append(" */\n");
-
-        //        @«SUPPRESS_WARNINGS.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
-        //        public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(
-        //«CLASS.importedName»<E$$> augmentationType) {
-        //            return (E$$) «AUGMENTATION_FIELD».get(«JU_OBJECTS.importedName».requireNonNull(augmentationType));
-        //        }
-        sc.append("@");
-        sc.append(importedName(SUPPRESS_WARNINGS));
-        sc.append("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})\n");
-        sc.append("public <E$$ extends ");
-        sc.append(importedName(augmentType));
-        sc.append("> E$$ ");
-        sc.append(Naming.AUGMENTABLE_AUGMENTATION_NAME);
-        sc.append("(");
-        sc.append(importedName(CLASS));
-        sc.append("<E$$> augmentationType) {\n");
-        sc.append("    return (E$$) ");
-        sc.append(Naming.AUGMENTATION_FIELD);
-        sc.append(".get(");
-        sc.append(importedName(JU_OBJECTS));
-        sc.append(".requireNonNull(augmentationType));\n");
-        sc.append("}\n");
-        return sc;
+    private String generateAugmentation() {
+        return new StringBuilder()
+            .append("""
+                     /**
+                      * Return the specified augmentation, if it is present in this builder.
+                      *
+                      * @param <E$$> augmentation type
+                      * @param augmentationType augmentation type class
+                      * @return Augmentation object from this builder, or {@code null} if not present
+                      * @throws\s""").append(importedName(NPE)).append(" if {@code augmentType} is {@code null}\n")
+            .append(" */\n")
+            .append('@').append(importedName(SUPPRESS_WARNINGS))
+                .append("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})\n")
+            .append("public <E$$ extends ").append(importedName(augmentType)).append("> E$$ ")
+                .append(Naming.AUGMENTABLE_AUGMENTATION_NAME).append("(").append(importedName(CLASS))
+                .append("<E$$> augmentationType) {\n")
+            .append("    return (E$$) ").append(Naming.AUGMENTATION_FIELD).append(".get(")
+                .append(importedName(JU_OBJECTS)).append(".requireNonNull(augmentationType));\n")
+            .append("}\n")
+            .toString();
     }
 
     @Override
