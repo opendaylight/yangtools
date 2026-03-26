@@ -10,15 +10,20 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableSet;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 
 /**
  * Abstract base class holding pure-Java parts of {@link ClassTemplate}.
@@ -26,6 +31,26 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 abstract class AbstractClassTemplate extends BaseTemplate {
     private static final Comparator<GeneratedProperty> PROP_COMPARATOR =
         Comparator.comparing(GeneratedProperty::getName);
+
+    static final Set<ConcreteType> VALUEOF_TYPES = Set.<ConcreteType>of(
+        BaseYangTypes.BOOLEAN_TYPE,
+        BaseYangTypes.INT8_TYPE,
+        BaseYangTypes.INT16_TYPE,
+        BaseYangTypes.INT32_TYPE,
+        BaseYangTypes.INT64_TYPE,
+        BaseYangTypes.UINT8_TYPE,
+        BaseYangTypes.UINT16_TYPE,
+        BaseYangTypes.UINT32_TYPE,
+        BaseYangTypes.UINT64_TYPE);
+
+    /**
+     * {@code java.lang.Boolean} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName BOOLEAN = JavaTypeName.create(Boolean.class);
+    /**
+     * {@code com.google.common.collect.ImmutableSet} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
 
     final @NonNull GeneratedTransferObject genTO;
     final @NonNull List<GeneratedProperty> properties;

@@ -9,36 +9,24 @@ package org.opendaylight.yangtools.binding.codegen
 
 import static java.util.Objects.requireNonNull
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT16_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT32_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT64_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT8_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT16_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
 import com.google.common.base.Verify
-import com.google.common.collect.ImmutableSet
 import java.util.Collection
 import java.util.List
 import java.util.Map
-import java.util.Set
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName
 import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.model.ri.Types
@@ -50,26 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
  */
 // FIXME: YANGTOOLS-1806: convert to Java
 class ClassTemplate extends AbstractClassTemplate {
-    static val VALUEOF_TYPES = Set.of(
-        BOOLEAN_TYPE,
-        INT8_TYPE,
-        INT16_TYPE,
-        INT32_TYPE,
-        INT64_TYPE,
-        UINT8_TYPE,
-        UINT16_TYPE,
-        UINT32_TYPE,
-        UINT64_TYPE)
-    /**
-     * {@code java.lang.Boolean} as a JavaTypeName.
-     */
-    static val BOOLEAN = JavaTypeName.create(Boolean)
-
-    /**
-     * {@code com.google.common.collect.ImmutableSet} as a JavaTypeName.
-     */
-    static val IMMUTABLE_SET = JavaTypeName.create(ImmutableSet)
-
     /**
      * List of enumeration which are generated as JAVA enum type.
      */
