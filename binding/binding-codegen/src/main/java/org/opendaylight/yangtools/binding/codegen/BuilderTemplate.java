@@ -680,7 +680,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         sc.append("public ");
         sc.append(type().simpleName());
         sc.append(" set");
-        sc.append(StringExtensions.toFirstUpper(field.getName()));
+        sc.append(Naming.toFirstUpper(field.getName()));
         sc.append("(final ");
         sc.append(importedReturnType(field));
         sc.append(" values) {\n");
@@ -753,7 +753,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         sc.append("public ");
         sc.append(type().simpleName());
         sc.append(" set");
-        sc.append(StringExtensions.toFirstUpper(field.getName()));
+        sc.append(Naming.toFirstUpper(field.getName()));
         sc.append("(final ");
         sc.append(importedReturnType(field));
         sc.append(" values) {\n");
@@ -812,7 +812,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         sc.append("public ");
         sc.append(type().simpleName());
         sc.append(" set");
-        sc.append(StringExtensions.toFirstUpper(field.getName()));
+        sc.append(Naming.toFirstUpper(field.getName()));
         sc.append("(final ");
         sc.append(importedReturnType(field));
         sc.append(" value) {\n");

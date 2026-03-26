@@ -24,7 +24,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -332,7 +331,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     final CharSequence asSetterMethod(final GeneratedProperty field) {
         final var fieldName = fieldName(field);
         final var fieldType = importedReturnType(field);
-        final var suffix = StringExtensions.toFirstUpper(field.getName());
+        final var suffix = Naming.toFirstUpper(field.getName());
         final var typeName = type().simpleName();
 
         return new StringBuilder()
@@ -565,7 +564,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         restrictions.getRangeConstraint().ifPresent(
             range -> sb
                 .append(AbstractRangeGenerator.forType(actualType)
-                    .generateRangeChecker(StringExtensions.toFirstUpper(field.getName()), range, this))
+                    .generateRangeChecker(Naming.toFirstUpper(field.getName()), range, this))
         );
         // FIXME: this call looks unlike the range checker call: it should be refactored to acquire a generator,
         //        so that we can suppress checker when not needed -- just like ranges do above
@@ -657,7 +656,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var sb = new StringBuilder();
         if (restrictions.getRangeConstraint().isPresent()) {
             AbstractRangeGenerator.forType(actualType)
-                .appendCheckerCall(sb, StringExtensions.toFirstUpper(property.getName()), valueRef);
+                .appendCheckerCall(sb, Naming.toFirstUpper(property.getName()), valueRef);
         }
 
         final var fieldName = fieldName(property);
