@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -33,7 +34,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
      */
-    final Type augmentType;
+    final ParameterizedType augmentType;
 
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
@@ -48,8 +49,8 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     final GeneratedType targetType;
 
     AbstractBuilderTemplate(final @NonNull AbstractJavaGeneratedType javaType, final @NonNull GeneratedType type,
-            final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties, final Type augmentType,
-            final GeneratedTransferObject keyType) {
+            final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties,
+            final ParameterizedType augmentType, final GeneratedTransferObject keyType) {
         super(javaType, type);
         this.targetType = targetType;
         this.properties = properties;
