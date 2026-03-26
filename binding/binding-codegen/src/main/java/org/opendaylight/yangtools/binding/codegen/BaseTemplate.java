@@ -653,13 +653,13 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
         final var sb = new StringBuilder();
         if (restrictions.getRangeConstraint().isPresent()) {
-            sb.append(AbstractRangeGenerator.forType(actualType)
-                .generateRangeCheckerCall(StringExtensions.toFirstUpper(property.getName()), valueRef));
+            AbstractRangeGenerator.forType(actualType)
+                .appendCheckerCall(sb, StringExtensions.toFirstUpper(property.getName()), valueRef);
         }
 
         final var fieldName = fieldName(property);
         if (restrictions.getLengthConstraint().isPresent()) {
-            sb.append(LengthGenerator.generateLengthCheckerCall(fieldName, valueRef));
+            LengthGenerator.appendCheckerCall(sb, fieldName, valueRef);
         }
 
         final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);

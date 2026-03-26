@@ -20,11 +20,9 @@ import com.google.common.base.Verify
 import java.util.Collection
 import java.util.List
 import java.util.Map
-import org.opendaylight.yangtools.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
-import org.opendaylight.yangtools.binding.model.api.Type
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
 import org.opendaylight.yangtools.binding.model.ri.Types
 import org.opendaylight.yangtools.binding.contract.Naming
@@ -293,34 +291,6 @@ class ClassTemplate extends AbstractClassTemplate {
             «CODEHELPERS.importedName».checkPattern(«ref», «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
             «ENDIF»
         «ENDFOR»
-    '''
-
-    def private static paramValue(Type returnType, String paramName) {
-        if (returnType instanceof ConcreteType) {
-            return paramName
-        } else {
-            return paramName + ".getValue()"
-        }
-    }
-
-    def generateRestrictions(Type type, String paramName, Type returnType) '''
-        «val restrictions = type.restrictions»
-        «IF restrictions !== null»
-            «IF restrictions.lengthConstraint.present || restrictions.rangeConstraint.present»
-                «IF !paramName.equals("_value")»
-                if («paramName» != null) {
-                «ENDIF»
-                «IF restrictions.lengthConstraint.present»
-                «LengthGenerator.generateLengthCheckerCall(paramName, paramValue(returnType, paramName))»
-                «ENDIF»
-                «IF restrictions.rangeConstraint.present»
-                «rangeGenerator.generateRangeCheckerCall(paramName, paramValue(returnType, paramName))»
-                «ENDIF»
-                «IF !paramName.equals("_value")»
-                }
-                «ENDIF»
-            «ENDIF»
-        «ENDIF»
     '''
 
     def package copyConstructor() '''

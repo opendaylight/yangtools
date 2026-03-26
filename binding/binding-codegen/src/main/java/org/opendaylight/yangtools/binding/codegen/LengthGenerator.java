@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -26,6 +29,7 @@ final class LengthGenerator {
         // Hidden on purpose
     }
 
+    @NonNullByDefault
     private static String lengthCheckerName(final String member) {
         return "check" + member + "Length";
     }
@@ -118,10 +122,11 @@ final class LengthGenerator {
             final LengthConstraint constraint, final JavaFileTemplate template) {
         return TypeUtils.getBaseYangType(type).simpleName().indexOf('[') != -1
                 ? generateArrayLengthChecker(member, constraint, template)
-                        : generateStringLengthChecker(member, constraint, template);
+                : generateStringLengthChecker(member, constraint, template);
     }
 
-    static String generateLengthCheckerCall(final @Nullable String member, final @NonNull String valueReference) {
-        return lengthCheckerName(member) + '(' + valueReference + ");\n";
+    @NonNullByDefault
+    static void appendCheckerCall(final StringBuilder sb, final String member, final String valueReference) {
+        sb.append(lengthCheckerName(member)).append('(').append(requireNonNull(valueReference)).append(");\n");
     }
 }

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -25,9 +26,13 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 /**
  * Abstract base class holding pure-Java parts of {@link ClassTemplate}.
@@ -264,5 +269,45 @@ abstract class AbstractClassTemplate extends BaseTemplate {
     final String importedHashCodeUtilClass(final GeneratedProperty prop) {
         final var propType = prop.getReturnType();
         return propType.equals(Types.primitiveBooleanType()) ? importedName(BOOLEAN) : importedUtilClass(propType);
+    }
+
+    @NonNullByDefault
+    final CharSequence generateRestrictions(final Type type, final String paramName, final Type returnType) {
+        final var typeRestrictions = switch (type) {
+            case GeneratedTransferObject gto -> gto.getRestrictions();
+            case RestrictedType restricted -> restricted.restrictions();
+            case null, default -> null;
+        };
+        if (typeRestrictions == null) {
+            return "";
+        }
+        final var length = typeRestrictions.getLengthConstraint().orElse(null);
+        final var range = typeRestrictions.getRangeConstraint().orElse(null);
+        if (length == null && range == null) {
+            return "";
+        }
+
+        final var sb = new StringBuilder();
+        if (!paramName.equals("_value")) {
+            sb.append("if (").append(paramName).append(" != null) {\n");
+            appendCheckerCalls(sb, "    ", paramName, returnType, length, range);
+            sb.append("}\n");
+        } else {
+            appendCheckerCalls(sb, "", paramName, returnType, length, range);
+        }
+        return sb;
+    }
+
+    @NonNullByDefault
+    private void appendCheckerCalls(final StringBuilder sb, final String indent, final String paramName,
+            final Type returnType, final @Nullable LengthConstraint length, final @Nullable RangeConstraint<?> range) {
+        final var paramValue = returnType instanceof ConcreteType ? paramName : paramName + ".getValue()";
+        // Note: at least one of these is non-null
+        if (length != null) {
+            LengthGenerator.appendCheckerCall(sb.append(indent), paramName, paramValue);
+        }
+        if (range != null) {
+            rangeGenerator.appendCheckerCall(sb.append(indent), paramName, paramValue);
+        }
     }
 }
