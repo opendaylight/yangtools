@@ -156,6 +156,25 @@ abstract class AbstractClassTemplate extends BaseTemplate {
     }
 
     /**
+     * {@return string with the class attributes in JAVA format}
+     */
+    final String generateFields() {
+        if (properties.isEmpty()) {
+            return "";
+        }
+
+        //    «FOR f : properties»
+        //        private«IF isReadOnly(f)» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
+        //    «ENDFOR»
+        final var sb = new StringBuilder();
+        for (var field : properties) {
+            sb.append(field.isReadOnly() ? "private final " : "private ").append(importedReturnType(field)).append(' ')
+                .append(fieldName(field)).append(";\n");
+        }
+        return sb.toString();
+    }
+
+    /**
      * {@return string with the {@code hashCode()} method definition in JAVA format}
      */
     final String generateHashCode() {

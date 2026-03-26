@@ -259,7 +259,7 @@ class InterfaceTemplate extends BaseTemplate {
         sc.newLineIfNotEmpty();
         sc.append(generateAnnotations(method.getAnnotations()));
         sc.newLineIfNotEmpty();
-        sc.append(importedName(method.getReturnType()));
+        sc.append(importedReturnType(method));
         sc.append(" ");
         sc.append(method.getName());
         sc.append("(");
@@ -639,7 +639,7 @@ class InterfaceTemplate extends BaseTemplate {
         sc.append(formatReference(comment == null ? null : comment.referenceDescription()));
         sc.newLineIfNotEmpty();
         sc.append("@return {@code ");
-        sc.append(importedName(method.getReturnType()));
+        sc.append(importedReturnType(method));
         sc.append("} ");
         sc.append(propReturn);
         sc.newLineIfNotEmpty();

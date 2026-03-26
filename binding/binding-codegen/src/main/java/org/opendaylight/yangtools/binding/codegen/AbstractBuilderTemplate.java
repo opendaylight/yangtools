@@ -75,7 +75,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         final var sb = new StringBuilder();
         if (properties != null) {
             for (var prop : properties) {
-                sb.append("private ").append(importedName(prop.getReturnType())).append(' ').append(fieldName(prop))
+                sb.append("private ").append(importedReturnType(prop)).append(' ').append(fieldName(prop))
                     .append(";\n");
             }
         }
