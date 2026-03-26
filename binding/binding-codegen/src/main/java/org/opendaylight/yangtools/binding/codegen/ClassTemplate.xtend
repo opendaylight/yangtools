@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.binding.codegen
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
-import com.google.common.base.Verify
 import java.util.Collection
-import java.util.List
-import org.opendaylight.yangtools.binding.model.api.Decimal64Type
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants
@@ -124,59 +121,6 @@ class ClassTemplate extends AbstractClassTemplate {
                 };
         }
     '''
-
-    def package constructors() '''
-        «IF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(TypeConstants.VALUE_PROP)»
-            «typedefConstructor»
-        «ELSE»
-            «allValuesConstructor»
-        «ENDIF»
-
-        «IF !allProperties.empty»
-            «copyConstructor»
-        «ENDIF»
-        «IF properties.empty && !parentProperties.empty »
-            «parentConstructor»
-        «ENDIF»
-    '''
-
-    def private typedefConstructor() '''
-    @«CONSTRUCTOR_PARAMETERS.importedName»("«TypeConstants.VALUE_PROP»")
-    public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
-        «IF !parentProperties.empty»
-            super(«parentProperties.asArguments»);
-        «ENDIF»
-        «val value = Verify.verifyNotNull(allProperties.valueProperty)»
-        «val fieldName = value.fieldName»
-        «IF properties.valueProperty !== null»
-            this.«fieldName» = «CODEHELPERS.importedName».requireValue(«fieldName»«value.assignFieldTail»)«value.cloneCall»;
-        «ENDIF»
-        «generateRestrictions(type, fieldName, value.returnType)»
-        «/*
-         * If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code is
-         * structured.
-         */»
-        «genPatternEnforcer(fieldName)»
-    }
-    '''
-
-    def private String assignFieldTail(GeneratedProperty valueProp) {
-        val returnType = valueProp.returnType
-        if (returnType instanceof Decimal64Type) {
-            return ", " + returnType.fractionDigits
-        }
-        return ""
-    }
-
-    def private GeneratedProperty valueProperty(List<GeneratedProperty> props) {
-        if (props.empty) {
-            return null
-        }
-        Verify.verify(props.size() == 1, "Unexpected properties %s", props);
-        val prop = props.first
-        Verify.verify(TypeConstants.VALUE_PROP.equals(prop.name), "Unexpected property %s", prop)
-        return prop
-    }
 
     /**
      * Template method which generates the method <code>equals()</code>.
