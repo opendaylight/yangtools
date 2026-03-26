@@ -611,138 +611,127 @@ class ClassTemplate extends BaseTemplate {
             return "";
         }
 
-        //        «FOR c : consts»
-        //            «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
-        //                «val cValue = c.value as Map<String, String>»
-        //                «val jurPatternRef = JUR_PATTERN.importedName»
-        //                public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» =
-        // «JU_LIST.importedName».of(«
-        //                FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
-        //                «IF cValue.size == 1»
-        //                    private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef»
-        //.compile(«TypeConstants.PATTERN_CONSTANT_NAME».getFirst());
-        //                    private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.iterator.next
-        //.escapeJava»";
-        //                «ELSE»
-        //                    private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST» = «CODEHELPERS
-        //.importedName».compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
-        //                    private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
-        //                    FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
-        //                «ENDIF»
-        //            «ELSEIF TypeConstants.VALID_NAMES_NAME.equals(c.name)»
-        //                «val cValue = c.value as BitsTypeDefinition»
-        //                «val immutableSet = IMMUTABLE_SET.importedName»
-        //                protected static final «immutableSet»<«STRING.importedName»> «TypeConstants.VALID_NAMES_NAME»
-        // = «immutableSet».of(«
-        //                FOR bit : cValue.bits SEPARATOR ", "»"«bit.name»"«ENDFOR»);
-        //            «ELSE»
-        //                «emitConstant(c)»
-        //            «ENDIF»
-        //        «ENDFOR»
-
         final var sc = new StringConcatenation();
         for (var c : consts) {
             switch (c.getName()) {
-                case TypeConstants.PATTERN_CONSTANT_NAME -> {
-                    final var constValue = (Map<String, String>) c.getValue();
-                    final var jurPattern = importedName(JUR_PATTERN);
-                    final var juList = importedName(JU_LIST);
-
-                    sc.newLineIfNotEmpty();
-                    sc.append("public static final ");
-                    sc.append(juList);
-                    sc.append("<String> ");
-                    sc.append(TypeConstants.PATTERN_CONSTANT_NAME);
-                    sc.append(" = ");
-                    sc.append(juList);
-                    sc.append(".of(");
-                    {
-                        boolean first = true;
-                        for (var value : constValue.keySet()) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                sc.appendImmediate(", ", "");
-                            }
-                            sc.append("\"");
-                            sc.append(StringEscapeUtils.escapeJava(value));
-                            sc.append("\"");
-                        }
-                    }
-                    sc.append(");\n");
-                    sc.append("private static final ");
-                    sc.append(jurPattern);
-                    if (constValue.size() == 1) {
-                        sc.append(" ");
-                        sc.append(Constants.MEMBER_PATTERN_LIST);
-                        sc.append(" = ");
-                        sc.append(jurPattern);
-                        sc.append(".compile(");
-                        sc.append(TypeConstants.PATTERN_CONSTANT_NAME);
-                        sc.append(".getFirst());\n");
-                        sc.append("private static final String ");
-                        sc.append(Constants.MEMBER_REGEX_LIST);
-                        sc.append(" = \"");
-                        sc.append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
-                        sc.append("\";\n");
-                    } else {
-                        sc.append("[] ");
-                        sc.append(Constants.MEMBER_PATTERN_LIST);
-                        sc.append(" = ");
-                        sc.append(importedName(CODEHELPERS));
-                        sc.append(".compilePatterns(");
-                        sc.append(TypeConstants.PATTERN_CONSTANT_NAME);
-                        sc.append(");\n");
-                        sc.append("private static final String[] ");
-                        sc.append(Constants.MEMBER_REGEX_LIST);
-                        sc.append(" = { ");
-                        {
-                            boolean first = true;
-                            for (var value : constValue.values()) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    sc.appendImmediate(", ", "");
-                                }
-                                sc.append("\"");
-                                sc.append(StringEscapeUtils.escapeJava(value));
-                                sc.append("\"");
-                            }
-                        }
-                        sc.append(" };\n");
-                    }
-                }
-                case TypeConstants.VALID_NAMES_NAME -> {
-                    final var immutableSet = importedName(IMMUTABLE_SET);
-                    final var bitsType = (BitsTypeDefinition) c.getValue();
-                    sc.append("protected static final ");
-                    sc.append(immutableSet);
-                    sc.append("<");
-                    sc.append(importedName(Types.STRING));
-                    sc.append("> ");
-                    sc.append(TypeConstants.VALID_NAMES_NAME);
-                    sc.append(" = ");
-                    sc.append(immutableSet);
-                    sc.append(".of(");
-                    {
-                        boolean first = true;
-                        for (var bit : bitsType.getBits()) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                sc.appendImmediate(", ", "");
-                            }
-                            sc.append("\"");
-                            sc.append(bit.getName());
-                            sc.append("\"");
-                        }
-                    }
-                    sc.append(");\n");
-                }
+                case TypeConstants.PATTERN_CONSTANT_NAME ->
+                    appendPatternConstant(sc, (Map<String, String>) c.getValue());
+                case TypeConstants.VALID_NAMES_NAME -> appendValidNames(sc, (BitsTypeDefinition) c.getValue());
                 default -> sc.append(emitConstant(c));
             }
         }
         return sc;
+    }
+
+    private void appendPatternConstant(final StringConcatenation sc, final Map<String, String> constValue) {
+        final var jurPattern = importedName(JUR_PATTERN);
+        final var juList = importedName(JU_LIST);
+
+        //    «val jurPatternRef = JUR_PATTERN.importedName»
+        //    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» =
+        // «JU_LIST.importedName».of(«
+        //    FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
+        //    «IF cValue.size == 1»
+        //        private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(
+        //«TypeConstants.PATTERN_CONSTANT_NAME».getFirst());
+        //        private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.iterator.next
+        //.escapeJava»";
+        //    «ELSE»
+        //        private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST» = «CODEHELPERS.importedName»
+        //.compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
+        //        private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
+        //        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
+        //    «ENDIF»
+        sc.append("public static final ");
+        sc.append(juList);
+        sc.append("<String> ");
+        sc.append(TypeConstants.PATTERN_CONSTANT_NAME);
+        sc.append(" = ");
+        sc.append(juList);
+        sc.append(".of(");
+        {
+            boolean first = true;
+            for (var value : constValue.keySet()) {
+                if (first) {
+                    first = false;
+                } else {
+                    sc.appendImmediate(", ", "");
+                }
+                sc.append("\"");
+                sc.append(StringEscapeUtils.escapeJava(value));
+                sc.append("\"");
+            }
+        }
+        sc.append(");\n");
+        sc.append("private static final ");
+        sc.append(jurPattern);
+        if (constValue.size() == 1) {
+            sc.append(" ");
+            sc.append(Constants.MEMBER_PATTERN_LIST);
+            sc.append(" = ");
+            sc.append(jurPattern);
+            sc.append(".compile(");
+            sc.append(TypeConstants.PATTERN_CONSTANT_NAME);
+            sc.append(".getFirst());\n");
+            sc.append("private static final String ");
+            sc.append(Constants.MEMBER_REGEX_LIST);
+            sc.append(" = \"");
+            sc.append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
+            sc.append("\";\n");
+            return;
+        }
+
+        sc.append("[] ");
+        sc.append(Constants.MEMBER_PATTERN_LIST);
+        sc.append(" = ");
+        sc.append(importedName(CODEHELPERS));
+        sc.append(".compilePatterns(");
+        sc.append(TypeConstants.PATTERN_CONSTANT_NAME);
+        sc.append(");\n");
+        sc.append("private static final String[] ");
+        sc.append(Constants.MEMBER_REGEX_LIST);
+        sc.append(" = { ");
+        {
+            boolean first = true;
+            for (var value : constValue.values()) {
+                if (first) {
+                    first = false;
+                } else {
+                    sc.appendImmediate(", ", "");
+                }
+                sc.append("\"");
+                sc.append(StringEscapeUtils.escapeJava(value));
+                sc.append("\"");
+            }
+        }
+        sc.append(" };\n");
+    }
+
+    private void appendValidNames(final StringConcatenation sc, final BitsTypeDefinition bitsType) {
+        final var immutableSet = importedName(IMMUTABLE_SET);
+        sc.append("protected static final ");
+        sc.append(immutableSet);
+        sc.append("<");
+        sc.append(importedName(Types.STRING));
+        sc.append("> ");
+        sc.append(TypeConstants.VALID_NAMES_NAME);
+        sc.append(" = ");
+        sc.append(immutableSet);
+        sc.append(".of(");
+        {
+            boolean first = true;
+            for (var bit : bitsType.getBits()) {
+                if (first) {
+                    first = false;
+                } else {
+                    sc.appendImmediate(", ", "");
+                }
+                sc.append("\"");
+                sc.append(bit.getName());
+                sc.append("\"");
+            }
+        }
+        sc.append(");\n");
     }
 
     // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
