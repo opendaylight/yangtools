@@ -294,10 +294,14 @@ class ClassTemplate extends BaseTemplate {
         }
 
         if (isBitsTypeObject()) {
-            sc.newLine();
-            sc.append("    ");
-            sc.append(validNamesAndValues(), "    ");
-            sc.newLineIfNotEmpty();
+            for (var c : consts) {
+                if (TypeConstants.VALID_NAMES_NAME.equals(c.getName())) {
+                    sc.newLine();
+                    sc.append("    ");
+                    sc.append(validNamesAndValues((BitsTypeDefinition) c.getValue()), "    ");
+                    sc.newLineIfNotEmpty();
+                }
+            }
         }
 
         final var hashCode = generateHashCode();
@@ -339,15 +343,6 @@ class ClassTemplate extends BaseTemplate {
             wlk = wlk.getSuperType();
         } while (wlk != null);
         return false;
-    }
-
-    private CharSequence validNamesAndValues() {
-        for (var c : consts) {
-            if (TypeConstants.VALID_NAMES_NAME.equals(c.getName())) {
-                return validNamesAndValues((BitsTypeDefinition) c.getValue());
-            }
-        }
-        return "";
     }
 
     private CharSequence validNamesAndValues(final BitsTypeDefinition typedef) {
