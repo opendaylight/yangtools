@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.source.YinSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YinTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.SimpleEffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
@@ -133,7 +134,7 @@ public final class CrossSourceStatementReactor {
         sealed interface WithYang<S extends YangSourceRepresentation> extends BuildAction
                 permits YangReactorBuildAction, Full {
             /**
-             * Add a YANG source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+             * Add a YANG source. All main sources are present in resulting {@link SimpleEffectiveModelContext}.
              *
              * @param source which should be transformed and added into main sources
              * @return This build action, for fluent use.
@@ -145,7 +146,7 @@ public final class CrossSourceStatementReactor {
 
             /**
              * Add a library YANG source. Only library sources required by main sources are present in resulting
-             * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+             * {@link SimpleEffectiveModelContext}. Any other library sources are ignored and this also applies to error
              * reporting.
              *
              * <p>Library sources are not supported in semantic version mode currently.
@@ -166,7 +167,7 @@ public final class CrossSourceStatementReactor {
         sealed interface WithYin<S extends YinSourceRepresentation> extends BuildAction
                 permits YinReactorBuildAction, Full {
             /**
-             * Add a YIN source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+             * Add a YIN source. All main sources are present in resulting {@link SimpleEffectiveModelContext}.
              *
              * @param source which should be transformed and added into main sources
              * @return This build action, for fluent use.
@@ -178,7 +179,7 @@ public final class CrossSourceStatementReactor {
 
             /**
              * Add a library YIN source. Only library sources required by main sources are present in resulting
-             * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+             * {@link SimpleEffectiveModelContext}. Any other library sources are ignored and this also applies to error
              * reporting.
              *
              * <p>Library sources are not supported in semantic version mode currently.
@@ -213,7 +214,7 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         * Add a main source. All main sources are present in resulting {@link SimpleEffectiveModelContext}.
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
@@ -224,7 +225,7 @@ public final class CrossSourceStatementReactor {
         BuildAction addSource(YangIRSource source) throws IOException, SourceSyntaxException;
 
         /**
-         * Add a main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         * Add a main source. All main sources are present in resulting {@link SimpleEffectiveModelContext}.
          *
          * @param source which should be added into main sources
          * @return This build action, for fluent use.
@@ -235,7 +236,7 @@ public final class CrossSourceStatementReactor {
         BuildAction addSource(YinDOMSource source) throws IOException, SourceSyntaxException;
 
         /**
-         * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         * Add a transformed main source. All main sources are present in resulting {@link SimpleEffectiveModelContext}.
          *
          * @param <S> source representation type
          * @param transformer the transformer to {@link YangIRSource}
@@ -252,7 +253,7 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Add a transformed main source. All main sources are present in resulting {@link EffectiveSchemaContext}.
+         * Add a transformed main source. All main sources are present in resulting {@link SimpleEffectiveModelContext}.
          *
          * @param <S> source representation type
          * @param transformer the transformer to {@link YangIRSource}
@@ -270,7 +271,7 @@ public final class CrossSourceStatementReactor {
 
         /**
          * Add a library source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * {@link SimpleEffectiveModelContext}. Any other library sources are ignored and this also applies to error
          * reporting.
          *
          * <p>Library sources are not supported in semantic version mode currently.
@@ -283,7 +284,7 @@ public final class CrossSourceStatementReactor {
 
         /**
          * Add a library YIN source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * {@link SimpleEffectiveModelContext}. Any other library sources are ignored and this also applies to error
          * reporting.
          *
          * <p>Library sources are not supported in semantic version mode currently.
@@ -296,7 +297,7 @@ public final class CrossSourceStatementReactor {
 
         /**
          * Add a transformed YANG library source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * {@link SimpleEffectiveModelContext}. Any other library sources are ignored and this also applies to error
          * reporting.
          *
          * <p>Library sources are not supported in semantic version mode currently.
@@ -312,7 +313,7 @@ public final class CrossSourceStatementReactor {
 
         /**
          * Add a transformed YIN library source. Only library sources required by main sources are present in resulting
-         * {@link EffectiveSchemaContext}. Any other library sources are ignored and this also applies to error
+         * {@link SimpleEffectiveModelContext}. Any other library sources are ignored and this also applies to error
          * reporting.
          *
          * <p>Library sources are not supported in semantic version mode currently.
@@ -366,12 +367,12 @@ public final class CrossSourceStatementReactor {
         @NonNull ReactorDeclaredModel buildDeclared() throws ReactorException, SourceSyntaxException;
 
         /**
-         * Build the {@link EffectiveSchemaContext} view of this action.
+         * Build the {@link SimpleEffectiveModelContext} view of this action.
          *
          * @return An effective view of selected models.
          * @throws ReactorException if the effective model cannot be built
          * @throws SourceSyntaxException if a source cannot be analyzed
          */
-        @NonNull EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException;
+        @NonNull SimpleEffectiveModelContext buildEffective() throws ReactorException, SourceSyntaxException;
     }
 }

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
+import org.opendaylight.yangtools.yang.model.spi.SimpleEffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceTransformer;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YinDOMSource;
@@ -104,7 +105,7 @@ sealed class ReactorBuildAction implements CrossSourceStatementReactor.BuildActi
     }
 
     @Override
-    public final EffectiveSchemaContext buildEffective() throws ReactorException, SourceSyntaxException {
+    public final SimpleEffectiveModelContext buildEffective() throws ReactorException, SourceSyntaxException {
         return buildLinkage().buildEffective();
     }
 

@@ -77,6 +77,8 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
      * Create a new instance from specified modules. Note that no module validation is done and hence the consistency
      * of the resulting SchemaContext is completely in hands of the caller.
      */
+    // FIXME: 16.0.0: remove this method
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static SimpleSchemaContext forModules(final Collection<? extends Module> modules) {
         return new SimpleSchemaContext(modules);
     }

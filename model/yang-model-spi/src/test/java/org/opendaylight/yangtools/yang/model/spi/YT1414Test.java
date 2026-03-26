@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.spi;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,10 +28,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 @ExtendWith(MockitoExtension.class)
 class YT1414Test {
+    @Mock(answer = Answers.CALLS_REAL_METHODS)
+    private EffectiveModelContext modelContext;
     @Mock
-    EffectiveModelContext modelContext;
+    private ModuleEffectiveStatement module;
     @Mock
-    ContainerEffectiveStatement container;
+    private ContainerEffectiveStatement container;
+    @Mock
+    private ListEffectiveStatement list;
 
     @Test
     void testUnsafeOf() {
@@ -45,8 +50,7 @@ class YT1414Test {
         final var qname = QName.create("foo", "foo");
         doReturn(qname).when(container).argument();
 
-        final var module = mock(ModuleEffectiveStatement.class);
-        doReturn(Optional.of(module)).when(modelContext).findModuleStatement(qname.getModule());
+        doReturn(Map.of(qname.getModule(), module)).when(modelContext).namespaceToModule();
         doReturn(Optional.of(container)).when(module).findSchemaTreeNode(qname);
 
         final var path = ImmutableList.of(container);
@@ -61,13 +65,11 @@ class YT1414Test {
         final var qname = QName.create("foo", "foo");
         doReturn(qname).when(container).argument();
 
-        final var module = mock(ModuleEffectiveStatement.class);
-        doReturn(Optional.of(module)).when(modelContext).findModuleStatement(qname.getModule());
-        doReturn(Optional.of(mock(ListEffectiveStatement.class))).when(module).findSchemaTreeNode(qname);
+        doReturn(Map.of(qname.getModule(), module)).when(modelContext).namespaceToModule();
+        doReturn(Optional.of(list)).when(module).findSchemaTreeNode(qname);
 
-        assertThat(assertThrows(IllegalArgumentException.class,
-            () -> DefaultSchemaTreeInference.verifiedOf(modelContext, ImmutableList.of(container)))
-            .getMessage()).startsWith(
-                "Provided path [container] is not consistent with resolved path [Mock for ListEffectiveStatement, ");
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> DefaultSchemaTreeInference.verifiedOf(modelContext, ImmutableList.of(container)));
+        assertEquals("Provided path [container] is not consistent with resolved path [list]", ex.getMessage());
     }
 }

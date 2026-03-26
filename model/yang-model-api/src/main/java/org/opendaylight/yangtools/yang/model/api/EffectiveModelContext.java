@@ -7,16 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -31,20 +30,46 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeRoot;
  * it gives access to individual {@link ModuleEffectiveStatement}s that comprise it. It also supports resolution of
  * schema node identifiers via {@link #findSchemaTreeNode(SchemaNodeIdentifier)}.
  */
-@Beta
-// FIXME: 8.0.0: evaluate if we still need to extend SchemaContext here
-public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
+public interface EffectiveModelContext extends Immutable, SchemaTreeRoot {
 
-    @NonNull Map<QNameModule, ModuleEffectiveStatement> getModuleStatements();
+    @NonNull Map<QNameModule, ModuleEffectiveStatement> namespaceToModule();
 
+    default @NonNull Collection<ModuleEffectiveStatement> modules() {
+        return namespaceToModule().values();
+    }
+
+    default @Nullable ModuleEffectiveStatement moduleByNamespace(final @NonNull QNameModule namespace) {
+        return namespaceToModule().get(requireNonNull(namespace));
+    }
+
+    default Optional<ModuleEffectiveStatement> findModuleByNamespace(final @NonNull QNameModule namespace) {
+        return Optional.ofNullable(moduleByNamespace(namespace));
+    }
+
+    default @NonNull ModuleEffectiveStatement getModuleByNamespace(final @NonNull QNameModule namespace) {
+        final var module = moduleByNamespace(namespace);
+        if (module == null) {
+            throw new NoSuchElementException("module for " + namespace + " not found");
+        }
+        return module;
+    }
+
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    default @NonNull Map<QNameModule, ModuleEffectiveStatement> getModuleStatements() {
+        return namespaceToModule();
+    }
+
+    @Deprecated(since = "16.0.0", forRemoval = true)
     default @Nullable ModuleEffectiveStatement lookupModule(final QNameModule moduleName) {
-        return getModuleStatements().get(requireNonNull(moduleName));
+        return moduleByNamespace(requireNonNull(moduleName));
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     default @NonNull Optional<ModuleEffectiveStatement> findModuleStatement(final QNameModule moduleName) {
-        return Optional.ofNullable(getModuleStatements().get(requireNonNull(moduleName)));
+        return findModuleByNamespace(requireNonNull(moduleName));
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     default @NonNull Optional<ModuleEffectiveStatement> findModuleStatement(final QName moduleName) {
         return findModuleStatement(moduleName.getModule());
     }
@@ -56,9 +81,8 @@ public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
      * @param name string with the module name
      * @return set of module instances with specified name.
      */
-    default @NonNull Collection<@NonNull ModuleEffectiveStatement> findModuleStatements(final String name) {
-        return Collections2.transform(findModules(name), Module::asEffectiveStatement);
-    }
+    // FIXME: rename
+    @NonNull Collection<@NonNull ModuleEffectiveStatement> findModuleStatements(@NonNull String name);
 
     /**
      * Returns module instance (from the context) with concrete namespace. Returned collection is required to have its
@@ -67,15 +91,15 @@ public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
      * @param namespace XMLNamespace instance with specified namespace
      * @return module instance which has namespace equal to the {@code namespace} or {@code null} in other cases
      */
-    default @NonNull Collection<@NonNull ModuleEffectiveStatement> findModuleStatements(
-            final XMLNamespace namespace) {
-        return Collections2.transform(findModules(namespace), Module::asEffectiveStatement);
-    }
+    // FIXME: rename
+    @NonNull Collection<@NonNull ModuleEffectiveStatement> findModuleStatements(@NonNull XMLNamespace namespace);
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     default @NonNull ModuleEffectiveStatement getModuleStatement(final QNameModule moduleName) {
-        return verifyNotNull(getModuleStatements().get(requireNonNull(moduleName)));
+        return getModuleByNamespace(requireNonNull(moduleName));
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     default @NonNull ModuleEffectiveStatement getModuleStatement(final QName moduleName) {
         return getModuleStatement(moduleName.getModule());
     }
@@ -89,7 +113,7 @@ public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
      */
     @Override
     default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final SchemaNodeIdentifier path) {
-        return findModuleStatement(path.firstNodeIdentifier().getModule())
-            .flatMap(module -> module.findSchemaTreeNode(path));
+        final var module = moduleByNamespace(path.firstNodeIdentifier().getModule());
+        return module == null ? Optional.empty() : module.findSchemaTreeNode(path);
     }
 }

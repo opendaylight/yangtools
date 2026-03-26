@@ -17,12 +17,11 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 
 class YT1485Test extends AbstractYangTest {
-    private static final QName FOO = QName.create("urn:foo", "foo");
-
     @Test
     void testLeafFooFeatureSupported() {
         assertEquals(List.of(), assertFoo("leaf", null).effectiveSubstatements());
@@ -47,9 +46,9 @@ class YT1485Test extends AbstractYangTest {
     private static ContainerEffectiveStatement assertFoo(final String dirName,
             final Set<QName> supportedFeatures) {
         final var foo = assertEffectiveModelDir("/bugs/YT1485/" + dirName, supportedFeatures)
-            .findModuleStatement(FOO).orElseThrow()
+            .getModuleByNamespace(QNameModule.of("urn:foo"))
             .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow();
-        assertEquals(FOO, foo.argument());
+        assertEquals(QName.create("urn:foo", "foo"), foo.argument());
         return foo;
     }
 }
