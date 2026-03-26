@@ -212,6 +212,7 @@ abstract class AbstractClassTemplate extends BaseTemplate {
 
         final var ifaces = type.getImplements();
         if (!ifaces.isEmpty()) {
+            sc.newLine();
             sc.append(" implements ");
 
             final var it = ifaces.iterator();
