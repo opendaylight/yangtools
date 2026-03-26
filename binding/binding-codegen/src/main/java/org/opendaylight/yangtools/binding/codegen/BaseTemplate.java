@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
@@ -38,6 +40,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -697,6 +700,37 @@ abstract class BaseTemplate extends JavaFileTemplate {
                 return sb.toString();
             }
             sb.append('\n');
+        }
+    }
+
+    /**
+     * {@return string with the source code for inner classes in JAVA format}
+     */
+    final CharSequence generateInnerClasses(final List<GeneratedType> innerTypes) {
+        final var innerClasses = new ArrayList<CharSequence>();
+        for (var innerType : innerTypes) {
+            if (innerType instanceof GeneratedTransferObject gto) {
+                final var innerJavaType = javaType().getEnclosedType(gto.name());
+                final var innerClass = gto instanceof UnionTypeObjectArchetype union
+                    ? UnionTypeObjectTemplate.generateAsInner(innerJavaType, union)
+                    : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
+                if (!innerClass.isEmpty()) {
+                    innerClasses.add(innerClass);
+                }
+            }
+        }
+        if (innerClasses.isEmpty()) {
+            return "";
+        }
+
+        final var sc = new StringConcatenation();
+        final var it = innerClasses.iterator();
+        while (true) {
+            sc.append(it.next());
+            if (!it.hasNext()) {
+                return sc;
+            }
+            sc.append("\n");
         }
     }
 }

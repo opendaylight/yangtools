@@ -78,7 +78,7 @@ class ClassTemplate extends AbstractClassTemplate {
         «ENDIF»
         «generateClassDeclaration(isInnerClass)» {
             «suidDeclaration»
-            «innerClassesDeclarations»
+            «generateInnerClasses(type.enclosedTypes)»
             «generateInnerEnumTypeObjects(enums)»
             «constantsDeclarations»
             «generateFields»
@@ -181,19 +181,6 @@ class ClassTemplate extends AbstractClassTemplate {
                     «ENDFOR»
                 };
         }
-    '''
-
-    /**
-     * Template method which generates inner classes inside this interface.
-     *
-     * @return string with the source code for inner classes in JAVA format
-     */
-    def protected innerClassesDeclarations() '''
-        «IF !type.enclosedTypes.empty»
-            «FOR innerClass : type.enclosedTypes SEPARATOR "\n"»
-                «generateInnerClass(innerClass)»
-            «ENDFOR»
-        «ENDIF»
     '''
 
     def package constructors() '''
