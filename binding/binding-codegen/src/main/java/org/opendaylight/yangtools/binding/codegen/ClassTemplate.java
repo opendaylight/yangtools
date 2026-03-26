@@ -240,11 +240,17 @@ class ClassTemplate extends BaseTemplate {
         }
 
         // fields
-        final var fields = generateFields();
-        if (!fields.isEmpty()) {
-            sc.append("    ");
-            sc.append(fields, "    ");
-            sc.newLineIfNotEmpty();
+        if (!properties.isEmpty()) {
+            for (var field : properties) {
+                sc.append("    private ");
+                if (field.isReadOnly()) {
+                    sc.append("final ");
+                }
+                sc.append(importedReturnType(field));
+                sc.append(" ");
+                sc.append(fieldName(field));
+                sc.append(";\n");
+            }
         }
 
         // length/range checkes
@@ -824,25 +830,6 @@ class ClassTemplate extends BaseTemplate {
         }
         sc.append("}\n");
         return sc;
-    }
-
-    /**
-     * {@return string with the class attributes in JAVA format}
-     */
-    private String generateFields() {
-        if (properties.isEmpty()) {
-            return "";
-        }
-
-        //    «FOR f : properties»
-        //        private«IF isReadOnly(f)» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
-        //    «ENDFOR»
-        final var sb = new StringBuilder();
-        for (var field : properties) {
-            sb.append(field.isReadOnly() ? "private final " : "private ").append(importedReturnType(field)).append(' ')
-                .append(fieldName(field)).append(";\n");
-        }
-        return sb.toString();
     }
 
     CharSequence constructors() {
