@@ -277,23 +277,6 @@ class ClassTemplate extends AbstractClassTemplate {
         «ENDFOR»
     '''
 
-    def package copyConstructor() '''
-    /**
-     * Creates a copy from Source Object.
-     *
-     * @param source Source object
-     */
-    public «type.simpleName»(«type.simpleName» source) {
-        «IF !parentProperties.empty»
-            super(source);
-        «ENDIF»
-        «FOR p : properties»
-            «val fieldName = p.fieldName»
-            this.«fieldName» = source.«fieldName»;
-        «ENDFOR»
-    }
-    '''
-
     def protected parentConstructor() '''
     /**
      * Creates a new instance from «genTO.superType.importedName»
