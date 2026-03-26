@@ -875,13 +875,6 @@ class ClassTemplate extends BaseTemplate {
                 +  "}\n";
         }
 
-        //    «FOR field : properties SEPARATOR "\n"»
-        //        «field.asGetterMethod»
-        //        «IF !field.readOnly»
-        //            «field.asSetterMethod»
-        //        «ENDIF»
-        //    «ENDFOR»
-
         final var sc = new StringConcatenation();
         final var it = properties.iterator();
         while (true) {
