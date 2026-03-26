@@ -466,55 +466,10 @@ class ClassTemplate extends AbstractClassTemplate {
     def protected generateFields() '''
         «IF !properties.empty»
             «FOR f : properties»
-                private«IF isReadOnly(f)» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
+                private«IF f.readOnly» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
     '''
-
-    protected def isReadOnly(GeneratedProperty field) {
-        return field.readOnly
-    }
-
-    /**
-     * Template method which generates the method <code>hashCode()</code>.
-     *
-     * @return string with the <code>hashCode()</code> method definition in JAVA format
-     */
-    def protected generateHashCode() {
-        val props = genTO.hashCodeIdentifiers
-        val size = props.size
-        if (size == 0) {
-            return ""
-        }
-        return '''
-            @«OVERRIDE.importedName»
-            public int hashCode() {
-                «IF size != 1»
-                    final int prime = 31;
-                    int result = 1;
-                    «FOR property : props»
-                        result = prime * result + «property.importedHashCodeUtilClass».hashCode(«property.fieldName»);
-                    «ENDFOR»
-                    return result;
-                «ELSE»
-                    «val prop = props.first»
-                    «IF prop.returnType.equals(Types.primitiveBooleanType())»
-                        return «BOOLEAN.importedName».hashCode(«prop.fieldName»);
-                    «ELSE»
-                        return «CODEHELPERS.importedName».wrapperHashCode(«prop.fieldName»);
-                    «ENDIF»
-                «ENDIF»
-            }
-        '''
-    }
-
-    def private importedHashCodeUtilClass(GeneratedProperty prop) {
-        val propType = prop.returnType
-        if (propType.equals(Types.primitiveBooleanType)) {
-            return BOOLEAN.importedName
-        }
-        return propType.importedUtilClass
-    }
 
     /**
      * Template method which generates the method <code>equals()</code>.

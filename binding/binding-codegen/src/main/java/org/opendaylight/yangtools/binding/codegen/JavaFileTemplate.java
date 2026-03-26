@@ -233,7 +233,7 @@ class JavaFileTemplate {
      * @param returnType A property return Type
      * @return Imported class name
      */
-    final String importedUtilClass(final Type returnType) {
+    final @NonNull String importedUtilClass(final Type returnType) {
         return importedName(returnType.simpleName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
     }
 
