@@ -311,6 +311,64 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         }
     }
 
+    CharSequence allValuesConstructor() {
+        //        public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
+        //            «IF !parentProperties.empty»
+        //                super(«parentProperties.asArguments»);
+        //            «ENDIF»
+        //            «FOR p : allProperties»
+        //                «generateRestrictions(type, p.fieldName, p.returnType)»
+        //            «ENDFOR»
+        //
+        //            «FOR p : properties»
+        //                «val fieldName = p.fieldName»
+        //                «IF p.returnType.simpleName.endsWith("[]")»
+        //                    this.«fieldName» = «CODEHELPERS.importedName».copyArray(«fieldName»);
+        //                «ELSE»
+        //                    this.«fieldName» = «fieldName»;
+        //                «ENDIF»
+        //            «ENDFOR»
+        //        }
+
+        final var sc = new StringConcatenation();
+        sc.append("public ");
+        sc.append(type().simpleName());
+        sc.append("(");
+        sc.append(asArgumentsDeclaration(allProperties));
+        sc.append(") {\n");
+        if (!parentProperties.isEmpty()) {
+            sc.append("    super(");
+            sc.append(asArguments(parentProperties));
+            sc.append(");\n");
+        }
+        for (var prop : allProperties) {
+            sc.append("    ");
+            sc.append(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()), "    ");
+            sc.newLineIfNotEmpty();
+        }
+        sc.newLine();
+        for (var prop : properties) {
+            final var fieldName = BaseTemplate.fieldName(prop);
+            if (prop.getReturnType().simpleName().endsWith("[]")) {
+                sc.append("    this.");
+                sc.append(fieldName);
+                sc.append(" = ");
+                sc.append(importedName(CODEHELPERS));
+                sc.append(".copyArray(");
+                sc.append(fieldName);
+                sc.append(");\n");
+            } else {
+                sc.append("    this.");
+                sc.append(fieldName);
+                sc.append(" = ");
+                sc.append(fieldName);
+                sc.append(";\n");
+            }
+        }
+        sc.append("}\n");
+        return sc;
+    }
+
     String copyConstructor() {
         final var simpleName = type().simpleName();
 
