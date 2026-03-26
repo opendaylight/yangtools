@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
+import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
 import java.util.Comparator;
@@ -31,16 +34,40 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
+import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract class BaseTemplate extends JavaFileTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
+    private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
+        .addIgnoredStatement(ContactStatement.DEF)
+        .addIgnoredStatement(DescriptionStatement.DEF)
+        .addIgnoredStatement(OrganizationStatement.DEF)
+        .addIgnoredStatement(ReferenceStatement.DEF)
+        .build();
 
     @NonNullByDefault
     BaseTemplate(final GeneratedType type) {
@@ -365,6 +392,84 @@ abstract class BaseTemplate extends JavaFileTemplate {
         appendSnippet(sb, type);
         return additionalComment.isBlank() ? sb.toString()
             : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
+    }
+
+    private void appendSnippet(final StringBuilder sb, final GeneratedType genType) {
+        genType.getYangSourceDefinition().ifPresent(def -> {
+            sb.append('\n');
+
+            if (def instanceof Single single) {
+                final var node = single.getNode();
+
+                sb.append("<p>\n")
+                    .append("This class represents the following YANG schema fragment defined in module <b>")
+                    .append(def.getModule().argument().getLocalName()).append("</b>\n")
+                    .append("<pre>\n");
+                appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
+                sb.append("</pre>");
+
+                if (node instanceof SchemaNode schema) {
+//                    sb.append("The schema path to identify an instance is\n");
+//                    appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
+//                    sb.append("</i>\n");
+
+                    if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
+                        || schema instanceof NotificationDefinition && !BindingTypes.isNotificationBody(genType)) {
+                        final String builderName = genType.simpleName() + Naming.BUILDER_SUFFIX;
+
+                        sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
+                        .append("}.\n")
+                        .append("@see ").append(builderName).append('\n');
+                        if (node instanceof ListSchemaNode list) {
+                            final var keyDef = list.getKeyDefinition();
+                            if (!keyDef.isEmpty()) {
+                                sb.append("@see ").append(genType.simpleName()).append(Naming.KEY_SUFFIX);
+                            }
+                            sb.append('\n');
+                        }
+                    }
+                } else if (node instanceof AugmentEffectiveStatement) {
+                    // Find target Augmentation<Foo> and reference Foo
+                    final var augType = findAugmentationArgument(genType);
+                    if (augType != null) {
+                        sb.append("\n\n")
+                        .append("@see ").append(importedName(augType));
+                    }
+                }
+                if (node instanceof TypedefEffectiveStatement && genType instanceof GeneratedTransferObject genTO) {
+                    final var augType = genTO.getSuperType();
+                    if (augType != null) {
+                        sb.append("\n\n")
+                        .append("@see ").append(augType.simpleName());
+                    }
+                }
+            } else if (def instanceof Multiple multiple) {
+                sb.append("<pre>\n");
+                for (var node : multiple.getNodes()) {
+                    appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
+                }
+                sb.append("</pre>\n");
+            }
+        });
+    }
+
+    private static void appendYangSnippet(final StringBuilder sb, final ModuleEffectiveStatement module,
+            final DeclaredStatement<?> stmt) {
+        for (String str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
+            sb.append(replaceAllIllegalChars(encodeAngleBrackets(encodeJavadocSymbols(str))));
+        }
+    }
+
+    private static @Nullable Type findAugmentationArgument(final GeneratedType genType) {
+        for (var implType : genType.getImplements()) {
+            if (implType instanceof ParameterizedType parameterized) {
+                final var augmentType = BindingTypes.extractAugmentationTarget(parameterized);
+                if (augmentType != null) {
+                    return augmentType;
+                }
+            }
+        }
+        return null;
     }
 
     static final @NonNull String formatReference(final @Nullable String reference) {
