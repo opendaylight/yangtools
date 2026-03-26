@@ -163,7 +163,6 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
                  */
                 public\s""").append(importedName(Types.STRING)).append(" stringValue() {\n");
 
-
         for (var prop : finalProperties) {
             final var field = fieldName(prop);
             final var type = prop.getReturnType();

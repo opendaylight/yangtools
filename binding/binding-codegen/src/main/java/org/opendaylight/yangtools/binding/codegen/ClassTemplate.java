@@ -243,10 +243,14 @@ class ClassTemplate extends BaseTemplate {
         sc.append("    ");
         sc.append(constructors(), "    ");
         sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(defaultInstance(), "    ");
-        sc.newLineIfNotEmpty();
+
+        final var defaultInstance = defaultInstance();
+        if (!defaultInstance.isEmpty()) {
+            sc.newLine();
+            sc.append("    ");
+            sc.append(defaultInstance, "    ");
+            sc.newLineIfNotEmpty();
+        }
 
         final var propertyMethods = propertyMethods();
         if (!propertyMethods.isEmpty()) {
