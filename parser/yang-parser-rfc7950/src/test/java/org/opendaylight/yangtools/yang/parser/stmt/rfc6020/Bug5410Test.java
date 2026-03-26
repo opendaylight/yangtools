@@ -13,22 +13,26 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 class Bug5410Test extends AbstractYangTest {
-    private static final String FOO_NS = "foo";
+    private static final @NonNull QNameModule FOO_NS = QNameModule.of("foo");
 
     @Test
     void testYangPattern() {
-        final var context = assertEffectiveModelDir("/bugs/bug5410");
+        final var modelContext = assertEffectiveModelDir("/bugs/bug5410");
+        final var module = modelContext.getModuleStatement(FOO_NS);
+        final var leaf = assertInstanceOf(LeafEffectiveStatement.class,
+            module.findSchemaTreeNode(foo("leaf-with-pattern")).orElseThrow());
 
-        final PatternConstraint pattern = getPatternConstraintOf(context, "leaf-with-pattern");
+        final var pattern = assertInstanceOf(StringTypeDefinition.class,
+            leaf.toDataSchemaNode().typeDefinition()).getPatternConstraints().iterator().next();
 
         final String rawRegex = pattern.getRegularExpressionString();
         final String expectedYangRegex = """
@@ -47,13 +51,6 @@ class Bug5410Test extends AbstractYangTest {
             "$6$AnrKGc0V$B/0/A.pWg4HrrA6YiEJOtFGibQ9Fmm5.4rI/00gEz3QeB7joSxBU3YtbHDm6NSkS1dKTQy3BWhwKKDS8nB5S//";
         testPattern(javaRegexFromYang, List.of(value), List.of());
     }
-
-    private static PatternConstraint getPatternConstraintOf(final SchemaContext context, final String leafName) {
-        final var leaf = assertInstanceOf(LeafSchemaNode.class, context.getDataChildByName(foo(leafName)));
-        final var strType = assertInstanceOf(StringTypeDefinition.class, leaf.typeDefinition());
-        return strType.getPatternConstraints().iterator().next();
-    }
-
 
     private static void testPattern(final String javaRegex, final List<String> positiveMatches,
             final List<String> negativeMatches) {
