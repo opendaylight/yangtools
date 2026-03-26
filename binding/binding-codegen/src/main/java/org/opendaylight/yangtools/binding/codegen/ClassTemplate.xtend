@@ -9,12 +9,10 @@ package org.opendaylight.yangtools.binding.codegen
 
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
-import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
 import com.google.common.base.Verify
 import java.util.Collection
 import java.util.List
-import java.util.Map
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
@@ -198,39 +196,6 @@ class ClassTemplate extends AbstractClassTemplate {
         Verify.verify(TypeConstants.VALUE_PROP.equals(prop.name), "Unexpected property %s", prop)
         return prop
     }
-
-    /**
-     * Template method which generates JAVA constants.
-     *
-     * @return string with constants in JAVA format
-     */
-    def protected constantsDeclarations() '''
-        «IF !consts.empty»
-            «FOR c : consts»
-                «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
-                    «val cValue = c.value as Map<String, String>»
-                    «val jurPatternRef = JUR_PATTERN.importedName»
-                    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «JU_LIST.importedName».of(«
-                    FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
-                    «IF cValue.size == 1»
-                        private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(«TypeConstants.PATTERN_CONSTANT_NAME».getFirst());
-                        private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.iterator.next.escapeJava»";
-                    «ELSE»
-                        private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST» = «CODEHELPERS.importedName».compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
-                        private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
-                        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
-                    «ENDIF»
-                «ELSEIF TypeConstants.VALID_NAMES_NAME.equals(c.name)»
-                    «val cValue = c.value as BitsTypeDefinition»
-                    «val immutableSet = IMMUTABLE_SET.importedName»
-                    protected static final «immutableSet»<«STRING.importedName»> «TypeConstants.VALID_NAMES_NAME» = «immutableSet».of(«
-                    FOR bit : cValue.bits SEPARATOR ", "»"«bit.name»"«ENDFOR»);
-                «ELSE»
-                    «emitConstant(c)»
-                «ENDIF»
-            «ENDFOR»
-        «ENDIF»
-    '''
 
     /**
      * Template method which generates the method <code>equals()</code>.
