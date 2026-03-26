@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -152,38 +151,36 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             appendCopyAugmentation(sb);
         }
 
-        final var sc = new StringConcatenation();
         if (keyType != null && targetType.getImplements().contains(BindingTypes.entryObject(targetType, keyType))) {
             final var allProps = new ArrayList<>(properties);
             final var keyProps = BaseTemplate.keyConstructorArgs(keyType);
             for (var field : keyProps) {
                 removeProperty(allProps, field.getName());
             }
-            sc.append("    ");
-            sc.append(generateCopyKeys(keyProps), "    ");
-            sc.newLineIfNotEmpty();
-            sc.append("    ");
-            sc.append(generateCopyNonKeys(allProps), "    ");
-            sc.newLineIfNotEmpty();
+
+            appendCopyKeys(sb, keyProps);
+            appendCopyNonKeys(sb, allProps);
         } else {
-            sc.append("    ");
-            sc.append(generateCopyNonKeys(properties), "    ");
-            sc.newLineIfNotEmpty();
+            appendCopyNonKeys(sb, properties);
         }
 
-        return sb.append(sc).append("}\n").toString();
+        return sb.append("}\n").toString();
     }
 
-    // FIXME: 'append' alternative to this
-    abstract CharSequence generateCopyKeys(List<GeneratedProperty> keyProps);
+    /**
+     * Append the code to copy key components, with four spaces of indentation.
+     */
+    abstract void appendCopyKeys(StringBuilder sb, List<GeneratedProperty> keyProps);
 
-    // FIXME: 'append' alternative to this
-    abstract CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props);
+    /**
+     * Append the code to copy non-key-components, with four spaces of indentation.
+     */
+    abstract void appendCopyNonKeys(StringBuilder sb, Collection<BuilderGeneratedProperty> props);
 
     /**
      * Append the code to copy augmentations from a {@code base} local variable, with four spaces of indentation.
      */
-    abstract void appendCopyAugmentation(@NonNull StringBuilder sb);
+    abstract void appendCopyAugmentation(StringBuilder sb);
 
     final CharSequence generateDeprecatedAnnotation(final @Nullable List<AnnotationType> annotations) {
         if (annotations != null) {

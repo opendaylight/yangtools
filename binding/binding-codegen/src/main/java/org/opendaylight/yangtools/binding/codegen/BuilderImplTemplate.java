@@ -290,20 +290,18 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    String generateCopyKeys(final List<GeneratedProperty> keyProps) {
-        final var sb = new StringBuilder().append("final var key = key();\n");
+    void appendCopyKeys(final StringBuilder sb, final List<GeneratedProperty> keyProps) {
+        sb.append("    final var key = key();\n");
         for (var field : keyProps) {
-            sb.append("this.").append(fieldName(field)).append(" = key.").append(getterMethodName(field))
+            sb.append("    this.").append(fieldName(field)).append(" = key.").append(getterMethodName(field))
                 .append("();\n");
         }
-        return sb.toString();
     }
 
     @Override
-    String generateCopyNonKeys(final Collection<BuilderGeneratedProperty> props) {
-        final var sb = new StringBuilder();
+    void appendCopyNonKeys(final StringBuilder sb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
-            sb.append("this.").append(fieldName(field)).append(" = ");
+            sb.append("    this.").append(fieldName(field)).append(" = ");
 
             if (field.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
                 sb.append(importedName(CODEHELPERS)).append(".emptyToNull(base.").append(field.getGetterName())
@@ -312,7 +310,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 sb.append("base.").append(field.getGetterName()).append("();\n");
             }
         }
-        return sb.toString();
     }
 
     @Override

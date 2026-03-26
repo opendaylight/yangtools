@@ -1087,24 +1087,20 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    protected String generateCopyKeys(final List<GeneratedProperty> keyProps) {
-        final var sb = new StringBuilder()
-            .append("this.key = base.").append(Naming.KEY_AWARE_KEY_NAME).append("();\n");
+    void appendCopyKeys(final StringBuilder sb, final List<GeneratedProperty> keyProps) {
+        sb.append("    this.key = base.").append(Naming.KEY_AWARE_KEY_NAME).append("();\n");
         for (var field : keyProps) {
-            sb.append("this.").append(fieldName(field)).append(" = base.").append(getterMethodName(field))
+            sb.append("    this.").append(fieldName(field)).append(" = base.").append(getterMethodName(field))
                 .append("();\n");
         }
-        return sb.toString();
     }
 
     @Override
-    protected String generateCopyNonKeys(final Collection<BuilderGeneratedProperty> props) {
-        final var sb = new StringBuilder();
+    void appendCopyNonKeys(final StringBuilder sb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
-            sb.append("this.").append(fieldName(field)).append(" = base.").append(field.getGetterName())
+            sb.append("    this.").append(fieldName(field)).append(" = base.").append(field.getGetterName())
                 .append("();\n");
         }
-        return sb.toString();
     }
 
     @Override
