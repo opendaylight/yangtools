@@ -193,11 +193,15 @@ class ClassTemplate extends BaseTemplate {
         final var sc = new StringConcatenation();
         sc.append(wrapToDocumentation(formatDataForJavaDoc(type())));
         sc.newLineIfNotEmpty();
-        sc.append(annotationDeclaration());
-        sc.newLineIfNotEmpty();
+
+        final var annotation = annotationDeclaration();
+        if (!annotation.isEmpty()) {
+            sc.append(annotation);
+        }
+
         if (!isInnerClass) {
             sc.append(generatedAnnotation());
-            sc.newLineIfNotEmpty();
+            sc.newLine();
         }
         sc.append(generateClassDeclaration(isInnerClass));
         sc.append(" {\n");
@@ -211,22 +215,43 @@ class ClassTemplate extends BaseTemplate {
             sc.append("L;\n");
         }
 
-        sc.append("    ");
-        sc.append(generateInnerClasses(type().getEnclosedTypes()), "    ");
-        sc.newLineIfNotEmpty();
-        sc.append("    ");
-        sc.append(generateInnerEnumTypeObjects(enums), "    ");
-        sc.newLineIfNotEmpty();
-        sc.append("    ");
-        sc.append(constantsDeclarations(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.append("    ");
-        sc.append(generateFields(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
+        // inner classes
+        final var innerClasses = generateInnerClasses(type().getEnclosedTypes());
+        if (!innerClasses.isEmpty()) {
+            sc.append("    ");
+            sc.append(innerClasses, "    ");
+            sc.newLineIfNotEmpty();
+        }
+
+        // inner EnumTypeObjects
+        final var innerEnumTypeObjects = generateInnerEnumTypeObjects(enums);
+        if (!innerEnumTypeObjects.isEmpty()) {
+            sc.append("    ");
+            sc.append(innerEnumTypeObjects, "    ");
+            sc.newLineIfNotEmpty();
+        }
+
+        // constants
+        final var constants = constantsDeclarations();
+        if (!constants.isEmpty()) {
+            sc.append("    ");
+            sc.append(constants, "    ");
+            sc.newLineIfNotEmpty();
+        }
+
+        // fields
+        final var fields = generateFields();
+        if (!fields.isEmpty()) {
+            sc.append("    ");
+            sc.append(fields, "    ");
+            sc.newLineIfNotEmpty();
+        }
+
+        // length/range checkes
         if (restrictions != null) {
             final var length = restrictions.getLengthConstraint();
             if (length.isPresent()) {
+                sc.newLine();
                 sc.append("    ");
                 sc.append(LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
                     length.orElseThrow(), this), "    ");
@@ -234,11 +259,13 @@ class ClassTemplate extends BaseTemplate {
             }
             final var range = restrictions.getRangeConstraint();
             if (range.isPresent()) {
+                sc.newLine();
                 sc.append("    ");
                 sc.append(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), this), "    ");
                 sc.newLineIfNotEmpty();
             }
         }
+
         sc.newLine();
         sc.append("    ");
         sc.append(constructors(), "    ");
