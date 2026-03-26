@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen
 
-import static java.util.Objects.requireNonNull
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER
@@ -22,9 +21,7 @@ import java.util.Collection
 import java.util.List
 import java.util.Map
 import org.opendaylight.yangtools.binding.model.api.ConcreteType
-import org.opendaylight.yangtools.binding.model.api.Constant
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.binding.model.api.Type
@@ -38,18 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
  */
 // FIXME: YANGTOOLS-1806: convert to Java
 class ClassTemplate extends AbstractClassTemplate {
-    /**
-     * List of enumeration which are generated as JAVA enum type.
-     */
-    protected val List<EnumTypeObjectArchetype> enums
-
-    /**
-     * List of constant instances which are generated as JAVA public static final attributes.
-     */
-    protected val List<Constant> consts
-
-    val AbstractRangeGenerator<?> rangeGenerator
-
     /**
      * Creates instance of this class with concrete <code>genType</code>.
      *
@@ -66,15 +51,6 @@ class ClassTemplate extends AbstractClassTemplate {
      */
     new(AbstractJavaGeneratedType javaType, GeneratedTransferObject genType) {
         super(javaType, genType)
-
-        this.enums = genType.enumerations
-        this.consts = genType.constantDefinitions
-
-        if (restrictions !== null && restrictions.rangeConstraint.present) {
-            rangeGenerator = requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genType)))
-        } else {
-            rangeGenerator = null
-        }
     }
 
     /**
@@ -86,7 +62,7 @@ class ClassTemplate extends AbstractClassTemplate {
         return generateBody(true)
     }
 
-    override protected body() {
+    override package body() {
         generateBody(false);
     }
 

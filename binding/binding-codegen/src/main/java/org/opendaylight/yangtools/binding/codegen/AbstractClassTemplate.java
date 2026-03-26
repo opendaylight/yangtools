@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -57,6 +59,17 @@ abstract class AbstractClassTemplate extends BaseTemplate {
     final @NonNull List<GeneratedProperty> finalProperties;
     final @NonNull List<GeneratedProperty> parentProperties;
     final @NonNull List<GeneratedProperty> allProperties;
+
+    /**
+     * List of enumeration which are generated as JAVA enum type.
+     */
+    final @NonNull List<EnumTypeObjectArchetype> enums;
+    /**
+     * List of constant instances which are generated as JAVA public static final attributes.
+     */
+    final @NonNull List<Constant> consts;
+
+    final AbstractRangeGenerator<?> rangeGenerator;
     final Restrictions restrictions;
 
     @NonNullByDefault
@@ -73,6 +86,12 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         allProperties = Stream.concat(properties.stream(), parentProperties.stream())
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
+
+        enums = genType.getEnumerations();
+        consts = genType.getConstantDefinitions();
+        rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
+            ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genType)))
+                : null;
     }
 
     /**
