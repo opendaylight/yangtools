@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
@@ -294,7 +295,7 @@ public final class Naming {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
 
-        for (String p : DOT_SPLITTER.split(packageName.toLowerCase(Locale.ENGLISH))) {
+        for (String p : DOT_SPLITTER.split(packageName.toLowerCase(Locale.ROOT))) {
             if (first) {
                 first = false;
             } else {
@@ -400,7 +401,8 @@ public final class Naming {
      * @param str the string that should get an upper case first character.
      * @return the {@link String} {@code str} with an upper case first character.
      */
-    public static @NonNull String toFirstUpper(final @NonNull String str) {
+    @NonNullByDefault
+    public static String toFirstUpper(final String str) {
         if (str.isEmpty()) {
             return str;
         }
@@ -408,9 +410,9 @@ public final class Naming {
             return str;
         }
         if (str.length() == 1) {
-            return str.toUpperCase(Locale.ENGLISH);
+            return str.toUpperCase(Locale.ROOT);
         }
-        return str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1);
     }
 
     /**
@@ -420,8 +422,10 @@ public final class Naming {
      * @param str the string that should get an lower case first character. May be <code>null</code>.
      * @return the {@link String} {@code str} with an lower case first character or <code>null</code> if the input
      *         {@link String} {@code str} was empty.
+     * @since 15.0.3
      */
-    private static @NonNull String toFirstLower(final @NonNull String str) {
+    @NonNullByDefault
+    public static String toFirstLower(final String str) {
         if (str.isEmpty()) {
             return str;
         }
@@ -429,9 +433,9 @@ public final class Naming {
             return str;
         }
         if (str.length() == 1) {
-            return str.toLowerCase(Locale.ENGLISH);
+            return str.toLowerCase(Locale.ROOT);
         }
-        return str.substring(0, 1).toLowerCase(Locale.ENGLISH) + str.substring(1);
+        return str.substring(0, 1).toLowerCase(Locale.ROOT) + str.substring(1);
     }
 
     /**
