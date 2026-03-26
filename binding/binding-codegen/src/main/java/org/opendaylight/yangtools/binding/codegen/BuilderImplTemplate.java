@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
@@ -317,8 +316,11 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    String generateCopyAugmentation(final Type implType) {
-        return keyType == null ? "super(base." + AUGMENTATION_FIELD + ");\n"
-            : "super(base." + AUGMENTATION_FIELD + ", extractKey(base));\n";
+    void appendCopyAugmentation(final StringBuilder sb) {
+        sb.append("    super(base.").append(AUGMENTATION_FIELD);
+        if (keyType != null) {
+            sb.append(", extractKey(base)");
+        }
+        sb.append(");\n");
     }
 }

@@ -1108,16 +1108,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    protected CharSequence generateCopyAugmentation(final Type implType) {
-        final var sc = new StringConcatenation();
-        sc.append("final var aug = base.augmentations();\n");
-        sc.append("if (!aug.isEmpty()) {\n");
-        sc.append("    this.");
-        sc.append(Naming.AUGMENTATION_FIELD);
-        sc.append(" = new ");
-        sc.append(importedName(JU_HASHMAP));
-        sc.append("<>(aug);\n");
-        sc.append("}\n");
-        return sc;
+    void appendCopyAugmentation(final StringBuilder sb) {
+        sb
+            .append("    final var aug = base.augmentations();\n")
+            .append("    if (!aug.isEmpty()) {\n")
+            .append("        this.").append(Naming.AUGMENTATION_FIELD).append(" = new ")
+                .append(importedName(JU_HASHMAP)).append("<>(aug);\n")
+            .append("    }\n");
     }
 }

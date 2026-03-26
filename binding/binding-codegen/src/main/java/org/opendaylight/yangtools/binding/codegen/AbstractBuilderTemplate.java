@@ -148,12 +148,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             .append(type().simpleName()).append("(final ").append(importedName(fromType)).append(" base) {\n");
 
         if (augmentType != null) {
-            // FIXME: create 'appendCopyAugmentation' method for use here
-            final var sc = new StringConcatenation();
-            sc.append("    ");
-            sc.append(generateCopyAugmentation(implType), "    ");
-            sc.newLineIfNotEmpty();
-            sb.append(sc);
+            appendCopyAugmentation(sb);
         }
 
         final var sc = new StringConcatenation();
@@ -184,8 +179,10 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     // FIXME: 'append' alternative to this
     abstract CharSequence generateCopyNonKeys(Collection<BuilderGeneratedProperty> props);
 
-    // FIXME: 'append' alternative to this
-    abstract CharSequence generateCopyAugmentation(Type implType);
+    /**
+     * Append the code to copy augmentations from a {@code base} local variable, with four spaces of indentation.
+     */
+    abstract void appendCopyAugmentation(@NonNull StringBuilder sb);
 
     final CharSequence generateDeprecatedAnnotation(final @Nullable List<AnnotationType> annotations) {
         if (annotations != null) {
