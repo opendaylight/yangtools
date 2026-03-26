@@ -173,7 +173,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var sb = new StringBuilder();
         while (true) {
             final var parameter = it.next();
-            sb.append(importedName(parameter.getReturnType())).append(' ').append(fieldName(parameter));
+            sb.append(importedReturnType(parameter)).append(' ').append(fieldName(parameter));
             if (!it.hasNext()) {
                 return sb.toString();
             }
@@ -328,7 +328,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     @NonNullByDefault
     final CharSequence asSetterMethod(final GeneratedProperty field) {
         final var fieldName = fieldName(field);
-        final var fieldType = importedName(field.getReturnType());
+        final var fieldType = importedReturnType(field);
         final var suffix = StringExtensions.toFirstUpper(field.getName());
         final var typeName = type().simpleName();
 

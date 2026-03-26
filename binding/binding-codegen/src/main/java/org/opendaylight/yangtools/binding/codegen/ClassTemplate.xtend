@@ -459,19 +459,6 @@ class ClassTemplate extends AbstractClassTemplate {
     '''
 
     /**
-     * Template method which generates JAVA class attributes.
-     *
-     * @return string with the class attributes in JAVA format
-     */
-    def protected generateFields() '''
-        «IF !properties.empty»
-            «FOR f : properties»
-                private«IF f.readOnly» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
-            «ENDFOR»
-        «ENDIF»
-    '''
-
-    /**
      * Template method which generates the method <code>equals()</code>.
      *
      * @return string with the <code>equals()</code> method definition in JAVA format

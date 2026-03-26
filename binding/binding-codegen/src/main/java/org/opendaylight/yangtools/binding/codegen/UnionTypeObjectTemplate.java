@@ -139,7 +139,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         while (true) {
             final var prop = it.next();
             final var fieldName = fieldName(prop);
-            final var propType = importedName(prop.getReturnType());
+            final var propType = importedReturnType(prop);
             sb
                 .append("public ").append(simpleName).append('(').append(propType).append(' ').append(fieldName)
                     .append(") {\n")

@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMember;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
 /**
@@ -166,35 +167,48 @@ class JavaFileTemplate {
         return type;
     }
 
-    final @NonNull String importedJavadocName(final @NonNull Type intype) {
+    @NonNullByDefault
+    final String importedJavadocName(final Type intype) {
         return importedName(intype instanceof ParameterizedType parameterized ? parameterized.getRawType() : intype);
     }
 
-    final @NonNull String importedName(final @NonNull Type intype) {
+    @NonNullByDefault
+    final String importedName(final Type intype) {
         return javaType.getReferenceString(intype);
     }
 
-    final @NonNull String importedName(final @NonNull Type intype, final @NonNull String annotation) {
+    @NonNullByDefault
+    final String importedName(final Type intype, final String annotation) {
         return javaType.getReferenceString(intype, annotation);
     }
 
-    final @NonNull String importedName(final @NonNull JavaTypeName intype) {
+    @NonNullByDefault
+    final String importedName(final JavaTypeName intype) {
         return javaType.getReferenceString(intype);
     }
 
-    final @NonNull String importedNonNull(final @NonNull Type intype) {
+    @NonNullByDefault
+    final String importedNonNull(final Type intype) {
         return importedName(intype, importedName(NONNULL));
     }
 
-    final @NonNull String importedNullable(final @NonNull Type intype) {
+    @NonNullByDefault
+    final String importedNullable(final Type intype) {
         return importedName(intype, importedName(NULLABLE));
     }
 
-    final @NonNull String fullyQualifiedNonNull(final @NonNull Type intype) {
+    @NonNullByDefault
+    final String importedReturnType(final TypeMember member) {
+        return importedName(member.getReturnType());
+    }
+
+    @NonNullByDefault
+    final String fullyQualifiedNonNull(final Type intype) {
         return fullyQualifiedName(intype, importedName(NONNULL));
     }
 
-    final @NonNull String fullyQualifiedName(final @NonNull Type intype, final @NonNull String annotation) {
+    @NonNullByDefault
+    final String fullyQualifiedName(final Type intype, final String annotation) {
         return javaType.getFullyQualifiedReference(intype, annotation);
     }
 
