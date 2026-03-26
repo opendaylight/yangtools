@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -1031,7 +1030,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     @Override
     String formatDataForJavaDoc(final GeneratedType type) {
         final var typeDescription = createDescription(type);
-        if (StringExtensions.isNullOrEmpty(typeDescription)) {
+        if (typeDescription == null || typeDescription.isEmpty()) {
             return "";
         }
 
