@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
@@ -17,16 +16,12 @@ import com.google.common.base.MoreObjects;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.annotation.processing.Generated;
 import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNull;
@@ -67,23 +62,6 @@ import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
  */
 class JavaFileTemplate {
-    @NonNullByDefault
-    sealed interface TypeAnalysis permits DefaultTypeAnalysis {
-
-        Set<BuilderGeneratedProperty> properties();
-
-        @Nullable ParameterizedType augmentType();
-    }
-
-    @NonNullByDefault
-    private record DefaultTypeAnalysis(
-            Set<BuilderGeneratedProperty> properties,
-            @Nullable ParameterizedType augmentType) implements TypeAnalysis {
-        DefaultTypeAnalysis {
-            requireNonNull(properties);
-        }
-    }
-
     /**
      * {@code java.lang.Class} as a JavaTypeName.
      */
@@ -183,7 +161,6 @@ class JavaFileTemplate {
      */
     static final @NonNull JavaTypeName MOREOBJECTS = JavaTypeName.create(MoreObjects.class);
 
-    private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
@@ -192,7 +169,6 @@ class JavaFileTemplate {
         .addIgnoredStatement(OrganizationStatement.DEF)
         .addIgnoredStatement(ReferenceStatement.DEF)
         .build();
-    private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
     private final @NonNull AbstractJavaGeneratedType javaType;
     private final @NonNull GeneratedType type;
@@ -290,19 +266,6 @@ class JavaFileTemplate {
         return "@" + importedName(GENERATED) + "(\"mdsal-binding-generator\")";
     }
 
-    /**
-     * Run type analysis, which results in identification of the augmentable type, as well as all methods available
-     * to the type, expressed as properties.
-     */
-    static @NonNull TypeAnalysis analyzeTypeHierarchy(final GeneratedType type) {
-        final var methods = new LinkedHashSet<MethodSignature>();
-        final var augmentType = createMethods(type, methods);
-
-        return new DefaultTypeAnalysis(
-            propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).collect(Collectors.toUnmodifiableList())),
-            augmentType);
-    }
-
     static final Restrictions restrictionsForSetter(final Type actualType) {
         return actualType instanceof GeneratedType ? null : getRestrictions(actualType);
     }
@@ -323,64 +286,6 @@ class JavaFileTemplate {
      */
     static final String cloneCall(final GeneratedProperty property) {
         return property.getReturnType().simpleName().endsWith("[]") ? ".clone()" : "";
-    }
-
-    /**
-     * Returns set of method signature instances which contains all the methods of the <code>genType</code>
-     * and all the methods of the implemented interfaces.
-     *
-     * @returns set of method signature instances
-     */
-    private static @Nullable ParameterizedType createMethods(final GeneratedType type,
-            final Set<MethodSignature> methods) {
-        methods.addAll(type.getMethodDefinitions());
-        return collectImplementedMethods(type, methods, type.getImplements());
-    }
-
-    /**
-     * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code>
-     * and recursively their implemented interfaces.
-     *
-     * @param methods set of method signatures
-     * @param implementedIfcs list of implemented interfaces
-     */
-    private static @Nullable ParameterizedType collectImplementedMethods(final GeneratedType type,
-            final Set<MethodSignature> methods, final List<Type> implementedIfcs) {
-        if (implementedIfcs == null || implementedIfcs.isEmpty()) {
-            return null;
-        }
-
-        ParameterizedType augmentType = null;
-        for (var implementedIfc : implementedIfcs) {
-            if (implementedIfc instanceof GeneratedType ifc && !(implementedIfc instanceof GeneratedTransferObject)) {
-                addImplMethods(methods, ifc);
-
-                final var t = collectImplementedMethods(type, methods, ifc.getImplements());
-                if (t != null && augmentType == null) {
-                    augmentType = t;
-                }
-            } else if (implementedIfc instanceof ParameterizedType parameterized) {
-                final var augmentation = BindingTypes.extractAugmentableTarget(parameterized);
-                if (augmentation != null) {
-                    augmentType = BindingTypes.augmentation(augmentation);
-                }
-            }
-        }
-
-        return augmentType;
-    }
-
-    private static void addImplMethods(final Set<MethodSignature> methods, final GeneratedType implType) {
-        for (var implMethod : implType.getMethodDefinitions()) {
-            if (hasOverrideAnnotation(implMethod)) {
-                methods.add(implMethod);
-            } else {
-                final var implMethodName = implMethod.getName();
-                if (Naming.isGetterMethodName(implMethodName) && getterByName(methods, implMethodName) == null) {
-                    methods.add(implMethod);
-                }
-            }
-        }
     }
 
     static final @Nullable MethodSignature getterByName(final Collection<MethodSignature> methods,
@@ -532,55 +437,5 @@ class JavaFileTemplate {
 
     private static boolean isSameProperty(final String getterName1, final String getterName2) {
         return propertyNameFromGetter(getterName1).equals(propertyNameFromGetter(getterName2));
-    }
-
-    /**
-     * Creates set of generated property instances from getter <code>methods</code>.
-     *
-     * @param methods set of method signature instances which should be transformed to list of properties
-     * @return set of generated property instances which represents the getter <code>methods</code>
-     */
-    @NonNullByDefault
-    private static Set<BuilderGeneratedProperty> propertiesFromMethods(final List<MethodSignature> methods) {
-        if (methods.isEmpty()) {
-            return Set.of();
-        }
-
-        final var result = new LinkedHashSet<BuilderGeneratedProperty>();
-        for (var method : methods) {
-            final var createdField = propertyFromGetter(method);
-            if (createdField != null) {
-                result.add(createdField);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Creates generated property instance from the getter <code>method</code> name and return type.
-     *
-     * @param method method signature from which is the method name and return type obtained
-     * @return generated property instance for the getter <code>method</code>
-     * @throws IllegalArgumentException <ul>
-     *                                    <li>if the {@code method} equals {@code null}</li>
-     *                                    <li>if the name of the {@code method} equals {@code null}</li>
-     *                                    <li>if the name of the {@code method} is empty</li>
-     *                                    <li>if the return type of the {@code method} equals {@code null}</li>
-     *                                  </ul>
-     */
-    private static BuilderGeneratedProperty propertyFromGetter(final MethodSignature method) {
-        checkArgument(method != null);
-        checkArgument(method.getReturnType() != null);
-        checkArgument(method.getName() != null);
-        checkArgument(!method.getName().isEmpty());
-        if (method.isDefault()) {
-            return null;
-        }
-        if (!Naming.isGetterMethodName(method.getName())) {
-            return null;
-        }
-
-        final String fieldName = StringExtensions.toFirstLower(method.getName().substring(GETTER_PREFIX_LENGTH));
-        return new BuilderGeneratedProperty(fieldName, method);
     }
 }
