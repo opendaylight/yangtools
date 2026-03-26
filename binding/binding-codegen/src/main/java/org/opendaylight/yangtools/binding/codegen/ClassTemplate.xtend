@@ -298,32 +298,6 @@ class ClassTemplate extends AbstractClassTemplate {
     '''
 
     /**
-     * Template method which generates JAVA class declaration.
-     *
-     * @param isInnerClass boolean value which specify if generated class is|isn't inner
-     * @return string with class declaration in JAVA format
-     */
-    def protected generateClassDeclaration(boolean isInnerClass) '''
-        public«
-        IF (isInnerClass)»«
-            " static final "»«
-        ELSEIF (type.abstract)»«
-            " abstract "»«
-        ELSE»«
-            finalClass()»«
-        ENDIF»class «type.simpleName»«
-        IF (genTO.superType !== null)»«
-            " extends "»«genTO.superType.importedName»«
-        ENDIF»
-        «IF (!type.implements.empty)»«
-            " implements "»«
-            FOR type : type.implements SEPARATOR ", "»«
-                type.importedName»«
-            ENDFOR»«
-        ENDIF
-    »'''
-
-    /**
      * Template method which generates JAVA constants.
      *
      * @return string with constants in JAVA format

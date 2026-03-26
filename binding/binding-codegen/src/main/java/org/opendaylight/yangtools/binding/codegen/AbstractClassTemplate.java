@@ -185,6 +185,47 @@ abstract class AbstractClassTemplate extends BaseTemplate {
     }
 
     /**
+     * Template method which generates JAVA class declaration.
+     *
+     * @param isInnerClass boolean value which specify if generated class is|isn't inner
+     * @return string with class declaration in JAVA format
+     */
+    CharSequence generateClassDeclaration(final boolean isInnerClass) {
+        final var type = type();
+
+        final var sc = new StringConcatenation();
+        sc.append("public");
+        if (isInnerClass) {
+            sc.append(" static final ");
+        } else {
+            sc.append(type.isAbstract() ? " abstract " : finalClass());
+        }
+        sc.append("class ");
+        sc.append(type.simpleName());
+
+        final var superType = genTO.getSuperType();
+        if (superType != null) {
+            sc.append(" extends ");
+            sc.append(importedName(superType));
+        }
+
+        final var ifaces = type.getImplements();
+        if (!ifaces.isEmpty()) {
+            sc.append(" implements ");
+
+            final var it = ifaces.iterator();
+            while (true) {
+                sc.append(importedName(it.next()));
+                if (!it.hasNext()) {
+                    break;
+                }
+                sc.append(", ");
+            }
+        }
+        return sc;
+    }
+
+    /**
      * {@return string with the class attributes in JAVA format}
      */
     final String generateFields() {
