@@ -155,6 +155,17 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         sb.append("    values[").append(index).append(']');
     }
 
+    @NonNull String finalClass() {
+        return " ";
+    }
+
+    final @NonNull String suidDeclaration() {
+        final var suid = genTO.getSUID();
+        return suid == null ? ""
+            : "@java.io.Serial\n"
+            + "private static final long serialVersionUID = " + suid.getValue() + "L;\n";
+    }
+
     final String annotationDeclaration() {
         final var annotations = genTO.getAnnotations();
         if (annotations.isEmpty()) {

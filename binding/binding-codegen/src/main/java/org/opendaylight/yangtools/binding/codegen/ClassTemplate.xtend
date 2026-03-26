@@ -406,17 +406,6 @@ class ClassTemplate extends AbstractClassTemplate {
         ENDIF
     »'''
 
-    def package String finalClass() {
-        return " "
-    }
-
-    def protected suidDeclaration() '''
-        «IF genTO.SUID !== null»
-            @java.io.Serial
-            private static final long serialVersionUID = «genTO.SUID.value»L;
-        «ENDIF»
-    '''
-
     /**
      * Template method which generates JAVA constants.
      *
