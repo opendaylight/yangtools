@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Abstract base class holding pure-Java parts of {@link ClassTemplate}.
@@ -151,5 +153,73 @@ abstract class AbstractClassTemplate extends BaseTemplate {
     @NonNullByDefault
     private static void appendValue(final StringBuilder sb, final int index) {
         sb.append("    values[").append(index).append(']');
+    }
+
+    /**
+     * {@return string with the {@code hashCode()} method definition in JAVA format}
+     */
+    final String generateHashCode() {
+        final var props = genTO.getHashCodeIdentifiers();
+        final int size = props.size();
+        if (size == 0) {
+            return "";
+        }
+
+        //      @«OVERRIDE.importedName»
+        //      public int hashCode() {
+        //          «IF size != 1»
+        //              final int prime = 31;
+        //              int result = 1;
+        //              «FOR property : props»
+        //                  result = prime * result + «property.importedHashCodeUtilClass».hashCode(
+        //«property.fieldName»);
+        //              «ENDFOR»
+        //              return result;
+        //          «ELSE»
+        //              «val prop = props.first»
+        //              «IF prop.returnType.equals(Types.primitiveBooleanType())»
+        //                  return «BOOLEAN.importedName».hashCode(«prop.fieldName»);
+        //              «ELSE»
+        //                  return «CODEHELPERS.importedName».wrapperHashCode(«prop.fieldName»);
+        //              «ENDIF»
+        //          «ENDIF»
+        //      }
+        final var sc = new StringConcatenation();
+        sc.append("@");
+        sc.append(importedName(OVERRIDE));
+        sc.newLine();
+        sc.append("public int hashCode() {\n");
+        if (size == 1) {
+            sc.append("    return ");
+            final var prop = props.getFirst();
+            if (prop.getReturnType().equals(Types.primitiveBooleanType())) {
+                sc.append(importedName(BOOLEAN), "    ");
+                sc.append(".hashCode(");
+            } else {
+                sc.append(importedName(CODEHELPERS), "    ");
+                sc.append(".wrapperHashCode(");
+            }
+            sc.append(fieldName(prop), "    ");
+            sc.append(");\n");
+        } else {
+            sc.append("    final int prime = 31;\n");
+            sc.append("    int result = 1;\n");
+            for (var property : props) {
+                sc.append("    result = prime * result + ");
+                sc.append(importedHashCodeUtilClass(property), "    ");
+                sc.append(".hashCode(");
+                sc.append(fieldName(property), "    ");
+                sc.append(");\n");
+            }
+            sc.append("    return result;\n");
+        }
+        sc.append("}\n");
+        return sc.toString();
+    }
+
+    @NonNullByDefault
+    final String importedHashCodeUtilClass(final GeneratedProperty prop) {
+        final var propType = prop.getReturnType();
+        return propType.equals(Types.primitiveBooleanType()) ? importedName(BOOLEAN) : importedUtilClass(propType);
     }
 }
