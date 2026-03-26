@@ -44,26 +44,7 @@ class ClassTemplate extends AbstractClassTemplate {
         super(javaType, genType)
     }
 
-    /**
-     * Generates JAVA class source code (class body only).
-     *
-     * @return string with JAVA class body source code
-     */
-    def CharSequence generateAsInnerClass() {
-        return generateBody(true)
-    }
-
-    override package body() {
-        generateBody(false);
-    }
-
-    /**
-     * Template method which generates class body.
-     *
-     * @param isInnerClass boolean value which specify if generated class is|isn't inner
-     * @return string with class source code in JAVA format
-     */
-    def protected generateBody(boolean isInnerClass) '''
+    override package generateBody(boolean isInnerClass) '''
         «type.formatDataForJavaDoc.wrapToDocumentation»
         «annotationDeclaration»
         «IF !isInnerClass»

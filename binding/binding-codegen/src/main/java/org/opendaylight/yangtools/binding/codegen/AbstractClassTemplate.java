@@ -128,6 +128,24 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         return superType == null ? stream : Stream.concat(stream, streamAllProperties(superType));
     }
 
+    @Override
+    final CharSequence body() {
+        return generateBody(false);
+    }
+
+    /**
+     * {@return string with JAVA class body source code}
+     */
+    final CharSequence generateAsInnerClass() {
+        return generateBody(true);
+    }
+
+    /**
+     * {@return string with class source code in JAVA format}
+     * @param isInnerClass {@code true} if generated class is an inner class
+     */
+    abstract CharSequence generateBody(boolean isInnerClass);
+
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
     final String bitsDefaultInstanceBody() {
         final var sb = new StringBuilder()
