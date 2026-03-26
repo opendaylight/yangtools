@@ -201,9 +201,16 @@ class ClassTemplate extends BaseTemplate {
         }
         sc.append(generateClassDeclaration(isInnerClass));
         sc.append(" {\n");
-        sc.append("    ");
-        sc.append(suidDeclaration(), "    ");
-        sc.newLineIfNotEmpty();
+
+        // serialVersionUID
+        final var suid = genTO.getSUID();
+        if (suid != null) {
+            sc.append("    @java.io.Serial\n");
+            sc.append("    private static final long serialVersionUID = ");
+            sc.append(suid.getValue());
+            sc.append("L;\n");
+        }
+
         sc.append("    ");
         sc.append(generateInnerClasses(type().getEnclosedTypes()), "    ");
         sc.newLineIfNotEmpty();
@@ -492,13 +499,6 @@ class ClassTemplate extends BaseTemplate {
 
     @NonNull String finalClass() {
         return " ";
-    }
-
-    private @NonNull String suidDeclaration() {
-        final var suid = genTO.getSUID();
-        return suid == null ? ""
-            : "@java.io.Serial\n"
-            + "private static final long serialVersionUID = " + suid.getValue() + "L;\n";
     }
 
     private String annotationDeclaration() {
