@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -428,5 +429,52 @@ abstract class AbstractClassTemplate extends BaseTemplate {
             sb.append("    this.").append(fieldName).append(" = source.").append(fieldName).append(";\n");
         }
         return sb.append("}\n").toString();
+    }
+
+    @NonNullByDefault
+    final CharSequence parentConstructor() {
+        //        /**
+        //         * Creates a new instance from «genTO.superType.importedName»
+        //         *
+        //         * @param source Source object
+        //         */
+        //        public «type.simpleName»(«genTO.superType.importedName» source) {
+        //            super(source);
+        //            «genPatternEnforcer("getValue()")»
+        //        }
+        final var importedSuper = importedName(genTO.getSuperType());
+
+        final var sc = new StringConcatenation();
+        sc.append("/**\n");
+        sc.append(" * Creates a new instance from ");
+        sc.append(importedSuper);
+        sc.newLine();
+        sc.append(" *\n");
+        sc.append(" * @param source Source object\n");
+        sc.append(" */\n");
+        sc.append("public ");
+        sc.append(type().simpleName());
+        sc.append("(");
+        sc.append(importedSuper);
+        sc.append(" source) {\n");
+        sc.append("    super(source);\n");
+        sc.append("    ");
+        sc.append(genPatternEnforcer("getValue()"));
+        sc.newLineIfNotEmpty();
+        sc.append("}\n");
+        return sc;
+    }
+
+    @NonNullByDefault
+    final String genPatternEnforcer(final String ref) {
+        final var sb = new StringBuilder();
+        for (var constant : consts) {
+            if (TypeConstants.PATTERN_CONSTANT_NAME.equals(constant.getName())) {
+                sb.append(importedName(CODEHELPERS)).append(".checkPattern(").append(ref).append(", ")
+                    .append(Constants.MEMBER_PATTERN_LIST).append(", ").append(Constants.MEMBER_REGEX_LIST)
+                    .append(");\n");
+            }
+        }
+        return sb.toString();
     }
 }

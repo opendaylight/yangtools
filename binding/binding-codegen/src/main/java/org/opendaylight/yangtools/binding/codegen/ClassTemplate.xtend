@@ -249,26 +249,6 @@ class ClassTemplate extends AbstractClassTemplate {
         return prop
     }
 
-    def private genPatternEnforcer(String ref) '''
-        «FOR c : consts»
-            «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
-            «CODEHELPERS.importedName».checkPattern(«ref», «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
-            «ENDIF»
-        «ENDFOR»
-    '''
-
-    def protected parentConstructor() '''
-    /**
-     * Creates a new instance from «genTO.superType.importedName»
-     *
-     * @param source Source object
-     */
-    public «type.simpleName»(«genTO.superType.importedName» source) {
-        super(source);
-        «genPatternEnforcer("getValue()")»
-    }
-    '''
-
     // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
     //        different from ScalarTypeObjects the rest of this method handles.
     def package defaultInstance() '''
