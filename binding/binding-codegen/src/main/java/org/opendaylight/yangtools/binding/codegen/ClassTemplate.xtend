@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen
 
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
@@ -108,22 +107,6 @@ class ClassTemplate extends AbstractClassTemplate {
 
     '''
 
-    def protected propertyMethods() {
-        if (properties.empty) {
-            return ""
-        }
-        isScalarTypeObject ? scalarTypeObjectValue(properties.first) : defaultProperties
-    }
-
-    def private isScalarTypeObject() {
-        for (impl : genTO.implements) {
-            if (SCALAR_TYPE_OBJECT.name.equals(impl.name)) {
-                return true
-            }
-        }
-        return false
-    }
-
     def private isBitsTypeObject() {
         var wlk = genTO
         while (wlk !== null) {
@@ -136,22 +119,6 @@ class ClassTemplate extends AbstractClassTemplate {
         }
         return false
     }
-
-    def private defaultProperties() '''
-        «FOR field : properties SEPARATOR "\n"»
-            «field.asGetterMethod»
-            «IF !field.readOnly»
-                «field.asSetterMethod»
-            «ENDIF»
-        «ENDFOR»
-    '''
-
-    def private scalarTypeObjectValue(GeneratedProperty field) '''
-        @«OVERRIDE.importedName»
-        public «field.returnType.importedName» «Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME»() {
-            return «field.fieldName»«field.cloneCall»;
-        }
-    '''
 
     def private validNamesAndValues() {
         for (c : consts) {

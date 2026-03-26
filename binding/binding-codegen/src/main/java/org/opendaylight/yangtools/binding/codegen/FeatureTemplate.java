@@ -56,7 +56,7 @@ final class FeatureTemplate extends ClassTemplate {
     }
 
     @Override
-    protected String propertyMethods() {
+    String propertyMethods() {
         final var override = importedName(OVERRIDE);
         final var typeName = type().simpleName();
         final var clazz = importedName(CLASS);
