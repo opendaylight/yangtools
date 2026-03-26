@@ -167,7 +167,7 @@ abstract class AbstractInterfaceTemplate extends BaseTemplate {
         return sc;
     }
 
-    private CharSequence generateAnnotations(final @NonNull List<AnnotationType> annotations) {
+    final CharSequence generateAnnotations(final @NonNull List<AnnotationType> annotations) {
         if (annotations.isEmpty()) {
             return "";
         }
