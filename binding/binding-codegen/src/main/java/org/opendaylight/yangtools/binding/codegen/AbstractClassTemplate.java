@@ -155,6 +155,19 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         sb.append("    values[").append(index).append(']');
     }
 
+    final String annotationDeclaration() {
+        final var annotations = genTO.getAnnotations();
+        if (annotations.isEmpty()) {
+            return "";
+        }
+
+        final var sb = new StringBuilder();
+        for (var annotation : annotations) {
+            sb.append('@').append(annotation.simpleName()).append('\n');
+        }
+        return sb.toString();
+    }
+
     /**
      * {@return string with the class attributes in JAVA format}
      */

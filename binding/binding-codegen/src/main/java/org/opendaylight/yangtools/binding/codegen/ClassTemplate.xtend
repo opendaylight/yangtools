@@ -417,14 +417,6 @@ class ClassTemplate extends AbstractClassTemplate {
         «ENDIF»
     '''
 
-    def protected annotationDeclaration() '''
-        «IF genTO.getAnnotations !== null»
-            «FOR e : genTO.getAnnotations»
-                @«e.simpleName»
-            «ENDFOR»
-        «ENDIF»
-    '''
-
     /**
      * Template method which generates JAVA constants.
      *
