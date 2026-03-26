@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -327,6 +329,42 @@ abstract class AbstractClassTemplate extends BaseTemplate {
                 .append(fieldName(field)).append(";\n");
         }
         return sb.toString();
+    }
+
+    CharSequence propertyMethods() {
+        if (properties.isEmpty()) {
+            return "";
+        }
+        if (genTO.getImplements().stream().anyMatch(ifc -> BindingTypes.SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
+            final var field = properties.getFirst();
+            return '@' + importedName(OVERRIDE) + '\n'
+                +  "public " + importedReturnType(field) + ' ' + Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "() {\n"
+                +  "    return " + fieldName(field) + cloneCall(field) + ";\n"
+                +  "}\n";
+        }
+
+        //    «FOR field : properties SEPARATOR "\n"»
+        //        «field.asGetterMethod»
+        //        «IF !field.readOnly»
+        //            «field.asSetterMethod»
+        //        «ENDIF»
+        //    «ENDFOR»
+
+        final var sc = new StringConcatenation();
+        final var it = properties.iterator();
+        while (true) {
+            final var field = it.next();
+            sc.append(asGetterMethod(field));
+            if (!field.isReadOnly()) {
+                sc.newLine();
+                sc.append(asSetterMethod(field));
+            }
+
+            if (!it.hasNext()) {
+                return sc;
+            }
+            sc.newLine();
+        }
     }
 
     /**
