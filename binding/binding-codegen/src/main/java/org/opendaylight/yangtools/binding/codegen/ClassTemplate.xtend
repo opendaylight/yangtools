@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen
 
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
@@ -235,34 +231,6 @@ class ClassTemplate extends AbstractClassTemplate {
         Verify.verify(TypeConstants.VALUE_PROP.equals(prop.name), "Unexpected property %s", prop)
         return prop
     }
-
-    // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
-    //        different from ScalarTypeObjects the rest of this method handles.
-    def package defaultInstance() '''
-        «IF genTO.typedef && !allProperties.empty»
-            «val prop = allProperties.first»
-            «val propType = prop.returnType»
-            «IF !(INSTANCE_IDENTIFIER.name.equals(propType.name))»
-            public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
-                «IF propType.equals(Types.primitiveBooleanType())»
-                    «bitsDefaultInstanceBody»
-                «ELSEIF VALUEOF_TYPES.contains(propType)»
-                    return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
-                «ELSEIF propType instanceof Decimal64Type»
-                    return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue).scaleTo(«propType.fractionDigits»));
-                «ELSEIF STRING_TYPE.equals(propType)»
-                    return new «genTO.simpleName»(defaultValue);
-                «ELSEIF BINARY_TYPE.equals(propType)»
-                    return new «genTO.simpleName»(«JU_BASE64.importedName».getDecoder().decode(defaultValue));
-                «ELSEIF EMPTY_TYPE.equals(propType)»
-                    return new «genTO.simpleName»(«CODEHELPERS.importedName».emptyFor(defaultValue));
-                «ELSE»
-                    return new «genTO.simpleName»(new «propType.importedName»(defaultValue));
-                «ENDIF»
-            }
-            «ENDIF»
-        «ENDIF»
-    '''
 
     /**
      * Template method which generates JAVA constants.

@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -224,6 +225,88 @@ abstract class AbstractClassTemplate extends BaseTemplate {
                 sc.append(", ");
             }
         }
+        return sc;
+    }
+
+    // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
+    //        different from ScalarTypeObjects the rest of this method handles.
+    CharSequence defaultInstance() {
+        if (!genTO.isTypedef() || allProperties.isEmpty()) {
+            return "";
+        }
+
+        final var prop = allProperties.getFirst();
+        final var propType = prop.getReturnType();
+        if (BaseYangTypes.INSTANCE_IDENTIFIER.name().equals(propType.name())) {
+            return "";
+        }
+
+        //        public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
+        //            «IF propType.equals(Types.primitiveBooleanType())»
+        //                «bitsDefaultInstanceBody»
+        //            «ELSEIF VALUEOF_TYPES.contains(propType)»
+        //                return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
+        //            «ELSEIF propType instanceof Decimal64Type»
+        //                return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue).scaleTo(
+        //«propType.fractionDigits»));
+        //            «ELSEIF STRING_TYPE.equals(propType)»
+        //                return new «genTO.simpleName»(defaultValue);
+        //            «ELSEIF BINARY_TYPE.equals(propType)»
+        //                return new «genTO.simpleName»(«JU_BASE64.importedName».getDecoder().decode(defaultValue));
+        //            «ELSEIF EMPTY_TYPE.equals(propType)»
+        //                return new «genTO.simpleName»(«CODEHELPERS.importedName».emptyFor(defaultValue));
+        //            «ELSE»
+        //                return new «genTO.simpleName»(new «propType.importedName»(defaultValue));
+        //            «ENDIF»
+        //        }
+
+        final var simpleName = genTO.simpleName();
+        final var sc = new StringConcatenation();
+        sc.append("public static ");
+        sc.append(simpleName);
+        sc.append(" getDefaultInstance(final String defaultValue) {\n");
+        if (propType.equals(Types.primitiveBooleanType())) {
+            sc.append("    ");
+            sc.append(bitsDefaultInstanceBody(), "    ");
+            sc.newLineIfNotEmpty();
+        } else if (ClassTemplate.VALUEOF_TYPES.contains(propType)) {
+            sc.append("    return new ");
+            sc.append(simpleName);
+            sc.append("(");
+            sc.append(importedName(propType));
+            sc.append(".valueOf(defaultValue));\n");
+        } else if (propType instanceof Decimal64Type decimal64) {
+            sc.append("    return new ");
+            sc.append(simpleName);
+            sc.append("(");
+            sc.append(importedName(propType));
+            sc.append(".valueOf(defaultValue).scaleTo(");
+            sc.append(decimal64.fractionDigits());
+            sc.append("));\n");
+        } else if (BaseYangTypes.STRING_TYPE.equals(propType)) {
+            sc.append("    return new ");
+            sc.append(simpleName);
+            sc.append("(defaultValue);\n");
+        } else if (BaseYangTypes.BINARY_TYPE.equals(propType)) {
+            sc.append("    return new ");
+            sc.append(simpleName);
+            sc.append("(");
+            sc.append(importedName(JU_BASE64));
+            sc.append(".getDecoder().decode(defaultValue));\n");
+        } else if (BaseYangTypes.EMPTY_TYPE.equals(propType)) {
+            sc.append("    return new ");
+            sc.append(simpleName);
+            sc.append("(");
+            sc.append(importedName(CODEHELPERS));
+            sc.append(".emptyFor(defaultValue));\n");
+        } else {
+            sc.append("    return new ");
+            sc.append(simpleName);
+            sc.append("(new ");
+            sc.append(importedName(propType));
+            sc.append("(defaultValue));\n");
+        }
+        sc.append("}\n");
         return sc;
     }
 
