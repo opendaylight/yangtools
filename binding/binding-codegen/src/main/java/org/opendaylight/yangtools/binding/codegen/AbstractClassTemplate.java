@@ -310,4 +310,24 @@ abstract class AbstractClassTemplate extends BaseTemplate {
             rangeGenerator.appendCheckerCall(sb.append(indent), paramName, paramValue);
         }
     }
+
+    String copyConstructor() {
+        final var simpleName = type().simpleName();
+
+        final var sb = new StringBuilder()
+            .append("/**\n")
+            .append(" * Creates a copy from Source Object.\n")
+            .append(" *\n")
+            .append(" * @param source Source object\n")
+            .append(" */\n")
+            .append("public ").append(simpleName).append("(").append(simpleName).append(" source) {\n");
+        if (!parentProperties.isEmpty()) {
+            sb.append("    super(source);\n");
+        }
+        for (var prop : properties) {
+            final var fieldName = fieldName(prop);
+            sb.append("    this.").append(fieldName).append(" = source.").append(fieldName).append(";\n");
+        }
+        return sb.append("}\n").toString();
+    }
 }
