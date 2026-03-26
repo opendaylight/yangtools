@@ -58,9 +58,9 @@ abstract class AbstractInterfaceTemplate extends BaseTemplate {
     }
 
     private @NonNull TypeAnalysis loadTypeAnalysis() {
-        final var ret = analyzeTypeHierarchy(type());
-        typeAnalysis = ret;
-        return ret;
+        final var analysis = TypeAnalysis.of(type());
+        typeAnalysis = analysis;
+        return analysis;
     }
 
     /**
