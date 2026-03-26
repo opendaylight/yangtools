@@ -48,8 +48,8 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     final GeneratedType targetType;
 
     AbstractBuilderTemplate(final @NonNull AbstractJavaGeneratedType javaType, final @NonNull GeneratedType type,
-        final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties, final Type augmentType,
-        final GeneratedTransferObject keyType) {
+            final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties, final Type augmentType,
+            final GeneratedTransferObject keyType) {
         super(javaType, type);
         this.targetType = targetType;
         this.properties = properties;
@@ -58,7 +58,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     }
 
     AbstractBuilderTemplate(final @NonNull GeneratedType type, final @NonNull GeneratedType targetType,
-        final GeneratedTransferObject keyType) {
+            final GeneratedTransferObject keyType) {
         super(type);
         this.targetType = requireNonNull(targetType);
         this.keyType = keyType;
