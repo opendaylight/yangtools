@@ -255,13 +255,9 @@ class JavaFileTemplate {
         return "@" + importedName(GENERATED) + "(\"mdsal-binding-generator\")";
     }
 
-    static final Restrictions restrictionsForSetter(final Type actualType) {
-        return actualType instanceof GeneratedType ? null : getRestrictions(actualType);
-    }
-
-    static final Restrictions getRestrictions(final Type type) {
-        return switch (type) {
-            case GeneratedTransferObject gto -> gto.getRestrictions();
+    static final @Nullable Restrictions restrictionsForSetter(final Type actualType) {
+        return switch (actualType) {
+            case GeneratedType genType -> null;
             case RestrictedType restricted -> restricted.restrictions();
             case null, default -> null;
         };

@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -120,8 +121,10 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         return generateRangeCheckerImplementation(rangeCheckerName(member), constraints, template::importedName);
     }
 
-    String generateRangeCheckerCall(final @NonNull String member, final @NonNull String valueReference) {
-        return rangeCheckerName(member) + '(' + valueReference + primitiveRef() + ");\n";
+    @NonNullByDefault
+    final void appendCheckerCall(final StringBuilder sb, final String member, final String valueReference) {
+        sb.append(rangeCheckerName(member)).append('(').append(requireNonNull(valueReference)).append(primitiveRef())
+            .append(");\n");
     }
 
     String primitiveRef() {
