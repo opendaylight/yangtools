@@ -238,7 +238,7 @@ class JavaFileTemplate {
         return importedName(returnType.simpleName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
     }
 
-    final String generatedAnnotation() {
+    final @NonNull String generatedAnnotation() {
         return "@" + importedName(GENERATED) + "(\"mdsal-binding-generator\")";
     }
 

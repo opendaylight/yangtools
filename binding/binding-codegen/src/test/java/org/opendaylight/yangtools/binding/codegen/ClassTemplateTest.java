@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 
 @ExtendWith(MockitoExtension.class)
-class AbstractClassTemplateTest {
+class ClassTemplateTest {
     @Mock
     private GeneratedTransferObject enclosedType;
     @Mock
@@ -32,6 +32,6 @@ class AbstractClassTemplateTest {
         doReturn(List.of(property)).when(enclosedType).getProperties();
         doReturn(Boolean.TRUE).when(property).isReadOnly();
         doReturn(enclosedType).when(superType).getSuperType();
-        assertThat(AbstractClassTemplate.propertiesOfAllParents(superType)).contains(property);
+        assertThat(ClassTemplate.propertiesOfAllParents(superType)).contains(property);
     }
 }
