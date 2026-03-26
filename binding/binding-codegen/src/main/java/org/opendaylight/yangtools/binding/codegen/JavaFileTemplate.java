@@ -29,7 +29,6 @@ import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -38,7 +37,6 @@ import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMember;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
 /**
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
@@ -216,17 +214,6 @@ class JavaFileTemplate {
     boolean isLocalInnerClass(final JavaTypeName name) {
         final var enclosing = name.immediatelyEnclosingClass();
         return enclosing != null && type.name().equals(enclosing);
-    }
-
-    final CharSequence generateInnerClass(final GeneratedType innerClass) {
-        if (!(innerClass instanceof GeneratedTransferObject gto)) {
-            return "";
-        }
-
-        final var innerJavaType = javaType.getEnclosedType(innerClass.name());
-        return gto instanceof UnionTypeObjectArchetype union
-            ? UnionTypeObjectTemplate.generateAsInner(innerJavaType, union)
-            : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
     }
 
     /**

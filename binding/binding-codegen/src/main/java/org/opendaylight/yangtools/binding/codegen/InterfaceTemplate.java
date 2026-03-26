@@ -106,7 +106,7 @@ class InterfaceTemplate extends BaseTemplate {
         sc.newLine();
         sc.newLine();
         sc.append("    ");
-        sc.append(generateInnerClasses(), "    ");
+        sc.append(generateInnerClasses(enclosedGeneratedTypes), "    ");
         sc.newLineIfNotEmpty();
         sc.newLine();
         sc.append("    ");
@@ -145,32 +145,6 @@ class InterfaceTemplate extends BaseTemplate {
                 return sb.toString();
             }
             sb.append(",\n");
-        }
-    }
-
-    /**
-     * {@return string with the source code for inner classes in JAVA format}
-     */
-    private CharSequence generateInnerClasses() {
-        if (enclosedGeneratedTypes.isEmpty()) {
-            return "";
-        }
-        final var innerClasses = enclosedGeneratedTypes.stream()
-            .map(this::generateInnerClass)
-            .filter(str -> !str.isEmpty())
-            .toList();
-        if (innerClasses.isEmpty()) {
-            return "";
-        }
-
-        final var sc = new StringConcatenation();
-        final var it = innerClasses.iterator();
-        while (true) {
-            sc.append(it.next());
-            if (!it.hasNext()) {
-                return sc;
-            }
-            sc.newLine();
         }
     }
 
