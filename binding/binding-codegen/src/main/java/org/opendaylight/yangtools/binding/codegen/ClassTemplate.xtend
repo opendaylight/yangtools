@@ -211,26 +211,6 @@ class ClassTemplate extends AbstractClassTemplate {
         «ENDIF»
     '''
 
-    def package allValuesConstructor() '''
-    public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
-        «IF !parentProperties.empty»
-            super(«parentProperties.asArguments»);
-        «ENDIF»
-        «FOR p : allProperties»
-            «generateRestrictions(type, p.fieldName, p.returnType)»
-        «ENDFOR»
-
-        «FOR p : properties»
-            «val fieldName = p.fieldName»
-            «IF p.returnType.simpleName.endsWith("[]")»
-                this.«fieldName» = «CODEHELPERS.importedName».copyArray(«fieldName»);
-            «ELSE»
-                this.«fieldName» = «fieldName»;
-            «ENDIF»
-        «ENDFOR»
-    }
-    '''
-
     def private typedefConstructor() '''
     @«CONSTRUCTOR_PARAMETERS.importedName»("«TypeConstants.VALUE_PROP»")
     public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
