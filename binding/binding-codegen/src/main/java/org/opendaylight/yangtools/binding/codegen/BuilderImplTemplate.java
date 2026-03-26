@@ -21,7 +21,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -159,7 +159,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                     sc.append(importedName(fieldType));
                     sc.append(" ");
                     sc.append(NONNULL_PREFIX);
-                    sc.append(StringExtensions.toFirstUpper(field.getName()));
+                    sc.append(Naming.toFirstUpper(field.getName()));
                     sc.append("() {\n");
                     sc.append("        return ");
                     sc.append(importedName(JU_OBJECTS));

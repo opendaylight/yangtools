@@ -25,7 +25,6 @@ import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -286,7 +285,7 @@ class JavaFileTemplate {
         } else {
             throw new IllegalArgumentException(getterName + " is not a getter");
         }
-        return StringExtensions.toFirstLower(getterName.substring(prefix.length()));
+        return Naming.toFirstLower(getterName.substring(prefix.length()));
     }
 
     /**

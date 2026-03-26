@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -130,7 +129,7 @@ record TypeAnalysis(
             return null;
         }
 
-        final var fieldName = StringExtensions.toFirstLower(method.getName().substring(GETTER_PREFIX_LENGTH));
+        final var fieldName = Naming.toFirstLower(method.getName().substring(GETTER_PREFIX_LENGTH));
         return new BuilderGeneratedProperty(fieldName, method);
     }
 
