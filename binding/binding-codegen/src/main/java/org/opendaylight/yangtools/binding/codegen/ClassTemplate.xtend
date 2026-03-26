@@ -269,22 +269,6 @@ class ClassTemplate extends AbstractClassTemplate {
         return prop
     }
 
-    def protected genConstructor(GeneratedProperty property, Iterable<GeneratedProperty> other) '''
-    public «type.simpleName»(«property.returnType.importedName + " " + property.name») {
-        «IF !parentProperties.empty»
-            super(«parentProperties.asArguments»);
-        «ENDIF»
-
-        «val fieldName = property.fieldName»
-        «generateRestrictions(type, fieldName, property.returnType)»
-
-        this.«fieldName» = «property.name»;
-        «FOR p : other»
-            this.«p.fieldName» = null;
-        «ENDFOR»
-    }
-    '''
-
     def private genPatternEnforcer(String ref) '''
         «FOR c : consts»
             «IF TypeConstants.PATTERN_CONSTANT_NAME.equals(c.name)»
