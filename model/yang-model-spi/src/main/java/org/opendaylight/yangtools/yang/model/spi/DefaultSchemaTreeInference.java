@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -94,12 +93,14 @@ public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffecti
     private static ImmutableList<SchemaTreeEffectiveStatement<?>> resolveSteps(final EffectiveModelContext modelContext,
             final List<QName> steps) {
         final var first = steps.getFirst();
-        final var module = modelContext.findModuleStatement(first.getModule()).orElseThrow(
-            () -> new IllegalArgumentException("No module for " + first));
+        final var module = modelContext.moduleByNamespace(first.getModule());
+        if (module == null) {
+            throw new IllegalArgumentException("No module for " + first);
+        }
 
         final var builder = ImmutableList.<SchemaTreeEffectiveStatement<?>>builderWithExpectedSize(steps.size());
         SchemaTreeAwareEffectiveStatement<?, ?> parent = module;
-        final Iterator<QName> it = steps.iterator();
+        final var it = steps.iterator();
         while (true) {
             final var qname = it.next();
             final var found = parent.findSchemaTreeNode(qname).orElseThrow(
@@ -110,9 +111,11 @@ public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffecti
                 break;
             }
 
-            checkArgument(found instanceof SchemaTreeAwareEffectiveStatement, "Cannot resolve steps %s past %s", steps,
-                found);
-            parent = (SchemaTreeAwareEffectiveStatement<?, ?>) found;
+            if (!(found instanceof SchemaTreeAwareEffectiveStatement<?, ?> foundAware)) {
+                throw new IllegalArgumentException("Cannot resolve steps %s past %s".formatted(steps, found));
+            }
+
+            parent = foundAware;
         }
 
         return builder.build();

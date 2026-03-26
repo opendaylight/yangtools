@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.spi.SimpleEffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
@@ -298,7 +299,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
     }
 
     @NonNullByDefault
-    EffectiveSchemaContext buildEffective() throws ReactorException {
+    SimpleEffectiveModelContext buildEffective() throws ReactorException {
         executePhases();
         return transformEffective();
     }
@@ -340,7 +341,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private @NonNull EffectiveSchemaContext transformEffective() throws ReactorException {
+    private @NonNull SimpleEffectiveModelContext transformEffective() throws ReactorException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final var rootStatements = new ArrayList<DeclaredStatement<?>>(sources.size());
         final var rootEffectiveStatements = new ArrayList<EffectiveStatement<?, ?>>(sources.size());
@@ -355,7 +356,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
         }
 
         sealMutableStatements();
-        return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
+        return SimpleEffectiveModelContext.of(rootStatements, rootEffectiveStatements);
     }
 
     private void startPhase(final ModelProcessingPhase phase) {

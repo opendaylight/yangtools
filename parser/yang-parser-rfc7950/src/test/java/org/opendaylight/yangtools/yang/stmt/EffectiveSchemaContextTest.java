@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,48 +22,48 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
+import org.opendaylight.yangtools.yang.model.spi.SimpleEffectiveModelContext;
 
 class EffectiveSchemaContextTest extends AbstractYangTest {
     @Test
     void testEffectiveSchemaContext() {
-        final var schemaContext = assertEffectiveModel(
+        final var modelContext = assertInstanceOf(SimpleEffectiveModelContext.class, assertEffectiveModel(
             "/effective-schema-context-test/foo.yang",
             "/effective-schema-context-test/bar.yang",
-            "/effective-schema-context-test/baz.yang");
+            "/effective-schema-context-test/baz.yang"));
 
-        assertEquals(3, schemaContext.getDataDefinitions().size());
-        assertEquals(3, schemaContext.getChildNodes().size());
-        assertEquals(3, schemaContext.getNotifications().size());
-        assertEquals(3, schemaContext.getOperations().size());
-        assertEquals(3, schemaContext.getExtensions().size());
+        assertEquals(3, modelContext.getDataDefinitions().size());
+        assertEquals(3, modelContext.getChildNodes().size());
+        assertEquals(3, modelContext.getNotifications().size());
+        assertEquals(3, modelContext.getOperations().size());
+        assertEquals(3, modelContext.getExtensions().size());
 
-        for (var module : schemaContext.getModuleStatements().values()) {
+        for (var module : modelContext.getModuleStatements().values()) {
             assertEquals(1, module.requireDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
         }
 
-        assertNull(schemaContext.dataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
+        assertNull(modelContext.dataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
 
-        assertFalse(schemaContext.findModule("foo", Revision.of("2016-08-21")).isPresent());
-        assertFalse(schemaContext.findModule(XMLNamespace.of("foo-namespace"), Revision.of("2016-08-21")).isPresent());
+        assertFalse(modelContext.findModule("foo", Revision.of("2016-08-21")).isPresent());
+        assertFalse(modelContext.findModule(XMLNamespace.of("foo-namespace"), Revision.of("2016-08-21")).isPresent());
 
-        assertFalse(schemaContext.isAugmenting());
-        assertFalse(schemaContext.isAddedByUses());
-        assertEquals(Optional.empty(), schemaContext.effectiveConfig());
-        assertFalse(schemaContext.getWhenCondition().isPresent());
-        assertEquals(0, schemaContext.getMustConstraints().size());
-        assertFalse(schemaContext.getDescription().isPresent());
-        assertFalse(schemaContext.getReference().isPresent());
-        assertEquals(SchemaContext.NAME, schemaContext.getQName());
-        assertEquals(Status.CURRENT, schemaContext.getStatus());
-        assertNotNull(schemaContext.getUses());
-        assertTrue(schemaContext.getUses().isEmpty());
-        assertNotNull(schemaContext.getAvailableAugmentations());
-        assertTrue(schemaContext.getAvailableAugmentations().isEmpty());
+        assertFalse(modelContext.isAugmenting());
+        assertFalse(modelContext.isAddedByUses());
+        assertEquals(Optional.empty(), modelContext.effectiveConfig());
+        assertFalse(modelContext.getWhenCondition().isPresent());
+        assertEquals(0, modelContext.getMustConstraints().size());
+        assertFalse(modelContext.getDescription().isPresent());
+        assertFalse(modelContext.getReference().isPresent());
+        assertEquals(SchemaContext.NAME, modelContext.getQName());
+        assertEquals(Status.CURRENT, modelContext.getStatus());
+        assertNotNull(modelContext.getUses());
+        assertTrue(modelContext.getUses().isEmpty());
+        assertNotNull(modelContext.getAvailableAugmentations());
+        assertTrue(modelContext.getAvailableAugmentations().isEmpty());
 
-        assertTrue(schemaContext.findModule("foo", Revision.of("2016-09-21")).isPresent());
-        assertEquals(3, schemaContext.getModules().size());
-        assertEquals(3, ((EffectiveSchemaContext) schemaContext).getRootDeclaredStatements().size());
-        assertEquals(3, schemaContext.getModuleStatements().size());
+        assertTrue(modelContext.findModule("foo", Revision.of("2016-09-21")).isPresent());
+        assertEquals(3, modelContext.getModules().size());
+        assertEquals(3, modelContext.getRootDeclaredStatements().size());
+        assertEquals(3, modelContext.getModuleStatements().size());
     }
 }
