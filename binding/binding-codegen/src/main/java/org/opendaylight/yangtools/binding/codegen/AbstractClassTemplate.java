@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.util.Comparator;
 import java.util.List;
@@ -496,6 +497,42 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         return sb.toString();
     }
 
+    CharSequence constructors() {
+        //        «IF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(
+        //TypeConstants.VALUE_PROP)»
+        //            «typedefConstructor»
+        //        «ELSE»
+        //            «allValuesConstructor»
+        //        «ENDIF»
+        //
+        //        «IF !allProperties.empty»
+        //            «copyConstructor»
+        //        «ENDIF»
+        //        «IF properties.empty && !parentProperties.empty »
+        //            «parentConstructor»
+        //        «ENDIF»
+
+        final var sc = new StringConcatenation();
+        if (genTO.isTypedef() && allProperties.size() == 1
+            && TypeConstants.VALUE_PROP.equals(allProperties.getFirst().getName())) {
+            sc.append(typedefConstructor());
+            sc.newLineIfNotEmpty();
+        } else {
+            sc.append(allValuesConstructor());
+            sc.newLineIfNotEmpty();
+        }
+        sc.newLine();
+        if (!allProperties.isEmpty()) {
+            sc.append(copyConstructor());
+            sc.newLineIfNotEmpty();
+        }
+        if (properties.isEmpty() && !parentProperties.isEmpty()) {
+            sc.append(parentConstructor());
+            sc.newLineIfNotEmpty();
+        }
+        return sc;
+    }
+
     CharSequence propertyMethods() {
         if (properties.isEmpty()) {
             return "";
@@ -583,7 +620,8 @@ abstract class AbstractClassTemplate extends BaseTemplate {
             sc.append("    int result = 1;\n");
             for (var property : props) {
                 sc.append("    result = prime * result + ");
-                sc.append(importedHashCodeUtilClass(property), "    ");
+                final var type = property.getReturnType();
+                sc.append(type.equals(Types.primitiveBooleanType()) ? importedName(BOOLEAN) : importedUtilClass(type));
                 sc.append(".hashCode(");
                 sc.append(fieldName(property), "    ");
                 sc.append(");\n");
@@ -592,12 +630,6 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         }
         sc.append("}\n");
         return sc.toString();
-    }
-
-    @NonNullByDefault
-    final String importedHashCodeUtilClass(final GeneratedProperty prop) {
-        final var propType = prop.getReturnType();
-        return propType.equals(Types.primitiveBooleanType()) ? importedName(BOOLEAN) : importedUtilClass(propType);
     }
 
     @NonNullByDefault
@@ -752,8 +784,92 @@ abstract class AbstractClassTemplate extends BaseTemplate {
         return sc;
     }
 
+    private CharSequence typedefConstructor() {
+        //        @«CONSTRUCTOR_PARAMETERS.importedName»("«TypeConstants.VALUE_PROP»")
+        //        public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
+        //            «IF !parentProperties.empty»
+        //                super(«parentProperties.asArguments»);
+        //            «ENDIF»
+        //            «val value = Verify.verifyNotNull(allProperties.valueProperty)»
+        //            «val fieldName = value.fieldName»
+        //            «IF properties.valueProperty !== null»
+        //                this.«fieldName» = «CODEHELPERS.importedName».requireValue(«fieldName»«value.assignFieldTail»)
+        //«value.cloneCall»;
+        //            «ENDIF»
+        //            «generateRestrictions(type, fieldName, value.returnType)»
+        //            «/*
+        //             * If we have patterns, we need to apply them to the value field. This is a sad consequence of how
+        //this code is
+        //             * structured.
+        //             */»
+        //            «genPatternEnforcer(fieldName)»
+        //        }
+
+        final var sc = new StringConcatenation();
+        sc.append("@");
+        sc.append(importedName(CONSTRUCTOR_PARAMETERS));
+        sc.append("(\"");
+        sc.append(TypeConstants.VALUE_PROP);
+        sc.append("\")\n");
+        sc.append("public ");
+        sc.append(type().simpleName());
+        sc.append("(");
+        sc.append(asArgumentsDeclaration(allProperties));
+        sc.append(") {\n");
+        if (!parentProperties.isEmpty()) {
+            sc.append("    super(");
+            sc.append(asArguments(parentProperties), "    ");
+            sc.append(");\n");
+        }
+
+        final var value = valueProperty(allProperties);
+        if (value == null) {
+            throw new VerifyException("missing value property");
+        }
+
+        final var fieldName = fieldName(value);
+        if (valueProperty(properties) != null) {
+            sc.append("    this.");
+            sc.append(fieldName);
+            sc.append(" = ");
+            sc.append(importedName(CODEHELPERS));
+            sc.append(".requireValue(");
+            sc.append(fieldName);
+            if (value.getReturnType() instanceof Decimal64Type decimal64) {
+                sc.append(", " + decimal64.fractionDigits());
+            }
+            sc.append(")");
+            sc.append(cloneCall(value));
+            sc.append(";\n");
+        }
+        sc.append("    ");
+        sc.append(generateRestrictions(type(), fieldName, value.getReturnType()), "    ");
+        sc.newLineIfNotEmpty();
+        sc.append("    ");
+        sc.newLine();
+        sc.append("    ");
+        sc.append(genPatternEnforcer(fieldName), "    ");
+        sc.newLineIfNotEmpty();
+        sc.append("}\n");
+        return sc;
+    }
+
+    private static @Nullable GeneratedProperty valueProperty(final List<GeneratedProperty> props) {
+        return switch (props.size()) {
+            case 0 -> null;
+            case 1 -> {
+                final var prop = props.getFirst();
+                if (!TypeConstants.VALUE_PROP.equals(prop.getName())) {
+                    throw new VerifyException("Unexpected property " + prop);
+                }
+                yield prop;
+            }
+            default -> throw new VerifyException("Unexpected properties " + props);
+        };
+    }
+
     @NonNullByDefault
-    final String genPatternEnforcer(final String ref) {
+    private String genPatternEnforcer(final String ref) {
         final var sb = new StringBuilder();
         for (var constant : consts) {
             if (TypeConstants.PATTERN_CONSTANT_NAME.equals(constant.getName())) {
