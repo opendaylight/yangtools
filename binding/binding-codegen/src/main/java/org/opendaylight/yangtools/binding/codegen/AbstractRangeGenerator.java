@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -27,13 +26,13 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRangeGenerator.class);
     private static final ImmutableMap<String, AbstractRangeGenerator<?>> GENERATORS;
 
-    private static void addGenerator(final Builder<String, AbstractRangeGenerator<?>> builder,
+    private static void addGenerator(final ImmutableMap.Builder<String, AbstractRangeGenerator<?>> builder,
             final AbstractRangeGenerator<?> generator) {
         builder.put(generator.getTypeClass().getCanonicalName(), generator);
     }
 
     static {
-        final Builder<String, AbstractRangeGenerator<?>> b = ImmutableMap.builder();
+        final var b = ImmutableMap.<String, AbstractRangeGenerator<?>>builder();
         addGenerator(b, new ByteRangeGenerator());
         addGenerator(b, new ShortRangeGenerator());
         addGenerator(b, new IntegerRangeGenerator());
