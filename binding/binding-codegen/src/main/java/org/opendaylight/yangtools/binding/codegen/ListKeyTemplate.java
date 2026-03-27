@@ -68,9 +68,9 @@ final class ListKeyTemplate extends ClassTemplate {
             }
         }
 
-        final var bb = new BlockBuilder();
-        bb.append(sb.append("}\n"));
-        return bb;
+        return new BlockBuilder()
+            .txt(sb.toString())
+            .eol("}");
     }
 
     @Override
