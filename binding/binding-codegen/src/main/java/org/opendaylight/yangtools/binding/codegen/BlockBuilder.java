@@ -21,15 +21,8 @@ import org.opendaylight.yangtools.concepts.Mutable;
  *
  * <p>Currently it is just a {@link StringConcatenation} but it will expand as we integrate more users.
  */
-// FIXME: internalize StringConcatenation
-final class BlockBuilder extends StringConcatenation implements Mutable {
-    /**
-     * Default constructor. Uses {@code "\n"} as {@link #getLineDelimiter()} instead of the platform-dependent
-     * {@link StringConcatenation#DEFAULT_LINE_DELIMITER}.
-     */
-    BlockBuilder() {
-        super("\n");
-    }
+final class BlockBuilder implements Mutable {
+    private final @NonNull StringConcatenation sc = new StringConcatenation("\n");
 
     /**
      * Append a {@code '@'}.
@@ -38,7 +31,7 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder at() {
-        super.append("@");
+        sc.append("@");
         return this;
     }
 
@@ -49,16 +42,15 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder nl() {
-        super.newLine();
+        sc.newLine();
         return this;
     }
 
     /**
      * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
      */
-    @Override
-    public void newLine() {
-        super.newLine();
+    void newLine() {
+        sc.newLine();
     }
 
     /**
@@ -74,7 +66,7 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder str(final String content) {
-        super.append(validateStr(content));
+        sc.append(validateStr(content));
         return this;
     }
 
@@ -87,7 +79,7 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder strI(final int value) {
-        super.append(Integer.toString(value));
+        sc.append(Integer.toString(value));
         return this;
     }
 
@@ -98,38 +90,47 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         return requireNonNull(strArg);
     }
 
-    @Override
-    public void append(final String str) {
-        super.append(requireNonNull(str));
+    // FIXME: remove this method
+    void append(final String str) {
+        sc.append(requireNonNull(str));
+    }
+
+    // FIXME: remove this method
+    void append(final CharSequence str) {
+        switch (str) {
+            case String match -> sc.append(match);
+            case StringConcatenation match -> sc.append(match);
+            default -> sc.append(str.toString());
+        }
     }
 
     @NonNullByDefault
     void append(final BlockBuilder bb) {
-        super.append(requireNonNull(bb));
+        sc.append(bb.sc);
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    public void append(final StringConcatenation concat) {
-        if (concat instanceof BlockBuilder bb) {
-            append(bb);
-        } else {
-            super.append(concat);
-        }
+    void append(final StringConcatenation concat) {
+        sc.append(concat);
     }
 
-    @Override
     @Deprecated(forRemoval = true)
-    public void append(final StringConcatenation concat, final String indentation) {
-        super.append(requireNonNull(concat), requireNonNull(indentation));
+    void append(final StringConcatenation concat, final String indentation) {
+        sc.append(requireNonNull(concat), requireNonNull(indentation));
+    }
+
+    @Deprecated(forRemoval = true)
+    void newLineIfNotEmpty() {
+        sc.newLineIfNotEmpty();
     }
 
     // FIXME: clarify contract
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder appendIndented(final BlockBuilder bb) {
-        super.append("    ");
-        super.append(requireNonNull(bb), "    ");
+        sc.append("    ");
+        sc.append(requireNonNull(bb), "    ");
         return this;
     }
 
@@ -142,11 +143,11 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     //    }
 
     @NonNull String toRawString() {
-        return verifyNotNull(super.toString());
+        return verifyNotNull(sc.toString());
     }
 
     String toJavadocBlock() {
-        return isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
+        return sc.isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
     }
 
     /**
