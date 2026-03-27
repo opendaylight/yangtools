@@ -78,7 +78,13 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         return this;
     }
 
-    // FIXME: str(int) or similar
+    // FIXME: document
+    @NonNullByDefault
+    @CheckReturnValue
+    BlockBuilder str(final int value) {
+        super.append(Integer.toString(value));
+        return this;
+    }
 
     @NonNullByDefault
     @CheckReturnValue
