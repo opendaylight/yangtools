@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -108,6 +107,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
      *
      * @return Body of this Java file
      */
+    // FIXME: return a Block
     abstract @NonNull CharSequence body();
 
     // Helper patterns
@@ -705,6 +705,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     /**
      * {@return string with the source code for inner classes in JAVA format}
      */
+    // FIXME: return a Block
     final CharSequence generateInnerClasses(final List<GeneratedType> innerTypes) {
         final var innerClasses = new ArrayList<CharSequence>();
         for (var innerType : innerTypes) {
@@ -722,14 +723,14 @@ abstract class BaseTemplate extends JavaFileTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         final var it = innerClasses.iterator();
         while (true) {
-            sc.append(it.next());
+            bb.append(it.next());
             if (!it.hasNext()) {
-                return sc;
+                return bb;
             }
-            sc.append("\n");
+            bb.append("\n");
         }
     }
 }
