@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -19,36 +19,21 @@ import org.opendaylight.yangtools.concepts.Mutable;
  *
  * <p>Currently it is just a {@link StringConcatenation} but it will expand as we integrate more users.
  */
-// FIXME: internalize StringConcatenation
-final class BlockBuilder extends StringConcatenation implements Mutable {
-    /**
-     * Default constructor. Uses {@code "\n"} as {@link #getLineDelimiter()} instead of the platform-dependent
-     * {@link StringConcatenation#DEFAULT_LINE_DELIMITER}.
-     */
-    BlockBuilder() {
-        super("\n");
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public void append(final StringConcatenation concat) {
-        if (concat instanceof BlockBuilder bb) {
-            append(bb);
-        } else {
-            super.append(concat);
-        }
-    }
+final class BlockBuilder implements Mutable {
+    // FIXME: remove use of StringConcatenation
+    private final StringConcatenation sc = new StringConcatenation("\n");
 
     void append(final @NonNull BlockBuilder bb) {
-        super.append(requireNonNull(bb));
+        verify(bb != this);
+        sc.append(bb.sc);
     }
 
     @NonNull String toRawString() {
-        return verifyNotNull(super.toString());
+        return verifyNotNull(sc.toString());
     }
 
     String toJavadocBlock() {
-        return isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
+        return sc.isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
     }
 
     /**
