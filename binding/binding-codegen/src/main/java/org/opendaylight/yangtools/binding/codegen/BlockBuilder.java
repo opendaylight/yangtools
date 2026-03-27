@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.concepts.Mutable;
 
@@ -58,6 +59,37 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     @Override
     public void newLine() {
         super.newLine();
+    }
+
+    /**
+     * Append a {@link String} simple string. The string has to be known to:
+     * <ul>
+     *    <li>be non-empty</li>
+     *    <li>not contain new lines</li>
+     * </ul>
+     *
+     * @param content the {@link String}
+     * @return this instance
+     */
+    @NonNullByDefault
+    @CheckReturnValue
+    BlockBuilder str(final String content) {
+        super.append(validateStr(content));
+        return this;
+    }
+
+    // FIXME: str(int) or similar
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String validateStr(final String strArg) {
+        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
+        return requireNonNull(strArg);
+    }
+
+    @Override
+    public void append(final String str) {
+        super.append(requireNonNull(str));
     }
 
     void append(final @NonNull BlockBuilder bb) {

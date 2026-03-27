@@ -620,13 +620,8 @@ class ClassTemplate extends BaseTemplate {
         //        private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
         //        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
         //    «ENDIF»
-        bb.append("public static final ");
-        bb.append(juList);
-        bb.append("<String> ");
-        bb.append(TypeConstants.PATTERN_CONSTANT_NAME);
-        bb.append(" = ");
-        bb.append(juList);
-        bb.append(".of(");
+        bb.str("public static final ").str(juList).str("<String> " + TypeConstants.PATTERN_CONSTANT_NAME).str(" = ")
+            .str(juList).append(".of(");
         {
             boolean first = true;
             for (var value : constValue.keySet()) {
@@ -635,40 +630,24 @@ class ClassTemplate extends BaseTemplate {
                 } else {
                     bb.appendImmediate(", ", "");
                 }
-                bb.append("\"");
-                bb.append(StringEscapeUtils.escapeJava(value));
+                bb.str("\"").append(StringEscapeUtils.escapeJava(value));
                 bb.append("\"");
             }
         }
         bb.append(");\n");
-        bb.append("private static final ");
-        bb.append(jurPattern);
+        bb.str("private static final ").append(jurPattern);
         if (constValue.size() == 1) {
-            bb.append(" ");
-            bb.append(Constants.MEMBER_PATTERN_LIST);
-            bb.append(" = ");
-            bb.append(jurPattern);
-            bb.append(".compile(");
-            bb.append(TypeConstants.PATTERN_CONSTANT_NAME);
-            bb.append(".getFirst());\n");
-            bb.append("private static final String ");
-            bb.append(Constants.MEMBER_REGEX_LIST);
-            bb.append(" = \"");
-            bb.append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
+            bb.str(" " + Constants.MEMBER_PATTERN_LIST + " = ").str(jurPattern)
+                .str(".compile(" + TypeConstants.PATTERN_CONSTANT_NAME).append(".getFirst());\n");
+            bb.str("private static final String " + Constants.MEMBER_REGEX_LIST + " = \"")
+                .append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
             bb.append("\";\n");
             return;
         }
 
-        bb.append("[] ");
-        bb.append(Constants.MEMBER_PATTERN_LIST);
-        bb.append(" = ");
-        bb.append(importedName(CODEHELPERS));
-        bb.append(".compilePatterns(");
-        bb.append(TypeConstants.PATTERN_CONSTANT_NAME);
-        bb.append(");\n");
-        bb.append("private static final String[] ");
-        bb.append(Constants.MEMBER_REGEX_LIST);
-        bb.append(" = { ");
+        bb.str("[] " + Constants.MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
+            .str(".compilePatterns(" + TypeConstants.PATTERN_CONSTANT_NAME).append(");\n");
+        bb.str("private static final String[] " + Constants.MEMBER_REGEX_LIST).append(" = { ");
         {
             boolean first = true;
             for (var value : constValue.values()) {
@@ -687,15 +666,8 @@ class ClassTemplate extends BaseTemplate {
 
     private void appendValidNames(final BlockBuilder bb, final BitsTypeDefinition bitsType) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.append("protected static final ");
-        bb.append(immutableSet);
-        bb.append("<");
-        bb.append(importedName(Types.STRING));
-        bb.append("> ");
-        bb.append(TypeConstants.VALID_NAMES_NAME);
-        bb.append(" = ");
-        bb.append(immutableSet);
-        bb.append(".of(");
+        bb.str("protected static final ").str(immutableSet).str("<").str(importedName(Types.STRING))
+            .str("> " + TypeConstants.VALID_NAMES_NAME + " = ").str(immutableSet).append(".of(");
         {
             boolean first = true;
             for (var bit : bitsType.getBits()) {
@@ -704,9 +676,7 @@ class ClassTemplate extends BaseTemplate {
                 } else {
                     bb.appendImmediate(", ", "");
                 }
-                bb.append("\"");
-                bb.append(bit.getName());
-                bb.append("\"");
+                bb.str("\"").str(bit.getName()).append("\"");
             }
         }
         bb.append(");\n");
@@ -747,26 +717,17 @@ class ClassTemplate extends BaseTemplate {
 
         final var simpleName = genTO.simpleName();
         final var bb = new BlockBuilder();
-        bb.append("public static ");
-        bb.append(simpleName);
-        bb.append(" getDefaultInstance(final String defaultValue) {\n");
+        bb.str("public static ").str(simpleName).append(" getDefaultInstance(final String defaultValue) {\n");
         if (propType.equals(Types.primitiveBooleanType())) {
             bb.append("    ");
             bb.append(bitsDefaultInstanceBody(), "    ");
             bb.newLineIfNotEmpty();
         } else if (ClassTemplate.VALUEOF_TYPES.contains(propType)) {
-            bb.append("    return new ");
-            bb.append(simpleName);
-            bb.append("(");
-            bb.append(importedName(propType));
-            bb.append(".valueOf(defaultValue));\n");
+            bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
+                .append(".valueOf(defaultValue));\n");
         } else if (propType instanceof Decimal64Type decimal64) {
-            bb.append("    return new ");
-            bb.append(simpleName);
-            bb.append("(");
-            bb.append(importedName(propType));
-            bb.append(".valueOf(defaultValue).scaleTo(");
-            bb.append(decimal64.fractionDigits());
+            bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
+                .str(".valueOf(defaultValue).scaleTo(").append(decimal64.fractionDigits());
             bb.append("));\n");
         } else if (BaseYangTypes.STRING_TYPE.equals(propType)) {
             bb.append("    return new ");
@@ -984,14 +945,11 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var bb = new BlockBuilder();
-        bb.append("public ");
-        bb.append(type().simpleName());
-        bb.append("(");
-        bb.append(asArgumentsDeclaration(allProperties));
+        bb.str("public ").append(type().simpleName());
+        bb.str("(").append(asArgumentsDeclaration(allProperties));
         bb.append(") {\n");
         if (!parentProperties.isEmpty()) {
-            bb.append("    super(");
-            bb.append(asArguments(parentProperties));
+            bb.str("    super(").append(asArguments(parentProperties));
             bb.append(");\n");
         }
         for (var prop : allProperties) {
@@ -1003,18 +961,14 @@ class ClassTemplate extends BaseTemplate {
         for (var prop : properties) {
             final var fieldName = BaseTemplate.fieldName(prop);
             if (prop.getReturnType().simpleName().endsWith("[]")) {
-                bb.append("    this.");
-                bb.append(fieldName);
+                bb.str("    this.").append(fieldName);
                 bb.append(" = ");
                 bb.append(importedName(CODEHELPERS));
-                bb.append(".copyArray(");
-                bb.append(fieldName);
+                bb.str(".copyArray(").append(fieldName);
                 bb.append(");\n");
             } else {
-                bb.append("    this.");
-                bb.append(fieldName);
-                bb.append(" = ");
-                bb.append(fieldName);
+                bb.str("    this.").append(fieldName);
+                bb.str(" = ").append(fieldName);
                 bb.append(";\n");
             }
         }
@@ -1057,16 +1011,13 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         bb.append("/**\n");
-        bb.append(" * Creates a new instance from ");
-        bb.append(importedSuper);
+        bb.str(" * Creates a new instance from ").append(importedSuper);
         bb.nl().append(
                   " *\n");
         bb.append(" * @param source Source object\n");
         bb.append(" */\n");
-        bb.append("public ");
-        bb.append(type().simpleName());
-        bb.append("(");
-        bb.append(importedSuper);
+        bb.str("public ").append(type().simpleName());
+        bb.str("(").append(importedSuper);
         bb.append(" source) {\n");
         bb.append("    super(source);\n");
         bb.append("    ");
@@ -1099,17 +1050,13 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         bb.at().append(importedName(CONSTRUCTOR_PARAMETERS));
-        bb.append("(\"");
-        bb.append(TypeConstants.VALUE_PROP);
+        bb.str("(\"").append(TypeConstants.VALUE_PROP);
         bb.append("\")\n");
-        bb.append("public ");
-        bb.append(type().simpleName());
-        bb.append("(");
-        bb.append(asArgumentsDeclaration(allProperties));
+        bb.str("public ").append(type().simpleName());
+        bb.str("(").append(asArgumentsDeclaration(allProperties));
         bb.append(") {\n");
         if (!parentProperties.isEmpty()) {
-            bb.append("    super(");
-            bb.append(asArguments(parentProperties), "    ");
+            bb.str("    super(").append(asArguments(parentProperties), "    ");
             bb.append(");\n");
         }
 
@@ -1120,17 +1067,13 @@ class ClassTemplate extends BaseTemplate {
 
         final var fieldName = fieldName(value);
         if (valueProperty(properties) != null) {
-            bb.append("    this.");
-            bb.append(fieldName);
-            bb.append(" = ");
-            bb.append(importedName(CODEHELPERS));
-            bb.append(".requireValue(");
-            bb.append(fieldName);
+            bb.str("    this.").append(fieldName);
+            bb.str(" = ").append(importedName(CODEHELPERS));
+            bb.str(".requireValue(").append(fieldName);
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
                 bb.append(", " + decimal64.fractionDigits());
             }
-            bb.append(")");
-            bb.append(cloneCall(value));
+            bb.str(")").append(cloneCall(value));
             bb.append(";\n");
         }
         bb.append("    ");
