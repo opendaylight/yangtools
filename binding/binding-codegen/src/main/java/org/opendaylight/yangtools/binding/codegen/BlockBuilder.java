@@ -92,8 +92,18 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         super.append(requireNonNull(str));
     }
 
-    void append(final @NonNull BlockBuilder bb) {
+    @NonNullByDefault
+    void append(final BlockBuilder bb) {
         super.append(requireNonNull(bb));
+    }
+
+    // FIXME: clarify contract
+    @NonNullByDefault
+    @CheckReturnValue
+    BlockBuilder appendIndented(final BlockBuilder bb) {
+        super.append("    ");
+        super.append(requireNonNull(bb), "    ");
+        return this;
     }
 
     @Override
@@ -104,6 +114,12 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         } else {
             super.append(concat);
         }
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    public void append(final StringConcatenation concat, final String indentation) {
+        super.append(requireNonNull(concat), requireNonNull(indentation));
     }
 
     // FIXME: something like, but perhaps that is part of a JavaBlockBuilder along with importedName() et al.
