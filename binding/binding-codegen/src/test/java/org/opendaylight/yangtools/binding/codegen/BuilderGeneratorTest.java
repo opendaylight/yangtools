@@ -331,7 +331,7 @@ public class BuilderGeneratorTest {
         return genType;
     }
 
-    private static CharSequence genToString(final GeneratedType genType) {
+    private static BlockBuilder genToString(final GeneratedType genType) {
         return new InterfaceTemplate(genType).generateBindingToString();
     }
 
