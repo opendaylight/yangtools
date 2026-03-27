@@ -597,22 +597,16 @@ class InterfaceTemplate extends BaseTemplate {
         //        ''')
 
         final var bb = new BlockBuilder();
-        bb.append("Return ");
-        bb.append(propReturn);
+        bb.str("Return ").append(propReturn);
         bb.newLineIfNotEmpty();
         final var comment = method.getComment();
         bb.nl().append(formatReference(comment == null ? null : comment.referenceDescription()));
         bb.newLineIfNotEmpty();
-        bb.append("@return {@code ");
-        bb.append(importedReturnType(method));
-        bb.append("} ");
-        bb.append(propReturn);
+        bb.str("@return {@code ").str(importedReturnType(method)).str("} ").append(propReturn);
         bb.newLineIfNotEmpty();
         if (exception != null) {
-            bb.append("@throws ");
-            bb.append(importedName(exception));
-            bb.append(" if ");
-            bb.append(propName);
+            bb.str("@throws ").append(importedName(exception));
+            bb.str(" if ").append(propName);
             bb.append(" is not present\n");
         }
         return bb.toJavadocBlock();
