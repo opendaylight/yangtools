@@ -13,8 +13,6 @@ import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BA
 
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 
 /**
  * Bug5151 involves adding <code>{@literal @}return</code> annotations to accessor methods.
@@ -23,9 +21,6 @@ class Bug5151Test extends BaseCompilationTest {
     private static final Path SVC_PATH = BASE_SVC_PATH.resolve(Path.of("urn", "test", "foo", "rev160706"));
 
     @Test
-    @DisabledOnOs(value = OS.WINDOWS, disabledReason = """
-        Xtend's StringConcatenation uses the "line.separator" system property to generate proper line endings
-        in templates, leading to test failures running on Windows-type OS""")
     void test() throws Exception {
         final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5151");
         final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug5151");

@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -57,118 +56,118 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      */
     @Override
     public CharSequence body() {
-        final var sc = new StringConcatenation();
-        sc.append(wrapToDocumentation(formatDataForJavaDoc(targetType)));
-        sc.newLineIfNotEmpty();
-        sc.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
-        sc.newLineIfNotEmpty();
-        sc.append(generatedAnnotation());
-        sc.newLineIfNotEmpty();
-        sc.append("public class ");
-        sc.append(type().simpleName());
-        sc.append(" {\n");
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateBuilderFields(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(constantsDeclarations(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
+        final var bb = new BlockBuilder();
+        bb.append(wrapToDocumentation(formatDataForJavaDoc(targetType)));
+        bb.newLineIfNotEmpty();
+        bb.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
+        bb.newLineIfNotEmpty();
+        bb.append(generatedAnnotation());
+        bb.newLineIfNotEmpty();
+        bb.append("public class ");
+        bb.append(type().simpleName());
+        bb.append(" {\n");
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateBuilderFields(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(constantsDeclarations(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
         if (augmentType != null) {
-            sc.append("    ");
+            bb.append("    ");
             final var augmentTypeRef = importedName(augmentType);
             final var mapTypeRef = importedName(JU_MAP);
 
-            sc.append(mapTypeRef);
-            sc.append("<");
-            sc.append(importedName(CLASS));
-            sc.append("<? extends ");
-            sc.append(augmentTypeRef);
-            sc.append(">, ");
-            sc.append(augmentTypeRef);
-            sc.append("> ");
-            sc.append(Naming.AUGMENTATION_FIELD);
-            sc.append(" = ");
-            sc.append(mapTypeRef);
-            sc.append(".of();\n");
+            bb.append(mapTypeRef);
+            bb.append("<");
+            bb.append(importedName(CLASS));
+            bb.append("<? extends ");
+            bb.append(augmentTypeRef);
+            bb.append(">, ");
+            bb.append(augmentTypeRef);
+            bb.append("> ");
+            bb.append(Naming.AUGMENTATION_FIELD);
+            bb.append(" = ");
+            bb.append(mapTypeRef);
+            bb.append(".of();\n");
         }
 
         final var targetTypeName = importedName(targetType);
-        sc.newLine();
-        sc.append("    /**\n");
-        sc.append("     * Construct an empty builder.\n");
-        sc.append("     */\n");
-        sc.append("    public ");
-        sc.append(type().simpleName());
-        sc.append("() {\n");
-        sc.append("        // No-op\n");
-        sc.append("    }\n");
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateConstructorsFromIfcs(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    /**\n");
-        sc.append("     * Construct a builder initialized with state from specified {@link ");
-        sc.append(targetTypeName);
-        sc.append("}.\n");
-        sc.append("     *\n");
-        sc.append("     * @param base ");
-        sc.append(targetTypeName);
-        sc.append(" from which the builder should be initialized\n");
-        sc.append("     */\n");
-        sc.append("    public ");
-        sc.append(generateCopyConstructor(targetType, type().getEnclosedTypes().getFirst()), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateMethodFieldsFrom(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
+        bb.newLine();
+        bb.append("    /**\n");
+        bb.append("     * Construct an empty builder.\n");
+        bb.append("     */\n");
+        bb.append("    public ");
+        bb.append(type().simpleName());
+        bb.append("() {\n");
+        bb.append("        // No-op\n");
+        bb.append("    }\n");
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateConstructorsFromIfcs(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    /**\n");
+        bb.append("     * Construct a builder initialized with state from specified {@link ");
+        bb.append(targetTypeName);
+        bb.append("}.\n");
+        bb.append("     *\n");
+        bb.append("     * @param base ");
+        bb.append(targetTypeName);
+        bb.append(" from which the builder should be initialized\n");
+        bb.append("     */\n");
+        bb.append("    public ");
+        bb.append(generateCopyConstructor(targetType, type().getEnclosedTypes().getFirst()), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateMethodFieldsFrom(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
         if (isNonPresenceContainer(targetType)) {
-            sc.append("    ");
-            sc.append(generateEmptyInstance(), "    ");
-            sc.newLineIfNotEmpty();
+            bb.append("    ");
+            bb.append(generateEmptyInstance(), "    ");
+            bb.newLineIfNotEmpty();
         }
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateGetters(false), "    ");
-        sc.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateGetters(false), "    ");
+        bb.newLineIfNotEmpty();
         if (augmentType != null) {
-            sc.newLine();
-            sc.append("    ");
-            sc.append(generateAugmentation(), "    ");
-            sc.newLineIfNotEmpty();
+            bb.newLine();
+            bb.append("    ");
+            bb.append(generateAugmentation(), "    ");
+            bb.newLineIfNotEmpty();
         }
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateSetters(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    /**\n");
-        sc.append("     * A new {@link ");
-        sc.append(targetTypeName);
-        sc.append("} instance.\n");
-        sc.append("     *\n");
-        sc.append("     * @return A new {@link ");
-        sc.append(targetTypeName);
-        sc.append("} instance.\n");
-        sc.append("     */\n");
-        sc.append("    public ");
-        sc.append(importedNonNull(targetType));
-        sc.append(" build() {\n");
-        sc.append("        return new ");
-        sc.append(importedName(type().getEnclosedTypes().getFirst()));
-        sc.append("(this);\n");
-        sc.append("    }\n");
-        sc.newLine();
-        sc.append("    ");
-        sc.append(implTemplate.body(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.append("}\n");
-        return sc;
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateSetters(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    /**\n");
+        bb.append("     * A new {@link ");
+        bb.append(targetTypeName);
+        bb.append("} instance.\n");
+        bb.append("     *\n");
+        bb.append("     * @return A new {@link ");
+        bb.append(targetTypeName);
+        bb.append("} instance.\n");
+        bb.append("     */\n");
+        bb.append("    public ");
+        bb.append(importedNonNull(targetType));
+        bb.append(" build() {\n");
+        bb.append("        return new ");
+        bb.append(importedName(type().getEnclosedTypes().getFirst()));
+        bb.append("(this);\n");
+        bb.append("    }\n");
+        bb.newLine();
+        bb.append("    ");
+        bb.append(implTemplate.body(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.append("}\n");
+        return bb;
     }
 
     @Override
@@ -186,18 +185,18 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
             if (first) {
                 first = false;
             } else {
-                sc.appendImmediate("\n", "");
+                bb.appendImmediate("\n", "");
             }
-            sc.append(generateConstructorFromIfc(impl));
-            sc.newLineIfNotEmpty();
+            bb.append(generateConstructorFromIfc(impl));
+            bb.newLineIfNotEmpty();
         }
-        return sc;
+        return bb;
     }
 
     /**
@@ -224,34 +223,34 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            «generateConstructorFromIfc(implTypeImplement)»
         //        «ENDFOR»
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
-            sc.append("/**\n");
-            sc.append(" * Construct a new builder initialized from specified {@link ");
-            sc.append(typeName);
-            sc.append("}.\n");
-            sc.append(" *\n");
-            sc.append(" * @param arg ");
-            sc.append(typeName);
-            sc.append(" from which the builder should be initialized\n");
-            sc.append(" */\n");
-            sc.append("public ");
-            sc.append(type().simpleName());
-            sc.append("(");
-            sc.append(typeName);
-            sc.append(" arg) {\n");
-            sc.append("    ");
-            sc.append(printConstructorPropertySetter(genType), "    ");
-            sc.newLineIfNotEmpty();
-            sc.append("}\n");
-            sc.newLine();
+            bb.append("/**\n");
+            bb.append(" * Construct a new builder initialized from specified {@link ");
+            bb.append(typeName);
+            bb.append("}.\n");
+            bb.append(" *\n");
+            bb.append(" * @param arg ");
+            bb.append(typeName);
+            bb.append(" from which the builder should be initialized\n");
+            bb.append(" */\n");
+            bb.append("public ");
+            bb.append(type().simpleName());
+            bb.append("(");
+            bb.append(typeName);
+            bb.append(" arg) {\n");
+            bb.append("    ");
+            bb.append(printConstructorPropertySetter(genType), "    ");
+            bb.newLineIfNotEmpty();
+            bb.append("}\n");
+            bb.newLine();
         }
         for (var implTypeImplement :  genType.getImplements()) {
-            sc.append(generateConstructorFromIfc(implTypeImplement));
-            sc.newLineIfNotEmpty();
+            bb.append(generateConstructorFromIfc(implTypeImplement));
+            bb.newLineIfNotEmpty();
         }
-        return sc;
+        return bb;
     }
 
     private CharSequence printConstructorPropertySetter(final Type implementedIfc) {
@@ -265,12 +264,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //                «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
         //            «ENDIF»
         //        «ENDFOR»
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (Naming.isGetterMethodName(getter.getName())) {
-                sc.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
+                bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                sc.append(";\n");
+                bb.append(";\n");
             }
         }
 
@@ -278,10 +277,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            «printConstructorPropertySetter(impl, getSpecifiedGetters(ifc))»
         //        «ENDFOR»
         for (var impl : ifc.getImplements()) {
-            sc.append(printConstructorPropertySetter(impl, getSpecifiedGetters(ifc)));
-            sc.newLineIfNotEmpty();
+            bb.append(printConstructorPropertySetter(impl, getSpecifiedGetters(ifc)));
+            bb.newLineIfNotEmpty();
         }
-        return sc;
+        return bb;
     }
 
     private CharSequence printConstructorPropertySetter(final Type implementedIfc,
@@ -290,7 +289,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         //    «FOR getter : ifc.nonDefaultMethods»
         //        «IF Naming.isGetterMethodName(getter.name) && getterByName(alreadySetProperties, getter.name) ===
         // null»
@@ -301,9 +300,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         for (var getter : nonDefaultMethods(ifc)) {
             if (Naming.isGetterMethodName(getter.getName())
                 && getterByName(alreadySetProperties, getter.getName()) == null) {
-                sc.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
+                bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                sc.append(";\n");
+                bb.append(";\n");
             }
         }
 
@@ -312,11 +311,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         // getSpecifiedGetters(ifc)))»
         //    «ENDFOR»
         for (var descendant : ifc.getImplements()) {
-            sc.append(printConstructorPropertySetter(descendant,
+            bb.append(printConstructorPropertySetter(descendant,
                 Sets.union(alreadySetProperties, getSpecifiedGetters(ifc))));
-            sc.newLineIfNotEmpty();
+            bb.newLineIfNotEmpty();
         }
-        return sc;
+        return bb;
     }
 
     private static Set<MethodSignature> getSpecifiedGetters(final GeneratedType type) {
@@ -343,25 +342,25 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            «ENDFOR»
         //            «CODEHELPERS.importedName».validValue(isValidArg, arg, "«targetType.getAllIfcs.toListOfNames»");
         //        }
-        final var sc = new StringConcatenation();
-        sc.append(generateMethodFieldsFromComment(targetType));
-        sc.newLineIfNotEmpty();
-        sc.append("public void fieldsFrom(final ");
-        sc.append(importedName(BindingTypes.GROUPING));
-        sc.append(" arg) {\n");
-        sc.append("    boolean isValidArg = false;\n");
+        final var bb = new BlockBuilder();
+        bb.append(generateMethodFieldsFromComment(targetType));
+        bb.newLineIfNotEmpty();
+        bb.append("public void fieldsFrom(final ");
+        bb.append(importedName(BindingTypes.GROUPING));
+        bb.append(" arg) {\n");
+        bb.append("    boolean isValidArg = false;\n");
         for (var impl : getAllIfcs(targetType)) {
-            sc.append("    ");
-            sc.append(generateIfCheck(impl, done), "    ");
-            sc.newLineIfNotEmpty();
+            bb.append("    ");
+            bb.append(generateIfCheck(impl, done), "    ");
+            bb.newLineIfNotEmpty();
         }
-        sc.append("    ");
-        sc.append(importedName(CODEHELPERS), "    ");
-        sc.append(".validValue(isValidArg, arg, \"");
-        sc.append(toListOfNames(getAllIfcs(targetType)), "    ");
-        sc.append("\");\n");
-        sc.append("}\n");
-        return sc;
+        bb.append("    ");
+        bb.append(importedName(CODEHELPERS), "    ");
+        bb.append(".validValue(isValidArg, arg, \"");
+        bb.append(toListOfNames(getAllIfcs(targetType)), "    ");
+        bb.append("\");\n");
+        bb.append("}\n");
+        return bb;
     }
 
     /**
@@ -370,34 +369,34 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private CharSequence generateEmptyInstance() {
         final var nonnullTarget = importedNonNull(targetType);
 
-        final var sc = new StringConcatenation();
-        sc.append("private static final class LazyEmpty {\n");
-        sc.append("    static final ");
-        sc.append(nonnullTarget, "    ");
-        sc.append(" INSTANCE = new ");
-        sc.append(type().simpleName());
-        sc.append("().build();\n");
-        sc.newLine();
-        sc.append("    private LazyEmpty() {\n");
-        sc.append("        // Hidden on purpose\n");
-        sc.append("    }\n");
-        sc.append("}\n");
-        sc.newLine();
-        sc.append("/**\n");
-        sc.append(" * Get empty instance of ");
-        sc.append(targetType.simpleName());
-        sc.append(".\n");
-        sc.append(" *\n");
-        sc.append(" * @return An empty {@link ");
-        sc.append(targetType.simpleName());
-        sc.append("}\n");
-        sc.append(" */\n");
-        sc.append("public static ");
-        sc.append(nonnullTarget);
-        sc.append(" empty() {\n");
-        sc.append("    return LazyEmpty.INSTANCE;\n");
-        sc.append("}\n");
-        return sc;
+        final var bb = new BlockBuilder();
+        bb.append("private static final class LazyEmpty {\n");
+        bb.append("    static final ");
+        bb.append(nonnullTarget, "    ");
+        bb.append(" INSTANCE = new ");
+        bb.append(type().simpleName());
+        bb.append("().build();\n");
+        bb.newLine();
+        bb.append("    private LazyEmpty() {\n");
+        bb.append("        // Hidden on purpose\n");
+        bb.append("    }\n");
+        bb.append("}\n");
+        bb.newLine();
+        bb.append("/**\n");
+        bb.append(" * Get empty instance of ");
+        bb.append(targetType.simpleName());
+        bb.append(".\n");
+        bb.append(" *\n");
+        bb.append(" * @return An empty {@link ");
+        bb.append(targetType.simpleName());
+        bb.append("}\n");
+        bb.append(" */\n");
+        bb.append("public static ");
+        bb.append(nonnullTarget);
+        bb.append(" empty() {\n");
+        bb.append("    return LazyEmpty.INSTANCE;\n");
+        bb.append("}\n");
+        return bb;
     }
 
     private CharSequence generateMethodFieldsFromComment(final GeneratedType type) {
@@ -414,24 +413,24 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         // incompatible value
         //         */
 
-        final var sc = new StringConcatenation();
-        sc.append("/**\n");
-        sc.append(
+        final var bb = new StringBuilder();
+        bb.append("/**\n");
+        bb.append(
             " * Set fields from given grouping argument. Valid argument is instance of one of following types:\n");
-        sc.append(" * <ul>\n");
+        bb.append(" * <ul>\n");
         for (var impl : getAllIfcs(type)) {
-            sc.append(" *   <li>{@link ");
-            sc.append(importedName(impl));
-            sc.append("}</li>\n");
+            bb.append(" *   <li>{@link ");
+            bb.append(importedName(impl));
+            bb.append("}</li>\n");
         }
-        sc.append(" * </ul>\n");
-        sc.append(" *\n");
-        sc.append(" * @param arg grouping object\n");
-        sc.append(" * @throws ");
-        sc.append(importedName(IAE));
-        sc.append(" if given argument is none of valid types or has property with incompatible value\n");
-        sc.append(" */\n");
-        return sc;
+        bb.append(" * </ul>\n");
+        bb.append(" *\n");
+        bb.append(" * @param arg grouping object\n");
+        bb.append(" * @throws ");
+        bb.append(importedName(IAE));
+        bb.append(" if given argument is none of valid types or has property with incompatible value\n");
+        bb.append(" */\n");
+        return bb;
     }
 
     /**
@@ -451,16 +450,16 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            «printPropertySetter(implType)»
         //            isValidArg = true;
         //        }
-        final var sc = new StringConcatenation();
-        sc.append("if (arg instanceof ");
-        sc.append(importedName(implType));
-        sc.append(" castArg) {\n");
-        sc.append("    ");
-        sc.append(printPropertySetter(implType), "    ");
-        sc.newLineIfNotEmpty();
-        sc.append("    isValidArg = true;\n");
-        sc.append("}\n");
-        return sc;
+        final var bb = new BlockBuilder();
+        bb.append("if (arg instanceof ");
+        bb.append(importedName(implType));
+        bb.append(" castArg) {\n");
+        bb.append("    ");
+        bb.append(printPropertySetter(implType), "    ");
+        bb.newLineIfNotEmpty();
+        bb.append("    isValidArg = true;\n");
+        bb.append("}\n");
+        return bb;
     }
 
     private CharSequence printPropertySetter(final Type implementedIfc) {
@@ -468,15 +467,15 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (Naming.isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
-                sc.append(printPropertySetter(getter, "castArg." + getter.getName() + "()",
+                bb.append(printPropertySetter(getter, "castArg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                sc.append(";\n");
+                bb.append(";\n");
             }
         }
-        return sc;
+        return bb;
     }
 
     private CharSequence printPropertySetter(final MethodSignature getter, final String retrieveProperty,
@@ -547,87 +546,87 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private CharSequence constantsDeclarations() {
-        final var sc = new StringConcatenation();
-        for (var c : type().getConstantDefinitions()) {
-            if (!c.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
-                sc.append(emitConstant(c));
-                sc.newLineIfNotEmpty();
+        final var bb = new BlockBuilder();
+        for (var def : type().getConstantDefinitions()) {
+            if (!def.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
+                bb.append(emitConstant(def));
+                bb.newLineIfNotEmpty();
                 continue;
             }
 
-            final var cValue = (Map<String, String>) c.getValue();
-            final var fieldSuffix = c.getName().substring(TypeConstants.PATTERN_CONSTANT_NAME.length());
+            final var xsdToPattern = (Map<String, String>) def.getValue();
+            final var fieldSuffix = def.getName().substring(TypeConstants.PATTERN_CONSTANT_NAME.length());
             final var jurPatternRef = importedName(JUR_PATTERN);
-            if (cValue.size() == 1) {
-                final var firstEntry = cValue.entrySet().iterator().next();
+            if (xsdToPattern.size() == 1) {
+                final var firstEntry = xsdToPattern.entrySet().iterator().next();
                 //  private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «jurPatternRef»
                 //.compile("«firstEntry.key.escapeJava»");
                 //  private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» =
                 // "«firstEntry.value.escapeJava»";
 
-                sc.append("private static final ");
-                sc.append(jurPatternRef);
-                sc.append(" ");
-                sc.append(Constants.MEMBER_PATTERN_LIST);
-                sc.append(fieldSuffix);
-                sc.append(" = ");
-                sc.append(jurPatternRef);
-                sc.append(".compile(\"");
-                sc.append(StringEscapeUtils.escapeJava(firstEntry.getKey()));
-                sc.append("\");\n");
-                sc.append("private static final String ");
-                sc.append(Constants.MEMBER_REGEX_LIST);
-                sc.append(fieldSuffix);
-                sc.append(" = \"");
-                sc.append(StringEscapeUtils.escapeJava(firstEntry.getValue()));
-                sc.append("\";\n");
+                bb.append("private static final ");
+                bb.append(jurPatternRef);
+                bb.append(" ");
+                bb.append(Constants.MEMBER_PATTERN_LIST);
+                bb.append(fieldSuffix);
+                bb.append(" = ");
+                bb.append(jurPatternRef);
+                bb.append(".compile(\"");
+                bb.append(StringEscapeUtils.escapeJava(firstEntry.getKey()));
+                bb.append("\");\n");
+                bb.append("private static final String ");
+                bb.append(Constants.MEMBER_REGEX_LIST);
+                bb.append(fieldSuffix);
+                bb.append(" = \"");
+                bb.append(StringEscapeUtils.escapeJava(firstEntry.getValue()));
+                bb.append("\";\n");
                 continue;
             }
 
-            sc.append("private static final ");
-            sc.append(jurPatternRef);
-            sc.append("[] ");
-            sc.append(Constants.MEMBER_PATTERN_LIST);
-            sc.append(fieldSuffix);
-            sc.append(" = ");
-            sc.append(importedName(CODEHELPERS));
-            sc.append(".compilePatterns(");
-            sc.append(importedName(JU_LIST));
-            sc.append(".of(\n");
+            bb.append("private static final ");
+            bb.append(jurPatternRef);
+            bb.append("[] ");
+            bb.append(Constants.MEMBER_PATTERN_LIST);
+            bb.append(fieldSuffix);
+            bb.append(" = ");
+            bb.append(importedName(CODEHELPERS));
+            bb.append(".compilePatterns(");
+            bb.append(importedName(JU_LIST));
+            bb.append(".of(\n");
             {
                 boolean first = true;
-                for (var v : cValue.keySet()) {
+                for (var v : xsdToPattern.keySet()) {
                     if (first) {
                         first = false;
                     } else {
-                        sc.appendImmediate(", ", "");
+                        bb.appendImmediate(", ", "");
                     }
-                    sc.append("\"");
-                    sc.append(StringEscapeUtils.escapeJava(v));
-                    sc.append("\"");
+                    bb.append("\"");
+                    bb.append(StringEscapeUtils.escapeJava(v));
+                    bb.append("\"");
                 }
             }
-            sc.append("));\n");
-            sc.append("private static final String[] ");
-            sc.append(Constants.MEMBER_REGEX_LIST);
-            sc.append(fieldSuffix);
-            sc.append(" = { ");
+            bb.append("));\n");
+            bb.append("private static final String[] ");
+            bb.append(Constants.MEMBER_REGEX_LIST);
+            bb.append(fieldSuffix);
+            bb.append(" = { ");
             {
                 boolean first = true;
-                for (var v : cValue.values()) {
+                for (var v : xsdToPattern.values()) {
                     if (first) {
                         first = false;
                     } else {
-                        sc.appendImmediate(", ", "");
+                        bb.appendImmediate(", ", "");
                     }
-                    sc.append("\"");
-                    sc.append(StringEscapeUtils.escapeJava(v));
-                    sc.append("\"");
+                    bb.append("\"");
+                    bb.append(StringEscapeUtils.escapeJava(v));
+                    bb.append("\"");
                 }
             }
-            sc.append(" };\n");
+            bb.append(" };\n");
         }
-        return sc;
+        return bb;
     }
 
     private CharSequence generateSetter(final BuilderGeneratedProperty field) {
@@ -648,10 +647,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private CharSequence generateListSetter(final BuilderGeneratedProperty field, final Type actualType) {
         final var restrictions = restrictionsForSetter(actualType);
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         if (restrictions != null) {
-            sc.append(generateCheckers(field, restrictions, actualType));
-            sc.newLineIfNotEmpty();
+            bb.append(generateCheckers(field, restrictions, actualType));
+            bb.newLineIfNotEmpty();
         }
 
         //
@@ -664,25 +663,25 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //     * @return this builder
         //     */
         //    public «type.simpleName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
-        sc.newLine();
-        sc.append("/**\n");
-        sc.append(" * Set the property corresponding to {@link ");
-        sc.append(importedName(targetType));
-        sc.append("#");
-        sc.append(field.getGetterName());
-        sc.append("()} to the specified\n");
-        sc.append(" * value.\n");
-        sc.append(" *\n");
-        sc.append(" * @param values desired value\n");
-        sc.append(" * @return this builder\n");
-        sc.append(" */\n");
-        sc.append("public ");
-        sc.append(type().simpleName());
-        sc.append(" set");
-        sc.append(Naming.toFirstUpper(field.getName()));
-        sc.append("(final ");
-        sc.append(importedReturnType(field));
-        sc.append(" values) {\n");
+        bb.newLine();
+        bb.append("/**\n");
+        bb.append(" * Set the property corresponding to {@link ");
+        bb.append(importedName(targetType));
+        bb.append("#");
+        bb.append(field.getGetterName());
+        bb.append("()} to the specified\n");
+        bb.append(" * value.\n");
+        bb.append(" *\n");
+        bb.append(" * @param values desired value\n");
+        bb.append(" * @return this builder\n");
+        bb.append(" */\n");
+        bb.append("public ");
+        bb.append(type().simpleName());
+        bb.append(" set");
+        bb.append(Naming.toFirstUpper(field.getName()));
+        bb.append("(final ");
+        bb.append(importedReturnType(field));
+        bb.append(" values) {\n");
 
         //        «IF restrictions !== null»
         //            if (values != null) {
@@ -692,38 +691,38 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            }
         //        «ENDIF»
         if (restrictions != null) {
-            sc.append("if (values != null) {");
-            sc.newLine();
-            sc.append("   ");
-            sc.append("for (");
-            sc.append(importedName(actualType), "   ");
-            sc.append(" value : values) {\n");
-            sc.append("       ");
-            sc.append(checkArgument(field, restrictions, actualType, "value"), "       ");
-            sc.newLineIfNotEmpty();
-            sc.append("   }\n");
-            sc.append("}\n");
+            bb.append("if (values != null) {");
+            bb.newLine();
+            bb.append("   ");
+            bb.append("for (");
+            bb.append(importedName(actualType), "   ");
+            bb.append(" value : values) {\n");
+            bb.append("       ");
+            bb.append(checkArgument(field, restrictions, actualType, "value"), "       ");
+            bb.newLineIfNotEmpty();
+            bb.append("   }\n");
+            bb.append("}\n");
         }
 
         //            this.«field.fieldName» = values;
         //            return this;
         //        }
         //
-        sc.append("    this.");
-        sc.append(fieldName(field));
-        sc.append(" = values;\n");
-        sc.append("    return this;\n");
-        sc.append("}\n");
-        sc.newLine();
-        return sc;
+        bb.append("    this.");
+        bb.append(fieldName(field));
+        bb.append(" = values;\n");
+        bb.append("    return this;\n");
+        bb.append("}\n");
+        bb.newLine();
+        return bb;
     }
 
     private CharSequence generateMapSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
-            sc.append(generateCheckers(field, restrictions, actualType));
-            sc.newLineIfNotEmpty();
+            bb.append(generateCheckers(field, restrictions, actualType));
+            bb.newLineIfNotEmpty();
         }
 
         //
@@ -737,25 +736,25 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //         */
         //        public «type.simpleName» set«field.name.toFirstUpper»(final «field.returnType.importedName» values) {
 
-        sc.newLine();
-        sc.append("/**\n");
-        sc.append(" * Set the property corresponding to {@link ");
-        sc.append(importedName(targetType));
-        sc.append("#");
-        sc.append(field.getGetterName());
-        sc.append("()} to the specified\n");
-        sc.append(" * value.\n");
-        sc.append(" *\n");
-        sc.append(" * @param values desired value\n");
-        sc.append(" * @return this builder\n");
-        sc.append(" */\n");
-        sc.append("public ");
-        sc.append(type().simpleName());
-        sc.append(" set");
-        sc.append(Naming.toFirstUpper(field.getName()));
-        sc.append("(final ");
-        sc.append(importedReturnType(field));
-        sc.append(" values) {\n");
+        bb.newLine();
+        bb.append("/**\n");
+        bb.append(" * Set the property corresponding to {@link ");
+        bb.append(importedName(targetType));
+        bb.append("#");
+        bb.append(field.getGetterName());
+        bb.append("()} to the specified\n");
+        bb.append(" * value.\n");
+        bb.append(" *\n");
+        bb.append(" * @param values desired value\n");
+        bb.append(" * @return this builder\n");
+        bb.append(" */\n");
+        bb.append("public ");
+        bb.append(type().simpleName());
+        bb.append(" set");
+        bb.append(Naming.toFirstUpper(field.getName()));
+        bb.append("(final ");
+        bb.append(importedReturnType(field));
+        bb.append(" values) {\n");
 
         //        «IF restrictions !== null»
         //            if (values != null) {
@@ -765,170 +764,171 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            }
         //        «ENDIF»
         if (restrictions != null) {
-            sc.append("if (values != null) {\n");
-            sc.append("   for (");
-            sc.append(importedName(actualType), "   ");
-            sc.append(" value : values.values()) {\n");
-            sc.append("       ");
-            sc.append(checkArgument(field, restrictions, actualType, "value"), "       ");
-            sc.newLineIfNotEmpty();
-            sc.append("   }\n");
-            sc.newLine();
-            sc.append("}\n");
+            bb.append("if (values != null) {\n");
+            bb.append("   for (");
+            bb.append(importedName(actualType), "   ");
+            bb.append(" value : values.values()) {\n");
+            bb.append("       ");
+            bb.append(checkArgument(field, restrictions, actualType, "value"), "       ");
+            bb.newLineIfNotEmpty();
+            bb.append("   }\n");
+            bb.newLine();
+            bb.append("}\n");
         }
 
         //            this.«field.fieldName» = values;
         //            return this;
         //        }
-        sc.append("    this.");
-        sc.append(fieldName(field));
-        sc.append(" = values;\n");
-        sc.append("    return this;\n");
-        sc.append("}\n");
-        return sc;
+        bb.append("    this.");
+        bb.append(fieldName(field));
+        bb.append(" = values;\n");
+        bb.append("    return this;\n");
+        bb.append("}\n");
+        return bb;
     }
 
     private CharSequence generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            sc.newLine();
-            sc.append(generateCheckers(field, restrictions, actualType));
-            sc.newLineIfNotEmpty();
+            bb.newLine();
+            bb.append(generateCheckers(field, restrictions, actualType));
+            bb.newLineIfNotEmpty();
         }
-        sc.newLine();
-        sc.append("/**\n");
-        sc.append(" * Set the property corresponding to {@link ");
-        sc.append(importedName(targetType), " ");
-        sc.append("#");
-        sc.append(field.getGetterName());
-        sc.append("()} to the specified\n");
-        sc.append(" * value.\n");
-        sc.append(" *\n");
-        sc.append(" * @param value desired value\n");
-        sc.append(" * @return this builder\n");
-        sc.append(" */\n");
-        sc.append("public ");
-        sc.append(type().simpleName());
-        sc.append(" set");
-        sc.append(Naming.toFirstUpper(field.getName()));
-        sc.append("(final ");
-        sc.append(importedReturnType(field));
-        sc.append(" value) {\n");
+        bb.newLine();
+        bb.append("/**\n");
+        bb.append(" * Set the property corresponding to {@link ");
+        bb.append(importedName(targetType), " ");
+        bb.append("#");
+        bb.append(field.getGetterName());
+        bb.append("()} to the specified\n");
+        bb.append(" * value.\n");
+        bb.append(" *\n");
+        bb.append(" * @param value desired value\n");
+        bb.append(" * @return this builder\n");
+        bb.append(" */\n");
+        bb.append("public ");
+        bb.append(type().simpleName());
+        bb.append(" set");
+        bb.append(Naming.toFirstUpper(field.getName()));
+        bb.append("(final ");
+        bb.append(importedReturnType(field));
+        bb.append(" value) {\n");
         if (restrictions != null) {
-            sc.append("    if (value != null) {\n");
-            sc.append("        ");
-            sc.append(checkArgument(field, restrictions, actualType, "value"), "        ");
-            sc.newLineIfNotEmpty();
-            sc.append("    }\n");
+            bb.append("    if (value != null) {\n");
+            bb.append("        ");
+            bb.append(checkArgument(field, restrictions, actualType, "value"), "        ");
+            bb.newLineIfNotEmpty();
+            bb.append("    }\n");
         }
-        sc.append("    this.");
-        sc.append(fieldName(field));
-        sc.append(" = value;\n");
-        sc.append("    return this;\n");
-        sc.append("}\n");
-        return sc;
+        bb.append("    this.");
+        bb.append(fieldName(field));
+        bb.append(" = value;\n");
+        bb.append("    return this;\n");
+        bb.append("}\n");
+        return bb;
     }
 
     /**
      * {@return string with the setter methods}
      */
     private CharSequence generateSetters() {
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         if (keyType != null) {
-            sc.append("/**\n");
-            sc.append(" * Set the key value corresponding to {@link ");
-            sc.append(importedName(targetType));
-            sc.append("#");
-            sc.append(Naming.KEY_AWARE_KEY_NAME, " ");
-            sc.append("()} to the specified\n");
-            sc.append(" * value.\n");
-            sc.append(" *\n");
-            sc.append(" * @param key desired value\n");
-            sc.append(" * @return this builder\n");
-            sc.append(" */\n");
-            sc.append("public ");
-            sc.append(type().simpleName());
-            sc.append(" withKey(final ");
-            sc.append(importedName(keyType));
-            sc.append(" key) {\n");
-            sc.append("    this.key = key;\n");
-            sc.append("    return this;\n");
-            sc.append("}\n");
+            bb.append("/**\n");
+            bb.append(" * Set the key value corresponding to {@link ");
+            bb.append(importedName(targetType));
+            bb.append("#");
+            bb.append(Naming.KEY_AWARE_KEY_NAME, " ");
+            bb.append("()} to the specified\n");
+            bb.append(" * value.\n");
+            bb.append(" *\n");
+            bb.append(" * @param key desired value\n");
+            bb.append(" * @return this builder\n");
+            bb.append(" */\n");
+            bb.append("public ");
+            bb.append(type().simpleName());
+            bb.append(" withKey(final ");
+            bb.append(importedName(keyType));
+            bb.append(" key) {\n");
+            bb.append("    this.key = key;\n");
+            bb.append("    return this;\n");
+            bb.append("}\n");
         }
         for (var property : properties) {
-            sc.append(generateSetter(property));
-            sc.newLineIfNotEmpty();
+            bb.append(generateSetter(property));
+            bb.newLineIfNotEmpty();
         }
-        sc.newLine();
+        bb.newLine();
         if (augmentType != null) {
             final var augmentTypeRef = importedName(augmentType);
             final var hashMapRef = importedName(JU_HASHMAP);
-            sc.append("/**\n");
-            sc.append(" * Add an augmentation to this builder\'s product.\n");
-            sc.append(" *\n");
-            sc.append(" * @param augmentation augmentation to be added\n");
-            sc.append(" * @return this builder\n");
-            sc.append(" * @throws ");
-            sc.append(importedName(NPE));
-            sc.append(" if {@code augmentation} is null\n");
-            sc.append(" */\n");
-            sc.append("public ");
-            sc.append(type().simpleName());
-            sc.append(" addAugmentation(");
-            sc.append(augmentTypeRef);
-            sc.append(" augmentation) {\n");
-            sc.append("    if (!(this.");
-            sc.append(Naming.AUGMENTATION_FIELD);
-            sc.append(" instanceof ");
-            sc.append(hashMapRef);
-            sc.append(")) {\n");
-            sc.append("        ");
-            sc.append("this.");
-            sc.append(Naming.AUGMENTATION_FIELD);
-            sc.append(" = new ");
-            sc.append(hashMapRef);
-            sc.append("<>();\n");
-            sc.append("    }\n");
-            sc.newLine();
-            sc.append("    this.");
-            sc.append(Naming.AUGMENTATION_FIELD);
-            sc.append(".put(augmentation.");
-            sc.append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME);
-            sc.append("(), augmentation);\n");
-            sc.append("    return this;\n");
-            sc.append("}\n");
-            sc.newLine();
-            sc.append("/**\n");
-            sc.append(" * Remove an augmentation from this builder\'s product. If this builder does not track such an");
-            sc.append(" augmentation\n");
-            sc.append(" * type, this method does nothing.\n");
-            sc.append(" *\n");
-            sc.append(" * @param augmentationType augmentation type to be removed\n");
-            sc.append(" * @return this builder\n");
-            sc.append(" */\n");
-            sc.append("public ");
-            sc.append(type().simpleName());
-            sc.append(" removeAugmentation(");
-            sc.append(importedName(CLASS));
-            sc.append("<? extends ");
-            sc.append(augmentTypeRef);
-            sc.append("> augmentationType) {\n");
-            sc.append("    if (this.");
-            sc.append(Naming.AUGMENTATION_FIELD, "    ");
-            sc.append(" instanceof ");
-            sc.append(hashMapRef, "    ");
-            sc.append(") {\n");
-            sc.append("        this.");
-            sc.append(Naming.AUGMENTATION_FIELD);
-            sc.append(".remove(augmentationType);\n");
-            sc.append("    }\n");
-            sc.append("    return this;\n");
-            sc.append("}\n");
+            bb.append("/**\n");
+            bb.append(" * Add an augmentation to this builder\'s product.\n");
+            bb.append(" *\n");
+            bb.append(" * @param augmentation augmentation to be added\n");
+            bb.append(" * @return this builder\n");
+            bb.append(" * @throws ");
+            bb.append(importedName(NPE));
+            bb.append(" if {@code augmentation} is null\n");
+            bb.append(" */\n");
+            bb.append("public ");
+            bb.append(type().simpleName());
+            bb.append(" addAugmentation(");
+            bb.append(augmentTypeRef);
+            bb.append(" augmentation) {\n");
+            bb.append("    if (!(this.");
+            bb.append(Naming.AUGMENTATION_FIELD);
+            bb.append(" instanceof ");
+            bb.append(hashMapRef);
+            bb.append(")) {\n");
+            bb.append("        ");
+            bb.append("this.");
+            bb.append(Naming.AUGMENTATION_FIELD);
+            bb.append(" = new ");
+            bb.append(hashMapRef);
+            bb.append("<>();\n");
+            bb.append("    }\n");
+            bb.newLine();
+            bb.append("    this.");
+            bb.append(Naming.AUGMENTATION_FIELD);
+            bb.append(".put(augmentation.");
+            bb.append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME);
+            bb.append("(), augmentation);\n");
+            bb.append("    return this;\n");
+            bb.append("}\n");
+            bb.newLine();
+            bb.append("/**\n");
+            bb.append(" * Remove an augmentation from this builder\'s product. If this builder does not track such an");
+            bb.append(" augmentation\n");
+            bb.append(" * type, this method does nothing.\n");
+            bb.append(" *\n");
+            bb.append(" * @param augmentationType augmentation type to be removed\n");
+            bb.append(" * @return this builder\n");
+            bb.append(" */\n");
+            bb.append("public ");
+            bb.append(type().simpleName());
+            bb.append(" removeAugmentation(");
+            bb.append(importedName(CLASS));
+            bb.append("<? extends ");
+            bb.append(augmentTypeRef);
+            bb.append("> augmentationType) {\n");
+            bb.append("    if (this.");
+            bb.append(Naming.AUGMENTATION_FIELD, "    ");
+            bb.append(" instanceof ");
+            bb.append(hashMapRef, "    ");
+            bb.append(") {\n");
+            bb.append("        this.");
+            bb.append(Naming.AUGMENTATION_FIELD);
+            bb.append(".remove(augmentationType);\n");
+            bb.append("    }\n");
+            bb.append("    return this;\n");
+            bb.append("}\n");
         }
-        return sc;
+        return bb;
     }
 
+    // FIXME: return a Block
     // FIXME: remove this suppression
     @SuppressWarnings("checkstyle:lineLength")
     private String createDescription(final GeneratedType targetType) {
@@ -971,60 +971,61 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //        @see «target»
 
         final var target = importedName(targetType);
-        final var  sc = new StringConcatenation();
-        sc.append("Class that builds {@link ");
-        sc.append(target);
-        sc.append("} instances. Overall design of the class is that of a\n");
-        sc.append("<a href=\"https://en.wikipedia.org/wiki/Fluent_interface\">fluent interface</a>, where method chaining is used.\n");
-        sc.newLine();
-        sc.append("<p>\n");
-        sc.append("In general, this class is supposed to be used like this template:\n");
-        sc.append("<pre>\n");
-        sc.append("  <code>\n");
-        sc.append("    ");
-        sc.append(target);
-        sc.append(" create");
-        sc.append(target);
-        sc.append("(int fooXyzzy, int barBaz) {\n");
-        sc.append("        return new ");
-        sc.append(target);
-        sc.append("Builder()\n");
-        sc.append("            .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())\n");
-        sc.append("            .setBar(new BarBuilder().setBaz(barBaz).build())\n");
-        sc.append("            .build();\n");
-        sc.append("    }\n");
-        sc.append("  </code>\n");
-        sc.append("</pre>\n");
-        sc.newLine();
-        sc.append("<p>\n");
-        sc.append("This pattern is supported by the immutable nature of ");
-        sc.append(target);
-        sc.append(", as instances can be freely passed around without");
-        sc.newLineIfNotEmpty();
-        sc.append("worrying about synchronization issues.");
-        sc.newLine();
-        sc.newLine();
-        sc.append("<p>");
-        sc.newLine();
-        sc.append("As a side note: method chaining results in:");
-        sc.newLine();
-        sc.append("<ul>");
-        sc.newLine();
-        sc.append("  <li>very efficient Java bytecode, as the method invocation result, in this case the Builder reference, is\n");
-        sc.append("      on the stack, so further method invocations just need to fill method arguments for the next method\n");
-        sc.append("      invocation, which is terminated by {@link #build()}, which is then returned from the method</li>\n");
-        sc.append("  <li>better understanding by humans, as the scope of mutable state (the builder) is kept to a minimum and is\n");
-        sc.append("      very localized</li>\n");
-        sc.append("  <li>better optimization opportunities, as the object scope is minimized in terms of invocation (rather than\n");
-        sc.append("      method) stack, making <a href=\"https://en.wikipedia.org/wiki/Escape_analysis\">escape analysis</a> a lot\n");
-        sc.append("      easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely\n");
-        sc.append("      eliminated</li>\n");
-        sc.append("</ul>\n");
-        sc.newLine();
-        sc.append("@see ");
-        sc.append(target);
-        sc.newLineIfNotEmpty();
-        return sc.toString();
+        final var bb = new BlockBuilder();
+        // FIXME: use Java text blocks as much as possible
+        bb.append("Class that builds {@link ");
+        bb.append(target);
+        bb.append("} instances. Overall design of the class is that of a\n");
+        bb.append("<a href=\"https://en.wikipedia.org/wiki/Fluent_interface\">fluent interface</a>, where method chaining is used.\n");
+        bb.newLine();
+        bb.append("<p>\n");
+        bb.append("In general, this class is supposed to be used like this template:\n");
+        bb.append("<pre>\n");
+        bb.append("  <code>\n");
+        bb.append("    ");
+        bb.append(target);
+        bb.append(" create");
+        bb.append(target);
+        bb.append("(int fooXyzzy, int barBaz) {\n");
+        bb.append("        return new ");
+        bb.append(target);
+        bb.append("Builder()\n");
+        bb.append("            .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())\n");
+        bb.append("            .setBar(new BarBuilder().setBaz(barBaz).build())\n");
+        bb.append("            .build();\n");
+        bb.append("    }\n");
+        bb.append("  </code>\n");
+        bb.append("</pre>\n");
+        bb.newLine();
+        bb.append("<p>\n");
+        bb.append("This pattern is supported by the immutable nature of ");
+        bb.append(target);
+        bb.append(", as instances can be freely passed around without");
+        bb.newLineIfNotEmpty();
+        bb.append("worrying about synchronization issues.");
+        bb.newLine();
+        bb.newLine();
+        bb.append("<p>");
+        bb.newLine();
+        bb.append("As a side note: method chaining results in:");
+        bb.newLine();
+        bb.append("<ul>");
+        bb.newLine();
+        bb.append("  <li>very efficient Java bytecode, as the method invocation result, in this case the Builder reference, is\n");
+        bb.append("      on the stack, so further method invocations just need to fill method arguments for the next method\n");
+        bb.append("      invocation, which is terminated by {@link #build()}, which is then returned from the method</li>\n");
+        bb.append("  <li>better understanding by humans, as the scope of mutable state (the builder) is kept to a minimum and is\n");
+        bb.append("      very localized</li>\n");
+        bb.append("  <li>better optimization opportunities, as the object scope is minimized in terms of invocation (rather than\n");
+        bb.append("      method) stack, making <a href=\"https://en.wikipedia.org/wiki/Escape_analysis\">escape analysis</a> a lot\n");
+        bb.append("      easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely\n");
+        bb.append("      eliminated</li>\n");
+        bb.append("</ul>\n");
+        bb.newLine();
+        bb.append("@see ");
+        bb.append(target);
+        bb.newLineIfNotEmpty();
+        return bb.toRawString();
     }
 
     @Override
@@ -1034,10 +1035,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
-        sc.append(typeDescription);
-        sc.newLineIfNotEmpty();
-        return sc.toString();
+        final var bb = new BlockBuilder();
+        bb.append(typeDescription);
+        bb.newLineIfNotEmpty();
+        return bb.toRawString();
     }
 
     private String generateAugmentation() {

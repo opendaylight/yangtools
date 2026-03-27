@@ -14,7 +14,6 @@ import static org.mockito.Mockito.spy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -31,9 +30,9 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateHashcodeWithPropertyTest() {
-        final GeneratedType genType = mockGenType("get" + TEST);
+        final var genType = mockGenType("get" + TEST);
 
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent\
@@ -60,7 +59,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateHashCodeWithMorePropertiesTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent\
@@ -83,7 +82,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent\
@@ -106,7 +105,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent\
@@ -131,7 +130,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent\
@@ -159,7 +158,7 @@ public class BuilderGeneratorTest {
     void builderTemplateGenerateToStringWithPropertyTest() {
         final var genType = mockGenType("get" + TEST);
 
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent string\
@@ -180,7 +179,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateToStringWithoutAnyPropertyTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent string\
@@ -200,7 +199,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateToStringWithMorePropertiesTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent string\
@@ -222,7 +221,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent string\
@@ -243,7 +242,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateToStringWithPropertyWithAugmentTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent string\
@@ -265,7 +264,7 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() {
-        assertXtendEquals("""
+        assertEquals("""
             /**
              * Default implementation of {@link Object#toString()} contract for this interface.
              * Implementations of this interface are encouraged to defer to this method to get consistent string\
@@ -357,11 +356,5 @@ public class BuilderGeneratorTest {
         doReturn(methType).when(methSign).getReturnType();
         doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;
-    }
-
-    // Xtend's StringConcatenation is using runtime-configured line separator, which can change between runs, notably
-    // it has a different value on Windows. Make sure we account for that.
-    private static void assertXtendEquals(final String expected, final String actual) {
-        assertEquals(expected.replace("\n", StringConcatenation.DEFAULT_LINE_DELIMITER), actual);
     }
 }
