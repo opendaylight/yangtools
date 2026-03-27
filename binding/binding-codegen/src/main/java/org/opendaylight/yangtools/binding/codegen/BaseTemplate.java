@@ -320,7 +320,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * @return string with the setter method source code in JAVA format
      */
     @NonNullByDefault
-    final CharSequence asSetterMethod(final GeneratedProperty field) {
+    final StringBuilder asSetterMethod(final GeneratedProperty field) {
         final var fieldName = fieldName(field);
         final var fieldType = importedReturnType(field);
         final var suffix = Naming.toFirstUpper(field.getName());
@@ -331,8 +331,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
                 .append(" value) {\n")
             .append("    this.").append(fieldName).append(" = value;\n")
             .append("    return this;\n")
-            .append("}\n")
-            .toString();
+            .append("}\n");
     }
 
     /**
@@ -525,7 +524,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    final String generateAnnotation(final AnnotationType annotation) {
+    final StringBuilder generateAnnotation(final AnnotationType annotation) {
         final var sb = new StringBuilder()
             .append('@').append(importedName(annotation));
 
@@ -546,7 +545,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
             sb.append("\n)");
         }
 
-        return sb.append('\n').toString();
+        return sb.append('\n');
     }
 
     @NonNullByDefault

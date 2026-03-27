@@ -181,7 +181,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    public String generateDeprecatedAnnotation(final AnnotationType ann) {
+    StringBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
         return generateAnnotation(ann);
     }
 
