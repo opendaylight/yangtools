@@ -67,8 +67,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             bb.append(parentConstructor());
             bb.newLineIfNotEmpty();
         }
-        bb.newLine();
-        bb.append(generateStringValue());
+        bb.nl().append(generateStringValue());
         bb.newLineIfNotEmpty();
         return bb;
     }

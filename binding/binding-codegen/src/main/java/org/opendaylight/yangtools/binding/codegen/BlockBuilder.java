@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.errorprone.annotations.CheckReturnValue;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -29,6 +30,29 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         super("\n");
     }
 
+    /**
+     * Append a {@code '\n'}.
+     *
+     * @return this instance
+     */
+    @CheckReturnValue
+    @NonNull BlockBuilder nl() {
+        super.newLine();
+        return this;
+    }
+
+    /**
+     * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
+     */
+    @Override
+    public void newLine() {
+        super.newLine();
+    }
+
+    void append(final @NonNull BlockBuilder bb) {
+        super.append(requireNonNull(bb));
+    }
+
     @Override
     @Deprecated(forRemoval = true)
     public void append(final StringConcatenation concat) {
@@ -39,9 +63,13 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         }
     }
 
-    void append(final @NonNull BlockBuilder bb) {
-        super.append(requireNonNull(bb));
-    }
+    // FIXME: something like, but perhaps that is part of a JavaBlockBuilder along with importedName() et al.
+    //    @CheckReturnValue
+    //    @NonNull BlockBuilder fieldName(final GeneratedProperty property) {
+    //        super.append("_");
+    //        super.append(property.getName());
+    //        return this;
+    //    }
 
     @NonNull String toRawString() {
         return verifyNotNull(super.toString());
