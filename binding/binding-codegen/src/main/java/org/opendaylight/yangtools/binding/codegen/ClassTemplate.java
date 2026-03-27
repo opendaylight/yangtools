@@ -343,8 +343,7 @@ class ClassTemplate extends BaseTemplate {
         //        public «IMMUTABLE_SET.importedName»<«STRING.importedName»> validNames() {
         //            return «TypeConstants.VALID_NAMES_NAME»;
         //        }
-        bb.nl().append("@");
-        bb.append(override);
+        bb.nl().at().append(override);
         bb.nl().append("public ");
         bb.append(importedName(IMMUTABLE_SET));
         bb.append("<");
@@ -364,8 +363,7 @@ class ClassTemplate extends BaseTemplate {
         //                    «ENDFOR»
         //                };
         //        }
-        bb.nl().append("@");
-        bb.append(override);
+        bb.nl().at().append(override);
         bb.nl().append("public boolean[] values() {\n");
         bb.append("    return new boolean[] {\n");
         {
@@ -410,8 +408,7 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var bb = new BlockBuilder();
-        bb.append("@");
-        bb.append(importedName(OVERRIDE));
+        bb.at().append(importedName(OVERRIDE));
         bb.nl().append("public final boolean equals(");
         bb.append(importedName(OBJECT));
         bb.append(" obj) {\n");
@@ -457,8 +454,7 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var bb = new BlockBuilder();
-        bb.append("@");
-        bb.append(importedName(OVERRIDE));
+        bb.at().append(importedName(OVERRIDE));
         bb.nl().append("public ");
         bb.append(importedName(Types.STRING));
         bb.append(" toString() {\n");
@@ -896,8 +892,7 @@ class ClassTemplate extends BaseTemplate {
         //          «ENDIF»
         //      }
         final var bb = new BlockBuilder();
-        bb.append("@");
-        bb.append(importedName(OVERRIDE));
+        bb.at().append(importedName(OVERRIDE));
         bb.nl().append("public int hashCode() {\n");
         if (size == 1) {
             bb.append("    return ");
@@ -1103,8 +1098,7 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var bb = new BlockBuilder();
-        bb.append("@");
-        bb.append(importedName(CONSTRUCTOR_PARAMETERS));
+        bb.at().append(importedName(CONSTRUCTOR_PARAMETERS));
         bb.append("(\"");
         bb.append(TypeConstants.VALUE_PROP);
         bb.append("\")\n");

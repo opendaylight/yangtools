@@ -31,6 +31,17 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     }
 
     /**
+     * Append a {@code '@'}.
+     *
+     * @return this instance
+     */
+    @CheckReturnValue
+    @NonNull BlockBuilder at() {
+        super.append("@");
+        return this;
+    }
+
+    /**
      * Append a {@code '\n'}.
      *
      * @return this instance
