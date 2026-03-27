@@ -726,8 +726,7 @@ class ClassTemplate extends BaseTemplate {
                 .append(".valueOf(defaultValue));\n");
         } else if (propType instanceof Decimal64Type decimal64) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .str(".valueOf(defaultValue).scaleTo(").append(decimal64.fractionDigits());
-            bb.append("));\n");
+                .str(".valueOf(defaultValue).scaleTo(").strI(decimal64.fractionDigits()).append("));\n");
         } else if (BaseYangTypes.STRING_TYPE.equals(propType)) {
             bb.append("    return new ");
             bb.append(simpleName);
