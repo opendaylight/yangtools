@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.BASE_SVC_PATH;
 
-import java.io.File;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.condition.OS;
  * Bug5151 involves adding <code>{@literal @}return</code> annotations to accessor methods.
  */
 class Bug5151Test extends BaseCompilationTest {
-    private static final String BUG_ID = "bug5151";
     private static final Path SVC_PATH = BASE_SVC_PATH.resolve(Path.of("urn", "test", "foo", "rev160706"));
 
     @Test
@@ -29,10 +27,9 @@ class Bug5151Test extends BaseCompilationTest {
         Xtend's StringConcatenation uses the "line.separator" system property to generate proper line endings
         in templates, leading to test failures running on Windows-type OS""")
     void test() throws Exception {
-        final var sourcesOutputDir = CompilationTestUtils.generatorOutput(BUG_ID);
-        final var compiledOutputDir = CompilationTestUtils.compilerOutput(BUG_ID);
-        generateTestSources(File.separator + "compilation" + File.separator + BUG_ID,
-            sourcesOutputDir);
+        final var sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5151");
+        final var compiledOutputDir = CompilationTestUtils.compilerOutput("bug5151");
+        generateTestSources("/compilation/bug5151", sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
