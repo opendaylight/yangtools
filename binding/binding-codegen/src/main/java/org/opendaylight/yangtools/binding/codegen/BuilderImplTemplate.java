@@ -14,13 +14,13 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRI
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -62,37 +62,20 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         bb.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
         bb.newLineIfNotEmpty();
-        bb.append("private static final class ");
-        bb.append(type().simpleName());
-        bb.newLineIfNotEmpty();
+        bb.str("private static final class ").str(type().simpleName()).newLineIfNotEmpty();
         if (keyType != null) {
-            bb.append("    extends ");
-            bb.append(importedName(ABSTRACT_ENTRY_OBJECT));
-            bb.append("<");
-            bb.append(impIface);
-            bb.append(", ");
-            bb.append(importedName(keyType));
-            bb.append(">\n");
+            bb.str("    extends ").str(importedName(ABSTRACT_ENTRY_OBJECT)).str("<").str(impIface).str(", ")
+                .str(importedName(keyType)).append(">\n");
         } else if (augmentType != null) {
-            bb.append("    extends ");
-            bb.append(importedName(ABSTRACT_AUGMENTABLE));
-            bb.append("<");
-            bb.append(impIface);
-            bb.append(">\n");
+            bb.str("    extends ").str(importedName(ABSTRACT_AUGMENTABLE)).str("<").str(impIface).append(">\n");
         }
-        bb.append("    implements ");
-        bb.append(impIface);
-        bb.append(" {\n");
+        bb.str("    implements ").str(impIface).append(" {\n");
 
         // generate instance fields
         if (!properties.isEmpty()) {
             bb.newLine();
             for (var prop : properties) {
-                bb.append("    private final ");
-                bb.append(importedName(prop.getReturnType()));
-                bb.append(" ");
-                bb.append(fieldName(prop));
-                bb.append(";\n");
+                bb.str("    private final ").str(importedReturnType(prop)).str(" ").str(fieldName(prop)).append(";\n");
             }
         }
 
@@ -104,26 +87,17 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
             //       this code into the constructor once JEP-482 Flexible Constructor Bodies available. We should
             //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
-            bb.nl().append("    private static ");
-            bb.append(importedNonNull(keyType));
-            bb.append(" extractKey(final ");
-            bb.append(importedName(builder.type()));
-            bb.append(" base) {\n");
-            bb.append("        final var key = base.");
-            bb.append(KEY_AWARE_KEY_NAME);
-            bb.append("();\n");
+            bb.nl().str("    private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
+                .str(importedName(builder.type())).append(" base) {\n");
+            bb.str("        final var key = base." + KEY_AWARE_KEY_NAME).append("();\n");
             bb.append("        return key != null ? key\n");
-            bb.append("            : new ");
-            bb.append(importedName(keyType));
-            bb.append("(");
+            bb.str("            : new ").str(importedName(keyType)).append("(");
 
             // Note: keys have at least one component
             final var it = keyConstructorArgs(keyType).iterator();
             while (true) {
                 final var keyProp = it.next();
-                bb.append("base.");
-                bb.append(getterMethodName(keyProp));
-                bb.append("()");
+                bb.str("base.").str(getterMethodName(keyProp)).append("()");
                 if (!it.hasNext()) {
                     break;
                 }
@@ -148,22 +122,13 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
-                    bb.nl().append("    @");
-                    bb.append(override);
-                    bb.nl().append("    public ");
-                    bb.append(importedName(fieldType));
-                    bb.append(" ");
-                    bb.append(NONNULL_PREFIX);
-                    bb.append(Naming.toFirstUpper(field.getName()));
-                    bb.append("() {\n");
-                    bb.append("        return ");
-                    bb.append(importedName(JU_OBJECTS));
-                    bb.append(".requireNonNullElse(");
-                    bb.append(getterMethodName(field));
-                    bb.append("(), ");
-                    bb.append(fieldType.canonicalName());
-                    bb.append(BUILDER_SUFFIX);
-                    bb.append(".empty());\n");
+                    bb.nl()
+                        .str("    @").str(override).nl()
+                        .str("    public ").str(importedName(fieldType)).str(" ");
+                    bb.str(NONNULL_PREFIX).str(toFirstUpper(field.getName())).append("() {\n");
+                    bb.str("        return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
+                        .str(getterMethodName(field)).str("(), ").str(fieldType.canonicalName()).str(BUILDER_SUFFIX)
+                        .append(".empty());\n");
                     bb.append("}\n");
                 }
 
@@ -190,25 +155,16 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             bb.nl().append(
                       "        final int result = ");
             bb.append(impIface);
-            bb.append(".");
-            bb.append(BINDING_HASHCODE_NAME);
-            bb.append("(this);\n");
+            bb.str("." + BINDING_HASHCODE_NAME).append("(this);\n");
             bb.append("        hash = result;\n");
             bb.append("        hashValid = true;\n");
             bb.append("        return result;\n");
             bb.append("    }\n");
-            bb.nl().append(
-                      "    @");
-            bb.append(override);
-            bb.nl().append(
-                      "    public boolean equals(");
-            bb.append(importedName(Types.objectType()));
-            bb.append(" obj) {\n");
-            bb.append("        return ");
-            bb.append(impIface);
-            bb.append(".");
-            bb.append(BINDING_EQUALS_NAME);
-            bb.append("(this, obj);\n");
+            bb.nl()
+                .str("    @").str(override).nl()
+                .str("    public boolean equals(").str(importedName(Types.objectType())).append(" obj) {\n");
+            bb
+                .str("        return ").str(impIface).str("." + BINDING_EQUALS_NAME).append("(this, obj);\n");
             bb.append("    }\n");
         }
 
@@ -220,11 +176,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                   "    public ");
         bb.append(importedName(Types.STRING));
         bb.append(" toString() {\n");
-        bb.append("        return ");
-        bb.append(impIface);
-        bb.append(".");
-        bb.append(BINDING_TO_STRING_NAME);
-        bb.append("(this);\n");
+        bb.str("        return ").str(impIface).str("." + BINDING_TO_STRING_NAME).append("(this);\n");
         bb.append("    }\n");
 
         bb.append("}\n");
