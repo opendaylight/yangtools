@@ -101,29 +101,23 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append("    ");
         bb.append(superInterfaces(), "    ");
         bb.newLineIfNotEmpty();
-        bb.append("{");
-        bb.newLine();
-        bb.newLine();
-        bb.append("    ");
+        bb.append("{\n");
+        bb.nl().append("    ");
         bb.append(generateInnerClasses(enclosedGeneratedTypes), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateInnerEnumTypeObjects(enums), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateConstants(), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateMethods(), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("}");
-        bb.newLine();
-        bb.newLine();
-        return bb;
+        bb.nl().append("}");
+        return bb
+            .nl()
+            .nl();
     }
 
     /**
@@ -446,8 +440,7 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append("(final ");
         bb.append(fullyQualifiedNonNull(type()));
         bb.append(" obj) {\n");
-        bb.append("    int result = 1;");
-        bb.newLine();
+        bb.append("    int result = 1;\n");
         if (!props.isEmpty()) {
             bb.append("    final int prime = 31;\n");
             for (var property : props) {
@@ -607,9 +600,8 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append("Return ");
         bb.append(propReturn);
         bb.newLineIfNotEmpty();
-        bb.newLine();
         final var comment = method.getComment();
-        bb.append(formatReference(comment == null ? null : comment.referenceDescription()));
+        bb.nl().append(formatReference(comment == null ? null : comment.referenceDescription()));
         bb.newLineIfNotEmpty();
         bb.append("@return {@code ");
         bb.append(importedReturnType(method));

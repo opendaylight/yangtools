@@ -66,12 +66,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("public class ");
         bb.append(type().simpleName());
         bb.append(" {\n");
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateBuilderFields(), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(constantsDeclarations(), "    ");
         bb.newLineIfNotEmpty();
         bb.newLine();
@@ -95,8 +93,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         }
 
         final var targetTypeName = importedName(targetType);
-        bb.newLine();
-        bb.append("    /**\n");
+        bb.nl().append(
+                  "    /**\n");
         bb.append("     * Construct an empty builder.\n");
         bb.append("     */\n");
         bb.append("    public ");
@@ -104,12 +102,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("() {\n");
         bb.append("        // No-op\n");
         bb.append("    }\n");
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateConstructorsFromIfcs(), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("    /**\n");
+        bb.nl().append(
+                  "    /**\n");
         bb.append("     * Construct a builder initialized with state from specified {@link ");
         bb.append(targetTypeName);
         bb.append("}.\n");
@@ -121,8 +118,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("    public ");
         bb.append(generateCopyConstructor(targetType, type().getEnclosedTypes().getFirst()), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateMethodFieldsFrom(), "    ");
         bb.newLineIfNotEmpty();
         bb.newLine();
@@ -131,22 +127,19 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append(generateEmptyInstance(), "    ");
             bb.newLineIfNotEmpty();
         }
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateGetters(false), "    ");
         bb.newLineIfNotEmpty();
         if (augmentType != null) {
-            bb.newLine();
-            bb.append("    ");
+            bb.nl().append("    ");
             bb.append(generateAugmentation(), "    ");
             bb.newLineIfNotEmpty();
         }
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateSetters(), "    ");
         bb.newLineIfNotEmpty();
-        bb.newLine();
-        bb.append("    /**\n");
+        bb.nl().append(
+                  "    /**\n");
         bb.append("     * A new {@link ");
         bb.append(targetTypeName);
         bb.append("} instance.\n");
@@ -162,8 +155,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(importedName(type().getEnclosedTypes().getFirst()));
         bb.append("(this);\n");
         bb.append("    }\n");
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(implTemplate.body(), "    ");
         bb.newLineIfNotEmpty();
         bb.append("}\n");
@@ -376,13 +368,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(" INSTANCE = new ");
         bb.append(type().simpleName());
         bb.append("().build();\n");
-        bb.newLine();
-        bb.append("    private LazyEmpty() {\n");
+        bb.nl().append(
+                  "    private LazyEmpty() {\n");
         bb.append("        // Hidden on purpose\n");
         bb.append("    }\n");
         bb.append("}\n");
-        bb.newLine();
-        bb.append("/**\n");
+        bb.nl().append(
+                  "/**\n");
         bb.append(" * Get empty instance of ");
         bb.append(targetType.simpleName());
         bb.append(".\n");
@@ -492,8 +484,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     importedName(itemType));
             }
             if (Types.isSetType(parameterized)) {
-                return this.printPropertySetter(retrieveProperty, propertyName, "checkSetFieldCast",
-                    importedName(itemType));
+                return printPropertySetter(retrieveProperty, propertyName, "checkSetFieldCast", importedName(itemType));
             }
         }
         return printPropertySetter(retrieveProperty, propertyName, "checkFieldCast", importedName(ownGetterType));
@@ -663,8 +654,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //     * @return this builder
         //     */
         //    public «type.simpleName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
-        bb.newLine();
-        bb.append("/**\n");
+        bb.nl().append(
+                  "/**\n");
         bb.append(" * Set the property corresponding to {@link ");
         bb.append(importedName(targetType));
         bb.append("#");
@@ -691,10 +682,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            }
         //        «ENDIF»
         if (restrictions != null) {
-            bb.append("if (values != null) {");
-            bb.newLine();
-            bb.append("   ");
-            bb.append("for (");
+            bb.append("if (values != null) {\n");
+            bb.append("   for (");
             bb.append(importedName(actualType), "   ");
             bb.append(" value : values) {\n");
             bb.append("       ");
@@ -713,8 +702,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(" = values;\n");
         bb.append("    return this;\n");
         bb.append("}\n");
-        bb.newLine();
-        return bb;
+        return bb.nl();
     }
 
     private CharSequence generateMapSetter(final BuilderGeneratedProperty field, final Type actualType) {
@@ -736,8 +724,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //         */
         //        public «type.simpleName» set«field.name.toFirstUpper»(final «field.returnType.importedName» values) {
 
-        bb.newLine();
-        bb.append("/**\n");
+        bb.nl().append(
+                  "/**\n");
         bb.append(" * Set the property corresponding to {@link ");
         bb.append(importedName(targetType));
         bb.append("#");
@@ -772,8 +760,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append(checkArgument(field, restrictions, actualType, "value"), "       ");
             bb.newLineIfNotEmpty();
             bb.append("   }\n");
-            bb.newLine();
-            bb.append("}\n");
+            // FIXME: no nl() here ?
+            bb.nl().append("}\n");
         }
 
         //            this.«field.fieldName» = values;
@@ -791,12 +779,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.newLine();
-            bb.append(generateCheckers(field, restrictions, actualType));
+            bb.nl().append(generateCheckers(field, restrictions, actualType));
             bb.newLineIfNotEmpty();
         }
-        bb.newLine();
-        bb.append("/**\n");
+        bb.nl().append(
+                  "/**\n");
         bb.append(" * Set the property corresponding to {@link ");
         bb.append(importedName(targetType), " ");
         bb.append("#");
@@ -889,16 +876,16 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append(hashMapRef);
             bb.append("<>();\n");
             bb.append("    }\n");
-            bb.newLine();
-            bb.append("    this.");
+            bb.nl().append("    this.");
             bb.append(Naming.AUGMENTATION_FIELD);
             bb.append(".put(augmentation.");
             bb.append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME);
             bb.append("(), augmentation);\n");
             bb.append("    return this;\n");
             bb.append("}\n");
-            bb.newLine();
-            bb.append("/**\n");
+            // FIXME: use a text block here
+            bb.nl().append(
+                     "/**\n");
             bb.append(" * Remove an augmentation from this builder\'s product. If this builder does not track such an");
             bb.append(" augmentation\n");
             bb.append(" * type, this method does nothing.\n");
@@ -977,8 +964,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(target);
         bb.append("} instances. Overall design of the class is that of a\n");
         bb.append("<a href=\"https://en.wikipedia.org/wiki/Fluent_interface\">fluent interface</a>, where method chaining is used.\n");
-        bb.newLine();
-        bb.append("<p>\n");
+        bb.nl().append(
+                  "<p>\n");
         bb.append("In general, this class is supposed to be used like this template:\n");
         bb.append("<pre>\n");
         bb.append("  <code>\n");
@@ -996,22 +983,17 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("    }\n");
         bb.append("  </code>\n");
         bb.append("</pre>\n");
-        bb.newLine();
-        bb.append("<p>\n");
+        bb.nl().append(
+                  "<p>\n");
         bb.append("This pattern is supported by the immutable nature of ");
         bb.append(target);
         bb.append(", as instances can be freely passed around without");
         bb.newLineIfNotEmpty();
-        bb.append("worrying about synchronization issues.");
-        bb.newLine();
-        bb.newLine();
-        bb.append("<p>");
-        bb.newLine();
-        bb.append("As a side note: method chaining results in:");
-        bb.newLine();
-        bb.append("<ul>");
-        bb.newLine();
-        bb.append("  <li>very efficient Java bytecode, as the method invocation result, in this case the Builder reference, is\n");
+        bb.append("worrying about synchronization issues.\n");
+        bb.nl().nl().append("<p>");
+        bb.nl().append("As a side note: method chaining results in:");
+        bb.nl().append("<ul>");
+        bb.nl().append("  <li>very efficient Java bytecode, as the method invocation result, in this case the Builder reference, is\n");
         bb.append("      on the stack, so further method invocations just need to fill method arguments for the next method\n");
         bb.append("      invocation, which is terminated by {@link #build()}, which is then returned from the method</li>\n");
         bb.append("  <li>better understanding by humans, as the scope of mutable state (the builder) is kept to a minimum and is\n");
@@ -1021,8 +1003,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("      easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely\n");
         bb.append("      eliminated</li>\n");
         bb.append("</ul>\n");
-        bb.newLine();
-        bb.append("@see ");
+        bb.nl().append("@see ");
         bb.append(target);
         bb.newLineIfNotEmpty();
         return bb.toRawString();

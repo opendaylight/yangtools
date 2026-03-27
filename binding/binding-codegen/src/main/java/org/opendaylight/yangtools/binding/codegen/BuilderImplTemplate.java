@@ -96,8 +96,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(generateCopyConstructor(builder.type(), type()), "    ");
         bb.newLineIfNotEmpty();
 
@@ -105,8 +104,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
             //       this code into the constructor once JEP-482 Flexible Constructor Bodies available. We should
             //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
-            bb.newLine();
-            bb.append("    private static ");
+            bb.nl().append("    private static ");
             bb.append(importedNonNull(keyType));
             bb.append(" extractKey(final ");
             bb.append(importedName(builder.type()));
@@ -150,11 +148,9 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
-                    bb.newLine();
-                    bb.append("    @");
+                    bb.nl().append("    @");
                     bb.append(override);
-                    bb.newLine();
-                    bb.append("    public ");
+                    bb.nl().append("    public ");
                     bb.append(importedName(fieldType));
                     bb.append(" ");
                     bb.append(NONNULL_PREFIX);
@@ -180,19 +176,19 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
         // generate hashCode/equals if needed
         if (!properties.isEmpty() || augmentType != null) {
-            bb.newLine();
-            bb.append("    private int hash = 0;\n");
+            bb.nl().append(
+                      "    private int hash = 0;\n");
             bb.append("    private volatile boolean hashValid = false;\n");
-            bb.newLine();
-            bb.append("    @");
+            bb.nl().append(
+                      "    @");
             bb.append(override);
-            bb.newLine();
-            bb.append("    public int hashCode() {\n");
+            bb.nl().append(
+                      "    public int hashCode() {\n");
             bb.append("        if (hashValid) {\n");
             bb.append("            return hash;\n");
             bb.append("        }\n");
-            bb.newLine();
-            bb.append("        final int result = ");
+            bb.nl().append(
+                      "        final int result = ");
             bb.append(impIface);
             bb.append(".");
             bb.append(BINDING_HASHCODE_NAME);
@@ -201,11 +197,11 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             bb.append("        hashValid = true;\n");
             bb.append("        return result;\n");
             bb.append("    }\n");
-            bb.newLine();
-            bb.append("    @");
+            bb.nl().append(
+                      "    @");
             bb.append(override);
-            bb.newLine();
-            bb.append("    public boolean equals(");
+            bb.nl().append(
+                      "    public boolean equals(");
             bb.append(importedName(Types.objectType()));
             bb.append(" obj) {\n");
             bb.append("        return ");
@@ -217,11 +213,11 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         }
 
         // generate equals()
-        bb.newLine();
-        bb.append("    @");
+        bb.nl().append(
+                  "    @");
         bb.append(override);
-        bb.newLine();
-        bb.append("    public ");
+        bb.nl().append(
+                  "    public ");
         bb.append(importedName(Types.STRING));
         bb.append(" toString() {\n");
         bb.append("        return ");

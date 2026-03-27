@@ -256,38 +256,33 @@ class ClassTemplate extends BaseTemplate {
         if (restrictions != null) {
             final var length = restrictions.getLengthConstraint();
             if (length.isPresent()) {
-                bb.newLine();
-                bb.append("    ");
+                bb.nl().append("    ");
                 bb.append(LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
                     length.orElseThrow(), this), "    ");
                 bb.newLineIfNotEmpty();
             }
             final var range = restrictions.getRangeConstraint();
             if (range.isPresent()) {
-                bb.newLine();
-                bb.append("    ");
+                bb.nl().append("    ");
                 bb.append(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), this), "    ");
                 bb.newLineIfNotEmpty();
             }
         }
 
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(constructors(), "    ");
         bb.newLineIfNotEmpty();
 
         final var defaultInstance = defaultInstance();
         if (!defaultInstance.isEmpty()) {
-            bb.newLine();
-            bb.append("    ");
+            bb.nl().append("    ");
             bb.append(defaultInstance, "    ");
             bb.newLineIfNotEmpty();
         }
 
         final var propertyMethods = propertyMethods();
         if (!propertyMethods.isEmpty()) {
-            bb.newLine();
-            bb.append("    ");
+            bb.nl().append("    ");
             bb.append(propertyMethods, "    ");
             bb.newLineIfNotEmpty();
         }
@@ -295,8 +290,7 @@ class ClassTemplate extends BaseTemplate {
         if (isBitsTypeObject()) {
             for (var c : consts) {
                 if (TypeConstants.VALID_NAMES_NAME.equals(c.getName())) {
-                    bb.newLine();
-                    bb.append("    ");
+                    bb.nl().append("    ");
                     bb.append(validNamesAndValues((BitsTypeDefinition) c.getValue()), "    ");
                     bb.newLineIfNotEmpty();
                 }
@@ -305,30 +299,26 @@ class ClassTemplate extends BaseTemplate {
 
         final var hashCode = generateHashCode();
         if (!hashCode.isEmpty()) {
-            bb.newLine();
-            bb.append("    ");
+            bb.nl().append("    ");
             bb.append(hashCode, "    ");
             bb.newLineIfNotEmpty();
         }
 
         final var equals = generateEquals();
         if (!equals.isEmpty()) {
-            bb.newLine();
-            bb.append("    ");
+            bb.nl().append("    ");
             bb.append(equals, "    ");
             bb.newLineIfNotEmpty();
         }
 
         final var toString = generateToString(genTO.getToStringIdentifiers());
         if (!toString.isEmpty()) {
-            bb.newLine();
-            bb.append("    ");
+            bb.nl().append("    ");
             bb.append(toString, "    ");
             bb.newLineIfNotEmpty();
         }
         bb.append("}\n");
-        bb.newLine();
-        return bb;
+        return bb.nl();
     }
 
     private boolean isBitsTypeObject() {
@@ -353,12 +343,9 @@ class ClassTemplate extends BaseTemplate {
         //        public «IMMUTABLE_SET.importedName»<«STRING.importedName»> validNames() {
         //            return «TypeConstants.VALID_NAMES_NAME»;
         //        }
-        //
-        bb.newLine();
-        bb.append("@");
+        bb.nl().append("@");
         bb.append(override);
-        bb.newLine();
-        bb.append("public ");
+        bb.nl().append("public ");
         bb.append(importedName(IMMUTABLE_SET));
         bb.append("<");
         bb.append(importedName(Types.STRING));
@@ -367,8 +354,8 @@ class ClassTemplate extends BaseTemplate {
         bb.append(TypeConstants.VALID_NAMES_NAME);
         bb.append(";\n");
         bb.append("}\n");
-        bb.newLine();
 
+        //
         //        @«OVERRIDE.importedName»
         //        public boolean[] values() {
         //            return new boolean[] {
@@ -377,10 +364,9 @@ class ClassTemplate extends BaseTemplate {
         //                    «ENDFOR»
         //                };
         //        }
-        bb.append("@");
+        bb.nl().append("@");
         bb.append(override);
-        bb.newLine();
-        bb.append("public boolean[] values() {\n");
+        bb.nl().append("public boolean[] values() {\n");
         bb.append("    return new boolean[] {\n");
         {
             boolean first = true;
@@ -395,8 +381,7 @@ class ClassTemplate extends BaseTemplate {
                 bb.append("()");
             }
         }
-        bb.newLine();
-        bb.append("        };\n");
+        bb.nl().append("        };\n");
         bb.append("}\n");
         return bb;
     }
@@ -427,16 +412,14 @@ class ClassTemplate extends BaseTemplate {
         final var bb = new BlockBuilder();
         bb.append("@");
         bb.append(importedName(OVERRIDE));
-        bb.newLine();
-        bb.append("public final boolean equals(");
+        bb.nl().append("public final boolean equals(");
         bb.append(importedName(OBJECT));
         bb.append(" obj) {\n");
         bb.append("    return this == obj || obj instanceof ");
         bb.append(type().simpleName());
         bb.append(" other");
         for (var property : equalsIdentifiers) {
-            bb.newLine();
-            bb.append("        && ");
+            bb.nl().append("        && ");
 
             final var fieldName = fieldName(property);
             final var type = property.getReturnType();
@@ -476,8 +459,7 @@ class ClassTemplate extends BaseTemplate {
         final var bb = new BlockBuilder();
         bb.append("@");
         bb.append(importedName(OVERRIDE));
-        bb.newLine();
-        bb.append("public ");
+        bb.nl().append("public ");
         bb.append(importedName(Types.STRING));
         bb.append(" toString() {\n");
         bb.append("    final var helper = ");
@@ -588,8 +570,7 @@ class ClassTemplate extends BaseTemplate {
 
         final var ifaces = type.getImplements();
         if (!ifaces.isEmpty()) {
-            bb.newLine();
-            bb.append(" implements ");
+            bb.nl().append(" implements ");
 
             final var it = ifaces.iterator();
             while (true) {
@@ -843,6 +824,7 @@ class ClassTemplate extends BaseTemplate {
             bb.append(allValuesConstructor());
             bb.newLineIfNotEmpty();
         }
+        // FIXME: inline into if blocks?
         bb.newLine();
         if (!allProperties.isEmpty()) {
             bb.append(copyConstructor());
@@ -873,8 +855,7 @@ class ClassTemplate extends BaseTemplate {
             final var field = it.next();
             bb.append(asGetterMethod(field));
             if (!field.isReadOnly()) {
-                bb.newLine();
-                bb.append(asSetterMethod(field));
+                bb.nl().append(asSetterMethod(field));
             }
 
             if (!it.hasNext()) {
@@ -917,8 +898,7 @@ class ClassTemplate extends BaseTemplate {
         final var bb = new BlockBuilder();
         bb.append("@");
         bb.append(importedName(OVERRIDE));
-        bb.newLine();
-        bb.append("public int hashCode() {\n");
+        bb.nl().append("public int hashCode() {\n");
         if (size == 1) {
             bb.append("    return ");
             final var prop = props.getFirst();
@@ -1084,8 +1064,8 @@ class ClassTemplate extends BaseTemplate {
         bb.append("/**\n");
         bb.append(" * Creates a new instance from ");
         bb.append(importedSuper);
-        bb.newLine();
-        bb.append(" *\n");
+        bb.nl().append(
+                  " *\n");
         bb.append(" * @param source Source object\n");
         bb.append(" */\n");
         bb.append("public ");
@@ -1163,8 +1143,7 @@ class ClassTemplate extends BaseTemplate {
         bb.append(generateRestrictions(type(), fieldName, value.getReturnType()), "    ");
         bb.newLineIfNotEmpty();
         bb.append("    ");
-        bb.newLine();
-        bb.append("    ");
+        bb.nl().append("    ");
         bb.append(genPatternEnforcer(fieldName), "    ");
         bb.newLineIfNotEmpty();
         bb.append("}\n");
