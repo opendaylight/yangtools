@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
@@ -24,25 +26,11 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRangeGenerator.class);
-    private static final ImmutableMap<String, AbstractRangeGenerator<?>> GENERATORS;
-
-    private static void addGenerator(final ImmutableMap.Builder<String, AbstractRangeGenerator<?>> builder,
-            final AbstractRangeGenerator<?> generator) {
-        builder.put(generator.getTypeClass().getCanonicalName(), generator);
-    }
-
-    static {
-        final var b = ImmutableMap.<String, AbstractRangeGenerator<?>>builder();
-        addGenerator(b, new ByteRangeGenerator());
-        addGenerator(b, new ShortRangeGenerator());
-        addGenerator(b, new IntegerRangeGenerator());
-        addGenerator(b, new LongRangeGenerator());
-        addGenerator(b, new Uint8RangeGenerator());
-        addGenerator(b, new Uint16RangeGenerator());
-        addGenerator(b, new Uint32RangeGenerator());
-        addGenerator(b, new Uint64RangeGenerator());
-        GENERATORS = b.build();
-    }
+    private static final Map<String, AbstractRangeGenerator<?>> GENERATORS =
+        Stream.of(new ByteRangeGenerator(), new ShortRangeGenerator(), new IntegerRangeGenerator(),
+            new LongRangeGenerator(), new Uint8RangeGenerator(), new Uint16RangeGenerator(), new Uint32RangeGenerator(),
+            new Uint64RangeGenerator())
+        .collect(Collectors.toUnmodifiableMap(gen -> gen.getTypeClass().getCanonicalName(), Function.identity()));
 
     private final @NonNull Class<T> type;
 
