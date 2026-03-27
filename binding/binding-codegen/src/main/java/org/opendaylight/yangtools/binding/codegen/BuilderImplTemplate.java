@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
@@ -60,180 +59,180 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         final var impIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
 
-        final var sc = new StringConcatenation();
-        sc.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
-        sc.newLineIfNotEmpty();
-        sc.append("private static final class ");
-        sc.append(type().simpleName());
-        sc.newLineIfNotEmpty();
+        final var bb = new BlockBuilder();
+        bb.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
+        bb.newLineIfNotEmpty();
+        bb.append("private static final class ");
+        bb.append(type().simpleName());
+        bb.newLineIfNotEmpty();
         if (keyType != null) {
-            sc.append("    extends ");
-            sc.append(importedName(ABSTRACT_ENTRY_OBJECT));
-            sc.append("<");
-            sc.append(impIface);
-            sc.append(", ");
-            sc.append(importedName(keyType));
-            sc.append(">\n");
+            bb.append("    extends ");
+            bb.append(importedName(ABSTRACT_ENTRY_OBJECT));
+            bb.append("<");
+            bb.append(impIface);
+            bb.append(", ");
+            bb.append(importedName(keyType));
+            bb.append(">\n");
         } else if (augmentType != null) {
-            sc.append("    extends ");
-            sc.append(importedName(ABSTRACT_AUGMENTABLE));
-            sc.append("<");
-            sc.append(impIface);
-            sc.append(">\n");
+            bb.append("    extends ");
+            bb.append(importedName(ABSTRACT_AUGMENTABLE));
+            bb.append("<");
+            bb.append(impIface);
+            bb.append(">\n");
         }
-        sc.append("    implements ");
-        sc.append(impIface);
-        sc.append(" {\n");
+        bb.append("    implements ");
+        bb.append(impIface);
+        bb.append(" {\n");
 
         // generate instance fields
         if (!properties.isEmpty()) {
-            sc.newLine();
+            bb.newLine();
             for (var prop : properties) {
-                sc.append("    private final ");
-                sc.append(importedName(prop.getReturnType()));
-                sc.append(" ");
-                sc.append(fieldName(prop));
-                sc.append(";\n");
+                bb.append("    private final ");
+                bb.append(importedName(prop.getReturnType()));
+                bb.append(" ");
+                bb.append(fieldName(prop));
+                bb.append(";\n");
             }
         }
 
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateCopyConstructor(builder.type(), type()), "    ");
-        sc.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateCopyConstructor(builder.type(), type()), "    ");
+        bb.newLineIfNotEmpty();
 
         if (keyType != null) {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
             //       this code into the constructor once JEP-482 Flexible Constructor Bodies available. We should
             //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
-            sc.newLine();
-            sc.append("    private static ");
-            sc.append(importedNonNull(keyType));
-            sc.append(" extractKey(final ");
-            sc.append(importedName(builder.type()));
-            sc.append(" base) {\n");
-            sc.append("        final var key = base.");
-            sc.append(KEY_AWARE_KEY_NAME);
-            sc.append("();\n");
-            sc.append("        return key != null ? key\n");
-            sc.append("            : new ");
-            sc.append(importedName(keyType));
-            sc.append("(");
+            bb.newLine();
+            bb.append("    private static ");
+            bb.append(importedNonNull(keyType));
+            bb.append(" extractKey(final ");
+            bb.append(importedName(builder.type()));
+            bb.append(" base) {\n");
+            bb.append("        final var key = base.");
+            bb.append(KEY_AWARE_KEY_NAME);
+            bb.append("();\n");
+            bb.append("        return key != null ? key\n");
+            bb.append("            : new ");
+            bb.append(importedName(keyType));
+            bb.append("(");
 
             // Note: keys have at least one component
             final var it = keyConstructorArgs(keyType).iterator();
             while (true) {
                 final var keyProp = it.next();
-                sc.append("base.");
-                sc.append(getterMethodName(keyProp));
-                sc.append("()");
+                bb.append("base.");
+                bb.append(getterMethodName(keyProp));
+                bb.append("()");
                 if (!it.hasNext()) {
                     break;
                 }
-                sc.append(", ");
+                bb.append(", ");
             }
 
-            sc.append(");\n");
-            sc.append("    }\n");
+            bb.append(");\n");
+            bb.append("    }\n");
         }
 
         // generate getters
         if (!properties.isEmpty()) {
-            sc.newLine();
+            bb.newLine();
 
             final var it = properties.iterator();
             while (true) {
                 final var field = it.next();
 
                 // getFoo()
-                sc.append("    ");
-                sc.append(asGetterMethod(field), "    ");
+                bb.append("    ");
+                bb.append(asGetterMethod(field), "    ");
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
-                    sc.newLine();
-                    sc.append("    @");
-                    sc.append(override);
-                    sc.newLine();
-                    sc.append("    public ");
-                    sc.append(importedName(fieldType));
-                    sc.append(" ");
-                    sc.append(NONNULL_PREFIX);
-                    sc.append(Naming.toFirstUpper(field.getName()));
-                    sc.append("() {\n");
-                    sc.append("        return ");
-                    sc.append(importedName(JU_OBJECTS));
-                    sc.append(".requireNonNullElse(");
-                    sc.append(getterMethodName(field));
-                    sc.append("(), ");
-                    sc.append(fieldType.canonicalName());
-                    sc.append(BUILDER_SUFFIX);
-                    sc.append(".empty());\n");
-                    sc.append("}\n");
+                    bb.newLine();
+                    bb.append("    @");
+                    bb.append(override);
+                    bb.newLine();
+                    bb.append("    public ");
+                    bb.append(importedName(fieldType));
+                    bb.append(" ");
+                    bb.append(NONNULL_PREFIX);
+                    bb.append(Naming.toFirstUpper(field.getName()));
+                    bb.append("() {\n");
+                    bb.append("        return ");
+                    bb.append(importedName(JU_OBJECTS));
+                    bb.append(".requireNonNullElse(");
+                    bb.append(getterMethodName(field));
+                    bb.append("(), ");
+                    bb.append(fieldType.canonicalName());
+                    bb.append(BUILDER_SUFFIX);
+                    bb.append(".empty());\n");
+                    bb.append("}\n");
                 }
 
                 if (!it.hasNext()) {
                     break;
                 }
-                sc.newLine();
+                bb.newLine();
             }
         }
 
         // generate hashCode/equals if needed
         if (!properties.isEmpty() || augmentType != null) {
-            sc.newLine();
-            sc.append("    private int hash = 0;\n");
-            sc.append("    private volatile boolean hashValid = false;\n");
-            sc.newLine();
-            sc.append("    @");
-            sc.append(override);
-            sc.newLine();
-            sc.append("    public int hashCode() {\n");
-            sc.append("        if (hashValid) {\n");
-            sc.append("            return hash;\n");
-            sc.append("        }\n");
-            sc.newLine();
-            sc.append("        final int result = ");
-            sc.append(impIface);
-            sc.append(".");
-            sc.append(BINDING_HASHCODE_NAME);
-            sc.append("(this);\n");
-            sc.append("        hash = result;\n");
-            sc.append("        hashValid = true;\n");
-            sc.append("        return result;\n");
-            sc.append("    }\n");
-            sc.newLine();
-            sc.append("    @");
-            sc.append(override);
-            sc.newLine();
-            sc.append("    public boolean equals(");
-            sc.append(importedName(Types.objectType()));
-            sc.append(" obj) {\n");
-            sc.append("        return ");
-            sc.append(impIface);
-            sc.append(".");
-            sc.append(BINDING_EQUALS_NAME);
-            sc.append("(this, obj);\n");
-            sc.append("    }\n");
+            bb.newLine();
+            bb.append("    private int hash = 0;\n");
+            bb.append("    private volatile boolean hashValid = false;\n");
+            bb.newLine();
+            bb.append("    @");
+            bb.append(override);
+            bb.newLine();
+            bb.append("    public int hashCode() {\n");
+            bb.append("        if (hashValid) {\n");
+            bb.append("            return hash;\n");
+            bb.append("        }\n");
+            bb.newLine();
+            bb.append("        final int result = ");
+            bb.append(impIface);
+            bb.append(".");
+            bb.append(BINDING_HASHCODE_NAME);
+            bb.append("(this);\n");
+            bb.append("        hash = result;\n");
+            bb.append("        hashValid = true;\n");
+            bb.append("        return result;\n");
+            bb.append("    }\n");
+            bb.newLine();
+            bb.append("    @");
+            bb.append(override);
+            bb.newLine();
+            bb.append("    public boolean equals(");
+            bb.append(importedName(Types.objectType()));
+            bb.append(" obj) {\n");
+            bb.append("        return ");
+            bb.append(impIface);
+            bb.append(".");
+            bb.append(BINDING_EQUALS_NAME);
+            bb.append("(this, obj);\n");
+            bb.append("    }\n");
         }
 
         // generate equals()
-        sc.newLine();
-        sc.append("    @");
-        sc.append(override);
-        sc.newLine();
-        sc.append("    public ");
-        sc.append(importedName(Types.STRING));
-        sc.append(" toString() {\n");
-        sc.append("        return ");
-        sc.append(impIface);
-        sc.append(".");
-        sc.append(BINDING_TO_STRING_NAME);
-        sc.append("(this);\n");
-        sc.append("    }\n");
+        bb.newLine();
+        bb.append("    @");
+        bb.append(override);
+        bb.newLine();
+        bb.append("    public ");
+        bb.append(importedName(Types.STRING));
+        bb.append(" toString() {\n");
+        bb.append("        return ");
+        bb.append(impIface);
+        bb.append(".");
+        bb.append(BINDING_TO_STRING_NAME);
+        bb.append("(this);\n");
+        bb.append("    }\n");
 
-        sc.append("}\n");
-        return sc;
+        bb.append("}\n");
+        return bb;
     }
 
     @Override
