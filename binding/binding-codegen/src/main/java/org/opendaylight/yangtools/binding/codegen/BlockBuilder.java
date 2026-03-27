@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.errorprone.annotations.CheckReturnValue;
-import com.google.errorprone.annotations.DoNotCall;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -21,17 +20,34 @@ import org.opendaylight.yangtools.concepts.Mutable;
 /**
  * Universal builder of a string block. A block is composed of one or more lines, concatenated using {@code '\n'}.
  *
- * <p>Currently it is just a {@link StringConcatenation} but it will expand as we integrate more users.
+ * <p>The set of exposed methods is specifically tailored to callers. We do not use method overloads on purpose, so that
+ * there is always a strong tie between then intended semantics and argument types.
  */
-// FIXME: internalize StringConcatenation
-final class BlockBuilder extends StringConcatenation implements Mutable {
-    /**
-     * Default constructor. Uses {@code "\n"} as {@link #getLineDelimiter()} instead of the platform-dependent
-     * {@link StringConcatenation#DEFAULT_LINE_DELIMITER}.
-     */
-    BlockBuilder() {
-        super("\n");
-    }
+final class BlockBuilder implements Mutable {
+    // FIXME: replace with a StringBuilder-based state machine
+    //
+    // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
+    // Typically this will be just a simple append, but we also need to track indentation.
+    //
+    // Overall, the core state should look something like:
+    //
+    //    // indent + block content
+    //    sealed interface Blk {
+    //
+    //        int indent();
+    //    }
+    //
+    //    List<Blk> blocks; // completed blocks, with optional coalescence when indent matches
+    //    int indent;       // current indent
+    //    StringBuilder sb; // current block
+    //    int firstNl;      // offset of first known newline in current block, for quick single-line check
+    //    int lastNl;       // offset of the last known newline in current block, for quick complete-line check
+    //
+    //
+    //
+    //
+    // FIXME: YANGTOOLS-1831: migrating to equivalent StringBuilder is sufficient
+    private final @NonNull StringConcatenation sc = new StringConcatenation("\n");
 
     /**
      * Append a {@code '@'}.
@@ -40,7 +56,7 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder at() {
-        super.append("@");
+        sc.append("@");
         return this;
     }
 
@@ -51,16 +67,15 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder nl() {
-        super.newLine();
+        sc.newLine();
         return this;
     }
 
     /**
      * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
      */
-    @Override
-    public void newLine() {
-        super.newLine();
+    void newLine() {
+        sc.newLine();
     }
 
     /**
@@ -76,7 +91,7 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder str(final String content) {
-        super.append(validateStr(content));
+        sc.append(validateStr(content));
         return this;
     }
 
@@ -96,7 +111,7 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder strI(final int value) {
-        super.append(Integer.toString(value));
+        sc.append(Integer.toString(value));
         return this;
     }
 
@@ -125,45 +140,39 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder txt(final String text) {
-        super.append(requireNonNull(text));
+        sc.append(requireNonNull(text));
         return this;
     }
 
-    @Override
-    public void append(final String str) {
-        super.append(requireNonNull(str));
+    // FIXME: remove this method
+    void append(final String str) {
+        sc.append(requireNonNull(str));
+    }
+
+    // FIXME: remove this method
+    void append(final @Nullable StringBuilder sb) {
+        if (sb != null) {
+            sc.append(sb.toString());
+        }
     }
 
     void append(final @Nullable BlockBuilder bb) {
         if (bb != null) {
-            super.append(bb);
+            sc.append(bb);
         }
     }
 
-    @Override
-    @DoNotCall
     @Deprecated(forRemoval = true)
-    public void append(final StringConcatenation concat) {
-        if (concat instanceof BlockBuilder bb) {
-            append(bb);
-        } else {
-            super.append(concat);
-        }
-    }
-
-    @Override
-    @DoNotCall
-    @Deprecated(forRemoval = true)
-    public void append(final StringConcatenation concat, final String indentation) {
-        super.append(requireNonNull(concat), requireNonNull(indentation));
+    void newLineIfNotEmpty() {
+        sc.newLineIfNotEmpty();
     }
 
     // FIXME: clarify contract
     @NonNull BlockBuilder indented(final @Nullable BlockBuilder bb) {
         if (bb != null) {
-            super.append("    ");
-            super.append(bb, "    ");
-            super.newLineIfNotEmpty();
+            sc.append("    ");
+            sc.append(bb, "    ");
+            sc.newLineIfNotEmpty();
         }
         return this;
     }
@@ -171,9 +180,20 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     // FIXME: clarify contract
     @NonNull BlockBuilder indented(final @Nullable StringBuilder sb) {
         if (sb != null) {
-            super.append("    ");
-            super.append(sb.toString(), "    ");
-            super.newLineIfNotEmpty();
+            sc.append("    ");
+            sc.append(sb.toString(), "    ");
+            sc.newLineIfNotEmpty();
+        }
+        return this;
+    }
+
+    // FIXME: clarify contract
+    @NonNull BlockBuilder indented(final @NonNull String prefix, final @Nullable StringBuilder sb) {
+        if (sb != null) {
+            sc.append("    ");
+            sc.append(requireNonNull(prefix));
+            sc.append(sb.toString(), "    ");
+            sc.newLineIfNotEmpty();
         }
         return this;
     }
@@ -181,9 +201,9 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     // FIXME: remove this method
     @NonNull BlockBuilder indentedTwice(final @Nullable StringBuilder sb) {
         if (sb != null) {
-            super.append("        ");
-            super.append(sb.toString(), "        ");
-            super.newLineIfNotEmpty();
+            sc.append("        ");
+            sc.append(sb.toString(), "        ");
+            sc.newLineIfNotEmpty();
         }
         return this;
     }
@@ -197,11 +217,11 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     //    }
 
     @NonNull String toRawString() {
-        return verifyNotNull(super.toString());
+        return verifyNotNull(sc.toString());
     }
 
     String toJavadocBlock() {
-        return isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
+        return sc.isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
     }
 
     /**

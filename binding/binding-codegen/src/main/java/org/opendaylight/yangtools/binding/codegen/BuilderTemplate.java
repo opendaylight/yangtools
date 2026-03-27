@@ -84,30 +84,25 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         }
 
         final var targetTypeName = importedName(targetType);
-        bb.nl().append(
-                  "    /**\n");
-        bb.append("     * Construct an empty builder.\n");
-        bb.append("     */\n");
-        bb.append("    public ");
-        bb.append(type().simpleName());
-        bb.append("() {\n");
-        bb.append("        // No-op\n");
-        bb.append("    }\n");
-        bb.indented(generateConstructorsFromIfcs())
-            .nl().append(
-                  "    /**\n");
-        bb.append("     * Construct a builder initialized with state from specified {@link ");
-        bb.append(targetTypeName);
-        bb.append("}.\n");
-        bb.append("     *\n");
-        bb.append("     * @param base ");
-        bb.append(targetTypeName);
-        bb.append(" from which the builder should be initialized\n");
-        bb.append("     */\n");
-        bb.append("    public ");
-        bb.append(generateCopyConstructor(targetType, type().getEnclosedTypes().getFirst()), "    ");
-        bb.newLineIfNotEmpty();
         bb
+            .nl()
+            .txt("""
+                      /**
+                       * Construct an empty builder.
+                       */
+                  """)
+            .str("    public ").str(type().simpleName()).str("() {").nl()
+            .eol("        // No-op")
+            .eol("    }")
+            .indented(generateConstructorsFromIfcs())
+            .nl()
+            .eol("    /**")
+            .str("     * Construct a builder initialized with state from specified {@link ").str(targetTypeName)
+                .eol("}.")
+            .eol("     *")
+            .str("     * @param base ").str(targetTypeName).eol(" from which the builder should be initialized")
+            .eol("     */")
+            .indented("public ", generateCopyConstructor(targetType, type().getEnclosedTypes().getFirst()))
             .nl()
             .indented(generateMethodFieldsFrom())
             .nl()
@@ -155,10 +150,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    CharSequence generateDeprecatedAnnotation(final AnnotationType ann) {
+    StringBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
+        final var sb = new StringBuilder().append('@');
         final var forRemoval = ann.getParameter("forRemoval");
-        return forRemoval != null ? "@" + importedName(DEPRECATED) + "(forRemoval = " +  forRemoval.getValue()  + ")"
-            :  "@" + importedName(SUPPRESS_WARNINGS) + "(\"deprecation\")";
+        return forRemoval != null
+            ? sb.append(importedName(DEPRECATED)).append("(forRemoval = ").append(forRemoval.getValue()).append(')')
+            : sb.append(importedName(SUPPRESS_WARNINGS)).append("(\"deprecation\")");
     }
 
     private @Nullable BlockBuilder generateConstructorsFromIfcs() {
@@ -330,11 +327,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         for (var impl : getAllIfcs(targetType)) {
             bb.indented(generateIfCheck(impl, done));
         }
-        bb.str("    ").str(importedName(CODEHELPERS)).append(".validValue(isValidArg, arg, \"");
-        bb.append(toListOfNames(getAllIfcs(targetType)), "    ");
-        bb.append("\");\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .str("    ").str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, \"")
+                .str(getAllIfcs(targetType).stream()
+                    .map(this::importedName)
+                    .collect(Collectors.toUnmodifiableList()).toString())
+                .eol("\");")
+            .str("}").nl();
     }
 
     /**
@@ -494,10 +493,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             baseIfcs.addAll(getAllIfcs(impl));
         }
         return baseIfcs;
-    }
-
-    private List<String> toListOfNames(final Collection<Type> types) {
-        return types.stream().map(this::importedName).collect(Collectors.toUnmodifiableList());
     }
 
     @NonNullByDefault
@@ -673,20 +668,20 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //         */
         //        public «type.simpleName» set«field.name.toFirstUpper»(final «field.returnType.importedName» values) {
 
-        bb.nl().append(
-                  "/**\n");
-        bb.append(" * Set the property corresponding to {@link ");
-        bb.append(importedName(targetType));
-        bb.append("#");
-        bb.append(field.getGetterName());
-        bb.append("()} to the specified\n");
-        bb.append(" * value.\n");
-        bb.append(" *\n");
-        bb.append(" * @param values desired value\n");
-        bb.append(" * @return this builder\n");
-        bb.append(" */\n");
-        bb.str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
-            .str(importedReturnType(field)).append(" values) {\n");
+        bb
+            .nl()
+            .eol("/**")
+            .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
+                .str(field.getGetterName()).eol("()} to the specified")
+            .txt("""
+                 * value.
+                 *
+                 * @param values desired value
+                 * @return this builder
+                 */
+                """)
+            .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+                .str(importedReturnType(field)).str(" values) {").newLine();
 
         //        «IF restrictions !== null»
         //            if (values != null) {
@@ -720,14 +715,14 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         }
         bb
             .nl()
-            .str("/**")
+            .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(field.getGetterName()).str("()} to the specified").nl()
-            .str(" * value.").nl()
-            .str(" *").nl()
-            .str(" * @param value desired value").nl()
-            .str(" * @return this builder").nl()
-            .str(" */").nl()
+                .str(field.getGetterName()).eol("()} to the specified")
+            .eol(" * value.")
+            .eol(" *")
+            .eol(" * @param value desired value")
+            .eol(" * @return this builder")
+            .eol(" */")
             .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
                 .str(importedReturnType(field)).str(" value) {").newLine();
         if (restrictions != null) {
@@ -737,8 +732,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 .str("    }").newLine();
         }
         return bb
-            .str("    this.").str(fieldName(field)).str(" = value;").nl()
-            .str("    return this;").nl()
+            .str("    this.").str(fieldName(field)).eol(" = value;")
+            .eol("    return this;")
             .str("}").nl();
     }
 
@@ -781,22 +776,22 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                        * @param augmentation augmentation to be added
                        * @return this builder
                       """)
-                .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null\n")
+                .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null")
                 .eol(" */")
                 .str("public ").str(type().simpleName()).str(" addAugmentation(").str(augmentTypeRef)
                     .str(" augmentation) {").nl()
                 .str("    if (!(this." + AUGMENTATION_FIELD + " instanceof ").str(hashMapRef).str(")) {").nl()
-                .str("        this." + AUGMENTATION_FIELD +" = new ").str(hashMapRef).eol("<>();")
+                .str("        this." + AUGMENTATION_FIELD + " = new ").str(hashMapRef).eol("<>();")
                 .eol("    }")
                 .eol("    this." + AUGMENTATION_FIELD + ".put(augmentation."
                     + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "(), augmentation);")
                 .txt("""
-                   .      return this;
+                          return this;
                       }
 
                       /**
-                       * Remove an augmentation from this builder's producbbt. If this builder does not track such an\
-                       augmentation
+                       * Remove an augmentation from this builder's product. If this builder does not track such an \
+                      augmentation
                        * type, this method does nothing.
                        *
                        * @param augmentationType augmentation type to be removed
@@ -822,7 +817,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //        Class that builds {@link «target»} instances. Overall design of the class is that of a
         //        <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent interface</a>, where method chaining is used.
         //
-        //        <p>
+        //        <p>createDescription
         //        In general, this class is supposed to be used like this template:
         //        <pre>
         //          <code>
@@ -909,15 +904,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     @Override
     String formatDataForJavaDoc(final GeneratedType type) {
-        final var typeDescription = createDescription(type);
-        if (typeDescription == null || typeDescription.isEmpty()) {
-            return "";
-        }
-
-        final var bb = new BlockBuilder();
-        bb.append(typeDescription);
-        bb.newLineIfNotEmpty();
-        return bb.toRawString();
+        return createDescription(type).toRawString();
     }
 
     private StringBuilder generateAugmentation() {
