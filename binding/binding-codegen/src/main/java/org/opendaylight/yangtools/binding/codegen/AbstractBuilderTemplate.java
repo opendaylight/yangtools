@@ -131,7 +131,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                     .append(" */\n");
             } else {
                 sb
-                    .append("@").append(importedName(OVERRIDE)).append('\n');
+                    .append('@').append(importedName(OVERRIDE)).append('\n');
             }
             sb.append(asGetterMethod(field));
 
