@@ -13,7 +13,6 @@ import java.util.Locale;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -89,42 +88,42 @@ class InterfaceTemplate extends BaseTemplate {
         //        }
         //
 
-        final var sc = new StringConcatenation();
-        sc.append(wrapToDocumentation(formatDataForJavaDoc(type())));
-        sc.newLineIfNotEmpty();
-        sc.append(generateAnnotations(type().getAnnotations()));
-        sc.newLineIfNotEmpty();
-        sc.append(generatedAnnotation());
-        sc.newLineIfNotEmpty();
-        sc.append("public interface ");
-        sc.append(type().simpleName());
-        sc.newLineIfNotEmpty();
-        sc.append("    ");
-        sc.append(superInterfaces(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.append("{");
-        sc.newLine();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateInnerClasses(enclosedGeneratedTypes), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateInnerEnumTypeObjects(enums), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateConstants(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("    ");
-        sc.append(generateMethods(), "    ");
-        sc.newLineIfNotEmpty();
-        sc.newLine();
-        sc.append("}");
-        sc.newLine();
-        sc.newLine();
-        return sc;
+        final var bb = new BlockBuilder();
+        bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
+        bb.newLineIfNotEmpty();
+        bb.append(generateAnnotations(type().getAnnotations()));
+        bb.newLineIfNotEmpty();
+        bb.append(generatedAnnotation());
+        bb.newLineIfNotEmpty();
+        bb.append("public interface ");
+        bb.append(type().simpleName());
+        bb.newLineIfNotEmpty();
+        bb.append("    ");
+        bb.append(superInterfaces(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.append("{");
+        bb.newLine();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateInnerClasses(enclosedGeneratedTypes), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateInnerEnumTypeObjects(enums), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateConstants(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("    ");
+        bb.append(generateMethods(), "    ");
+        bb.newLineIfNotEmpty();
+        bb.newLine();
+        bb.append("}");
+        bb.newLine();
+        bb.newLine();
+        return bb;
     }
 
     /**
@@ -199,48 +198,48 @@ class InterfaceTemplate extends BaseTemplate {
         //            «ENDIF»
         //        «ENDFOR»
 
-        var sc = new StringConcatenation();
+        var bb = new BlockBuilder();
         boolean hasElements = false;
         for (var method : methods) {
             if (!hasElements) {
                 hasElements = true;
             } else {
-                sc.appendImmediate("\n", "");
+                bb.appendImmediate("\n", "");
             }
             if (method.isDefault()) {
-                sc.append(generateDefaultMethod(method));
+                bb.append(generateDefaultMethod(method));
             } else if (method.isStatic()) {
-                sc.append(generateStaticMethod(method));
+                bb.append(generateStaticMethod(method));
             } else if (method.getParameters().isEmpty() && Naming.isGetterMethodName(method.getName())) {
-                sc.append(generateAccessorMethod(method));
+                bb.append(generateAccessorMethod(method));
             } else if (method.getParameters().isEmpty() && Naming.isNonnullMethodName(method.getName())) {
-                sc.append(generateNonnullAccessorMethod(method));
+                bb.append(generateNonnullAccessorMethod(method));
             } else {
-                sc.append(generateMethod(method));
+                bb.append(generateMethod(method));
             }
-            sc.newLineIfNotEmpty();
+            bb.newLineIfNotEmpty();
         }
-        return sc;
+        return bb;
     }
 
-    private CharSequence generateMethod(final MethodSignature method) {
+    private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
         //        «method.comment.asJavadoc»
         //        «method.annotations.generateAnnotations»
         //        «method.returnType.importedName» «method.name»(«method.parameters.generateParameters»);
 
-        final var sc = new StringConcatenation();
-        sc.append(asJavadoc(method.getComment()));
-        sc.newLineIfNotEmpty();
-        sc.append(generateAnnotations(method.getAnnotations()));
-        sc.newLineIfNotEmpty();
-        sc.append(importedReturnType(method));
-        sc.append(" ");
-        sc.append(method.getName());
-        sc.append("(");
-        sc.append(generateParameters(method.getParameters()));
-        sc.append(");");
-        sc.newLineIfNotEmpty();
-        return sc;
+        final var bb = new BlockBuilder();
+        bb.append(asJavadoc(method.getComment()));
+        bb.newLineIfNotEmpty();
+        bb.append(generateAnnotations(method.getAnnotations()));
+        bb.newLineIfNotEmpty();
+        bb.append(importedReturnType(method));
+        bb.append(" ");
+        bb.append(method.getName());
+        bb.append("(");
+        bb.append(generateParameters(method.getParameters()));
+        bb.append(");");
+        bb.newLineIfNotEmpty();
+        return bb;
     }
 
     private CharSequence generateAnnotations(final @NonNull List<AnnotationType> annotations) {
@@ -248,12 +247,12 @@ class InterfaceTemplate extends BaseTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         for (var annotation : annotations) {
-            sc.append(generateAnnotation(annotation));
-            sc.newLineIfNotEmpty();
+            bb.append(generateAnnotation(annotation));
+            bb.newLineIfNotEmpty();
         }
-        return sc;
+        return bb;
     }
 
     private CharSequence generateDefaultMethod(final MethodSignature method) {
@@ -272,7 +271,7 @@ class InterfaceTemplate extends BaseTemplate {
         };
     }
 
-    private CharSequence generateNonnullMethod(final MethodSignature method) {
+    private BlockBuilder generateNonnullMethod(final MethodSignature method) {
         //        «val ret = method.returnType»
         //        «val name = method.name»
         //        «accessorJavadoc(method, ", or an empty list if it is not present.")»
@@ -281,27 +280,27 @@ class InterfaceTemplate extends BaseTemplate {
         //            return «CODEHELPERS.importedName».nonnull(«name.getGetterMethodForNonnull»());
         //        }
 
-        final var sc = new StringConcatenation();
+        final var bb = new BlockBuilder();
         final var ret = method.getReturnType();
-        sc.newLineIfNotEmpty();
+        bb.newLineIfNotEmpty();
         final var name = method.getName();
-        sc.newLineIfNotEmpty();
-        sc.append(accessorJavadoc(method, ", or an empty list if it is not present."));
-        sc.newLineIfNotEmpty();
-        sc.append(generateAnnotations(method.getAnnotations()));
-        sc.newLineIfNotEmpty();
-        sc.append("default ");
-        sc.append(importedNonNull(ret));
-        sc.append(" ");
-        sc.append(name);
-        sc.append("() {\n");
-        sc.append("    return ");
-        sc.append(importedName(JavaFileTemplate.CODEHELPERS), "    ");
-        sc.append(".nonnull(");
-        sc.append(Naming.getGetterMethodForNonnull(name), "    ");
-        sc.append("());\n");
-        sc.append("}\n");
-        return sc;
+        bb.newLineIfNotEmpty();
+        bb.append(accessorJavadoc(method, ", or an empty list if it is not present."));
+        bb.newLineIfNotEmpty();
+        bb.append(generateAnnotations(method.getAnnotations()));
+        bb.newLineIfNotEmpty();
+        bb.append("default ");
+        bb.append(importedNonNull(ret));
+        bb.append(" ");
+        bb.append(name);
+        bb.append("() {\n");
+        bb.append("    return ");
+        bb.append(importedName(JavaFileTemplate.CODEHELPERS), "    ");
+        bb.append(".nonnull(");
+        bb.append(Naming.getGetterMethodForNonnull(name), "    ");
+        bb.append("());\n");
+        bb.append("}\n");
+        return bb;
     }
 
     private CharSequence generateNoopVoidInterfaceMethod(final MethodSignature method) {
@@ -311,24 +310,24 @@ class InterfaceTemplate extends BaseTemplate {
         //            // No-op
         //        }
 
-        final var sc = new StringConcatenation();
-        sc.append(asJavadoc(method.getComment()));
-        sc.newLineIfNotEmpty();
-        sc.append(generateAnnotations(method.getAnnotations()));
-        sc.newLineIfNotEmpty();
-        sc.append("default ");
-        sc.append(importedName(VOID));
-        sc.append(" ");
-        sc.append(method.getName());
-        sc.append("(");
-        sc.append(generateParameters(method.getParameters()));
-        sc.append(") {\n");
-        sc.append("    // No-op\n");
-        sc.append("}\n");
-        return sc;
+        final var bb = new BlockBuilder();
+        bb.append(asJavadoc(method.getComment()));
+        bb.newLineIfNotEmpty();
+        bb.append(generateAnnotations(method.getAnnotations()));
+        bb.newLineIfNotEmpty();
+        bb.append("default ");
+        bb.append(importedName(VOID));
+        bb.append(" ");
+        bb.append(method.getName());
+        bb.append("(");
+        bb.append(generateParameters(method.getParameters()));
+        bb.append(") {\n");
+        bb.append("    // No-op\n");
+        bb.append("}\n");
+        return bb;
     }
 
-    private CharSequence generateRequireMethod(final MethodSignature method) {
+    private BlockBuilder generateRequireMethod(final MethodSignature method) {
         //        «val ret = method.returnType»
         //        «val name = method.name»
         //        «val fieldName = name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")»
@@ -339,40 +338,40 @@ class InterfaceTemplate extends BaseTemplate {
 
         final var ret = method.getReturnType();
         final var name = method.getName();
-        final var sc = new StringConcatenation();
-        sc.append(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE));
-        sc.newLineIfNotEmpty();
-        sc.append("default ");
-        sc.append(importedNonNull(ret));
-        sc.append(" ");
-        sc.append(name);
-        sc.append("() {\n");
-        sc.append("    return ");
-        sc.append(importedName(CODEHELPERS), "    ");
-        sc.append(".require(");
-        sc.append(Naming.getGetterMethodForRequire(name), "    ");
-        sc.append("(), \"");
-        sc.append(name.toLowerCase(Locale.ROOT).replace(Naming.REQUIRE_PREFIX, ""), "    ");
-        sc.append("\");\n");
-        sc.append("}\n");
-        return sc;
+        final var bb = new BlockBuilder();
+        bb.append(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE));
+        bb.newLineIfNotEmpty();
+        bb.append("default ");
+        bb.append(importedNonNull(ret));
+        bb.append(" ");
+        bb.append(name);
+        bb.append("() {\n");
+        bb.append("    return ");
+        bb.append(importedName(CODEHELPERS), "    ");
+        bb.append(".require(");
+        bb.append(Naming.getGetterMethodForRequire(name), "    ");
+        bb.append("(), \"");
+        bb.append(name.toLowerCase(Locale.ROOT).replace(Naming.REQUIRE_PREFIX, ""), "    ");
+        bb.append("\");\n");
+        bb.append("}\n");
+        return bb;
     }
 
-    private String generateAccessorMethod(final MethodSignature method) {
+    private BlockBuilder generateAccessorMethod(final MethodSignature method) {
         //        «accessorJavadoc(method, ", or {@code null} if it is not present.")»
         //        «method.generateAccessorAnnotations»
         //        «method.returnType.nullableType» «method.name»();
 
-        final var sc = new StringConcatenation();
-        sc.append(accessorJavadoc(method, ", or {@code null} if it is not present."));
-        sc.newLineIfNotEmpty();
-        sc.append(generateAccessorAnnotations(method));
-        sc.newLineIfNotEmpty();
-        sc.append(nullableType(method.getReturnType()));
-        sc.append(" ");
-        sc.append(method.getName());
-        sc.append("();\n");
-        return sc.toString();
+        final var bb = new BlockBuilder();
+        bb.append(accessorJavadoc(method, ", or {@code null} if it is not present."));
+        bb.newLineIfNotEmpty();
+        bb.append(generateAccessorAnnotations(method));
+        bb.newLineIfNotEmpty();
+        bb.append(nullableType(method.getReturnType()));
+        bb.append(" ");
+        bb.append(method.getName());
+        bb.append("();\n");
+        return bb;
     }
 
     private CharSequence generateAccessorAnnotations(final MethodSignature method) {
@@ -381,32 +380,32 @@ class InterfaceTemplate extends BaseTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
-        sc.newLineIfNotEmpty();
+        final var bb = new BlockBuilder();
+        bb.newLineIfNotEmpty();
         for (var annotation : annotations) {
             if (!Types.BOOLEAN.equals(method.getReturnType()) || !OVERRIDE.equals(annotation.name())) {
-                sc.append(generateAnnotation(annotation));
-                sc.newLineIfNotEmpty();
+                bb.append(generateAnnotation(annotation));
+                bb.newLineIfNotEmpty();
             }
         }
-        return sc;
+        return bb;
     }
 
-    private String generateNonnullAccessorMethod(final MethodSignature method) {
+    private BlockBuilder generateNonnullAccessorMethod(final MethodSignature method) {
         //        «accessorJavadoc(method, ", or an empty instance if it is not present.")»
         //        «method.annotations.generateAnnotations»
         //        «method.returnType.importedNonNull» «method.name»();
 
-        final var sc = new StringConcatenation();
-        sc.append(accessorJavadoc(method, ", or an empty instance if it is not present."));
-        sc.newLineIfNotEmpty();
-        sc.append(generateAnnotations(method.getAnnotations()));
-        sc.newLineIfNotEmpty();
-        sc.append(importedNonNull(method.getReturnType()));
-        sc.append(" ");
-        sc.append(method.getName());
-        sc.append("();\n");
-        return sc.toString();
+        final var bb = new BlockBuilder();
+        bb.append(accessorJavadoc(method, ", or an empty instance if it is not present."));
+        bb.newLineIfNotEmpty();
+        bb.append(generateAnnotations(method.getAnnotations()));
+        bb.newLineIfNotEmpty();
+        bb.append(importedNonNull(method.getReturnType()));
+        bb.append(" ");
+        bb.append(method.getName());
+        bb.append("();\n");
+        return bb;
     }
 
     private CharSequence generateStaticMethod(final MethodSignature method) {
@@ -427,46 +426,46 @@ class InterfaceTemplate extends BaseTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
-        sc.append("/**\n");
-        sc.append(" * Default implementation of {@link ");
-        sc.append(importedName(OBJECT), " ");
-        sc.append("#hashCode()} contract for this interface.\n");
-        sc.append(
+        final var bb = new BlockBuilder();
+        bb.append("/**\n");
+        bb.append(" * Default implementation of {@link ");
+        bb.append(importedName(OBJECT), " ");
+        bb.append("#hashCode()} contract for this interface.\n");
+        bb.append(
             " * Implementations of this interface are encouraged to defer to this method to get consistent hashing\n");
-        sc.append(" * results across all implementations.\n");
-        sc.append(" *\n");
-        sc.append(" * @param obj Object for which to generate hashCode() result.\n");
-        sc.append(" * @return Hash code value of data modeled by this interface.\n");
-        sc.append(" * @throws ");
-        sc.append(importedName(NPE), " ");
-        sc.append(" if {@code obj} is {@code null}\n");
-        sc.append(" */\n");
-        sc.append("static int ");
-        sc.append(Naming.BINDING_HASHCODE_NAME);
-        sc.append("(final ");
-        sc.append(fullyQualifiedNonNull(type()));
-        sc.append(" obj) {\n");
-        sc.append("    int result = 1;");
-        sc.newLine();
+        bb.append(" * results across all implementations.\n");
+        bb.append(" *\n");
+        bb.append(" * @param obj Object for which to generate hashCode() result.\n");
+        bb.append(" * @return Hash code value of data modeled by this interface.\n");
+        bb.append(" * @throws ");
+        bb.append(importedName(NPE), " ");
+        bb.append(" if {@code obj} is {@code null}\n");
+        bb.append(" */\n");
+        bb.append("static int ");
+        bb.append(Naming.BINDING_HASHCODE_NAME);
+        bb.append("(final ");
+        bb.append(fullyQualifiedNonNull(type()));
+        bb.append(" obj) {\n");
+        bb.append("    int result = 1;");
+        bb.newLine();
         if (!props.isEmpty()) {
-            sc.append("    final int prime = 31;\n");
+            bb.append("    final int prime = 31;\n");
             for (var property : props) {
-                sc.append("    result = prime * result + ");
-                sc.append(importedUtilClass(property), "    ");
-                sc.append(".hashCode(obj.");
-                sc.append(getterMethodName(property), "    ");
-                sc.append("());\n");
+                bb.append("    result = prime * result + ");
+                bb.append(importedUtilClass(property), "    ");
+                bb.append(".hashCode(obj.");
+                bb.append(getterMethodName(property), "    ");
+                bb.append("());\n");
             }
         }
         if (augmentable) {
-            sc.append("    for (var augmentation : obj.augmentations().values()) {\n");
-            sc.append("        result += augmentation.hashCode();\n");
-            sc.append("    }\n");
+            bb.append("    for (var augmentation : obj.augmentations().values()) {\n");
+            bb.append("        result += augmentation.hashCode();\n");
+            bb.append("    }\n");
         }
-        sc.append("    return result;\n");
-        sc.append("}\n");
-        return sc;
+        bb.append("    return result;\n");
+        bb.append("}\n");
+        return bb;
     }
 
     private CharSequence generateBindingEquals() {
@@ -477,112 +476,112 @@ class InterfaceTemplate extends BaseTemplate {
             return "";
         }
 
-        final var sc = new StringConcatenation();
-        sc.newLineIfNotEmpty();
-        sc.append("/**\n");
-        sc.append(" * Default implementation of {@link ");
-        sc.append(importedName(OBJECT), " ");
-        sc.append("#equals(");
-        sc.append(importedName(OBJECT), " ");
-        sc.append(")} contract for this interface.\n");
-        sc.append(
+        final var bb = new BlockBuilder();
+        bb.newLineIfNotEmpty();
+        bb.append("/**\n");
+        bb.append(" * Default implementation of {@link ");
+        bb.append(importedName(OBJECT), " ");
+        bb.append("#equals(");
+        bb.append(importedName(OBJECT), " ");
+        bb.append(")} contract for this interface.\n");
+        bb.append(
             " * Implementations of this interface are encouraged to defer to this method to get consistent equality\n");
-        sc.append(" * results across all implementations.\n");
-        sc.append(" *\n");
-        sc.append(" * @param thisObj Object acting as the receiver of equals invocation\n");
-        sc.append(" * @param obj Object acting as argument to equals invocation\n");
-        sc.append(" * @return True if thisObj and obj are considered equal\n");
-        sc.append(" * @throws ");
-        sc.append(importedName(NPE), " ");
-        sc.append(" if {@code thisObj} is {@code null}\n");
-        sc.append(" */\n");
-        sc.append("static boolean ");
-        sc.append(Naming.BINDING_EQUALS_NAME);
-        sc.append("(final ");
-        sc.append(fullyQualifiedNonNull(type()));
-        sc.append(" thisObj, final ");
-        sc.append(importedName(Types.objectType()));
-        sc.append(" obj) {\n");
-        sc.append("    if (thisObj == obj) {\n");
-        sc.append("        return true;\n");
-        sc.append("    }\n");
-        sc.append("    final var other = ");
-        sc.append(importedName(CODEHELPERS), "    ");
-        sc.append(".checkCast(");
-        sc.append(type().canonicalName(), "    ");
-        sc.append(".class, obj);\n");
-        sc.append("    return other != null\n");
+        bb.append(" * results across all implementations.\n");
+        bb.append(" *\n");
+        bb.append(" * @param thisObj Object acting as the receiver of equals invocation\n");
+        bb.append(" * @param obj Object acting as argument to equals invocation\n");
+        bb.append(" * @return True if thisObj and obj are considered equal\n");
+        bb.append(" * @throws ");
+        bb.append(importedName(NPE), " ");
+        bb.append(" if {@code thisObj} is {@code null}\n");
+        bb.append(" */\n");
+        bb.append("static boolean ");
+        bb.append(Naming.BINDING_EQUALS_NAME);
+        bb.append("(final ");
+        bb.append(fullyQualifiedNonNull(type()));
+        bb.append(" thisObj, final ");
+        bb.append(importedName(Types.objectType()));
+        bb.append(" obj) {\n");
+        bb.append("    if (thisObj == obj) {\n");
+        bb.append("        return true;\n");
+        bb.append("    }\n");
+        bb.append("    final var other = ");
+        bb.append(importedName(CODEHELPERS), "    ");
+        bb.append(".checkCast(");
+        bb.append(type().canonicalName(), "    ");
+        bb.append(".class, obj);\n");
+        bb.append("    return other != null\n");
         for (var property : ByTypeMemberComparator.sort(props)) {
-            sc.append("        && ");
-            sc.append(importedUtilClass(property), "        ");
-            sc.append(".equals(thisObj.");
-            sc.append(property.getGetterName(), "        ");
-            sc.append("(), other.");
-            sc.append(property.getGetterName(), "        ");
-            sc.append("())\n");
+            bb.append("        && ");
+            bb.append(importedUtilClass(property), "        ");
+            bb.append(".equals(thisObj.");
+            bb.append(property.getGetterName(), "        ");
+            bb.append("(), other.");
+            bb.append(property.getGetterName(), "        ");
+            bb.append("())\n");
         }
-        sc.append("        ");
+        bb.append("        ");
         if (augmentable) {
-            sc.append("&& thisObj.augmentations().equals(other.augmentations())");
+            bb.append("&& thisObj.augmentations().equals(other.augmentations())");
         }
-        sc.append(";\n");
-        sc.append("}\n");
-        return sc;
+        bb.append(";\n");
+        bb.append("}\n");
+        return bb;
     }
 
     @VisibleForTesting
-    final CharSequence generateBindingToString() {
+    final BlockBuilder generateBindingToString() {
         final var analysis = typeAnalysis();
 
-        final var sc = new StringConcatenation();
-        sc.newLineIfNotEmpty();
-        sc.append("/**\n");
-        sc.append(" * Default implementation of {@link ");
-        sc.append(importedName(OBJECT), " ");
-        sc.append("#toString()} contract for this interface.\n");
-        sc.append(
+        final var bb = new BlockBuilder();
+        bb.newLineIfNotEmpty();
+        bb.append("/**\n");
+        bb.append(" * Default implementation of {@link ");
+        bb.append(importedName(OBJECT), " ");
+        bb.append("#toString()} contract for this interface.\n");
+        bb.append(
             " * Implementations of this interface are encouraged to defer to this method to get consistent string\n");
-        sc.append(" * representations across all implementations.\n");
-        sc.append(" *\n");
-        sc.append(" * @param obj Object for which to generate toString() result.\n");
-        sc.append(" * @return {@link ");
-        sc.append(importedName(Types.STRING), " ");
-        sc.append("} value of data modeled by this interface.\n");
-        sc.append(" * @throws ");
-        sc.append(importedName(NPE), " ");
-        sc.append(" if {@code obj} is {@code null}\n");
-        sc.append(" */\n");
-        sc.append("static ");
-        sc.append(importedName(Types.STRING));
-        sc.append(" ");
-        sc.append(Naming.BINDING_TO_STRING_NAME);
-        sc.append("(final ");
-        sc.append(fullyQualifiedNonNull(type()));
-        sc.append(" obj) {\n");
-        sc.append("    final var helper = ");
-        sc.append(importedName(MOREOBJECTS), "    ");
-        sc.append(".toStringHelper(\"");
-        sc.append(type().simpleName(), "    ");
-        sc.append("\");\n");
+        bb.append(" * representations across all implementations.\n");
+        bb.append(" *\n");
+        bb.append(" * @param obj Object for which to generate toString() result.\n");
+        bb.append(" * @return {@link ");
+        bb.append(importedName(Types.STRING), " ");
+        bb.append("} value of data modeled by this interface.\n");
+        bb.append(" * @throws ");
+        bb.append(importedName(NPE), " ");
+        bb.append(" if {@code obj} is {@code null}\n");
+        bb.append(" */\n");
+        bb.append("static ");
+        bb.append(importedName(Types.STRING));
+        bb.append(" ");
+        bb.append(Naming.BINDING_TO_STRING_NAME);
+        bb.append("(final ");
+        bb.append(fullyQualifiedNonNull(type()));
+        bb.append(" obj) {\n");
+        bb.append("    final var helper = ");
+        bb.append(importedName(MOREOBJECTS), "    ");
+        bb.append(".toStringHelper(\"");
+        bb.append(type().simpleName(), "    ");
+        bb.append("\");\n");
         for (var property : analysis.properties()) {
-            sc.append("    ");
-            sc.append(importedName(CODEHELPERS), "    ");
-            sc.append(".appendValue(helper, \"");
-            sc.append(property.getName(), "    ");
-            sc.append("\", obj.");
-            sc.append(property.getGetterName(), "    ");
-            sc.append("());\n");
+            bb.append("    ");
+            bb.append(importedName(CODEHELPERS), "    ");
+            bb.append(".appendValue(helper, \"");
+            bb.append(property.getName(), "    ");
+            bb.append("\", obj.");
+            bb.append(property.getGetterName(), "    ");
+            bb.append("());\n");
         }
         if (analysis.augmentType() != null) {
-            sc.append("    ");
-            sc.append(importedName(CODEHELPERS), "    ");
-            sc.append(".appendAugmentations(helper, \"");
-            sc.append(Naming.AUGMENTATION_FIELD, "    ");
-            sc.append("\", obj);\n");
+            bb.append("    ");
+            bb.append(importedName(CODEHELPERS), "    ");
+            bb.append(".appendAugmentations(helper, \"");
+            bb.append(Naming.AUGMENTATION_FIELD, "    ");
+            bb.append("\", obj);\n");
         }
-        sc.append("    return helper.toString();\n");
-        sc.append("}\n");
-        return sc;
+        bb.append("    return helper.toString();\n");
+        bb.append("}\n");
+        return bb;
     }
 
     private String accessorJavadoc(final MethodSignature method, final String orString) {
@@ -604,27 +603,27 @@ class InterfaceTemplate extends BaseTemplate {
         //            «ENDIF»
         //        ''')
 
-        final var sc = new StringConcatenation();
-        sc.append("Return ");
-        sc.append(propReturn);
-        sc.newLineIfNotEmpty();
-        sc.newLine();
+        final var bb = new BlockBuilder();
+        bb.append("Return ");
+        bb.append(propReturn);
+        bb.newLineIfNotEmpty();
+        bb.newLine();
         final var comment = method.getComment();
-        sc.append(formatReference(comment == null ? null : comment.referenceDescription()));
-        sc.newLineIfNotEmpty();
-        sc.append("@return {@code ");
-        sc.append(importedReturnType(method));
-        sc.append("} ");
-        sc.append(propReturn);
-        sc.newLineIfNotEmpty();
+        bb.append(formatReference(comment == null ? null : comment.referenceDescription()));
+        bb.newLineIfNotEmpty();
+        bb.append("@return {@code ");
+        bb.append(importedReturnType(method));
+        bb.append("} ");
+        bb.append(propReturn);
+        bb.newLineIfNotEmpty();
         if (exception != null) {
-            sc.append("@throws ");
-            sc.append(importedName(exception));
-            sc.append(" if ");
-            sc.append(propName);
-            sc.append(" is not present\n");
+            bb.append("@throws ");
+            bb.append(importedName(exception));
+            bb.append(" if ");
+            bb.append(propName);
+            bb.append(" is not present\n");
         }
-        return wrapToDocumentation(sc.toString());
+        return bb.toJavadocBlock();
     }
 
     @NonNullByDefault

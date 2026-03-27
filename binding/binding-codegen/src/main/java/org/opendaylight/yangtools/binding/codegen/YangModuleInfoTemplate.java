@@ -16,7 +16,6 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
@@ -207,6 +206,7 @@ public final class YangModuleInfoTemplate {
 
     @NonNullByDefault
     private String classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
+        // FIXME: use BlockBuilder here
         final var sb = new StringBuilder()
             .append("private ").append(className).append("() {\n");
 
@@ -299,11 +299,9 @@ public final class YangModuleInfoTemplate {
                 .append("}\n");
         }
 
-        // FIXME: do not use StringConcatenation here: rework this method to take StringBuilder and leading indent
-        //        and just append the output
-        final var sc = new StringConcatenation();
-        sc.append("    ");
-        sc.append(sb, "    ");
-        return sc.toString();
+        final var bb = new BlockBuilder();
+        bb.append("    ");
+        bb.append(sb, "    ");
+        return bb.toRawString();
     }
 }

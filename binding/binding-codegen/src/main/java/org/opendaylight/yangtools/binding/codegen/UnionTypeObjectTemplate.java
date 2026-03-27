@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -55,25 +54,26 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         //
         //      «generateStringValue»
 
-        final var sc = new StringConcatenation();
-        sc.append(unionConstructorsParentProperties());
-        sc.newLineIfNotEmpty();
-        sc.append(unionConstructors());
-        sc.newLineIfNotEmpty();
+        final var bb = new BlockBuilder();
+        bb.append(unionConstructorsParentProperties());
+        bb.newLineIfNotEmpty();
+        bb.append(unionConstructors());
+        bb.newLineIfNotEmpty();
         if (!allProperties.isEmpty()) {
-            sc.append(copyConstructor());
-            sc.newLineIfNotEmpty();
+            bb.append(copyConstructor());
+            bb.newLineIfNotEmpty();
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
-            sc.append(parentConstructor());
-            sc.newLineIfNotEmpty();
+            bb.append(parentConstructor());
+            bb.newLineIfNotEmpty();
         }
-        sc.newLine();
-        sc.append(generateStringValue());
-        sc.newLineIfNotEmpty();
-        return sc;
+        bb.newLine();
+        bb.append(generateStringValue());
+        bb.newLineIfNotEmpty();
+        return bb;
     }
 
+    // FIXME: return a Block
     private String unionConstructors() {
         if (finalProperties.isEmpty()) {
             return "";
