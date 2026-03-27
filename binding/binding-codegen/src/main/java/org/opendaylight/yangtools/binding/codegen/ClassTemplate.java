@@ -290,9 +290,7 @@ class ClassTemplate extends BaseTemplate {
         if (isBitsTypeObject()) {
             for (var c : consts) {
                 if (TypeConstants.VALID_NAMES_NAME.equals(c.getName())) {
-                    bb.nl().append("    ");
-                    bb.append(validNamesAndValues((BitsTypeDefinition) c.getValue()), "    ");
-                    bb.newLineIfNotEmpty();
+                    bb.nl().appendIndented(validNamesAndValues((BitsTypeDefinition) c.getValue())).newLineIfNotEmpty();
                 }
             }
         }
@@ -334,6 +332,7 @@ class ClassTemplate extends BaseTemplate {
         return false;
     }
 
+    @NonNullByDefault
     private BlockBuilder validNamesAndValues(final BitsTypeDefinition typedef) {
         final var override = importedName(OVERRIDE);
 
