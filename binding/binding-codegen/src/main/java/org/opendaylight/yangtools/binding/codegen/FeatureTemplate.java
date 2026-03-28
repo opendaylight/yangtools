@@ -8,10 +8,13 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangFeature;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -23,27 +26,30 @@ final class FeatureTemplate extends ClassTemplate {
 
     private final @NonNull Type dataRoot;
 
+    @NonNullByDefault
     FeatureTemplate(final GeneratedTransferObject genType, final Type dataRoot) {
         super(genType);
         this.dataRoot = requireNonNull(dataRoot);
     }
 
     @Override
-    protected String generateClassDeclaration(final boolean isInnerClass) {
+    protected BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
         final var typeName = type().simpleName();
 
-        return "@" + importedName(NONNULL_BY_DEFAULT) + '\n'
-            + "public final class " + typeName + " extends " + importedName(YANG_FEATURE) + '<' + typeName + ", "
-            + importedName(dataRoot) + '>';
+        return new BlockBuilder()
+            .at().str(importedName(NONNULL_BY_DEFAULT)).nl()
+            .str("public final class ").str(typeName).str(" extends ").str(importedName(YANG_FEATURE))
+                .str("<").str(typeName).str(", ").str(importedName(dataRoot)).str(">");
     }
 
     @Override
-    String constructors() {
+    BlockBuilder constructors() {
         final var typeName = type().simpleName();
 
-        return "private " + typeName + "() {\n"
-            +  "    // Hidden on purpose\n"
-            +  "}";
+        return new BlockBuilder()
+            .str("private ").str(typeName).str("() {").nl()
+            .str("    // Hidden on purpose").nl()
+            .str("}").nl();
     }
 
     @Override
@@ -52,29 +58,31 @@ final class FeatureTemplate extends ClassTemplate {
         return "/**\n"
             +  " * {@link " + typeName + "} singleton instance.\n"
             +  " */\n"
-            +  "public static final " + typeName + ' ' + Naming.VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();";
+            +  "public static final " + typeName + ' ' + VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();";
     }
 
     @Override
-    String propertyMethods() {
+    BlockBuilder propertyMethods() {
         final var override = importedName(OVERRIDE);
         final var typeName = type().simpleName();
         final var clazz = importedName(CLASS);
         final var rootName = importedName(dataRoot);
 
-        return '@' + override + '\n'
-            +  "public " + clazz + '<' + typeName + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {\n"
-            +  "    return " + typeName + ".class;\n"
-            +  "}\n"
-            +  '\n'
-            +  '@' + override + '\n'
-            +  "public " + importedName(QNAME) + " qname() {\n"
-            +  "    return " + Naming.QNAME_STATIC_FIELD_NAME + ";\n"
-            +  "}\n"
-            +  '\n'
-            +  '@' + override + '\n'
-            +  "public " + clazz + '<' + rootName + "> definingModule() {\n"
-            +  "    return " + rootName + ".class;\n"
-            +  "}\n";
+        return new BlockBuilder()
+            .at().str(override).nl()
+            .str("public ").str(clazz).str("<").str(typeName)
+                .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
+            .str("    return ").str(typeName).str(".class;").nl()
+            .str("}").nl()
+            .nl()
+            .at().str(override).nl()
+            .str("public ").str(importedName(QNAME)).str(" qname() {").nl()
+            .str("    return " + QNAME_STATIC_FIELD_NAME + ';').nl()
+            .str("}").nl()
+            .nl()
+            .at().str(override).nl()
+            .str("public ").str(clazz).str("<").str(rootName).str("> definingModule() {").nl()
+            .str("    return ").str(rootName).str(".class;").nl()
+            .str("}").nl();
     }
 }

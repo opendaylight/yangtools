@@ -95,68 +95,55 @@ class InterfaceTemplate extends BaseTemplate {
         bb.newLineIfNotEmpty();
         bb.append(generatedAnnotation());
         bb.newLineIfNotEmpty();
-        bb.append("public interface ");
-        bb.append(type().simpleName());
-        bb.newLineIfNotEmpty();
-        bb.append("    ");
-        bb.append(superInterfaces(), "    ");
-        bb.newLineIfNotEmpty();
-        bb.append("{\n");
-        bb.nl().append("    ");
-        bb.append(generateInnerClasses(enclosedGeneratedTypes), "    ");
-        bb.newLineIfNotEmpty();
-        bb.nl().append("    ");
-        bb.append(generateInnerEnumTypeObjects(enums), "    ");
-        bb.newLineIfNotEmpty();
-        bb.nl().append("    ");
-        bb.append(generateConstants(), "    ");
-        bb.newLineIfNotEmpty();
-        bb.nl().append("    ");
-        bb.append(generateMethods(), "    ");
-        bb.newLineIfNotEmpty();
-        bb.nl().append("}");
+        bb.str("public interface ").str(type().simpleName())
+            .nl()
+            .indented(superInterfaces()).append("{\n");
+        bb.nl().indented(generateInnerClasses(enclosedGeneratedTypes))
+            .nl()
+            .indented(generateInnerEnumTypeObjects(enums))
+            .nl()
+            .indented(generateConstants())
+            .nl()
+            .indented(generateMethods())
+            .nl()
+            .append("}");
         return bb
             .nl()
             .nl();
     }
 
-    /**
-     * {@return string with the code for the interface declaration in JAVA format}
-     */
-    private String superInterfaces() {
+    private @Nullable BlockBuilder superInterfaces() {
         final var ifaces = type().getImplements();
         if (ifaces.isEmpty()) {
-            return "";
+            return null;
         }
 
-        final var sb = new StringBuilder()
-            .append("extends\n");
+        final var bb = new BlockBuilder().str("extends").nl();
         final var it = ifaces.iterator();
         while (true) {
-            sb.append(importedName(it.next()));
+            bb.append(importedName(it.next()));
             if (!it.hasNext()) {
-                return sb.toString();
+                break;
             }
-            sb.append(",\n");
+            bb.append(",\n");
         }
+        return bb;
     }
 
-    /**
-     * {@return the code block containing this type's singleton constant declarations}
-     */
-    String generateConstants() {
+    @Nullable StringBuilder generateConstants() {
         if (consts.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var sb = new StringBuilder();
         for (var constant : consts) {
             // Pattern constants are emitted separately
             if (!constant.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
+                // FIXME: short circuit to statically-known case
                 sb.append(emitConstant(constant));
             }
         }
-        return sb.toString();
+        return sb;
     }
 
     final String generateDefaultImplementedInterface() {
@@ -170,12 +157,9 @@ class InterfaceTemplate extends BaseTemplate {
             +  "}\n";
     }
 
-    /**
-     * {@return string with the declaration of methods source code in JAVA forma}
-     */
-    CharSequence generateMethods() {
+    @Nullable BlockBuilder generateMethods() {
         if (methods.isEmpty()) {
-            return "";
+            return null;
         }
 
         //        «FOR m : methods SEPARATOR "\n"»
@@ -192,7 +176,7 @@ class InterfaceTemplate extends BaseTemplate {
         //            «ENDIF»
         //        «ENDFOR»
 
-        var bb = new BlockBuilder();
+        final var bb = new BlockBuilder();
         boolean hasElements = false;
         for (var method : methods) {
             if (!hasElements) {

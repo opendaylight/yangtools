@@ -11,8 +11,10 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.errorprone.annotations.CheckReturnValue;
+import com.google.errorprone.annotations.DoNotCall;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.concepts.Mutable;
 
@@ -103,12 +105,14 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         super.append(requireNonNull(str));
     }
 
-    @NonNullByDefault
-    void append(final BlockBuilder bb) {
-        super.append(requireNonNull(bb));
+    void append(final @Nullable BlockBuilder bb) {
+        if (bb != null) {
+            super.append(bb);
+        }
     }
 
     @Override
+    @DoNotCall
     @Deprecated(forRemoval = true)
     public void append(final StringConcatenation concat) {
         if (concat instanceof BlockBuilder bb) {
@@ -119,17 +123,29 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
     }
 
     @Override
+    @DoNotCall
     @Deprecated(forRemoval = true)
     public void append(final StringConcatenation concat, final String indentation) {
         super.append(requireNonNull(concat), requireNonNull(indentation));
     }
 
     // FIXME: clarify contract
-    @NonNullByDefault
-    @CheckReturnValue
-    BlockBuilder appendIndented(final BlockBuilder bb) {
-        super.append("    ");
-        super.append(requireNonNull(bb), "    ");
+    @NonNull BlockBuilder indented(final @Nullable BlockBuilder bb) {
+        if (bb != null) {
+            super.append("    ");
+            super.append(bb, "    ");
+            super.newLineIfNotEmpty();
+        }
+        return this;
+    }
+
+    // FIXME: clarify contract
+    @NonNull BlockBuilder indented(final @Nullable StringBuilder sb) {
+        if (sb != null) {
+            super.append("    ");
+            super.append(sb.toString(), "    ");
+            super.newLineIfNotEmpty();
+        }
         return this;
     }
 

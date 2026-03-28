@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.contract.Naming.DATA_ROOT_META_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.META_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataRoot;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
@@ -26,7 +29,7 @@ final class DataRootTemplate extends InterfaceTemplate {
     }
 
     @Override
-    String generateConstants() {
+    StringBuilder generateConstants() {
         final var archetype = archetype();
 
         // pre-compute constants: split out for future isolation
@@ -37,17 +40,19 @@ final class DataRootTemplate extends InterfaceTemplate {
         // FIXME: YANGTOOLS-1808: use importedName()
         final var type = archetype.canonicalName();
 
-        return "/**\n"
-            +  " * The {@link " + rootMetaRaw + "} associated with this module root.\n"
-            +  " */\n"
-            +  '@' + nonNullByDefault + '\n'
+        return new StringBuilder(
+             "/**\n"
+            +  " * The {@link ").append(rootMetaRaw).append("} associated with this module root.\n").append(
+               " */\n"
+            +  '@').append(nonNullByDefault).append('\n')
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
-            +  rootMetaRaw + '<' + type + "> META = new " + rootMetaRaw + "<>(" + type + ".class, " + moduleInfo
-                + '.' + Naming.MODULE_INFO_INSTANCE_FIELD_NAME + ");\n";
+            .append(rootMetaRaw).append('<').append(type).append("> META = new ").append(rootMetaRaw).append("<>(")
+                .append(type).append(".class, ").append(moduleInfo)
+                .append('.' + MODULE_INFO_INSTANCE_FIELD_NAME + ");\n");
     }
 
     @Override
-    String generateMethods() {
+    BlockBuilder generateMethods() {
         final var archetype = archetype();
 
         // pre-compute constants: split out for future isolation
@@ -56,19 +61,20 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var override = importedName(OVERRIDE);
         final var type = archetype.canonicalName();
 
-        final var sb = new StringBuilder()
-            .append(generateDefaultImplementedInterface()).append('\n')
-            .append('@').append(override).append('\n')
+        final var bb = new BlockBuilder();
+        bb.append(generateDefaultImplementedInterface());
+        bb
+            .nl()
+            .at().str(override).nl()
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
-            .append("default ").append(rootMeta).append('<').append(type).append("> ")
-                .append(Naming.DATA_ROOT_META_NAME).append("() {\n")
-            .append("    return ").append(Naming.META_STATIC_FIELD_NAME).append(";\n")
+            .str("default ").str(rootMeta).str("<").str(type).str("> " + DATA_ROOT_META_NAME).str("() {").nl()
+            .str("    return " + META_STATIC_FIELD_NAME + ';').nl()
             .append("}\n");
 
         final var superMethods = super.generateMethods();
-        if (!superMethods.isEmpty()) {
-            sb.append('\n').append(superMethods);
+        if (superMethods != null) {
+            bb.nl().append(superMethods.toRawString());
         }
-        return sb.toString();
+        return bb;
     }
 }

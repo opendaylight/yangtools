@@ -684,10 +684,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * {@return a string containing generated code for specified archetypes}
      * @param archetypes the {@link EnumTypeObjectArchetype}s to generate
      */
-    @NonNullByDefault
-    final String generateInnerEnumTypeObjects(final List<EnumTypeObjectArchetype> archetypes) {
+    final @Nullable StringBuilder generateInnerEnumTypeObjects(
+            final @NonNull List<EnumTypeObjectArchetype> archetypes) {
         if (archetypes.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var it = archetypes.iterator();
@@ -696,17 +696,13 @@ abstract class BaseTemplate extends JavaFileTemplate {
             final var archetype = it.next();
             EnumTypeObjectTemplate.generateAsInner(javaType().getEnclosedType(archetype.name()), archetype, sb);
             if (!it.hasNext()) {
-                return sb.toString();
+                return sb;
             }
             sb.append('\n');
         }
     }
 
-    /**
-     * {@return string with the source code for inner classes in JAVA format}
-     */
-    // FIXME: return a Block
-    final CharSequence generateInnerClasses(final List<GeneratedType> innerTypes) {
+    final @Nullable BlockBuilder generateInnerClasses(final List<GeneratedType> innerTypes) {
         final var innerClasses = new ArrayList<CharSequence>();
         for (var innerType : innerTypes) {
             if (innerType instanceof GeneratedTransferObject gto) {
@@ -720,7 +716,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
             }
         }
         if (innerClasses.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
@@ -728,9 +724,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
         while (true) {
             bb.append(it.next());
             if (!it.hasNext()) {
-                return bb;
+                break;
             }
             bb.append("\n");
         }
+        return bb;
     }
 }

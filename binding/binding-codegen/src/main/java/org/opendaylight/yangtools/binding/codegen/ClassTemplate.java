@@ -8,6 +8,30 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
+import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
+import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT16_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT32_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT64_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT8_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT16_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT;
+import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
+import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALID_NAMES_NAME;
+import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PROP;
+import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
+import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
@@ -22,7 +46,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
@@ -33,10 +56,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -48,16 +67,8 @@ class ClassTemplate extends BaseTemplate {
     private static final Comparator<GeneratedProperty> PROP_COMPARATOR =
         Comparator.comparing(GeneratedProperty::getName);
 
-    private static final Set<ConcreteType> VALUEOF_TYPES = Set.<ConcreteType>of(
-        BaseYangTypes.BOOLEAN_TYPE,
-        BaseYangTypes.INT8_TYPE,
-        BaseYangTypes.INT16_TYPE,
-        BaseYangTypes.INT32_TYPE,
-        BaseYangTypes.INT64_TYPE,
-        BaseYangTypes.UINT8_TYPE,
-        BaseYangTypes.UINT16_TYPE,
-        BaseYangTypes.UINT32_TYPE,
-        BaseYangTypes.UINT64_TYPE);
+    private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
+        BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
 
     /**
      * {@code java.lang.Boolean} as a JavaTypeName.
@@ -193,10 +204,7 @@ class ClassTemplate extends BaseTemplate {
         bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
         bb.newLineIfNotEmpty();
 
-        final var annotation = annotationDeclaration();
-        if (!annotation.isEmpty()) {
-            bb.append(annotation);
-        }
+        bb.append(annotationDeclaration());
 
         if (!isInnerClass) {
             bb.append(generatedAnnotation());
@@ -208,35 +216,18 @@ class ClassTemplate extends BaseTemplate {
         // serialVersionUID
         final var suid = genTO.getSUID();
         if (suid != null) {
-            bb.append("    @java.io.Serial\n");
-            bb.append("    private static final long serialVersionUID = ");
-            bb.append(suid.getValue());
-            bb.append("L;\n");
+            bb
+                .str("    @java.io.Serial").nl()
+                .str("    private static final long serialVersionUID = ").str(suid.getValue()).str("L;").newLine();
         }
 
-        // inner classes
-        final var innerClasses = generateInnerClasses(type().getEnclosedTypes());
-        if (!innerClasses.isEmpty()) {
-            bb.append("    ");
-            bb.append(innerClasses, "    ");
-            bb.newLineIfNotEmpty();
-        }
-
-        // inner EnumTypeObjects
-        final var innerEnumTypeObjects = generateInnerEnumTypeObjects(enums);
-        if (!innerEnumTypeObjects.isEmpty()) {
-            bb.append("    ");
-            bb.append(innerEnumTypeObjects, "    ");
-            bb.newLineIfNotEmpty();
-        }
-
-        // constants
-        final var constants = constantsDeclarations();
-        if (!constants.isEmpty()) {
-            bb.append("    ");
-            bb.append(constants, "    ");
-            bb.newLineIfNotEmpty();
-        }
+        bb
+            // inner classes
+            .indented(generateInnerClasses(type().getEnclosedTypes()))
+            // inner EnumTypeObjects
+            .indented(generateInnerEnumTypeObjects(enums))
+            // constants
+            .indented(constantsDeclarations());
 
         // fields
         if (!properties.isEmpty()) {
@@ -245,10 +236,7 @@ class ClassTemplate extends BaseTemplate {
                 if (field.isReadOnly()) {
                     bb.append("final ");
                 }
-                bb.append(importedReturnType(field));
-                bb.append(" ");
-                bb.append(fieldName(field));
-                bb.append(";\n");
+                bb.str(importedReturnType(field)).str(" ").str(fieldName(field)).append(";\n");
             }
         }
 
@@ -269,51 +257,31 @@ class ClassTemplate extends BaseTemplate {
             }
         }
 
-        bb.nl().append("    ");
-        bb.append(constructors(), "    ");
-        bb.newLineIfNotEmpty();
-
-        final var defaultInstance = defaultInstance();
-        if (!defaultInstance.isEmpty()) {
-            bb.nl().append("    ");
-            bb.append(defaultInstance, "    ");
-            bb.newLineIfNotEmpty();
-        }
-
-        final var propertyMethods = propertyMethods();
-        if (!propertyMethods.isEmpty()) {
-            bb.nl().append("    ");
-            bb.append(propertyMethods, "    ");
-            bb.newLineIfNotEmpty();
-        }
+        bb
+            .indented(constructors())
+            .indented(defaultInstance())
+            .indented(propertyMethods());
 
         if (isBitsTypeObject()) {
             for (var c : consts) {
-                if (TypeConstants.VALID_NAMES_NAME.equals(c.getName())) {
-                    bb.nl().appendIndented(validNamesAndValues((BitsTypeDefinition) c.getValue())).newLineIfNotEmpty();
+                if (VALID_NAMES_NAME.equals(c.getName())) {
+                    bb.nl().indented(validNamesAndValues((BitsTypeDefinition) c.getValue()));
                 }
             }
         }
 
         final var hashCode = generateHashCode();
-        if (!hashCode.isEmpty()) {
-            bb.nl().append("    ");
-            bb.append(hashCode, "    ");
-            bb.newLineIfNotEmpty();
+        if (hashCode != null) {
+            bb.nl().indented(hashCode);
         }
-
         final var equals = generateEquals();
-        if (!equals.isEmpty()) {
-            bb.nl().append("    ");
-            bb.append(equals, "    ");
-            bb.newLineIfNotEmpty();
+        if (equals != null) {
+            bb.nl().indented(equals);
         }
 
         final var toString = generateToString(genTO.getToStringIdentifiers());
-        if (!toString.isEmpty()) {
-            bb.nl().append("    ");
-            bb.append(toString, "    ");
-            bb.newLineIfNotEmpty();
+        if (toString != null) {
+            bb.nl().indented(toString);
         }
         bb.append("}\n");
         return bb.nl();
@@ -323,7 +291,7 @@ class ClassTemplate extends BaseTemplate {
         GeneratedTransferObject wlk = genTO;
         do {
             for (var impl : wlk.getImplements()) {
-                if (BindingTypes.BITS_TYPE_OBJECT.name().equals(impl.name())) {
+                if (BITS_TYPE_OBJECT.name().equals(impl.name())) {
                     return true;
                 }
             }
@@ -346,10 +314,10 @@ class ClassTemplate extends BaseTemplate {
         bb.nl().append("public ");
         bb.append(importedName(IMMUTABLE_SET));
         bb.append("<");
-        bb.append(importedName(Types.STRING));
+        bb.append(importedName(STRING));
         bb.append("> validNames() {\n");
         bb.append("    return ");
-        bb.append(TypeConstants.VALID_NAMES_NAME);
+        bb.append(VALID_NAMES_NAME);
         bb.append(";\n");
         bb.append("}\n");
 
@@ -374,7 +342,7 @@ class ClassTemplate extends BaseTemplate {
                     bb.append(",\n");
                 }
                 bb.append("            ");
-                bb.append(getterMethodName(Naming.getPropertyName(bit.getName())));
+                bb.append(getterMethodName(getPropertyName(bit.getName())));
                 bb.append("()");
             }
         }
@@ -383,13 +351,10 @@ class ClassTemplate extends BaseTemplate {
         return bb;
     }
 
-    /**
-     * {@return string with the {@code equals()} method definition in JAVA format}
-     */
-    private CharSequence generateEquals() {
+    private @Nullable BlockBuilder generateEquals() {
         final var equalsIdentifiers = genTO.getEqualsIdentifiers();
         if (equalsIdentifiers.isEmpty()) {
-            return "";
+            return null;
         }
 
         //        @«OVERRIDE.importedName»
@@ -406,30 +371,20 @@ class ClassTemplate extends BaseTemplate {
         //                »«ENDFOR»;
         //        }
 
-        final var bb = new BlockBuilder();
-        bb.at().append(importedName(OVERRIDE));
-        bb.nl().append("public final boolean equals(");
-        bb.append(importedName(OBJECT));
-        bb.append(" obj) {\n");
-        bb.append("    return this == obj || obj instanceof ");
-        bb.append(type().simpleName());
-        bb.append(" other");
+        final var bb = new BlockBuilder()
+            .at().str(importedName(OVERRIDE)).nl()
+            .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj) {").nl()
+            .str("    return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
         for (var property : equalsIdentifiers) {
             bb.nl().append("        && ");
 
             final var fieldName = fieldName(property);
             final var type = property.getReturnType();
-            if (type.equals(Types.primitiveBooleanType())) {
-                bb.append(fieldName);
-                bb.append(" == other.");
-                bb.append(fieldName);
+            if (type.equals(PRIMITIVE_BOOLEAN)) {
+                bb.str(fieldName).str(" == other.").append(fieldName);
             } else {
-                bb.append(importedUtilClass(type));
-                bb.append(".equals(");
-                bb.append(fieldName);
-                bb.append(", other.");
-                bb.append(fieldName);
-                bb.append(")");
+                bb.str(importedUtilClass(type)).str(".equals(").str(fieldName).str(", other.").str(fieldName)
+                    .append(")");
             }
         }
         bb.append(";\n");
@@ -437,9 +392,9 @@ class ClassTemplate extends BaseTemplate {
         return bb;
     }
 
-    private CharSequence generateToString(final List<GeneratedProperty> props) {
+    private @Nullable BlockBuilder generateToString(final List<GeneratedProperty> props) {
         if (props.isEmpty()) {
-            return "";
+            return null;
         }
 
         //        @«OVERRIDE.importedName»
@@ -452,26 +407,16 @@ class ClassTemplate extends BaseTemplate {
         //            return helper.toString();
         //        }
 
-        final var bb = new BlockBuilder();
-        bb.at().append(importedName(OVERRIDE));
-        bb.nl().append("public ");
-        bb.append(importedName(Types.STRING));
-        bb.append(" toString() {\n");
-        bb.append("    final var helper = ");
-        bb.append(importedName(MOREOBJECTS));
-        bb.append(".toStringHelper(");
-        bb.append(importedName(type()), "    ");
-        bb.append(".class);\n");
+        final var bb = new BlockBuilder()
+            .at().str(importedName(OVERRIDE)).nl()
+            .str("public ").str(importedName(STRING))
+            .str(" toString() {").nl()
+            .str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
+                .str(importedName(type())).str(".class);").nl();
         for (var property : props) {
-            bb.append("    ");
-            bb.append(importedName(CODEHELPERS));
-            bb.append(".");
+            bb.str("    ").str(importedName(CODEHELPERS)).append(".");
             bb.append(valueAppender(property));
-            bb.append("(helper, \"");
-            bb.append(property.getName());
-            bb.append("\", ");
-            bb.append(fieldName(property));
-            bb.append(");\n");
+            bb.str("(helper, \"").str(property.getName()).str("\", ").str(fieldName(property)).append(");\n");
         }
         bb.append("    return helper.toString();\n");
         bb.append("}\n");
@@ -480,7 +425,7 @@ class ClassTemplate extends BaseTemplate {
 
     // FIXME: this should be specialized in BitsTypeObjectTemplate
     private static String valueAppender(final GeneratedProperty prop) {
-        return prop.getReturnType().equals(Types.primitiveBooleanType()) ? "appendBit" : "appendValue";
+        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType()) ? "appendBit" : "appendValue";
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
@@ -526,25 +471,24 @@ class ClassTemplate extends BaseTemplate {
         return " ";
     }
 
-    private String annotationDeclaration() {
+    private @Nullable BlockBuilder annotationDeclaration() {
         final var annotations = genTO.getAnnotations();
         if (annotations.isEmpty()) {
-            return "";
+            return null;
         }
 
-        final var sb = new StringBuilder();
+        final var bb = new BlockBuilder();
         for (var annotation : annotations) {
-            sb.append('@').append(annotation.simpleName()).append('\n');
+            bb.at().str(annotation.simpleName()).newLine();
         }
-        return sb.toString();
+        return bb;
     }
 
     /**
      * {@return string with class declaration in JAVA format}
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
      */
-    // FIXME: return a Block
-    CharSequence generateClassDeclaration(final boolean isInnerClass) {
+    @Nullable BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
         final var type = type();
 
         final var bb = new BlockBuilder();
@@ -579,21 +523,16 @@ class ClassTemplate extends BaseTemplate {
         return bb;
     }
 
-    /**
-     * {@return string with constants in JAVA format}
-     */
-    // FIXME: return a Block
-    private CharSequence constantsDeclarations() {
+    private @Nullable BlockBuilder constantsDeclarations() {
         if (consts.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
         for (var c : consts) {
             switch (c.getName()) {
-                case TypeConstants.PATTERN_CONSTANT_NAME ->
-                    appendPatternConstant(bb, (Map<String, String>) c.getValue());
-                case TypeConstants.VALID_NAMES_NAME -> appendValidNames(bb, (BitsTypeDefinition) c.getValue());
+                case PATTERN_CONSTANT_NAME -> appendPatternConstant(bb, (Map<String, String>) c.getValue());
+                case VALID_NAMES_NAME -> appendValidNames(bb, (BitsTypeDefinition) c.getValue());
                 default -> bb.append(emitConstant(c));
             }
         }
@@ -619,8 +558,8 @@ class ClassTemplate extends BaseTemplate {
         //        private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
         //        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
         //    «ENDIF»
-        bb.str("public static final ").str(juList).str("<String> " + TypeConstants.PATTERN_CONSTANT_NAME).str(" = ")
-            .str(juList).append(".of(");
+        bb.str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME).str(" = ").str(juList)
+            .append(".of(");
         {
             boolean first = true;
             for (var value : constValue.keySet()) {
@@ -636,17 +575,17 @@ class ClassTemplate extends BaseTemplate {
         bb.append(");\n");
         bb.str("private static final ").append(jurPattern);
         if (constValue.size() == 1) {
-            bb.str(" " + Constants.MEMBER_PATTERN_LIST + " = ").str(jurPattern)
-                .str(".compile(" + TypeConstants.PATTERN_CONSTANT_NAME).append(".getFirst());\n");
-            bb.str("private static final String " + Constants.MEMBER_REGEX_LIST + " = \"")
+            bb.str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern).str(".compile(" + PATTERN_CONSTANT_NAME)
+                .append(".getFirst());\n");
+            bb.str("private static final String " + MEMBER_REGEX_LIST + " = \"")
                 .append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
             bb.append("\";\n");
             return;
         }
 
-        bb.str("[] " + Constants.MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
-            .str(".compilePatterns(" + TypeConstants.PATTERN_CONSTANT_NAME).append(");\n");
-        bb.str("private static final String[] " + Constants.MEMBER_REGEX_LIST).append(" = { ");
+        bb.str("[] " + MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
+            .str(".compilePatterns(" + PATTERN_CONSTANT_NAME).append(");\n");
+        bb.str("private static final String[] " + MEMBER_REGEX_LIST).append(" = { ");
         {
             boolean first = true;
             for (var value : constValue.values()) {
@@ -665,8 +604,8 @@ class ClassTemplate extends BaseTemplate {
 
     private void appendValidNames(final BlockBuilder bb, final BitsTypeDefinition bitsType) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").str(immutableSet).str("<").str(importedName(Types.STRING))
-            .str("> " + TypeConstants.VALID_NAMES_NAME + " = ").str(immutableSet).append(".of(");
+        bb.str("protected static final ").str(immutableSet).str("<").str(importedName(STRING))
+            .str("> " + VALID_NAMES_NAME + " = ").str(immutableSet).append(".of(");
         {
             boolean first = true;
             for (var bit : bitsType.getBits()) {
@@ -683,16 +622,15 @@ class ClassTemplate extends BaseTemplate {
 
     // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
     //        different from ScalarTypeObjects the rest of this method handles.
-    // FIXME: return a Block
-    CharSequence defaultInstance() {
+    @Nullable BlockBuilder defaultInstance() {
         if (!genTO.isTypedef() || allProperties.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var prop = allProperties.getFirst();
         final var propType = prop.getReturnType();
-        if (BaseYangTypes.INSTANCE_IDENTIFIER.name().equals(propType.name())) {
-            return "";
+        if (INSTANCE_IDENTIFIER.name().equals(propType.name())) {
+            return null;
         }
 
         //        public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
@@ -715,47 +653,44 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var simpleName = genTO.simpleName();
-        final var bb = new BlockBuilder();
-        bb.str("public static ").str(simpleName).append(" getDefaultInstance(final String defaultValue) {\n");
-        if (propType.equals(Types.primitiveBooleanType())) {
+        final var bb = new BlockBuilder()
+            .nl()
+            .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue) {").nl();
+        if (VALUEOF_TYPES.contains(propType)) {
+            bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
+                .append(".valueOf(defaultValue));\n");
+        } else if (propType.equals(PRIMITIVE_BOOLEAN)) {
             bb.append("    ");
             bb.append(bitsDefaultInstanceBody(), "    ");
             bb.newLineIfNotEmpty();
-        } else if (ClassTemplate.VALUEOF_TYPES.contains(propType)) {
-            bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .append(".valueOf(defaultValue));\n");
         } else if (propType instanceof Decimal64Type decimal64) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
                 .str(".valueOf(defaultValue).scaleTo(").strI(decimal64.fractionDigits()).append("));\n");
-        } else if (BaseYangTypes.STRING_TYPE.equals(propType)) {
+        } else if (propType.equals(STRING_TYPE)) {
             bb.append("    return new ");
             bb.append(simpleName);
             bb.append("(defaultValue);\n");
-        } else if (BaseYangTypes.BINARY_TYPE.equals(propType)) {
+        } else if (propType.equals(BINARY_TYPE)) {
             bb.append("    return new ");
             bb.append(simpleName);
             bb.append("(");
             bb.append(importedName(JU_BASE64));
             bb.append(".getDecoder().decode(defaultValue));\n");
-        } else if (BaseYangTypes.EMPTY_TYPE.equals(propType)) {
+        } else if (propType.equals(EMPTY_TYPE)) {
             bb.append("    return new ");
             bb.append(simpleName);
             bb.append("(");
             bb.append(importedName(CODEHELPERS));
             bb.append(".emptyFor(defaultValue));\n");
         } else {
-            bb.append("    return new ");
-            bb.append(simpleName);
-            bb.append("(new ");
-            bb.append(importedName(propType));
-            bb.append("(defaultValue));\n");
+            bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType)).str("(defaultValue));")
+                .newLine();
         }
         bb.append("}\n");
         return bb;
     }
 
-    // FIXME: return a Block
-    CharSequence constructors() {
+    @Nullable BlockBuilder constructors() {
         //        «IF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(
         //TypeConstants.VALUE_PROP)»
         //            «typedefConstructor»
@@ -771,8 +706,7 @@ class ClassTemplate extends BaseTemplate {
         //        «ENDIF»
 
         final var bb = new BlockBuilder();
-        if (genTO.isTypedef() && allProperties.size() == 1
-            && TypeConstants.VALUE_PROP.equals(allProperties.getFirst().getName())) {
+        if (genTO.isTypedef() && allProperties.size() == 1 && VALUE_PROP.equals(allProperties.getFirst().getName())) {
             bb.append(typedefConstructor());
             bb.newLineIfNotEmpty();
         } else {
@@ -792,16 +726,18 @@ class ClassTemplate extends BaseTemplate {
         return bb;
     }
 
-    CharSequence propertyMethods() {
+    @Nullable BlockBuilder propertyMethods() {
         if (properties.isEmpty()) {
-            return "";
+            return null;
         }
-        if (genTO.getImplements().stream().anyMatch(ifc -> BindingTypes.SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
+        if (genTO.getImplements().stream().anyMatch(ifc -> SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
             final var field = properties.getFirst();
-            return '@' + importedName(OVERRIDE) + '\n'
-                +  "public " + importedReturnType(field) + ' ' + Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "() {\n"
-                +  "    return " + fieldName(field) + cloneCall(field) + ";\n"
-                +  "}\n";
+            return new BlockBuilder()
+                .at().str(importedName(OVERRIDE)).nl()
+                .str("public ").str(importedReturnType(field))
+                    .str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "() {").nl()
+                .str("    return ").str(fieldName(field)).str(cloneCall(field)).str(";").nl()
+                .str("}").nl();
         }
 
         final var bb = new BlockBuilder();
@@ -820,15 +756,11 @@ class ClassTemplate extends BaseTemplate {
         }
     }
 
-    /**
-     * {@return string with the {@code hashCode()} method definition in JAVA format}
-     */
-    // FIXME: return a Block
-    private String generateHashCode() {
+    private @Nullable BlockBuilder generateHashCode() {
         final var props = genTO.getHashCodeIdentifiers();
         final int size = props.size();
         if (size == 0) {
-            return "";
+            return null;
         }
 
         //      @«OVERRIDE.importedName»
@@ -850,28 +782,25 @@ class ClassTemplate extends BaseTemplate {
         //              «ENDIF»
         //          «ENDIF»
         //      }
-        final var bb = new BlockBuilder();
-        bb.at().append(importedName(OVERRIDE));
-        bb.nl().append("public int hashCode() {\n");
+        final var bb = new BlockBuilder()
+            .at().str(importedName(OVERRIDE)).nl()
+            .str("public int hashCode() {").nl();
         if (size == 1) {
             bb.append("    return ");
             final var prop = props.getFirst();
-            if (prop.getReturnType().equals(Types.primitiveBooleanType())) {
-                bb.append(importedName(BOOLEAN), "    ");
-                bb.append(".hashCode(");
+            if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
+                bb.str(importedName(BOOLEAN)).append(".hashCode(");
             } else {
-                bb.append(importedName(CODEHELPERS), "    ");
-                bb.append(".wrapperHashCode(");
+                bb.str(importedName(CODEHELPERS)).append(".wrapperHashCode(");
             }
-            bb.append(fieldName(prop), "    ");
-            bb.append(");\n");
+            bb.str(fieldName(prop)).append(");\n");
         } else {
             bb.append("    final int prime = 31;\n");
             bb.append("    int result = 1;\n");
             for (var property : props) {
                 bb.append("    result = prime * result + ");
                 final var type = property.getReturnType();
-                bb.append(type.equals(Types.primitiveBooleanType()) ? importedName(BOOLEAN) : importedUtilClass(type));
+                bb.append(type.equals(PRIMITIVE_BOOLEAN) ? importedName(BOOLEAN) : importedUtilClass(type));
                 bb.append(".hashCode(");
                 bb.append(fieldName(property), "    ");
                 bb.append(");\n");
@@ -879,7 +808,7 @@ class ClassTemplate extends BaseTemplate {
             bb.append("    return result;\n");
         }
         bb.append("}\n");
-        return bb.toRawString();
+        return bb;
     }
 
     @NonNullByDefault
@@ -1048,8 +977,7 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         bb.at().append(importedName(CONSTRUCTOR_PARAMETERS));
-        bb.str("(\"").append(TypeConstants.VALUE_PROP);
-        bb.append("\")\n");
+        bb.str("(\"").str(VALUE_PROP).append("\")\n");
         bb.str("public ").append(type().simpleName());
         bb.str("(").append(asArgumentsDeclaration(allProperties));
         bb.append(") {\n");
@@ -1090,7 +1018,7 @@ class ClassTemplate extends BaseTemplate {
             case 0 -> null;
             case 1 -> {
                 final var prop = props.getFirst();
-                if (!TypeConstants.VALUE_PROP.equals(prop.getName())) {
+                if (!VALUE_PROP.equals(prop.getName())) {
                     throw new VerifyException("Unexpected property " + prop);
                 }
                 yield prop;
@@ -1103,10 +1031,9 @@ class ClassTemplate extends BaseTemplate {
     private String genPatternEnforcer(final String ref) {
         final var sb = new StringBuilder();
         for (var constant : consts) {
-            if (TypeConstants.PATTERN_CONSTANT_NAME.equals(constant.getName())) {
+            if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
                 sb.append(importedName(CODEHELPERS)).append(".checkPattern(").append(ref).append(", ")
-                    .append(Constants.MEMBER_PATTERN_LIST).append(", ").append(Constants.MEMBER_REGEX_LIST)
-                    .append(");\n");
+                    .append(MEMBER_PATTERN_LIST).append(", ").append(MEMBER_REGEX_LIST).append(");\n");
             }
         }
         return sb.toString();

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
+import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -23,6 +24,10 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
+/**
+ * Central mapping of types.
+ */
+// FIXME: much of these are exposed here just because of TYPE_CACHE and should be moved to model.spi
 public final class Types {
     @NonNullByDefault
     private static final LoadingCache<Class<?>, ConcreteType> TYPE_CACHE = CacheBuilder.newBuilder().weakKeys()
@@ -39,14 +44,20 @@ public final class Types {
     public static final @NonNull ConcreteType STRING = typeForClass(String.class);
     public static final @NonNull ConcreteType VOID = typeForClass(Void.class);
 
+    @Beta
+    public static final @NonNull ConcreteType OBJECT = typeForClass(Object.class);
+    @Beta
+    public static final @NonNull ConcreteType PRIMITIVE_BOOLEAN = typeForClass(boolean.class);
+    @Beta
+    public static final @NonNull ConcreteType PRIMITIVE_INT = typeForClass(int.class);
+    @Beta
+    public static final @NonNull ConcreteType PRIMITIVE_LONG = typeForClass(long.class);
+    @Beta
+    public static final @NonNull ConcreteType PRIMITIVE_VOID = typeForClass(void.class);
+
     private static final @NonNull ConcreteType LIST_TYPE = typeForClass(List.class);
     private static final @NonNull ConcreteType LISTENABLE_FUTURE = typeForClass(ListenableFuture.class);
     private static final @NonNull ConcreteType MAP_TYPE = typeForClass(Map.class);
-    private static final @NonNull ConcreteType OBJECT = typeForClass(Object.class);
-    private static final @NonNull ConcreteType PRIMITIVE_BOOLEAN = typeForClass(boolean.class);
-    private static final @NonNull ConcreteType PRIMITIVE_INT = typeForClass(int.class);
-    private static final @NonNull ConcreteType PRIMITIVE_LONG = typeForClass(long.class);
-    private static final @NonNull ConcreteType PRIMITIVE_VOID = typeForClass(void.class);
     private static final @NonNull ConcreteType SERIALIZABLE = typeForClass(Serializable.class);
     private static final @NonNull ConcreteType SET_TYPE = typeForClass(Set.class);
     private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = typeForClass(ImmutableSet.class);
@@ -85,7 +96,9 @@ public final class Types {
      * Returns an instance of {@link ConcreteType} which represents {@link Object} type.
      *
      * @return <code>ConcreteType</code> instance which represents {@link Object}
+     * @deprecated use {@link #OBJECT}
      */
+    @Deprecated(since = "15.0.3", forRemoval = true)
     public static @NonNull ConcreteType objectType() {
         return OBJECT;
     }
@@ -94,7 +107,9 @@ public final class Types {
      * Returns an instance of {@link ConcreteType} which represents JAVA <code>boolean</code> type.
      *
      * @return <code>ConcreteType</code> instance which represents JAVA <code>boolean</code>
+     * @deprecated use {@link #OBJECT}
      */
+    @Deprecated(since = "15.0.3", forRemoval = true)
     public static @NonNull ConcreteType primitiveBooleanType() {
         return PRIMITIVE_BOOLEAN;
     }
@@ -103,7 +118,9 @@ public final class Types {
      * Returns an instance of {@link ConcreteType} which represents JAVA <code>int</code> type.
      *
      * @return <code>ConcreteType</code> instance which represents JAVA <code>int</code>
+     * @deprecated use {@link #OBJECT}
      */
+    @Deprecated(since = "15.0.3", forRemoval = true)
     public static @NonNull ConcreteType primitiveIntType() {
         return PRIMITIVE_INT;
     }
@@ -111,7 +128,9 @@ public final class Types {
     /**
      * {@return {@link ConcreteType} instance which represents Java {@code long} type}
      * @since 15.0.0
+     * @deprecated use {@link #OBJECT}
      */
+    @Deprecated(since = "15.0.3", forRemoval = true)
     public static @NonNull ConcreteType primitiveLongType() {
         return PRIMITIVE_LONG;
     }
@@ -120,7 +139,9 @@ public final class Types {
      * Returns an instance of {@link ConcreteType} which represents JAVA <code>void</code> type.
      *
      * @return <code>ConcreteType</code> instance which represents JAVA <code>void</code>
+     * @deprecated use {@link #OBJECT}
      */
+    @Deprecated(since = "15.0.3", forRemoval = true)
     public static @NonNull ConcreteType primitiveVoidType() {
         return PRIMITIVE_VOID;
     }

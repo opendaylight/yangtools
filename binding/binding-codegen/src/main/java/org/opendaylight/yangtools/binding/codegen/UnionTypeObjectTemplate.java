@@ -42,7 +42,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    CharSequence constructors() {
+    BlockBuilder constructors() {
         //      «unionConstructorsParentProperties»
         //      «unionConstructors»
         //      «IF !allProperties.empty»
@@ -264,7 +264,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    String defaultInstance() {
-        return "";
+    BlockBuilder defaultInstance() {
+        return null;
     }
 }
