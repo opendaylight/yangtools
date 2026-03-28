@@ -68,24 +68,6 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     }
 
     /**
-     * {@return declared builder fields}
-     */
-    // FIXME: YANGTOOLS-1804: relocate to BuilderTemplate
-    final String generateBuilderFields() {
-        final var sb = new StringBuilder();
-        if (properties != null) {
-            for (var prop : properties) {
-                sb.append("private ").append(importedReturnType(prop)).append(' ').append(fieldName(prop))
-                    .append(";\n");
-            }
-        }
-        if (keyType != null) {
-            sb.append("private ").append(importedName(keyType)).append(" key;\n");
-        }
-        return sb.toString();
-    }
-
-    /**
      * Template method which generate getter methods for IMPL class.
      *
      * @return string with getter methods
