@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -63,15 +65,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.newLineIfNotEmpty();
         bb.append(generatedAnnotation());
         bb.newLineIfNotEmpty();
-        bb.append("public class ");
-        bb.append(type().simpleName());
-        bb.append(" {\n");
-        bb.nl().append("    ");
-        bb.append(generateBuilderFields(), "    ");
-        bb.newLineIfNotEmpty();
-        bb.nl().append("    ");
-        bb.append(constantsDeclarations(), "    ");
-        bb.newLineIfNotEmpty();
+        bb
+            .str("public class ").str(type().simpleName()).str(" {").nl()
+            // FIXME: remove this newline
+            .nl()
+            .indented(builderFields());
+        bb.nl().indented(constantsDeclarations());
         bb.newLine();
         if (augmentType != null) {
             bb.append("    ");
@@ -160,6 +159,23 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.newLineIfNotEmpty();
         bb.append("}\n");
         return bb;
+    }
+
+    private @Nullable BlockBuilder builderFields() {
+        if (properties != null && !properties.isEmpty()) {
+            final var bb = new BlockBuilder();
+            for (var prop : properties) {
+                bb.str("private ").str(importedReturnType(prop)).str(" ").str(fieldName(prop)).append(";\n");
+            }
+            return appendKeyField(bb, keyType);
+        }
+        return appendKeyField(new BlockBuilder(), keyType);
+    }
+
+    @NonNullByDefault
+    private BlockBuilder appendKeyField(final BlockBuilder bb, final @Nullable GeneratedTransferObject key) {
+        return key == null ? bb
+            : bb.str("private ").str(importedName(key)).str(" key;").nl();
     }
 
     @Override
@@ -536,7 +552,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return types.stream().map(this::importedName).collect(Collectors.toUnmodifiableList());
     }
 
-    private CharSequence constantsDeclarations() {
+    @NonNullByDefault
+    private BlockBuilder constantsDeclarations() {
         final var bb = new BlockBuilder();
         for (var def : type().getConstantDefinitions()) {
             if (!def.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
