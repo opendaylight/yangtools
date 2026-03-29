@@ -103,10 +103,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("() {\n");
         bb.append("        // No-op\n");
         bb.append("    }\n");
-        bb.nl().append("    ");
-        bb.append(generateConstructorsFromIfcs(), "    ");
-        bb.newLineIfNotEmpty();
-        bb.nl().append(
+        bb.indented(generateConstructorsFromIfcs())
+            .nl().append(
                   "    /**\n");
         bb.append("     * Construct a builder initialized with state from specified {@link ");
         bb.append(targetTypeName);
@@ -190,15 +188,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             :  "@" + importedName(SUPPRESS_WARNINGS) + "(\"deprecation\")";
     }
 
-    /**
-     * Generate default constructor and constructor for every implemented interface from uses statements.
-     */
-    private CharSequence generateConstructorsFromIfcs() {
+    private @Nullable BlockBuilder generateConstructorsFromIfcs() {
         if (targetType instanceof GeneratedTransferObject) {
-            return "";
+            return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = new BlockBuilder().nl();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
             if (first) {
