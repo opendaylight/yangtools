@@ -157,15 +157,17 @@ class InterfaceTemplate extends BaseTemplate {
         return sb;
     }
 
-    final String generateDefaultImplementedInterface() {
+    final @NonNull BlockBuilder generateDefaultImplementedInterface() {
         // Note: we cannot use importedName() or short name due to shadowing explained in MDSAL-365
+        // FIXME: use selfRef()
         final var fqcn = type().canonicalName();
 
-        return '@' + importedName(OVERRIDE) + '\n'
-            +  "default " + importedName(CLASS) + '<' + fqcn + "> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-                + "() {\n"
-            +  "    return " + fqcn + ".class;\n"
-            +  "}\n";
+        return new BlockBuilder()
+            .at().strLn(importedName(OVERRIDE))
+            .str("default ").str(importedName(CLASS)).str("<").str(fqcn)
+                .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
+            .str("    return ").str(fqcn).str(".class;").nl()
+            .str("}").nl();
     }
 
     @Nullable BlockBuilder generateMethods() {
@@ -244,7 +246,7 @@ class InterfaceTemplate extends BaseTemplate {
         return bb;
     }
 
-    private CharSequence generateDefaultMethod(final MethodSignature method) {
+    private @Nullable BlockBuilder generateDefaultMethod(final MethodSignature method) {
         final var methodName = method.getName();
         if (isNonnullMethodName(methodName)) {
             return generateNonnullMethod(method);
@@ -256,7 +258,7 @@ class InterfaceTemplate extends BaseTemplate {
             case BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME -> generateDefaultImplementedInterface();
             default ->
                 JavaFileTemplate.VOID.equals(method.getReturnType().name()) ? generateNoopVoidInterfaceMethod(method)
-                    : "";
+                    : null;
         };
     }
 

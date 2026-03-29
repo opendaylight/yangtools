@@ -67,13 +67,13 @@ final class DataRootTemplate extends InterfaceTemplate {
             .nl()
             .at().str(override).nl()
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
-            .str("default ").str(rootMeta).str("<").str(type).str("> " + DATA_ROOT_META_NAME).str("() {").nl()
+            .str("default ").str(rootMeta).str("<").str(type).str("> " + DATA_ROOT_META_NAME + "() {").nl()
             .str("    return " + META_STATIC_FIELD_NAME + ';').nl()
             .append("}\n");
 
         final var superMethods = super.generateMethods();
         if (superMethods != null) {
-            bb.nl().append(superMethods.toRawString());
+            bb.nl().append(superMethods);
         }
         return bb;
     }
