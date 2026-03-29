@@ -112,15 +112,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("    public ");
         bb.append(generateCopyConstructor(targetType, type().getEnclosedTypes().getFirst()), "    ");
         bb.newLineIfNotEmpty();
-        bb.nl().append("    ");
-        bb.append(generateMethodFieldsFrom(), "    ");
-        bb.newLineIfNotEmpty();
-        bb.newLine();
-        if (isNonPresenceContainer(targetType)) {
-            bb.append("    ");
-            bb.append(generateEmptyInstance(), "    ");
-            bb.newLineIfNotEmpty();
-        }
+        bb
+            .nl()
+            .indented(generateMethodFieldsFrom())
+            .nl()
+            .indented(generateEmptyInstance());
         bb.nl().append("    ");
         bb.append(generateGetters(false), "    ");
         bb.newLineIfNotEmpty();
@@ -129,9 +125,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append(generateAugmentation(), "    ");
             bb.newLineIfNotEmpty();
         }
-        bb.nl().append("    ");
-        bb.append(generateSetters(), "    ");
-        bb.newLineIfNotEmpty();
+        bb.nl().indented(generateSetters());
         bb.nl().append(
                   "    /**\n");
         bb.append("     * A new {@link ");
@@ -145,15 +139,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append("    public ");
         bb.append(importedNonNull(targetType));
         bb.append(" build() {\n");
-        bb.append("        return new ");
-        bb.append(importedName(type().getEnclosedTypes().getFirst()));
-        bb.append("(this);\n");
-        bb.append("    }\n");
-        bb.nl().append("    ");
-        bb.append(implTemplate.body(), "    ");
-        bb.newLineIfNotEmpty();
-        bb.append("}\n");
-        return bb;
+        return bb
+            .str("        return new ").str(importedName(type().getEnclosedTypes().getFirst())).str("(this);").nl()
+            .str("    }").nl()
+            .nl()
+            .indented(implTemplate.body())
+            .str("}").nl();
     }
 
     private @Nullable BlockBuilder builderFields() {
@@ -330,9 +321,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Generate 'fieldsFrom' method to set builder properties based on type of given argument.
      */
-    private CharSequence generateMethodFieldsFrom() {
+    private @Nullable BlockBuilder generateMethodFieldsFrom() {
         if (targetType instanceof GeneratedTransferObject || !hasImplementsFromUses(targetType)) {
-            return "";
+            return null;
         }
 
         final var done = getBaseIfcs(targetType);
@@ -353,13 +344,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(" arg) {\n");
         bb.append("    boolean isValidArg = false;\n");
         for (var impl : getAllIfcs(targetType)) {
-            bb.append("    ");
-            bb.append(generateIfCheck(impl, done), "    ");
-            bb.newLineIfNotEmpty();
+            bb.indented(generateIfCheck(impl, done));
         }
-        bb.append("    ");
-        bb.append(importedName(CODEHELPERS), "    ");
-        bb.append(".validValue(isValidArg, arg, \"");
+        bb.str("    ").str(importedName(CODEHELPERS)).append(".validValue(isValidArg, arg, \"");
         bb.append(toListOfNames(getAllIfcs(targetType)), "    ");
         bb.append("\");\n");
         bb.append("}\n");
@@ -369,7 +356,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Generate EMPTY instance which is lazily initialized in empty() method.
      */
-    private CharSequence generateEmptyInstance() {
+    private @Nullable BlockBuilder generateEmptyInstance() {
+        if (!isNonPresenceContainer(targetType)) {
+            return null;
+        }
+
         final var nonnullTarget = importedNonNull(targetType);
 
         final var bb = new BlockBuilder();
@@ -402,7 +393,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private CharSequence generateMethodFieldsFromComment(final GeneratedType type) {
+    private StringBuilder generateMethodFieldsFromComment(final GeneratedType type) {
         //        /**
         //         * Set fields from given grouping argument. Valid argument is instance of one of following types:
         //         * <ul>
@@ -444,30 +435,17 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .anyMatch(impl -> impl instanceof GeneratedType genType && hasNonDefaultMethods(genType));
     }
 
-    private CharSequence generateIfCheck(final Type impl, final List<Type> done) {
-        if (!(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType)) {
-            return "";
-        }
-
-        //        if (arg instanceof «implType.importedName» castArg) {
-        //            «printPropertySetter(implType)»
-        //            isValidArg = true;
-        //        }
-        final var bb = new BlockBuilder();
-        bb.append("if (arg instanceof ");
-        bb.append(importedName(implType));
-        bb.append(" castArg) {\n");
-        bb.append("    ");
-        bb.append(printPropertySetter(implType), "    ");
-        bb.newLineIfNotEmpty();
-        bb.append("    isValidArg = true;\n");
-        bb.append("}\n");
-        return bb;
+    private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
+        return !(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType) ? null : new BlockBuilder()
+            .str("if (arg instanceof ").str(importedName(implType)).str(" castArg) {").nl()
+                .indented(printPropertySetter(implType))
+            .str("    isValidArg = true;").nl()
+            .str("}").nl();
     }
 
-    private CharSequence printPropertySetter(final Type implementedIfc) {
+    private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
         if (!(implementedIfc instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
@@ -481,7 +459,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private CharSequence printPropertySetter(final MethodSignature getter, final String retrieveProperty,
+    private String printPropertySetter(final MethodSignature getter, final String retrieveProperty,
             final String propertyName) {
         final var ownGetter = implTemplate.findGetter(getter.getName());
         final var ownGetterType = ownGetter.getReturnType();
@@ -647,7 +625,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return generateSimpleSetter(field, returnType);
     }
 
-    private CharSequence generateListSetter(final BuilderGeneratedProperty field, final Type actualType) {
+    private @NonNull BlockBuilder generateListSetter(final BuilderGeneratedProperty field, final Type actualType) {
         final var restrictions = restrictionsForSetter(actualType);
 
         final var bb = new BlockBuilder();
@@ -717,7 +695,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb.nl();
     }
 
-    private CharSequence generateMapSetter(final BuilderGeneratedProperty field, final Type actualType) {
+    private @NonNull BlockBuilder generateMapSetter(final BuilderGeneratedProperty field, final Type actualType) {
         final var bb = new BlockBuilder();
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
@@ -787,7 +765,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private CharSequence generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
+    private @NonNull BlockBuilder generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
         final var bb = new BlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
@@ -831,7 +809,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * {@return string with the setter methods}
      */
-    private CharSequence generateSetters() {
+    private @NonNull BlockBuilder generateSetters() {
         final var bb = new BlockBuilder();
         if (keyType != null) {
             bb.append("/**\n");
@@ -927,10 +905,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    // FIXME: return a Block
     // FIXME: remove this suppression
     @SuppressWarnings("checkstyle:lineLength")
-    private String createDescription(final GeneratedType targetType) {
+    private @NonNull BlockBuilder createDescription(final GeneratedType targetType) {
         //        val target = targetType.importedName
         //        return '''
         //        Class that builds {@link «target»} instances. Overall design of the class is that of a
@@ -1018,7 +995,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.nl().append("@see ");
         bb.append(target);
         bb.newLineIfNotEmpty();
-        return bb.toRawString();
+        return bb;
     }
 
     @Override
