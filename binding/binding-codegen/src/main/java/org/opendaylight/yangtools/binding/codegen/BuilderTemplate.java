@@ -191,13 +191,15 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder().nl();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
-            if (first) {
-                first = false;
-            } else {
-                bb.appendImmediate("\n", "");
+            if (impl instanceof GeneratedType genType) {
+                if (first) {
+                    first = false;
+                } else {
+                    bb.appendImmediate("\n", "");
+                }
+                bb.append(generateConstructorFromIfc(genType));
+                bb.newLineIfNotEmpty();
             }
-            bb.append(generateConstructorFromIfc(impl));
-            bb.newLineIfNotEmpty();
         }
         return bb;
     }
@@ -205,11 +207,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private CharSequence generateConstructorFromIfc(final Type iface) {
-        if (!(iface instanceof GeneratedType genType)) {
-            return "";
-        }
-
+    private @NonNull BlockBuilder generateConstructorFromIfc(final GeneratedType genType) {
         //        «IF impl.hasNonDefaultMethods»
         //            «val typeName = impl.importedName»
         //            /**
@@ -249,9 +247,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append("}\n");
             bb.newLine();
         }
-        for (var implTypeImplement :  genType.getImplements()) {
-            bb.append(generateConstructorFromIfc(implTypeImplement));
-            bb.newLineIfNotEmpty();
+        for (var implTypeImplement : genType.getImplements()) {
+            if (implTypeImplement instanceof GeneratedType implType) {
+                bb.append(generateConstructorFromIfc(implType));
+                bb.newLineIfNotEmpty();
+            }
         }
         return bb;
     }
