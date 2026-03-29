@@ -72,7 +72,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      *
      * @return string with getter methods
      */
-    final CharSequence generateGetters(final boolean addOverride) {
+    final @NonNull StringBuilder generateGetters(final boolean addOverride) {
         final var sb = new StringBuilder();
 
         if (keyType != null) {
@@ -97,7 +97,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         }
 
         if (properties.isEmpty()) {
-            return sb.toString();
+            return sb;
         }
 
         final var it = properties.iterator();
@@ -118,7 +118,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             sb.append(asGetterMethod(field));
 
             if (!it.hasNext()) {
-                return sb.toString();
+                return sb;
             }
 
             sb.append('\n');

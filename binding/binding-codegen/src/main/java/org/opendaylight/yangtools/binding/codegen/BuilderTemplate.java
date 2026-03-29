@@ -116,30 +116,22 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .nl()
             .indented(generateMethodFieldsFrom())
             .nl()
-            .indented(generateEmptyInstance());
-        bb.nl().append("    ");
-        bb.append(generateGetters(false), "    ");
-        bb.newLineIfNotEmpty();
+            .indented(generateEmptyInstance())
+            .nl()
+            .indented(generateGetters(false));
         if (augmentType != null) {
-            bb.nl().append("    ");
-            bb.append(generateAugmentation(), "    ");
-            bb.newLineIfNotEmpty();
+            bb.nl().indented(generateAugmentation());
         }
-        bb.nl().indented(generateSetters());
-        bb.nl().append(
-                  "    /**\n");
-        bb.append("     * A new {@link ");
-        bb.append(targetTypeName);
-        bb.append("} instance.\n");
-        bb.append("     *\n");
-        bb.append("     * @return A new {@link ");
-        bb.append(targetTypeName);
-        bb.append("} instance.\n");
-        bb.append("     */\n");
-        bb.append("    public ");
-        bb.append(importedNonNull(targetType));
-        bb.append(" build() {\n");
         return bb
+            .nl()
+            .indented(generateSetters())
+            .nl()
+            .str("    /**").nl()
+            .str("     * A new {@link ").str(targetTypeName).str("} instance.").nl()
+            .str("     *").nl()
+            .str("     * @return A new {@link ").str(targetTypeName).str("} instance.").nl()
+            .str("     */").nl()
+            .str("    public ").str(importedNonNull(targetType)).str(" build() {").nl()
             .str("        return new ").str(importedName(type().getEnclosedTypes().getFirst())).str("(this);").nl()
             .str("    }").nl()
             .nl()
@@ -1011,7 +1003,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb.toRawString();
     }
 
-    private String generateAugmentation() {
+    private StringBuilder generateAugmentation() {
         return new StringBuilder()
             .append("""
                      /**
@@ -1029,8 +1021,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 .append("<E$$> augmentationType) {\n")
             .append("    return (E$$) ").append(Naming.AUGMENTATION_FIELD).append(".get(")
                 .append(importedName(JU_OBJECTS)).append(".requireNonNull(augmentationType));\n")
-            .append("}\n")
-            .toString();
+            .append("}\n");
     }
 
     @Override
