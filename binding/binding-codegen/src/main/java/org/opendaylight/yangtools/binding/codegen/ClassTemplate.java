@@ -942,7 +942,7 @@ class ClassTemplate extends BaseTemplate {
         return bb;
     }
 
-    private CharSequence typedefConstructor() {
+    private BlockBuilder typedefConstructor() {
         //        @«CONSTRUCTOR_PARAMETERS.importedName»("«TypeConstants.VALUE_PROP»")
         //        public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
         //            «IF !parentProperties.empty»
@@ -970,7 +970,7 @@ class ClassTemplate extends BaseTemplate {
         bb.str("(").append(asArgumentsDeclaration(allProperties));
         bb.append(") {\n");
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").append(asArguments(parentProperties), "    ");
+            bb.str("    super(").append(asArguments(parentProperties));
             bb.append(");\n");
         }
 

@@ -266,10 +266,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private CharSequence printConstructorPropertySetter(final Type implementedIfc,
+    private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc,
             final Set<MethodSignature> alreadySetProperties) {
         if (!(implementedIfc instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
@@ -590,7 +590,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private CharSequence generateSetter(final BuilderGeneratedProperty field) {
+    private @NonNull BlockBuilder generateSetter(final BuilderGeneratedProperty field) {
         final var returnType = field.getReturnType();
         if (returnType instanceof ParameterizedType parameterized) {
             if (Types.isListType(parameterized) || Types.isSetType(parameterized)) {
@@ -652,10 +652,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            }
         //        «ENDIF»
         if (restrictions != null) {
-            bb.append("if (values != null) {\n");
-            bb.append("   for (");
-            bb.append(importedName(actualType), "   ");
-            bb.append(" value : values) {\n");
+            bb.str("if (values != null) {").nl().str("   for (").str(importedName(actualType)).str(" value : values) {")
+                .newLine();
             bb.append("       ");
             bb.append(checkArgument(field, restrictions, actualType, "value"), "       ");
             bb.newLineIfNotEmpty();

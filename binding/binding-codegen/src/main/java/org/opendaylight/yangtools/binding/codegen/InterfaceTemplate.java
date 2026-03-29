@@ -231,9 +231,9 @@ class InterfaceTemplate extends BaseTemplate {
         return bb;
     }
 
-    private CharSequence generateAnnotations(final @NonNull List<AnnotationType> annotations) {
+    private @Nullable BlockBuilder generateAnnotations(final @NonNull List<AnnotationType> annotations) {
         if (annotations.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
@@ -289,7 +289,7 @@ class InterfaceTemplate extends BaseTemplate {
         return bb;
     }
 
-    private CharSequence generateNoopVoidInterfaceMethod(final MethodSignature method) {
+    private @NonNull BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
         //        «method.comment.asJavadoc»
         //        «method.annotations.generateAnnotations»
         //        default «VOID.importedName» «method.name»(«method.parameters.generateParameters») {
@@ -356,10 +356,10 @@ class InterfaceTemplate extends BaseTemplate {
         return bb;
     }
 
-    private CharSequence generateAccessorAnnotations(final MethodSignature method) {
+    private @Nullable BlockBuilder generateAccessorAnnotations(final MethodSignature method) {
         final var annotations = method.getAnnotations();
         if (annotations.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
@@ -494,10 +494,9 @@ class InterfaceTemplate extends BaseTemplate {
         final var analysis = typeAnalysis();
 
         final var bb = new BlockBuilder();
-        bb.newLineIfNotEmpty();
         bb.append("/**\n");
         bb.append(" * Default implementation of {@link ");
-        bb.append(importedName(OBJECT), " ");
+        bb.append(importedName(OBJECT));
         bb.append("#toString()} contract for this interface.\n");
         bb.append(
             " * Implementations of this interface are encouraged to defer to this method to get consistent string\n");
@@ -505,10 +504,10 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append(" *\n");
         bb.append(" * @param obj Object for which to generate toString() result.\n");
         bb.append(" * @return {@link ");
-        bb.append(importedName(Types.STRING), " ");
+        bb.append(importedName(Types.STRING));
         bb.append("} value of data modeled by this interface.\n");
         bb.append(" * @throws ");
-        bb.append(importedName(NPE), " ");
+        bb.append(importedName(NPE));
         bb.append(" if {@code obj} is {@code null}\n");
         bb.append(" */\n");
         bb.append("static ");

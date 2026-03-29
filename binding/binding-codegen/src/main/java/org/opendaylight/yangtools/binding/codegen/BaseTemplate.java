@@ -138,20 +138,17 @@ abstract class BaseTemplate extends JavaFileTemplate {
     /**
      * Template method which generates sequence of the names of the class attributes from {@code parameters}.
      *
-     * @param parameters group of generated property instances which are transformed to the sequence of parameter names
+     * @param parameters non-empty group of generated property instances which are transformed to the sequence
+     *                   of parameter names
      * @return string with the list of the parameter names of the {@code parameters}
      */
-    static final @NonNull String asArguments(final @NonNull List<GeneratedProperty> parameters) {
-        final var it = parameters.iterator();
-        if (!it.hasNext()) {
-            return "";
-        }
-
+    static final @NonNull StringBuilder asArguments(final @NonNull List<GeneratedProperty> parameters) {
         final var sb = new StringBuilder();
+        final var it = parameters.iterator();
         while (true) {
             sb.append(fieldName(it.next()));
             if (!it.hasNext()) {
-                return sb.toString();
+                return sb;
             }
             sb.append(", ");
         }
@@ -646,7 +643,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    final String checkArgument(final GeneratedProperty property, final Restrictions restrictions,
+    final StringBuilder checkArgument(final GeneratedProperty property, final Restrictions restrictions,
             final Type actualType, final String value) {
         final var valueRef = actualType instanceof ConcreteType ? value : value + ".getValue()";
 
@@ -674,7 +671,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
             }
         }
 
-        return sb.toString();
+        return sb;
     }
 
     /**
