@@ -79,9 +79,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        bb.nl().append("    ");
-        bb.append(generateCopyConstructor(builder.type(), type()), "    ");
-        bb.newLineIfNotEmpty();
+        bb.nl().indented(generateCopyConstructor(builder.type(), type()));
 
         if (keyType != null) {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining

@@ -224,10 +224,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append("(");
             bb.append(typeName);
             bb.append(" arg) {\n");
-            bb.append("    ");
-            bb.append(printConstructorPropertySetter(genType), "    ");
-            bb.newLineIfNotEmpty();
-            bb.append("}\n");
+            bb.indented(printConstructorPropertySetter(genType)).append("}\n");
             bb.newLine();
         }
         for (var implTypeImplement : genType.getImplements()) {
@@ -239,9 +236,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private CharSequence printConstructorPropertySetter(final Type implementedIfc) {
+    private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc) {
         if (!(implementedIfc instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
-            return "";
+            return null;
         }
 
         //        «FOR getter : ifc.nonDefaultMethods»
@@ -971,8 +968,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(", as instances can be freely passed around without");
         bb.newLineIfNotEmpty();
         bb.append("worrying about synchronization issues.\n");
-        bb.nl().nl().append("<p>");
-        bb.nl().append("As a side note: method chaining results in:");
+        bb.nl().append("<p>\n");
+        bb.append("As a side note: method chaining results in:");
         bb.nl().append("<ul>");
         bb.nl().append("  <li>very efficient Java bytecode, as the method invocation result, in this case the Builder reference, is\n");
         bb.append("      on the stack, so further method invocations just need to fill method arguments for the next method\n");

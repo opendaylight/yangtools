@@ -430,11 +430,8 @@ class InterfaceTemplate extends BaseTemplate {
         if (!props.isEmpty()) {
             bb.append("    final int prime = 31;\n");
             for (var property : props) {
-                bb.append("    result = prime * result + ");
-                bb.append(importedUtilClass(property), "    ");
-                bb.append(".hashCode(obj.");
-                bb.append(getterMethodName(property), "    ");
-                bb.append("());\n");
+                bb.str("    result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
+                    .str(getterMethodName(property)).append("());\n");
             }
         }
         if (augmentable) {
@@ -455,53 +452,37 @@ class InterfaceTemplate extends BaseTemplate {
             return "";
         }
 
-        final var bb = new BlockBuilder();
-        bb.newLineIfNotEmpty();
-        bb.append("/**\n");
-        bb.append(" * Default implementation of {@link ");
-        bb.append(importedName(OBJECT), " ");
-        bb.append("#equals(");
-        bb.append(importedName(OBJECT), " ");
-        bb.append(")} contract for this interface.\n");
-        bb.append(
-            " * Implementations of this interface are encouraged to defer to this method to get consistent equality\n");
-        bb.append(" * results across all implementations.\n");
-        bb.append(" *\n");
-        bb.append(" * @param thisObj Object acting as the receiver of equals invocation\n");
-        bb.append(" * @param obj Object acting as argument to equals invocation\n");
-        bb.append(" * @return True if thisObj and obj are considered equal\n");
-        bb.append(" * @throws ");
-        bb.append(importedName(NPE), " ");
-        bb.append(" if {@code thisObj} is {@code null}\n");
-        bb.append(" */\n");
-        bb.append("static boolean ");
-        bb.append(BINDING_EQUALS_NAME);
-        bb.append("(final ");
-        bb.append(fullyQualifiedNonNull(type()));
-        bb.append(" thisObj, final ");
-        bb.append(importedName(Types.objectType()));
-        bb.append(" obj) {\n");
-        bb.append("    if (thisObj == obj) {\n");
-        bb.append("        return true;\n");
-        bb.append("    }\n");
-        bb.append("    final var other = ");
-        bb.append(importedName(CODEHELPERS), "    ");
-        bb.append(".checkCast(");
-        bb.append(type().canonicalName(), "    ");
-        bb.append(".class, obj);\n");
-        bb.append("    return other != null\n");
+        final var object = importedName(OBJECT);
+
+        final var bb = new BlockBuilder()
+            .str("/**").nl()
+            .str(" * Default implementation of {@link ").str(object).str("#equals(").str(object)
+                .str(")} contract for this interface.").nl()
+            .str(" * Implementations of this interface are encouraged to defer to this method to get consistent ")
+                .str("equality").nl()
+            .str(" * results across all implementations.").nl()
+            .str(" *").nl()
+            .str(" * @param thisObj Object acting as the receiver of equals invocation").nl()
+            .str(" * @param obj Object acting as argument to equals invocation").nl()
+            .str(" * @return True if thisObj and obj are considered equal").nl()
+            .str(" * @throws ").str(importedName(NPE)).str(" if {@code thisObj} is {@code null}").nl()
+            .str(" */").nl()
+            .str("static boolean " + BINDING_EQUALS_NAME + "(final ").str(fullyQualifiedNonNull(type()))
+                .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj) {").nl()
+            .str("    if (thisObj == obj) {").nl()
+            .str("        return true;").nl()
+            .str("    }").nl()
+            .str("    final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
+                .str(type().canonicalName()).str(".class, obj);").nl()
+            .str("    return other != null");
+
         for (var property : ByTypeMemberComparator.sort(props)) {
-            bb.append("        && ");
-            bb.append(importedUtilClass(property), "        ");
-            bb.append(".equals(thisObj.");
-            bb.append(property.getGetterName(), "        ");
-            bb.append("(), other.");
-            bb.append(property.getGetterName(), "        ");
-            bb.append("())\n");
+            final var getterName = property.getGetterName();
+            bb.nl().str("        && ").str(importedUtilClass(property)).str(".equals(thisObj.").str(getterName)
+                .str("(), other.").str(getterName).append("())");
         }
-        bb.append("        ");
         if (augmentable) {
-            bb.append("&& thisObj.augmentations().equals(other.augmentations())");
+            bb.nl().append("        && thisObj.augmentations().equals(other.augmentations())");
         }
         bb.append(";\n");
         bb.append("}\n");

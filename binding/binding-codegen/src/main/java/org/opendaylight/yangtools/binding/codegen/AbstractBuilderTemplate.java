@@ -125,7 +125,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         }
     }
 
-    final String generateCopyConstructor(final Type fromType, final Type implType) {
+    final StringBuilder generateCopyConstructor(final Type fromType, final Type implType) {
         final var sb = new StringBuilder()
             .append(type().simpleName()).append("(final ").append(importedName(fromType)).append(" base) {\n");
 
@@ -146,7 +146,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             appendCopyNonKeys(sb, properties);
         }
 
-        return sb.append("}\n").toString();
+        return sb.append("}\n");
     }
 
     /**
