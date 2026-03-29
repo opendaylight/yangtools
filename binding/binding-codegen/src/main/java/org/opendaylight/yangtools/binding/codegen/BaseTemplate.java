@@ -103,12 +103,9 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     /**
-     * Generate the body of this Java file, i.e. the entire class declaration.
-     *
-     * @return Body of this Java file
+     * {@return Body of this Java file}
      */
-    // FIXME: return a Block
-    abstract @NonNull CharSequence body();
+    abstract @NonNull BlockBuilder body();
 
     // Helper patterns
     static final @NonNull String fieldName(final GeneratedProperty property) {
@@ -603,14 +600,14 @@ abstract class BaseTemplate extends JavaFileTemplate {
             return "";
         }
 
-        final var sb = new StringBuilder();
-        appendAsJavadoc(sb, "", text);
-        return sb.toString();
+        final var bb = new BlockBuilder();
+        appendAsJavadoc(bb, "", text);
+        return bb.toRawString();
     }
 
     @NonNullByDefault
-    static final void appendAsJavadoc(final StringBuilder sb, final String indent, final String text) {
-        sb.append(indent).append("/**\n");
+    static final void appendAsJavadoc(final BlockBuilder bb, final String indent, final String text) {
+        final var sb = new StringBuilder().append(indent).append("/**\n");
 
         final int length = text.length();
         int begin = 0;
@@ -624,7 +621,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
             begin = end + 1;
         }
 
-        sb.append(indent).append(" */");
+        bb.append(sb.append(indent).append(" */").toString());
     }
 
     @NonNullByDefault
@@ -684,21 +681,21 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * {@return a string containing generated code for specified archetypes}
      * @param archetypes the {@link EnumTypeObjectArchetype}s to generate
      */
-    final @Nullable StringBuilder generateInnerEnumTypeObjects(
+    final @Nullable BlockBuilder generateInnerEnumTypeObjects(
             final @NonNull List<EnumTypeObjectArchetype> archetypes) {
         if (archetypes.isEmpty()) {
             return null;
         }
 
         final var it = archetypes.iterator();
-        final var sb = new StringBuilder();
+        final var bb = new BlockBuilder();
         while (true) {
             final var archetype = it.next();
-            EnumTypeObjectTemplate.generateAsInner(javaType().getEnclosedType(archetype.name()), archetype, sb);
+            EnumTypeObjectTemplate.generateAsInner(javaType().getEnclosedType(archetype.name()), archetype, bb);
             if (!it.hasNext()) {
-                return sb;
+                return bb;
             }
-            sb.append('\n');
+            bb.newLine();
         }
     }
 

@@ -144,14 +144,14 @@ class ClassTemplate extends BaseTemplate {
     }
 
     @Override
-    final CharSequence body() {
+    final BlockBuilder body() {
         return generateBody(false);
     }
 
     /**
      * {@return string with JAVA class body source code}
      */
-    final CharSequence generateAsInnerClass() {
+    final @NonNull BlockBuilder generateAsInnerClass() {
         return generateBody(true);
     }
 
@@ -159,7 +159,7 @@ class ClassTemplate extends BaseTemplate {
      * {@return string with class source code in JAVA format}
      * @param isInnerClass {@code true} if generated class is an inner class
      */
-    private BlockBuilder generateBody(final boolean isInnerClass) {
+    private @NonNull BlockBuilder generateBody(final boolean isInnerClass) {
         //        «type.formatDataForJavaDoc.wrapToDocumentation»
         //        «annotationDeclaration»
         //        «IF !isInnerClass»

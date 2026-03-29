@@ -53,13 +53,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return false;
     }
 
-    /**
-     * Template method which generates JAVA class body for builder class and for IMPL class.
-     *
-     * @return string with JAVA source code
-     */
     @Override
-    public CharSequence body() {
+    BlockBuilder body() {
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(targetType)));
         bb.newLineIfNotEmpty();
