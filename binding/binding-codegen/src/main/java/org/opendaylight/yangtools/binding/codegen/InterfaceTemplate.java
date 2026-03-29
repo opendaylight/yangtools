@@ -390,22 +390,22 @@ class InterfaceTemplate extends BaseTemplate {
         return bb;
     }
 
-    private CharSequence generateStaticMethod(final MethodSignature method) {
+    private @Nullable BlockBuilder generateStaticMethod(final MethodSignature method) {
         return switch (method.getName()) {
             case BINDING_EQUALS_NAME -> generateBindingEquals();
             case BINDING_HASHCODE_NAME -> generateBindingHashCode();
             case BINDING_TO_STRING_NAME -> generateBindingToString();
-            default -> "";
+            default -> null;
         };
     }
 
     @VisibleForTesting
-    final CharSequence generateBindingHashCode() {
+    final @Nullable BlockBuilder generateBindingHashCode() {
         final var analysis = typeAnalysis();
         final boolean augmentable = analysis.augmentType() != null;
         final var props = analysis.properties();
         if (!augmentable && props.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
@@ -419,37 +419,36 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append(" *\n");
         bb.append(" * @param obj Object for which to generate hashCode() result.\n");
         bb.append(" * @return Hash code value of data modeled by this interface.\n");
-        bb.str(" * @throws ").str(importedName(NPE)).append(" if {@code obj} is {@code null}\n");
-        bb.append(" */\n");
-        bb.append("static int ");
-        bb.append(BINDING_HASHCODE_NAME);
-        bb.append("(final ");
-        bb.append(fullyQualifiedNonNull(type()));
-        bb.append(" obj) {\n");
-        bb.append("    int result = 1;\n");
+        bb
+            .str(" * @throws ").str(importedName(NPE)).str(" if {@code obj} is {@code null}").nl()
+            .str(" */").nl()
+            .str("static int " + BINDING_HASHCODE_NAME + "(final ").str(fullyQualifiedNonNull(type())).str(" obj) {")
+                .nl()
+            .str("    int result = 1;").newLine();
         if (!props.isEmpty()) {
-            bb.append("    final int prime = 31;\n");
+            bb.str("    final int prime = 31;").newLine();
             for (var property : props) {
                 bb.str("    result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
                     .str(getterMethodName(property)).append("());\n");
             }
         }
         if (augmentable) {
-            bb.append("    for (var augmentation : obj.augmentations().values()) {\n");
-            bb.append("        result += augmentation.hashCode();\n");
-            bb.append("    }\n");
+            bb
+                .str("    for (var augmentation : obj.augmentations().values()) {").nl()
+                .str("        result += augmentation.hashCode();").nl()
+                .str("    }").newLine();
         }
-        bb.append("    return result;\n");
-        bb.append("}\n");
-        return bb;
+        return  bb
+            .str("    return result;").nl()
+            .str("}").nl();
     }
 
-    private CharSequence generateBindingEquals() {
+    private @Nullable BlockBuilder generateBindingEquals() {
         final var analysis = typeAnalysis();
         final var augmentable = analysis.augmentType() != null;
         final var props = analysis.properties();
         if (!augmentable && props.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var object = importedName(OBJECT);

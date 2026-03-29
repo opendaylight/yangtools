@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -30,8 +33,8 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateHashcodeWithPropertyTest() {
-        final var genType = mockGenType("get" + TEST);
-
+        final var bb = genHashCode(mockGenType("get" + TEST));
+        assertNotNull(bb);
         assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -49,16 +52,18 @@ public class BuilderGeneratorTest {
                 result = prime * result + Objects.hashCode(obj.getTest());
                 return result;
             }
-            """, genHashCode(genType).toString());
+            """, bb.toRawString());
     }
 
     @Test
     void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() {
-        assertEquals("", genHashCode(mockGenType(TEST)).toString());
+        assertNull(genHashCode(mockGenType(TEST)));
     }
 
     @Test
     void builderTemplateGenerateHashCodeWithMorePropertiesTest() {
+        final var bb = genHashCode(mockGenTypeMoreMeth("get" + TEST));
+        assertNotNull(bb);
         assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -77,11 +82,13 @@ public class BuilderGeneratorTest {
                 result = prime * result + Objects.hashCode(obj.getTest2());
                 return result;
             }
-            """, genHashCode(mockGenTypeMoreMeth("get" + TEST)).toString());
+            """, bb.toRawString());
     }
 
     @Test
     void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() {
+        final var bb = genHashCode(mockAugment(mockGenType(TEST)));
+        assertNotNull(bb);
         assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -100,11 +107,13 @@ public class BuilderGeneratorTest {
                 }
                 return result;
             }
-            """, genHashCode(mockAugment(mockGenType(TEST))).toString());
+            """, bb.toRawString());
     }
 
     @Test
     void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() {
+        final var bb = genHashCode(mockAugment(mockGenType("get" + TEST)));
+        assertNotNull(bb);
         assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -125,11 +134,13 @@ public class BuilderGeneratorTest {
                 }
                 return result;
             }
-            """, genHashCode(mockAugment(mockGenType("get" + TEST))).toString());
+            """, bb.toRawString());
     }
 
     @Test
     void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() {
+        final var bb = genHashCode(mockAugment(mockGenTypeMoreMeth("get" + TEST)));
+        assertNotNull(bb);
         assertEquals("""
             /**
              * Default implementation of {@link Object#hashCode()} contract for this interface.
@@ -151,7 +162,7 @@ public class BuilderGeneratorTest {
                 }
                 return result;
             }
-            """, genHashCode(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
+            """, bb.toRawString());
     }
 
     @Test
@@ -174,7 +185,7 @@ public class BuilderGeneratorTest {
                 CodeHelpers.appendValue(helper, "test", obj.gettest());
                 return helper.toString();
             }
-            """, genToString(genType).toString());
+            """, genToString(genType).toRawString());
     }
 
     @Test
@@ -194,7 +205,7 @@ public class BuilderGeneratorTest {
                 final var helper = MoreObjects.toStringHelper("test");
                 return helper.toString();
             }
-            """, genToString(mockGenType(TEST)).toString());
+            """, genToString(mockGenType(TEST)).toRawString());
     }
 
     @Test
@@ -216,7 +227,7 @@ public class BuilderGeneratorTest {
                 CodeHelpers.appendValue(helper, "test2", obj.gettest2());
                 return helper.toString();
             }
-            """, genToString(mockGenTypeMoreMeth("get" + TEST)).toString());
+            """, genToString(mockGenTypeMoreMeth("get" + TEST)).toRawString());
     }
 
     @Test
@@ -237,7 +248,7 @@ public class BuilderGeneratorTest {
                 CodeHelpers.appendAugmentations(helper, "augmentation", obj);
                 return helper.toString();
             }
-            """, genToString(mockAugment(mockGenType(TEST))).toString());
+            """, genToString(mockAugment(mockGenType(TEST))).toRawString());
     }
 
     @Test
@@ -259,7 +270,7 @@ public class BuilderGeneratorTest {
                 CodeHelpers.appendAugmentations(helper, "augmentation", obj);
                 return helper.toString();
             }
-            """, genToString(mockAugment(mockGenType("get" + TEST))).toString());
+            """, genToString(mockAugment(mockGenType("get" + TEST))).toRawString());
     }
 
     @Test
@@ -282,7 +293,7 @@ public class BuilderGeneratorTest {
                 CodeHelpers.appendAugmentations(helper, "augmentation", obj);
                 return helper.toString();
             }
-            """, genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
+            """, genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toRawString());
     }
 
     @Test
@@ -331,11 +342,11 @@ public class BuilderGeneratorTest {
         return genType;
     }
 
-    private static CharSequence genToString(final GeneratedType genType) {
+    private static BlockBuilder genToString(final GeneratedType genType) {
         return new InterfaceTemplate(genType).generateBindingToString();
     }
 
-    private static CharSequence genHashCode(final GeneratedType genType) {
+    private static @Nullable BlockBuilder genHashCode(final GeneratedType genType) {
         return new InterfaceTemplate(genType).generateBindingHashCode();
     }
 
