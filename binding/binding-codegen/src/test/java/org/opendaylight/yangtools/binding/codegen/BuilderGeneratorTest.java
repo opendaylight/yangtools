@@ -15,7 +15,7 @@ import static org.mockito.Mockito.spy;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
+import org.opendaylight.yangtools.binding.generator.dagger.BindingGeneratorModule;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -288,7 +288,7 @@ public class BuilderGeneratorTest {
     @Test
     void builderTemplateGenerateToEqualsComparingOrderTest() {
         final var context = YangParserTestUtils.parseYangResource("/test-types.yang");
-        final var types = new DefaultBindingGenerator().generateTypes(context);
+        final var types = BindingGeneratorModule.provideBindingGenerator().generateTypes(context);
         assertEquals(27, types.size());
 
         final var bt = BuilderGenerator.templateForType(

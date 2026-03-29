@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
+import org.opendaylight.yangtools.binding.generator.dagger.BindingGeneratorModule;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 class ClassCodeGeneratorTest {
     @Test
     void compositeKeyClassTest() {
-        final var genTypes = new DefaultBindingGenerator().generateTypes(
-            YangParserTestUtils.parseYangResource("/list-composite-key.yang"));
+        final var genTypes = BindingGeneratorModule.provideBindingGenerator()
+            .generateTypes(YangParserTestUtils.parseYangResource("/list-composite-key.yang"));
 
         assertNotNull(genTypes);
         assertEquals(7, genTypes.size());

@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
+import org.opendaylight.yangtools.binding.generator.dagger.BindingGeneratorModule;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -43,7 +43,7 @@ abstract class BaseCompilationTest {
 
     static final List<GeneratedType> generateTestSources(final String resourceDirPath, final Path sourcesOutputDir) {
         final var context = YangParserTestUtils.parseYangResourceDirectory(resourceDirPath);
-        final var types = new DefaultBindingGenerator().generateTypes(context);
+        final var types = BindingGeneratorModule.provideBindingGenerator().generateTypes(context);
         try {
             generateTestSources(types, sourcesOutputDir);
         } catch (IOException e) {

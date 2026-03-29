@@ -9,11 +9,14 @@ package org.opendaylight.yangtools.binding.generator.dagger;
 
 import dagger.Component;
 import jakarta.inject.Singleton;
+import org.opendaylight.yangtools.binding.generator.BindingGenerator;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
 
 @Singleton
-@Component(modules = BindingRuntimeGeneratorModule.class)
+@Component(modules = { BindingGeneratorModule.class, BindingRuntimeGeneratorModule.class })
 interface TestComponent {
+
+    BindingGenerator bindingGenerator();
 
     BindingRuntimeGenerator bindingRuntimeGenerator();
 }

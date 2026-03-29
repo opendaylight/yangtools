@@ -16,8 +16,13 @@ class DaggerTestComponentTest {
     @Test
     void generatorIsSingleton() {
         final var component = DaggerTestComponent.create();
-        final var first = component.bindingRuntimeGenerator();
+
+        final var first = component.bindingGenerator();
         assertNotNull(first);
-        assertSame(first, component.bindingRuntimeGenerator());
+        assertSame(first, component.bindingGenerator());
+
+        final var firstRuntime = component.bindingRuntimeGenerator();
+        assertNotNull(firstRuntime);
+        assertSame(firstRuntime, component.bindingRuntimeGenerator());
     }
 }
