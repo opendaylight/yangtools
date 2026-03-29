@@ -36,7 +36,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         super(archetype);
     }
 
-    static CharSequence generateAsInner(final @NonNull NestedJavaGeneratedType javaType,
+    static @NonNull BlockBuilder generateAsInner(final @NonNull NestedJavaGeneratedType javaType,
             final @NonNull UnionTypeObjectArchetype archetype) {
         return new UnionTypeObjectTemplate(javaType, archetype).generateAsInnerClass();
     }

@@ -55,7 +55,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    public CharSequence body() {
+    BlockBuilder body() {
         final var impIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
 

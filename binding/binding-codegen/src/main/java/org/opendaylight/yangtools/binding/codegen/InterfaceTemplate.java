@@ -69,7 +69,7 @@ class InterfaceTemplate extends BaseTemplate {
     }
 
     @Override
-    CharSequence body() {
+    final BlockBuilder body() {
         //        «type.formatDataForJavaDoc.wrapToDocumentation»
         //        «type.annotations.generateAnnotations»
         //        «generatedAnnotation»
