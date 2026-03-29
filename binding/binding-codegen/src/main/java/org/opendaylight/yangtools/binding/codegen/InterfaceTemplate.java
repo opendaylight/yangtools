@@ -7,13 +7,24 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
+import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire;
+import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
+import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
+import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
+
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Locale;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -151,7 +162,7 @@ class InterfaceTemplate extends BaseTemplate {
         final var fqcn = type().canonicalName();
 
         return '@' + importedName(OVERRIDE) + '\n'
-            +  "default " + importedName(CLASS) + '<' + fqcn + "> " + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+            +  "default " + importedName(CLASS) + '<' + fqcn + "> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
                 + "() {\n"
             +  "    return " + fqcn + ".class;\n"
             +  "}\n";
@@ -188,9 +199,9 @@ class InterfaceTemplate extends BaseTemplate {
                 bb.append(generateDefaultMethod(method));
             } else if (method.isStatic()) {
                 bb.append(generateStaticMethod(method));
-            } else if (method.getParameters().isEmpty() && Naming.isGetterMethodName(method.getName())) {
+            } else if (method.getParameters().isEmpty() && isGetterMethodName(method.getName())) {
                 bb.append(generateAccessorMethod(method));
-            } else if (method.getParameters().isEmpty() && Naming.isNonnullMethodName(method.getName())) {
+            } else if (method.getParameters().isEmpty() && isNonnullMethodName(method.getName())) {
                 bb.append(generateNonnullAccessorMethod(method));
             } else {
                 bb.append(generateMethod(method));
@@ -235,21 +246,21 @@ class InterfaceTemplate extends BaseTemplate {
 
     private CharSequence generateDefaultMethod(final MethodSignature method) {
         final var methodName = method.getName();
-        if (Naming.isNonnullMethodName(methodName)) {
+        if (isNonnullMethodName(methodName)) {
             return generateNonnullMethod(method);
         }
-        if (Naming.isRequireMethodName(methodName)) {
+        if (isRequireMethodName(methodName)) {
             return generateRequireMethod(method);
         }
         return switch (methodName) {
-            case Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME -> generateDefaultImplementedInterface();
+            case BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME -> generateDefaultImplementedInterface();
             default ->
                 JavaFileTemplate.VOID.equals(method.getReturnType().name()) ? generateNoopVoidInterfaceMethod(method)
                     : "";
         };
     }
 
-    private BlockBuilder generateNonnullMethod(final MethodSignature method) {
+    private @NonNull BlockBuilder generateNonnullMethod(final MethodSignature method) {
         //        «val ret = method.returnType»
         //        «val name = method.name»
         //        «accessorJavadoc(method, ", or an empty list if it is not present.")»
@@ -272,11 +283,8 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append(" ");
         bb.append(name);
         bb.append("() {\n");
-        bb.append("    return ");
-        bb.append(importedName(JavaFileTemplate.CODEHELPERS), "    ");
-        bb.append(".nonnull(");
-        bb.append(Naming.getGetterMethodForNonnull(name), "    ");
-        bb.append("());\n");
+        bb.str("    return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
+            .append("());\n");
         bb.append("}\n");
         return bb;
     }
@@ -324,12 +332,8 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append(" ");
         bb.append(name);
         bb.append("() {\n");
-        bb.append("    return ");
-        bb.append(importedName(CODEHELPERS), "    ");
-        bb.append(".require(");
-        bb.append(Naming.getGetterMethodForRequire(name), "    ");
-        bb.append("(), \"");
-        bb.append(name.toLowerCase(Locale.ROOT).replace(Naming.REQUIRE_PREFIX, ""), "    ");
+        bb.str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
+            .str("(), \"").append(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, ""));
         bb.append("\");\n");
         bb.append("}\n");
         return bb;
@@ -388,9 +392,9 @@ class InterfaceTemplate extends BaseTemplate {
 
     private CharSequence generateStaticMethod(final MethodSignature method) {
         return switch (method.getName()) {
-            case Naming.BINDING_EQUALS_NAME -> generateBindingEquals();
-            case Naming.BINDING_HASHCODE_NAME -> generateBindingHashCode();
-            case Naming.BINDING_TO_STRING_NAME -> generateBindingToString();
+            case BINDING_EQUALS_NAME -> generateBindingEquals();
+            case BINDING_HASHCODE_NAME -> generateBindingHashCode();
+            case BINDING_TO_STRING_NAME -> generateBindingToString();
             default -> "";
         };
     }
@@ -415,12 +419,10 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append(" *\n");
         bb.append(" * @param obj Object for which to generate hashCode() result.\n");
         bb.append(" * @return Hash code value of data modeled by this interface.\n");
-        bb.append(" * @throws ");
-        bb.append(importedName(NPE), " ");
-        bb.append(" if {@code obj} is {@code null}\n");
+        bb.str(" * @throws ").str(importedName(NPE)).append(" if {@code obj} is {@code null}\n");
         bb.append(" */\n");
         bb.append("static int ");
-        bb.append(Naming.BINDING_HASHCODE_NAME);
+        bb.append(BINDING_HASHCODE_NAME);
         bb.append("(final ");
         bb.append(fullyQualifiedNonNull(type()));
         bb.append(" obj) {\n");
@@ -473,7 +475,7 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append(" if {@code thisObj} is {@code null}\n");
         bb.append(" */\n");
         bb.append("static boolean ");
-        bb.append(Naming.BINDING_EQUALS_NAME);
+        bb.append(BINDING_EQUALS_NAME);
         bb.append("(final ");
         bb.append(fullyQualifiedNonNull(type()));
         bb.append(" thisObj, final ");
@@ -531,30 +533,19 @@ class InterfaceTemplate extends BaseTemplate {
         bb.append("static ");
         bb.append(importedName(Types.STRING));
         bb.append(" ");
-        bb.append(Naming.BINDING_TO_STRING_NAME);
+        bb.append(BINDING_TO_STRING_NAME);
         bb.append("(final ");
         bb.append(fullyQualifiedNonNull(type()));
         bb.append(" obj) {\n");
-        bb.append("    final var helper = ");
-        bb.append(importedName(MOREOBJECTS), "    ");
-        bb.append(".toStringHelper(\"");
-        bb.append(type().simpleName(), "    ");
-        bb.append("\");\n");
+        bb.str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
+            .str(type().simpleName()).append("\");\n");
         for (var property : analysis.properties()) {
-            bb.append("    ");
-            bb.append(importedName(CODEHELPERS), "    ");
-            bb.append(".appendValue(helper, \"");
-            bb.append(property.getName(), "    ");
-            bb.append("\", obj.");
-            bb.append(property.getGetterName(), "    ");
-            bb.append("());\n");
+            bb.str("    ").str(importedName(CODEHELPERS)).str(".appendValue(helper, \"").str(property.getName())
+                .str("\", obj.").str(property.getGetterName()).append("());\n");
         }
         if (analysis.augmentType() != null) {
-            bb.append("    ");
-            bb.append(importedName(CODEHELPERS), "    ");
-            bb.append(".appendAugmentations(helper, \"");
-            bb.append(Naming.AUGMENTATION_FIELD, "    ");
-            bb.append("\", obj);\n");
+            bb.str("    ").str(importedName(CODEHELPERS)).str(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD)
+                .append("\", obj);\n");
         }
         bb.append("    return helper.toString();\n");
         bb.append("}\n");
