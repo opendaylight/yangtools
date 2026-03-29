@@ -558,7 +558,7 @@ class ClassTemplate extends BaseTemplate {
         //        private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
         //        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
         //    «ENDIF»
-        bb.str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME).str(" = ").str(juList)
+        bb.str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME + " = ").str(juList)
             .append(".of(");
         {
             boolean first = true;
