@@ -667,21 +667,13 @@ class ClassTemplate extends BaseTemplate {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
                 .str(".valueOf(defaultValue).scaleTo(").strI(decimal64.fractionDigits()).append("));\n");
         } else if (propType.equals(STRING_TYPE)) {
-            bb.append("    return new ");
-            bb.append(simpleName);
-            bb.append("(defaultValue);\n");
+            bb.str("    return new ").str(simpleName).append("(defaultValue);\n");
         } else if (propType.equals(BINARY_TYPE)) {
-            bb.append("    return new ");
-            bb.append(simpleName);
-            bb.append("(");
-            bb.append(importedName(JU_BASE64));
-            bb.append(".getDecoder().decode(defaultValue));\n");
+            bb.str("    return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
+                .append(".getDecoder().decode(defaultValue));\n");
         } else if (propType.equals(EMPTY_TYPE)) {
-            bb.append("    return new ");
-            bb.append(simpleName);
-            bb.append("(");
-            bb.append(importedName(CODEHELPERS));
-            bb.append(".emptyFor(defaultValue));\n");
+            bb.str("    return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
+                .append(".emptyFor(defaultValue));\n");
         } else {
             bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType)).str("(defaultValue));")
                 .newLine();
