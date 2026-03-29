@@ -88,6 +88,7 @@ public final class YangModuleInfoTemplate {
         final var submodules = new LinkedHashSet<Submodule>();
         collectSubmodules(submodules, module);
 
+        // FIXME: use BlockBuilder
         var sb = new StringBuilder()
             .append("/**\n")
             .append(" * The {@link ResourceYangModuleInfo} for {@code ").append(module.getName()).append("} module.\n")
@@ -109,7 +110,7 @@ public final class YangModuleInfoTemplate {
             .append('\n')
             .append("    private final @NonNull ImmutableSet<YangModuleInfo> importedModules;\n")
             .append('\n')
-            // FIXME: pass down indent
+            // FIXME: BlockBuilder.indented()
             .append(classBody(module, Naming.MODULE_INFO_CLASS_NAME, submodules)).append("\n")
             .append("""
                     /**
@@ -205,7 +206,7 @@ public final class YangModuleInfoTemplate {
     }
 
     @NonNullByDefault
-    private String classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
+    private BlockBuilder classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
         // FIXME: use BlockBuilder here
         final var sb = new StringBuilder()
             .append("private ").append(className).append("() {\n");
@@ -295,13 +296,11 @@ public final class YangModuleInfoTemplate {
                 .append('\n')
                 .append("    private final @NonNull ImmutableSet<YangModuleInfo> importedModules;\n")
                 .append('\n')
+                // FIXME: BlockBuilder.indented()
                 .append(classBody(sub, subName + "Info", Set.of()))
                 .append("}\n");
         }
 
-        final var bb = new BlockBuilder();
-        bb.append("    ");
-        bb.append(sb, "    ");
-        return bb.toRawString();
+        return new BlockBuilder().indented(sb);
     }
 }

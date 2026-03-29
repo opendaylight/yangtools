@@ -351,35 +351,26 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         }
 
         final var nonnullTarget = importedNonNull(targetType);
+        final var targetName = targetType.simpleName();
 
-        final var bb = new BlockBuilder();
-        bb.append("private static final class LazyEmpty {\n");
-        bb.append("    static final ");
-        bb.append(nonnullTarget, "    ");
-        bb.append(" INSTANCE = new ");
-        bb.append(type().simpleName());
-        bb.append("().build();\n");
-        bb.nl().append(
-                  "    private LazyEmpty() {\n");
-        bb.append("        // Hidden on purpose\n");
-        bb.append("    }\n");
-        bb.append("}\n");
-        bb.nl().append(
-                  "/**\n");
-        bb.append(" * Get empty instance of ");
-        bb.append(targetType.simpleName());
-        bb.append(".\n");
-        bb.append(" *\n");
-        bb.append(" * @return An empty {@link ");
-        bb.append(targetType.simpleName());
-        bb.append("}\n");
-        bb.append(" */\n");
-        bb.append("public static ");
-        bb.append(nonnullTarget);
-        bb.append(" empty() {\n");
-        bb.append("    return LazyEmpty.INSTANCE;\n");
-        bb.append("}\n");
-        return bb;
+        return new BlockBuilder()
+            .str("private static final class LazyEmpty {").nl()
+            .str("    static final ").str(nonnullTarget).str(" INSTANCE = new ").str(type().simpleName())
+                .strLn("().build();")
+            .nl()
+            .str("    private LazyEmpty() {").nl()
+            .str("        // Hidden on purpose").nl()
+            .str("    }").nl()
+            .str("}").nl()
+            .nl()
+            .str("/**").nl()
+            .str(" * Get empty instance of ").str(targetName).strLn(".")
+            .str(" *").nl()
+            .str(" * @return An empty {@link ").str(targetName).str("}").nl()
+            .str(" */").nl()
+            .str("public static ").str(nonnullTarget).str(" empty() {").nl()
+            .str("    return LazyEmpty.INSTANCE;").nl()
+            .str("}").nl();
     }
 
     private StringBuilder generateMethodFieldsFromComment(final GeneratedType type) {

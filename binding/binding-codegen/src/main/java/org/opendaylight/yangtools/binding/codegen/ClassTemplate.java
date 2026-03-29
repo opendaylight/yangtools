@@ -803,20 +803,20 @@ class ClassTemplate extends BaseTemplate {
         return bb;
     }
 
-    @NonNullByDefault
-    final CharSequence generateRestrictions(final Type type, final String paramName, final Type returnType) {
+    final @Nullable StringBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
+            final @NonNull Type returnType) {
         final var typeRestrictions = switch (type) {
             case GeneratedTransferObject gto -> gto.getRestrictions();
             case RestrictedType restricted -> restricted.restrictions();
             case null, default -> null;
         };
         if (typeRestrictions == null) {
-            return "";
+            return null;
         }
         final var length = typeRestrictions.getLengthConstraint().orElse(null);
         final var range = typeRestrictions.getRangeConstraint().orElse(null);
         if (length == null && range == null) {
-            return "";
+            return null;
         }
 
         final var sb = new StringBuilder();
@@ -872,9 +872,7 @@ class ClassTemplate extends BaseTemplate {
             bb.append(");\n");
         }
         for (var prop : allProperties) {
-            bb.append("    ");
-            bb.append(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()), "    ");
-            bb.newLineIfNotEmpty();
+            bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
         }
         bb.newLine();
         for (var prop : properties) {
@@ -939,9 +937,7 @@ class ClassTemplate extends BaseTemplate {
         bb.str("(").append(importedSuper);
         bb.append(" source) {\n");
         bb.append("    super(source);\n");
-        bb.append("    ");
-        bb.append(genPatternEnforcer("getValue()"));
-        bb.newLineIfNotEmpty();
+        bb.indented(genPatternEnforcer("getValue()"));
         bb.append("}\n");
         return bb;
     }
@@ -994,13 +990,8 @@ class ClassTemplate extends BaseTemplate {
             bb.str(")").append(cloneCall(value));
             bb.append(";\n");
         }
-        bb.append("    ");
-        bb.append(generateRestrictions(type(), fieldName, value.getReturnType()), "    ");
-        bb.newLineIfNotEmpty();
-        bb.append("    ");
-        bb.nl().append("    ");
-        bb.append(genPatternEnforcer(fieldName), "    ");
-        bb.newLineIfNotEmpty();
+        bb.indented(generateRestrictions(type(), fieldName, value.getReturnType()));
+        bb.nl().indented(genPatternEnforcer(fieldName));
         bb.append("}\n");
         return bb;
     }
@@ -1019,8 +1010,7 @@ class ClassTemplate extends BaseTemplate {
         };
     }
 
-    @NonNullByDefault
-    private String genPatternEnforcer(final String ref) {
+    private @Nullable StringBuilder genPatternEnforcer(final @NonNull String ref) {
         final var sb = new StringBuilder();
         for (var constant : consts) {
             if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
@@ -1028,6 +1018,6 @@ class ClassTemplate extends BaseTemplate {
                     .append(MEMBER_PATTERN_LIST).append(", ").append(MEMBER_REGEX_LIST).append(");\n");
             }
         }
-        return sb.toString();
+        return sb.isEmpty() ? null : sb;
     }
 }

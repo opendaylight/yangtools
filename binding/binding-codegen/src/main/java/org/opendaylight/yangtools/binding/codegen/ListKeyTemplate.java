@@ -61,7 +61,10 @@ final class ListKeyTemplate extends ClassTemplate {
         }
 
         for (var prop : properties) {
-            sb.append(generateRestrictions(type(), fieldName(prop), prop.getReturnType()));
+            final var restrictions = generateRestrictions(type(), fieldName(prop), prop.getReturnType());
+            if (restrictions != null) {
+                sb.append(restrictions);
+            }
         }
 
         return sb.append("}\n").toString();

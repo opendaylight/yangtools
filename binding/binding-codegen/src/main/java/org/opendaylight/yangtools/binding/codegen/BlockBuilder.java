@@ -93,6 +93,18 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         return this;
     }
 
+    /**
+     * The equivalent of {@code str(content).nl()}.
+     *
+     * @param content the {@link String}
+     * @return this instance
+     */
+    @NonNullByDefault
+    @CheckReturnValue
+    BlockBuilder strLn(final String content) {
+        return str(content).nl();
+    }
+
     @NonNullByDefault
     @CheckReturnValue
     private static String validateStr(final String strArg) {
