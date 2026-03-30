@@ -299,51 +299,32 @@ class ClassTemplate extends BaseTemplate {
     private BlockBuilder validNamesAndValues(final BitsTypeDefinition typedef) {
         final var override = importedName(OVERRIDE);
 
-        final var bb = new BlockBuilder();
-        //
-        //        @«OVERRIDE.importedName»
-        //        public «IMMUTABLE_SET.importedName»<«STRING.importedName»> validNames() {
-        //            return «TypeConstants.VALID_NAMES_NAME»;
-        //        }
-        bb.nl().at().append(override);
-        bb.nl().append("public ");
-        bb.append(importedName(IMMUTABLE_SET));
-        bb.append("<");
-        bb.append(importedName(STRING));
-        bb.append("> validNames() {\n");
-        bb.append("    return ");
-        bb.append(VALID_NAMES_NAME);
-        bb.append(";\n");
-        bb.append("}\n");
+        final var bb = new BlockBuilder()
+            .nl()
+            .at().eol(override)
+            .str("public ").str(importedName(IMMUTABLE_SET)).str("<").str(importedName(STRING)).str("> validNames() {")
+                .nl()
+            .eol("    return " + VALID_NAMES_NAME + ";")
+            .str("}").nl()
+            .nl()
+            .at().eol(override)
+            .str("public boolean[] values() {").nl()
+            .str("    return new boolean[] {").nl();
 
-        //
-        //        @«OVERRIDE.importedName»
-        //        public boolean[] values() {
-        //            return new boolean[] {
-        //                    «FOR bit : typedef.bits SEPARATOR ','»
-        //                        «Naming.getPropertyName(bit.name).getterMethodName»()
-        //                    «ENDFOR»
-        //                };
-        //        }
-        bb.nl().at().append(override);
-        bb.nl().append("public boolean[] values() {\n");
-        bb.append("    return new boolean[] {\n");
-        {
-            boolean first = true;
-            for (var bit : typedef.getBits()) {
-                if (first) {
-                    first = false;
-                } else {
-                    bb.append(",\n");
-                }
-                bb.append("            ");
-                bb.append(getterMethodName(getPropertyName(bit.getName())));
-                bb.append("()");
+        boolean first = true;
+        for (var bit : typedef.getBits()) {
+            if (first) {
+                first = false;
+            } else {
+                bb.str(",").newLine();
             }
+            bb.str("            ").str(getterMethodName(getPropertyName(bit.getName()))).append("()");
         }
-        bb.nl().append("        };\n");
-        bb.append("}\n");
-        return bb;
+
+        return bb
+            .nl()
+            .eol("        };")
+            .str("}").nl();
     }
 
     private @Nullable BlockBuilder generateEquals() {
@@ -352,22 +333,8 @@ class ClassTemplate extends BaseTemplate {
             return null;
         }
 
-        //        @«OVERRIDE.importedName»
-        //        public final boolean equals(«OBJECT.importedName» obj) {
-        //            return this == obj || obj instanceof «type.simpleName» other
-        //                «FOR property : genTO.equalsIdentifiers»
-        //                    «val fieldName = property.fieldName»
-        //                    «val type = property.returnType»
-        //                    «IF type.equals(Types.primitiveBooleanType)»
-        //                        && «fieldName» == other.«fieldName»«
-        //                    »«ELSE»
-        //                        && «type.importedUtilClass».equals(«fieldName», other.«fieldName»)«
-        //                    »«ENDIF»«
-        //                »«ENDFOR»;
-        //        }
-
         final var bb = new BlockBuilder()
-            .at().str(importedName(OVERRIDE)).nl()
+            .at().eol(importedName(OVERRIDE))
             .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj) {").nl()
             .str("    return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
         for (var property : equalsIdentifiers) {
@@ -382,9 +349,9 @@ class ClassTemplate extends BaseTemplate {
                     .append(")");
             }
         }
-        bb.append(";\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .eol(";")
+            .str("}").nl();
     }
 
     private @Nullable BlockBuilder generateToString(final List<GeneratedProperty> props) {
@@ -392,30 +359,19 @@ class ClassTemplate extends BaseTemplate {
             return null;
         }
 
-        //        @«OVERRIDE.importedName»
-        //        public «STRING.importedName» toString() {
-        //            final var helper = «MOREOBJECTS.importedName».toStringHelper(«type.importedName».class);
-        //            «FOR property : properties»
-        //                «CODEHELPERS.importedName».«property.valueAppender»(helper, "«property.name»",
-        // «property.fieldName»);
-        //            «ENDFOR»
-        //            return helper.toString();
-        //        }
-
         final var bb = new BlockBuilder()
-            .at().str(importedName(OVERRIDE)).nl()
-            .str("public ").str(importedName(STRING))
-            .str(" toString() {").nl()
+            .at().eol(importedName(OVERRIDE))
+            .str("public ").str(importedName(STRING)).str(" toString() {").nl()
             .str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                .str(importedName(type())).str(".class);").nl();
+                .str(importedName(type())).eol(".class);");
         for (var property : props) {
-            bb.str("    ").str(importedName(CODEHELPERS)).append(".");
-            bb.append(valueAppender(property));
-            bb.str("(helper, \"").str(property.getName()).str("\", ").str(fieldName(property)).append(");\n");
+            bb
+                .str("    ").str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, \"")
+                .str(property.getName()).str("\", ").str(fieldName(property)).str(");").newLine();
         }
-        bb.append("    return helper.toString();\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .eol("    return helper.toString();")
+            .str("}").nl();
     }
 
     // FIXME: this should be specialized in BitsTypeObjectTemplate
@@ -486,15 +442,14 @@ class ClassTemplate extends BaseTemplate {
     @Nullable BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
         final var type = type();
 
-        final var bb = new BlockBuilder();
-        bb.append("public");
+        final var bb = new BlockBuilder()
+            .str("public");
         if (isInnerClass) {
             bb.append(" static final ");
         } else {
             bb.append(type.isAbstract() ? " abstract " : finalClass());
         }
-        bb.append("class ");
-        bb.append(type.simpleName());
+        bb.str("class ").append(type.simpleName());
 
         final var superType = genTO.getSuperType();
         if (superType != null) {
@@ -567,20 +522,23 @@ class ClassTemplate extends BaseTemplate {
                 bb.append("\"");
             }
         }
-        bb.append(");\n");
-        bb.str("private static final ").append(jurPattern);
+        bb
+            .eol(");")
+            .str("private static final ").append(jurPattern);
         if (constValue.size() == 1) {
-            bb.str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern).str(".compile(" + PATTERN_CONSTANT_NAME)
-                .append(".getFirst());\n");
-            bb.str("private static final String " + MEMBER_REGEX_LIST + " = \"")
-                .append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
-            bb.append("\";\n");
+            bb
+                .str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern)
+                .eol(".compile(" + PATTERN_CONSTANT_NAME + ".getFirst());")
+                .str("private static final String " + MEMBER_REGEX_LIST + " = \"")
+                    .append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
+            bb.str("\";").newLine();
             return;
         }
 
-        bb.str("[] " + MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
-            .str(".compilePatterns(" + PATTERN_CONSTANT_NAME).append(");\n");
-        bb.str("private static final String[] " + MEMBER_REGEX_LIST).append(" = { ");
+        bb
+            .str("[] " + MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
+                .eol(".compilePatterns(" + PATTERN_CONSTANT_NAME + ");")
+            .str("private static final String[] " + MEMBER_REGEX_LIST).append(" = { ");
         {
             boolean first = true;
             for (var value : constValue.values()) {
@@ -593,7 +551,7 @@ class ClassTemplate extends BaseTemplate {
                 bb.append("\"");
             }
         }
-        bb.append(" };\n");
+        bb.str(" };").newLine();
     }
 
     private void appendValidNames(final BlockBuilder bb, final BitsTypeDefinition bitsType) {
@@ -611,7 +569,7 @@ class ClassTemplate extends BaseTemplate {
                 bb.str("\"").str(bit.getName()).append("\"");
             }
         }
-        bb.append(");\n");
+        bb.str(");").newLine();
     }
 
     // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
@@ -627,32 +585,13 @@ class ClassTemplate extends BaseTemplate {
             return null;
         }
 
-        //        public static «genTO.simpleName» getDefaultInstance(final String defaultValue) {
-        //            «IF propType.equals(Types.primitiveBooleanType())»
-        //                «bitsDefaultInstanceBody»
-        //            «ELSEIF VALUEOF_TYPES.contains(propType)»
-        //                return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue));
-        //            «ELSEIF propType instanceof Decimal64Type»
-        //                return new «genTO.simpleName»(«propType.importedName».valueOf(defaultValue).scaleTo(
-        //«propType.fractionDigits»));
-        //            «ELSEIF STRING_TYPE.equals(propType)»
-        //                return new «genTO.simpleName»(defaultValue);
-        //            «ELSEIF BINARY_TYPE.equals(propType)»
-        //                return new «genTO.simpleName»(«JU_BASE64.importedName».getDecoder().decode(defaultValue));
-        //            «ELSEIF EMPTY_TYPE.equals(propType)»
-        //                return new «genTO.simpleName»(«CODEHELPERS.importedName».emptyFor(defaultValue));
-        //            «ELSE»
-        //                return new «genTO.simpleName»(new «propType.importedName»(defaultValue));
-        //            «ENDIF»
-        //        }
-
         final var simpleName = genTO.simpleName();
         final var bb = new BlockBuilder()
             .nl()
             .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue) {").nl();
         if (VALUEOF_TYPES.contains(propType)) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .append(".valueOf(defaultValue));\n");
+                .str(".valueOf(defaultValue));").newLine();
         } else if (propType.equals(PRIMITIVE_BOOLEAN)) {
             bb.indented(bitsDefaultInstanceBody());
         } else if (propType instanceof Decimal64Type decimal64) {
@@ -744,7 +683,7 @@ class ClassTemplate extends BaseTemplate {
         //          «ENDIF»
         //      }
         final var bb = new BlockBuilder()
-            .at().str(importedName(OVERRIDE)).nl()
+            .at().eol(importedName(OVERRIDE))
             .str("public int hashCode() {").nl();
         if (size == 1) {
             bb.append("    return ");
@@ -756,18 +695,19 @@ class ClassTemplate extends BaseTemplate {
             }
             bb.str(fieldName(prop)).append(");\n");
         } else {
-            bb.append("    final int prime = 31;\n");
-            bb.append("    int result = 1;\n");
+            bb
+                .eol("    final int prime = 31;")
+                .str("    int result = 1;").newLine();
             for (var property : props) {
-                bb.append("    result = prime * result + ");
                 final var type = property.getReturnType();
-                bb.str(type.equals(PRIMITIVE_BOOLEAN) ? importedName(BOOLEAN) : importedUtilClass(type))
-                    .str(".hashCode(").str(fieldName(property)).append(");\n");
+                bb
+                    .str("    result = prime * result + ")
+                        .str(type.equals(PRIMITIVE_BOOLEAN) ? importedName(BOOLEAN) : importedUtilClass(type))
+                        .str(".hashCode(").str(fieldName(property)).str(");").newLine();
             }
-            bb.append("    return result;\n");
+            bb.str("    return result;").newLine();
         }
-        bb.append("}\n");
-        return bb;
+        return bb.eol("}");
     }
 
     final @Nullable StringBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
@@ -811,29 +751,11 @@ class ClassTemplate extends BaseTemplate {
     }
 
     @NonNull BlockBuilder allValuesConstructor() {
-        //        public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
-        //            «IF !parentProperties.empty»
-        //                super(«parentProperties.asArguments»);
-        //            «ENDIF»
-        //            «FOR p : allProperties»
-        //                «generateRestrictions(type, p.fieldName, p.returnType)»
-        //            «ENDFOR»
-        //
-        //            «FOR p : properties»
-        //                «val fieldName = p.fieldName»
-        //                «IF p.returnType.simpleName.endsWith("[]")»
-        //                    this.«fieldName» = «CODEHELPERS.importedName».copyArray(«fieldName»);
-        //                «ELSE»
-        //                    this.«fieldName» = «fieldName»;
-        //                «ENDIF»
-        //            «ENDFOR»
-        //        }
-
         final var bb = new BlockBuilder()
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(") {")
                 .nl();
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").str(asArguments(parentProperties)).append(");\n");
+            bb.str("    super(").str(asArguments(parentProperties)).str(");").newLine();
         }
         for (var prop : allProperties) {
             bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
@@ -843,13 +765,12 @@ class ClassTemplate extends BaseTemplate {
 
             if (prop.getReturnType().simpleName().endsWith("[]")) {
                 bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
-                    .str(fieldName).append(");\n");
+                    .str(fieldName).str(");").newLine();
             } else {
-                bb.str("    this.").str(fieldName).str(" = ").str(fieldName).append(";\n");
+                bb.str("    this.").str(fieldName).str(" = ").str(fieldName).str(";").newLine();
             }
         }
-        bb.append("}\n");
-        return bb;
+        return bb.eol("}");
     }
 
     StringBuilder copyConstructor() {
@@ -874,31 +795,18 @@ class ClassTemplate extends BaseTemplate {
 
     @NonNullByDefault
     final BlockBuilder parentConstructor() {
-        //        /**
-        //         * Creates a new instance from «genTO.superType.importedName»
-        //         *
-        //         * @param source Source object
-        //         */
-        //        public «type.simpleName»(«genTO.superType.importedName» source) {
-        //            super(source);
-        //            «genPatternEnforcer("getValue()")»
-        //        }
         final var importedSuper = importedName(genTO.getSuperType());
 
-        final var bb = new BlockBuilder();
-        bb.append("/**\n");
-        bb.str(" * Creates a new instance from ").append(importedSuper);
-        bb.nl().append(
-                  " *\n");
-        bb.append(" * @param source Source object\n");
-        bb.append(" */\n");
-        bb.str("public ").append(type().simpleName());
-        bb.str("(").append(importedSuper);
-        bb.append(" source) {\n");
-        bb.append("    super(source);\n");
-        bb.indented(genPatternEnforcer("getValue()"));
-        bb.append("}\n");
-        return bb;
+        return new BlockBuilder()
+            .eol("/**")
+            .str(" * Creates a new instance from ").eol(importedSuper)
+            .eol(" *")
+            .eol(" * @param source Source object")
+            .eol(" */")
+            .str("public ").str(type().simpleName()).str("(").str(importedSuper).str(" source) {").nl()
+            .eol("    super(source);")
+            .indented(genPatternEnforcer("getValue()"))
+            .eol("}");
     }
 
     private BlockBuilder typedefConstructor() {
@@ -923,11 +831,11 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var bb = new BlockBuilder()
-            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(\"").str(VALUE_PROP).str("\")").nl()
+            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(\"").str(VALUE_PROP).eol("\")")
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(") {")
                 .nl();
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").str(asArguments(parentProperties)).append(");\n");
+            bb.str("    super(").str(asArguments(parentProperties)).str(");").newLine();
         }
 
         final var value = valueProperty(allProperties);
@@ -943,12 +851,13 @@ class ClassTemplate extends BaseTemplate {
                 bb.str(", ").strI(decimal64.fractionDigits());
             }
             bb.str(")").append(cloneCall(value));
-            bb.append(";\n");
+            bb.str(";").newLine();
         }
-        bb.indented(generateRestrictions(type(), fieldName, value.getReturnType()));
-        bb.nl().indented(genPatternEnforcer(fieldName));
-        bb.append("}\n");
-        return bb;
+        return bb
+            .indented(generateRestrictions(type(), fieldName, value.getReturnType()))
+            .nl()
+            .indented(genPatternEnforcer(fieldName))
+            .eol("}");
     }
 
     private static @Nullable GeneratedProperty valueProperty(final List<GeneratedProperty> props) {
