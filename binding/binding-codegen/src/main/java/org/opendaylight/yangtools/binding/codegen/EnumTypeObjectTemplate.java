@@ -68,7 +68,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         }
 
         bb
-            .str(generatedAnnotation()).nl()
+            .eol(generatedAnnotation())
             .str("public enum ").str(typeName).str(" implements ").str(enumTypeObject).append(" {\n");
 
         final var it = archetype.values().iterator();
