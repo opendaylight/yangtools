@@ -96,14 +96,14 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param constraints Restrictions which need to be applied.
      * @return Method source code.
      */
-    protected abstract @NonNull String generateRangeCheckerImplementation(@NonNull String checkerName,
+    protected abstract @NonNull StringBuilder generateRangeCheckerImplementation(@NonNull String checkerName,
             @NonNull RangeConstraint<?> constraints, Function<JavaTypeName, String> classImporter);
 
     private static @NonNull String rangeCheckerName(final String member) {
         return "check" + member + "Range";
     }
 
-    String generateRangeChecker(final @NonNull String member, final @NonNull RangeConstraint<?> constraints,
+    StringBuilder generateRangeChecker(final @NonNull String member, final @NonNull RangeConstraint<?> constraints,
             final JavaFileTemplate template) {
         return generateRangeCheckerImplementation(rangeCheckerName(member), constraints, template::importedName);
     }
