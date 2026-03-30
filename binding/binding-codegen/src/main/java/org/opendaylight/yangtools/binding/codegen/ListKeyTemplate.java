@@ -74,18 +74,21 @@ final class ListKeyTemplate extends ClassTemplate {
     }
 
     @Override
-    String asGetterMethod(final GeneratedProperty field) {
+    StringBuilder asGetterMethod(final GeneratedProperty field) {
         final var fieldName = field.getName();
         final var returnType = field.getReturnType();
 
-        return "/**\n"
-            +  " * Return " + fieldName + ", guaranteed to be non-null.\n"
-            +  " *\n"
-            +  " * @return {@code " + importedName(returnType) + "} " + fieldName + ", guaranteed to be non-null.\n"
-            +  " */\n"
-            +  "public " + importedNonNull(returnType) + ' ' + getterMethodName(field) + "() {\n"
-            +  "    return " + fieldName(field) + cloneCall(field) + ";\n"
-            + "}\n";
+        return new StringBuilder()
+            .append("/**\n")
+            .append(" * Return ").append(fieldName).append(", guaranteed to be non-null.\n")
+            .append(" *\n")
+            .append(" * @return {@code ").append(importedName(returnType)).append("} ").append(fieldName)
+                .append(", guaranteed to be non-null.\n")
+            .append(" */\n")
+            .append("public ").append(importedNonNull(returnType)).append(' ').append(getterMethodName(field))
+                .append("() {\n")
+            .append("    return ").append(fieldName(field)).append(cloneCall(field)).append(";\n")
+            .append("}\n");
     }
 
     @Override

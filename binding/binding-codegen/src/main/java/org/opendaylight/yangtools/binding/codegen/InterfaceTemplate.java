@@ -163,7 +163,7 @@ class InterfaceTemplate extends BaseTemplate {
         final var fqcn = type().canonicalName();
 
         return new BlockBuilder()
-            .at().strLn(importedName(OVERRIDE))
+            .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(CLASS)).str("<").str(fqcn)
                 .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
             .str("    return ").str(fqcn).str(".class;").nl()

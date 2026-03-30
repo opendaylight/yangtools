@@ -80,6 +80,13 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         return this;
     }
 
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String validateStr(final String strArg) {
+        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
+        return requireNonNull(strArg);
+    }
+
     /**
      * Append {@code Integer.toString(value}.
      *
@@ -101,15 +108,25 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
      */
     @NonNullByDefault
     @CheckReturnValue
-    BlockBuilder strLn(final String content) {
+    BlockBuilder eol(final String content) {
         return str(content).nl();
     }
 
+    /**
+     * Append a text block. The string has to be known to:
+     * <ul>
+     *    <li>be non-empty</li>
+     *    <li>contain one or more new lines</li>
+     * </ul>
+     *
+     * @param text the {@link String}
+     * @return this instance
+     */
     @NonNullByDefault
     @CheckReturnValue
-    private static String validateStr(final String strArg) {
-        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
-        return requireNonNull(strArg);
+    BlockBuilder txt(final String text) {
+        super.append(requireNonNull(text));
+        return this;
     }
 
     @Override
