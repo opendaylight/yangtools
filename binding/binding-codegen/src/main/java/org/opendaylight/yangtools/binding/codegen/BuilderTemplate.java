@@ -356,7 +356,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return new BlockBuilder()
             .str("private static final class LazyEmpty {").nl()
             .str("    static final ").str(nonnullTarget).str(" INSTANCE = new ").str(type().simpleName())
-                .strLn("().build();")
+                .eol("().build();")
             .nl()
             .str("    private LazyEmpty() {").nl()
             .str("        // Hidden on purpose").nl()
@@ -364,7 +364,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .str("}").nl()
             .nl()
             .str("/**").nl()
-            .str(" * Get empty instance of ").str(targetName).strLn(".")
+            .str(" * Get empty instance of ").str(targetName).eol(".")
             .str(" *").nl()
             .str(" * @return An empty {@link ").str(targetName).str("}").nl()
             .str(" */").nl()
@@ -702,13 +702,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(" * @param values desired value\n");
         bb.append(" * @return this builder\n");
         bb.append(" */\n");
-        bb.append("public ");
-        bb.append(type().simpleName());
-        bb.append(" set");
-        bb.append(Naming.toFirstUpper(field.getName()));
-        bb.append("(final ");
-        bb.append(importedReturnType(field));
-        bb.append(" values) {\n");
+        bb.str("public ").str(type().simpleName()).str(" set").str(Naming.toFirstUpper(field.getName())).str("(final ")
+            .str(importedReturnType(field)).append(" values) {\n");
 
         //        «IF restrictions !== null»
         //            if (values != null) {
@@ -718,25 +713,19 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //            }
         //        «ENDIF»
         if (restrictions != null) {
-            bb.append("if (values != null) {\n");
-            bb.append("   for (");
-            bb.append(importedName(actualType), "   ");
-            bb.append(" value : values.values()) {\n");
-            bb.indentedTwice(checkArgument(field, restrictions, actualType, "value"));
-            bb.append("   }\n");
-            // FIXME: no nl() here ?
-            bb.nl().append("}\n");
+            bb
+                .eol("if (values != null) {")
+                .str("   for (").str(importedName(actualType)).str(" value : values.values()) {").nl()
+                .indentedTwice(checkArgument(field, restrictions, actualType, "value"))
+                .eol("   }")
+                // FIXME: no nl() here ?
+                .nl().append("}\n");
         }
 
-        //            this.«field.fieldName» = values;
-        //            return this;
-        //        }
-        bb.append("    this.");
-        bb.append(fieldName(field));
-        bb.append(" = values;\n");
-        bb.append("    return this;\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .str("    this.").str(fieldName(field)).eol(" = values;")
+            .eol("    return this;")
+            .eol("}");
     }
 
     private @NonNull BlockBuilder generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
@@ -776,25 +765,22 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private @NonNull BlockBuilder generateSetters() {
         final var bb = new BlockBuilder();
         if (keyType != null) {
-            bb.append("/**\n");
-            bb.append(" * Set the key value corresponding to {@link ");
-            bb.append(importedName(targetType));
-            bb.append("#");
-            bb.append(Naming.KEY_AWARE_KEY_NAME, " ");
-            bb.append("()} to the specified\n");
-            bb.append(" * value.\n");
-            bb.append(" *\n");
-            bb.append(" * @param key desired value\n");
-            bb.append(" * @return this builder\n");
-            bb.append(" */\n");
-            bb.append("public ");
-            bb.append(type().simpleName());
-            bb.append(" withKey(final ");
-            bb.append(importedName(keyType));
-            bb.append(" key) {\n");
-            bb.append("    this.key = key;\n");
-            bb.append("    return this;\n");
-            bb.append("}\n");
+            bb
+                .eol("/**")
+                .str(" * Set the key value corresponding to {@link ").str(importedName(targetType)).str("#")
+                    .str(Naming.KEY_AWARE_KEY_NAME).eol("()} to the specified")
+                .txt("""
+                       * value.
+                       *
+                       * @param key desired value
+                       * @return this builder
+                       */
+                      """)
+                .str("public ").str(type().simpleName()).str(" withKey(final ").str(importedName(keyType))
+                    .str(" key) {").nl()
+                .eol("    this.key = key;")
+                .eol("    return this;\n")
+                .append("}\n");
         }
         for (var property : properties) {
             bb.append(generateSetter(property));
@@ -840,31 +826,21 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             // FIXME: use a text block here
             bb.nl().append(
                      "/**\n");
-            bb.append(" * Remove an augmentation from this builder\'s product. If this builder does not track such an");
+            bb.append(" * Remove an augmentation from this builder\'s producbbt. If this builder does not track such an");
             bb.append(" augmentation\n");
             bb.append(" * type, this method does nothing.\n");
             bb.append(" *\n");
             bb.append(" * @param augmentationType augmentation type to be removed\n");
             bb.append(" * @return this builder\n");
             bb.append(" */\n");
-            bb.append("public ");
-            bb.append(type().simpleName());
-            bb.append(" removeAugmentation(");
-            bb.append(importedName(CLASS));
-            bb.append("<? extends ");
-            bb.append(augmentTypeRef);
-            bb.append("> augmentationType) {\n");
-            bb.append("    if (this.");
-            bb.append(Naming.AUGMENTATION_FIELD, "    ");
-            bb.append(" instanceof ");
-            bb.append(hashMapRef, "    ");
-            bb.append(") {\n");
-            bb.append("        this.");
-            bb.append(Naming.AUGMENTATION_FIELD);
-            bb.append(".remove(augmentationType);\n");
-            bb.append("    }\n");
-            bb.append("    return this;\n");
-            bb.append("}\n");
+            bb
+                .str("public ").str(type().simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
+                    .str("<? extends ").str(augmentTypeRef).str("> augmentationType) {").nl()
+                .str("    if (this." + Naming.AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(") {").nl()
+                .eol("        this." + Naming.AUGMENTATION_FIELD + ".remove(augmentationType);")
+                .eol("    }")
+                .eol("    return this;")
+                .append("}\n");
         }
         return bb;
     }
