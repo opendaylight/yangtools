@@ -43,43 +43,26 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder constructors() {
-        //      «unionConstructorsParentProperties»
-        //      «unionConstructors»
-        //      «IF !allProperties.empty»
-        //          «copyConstructor»
-        //      «ENDIF»
-        //      «IF properties.empty && !parentProperties.empty»
-        //          «parentConstructor»
-        //      «ENDIF»
-        //
-        //      «generateStringValue»
-
         final var bb = new BlockBuilder();
         bb.append(unionConstructorsParentProperties());
-        bb.newLineIfNotEmpty();
         bb.append(unionConstructors());
-        bb.newLineIfNotEmpty();
         if (!allProperties.isEmpty()) {
             bb.append(copyConstructor());
-            bb.newLineIfNotEmpty();
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
             bb.append(parentConstructor());
-            bb.newLineIfNotEmpty();
         }
         bb.nl().append(generateStringValue());
-        bb.newLineIfNotEmpty();
         return bb;
     }
 
-    // FIXME: return a Block
-    private String unionConstructors() {
+    private @Nullable StringBuilder unionConstructors() {
         if (finalProperties.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var simpleName = type().simpleName();
-        final var sb = new StringBuilder();
+        final var sb = new StringBuilder().append('\n');
         final var it = finalProperties.iterator();
         while (true) {
             final var property = it.next();
@@ -121,15 +104,15 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             sb.append("}\n");
 
             if (!it.hasNext()) {
-                return sb.toString();
+                return sb;
             }
             sb.append('\n');
         }
     }
 
-    private String unionConstructorsParentProperties() {
+    private @Nullable StringBuilder unionConstructorsParentProperties() {
         if (parentProperties.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var sb = new StringBuilder();
@@ -146,13 +129,13 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
                 .append("}\n");
 
             if (!it.hasNext()) {
-                return sb.toString();
+                return sb;
             }
             sb.append('\n');
         }
     }
 
-    private String generateStringValue() {
+    private StringBuilder generateStringValue() {
         final var sb = new StringBuilder()
             .append("""
                 /**
@@ -216,8 +199,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
 
         return sb
             .append("    throw new IllegalStateException(\"No value assigned\");\n")
-            .append("}\n")
-            .toString();
+            .append("}\n");
     }
 
     private static @Nullable Type typedefReturnType(final Type type) {
@@ -234,7 +216,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    String copyConstructor() {
+    StringBuilder copyConstructor() {
         final var type = type();
         final var simpleName = type.simpleName();
 
@@ -260,7 +242,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             }
             sb.append(";\n");
         }
-        return sb.append("}\n").toString();
+        return sb.append("}\n");
     }
 
     @Override
