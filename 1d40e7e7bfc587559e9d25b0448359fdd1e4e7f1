@@ -47,6 +47,54 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "076957fd_c82c4ad9",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/InterfaceTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-03-30T13:30:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5653dec_0cc69ab3",
+      "range": {
+        "startLine": 453,
+        "startChar": 13,
+        "endLine": 453,
+        "endChar": 16
+      },
+      "revId": "1d40e7e7bfc587559e9d25b0448359fdd1e4e7f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9facc92b_e0335b26",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/InterfaceTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-03-30T13:30:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa2e12d8_61ce8ec8",
+      "range": {
+        "startLine": 453,
+        "startChar": 38,
+        "endLine": 453,
+        "endChar": 41
+      },
+      "revId": "1d40e7e7bfc587559e9d25b0448359fdd1e4e7f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e277c415_c4a9fc70",
@@ -70,6 +118,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a0df0d7_31e4b03e",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/InterfaceTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-03-30T13:30:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e277c415_c4a9fc70",
+      "range": {
+        "startLine": 456,
+        "startChar": 63,
+        "endLine": 456,
+        "endChar": 69
+      },
+      "revId": "1d40e7e7bfc587559e9d25b0448359fdd1e4e7f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7da94e7f_27ab38d6",
@@ -83,6 +155,30 @@
       "writtenOn": "2026-03-30T11:02:18Z",
       "side": 1,
       "message": "concat + .newLine()",
+      "range": {
+        "startLine": 460,
+        "startChar": 17,
+        "endLine": 460,
+        "endChar": 23
+      },
+      "revId": "1d40e7e7bfc587559e9d25b0448359fdd1e4e7f1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b8a21b5_4e122fc8",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/InterfaceTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-03-30T13:30:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7da94e7f_27ab38d6",
       "range": {
         "startLine": 460,
         "startChar": 17,
