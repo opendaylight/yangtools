@@ -11,13 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.DOUBLE_TAB;
-import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.TAB;
-import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.TRIPLE_TAB;
-import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.doubleTab;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.getFiles;
-import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.tab;
-import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.tripleTab;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,9 +32,6 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     public static final String BAR_CONT = "BarCont";
     public static final String BOOLEAN_CONT = "BooleanCont";
 
-    private static final String BAR_LST = "BarLst";
-    private static final String BAZ_GRP = "BazGrp";
-    private static final String FOO_GRP = "FooGrp";
     private static final String RESOLVED_LEAF_GRP = "ResolvedLeafGrp";
     private static final String RESOLVED_LEAFLIST_GRP = "ResolvedLeafListGrp";
     private static final String TRANSITIVE_GROUP = "TransitiveGroup";
@@ -51,24 +42,9 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static final String GET_LEAF1_TYPE_OBJECT = "    Object getLeaf1();";
     private static final String GET_LEAF1_TYPE_STRING = "    String getLeaf1();";
-    private static final String GET_LEAFLIST1_WILDCARD = "    @Nullable Set<?> getLeafList1();";
     private static final String GET_LEAFLIST1_STRING = "    @Nullable Set<String> getLeafList1();";
     private static final String GET_LEAFLIST1_DECLARATION = " getLeafList1();";
     private static final String GET_LEAF1_DECLARATION = " getLeaf1();";
-
-    private static final char CLOSING_METHOD_BRACE = '}';
-    private static final String TAB_CLOSING_METHOD_BRACE = TAB + CLOSING_METHOD_BRACE;
-    private static final String DTAB_CLOSING_METHOD_BRACE = DOUBLE_TAB + CLOSING_METHOD_BRACE;
-
-    private static final String FOO_GRP_REF = "FooGrp";
-    private static final String RESOLVED_LEAF_GRP_REF = "ResolvedLeafGrp";
-    private static final String UNRESOLVED_GROUPING_REF = "UnresolvedGrouping";
-
-    private static final String LEAF2_ASSIGNMENT = "this._leaf2 = arg.getLeaf2();";
-
-    private static final String TAB_FIELDS_FROM_SIGNATURE = TAB + "public void fieldsFrom(final Grouping arg) {";
-    private static final String TTAB_SET_IS_VALID_ARG_TRUE = TRIPLE_TAB + "isValidArg = true;";
-    private static final String DTAB_INIT_IS_VALID_ARG_FALSE = DOUBLE_TAB + "boolean isValidArg = false;";
 
     private static Path sourcesOutputDir;
     private static Path compiledOutputDir;
@@ -95,13 +71,13 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testGroupingWithUnresolvedLeafRefs() throws Exception {
-        verifyReturnType(FOO_GRP, GET_LEAF1_NAME, Types.objectType());
-        verifyReturnType(FOO_GRP, GET_LEAFLIST1_NAME, Types.setTypeWildcard());
+        verifyReturnType("FooGrp", GET_LEAF1_NAME, Types.objectType());
+        verifyReturnType("FooGrp", GET_LEAFLIST1_NAME, Types.setTypeWildcard());
 
-        final String content = getFileContent(FOO_GRP);
+        final String content = getFileContent("FooGrp");
 
         assertThat(content).contains(GET_LEAF1_TYPE_OBJECT);
-        assertThat(content).contains(GET_LEAFLIST1_WILDCARD);
+        assertThat(content).contains("    @Nullable Set<?> getLeafList1();");
     }
 
     @Test
@@ -166,8 +142,8 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     @Test
     void testGroupingsUsageWhereLeafrefAlreadyResolved() throws Exception {
         leafList1AndLeaf1Absence(BAR_CONT);
-        leafList1AndLeaf1Absence(BAR_LST);
-        leafList1AndLeaf1Absence(BAZ_GRP);
+        leafList1AndLeaf1Absence("BarLst");
+        leafList1AndLeaf1Absence("BazGrp");
     }
 
     private static void leafList1AndLeaf1Absence(final String typeName) throws Exception {
@@ -201,43 +177,40 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static void barContBuilderConstructorResolvedLeafGrpTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
-                tab("public BarContBuilder(" + RESOLVED_LEAF_GRP_REF + " arg) {"),
-                doubleTab("this._leaf1 = arg.getLeaf1();"),
-                doubleTab("this._leafList1 = arg.getLeafList1();"),
-                doubleTab("this._name = arg.getName();"),
-                doubleTab(LEAF2_ASSIGNMENT),
-                TAB_CLOSING_METHOD_BRACE);
+            "    public BarContBuilder(ResolvedLeafGrp arg) {",
+            "        this._leaf1 = arg.getLeaf1();",
+            "        this._leafList1 = arg.getLeafList1();",
+            "        this._name = arg.getName();",
+            "        this._leaf2 = arg.getLeaf2();",
+            "    }");
     }
 
     private static void barContBuilderFieldsFromTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
-                TAB_FIELDS_FROM_SIGNATURE,
-                DTAB_INIT_IS_VALID_ARG_FALSE,
-                doubleTab("if (arg instanceof " + FOO_GRP_REF + " castArg) {"),
-                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", castArg.getLeaf1());"),
-                tripleTab("this._leafList1 = CodeHelpers.checkSetFieldCast(String.class, \"leafList1\", "
-                    + "castArg.getLeafList1());"),
-                tripleTab("this._leaf2 = castArg.getLeaf2();"),
-                TTAB_SET_IS_VALID_ARG_TRUE,
-                DTAB_CLOSING_METHOD_BRACE,
-                doubleTab("if (arg instanceof " + RESOLVED_LEAF_GRP_REF + " castArg) {"),
-                tripleTab("this._name = castArg.getName();"),
-                TTAB_SET_IS_VALID_ARG_TRUE,
-                DTAB_CLOSING_METHOD_BRACE,
-                doubleTab("CodeHelpers.validValue(isValidArg, arg, \"[" + FOO_GRP_REF + ", " + RESOLVED_LEAF_GRP_REF
-                    + "]\");"),
-                TAB_CLOSING_METHOD_BRACE);
+            "    public void fieldsFrom(final Grouping arg) {",
+            "        boolean isValidArg = false;",
+            "        if (arg instanceof FooGrp castArg) {",
+            "            this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", castArg.getLeaf1());",
+            "            this._leafList1 = CodeHelpers.checkSetFieldCast(String.class, \"leafList1\", "
+                + "castArg.getLeafList1());",
+            "            this._leaf2 = castArg.getLeaf2();",
+            "            isValidArg = true;",
+            "        }",
+            "        if (arg instanceof ResolvedLeafGrp castArg) {",
+            "            this._name = castArg.getName();",
+            "            isValidArg = true;",
+            "        }",
+            "        CodeHelpers.validValue(isValidArg, arg, \"[FooGrp, ResolvedLeafGrp]\");",
+            "    }");
     }
 
     private static void barContBuilderConstructorFooGrpTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
-                tab("public BarContBuilder(" + FOO_GRP_REF + " arg) {"),
-                doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", "
-                    + "arg.getLeaf1());"),
-                doubleTab("this._leafList1 = CodeHelpers.checkSetFieldCast(String.class, \"leafList1\", "
-                    + "arg.getLeafList1());"),
-                doubleTab(LEAF2_ASSIGNMENT),
-                TAB_CLOSING_METHOD_BRACE);
+            "    public BarContBuilder(FooGrp arg) {",
+            "        this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", arg.getLeaf1());",
+            "        this._leafList1 = CodeHelpers.checkSetFieldCast(String.class, \"leafList1\", arg.getLeafList1());",
+            "        this._leaf2 = arg.getLeaf2();",
+            "    }");
     }
 
     @Test
@@ -251,22 +224,21 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static void booleanContBuilderFieldsFromTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
-                TAB_FIELDS_FROM_SIGNATURE,
-                DTAB_INIT_IS_VALID_ARG_FALSE,
-                doubleTab("if (arg instanceof " + UNRESOLVED_GROUPING_REF + " castArg) {"),
-                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", castArg.getLeaf1());"),
-                TTAB_SET_IS_VALID_ARG_TRUE,
-                DTAB_CLOSING_METHOD_BRACE,
-                doubleTab("CodeHelpers.validValue(isValidArg, arg, \"[" + UNRESOLVED_GROUPING_REF + "]\");"),
-                TAB_CLOSING_METHOD_BRACE);
+            "    public void fieldsFrom(final Grouping arg) {",
+            "        boolean isValidArg = false;",
+            "        if (arg instanceof UnresolvedGrouping castArg) {",
+            "            this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", castArg.getLeaf1());",
+            "            isValidArg = true;",
+            "        }",
+            "        CodeHelpers.validValue(isValidArg, arg, \"[UnresolvedGrouping]\");",
+            "    }");
     }
 
     private static void booleanContBuilderConstructorTest(final Path file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
-                tab("public BooleanContBuilder(" + UNRESOLVED_GROUPING_REF + " arg) {"),
-                doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", "
-                    + "arg.getLeaf1());"),
-                TAB_CLOSING_METHOD_BRACE);
+            "    public BooleanContBuilder(UnresolvedGrouping arg) {",
+            "        this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", arg.getLeaf1());",
+            "    }");
     }
 
     private static String getJavaFileName(final String name) {
