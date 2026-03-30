@@ -61,8 +61,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
         final var bb = new BlockBuilder();
         bb.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
-        bb.newLineIfNotEmpty();
-        bb.str("private static final class ").str(type().simpleName()).newLineIfNotEmpty();
+        bb.str("private static final class ").str(type().simpleName()).newLine();
         if (keyType != null) {
             bb.str("    extends ").str(importedName(ABSTRACT_ENTRY_OBJECT)).str("<").str(impIface).str(", ")
                 .str(importedName(keyType)).append(">\n");

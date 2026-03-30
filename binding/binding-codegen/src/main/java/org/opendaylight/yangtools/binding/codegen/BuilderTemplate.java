@@ -62,12 +62,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     BlockBuilder body() {
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(targetType)));
-        bb.newLineIfNotEmpty();
         bb.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
-        bb.newLineIfNotEmpty();
-        bb.append(generatedAnnotation());
-        bb.newLineIfNotEmpty();
         bb
+            .eol(generatedAnnotation())
             .str("public class ").str(type().simpleName()).str(" {").nl()
             // FIXME: remove this newline
             .nl()
@@ -173,7 +170,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     bb.newLine();
                 }
                 bb.append(generateConstructorFromIfc(genType));
-                bb.newLineIfNotEmpty();
             }
         }
         return bb;
@@ -183,46 +179,23 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      * Generate constructor with argument of given type.
      */
     private @NonNull BlockBuilder generateConstructorFromIfc(final GeneratedType genType) {
-        //        «IF impl.hasNonDefaultMethods»
-        //            «val typeName = impl.importedName»
-        //            /**
-        //             * Construct a new builder initialized from specified {@link «typeName»}.
-        //             *
-        //             * @param arg «typeName» from which the builder should be initialized
-        //             */
-        //            public «type.simpleName»(«typeName» arg) {
-        //                «printConstructorPropertySetter(impl)»
-        //            }
-        //
-        //        «ENDIF»
-        //        «FOR implTypeImplement : impl.implements»
-        //            «generateConstructorFromIfc(implTypeImplement)»
-        //        «ENDFOR»
-
         final var bb = new BlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
-            bb.append("/**\n");
-            bb.append(" * Construct a new builder initialized from specified {@link ");
-            bb.append(typeName);
-            bb.append("}.\n");
-            bb.append(" *\n");
-            bb.append(" * @param arg ");
-            bb.append(typeName);
-            bb.append(" from which the builder should be initialized\n");
-            bb.append(" */\n");
-            bb.append("public ");
-            bb.append(type().simpleName());
-            bb.append("(");
-            bb.append(typeName);
-            bb.append(" arg) {\n");
-            bb.indented(printConstructorPropertySetter(genType)).append("}\n");
-            bb.newLine();
+            bb
+                .eol("/**")
+                .str(" * Construct a new builder initialized from specified {@link ").str(typeName).eol("}.")
+                .eol(" *")
+                .str(" * @param arg ").str(typeName).eol(" from which the builder should be initialized")
+                .eol(" */")
+                .str("public ").str(type().simpleName()).str("(").str(typeName).str(" arg) {").nl()
+                .indented(printConstructorPropertySetter(genType))
+                .eol("}")
+                .newLine();
         }
         for (var implTypeImplement : genType.getImplements()) {
             if (implTypeImplement instanceof GeneratedType implType) {
                 bb.append(generateConstructorFromIfc(implType));
-                bb.newLineIfNotEmpty();
             }
         }
         return bb;
@@ -233,12 +206,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return null;
         }
 
-        //        «FOR getter : ifc.nonDefaultMethods»
-        //            «IF Naming.isGetterMethodName(getter.name)»
-        //                «val propertyName = getter.propertyNameFromGetter»
-        //                «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
-        //            «ENDIF»
-        //        «ENDFOR»
         final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName())) {
@@ -248,12 +215,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        //        «FOR impl : ifc.implements»
-        //            «printConstructorPropertySetter(impl, getSpecifiedGetters(ifc))»
-        //        «ENDFOR»
         for (var impl : ifc.getImplements()) {
             bb.append(printConstructorPropertySetter(impl, getSpecifiedGetters(ifc)));
-            bb.newLineIfNotEmpty();
         }
         return bb;
     }
@@ -273,11 +236,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //        «ENDIF»
         //    «ENDFOR»
         for (var getter : nonDefaultMethods(ifc)) {
-            if (isGetterMethodName(getter.getName())
-                && getterByName(alreadySetProperties, getter.getName()) == null) {
+            if (isGetterMethodName(getter.getName()) && getterByName(alreadySetProperties, getter.getName()) == null) {
                 bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                bb.append(";\n");
+                bb.str(";").newLine();
             }
         }
 
@@ -288,7 +250,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         for (var descendant : ifc.getImplements()) {
             bb.append(printConstructorPropertySetter(descendant,
                 Sets.union(alreadySetProperties, getSpecifiedGetters(ifc))));
-            bb.newLineIfNotEmpty();
         }
         return bb;
     }
@@ -319,11 +280,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //        }
         final var bb = new BlockBuilder();
         bb.append(generateMethodFieldsFromComment(targetType));
-        bb.newLineIfNotEmpty();
-        bb.append("public void fieldsFrom(final ");
-        bb.append(importedName(BindingTypes.GROUPING));
-        bb.append(" arg) {\n");
-        bb.append("    boolean isValidArg = false;\n");
+        bb
+            .str("public void fieldsFrom(final ").str(importedName(BindingTypes.GROUPING)).str(" arg) {").nl()
+            .str("    boolean isValidArg = false;").newLine();
         for (var impl : getAllIfcs(targetType)) {
             bb.indented(generateIfCheck(impl, done));
         }
@@ -501,7 +460,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         for (var def : type().getConstantDefinitions()) {
             if (!def.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
                 bb.append(emitConstant(def));
-                bb.newLineIfNotEmpty();
                 continue;
             }
 
@@ -599,7 +557,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         if (restrictions != null) {
             bb.append(generateCheckers(field, restrictions, actualType));
-            bb.newLineIfNotEmpty();
         }
 
         //
@@ -612,19 +569,17 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //     * @return this builder
         //     */
         //    public «type.simpleName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
-        bb.nl().append(
-                  "/**\n");
-        bb.append(" * Set the property corresponding to {@link ");
-        bb.append(importedName(targetType));
-        bb.append("#");
-        bb.append(field.getGetterName());
-        bb.append("()} to the specified\n");
-        bb.append(" * value.\n");
-        bb.append(" *\n");
-        bb.append(" * @param values desired value\n");
-        bb.append(" * @return this builder\n");
-        bb.append(" */\n");
-        bb.str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+        bb
+            .nl()
+            .eol("/**")
+            .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
+                .str(field.getGetterName()).eol("()} to the specified")
+        .eol(" * value.")
+        .eol(" *")
+        .eol(" * @param values desired value")
+        .eol(" * @return this builder")
+        .eol(" */")
+        .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
             .str(importedReturnType(field)).append(" values) {\n");
 
         //        «IF restrictions !== null»
@@ -654,7 +609,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
             bb.append(generateCheckers(field, restrictions, actualType));
-            bb.newLineIfNotEmpty();
         }
 
         //
@@ -711,7 +665,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
             bb.nl().append(generateCheckers(field, restrictions, actualType));
-            bb.newLineIfNotEmpty();
         }
         bb
             .nl()
@@ -756,13 +709,14 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                       """)
                 .str("public ").str(type().simpleName()).str(" withKey(final ").str(importedName(keyType))
                     .str(" key) {").nl()
-                .eol("    this.key = key;")
-                .eol("    return this;\n")
-                .append("}\n");
+                .txt("""
+                          this.key = key;
+                          return this;
+                      }
+                      """);
         }
         for (var property : properties) {
             bb.append(generateSetter(property));
-            bb.newLineIfNotEmpty();
         }
         bb.newLine();
         if (augmentType != null) {
@@ -809,97 +763,54 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    // FIXME: remove this suppression
-    @SuppressWarnings("checkstyle:lineLength")
     private @NonNull BlockBuilder createDescription(final GeneratedType targetType) {
-        //        val target = targetType.importedName
-        //        return '''
-        //        Class that builds {@link «target»} instances. Overall design of the class is that of a
-        //        <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent interface</a>, where method chaining is used.
-        //
-        //        <p>
-        //        In general, this class is supposed to be used like this template:
-        //        <pre>
-        //          <code>
-        //            «target» create«target»(int fooXyzzy, int barBaz) {
-        //                return new «target»Builder()
-        //                    .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())
-        //                    .setBar(new BarBuilder().setBaz(barBaz).build())
-        //                    .build();
-        //            }
-        //          </code>
-        //        </pre>
-        //
-        //        <p>
-        //        This pattern is supported by the immutable nature of «target», as instances can be freely passed around without
-        //        worrying about synchronization issues.
-        //
-        //        <p>
-        //        As a side note: method chaining results in:
-        //        <ul>
-        //          <li>very efficient Java bytecode, as the method invocation result, in this case the Builder reference, is
-        //              on the stack, so further method invocations just need to fill method arguments for the next method
-        //              invocation, which is terminated by {@link #build()}, which is then returned from the method</li>
-        //          <li>better understanding by humans, as the scope of mutable state (the builder) is kept to a minimum and is
-        //              very localized</li>
-        //          <li>better optimization opportunities, as the object scope is minimized in terms of invocation (rather than
-        //              method) stack, making <a href="https://en.wikipedia.org/wiki/Escape_analysis">escape analysis</a> a lot
-        //              easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely
-        //              eliminated</li>
-        //        </ul>
-        //
-        //        @see «target»
-
         final var target = importedName(targetType);
-        final var bb = new BlockBuilder();
-        // FIXME: use Java text blocks as much as possible
-        bb.append("Class that builds {@link ");
-        bb.append(target);
-        bb.append("} instances. Overall design of the class is that of a\n");
-        bb.append("<a href=\"https://en.wikipedia.org/wiki/Fluent_interface\">fluent interface</a>, where method chaining is used.\n");
-        bb.nl().append(
-                  "<p>\n");
-        bb.append("In general, this class is supposed to be used like this template:\n");
-        bb.append("<pre>\n");
-        bb.append("  <code>\n");
-        bb.append("    ");
-        bb.append(target);
-        bb.append(" create");
-        bb.append(target);
-        bb.append("(int fooXyzzy, int barBaz) {\n");
-        bb.append("        return new ");
-        bb.append(target);
-        bb.append("Builder()\n");
-        bb.append("            .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())\n");
-        bb.append("            .setBar(new BarBuilder().setBaz(barBaz).build())\n");
-        bb.append("            .build();\n");
-        bb.append("    }\n");
-        bb.append("  </code>\n");
-        bb.append("</pre>\n");
-        bb.nl().append(
-                  "<p>\n");
-        bb.append("This pattern is supported by the immutable nature of ");
-        bb.append(target);
-        bb.append(", as instances can be freely passed around without");
-        bb.newLineIfNotEmpty();
-        bb.append("worrying about synchronization issues.\n");
-        bb.nl().append("<p>\n");
-        bb.append("As a side note: method chaining results in:");
-        bb.nl().append("<ul>");
-        bb.nl().append("  <li>very efficient Java bytecode, as the method invocation result, in this case the Builder reference, is\n");
-        bb.append("      on the stack, so further method invocations just need to fill method arguments for the next method\n");
-        bb.append("      invocation, which is terminated by {@link #build()}, which is then returned from the method</li>\n");
-        bb.append("  <li>better understanding by humans, as the scope of mutable state (the builder) is kept to a minimum and is\n");
-        bb.append("      very localized</li>\n");
-        bb.append("  <li>better optimization opportunities, as the object scope is minimized in terms of invocation (rather than\n");
-        bb.append("      method) stack, making <a href=\"https://en.wikipedia.org/wiki/Escape_analysis\">escape analysis</a> a lot\n");
-        bb.append("      easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely\n");
-        bb.append("      eliminated</li>\n");
-        bb.append("</ul>\n");
-        bb.nl().append("@see ");
-        bb.append(target);
-        bb.newLineIfNotEmpty();
-        return bb;
+        return new BlockBuilder()
+            .str("Class that builds {@link ").str(target).eol("} instances. Overall design of the class is that of a")
+            .txt("""
+                  <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent interface</a>, where method chaining \
+                  is used.
+
+                  <p>In general, this class is supposed to be used like this template:
+                  <pre>
+                    <code>
+                  """)
+            .str("    ").str(target).str(" create").str(target).str("(int fooXyzzy, int barBaz) {").nl()
+            .str("        return new ").str(target).eol("Builder()")
+            .txt("""
+                              .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())
+                              .setBar(new BarBuilder().setBaz(barBaz).build())
+                              .build();
+                      }
+                    </code>
+                  </pre>
+
+                  """)
+            .str("<p>This pattern is supported by the immutable nature of ").str(target)
+                .eol(", as instances can be freely passed around without")
+            .txt("""
+                  worrying about synchronization issues.
+
+                  <p>As a side note: method chaining results in:
+                  <ul>
+                    <li>very efficient Java bytecode, as the method invocation result, in this case the Builder \
+                  reference, is
+                        on the stack, so further method invocations just need to fill method arguments for the next \
+                  method
+                        invocation, which is terminated by {@link #build()}, which is then returned from the method</li>
+                    <li>better understanding by humans, as the scope of mutable state (the builder) is kept to a \
+                  minimum and is
+                        very localized</li>
+                    <li>better optimization opportunities, as the object scope is minimized in terms of invocation \
+                  (rather than
+                        method) stack, making <a href="https://en.wikipedia.org/wiki/Escape_analysis">escape \
+                  analysis</a> a lot
+                        easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely
+                        eliminated</li>
+                  </ul>
+
+                  """)
+            .str("@see ").str(target).nl();
     }
 
     @Override
