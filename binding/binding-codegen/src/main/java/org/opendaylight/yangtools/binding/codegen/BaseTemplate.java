@@ -714,7 +714,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
             if (!it.hasNext()) {
                 break;
             }
-            bb.append("\n");
+            bb.newLine();
         }
         return bb;
     }
