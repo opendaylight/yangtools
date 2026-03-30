@@ -615,7 +615,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
             begin = end + 1;
         }
 
-        bb.append(sb.append(indent).append(" */").toString());
+        bb.append(sb.append(indent).append(" */\n").toString());
     }
 
     @NonNullByDefault
