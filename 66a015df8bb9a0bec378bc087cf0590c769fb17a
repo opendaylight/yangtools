@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d298ffea_f78fefb3",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/BuilderTemplate.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 820,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-03-30T15:46:31Z",
+      "side": 1,
+      "message": "stray",
+      "range": {
+        "startLine": 820,
+        "startChar": 21,
+        "endLine": 820,
+        "endChar": 38
+      },
+      "revId": "66a015df8bb9a0bec378bc087cf0590c769fb17a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
