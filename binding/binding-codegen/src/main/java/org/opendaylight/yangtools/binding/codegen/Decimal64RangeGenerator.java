@@ -54,7 +54,7 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
     }
 
     @Override
-    protected String generateRangeCheckerImplementation(final String checkerName,
+    protected StringBuilder generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraint, final Function<JavaTypeName, String> classImporter) {
         final var constraints = constraint.getAllowedRanges().asRanges();
         final var codeHelpers = classImporter.apply(JavaFileTemplate.CODEHELPERS);
@@ -87,6 +87,6 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         sb.append("    ").append(codeHelpers).append(".throwInvalidRange(").append(msg).append("]\", value);\n");
         sb.append("}\n");
 
-        return sb.toString();
+        return sb;
     }
 }
