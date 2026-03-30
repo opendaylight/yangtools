@@ -181,12 +181,12 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private static void assertNotOverriddenGetter(final String fileContent, final String getterString) {
-        assertThat(fileContent).doesNotContain("@Override" + System.lineSeparator() + getterString);
+        assertThat(fileContent).doesNotContain("@Override\n" + getterString);
         assertThat(fileContent).contains(getterString);
     }
 
     private static void assertOverriddenGetter(final String fileContent, final String getterString) {
-        assertThat(fileContent).contains("@Override" + System.lineSeparator() + getterString);
+        assertThat(fileContent).contains("@Override\n" + getterString);
     }
 
     @Test
