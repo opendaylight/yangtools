@@ -23,8 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -70,13 +70,13 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final String TTAB_SET_IS_VALID_ARG_TRUE = TRIPLE_TAB + "isValidArg = true;";
     private static final String DTAB_INIT_IS_VALID_ARG_FALSE = DOUBLE_TAB + "boolean isValidArg = false;";
 
-    private Path sourcesOutputDir;
-    private Path compiledOutputDir;
-    private List<GeneratedType> types;
-    private Map<String, Path> files;
+    private static Path sourcesOutputDir;
+    private static Path compiledOutputDir;
+    private static List<GeneratedType> types;
+    private static Map<String, Path> files;
 
-    @BeforeEach
-    void before() {
+    @BeforeAll
+    static void before() {
         sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal426");
         compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal426");
         types = generateTestSources("/compilation/mdsal426", sourcesOutputDir);
@@ -84,9 +84,13 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         files = getFiles(sourcesOutputDir);
     }
 
-    @AfterEach
-    void after() throws Exception {
+    @AfterAll
+    static void after() throws Exception {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
+        sourcesOutputDir = null;
+        compiledOutputDir = null;
+        types = null;
+        files = null;
     }
 
     @Test
