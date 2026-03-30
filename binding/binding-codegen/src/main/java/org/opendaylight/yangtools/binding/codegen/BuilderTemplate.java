@@ -654,9 +654,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         if (restrictions != null) {
             bb.str("if (values != null) {").nl().str("   for (").str(importedName(actualType)).str(" value : values) {")
                 .newLine();
-            bb.append("       ");
-            bb.append(checkArgument(field, restrictions, actualType, "value"), "       ");
-            bb.newLineIfNotEmpty();
+            bb.indentedTwice(checkArgument(field, restrictions, actualType, "value"));
             bb.append("   }\n");
             bb.append("}\n");
         }
@@ -724,9 +722,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append("   for (");
             bb.append(importedName(actualType), "   ");
             bb.append(" value : values.values()) {\n");
-            bb.append("       ");
-            bb.append(checkArgument(field, restrictions, actualType, "value"), "       ");
-            bb.newLineIfNotEmpty();
+            bb.indentedTwice(checkArgument(field, restrictions, actualType, "value"));
             bb.append("   }\n");
             // FIXME: no nl() here ?
             bb.nl().append("}\n");
@@ -750,38 +746,28 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.nl().append(generateCheckers(field, restrictions, actualType));
             bb.newLineIfNotEmpty();
         }
-        bb.nl().append(
-                  "/**\n");
-        bb.append(" * Set the property corresponding to {@link ");
-        bb.append(importedName(targetType), " ");
-        bb.append("#");
-        bb.append(field.getGetterName());
-        bb.append("()} to the specified\n");
-        bb.append(" * value.\n");
-        bb.append(" *\n");
-        bb.append(" * @param value desired value\n");
-        bb.append(" * @return this builder\n");
-        bb.append(" */\n");
-        bb.append("public ");
-        bb.append(type().simpleName());
-        bb.append(" set");
-        bb.append(Naming.toFirstUpper(field.getName()));
-        bb.append("(final ");
-        bb.append(importedReturnType(field));
-        bb.append(" value) {\n");
+        bb
+            .nl()
+            .str("/**")
+            .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
+                .str(field.getGetterName()).str("()} to the specified").nl()
+            .str(" * value.").nl()
+            .str(" *").nl()
+            .str(" * @param value desired value").nl()
+            .str(" * @return this builder").nl()
+            .str(" */").nl()
+            .str("public ").str(type().simpleName()).str(" set").str(Naming.toFirstUpper(field.getName()))
+                .str("(final ").str(importedReturnType(field)).str(" value) {").newLine();
         if (restrictions != null) {
-            bb.append("    if (value != null) {\n");
-            bb.append("        ");
-            bb.append(checkArgument(field, restrictions, actualType, "value"), "        ");
-            bb.newLineIfNotEmpty();
-            bb.append("    }\n");
+            bb
+                .str("    if (value != null) {").nl()
+                .indentedTwice(checkArgument(field, restrictions, actualType, "value"))
+                .str("    }").newLine();
         }
-        bb.append("    this.");
-        bb.append(fieldName(field));
-        bb.append(" = value;\n");
-        bb.append("    return this;\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .str("    this.").str(fieldName(field)).str(" = value;").nl()
+            .str("    return this;").nl()
+            .str("}").nl();
     }
 
     /**

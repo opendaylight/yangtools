@@ -161,6 +161,16 @@ final class BlockBuilder extends StringConcatenation implements Mutable {
         return this;
     }
 
+    // FIXME: remove this method
+    @NonNull BlockBuilder indentedTwice(final @Nullable StringBuilder sb) {
+        if (sb != null) {
+            super.append("        ");
+            super.append(sb.toString(), "        ");
+            super.newLineIfNotEmpty();
+        }
+        return this;
+    }
+
     // FIXME: something like, but perhaps that is part of a JavaBlockBuilder along with importedName() et al.
     //    @CheckReturnValue
     //    @NonNull BlockBuilder fieldName(final GeneratedProperty property) {
