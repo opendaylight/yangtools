@@ -244,16 +244,13 @@ class ClassTemplate extends BaseTemplate {
         if (restrictions != null) {
             final var length = restrictions.getLengthConstraint();
             if (length.isPresent()) {
-                bb.nl().append("    ");
-                bb.append(LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
-                    length.orElseThrow(), this), "    ");
-                bb.newLineIfNotEmpty();
+                bb.nl().indented(
+                    LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
+                        length.orElseThrow(), this));
             }
             final var range = restrictions.getRangeConstraint();
             if (range.isPresent()) {
-                bb.nl().append("    ");
-                bb.append(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), this), "    ");
-                bb.newLineIfNotEmpty();
+                bb.nl().indented(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), this));
             }
         }
 

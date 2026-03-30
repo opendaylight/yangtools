@@ -122,7 +122,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     }
 
     @Override
-    protected final String generateRangeCheckerImplementation(final String checkerName,
+    protected final StringBuilder generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraints, final Function<JavaTypeName, String> classImporter) {
         final var sb = new StringBuilder();
         final var expressions = createExpressions(constraints, classImporter);
@@ -142,6 +142,6 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
                 .append("\", value);\n");
         }
 
-        return sb.append("}\n").toString();
+        return sb.append("}\n");
     }
 }
