@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -43,9 +44,9 @@ final class BlockBuilder implements Mutable {
     //    int firstNl;      // offset of first known newline in current block, for quick single-line check
     //    int lastNl;       // offset of the last known newline in current block, for quick complete-line check
     //
-    //
-    //
-    //
+
+    private final @NonNull StringBuilder sb = new StringBuilder();
+
     // FIXME: YANGTOOLS-1831: migrating to equivalent StringBuilder is sufficient
     private final @NonNull StringConcatenation sc = new StringConcatenation("\n");
 
@@ -56,7 +57,8 @@ final class BlockBuilder implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder at() {
-        sc.append("@");
+        sb.append('@');
+        verifyAppend("@");
         return this;
     }
 
@@ -67,7 +69,7 @@ final class BlockBuilder implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder nl() {
-        sc.newLine();
+        newLine();
         return this;
     }
 
@@ -75,7 +77,9 @@ final class BlockBuilder implements Mutable {
      * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
      */
     void newLine() {
+        sb.append('\n');
         sc.newLine();
+        verifyContent();
     }
 
     /**
@@ -91,7 +95,9 @@ final class BlockBuilder implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder str(final String content) {
-        sc.append(validateStr(content));
+        final var str = validateStr(content);
+        sb.append(str);
+        verifyAppend(str);
         return this;
     }
 
@@ -111,7 +117,9 @@ final class BlockBuilder implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder strI(final int value) {
-        sc.append(Integer.toString(value));
+        final var str = Integer.toString(value);
+        sb.append(str);
+        verifyAppend(str);
         return this;
     }
 
@@ -140,25 +148,39 @@ final class BlockBuilder implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder txt(final String text) {
-        sc.append(requireNonNull(text));
+        final var str = validateTxt(text);
+        sb.append(str);
+        verifyAppend(str);
         return this;
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String validateTxt(final String txtArg) {
+        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
+        return requireNonNull(txtArg);
     }
 
     // FIXME: remove this method
     void append(final String str) {
-        sc.append(requireNonNull(str));
+        final int nl = str.indexOf('\n');
+        final var content = nl == -1 ? validateStr(str) : validateTxt(str);
+        sb.append(content);
+        verifyAppend(content);
     }
 
     // FIXME: remove this method
-    void append(final @Nullable StringBuilder sb) {
-        if (sb != null) {
-            sc.append(sb.toString());
+    void append(final @Nullable StringBuilder src) {
+        if (src != null) {
+            sb.append(src);
+            verifyAppend(src.toString());
         }
     }
 
     void append(final @Nullable BlockBuilder bb) {
         if (bb != null) {
-            sc.append(bb);
+            sb.append(bb.sb);
+            verifyAppend(bb.sb.toString());
         }
     }
 
@@ -232,5 +254,16 @@ final class BlockBuilder implements Mutable {
     @Deprecated(forRemoval = true)
     public String toString() {
         return toRawString();
+    }
+
+    private void verifyAppend(final String str) {
+        sc.append(requireNonNull(str));
+        verifyContent();
+    }
+
+    private void verifyContent() {
+        final var sbStr = sb.toString();
+        final var scStr = sc.toString();
+        verify(sbStr.equals(scStr), "mismatched sb='%s' sc='%s'", sbStr, scStr);
     }
 }
