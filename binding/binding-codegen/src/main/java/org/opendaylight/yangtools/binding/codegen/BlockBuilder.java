@@ -109,7 +109,6 @@ final class BlockBuilder implements Mutable {
      * @return this instance
      */
     @NonNullByDefault
-    @CheckReturnValue
     BlockBuilder strI(final int value) {
         sc.append(Integer.toString(value));
         return this;
@@ -138,7 +137,6 @@ final class BlockBuilder implements Mutable {
      * @return this instance
      */
     @NonNullByDefault
-    @CheckReturnValue
     BlockBuilder txt(final String text) {
         sc.append(requireNonNull(text));
         return this;
@@ -160,11 +158,6 @@ final class BlockBuilder implements Mutable {
         if (bb != null) {
             sc.append(bb);
         }
-    }
-
-    @Deprecated(forRemoval = true)
-    void newLineIfNotEmpty() {
-        sc.newLineIfNotEmpty();
     }
 
     // FIXME: clarify contract
