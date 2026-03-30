@@ -113,13 +113,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .nl()
             .indented(generateSetters())
             .nl()
-            .str("    /**").nl()
-            .str("     * A new {@link ").str(targetTypeName).str("} instance.").nl()
-            .str("     *").nl()
-            .str("     * @return A new {@link ").str(targetTypeName).str("} instance.").nl()
-            .str("     */").nl()
+            .eol("    /**")
+            .str("     * A new {@link ").str(targetTypeName).eol("} instance.")
+            .eol("     *")
+            .str("     * @return A new {@link ").str(targetTypeName).eol("} instance.")
+            .eol("     */")
             .str("    public ").str(importedNonNull(targetType)).str(" build() {").nl()
-            .str("        return new ").str(importedName(type().getEnclosedTypes().getFirst())).str("(this);").nl()
+            .str("        return new ").str(importedName(type().getEnclosedTypes().getFirst())).eol("(this);")
             .str("    }").nl()
             .nl()
             .indented(implTemplate.body())
@@ -228,13 +228,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         }
 
         final var bb = new BlockBuilder();
-        //    «FOR getter : ifc.nonDefaultMethods»
-        //        «IF Naming.isGetterMethodName(getter.name) && getterByName(alreadySetProperties, getter.name) ===
-        // null»
-        //            «val propertyName = getter.propertyNameFromGetter»
-        //            «printPropertySetter(getter, '''arg.«getter.name»()''', propertyName)»;
-        //        «ENDIF»
-        //    «ENDFOR»
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName()) && getterByName(alreadySetProperties, getter.getName()) == null) {
                 bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
@@ -243,10 +236,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        //    «FOR descendant : ifc.implements»
-        //        «printConstructorPropertySetter(descendant, Sets.union(alreadySetProperties,
-        // getSpecifiedGetters(ifc)))»
-        //    «ENDFOR»
         for (var descendant : ifc.getImplements()) {
             bb.append(printConstructorPropertySetter(descendant,
                 Sets.union(alreadySetProperties, getSpecifiedGetters(ifc))));
@@ -316,13 +305,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .str("    }").nl()
             .str("}").nl()
             .nl()
-            .str("/**").nl()
+            .eol("/**")
             .str(" * Get empty instance of ").str(targetName).eol(".")
-            .str(" *").nl()
-            .str(" * @return An empty {@link ").str(targetName).str("}").nl()
-            .str(" */").nl()
+            .eol(" *")
+            .str(" * @return An empty {@link ").str(targetName).eol("}")
+            .eol(" */")
             .str("public static ").str(nonnullTarget).str(" empty() {").nl()
-            .str("    return LazyEmpty.INSTANCE;").nl()
+            .eol("    return LazyEmpty.INSTANCE;")
             .str("}").nl();
     }
 
@@ -340,24 +329,21 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         // incompatible value
         //         */
 
-        final var bb = new StringBuilder();
-        bb.append("/**\n");
-        bb.append(
-            " * Set fields from given grouping argument. Valid argument is instance of one of following types:\n");
-        bb.append(" * <ul>\n");
+        final var sb = new StringBuilder()
+            .append("/**\n")
+            .append(
+                " * Set fields from given grouping argument. Valid argument is instance of one of following types:\n")
+            .append(" * <ul>\n");
         for (var impl : getAllIfcs(type)) {
-            bb.append(" *   <li>{@link ");
-            bb.append(importedName(impl));
-            bb.append("}</li>\n");
+            sb.append(" *   <li>{@link ").append(importedName(impl)).append("}</li>\n");
         }
-        bb.append(" * </ul>\n");
-        bb.append(" *\n");
-        bb.append(" * @param arg grouping object\n");
-        bb.append(" * @throws ");
-        bb.append(importedName(IAE));
-        bb.append(" if given argument is none of valid types or has property with incompatible value\n");
-        bb.append(" */\n");
-        return bb;
+        return sb
+            .append(" * </ul>\n")
+            .append(" *\n")
+            .append(" * @param arg grouping object\n")
+            .append(" * @throws ").append(importedName(IAE))
+                .append(" if given argument is none of valid types or has property with incompatible value\n")
+            .append(" */\n");
     }
 
     /**
@@ -372,7 +358,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return !(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType) ? null : new BlockBuilder()
             .str("if (arg instanceof ").str(importedName(implType)).str(" castArg) {").nl()
                 .indented(printPropertySetter(implType))
-            .str("    isValidArg = true;").nl()
+            .eol("    isValidArg = true;")
             .str("}").nl();
     }
 
@@ -386,7 +372,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             if (isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
                 bb.append(printPropertySetter(getter, "castArg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                bb.append(";\n");
+                bb.str(";").newLine();
             }
         }
         return bb;
