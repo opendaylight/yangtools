@@ -8,6 +8,12 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
+import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
+import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -22,7 +28,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -74,18 +79,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             final var augmentTypeRef = importedName(augmentType);
             final var mapTypeRef = importedName(JU_MAP);
 
-            bb.append(mapTypeRef);
-            bb.append("<");
-            bb.append(importedName(CLASS));
-            bb.append("<? extends ");
-            bb.append(augmentTypeRef);
-            bb.append(">, ");
-            bb.append(augmentTypeRef);
-            bb.append("> ");
-            bb.append(Naming.AUGMENTATION_FIELD);
-            bb.append(" = ");
-            bb.append(mapTypeRef);
-            bb.append(".of();\n");
+            bb.str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef).str(">, ")
+                .str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).append(".of();\n");
         }
 
         final var targetTypeName = importedName(targetType);
@@ -178,7 +173,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 if (first) {
                     first = false;
                 } else {
-                    bb.appendImmediate("\n", "");
+                    bb.newLine();
                 }
                 bb.append(generateConstructorFromIfc(genType));
                 bb.newLineIfNotEmpty();
@@ -249,7 +244,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //        «ENDFOR»
         final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
-            if (Naming.isGetterMethodName(getter.getName())) {
+            if (isGetterMethodName(getter.getName())) {
                 bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
                 bb.append(";\n");
@@ -281,7 +276,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         //        «ENDIF»
         //    «ENDFOR»
         for (var getter : nonDefaultMethods(ifc)) {
-            if (Naming.isGetterMethodName(getter.getName())
+            if (isGetterMethodName(getter.getName())
                 && getterByName(alreadySetProperties, getter.getName()) == null) {
                 bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
@@ -430,7 +425,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
         final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
-            if (Naming.isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
+            if (isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
                 bb.append(printPropertySetter(getter, "castArg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
                 bb.append(";\n");
@@ -560,10 +555,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     if (first) {
                         first = false;
                     } else {
-                        bb.appendImmediate(", ", "");
+                        bb.append(", ");
                     }
-                    bb.append("\"");
-                    bb.append(StringEscapeUtils.escapeJava(v));
+                    bb.str("\"").append(StringEscapeUtils.escapeJava(v));
                     bb.append("\"");
                 }
             }
@@ -578,10 +572,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     if (first) {
                         first = false;
                     } else {
-                        bb.appendImmediate(", ", "");
+                        bb.append(", ");
                     }
-                    bb.append("\"");
-                    bb.append(StringEscapeUtils.escapeJava(v));
+                    bb.str("\"").append(StringEscapeUtils.escapeJava(v));
                     bb.append("\"");
                 }
             }
@@ -636,13 +629,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(" * @param values desired value\n");
         bb.append(" * @return this builder\n");
         bb.append(" */\n");
-        bb.append("public ");
-        bb.append(type().simpleName());
-        bb.append(" set");
-        bb.append(Naming.toFirstUpper(field.getName()));
-        bb.append("(final ");
-        bb.append(importedReturnType(field));
-        bb.append(" values) {\n");
+        bb.str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+            .str(importedReturnType(field)).append(" values) {\n");
 
         //        «IF restrictions !== null»
         //            if (values != null) {
@@ -659,16 +647,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb.append("}\n");
         }
 
-        //            this.«field.fieldName» = values;
-        //            return this;
-        //        }
-        //
-        bb.append("    this.");
-        bb.append(fieldName(field));
-        bb.append(" = values;\n");
-        bb.append("    return this;\n");
-        bb.append("}\n");
-        return bb.nl();
+        return bb
+            .str("    this.").str(fieldName(field)).eol(" = values;")
+            .eol("    return this;")
+            .eol("}")
+            .nl();
     }
 
     private @NonNull BlockBuilder generateMapSetter(final BuilderGeneratedProperty field, final Type actualType) {
@@ -702,7 +685,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         bb.append(" * @param values desired value\n");
         bb.append(" * @return this builder\n");
         bb.append(" */\n");
-        bb.str("public ").str(type().simpleName()).str(" set").str(Naming.toFirstUpper(field.getName())).str("(final ")
+        bb.str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
             .str(importedReturnType(field)).append(" values) {\n");
 
         //        «IF restrictions !== null»
@@ -745,8 +728,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .str(" * @param value desired value").nl()
             .str(" * @return this builder").nl()
             .str(" */").nl()
-            .str("public ").str(type().simpleName()).str(" set").str(Naming.toFirstUpper(field.getName()))
-                .str("(final ").str(importedReturnType(field)).str(" value) {").newLine();
+            .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+                .str(importedReturnType(field)).str(" value) {").newLine();
         if (restrictions != null) {
             bb
                 .str("    if (value != null) {").nl()
@@ -768,7 +751,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             bb
                 .eol("/**")
                 .str(" * Set the key value corresponding to {@link ").str(importedName(targetType)).str("#")
-                    .str(Naming.KEY_AWARE_KEY_NAME).eol("()} to the specified")
+                    .str(KEY_AWARE_KEY_NAME).eol("()} to the specified")
                 .txt("""
                        * value.
                        *
@@ -790,54 +773,40 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         if (augmentType != null) {
             final var augmentTypeRef = importedName(augmentType);
             final var hashMapRef = importedName(JU_HASHMAP);
-            bb.append("/**\n");
-            bb.append(" * Add an augmentation to this builder\'s product.\n");
-            bb.append(" *\n");
-            bb.append(" * @param augmentation augmentation to be added\n");
-            bb.append(" * @return this builder\n");
-            bb.append(" * @throws ");
-            bb.append(importedName(NPE));
-            bb.append(" if {@code augmentation} is null\n");
-            bb.append(" */\n");
-            bb.append("public ");
-            bb.append(type().simpleName());
-            bb.append(" addAugmentation(");
-            bb.append(augmentTypeRef);
-            bb.append(" augmentation) {\n");
-            bb.append("    if (!(this.");
-            bb.append(Naming.AUGMENTATION_FIELD);
-            bb.append(" instanceof ");
-            bb.append(hashMapRef);
-            bb.append(")) {\n");
-            bb.append("        ");
-            bb.append("this.");
-            bb.append(Naming.AUGMENTATION_FIELD);
-            bb.append(" = new ");
-            bb.append(hashMapRef);
-            bb.append("<>();\n");
-            bb.append("    }\n");
-            bb.nl().append("    this.");
-            bb.append(Naming.AUGMENTATION_FIELD);
-            bb.append(".put(augmentation.");
-            bb.append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME);
-            bb.append("(), augmentation);\n");
-            bb.append("    return this;\n");
-            bb.append("}\n");
-            // FIXME: use a text block here
-            bb.nl().append(
-                     "/**\n");
-            bb.append(" * Remove an augmentation from this builder\'s producbbt. If this builder does not track such an");
-            bb.append(" augmentation\n");
-            bb.append(" * type, this method does nothing.\n");
-            bb.append(" *\n");
-            bb.append(" * @param augmentationType augmentation type to be removed\n");
-            bb.append(" * @return this builder\n");
-            bb.append(" */\n");
             bb
+                .txt("""
+                      /**
+                       * Add an augmentation to this builder's product.
+                       *
+                       * @param augmentation augmentation to be added
+                       * @return this builder
+                      """)
+                .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null\n")
+                .eol(" */")
+                .str("public ").str(type().simpleName()).str(" addAugmentation(").str(augmentTypeRef)
+                    .str(" augmentation) {").nl()
+                .str("    if (!(this." + AUGMENTATION_FIELD + " instanceof ").str(hashMapRef).str(")) {").nl()
+                .str("        this." + AUGMENTATION_FIELD +" = new ").str(hashMapRef).eol("<>();")
+                .eol("    }")
+                .eol("    this." + AUGMENTATION_FIELD + ".put(augmentation."
+                    + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "(), augmentation);")
+                .txt("""
+                   .      return this;
+                      }
+
+                      /**
+                       * Remove an augmentation from this builder's producbbt. If this builder does not track such an\
+                       augmentation
+                       * type, this method does nothing.
+                       *
+                       * @param augmentationType augmentation type to be removed
+                       * @return this builder
+                       */
+                      """)
                 .str("public ").str(type().simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
                     .str("<? extends ").str(augmentTypeRef).str("> augmentationType) {").nl()
-                .str("    if (this." + Naming.AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(") {").nl()
-                .eol("        this." + Naming.AUGMENTATION_FIELD + ".remove(augmentationType);")
+                .str("    if (this." + AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(") {").nl()
+                .eol("        this." + AUGMENTATION_FIELD + ".remove(augmentationType);")
                 .eol("    }")
                 .eol("    return this;")
                 .append("}\n");
@@ -965,16 +934,16 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .append('@').append(importedName(SUPPRESS_WARNINGS))
                 .append("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})\n")
             .append("public <E$$ extends ").append(importedName(augmentType)).append("> E$$ ")
-                .append(Naming.AUGMENTABLE_AUGMENTATION_NAME).append("(").append(importedName(CLASS))
+                .append(AUGMENTABLE_AUGMENTATION_NAME).append("(").append(importedName(CLASS))
                 .append("<E$$> augmentationType) {\n")
-            .append("    return (E$$) ").append(Naming.AUGMENTATION_FIELD).append(".get(")
+            .append("    return (E$$) ").append(AUGMENTATION_FIELD).append(".get(")
                 .append(importedName(JU_OBJECTS)).append(".requireNonNull(augmentationType));\n")
             .append("}\n");
     }
 
     @Override
     void appendCopyKeys(final StringBuilder sb, final List<GeneratedProperty> keyProps) {
-        sb.append("    this.key = base.").append(Naming.KEY_AWARE_KEY_NAME).append("();\n");
+        sb.append("    this.key = base.").append(KEY_AWARE_KEY_NAME).append("();\n");
         for (var field : keyProps) {
             sb.append("    this.").append(fieldName(field)).append(" = base.").append(getterMethodName(field))
                 .append("();\n");
@@ -994,8 +963,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         sb
             .append("    final var aug = base.augmentations();\n")
             .append("    if (!aug.isEmpty()) {\n")
-            .append("        this.").append(Naming.AUGMENTATION_FIELD).append(" = new ")
-                .append(importedName(JU_HASHMAP)).append("<>(aug);\n")
+            .append("        this.").append(AUGMENTATION_FIELD).append(" = new ").append(importedName(JU_HASHMAP))
+                .append("<>(aug);\n")
             .append("    }\n");
     }
 }

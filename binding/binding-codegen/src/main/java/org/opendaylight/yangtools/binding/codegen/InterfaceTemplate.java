@@ -195,7 +195,7 @@ class InterfaceTemplate extends BaseTemplate {
             if (!hasElements) {
                 hasElements = true;
             } else {
-                bb.appendImmediate("\n", "");
+                bb.newLine();
             }
             if (method.isDefault()) {
                 bb.append(generateDefaultMethod(method));
