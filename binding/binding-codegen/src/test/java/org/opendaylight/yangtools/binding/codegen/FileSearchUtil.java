@@ -16,11 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 final class FileSearchUtil {
-    private static final String LS = System.lineSeparator();
-    static final String TAB = "    ";
-    static final String DOUBLE_TAB = TAB.repeat(2);
-    static final String TRIPLE_TAB = TAB.repeat(3);
-
     private FileSearchUtil() {
         // Hidden on purpose
     }
@@ -37,7 +32,7 @@ final class FileSearchUtil {
         for (var line : lines) {
             assertFileContains(fileContent, line);
         }
-        assertFileContains(fileContent, String.join(LS, lines));
+        assertFileContains(fileContent, String.join("\n", lines));
     }
 
     static Map<String, Path> getFiles(final Path path) {
@@ -57,17 +52,5 @@ final class FileSearchUtil {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-    }
-
-    static String tab(final String line) {
-        return TAB + line;
-    }
-
-    static String doubleTab(final String line) {
-        return DOUBLE_TAB + line;
-    }
-
-    static String tripleTab(final String line) {
-        return TRIPLE_TAB + line;
     }
 }
