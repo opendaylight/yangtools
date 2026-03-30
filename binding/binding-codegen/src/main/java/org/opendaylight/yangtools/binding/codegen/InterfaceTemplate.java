@@ -101,15 +101,12 @@ class InterfaceTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
-        bb.newLineIfNotEmpty();
         bb.append(generateAnnotations(type().getAnnotations()));
-        bb.newLineIfNotEmpty();
-        bb.append(generatedAnnotation());
-        bb.newLineIfNotEmpty();
-        bb.str("public interface ").str(type().simpleName())
-            .nl()
-            .indented(superInterfaces()).append("{\n");
-        bb.nl().indented(generateInnerClasses(enclosedGeneratedTypes))
+        return bb
+            .eol(generatedAnnotation())
+            .str("public interface ").str(type().simpleName()).nl()
+            .indented(superInterfaces()).str("{").nl()
+            .nl().indented(generateInnerClasses(enclosedGeneratedTypes))
             .nl()
             .indented(generateInnerEnumTypeObjects(enums))
             .nl()
@@ -117,9 +114,7 @@ class InterfaceTemplate extends BaseTemplate {
             .nl()
             .indented(generateMethods())
             .nl()
-            .append("}");
-        return bb
-            .nl()
+            .eol("}")
             .nl();
     }
 
@@ -208,29 +203,17 @@ class InterfaceTemplate extends BaseTemplate {
             } else {
                 bb.append(generateMethod(method));
             }
-            bb.newLineIfNotEmpty();
         }
         return bb;
     }
 
     private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
-        //        «method.comment.asJavadoc»
-        //        «method.annotations.generateAnnotations»
-        //        «method.returnType.importedName» «method.name»(«method.parameters.generateParameters»);
-
         final var bb = new BlockBuilder();
         bb.append(asJavadoc(method.getComment()));
-        bb.newLineIfNotEmpty();
         bb.append(generateAnnotations(method.getAnnotations()));
-        bb.newLineIfNotEmpty();
-        bb.append(importedReturnType(method));
-        bb.append(" ");
-        bb.append(method.getName());
-        bb.append("(");
-        bb.append(generateParameters(method.getParameters()));
-        bb.append(");");
-        bb.newLineIfNotEmpty();
-        return bb;
+        return bb
+            .str(importedReturnType(method)).str(" ").str(method.getName()).str("(")
+                .str(generateParameters(method.getParameters())).str(");");
     }
 
     private @Nullable BlockBuilder generateAnnotations(final @NonNull List<AnnotationType> annotations) {
@@ -241,7 +224,6 @@ class InterfaceTemplate extends BaseTemplate {
         final var bb = new BlockBuilder();
         for (var annotation : annotations) {
             bb.append(generateAnnotation(annotation));
-            bb.newLineIfNotEmpty();
         }
         return bb;
     }
@@ -273,46 +255,25 @@ class InterfaceTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         final var ret = method.getReturnType();
-        bb.newLineIfNotEmpty();
         final var name = method.getName();
-        bb.newLineIfNotEmpty();
         bb.append(accessorJavadoc(method, ", or an empty list if it is not present."));
-        bb.newLineIfNotEmpty();
         bb.append(generateAnnotations(method.getAnnotations()));
-        bb.newLineIfNotEmpty();
-        bb.append("default ");
-        bb.append(importedNonNull(ret));
-        bb.append(" ");
-        bb.append(name);
-        bb.append("() {\n");
-        bb.str("    return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
-            .append("());\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .str("default ").str(importedNonNull(ret)).str(" ").str(name).str("() {").nl()
+            .str("    return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
+                .eol("());")
+            .str("}").nl();
     }
 
     private @NonNull BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
-        //        «method.comment.asJavadoc»
-        //        «method.annotations.generateAnnotations»
-        //        default «VOID.importedName» «method.name»(«method.parameters.generateParameters») {
-        //            // No-op
-        //        }
-
         final var bb = new BlockBuilder();
         bb.append(asJavadoc(method.getComment()));
-        bb.newLineIfNotEmpty();
         bb.append(generateAnnotations(method.getAnnotations()));
-        bb.newLineIfNotEmpty();
-        bb.append("default ");
-        bb.append(importedName(VOID));
-        bb.append(" ");
-        bb.append(method.getName());
-        bb.append("(");
-        bb.append(generateParameters(method.getParameters()));
-        bb.append(") {\n");
-        bb.append("    // No-op\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .str("default ").str(importedName(VOID)).str(" ").str(method.getName()).str("(")
+                .str(generateParameters(method.getParameters())).str(") {").nl()
+            .eol("    // No-op")
+            .str("}").nl();
     }
 
     private BlockBuilder generateRequireMethod(final MethodSignature method) {
@@ -328,17 +289,11 @@ class InterfaceTemplate extends BaseTemplate {
         final var name = method.getName();
         final var bb = new BlockBuilder();
         bb.append(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE));
-        bb.newLineIfNotEmpty();
-        bb.append("default ");
-        bb.append(importedNonNull(ret));
-        bb.append(" ");
-        bb.append(name);
-        bb.append("() {\n");
-        bb.str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
-            .str("(), \"").append(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, ""));
-        bb.append("\");\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .str("default ").str(importedNonNull(ret)).str(" ").str(name).str("() {").nl()
+            .str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
+                .str("(), \"").str(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol("\");")
+            .eol("}");
     }
 
     private BlockBuilder generateAccessorMethod(final MethodSignature method) {
@@ -348,14 +303,10 @@ class InterfaceTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         bb.append(accessorJavadoc(method, ", or {@code null} if it is not present."));
-        bb.newLineIfNotEmpty();
         bb.append(generateAccessorAnnotations(method));
-        bb.newLineIfNotEmpty();
-        bb.append(nullableType(method.getReturnType()));
-        bb.append(" ");
-        bb.append(method.getName());
-        bb.append("();\n");
-        return bb;
+        return bb
+            .str(nullableType(method.getReturnType())).str(" ").str(method.getName())
+            .eol("();");
     }
 
     private @Nullable BlockBuilder generateAccessorAnnotations(final MethodSignature method) {
@@ -365,31 +316,20 @@ class InterfaceTemplate extends BaseTemplate {
         }
 
         final var bb = new BlockBuilder();
-        bb.newLineIfNotEmpty();
         for (var annotation : annotations) {
             if (!Types.BOOLEAN.equals(method.getReturnType()) || !OVERRIDE.equals(annotation.name())) {
                 bb.append(generateAnnotation(annotation));
-                bb.newLineIfNotEmpty();
             }
         }
         return bb;
     }
 
     private BlockBuilder generateNonnullAccessorMethod(final MethodSignature method) {
-        //        «accessorJavadoc(method, ", or an empty instance if it is not present.")»
-        //        «method.annotations.generateAnnotations»
-        //        «method.returnType.importedNonNull» «method.name»();
-
         final var bb = new BlockBuilder();
         bb.append(accessorJavadoc(method, ", or an empty instance if it is not present."));
-        bb.newLineIfNotEmpty();
         bb.append(generateAnnotations(method.getAnnotations()));
-        bb.newLineIfNotEmpty();
-        bb.append(importedNonNull(method.getReturnType()));
-        bb.append(" ");
-        bb.append(method.getName());
-        bb.append("();\n");
-        return bb;
+        return bb
+            .str(importedNonNull(method.getReturnType())).str(" ").str(method.getName()).eol("();");
     }
 
     private @Nullable BlockBuilder generateStaticMethod(final MethodSignature method) {
@@ -540,6 +480,7 @@ class InterfaceTemplate extends BaseTemplate {
             final @Nullable JavaTypeName exception) {
         final var propName = propertyNameFromGetter(method);
         final var propReturn = propName + orString;
+        final var comment = method.getComment();
 
         //        return wrapToDocumentation('''
         //            Return «propReturn»
@@ -551,18 +492,17 @@ class InterfaceTemplate extends BaseTemplate {
         //            «ENDIF»
         //        ''')
 
-        final var bb = new BlockBuilder();
-        bb.str("Return ").append(propReturn);
-        bb.newLineIfNotEmpty();
-        final var comment = method.getComment();
-        bb.nl().append(formatReference(comment == null ? null : comment.referenceDescription()));
-        bb.newLineIfNotEmpty();
-        bb.str("@return {@code ").str(importedReturnType(method)).str("} ").append(propReturn);
-        bb.newLineIfNotEmpty();
+        final var bb = new BlockBuilder()
+            .str("Return ").eol(propReturn);
+        final var reference = comment == null ? null : comment.referenceDescription();
+        if (reference != null) {
+            bb.append(formatReference(reference));
+        }
+        bb
+            .nl()
+            .str("@return {@code ").str(importedReturnType(method)).str("} ").str(propReturn).newLine();
         if (exception != null) {
-            bb.str("@throws ").append(importedName(exception));
-            bb.str(" if ").append(propName);
-            bb.append(" is not present\n");
+            bb.str("@throws ").str(importedName(exception)).str(" if ").str(propName).str(" is not present").newLine();
         }
         return bb.toJavadocBlock();
     }

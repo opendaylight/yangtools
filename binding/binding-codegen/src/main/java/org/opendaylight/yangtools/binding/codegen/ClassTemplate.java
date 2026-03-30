@@ -202,22 +202,20 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
-        bb.newLineIfNotEmpty();
 
         bb.append(annotationDeclaration());
 
         if (!isInnerClass) {
-            bb.append(generatedAnnotation());
-            bb.newLine();
+            bb.str(generatedAnnotation()).newLine();
         }
         bb.append(generateClassDeclaration(isInnerClass));
-        bb.append(" {\n");
+        bb.str(" {").newLine();
 
         // serialVersionUID
         final var suid = genTO.getSUID();
         if (suid != null) {
             bb
-                .str("    @java.io.Serial").nl()
+                .eol("    @java.io.Serial")
                 .str("    private static final long serialVersionUID = ").str(suid.getValue()).str("L;").newLine();
         }
 
@@ -236,7 +234,7 @@ class ClassTemplate extends BaseTemplate {
                 if (field.isReadOnly()) {
                     bb.append("final ");
                 }
-                bb.str(importedReturnType(field)).str(" ").str(fieldName(field)).append(";\n");
+                bb.str(importedReturnType(field)).str(" ").str(fieldName(field)).str(";").newLine();
             }
         }
 
@@ -659,55 +657,35 @@ class ClassTemplate extends BaseTemplate {
             bb.indented(bitsDefaultInstanceBody());
         } else if (propType instanceof Decimal64Type decimal64) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .str(".valueOf(defaultValue).scaleTo(").strI(decimal64.fractionDigits()).append("));\n");
+                .str(".valueOf(defaultValue).scaleTo(").strI(decimal64.fractionDigits()).str("));").newLine();
         } else if (propType.equals(STRING_TYPE)) {
-            bb.str("    return new ").str(simpleName).append("(defaultValue);\n");
+            bb.str("    return new ").str(simpleName).str("(defaultValue);").newLine();
         } else if (propType.equals(BINARY_TYPE)) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
-                .append(".getDecoder().decode(defaultValue));\n");
+                .str(".getDecoder().decode(defaultValue));").newLine();
         } else if (propType.equals(EMPTY_TYPE)) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
-                .append(".emptyFor(defaultValue));\n");
+                .str(".emptyFor(defaultValue));").newLine();
         } else {
             bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType)).str("(defaultValue));")
                 .newLine();
         }
-        bb.append("}\n");
-        return bb;
+        return bb.eol("}");
     }
 
     @Nullable BlockBuilder constructors() {
-        //        «IF genTO.typedef && allProperties.size == 1 && allProperties.first.name.equals(
-        //TypeConstants.VALUE_PROP)»
-        //            «typedefConstructor»
-        //        «ELSE»
-        //            «allValuesConstructor»
-        //        «ENDIF»
-        //
-        //        «IF !allProperties.empty»
-        //            «copyConstructor»
-        //        «ENDIF»
-        //        «IF properties.empty && !parentProperties.empty »
-        //            «parentConstructor»
-        //        «ENDIF»
-
-        final var bb = new BlockBuilder();
+        final var bb = new BlockBuilder()
+            .nl();
         if (genTO.isTypedef() && allProperties.size() == 1 && VALUE_PROP.equals(allProperties.getFirst().getName())) {
             bb.append(typedefConstructor());
-            bb.newLineIfNotEmpty();
         } else {
             bb.append(allValuesConstructor());
-            bb.newLineIfNotEmpty();
         }
-        // FIXME: inline into if blocks?
-        bb.newLine();
         if (!allProperties.isEmpty()) {
-            bb.append(copyConstructor());
-            bb.newLineIfNotEmpty();
+            bb.nl().append(copyConstructor());
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
             bb.append(parentConstructor());
-            bb.newLineIfNotEmpty();
         }
         return bb;
     }
@@ -719,27 +697,24 @@ class ClassTemplate extends BaseTemplate {
         if (genTO.getImplements().stream().anyMatch(ifc -> SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
             final var field = properties.getFirst();
             return new BlockBuilder()
-                .at().str(importedName(OVERRIDE)).nl()
+                .nl()
+                .at().eol(importedName(OVERRIDE))
                 .str("public ").str(importedReturnType(field))
                     .str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "() {").nl()
-                .str("    return ").str(fieldName(field)).str(cloneCall(field)).str(";").nl()
+                .str("    return ").str(fieldName(field)).str(cloneCall(field)).eol(";")
                 .str("}").nl();
         }
 
         final var bb = new BlockBuilder();
         final var it = properties.iterator();
-        while (true) {
+        do {
             final var field = it.next();
-            bb.append(asGetterMethod(field));
+            bb.nl().append(asGetterMethod(field));
             if (!field.isReadOnly()) {
                 bb.nl().append(asSetterMethod(field));
             }
-
-            if (!it.hasNext()) {
-                return bb;
-            }
-            bb.newLine();
-        }
+        } while (it.hasNext());
+        return bb;
     }
 
     private @Nullable BlockBuilder generateHashCode() {
@@ -854,16 +829,15 @@ class ClassTemplate extends BaseTemplate {
         //            «ENDFOR»
         //        }
 
-        final var bb = new BlockBuilder();
-        bb.str("public ").str(type().simpleName()).str("(").append(asArgumentsDeclaration(allProperties));
-        bb.append(") {\n");
+        final var bb = new BlockBuilder()
+            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(") {")
+                .nl();
         if (!parentProperties.isEmpty()) {
             bb.str("    super(").str(asArguments(parentProperties)).append(");\n");
         }
         for (var prop : allProperties) {
             bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
         }
-        bb.newLine();
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
 
@@ -878,7 +852,7 @@ class ClassTemplate extends BaseTemplate {
         return bb;
     }
 
-    String copyConstructor() {
+    StringBuilder copyConstructor() {
         final var simpleName = type().simpleName();
 
         final var sb = new StringBuilder()
@@ -895,7 +869,7 @@ class ClassTemplate extends BaseTemplate {
             final var fieldName = fieldName(prop);
             sb.append("    this.").append(fieldName).append(" = source.").append(fieldName).append(";\n");
         }
-        return sb.append("}\n").toString();
+        return sb.append("}\n");
     }
 
     @NonNullByDefault
@@ -963,11 +937,10 @@ class ClassTemplate extends BaseTemplate {
 
         final var fieldName = fieldName(value);
         if (valueProperty(properties) != null) {
-            bb.str("    this.").append(fieldName);
-            bb.str(" = ").append(importedName(CODEHELPERS));
-            bb.str(".requireValue(").append(fieldName);
+            bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
+                .append(fieldName);
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
-                bb.append(", " + decimal64.fractionDigits());
+                bb.str(", ").strI(decimal64.fractionDigits());
             }
             bb.str(")").append(cloneCall(value));
             bb.append(";\n");
