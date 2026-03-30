@@ -64,17 +64,18 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         bb.str("private static final class ").str(type().simpleName()).newLine();
         if (keyType != null) {
             bb.str("    extends ").str(importedName(ABSTRACT_ENTRY_OBJECT)).str("<").str(impIface).str(", ")
-                .str(importedName(keyType)).append(">\n");
+                .str(importedName(keyType)).str(">").newLine();
         } else if (augmentType != null) {
-            bb.str("    extends ").str(importedName(ABSTRACT_AUGMENTABLE)).str("<").str(impIface).append(">\n");
+            bb.str("    extends ").str(importedName(ABSTRACT_AUGMENTABLE)).str("<").str(impIface).str(">").newLine();
         }
-        bb.str("    implements ").str(impIface).append(" {\n");
+        bb.str("    implements ").str(impIface).str(" {").newLine();
 
         // generate instance fields
         if (!properties.isEmpty()) {
             bb.newLine();
             for (var prop : properties) {
-                bb.str("    private final ").str(importedReturnType(prop)).str(" ").str(fieldName(prop)).append(";\n");
+                bb.str("    private final ").str(importedReturnType(prop)).str(" ").str(fieldName(prop)).str(";")
+                    .newLine();
             }
         }
 
@@ -84,11 +85,13 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
             //       this code into the constructor once JEP-482 Flexible Constructor Bodies available. We should
             //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
-            bb.nl().str("    private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
-                .str(importedName(builder.type())).append(" base) {\n");
-            bb.str("        final var key = base." + KEY_AWARE_KEY_NAME).append("();\n");
-            bb.append("        return key != null ? key\n");
-            bb.str("            : new ").str(importedName(keyType)).append("(");
+            bb
+                .nl()
+                .str("    private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
+                    .str(importedName(builder.type())).str(" base) {").nl()
+                .str("        final var key = base." + KEY_AWARE_KEY_NAME + "();").nl()
+                .eol("        return key != null ? key")
+                .str("            : new ").str(importedName(keyType)).append("(");
 
             // Note: keys have at least one component
             final var it = keyConstructorArgs(keyType).iterator();
@@ -118,14 +121,15 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
-                    bb.nl()
+                    bb
+                        .nl()
                         .str("    @").str(override).nl()
                         .str("    public ").str(importedName(fieldType)).str(" ")
-                        .str(NONNULL_PREFIX).str(toFirstUpper(field.getName())).append("() {\n");
-                    bb.str("        return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
-                        .str(getterMethodName(field)).str("(), ").str(fieldType.canonicalName()).str(BUILDER_SUFFIX)
-                        .append(".empty());\n");
-                    bb.append("}\n");
+                        .str(NONNULL_PREFIX).str(toFirstUpper(field.getName())).str("() {").nl()
+                        .str("        return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
+                            .str(getterMethodName(field)).str("(), ").str(fieldType.canonicalName()).str(BUILDER_SUFFIX)
+                            .eol(".empty());")
+                        .str("    }").newLine();
                 }
 
                 if (!it.hasNext()) {
@@ -137,46 +141,35 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
         // generate hashCode/equals if needed
         if (!properties.isEmpty() || augmentType != null) {
-            bb.nl().append(
-                      "    private int hash = 0;\n");
-            bb.append("    private volatile boolean hashValid = false;\n");
-            bb.nl().append(
-                      "    @");
-            bb.append(override);
-            bb.nl().append(
-                      "    public int hashCode() {\n");
-            bb.append("        if (hashValid) {\n");
-            bb.append("            return hash;\n");
-            bb.append("        }\n");
-            bb.nl().append(
-                      "        final int result = ");
-            bb.append(impIface);
-            bb.str("." + BINDING_HASHCODE_NAME).append("(this);\n");
-            bb.append("        hash = result;\n");
-            bb.append("        hashValid = true;\n");
-            bb.append("        return result;\n");
-            bb.append("    }\n");
-            bb.nl()
-                .str("    @").str(override).nl()
-                .str("    public boolean equals(").str(importedName(Types.objectType())).append(" obj) {\n");
             bb
-                .str("        return ").str(impIface).str("." + BINDING_EQUALS_NAME).append("(this, obj);\n");
-            bb.append("    }\n");
+                .nl()
+                .eol("    private volatile int hashBits = 0;")
+                .nl()
+                .str("    @").eol(override)
+                .str("    public int hashCode() {").nl()
+                .eol("        final int local = hashBits;")
+                .str("        if (local != 0) {").nl()
+                .eol("            return local;")
+                .str("        }").nl()
+                .str("        final int result = ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
+                .eol("        hashBits = result | 1;")
+                .eol("        return result;")
+                .str("    }").nl()
+                .nl()
+                .str("    @").str(override).nl()
+                .str("    public boolean equals(").str(importedName(Types.objectType())).str(" obj) {").nl()
+                .str("        return ").str(impIface).str("." + BINDING_EQUALS_NAME).eol("(this, obj);")
+                .str("    }").nl();
         }
 
         // generate equals()
-        bb.nl().append(
-                  "    @");
-        bb.append(override);
-        bb.nl().append(
-                  "    public ");
-        bb.append(importedName(Types.STRING));
-        bb.append(" toString() {\n");
-        bb.str("        return ").str(impIface).str("." + BINDING_TO_STRING_NAME).append("(this);\n");
-        bb.append("    }\n");
-
-        bb.append("}\n");
-        return bb;
+        return bb
+            .nl()
+            .str("    @").eol(override)
+            .str("    public ").str(importedName(Types.STRING)).str(" toString() {").nl()
+            .str("        return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
+            .str("    }").nl()
+            .str("}").nl();
     }
 
     @Override
