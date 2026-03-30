@@ -563,7 +563,7 @@ class ClassTemplate extends BaseTemplate {
                 if (first) {
                     first = false;
                 } else {
-                    bb.appendImmediate(", ", "");
+                    bb.append(", ");
                 }
                 bb.str("\"").append(StringEscapeUtils.escapeJava(value));
                 bb.append("\"");
@@ -589,10 +589,9 @@ class ClassTemplate extends BaseTemplate {
                 if (first) {
                     first = false;
                 } else {
-                    bb.appendImmediate(", ", "");
+                    bb.append(", ");
                 }
-                bb.append("\"");
-                bb.append(StringEscapeUtils.escapeJava(value));
+                bb.str("\"").append(StringEscapeUtils.escapeJava(value));
                 bb.append("\"");
             }
         }
@@ -609,7 +608,7 @@ class ClassTemplate extends BaseTemplate {
                 if (first) {
                     first = false;
                 } else {
-                    bb.appendImmediate(", ", "");
+                    bb.append(", ");
                 }
                 bb.str("\"").str(bit.getName()).append("\"");
             }
