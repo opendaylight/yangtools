@@ -163,7 +163,7 @@ class InterfaceTemplate extends BaseTemplate {
         final var fqcn = type().canonicalName();
 
         return new BlockBuilder()
-            .at().strLn(importedName(OVERRIDE))
+            .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(CLASS)).str("<").str(fqcn)
                 .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
             .str("    return ").str(fqcn).str(".class;").nl()
@@ -410,23 +410,22 @@ class InterfaceTemplate extends BaseTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
-        bb.append("/**\n");
-        bb.append(" * Default implementation of {@link ");
-        bb.append(importedName(OBJECT), " ");
-        bb.append("#hashCode()} contract for this interface.\n");
-        bb.append(
-            " * Implementations of this interface are encouraged to defer to this method to get consistent hashing\n");
-        bb.append(" * results across all implementations.\n");
-        bb.append(" *\n");
-        bb.append(" * @param obj Object for which to generate hashCode() result.\n");
-        bb.append(" * @return Hash code value of data modeled by this interface.\n");
-        bb
+        final var bb = new BlockBuilder()
+            .eol("/**")
+            .str(" * Default implementation of {@link ").str(importedName(OBJECT))
+                .eol("#hashCode()} contract for this interface.")
+            .txt("""
+                   * Implementations of this interface are encouraged to defer to this method to get consistent hashing
+                   * results across all implementations.
+                   *
+                   * @param obj Object for which to generate hashCode() result.
+                   * @return Hash code value of data modeled by this interface.
+                  """)
             .str(" * @throws ").str(importedName(NPE)).str(" if {@code obj} is {@code null}").nl()
             .str(" */").nl()
             .str("static int " + BINDING_HASHCODE_NAME + "(final ").str(fullyQualifiedNonNull(type())).str(" obj) {")
                 .nl()
-            .str("    int result = 1;").newLine();
+            .str("    int result = 1;").nl();
         if (!props.isEmpty()) {
             bb.str("    final int prime = 31;").newLine();
             for (var property : props) {

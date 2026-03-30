@@ -292,7 +292,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * @return string with the getter method source code in JAVA format
      */
     @NonNullByDefault
-    CharSequence asGetterMethod(final GeneratedProperty field) {
+    StringBuilder asGetterMethod(final GeneratedProperty field) {
         // derive state
         final var fieldName = fieldName(field);
         final var methodName = getterMethodName(field);
@@ -310,7 +310,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         } else {
             sb.append(fieldName);
         }
-        return sb.append(";\n}\n").toString();
+        return sb.append(";\n}\n");
     }
 
     /**

@@ -429,7 +429,7 @@ class ClassTemplate extends BaseTemplate {
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
-    private String bitsDefaultInstanceBody() {
+    private StringBuilder bitsDefaultInstanceBody() {
         final var sb = new StringBuilder()
             .append("var values = ").append(importedName(CODEHELPERS)).append(".parseBitsDefaultValue(defaultValue, ");
         final var size = allProperties.size();
@@ -459,7 +459,7 @@ class ClassTemplate extends BaseTemplate {
             appendValue(sb, last);
         }
 
-        return sb.append(");\n").toString();
+        return sb.append(");\n");
     }
 
     @NonNullByDefault
@@ -660,9 +660,7 @@ class ClassTemplate extends BaseTemplate {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
                 .append(".valueOf(defaultValue));\n");
         } else if (propType.equals(PRIMITIVE_BOOLEAN)) {
-            bb.append("    ");
-            bb.append(bitsDefaultInstanceBody(), "    ");
-            bb.newLineIfNotEmpty();
+            bb.indented(bitsDefaultInstanceBody());
         } else if (propType instanceof Decimal64Type decimal64) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
                 .str(".valueOf(defaultValue).scaleTo(").strI(decimal64.fractionDigits()).append("));\n");
@@ -792,10 +790,8 @@ class ClassTemplate extends BaseTemplate {
             for (var property : props) {
                 bb.append("    result = prime * result + ");
                 final var type = property.getReturnType();
-                bb.append(type.equals(PRIMITIVE_BOOLEAN) ? importedName(BOOLEAN) : importedUtilClass(type));
-                bb.append(".hashCode(");
-                bb.append(fieldName(property), "    ");
-                bb.append(");\n");
+                bb.str(type.equals(PRIMITIVE_BOOLEAN) ? importedName(BOOLEAN) : importedUtilClass(type))
+                    .str(".hashCode(").str(fieldName(property)).append(");\n");
             }
             bb.append("    return result;\n");
         }
