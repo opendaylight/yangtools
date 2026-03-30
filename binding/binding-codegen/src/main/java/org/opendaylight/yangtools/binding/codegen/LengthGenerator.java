@@ -71,17 +71,17 @@ final class LengthGenerator {
         return new ArrayList<>(constraint.getAllowedRanges().asRanges()).toString();
     }
 
-    private static String generateArrayLengthChecker(final String member, final LengthConstraint constraint,
+    private static StringBuilder generateArrayLengthChecker(final String member, final LengthConstraint constraint,
             final JavaFileTemplate template) {
-        final StringBuilder sb = new StringBuilder();
-        final Collection<String> expressions = createExpressions(constraint);
+        final var sb = new StringBuilder();
+        final var expressions = createExpressions(constraint);
 
         sb.append("private static void ").append(lengthCheckerName(member)).append("(final byte[] value) {\n");
 
         if (!expressions.isEmpty()) {
             sb.append("    final int length = value.length;\n");
 
-            for (String exp : expressions) {
+            for (var exp : expressions) {
                 sb.append("    if (").append(exp).append(") {\n");
                 sb.append("        return;\n");
                 sb.append("    }\n");
@@ -91,13 +91,13 @@ final class LengthGenerator {
             .append(".throwInvalidLength(\"").append(createLengthString(constraint)).append("\", value);\n");
         }
 
-        return sb.append("}\n").toString();
+        return sb.append("}\n");
     }
 
-    private static String generateStringLengthChecker(final String member, final LengthConstraint constraint,
+    private static StringBuilder generateStringLengthChecker(final String member, final LengthConstraint constraint,
             final JavaFileTemplate template) {
-        final StringBuilder sb = new StringBuilder();
-        final Collection<String> expressions = createExpressions(constraint);
+        final var sb = new StringBuilder();
+        final var expressions = createExpressions(constraint);
 
         sb.append("private static void ").append(lengthCheckerName(member))
             .append("(final ").append(template.importedName(Types.STRING)).append(" value) {\n");
@@ -115,10 +115,10 @@ final class LengthGenerator {
             .append(".throwInvalidLength(\"").append(createLengthString(constraint)).append("\", value);\n");
         }
 
-        return sb.append("}\n").toString();
+        return sb.append("}\n");
     }
 
-    static String generateLengthChecker(final String member, final @NonNull Type type,
+    static StringBuilder generateLengthChecker(final String member, final @NonNull Type type,
             final LengthConstraint constraint, final JavaFileTemplate template) {
         return TypeUtils.getBaseYangType(type).simpleName().indexOf('[') != -1
                 ? generateArrayLengthChecker(member, constraint, template)
