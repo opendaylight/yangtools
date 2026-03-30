@@ -115,8 +115,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 final var field = it.next();
 
                 // getFoo()
-                bb.append("    ");
-                bb.append(asGetterMethod(field), "    ");
+                bb.indented(asGetterMethod(field));
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
@@ -187,7 +186,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    public String asGetterMethod(final GeneratedProperty field) {
+    StringBuilder asGetterMethod(final GeneratedProperty field) {
         final var fieldName = fieldName(field);
         final var type = field.getReturnType();
 
@@ -202,7 +201,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             sb.append(fieldName);
         }
 
-        return sb.append(";\n").append("}\n").toString();
+        return sb.append(";\n").append("}\n");
     }
 
     @NonNullByDefault
