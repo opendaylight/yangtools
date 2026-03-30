@@ -106,100 +106,100 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
                     set.add(Submodule3Info.INSTANCE);
                     importedModules = ImmutableSet.copyOf(set);
                 }
-               \s
+
                 @Override
                 public QName getName() {
                     return NAME;
                 }
-               \s
+
                 @Override
                 protected String resourceName() {
                     return "/yang-module-info/main-module.yang";
                 }
-               \s
+
                 @Override
                 public ImmutableSet<YangModuleInfo> getImportedModules() {
                     return importedModules;
                 }
-               \s
+
                 private static final class Submodule1Info extends ResourceYangModuleInfo {
                     private final @NonNull QName NAME = QName.create("yang:test:main", "2014-04-02", "submodule1")\
             .intern();
-               \s
+
                     static final @NonNull YangModuleInfo INSTANCE = new Submodule1Info();
-               \s
+
                     private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
-               \s
+
                     private Submodule1Info() {
                         importedModules = ImmutableSet.of();
                     }
-                   \s
+
                     @Override
                     public QName getName() {
                         return NAME;
                     }
-                   \s
+
                     @Override
                     protected String resourceName() {
                         return "/yang-module-info/submodule1.yang";
                     }
-                   \s
+
                     @Override
                     public ImmutableSet<YangModuleInfo> getImportedModules() {
                         return importedModules;
                     }
                 }
-               \s
+
                 private static final class Submodule2Info extends ResourceYangModuleInfo {
                     private final @NonNull QName NAME = QName.create("yang:test:main", "2014-06-30", "submodule2")\
             .intern();
-               \s
+
                     static final @NonNull YangModuleInfo INSTANCE = new Submodule2Info();
-               \s
+
                     private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
-               \s
+
                     private Submodule2Info() {
                         importedModules = ImmutableSet.of();
                     }
-                   \s
+
                     @Override
                     public QName getName() {
                         return NAME;
                     }
-                   \s
+
                     @Override
                     protected String resourceName() {
                         return "/yang-module-info/submodule2.yang";
                     }
-                   \s
+
                     @Override
                     public ImmutableSet<YangModuleInfo> getImportedModules() {
                         return importedModules;
                     }
                 }
-               \s
+
                 private static final class Submodule3Info extends ResourceYangModuleInfo {
                     private final @NonNull QName NAME = QName.create("yang:test:main", "2014-06-30", "submodule3")\
             .intern();
-               \s
+
                     static final @NonNull YangModuleInfo INSTANCE = new Submodule3Info();
-               \s
+
                     private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
-               \s
+
                     private Submodule3Info() {
                         importedModules = ImmutableSet.of();
                     }
-                   \s
+
                     @Override
                     public QName getName() {
                         return NAME;
                     }
-                   \s
+
                     @Override
                     protected String resourceName() {
                         return "/yang-module-info/submodule3.yang";
                     }
-                   \s
+
                     @Override
                     public ImmutableSet<YangModuleInfo> getImportedModules() {
                         return importedModules;

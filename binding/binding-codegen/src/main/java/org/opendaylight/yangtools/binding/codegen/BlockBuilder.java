@@ -14,7 +14,6 @@ import com.google.errorprone.annotations.CheckReturnValue;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.xtend2.lib.StringConcatenation;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
@@ -42,12 +41,8 @@ final class BlockBuilder implements Mutable {
     //    StringBuilder sb; // current block
     //    int firstNl;      // offset of first known newline in current block, for quick single-line check
     //    int lastNl;       // offset of the last known newline in current block, for quick complete-line check
-    //
-    //
-    //
-    //
-    // FIXME: YANGTOOLS-1831: migrating to equivalent StringBuilder is sufficient
-    private final @NonNull StringConcatenation sc = new StringConcatenation("\n");
+
+    private final @NonNull StringBuilder buf = new StringBuilder();
 
     /**
      * Append a {@code '@'}.
@@ -56,7 +51,7 @@ final class BlockBuilder implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder at() {
-        sc.append("@");
+        buf.append('@');
         return this;
     }
 
@@ -67,7 +62,7 @@ final class BlockBuilder implements Mutable {
      */
     @CheckReturnValue
     @NonNull BlockBuilder nl() {
-        sc.newLine();
+        newLine();
         return this;
     }
 
@@ -75,7 +70,7 @@ final class BlockBuilder implements Mutable {
      * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
      */
     void newLine() {
-        sc.newLine();
+        buf.append('\n');
     }
 
     /**
@@ -91,7 +86,7 @@ final class BlockBuilder implements Mutable {
     @NonNullByDefault
     @CheckReturnValue
     BlockBuilder str(final String content) {
-        sc.append(validateStr(content));
+        buf.append(validateStr(content));
         return this;
     }
 
@@ -110,7 +105,7 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder strI(final int value) {
-        sc.append(Integer.toString(value));
+        buf.append(value);
         return this;
     }
 
@@ -138,44 +133,48 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder txt(final String text) {
-        sc.append(requireNonNull(text));
+        buf.append(validateTxt(text));
         return this;
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String validateTxt(final String txtArg) {
+        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
+        return requireNonNull(txtArg);
     }
 
     // FIXME: remove this method
     void append(final String str) {
-        sc.append(requireNonNull(str));
+        final int nl = str.indexOf('\n');
+        buf.append(nl == -1 ? validateStr(str) : validateTxt(str));
     }
 
     // FIXME: remove this method
-    void append(final @Nullable StringBuilder sb) {
-        if (sb != null) {
-            sc.append(sb.toString());
+    void append(final @Nullable StringBuilder src) {
+        if (src != null) {
+            buf.append(src);
         }
     }
 
     void append(final @Nullable BlockBuilder bb) {
         if (bb != null) {
-            sc.append(bb);
+            buf.append(bb.buf);
         }
     }
 
     // FIXME: clarify contract
     @NonNull BlockBuilder indented(final @Nullable BlockBuilder bb) {
-        if (bb != null) {
-            sc.append("    ");
-            sc.append(bb, "    ");
-            sc.newLineIfNotEmpty();
+        if (bb != null && !bb.buf.isEmpty()) {
+            indented("    ", bb.buf.toString());
         }
         return this;
     }
 
     // FIXME: clarify contract
     @NonNull BlockBuilder indented(final @Nullable StringBuilder sb) {
-        if (sb != null) {
-            sc.append("    ");
-            sc.append(sb.toString(), "    ");
-            sc.newLineIfNotEmpty();
+        if (sb != null && !sb.isEmpty()) {
+            indented("    ", sb.toString());
         }
         return this;
     }
@@ -183,20 +182,43 @@ final class BlockBuilder implements Mutable {
     // FIXME: clarify contract
     @NonNull BlockBuilder indented(final @NonNull String prefix, final @Nullable StringBuilder sb) {
         if (sb != null) {
-            sc.append("    ");
-            sc.append(requireNonNull(prefix));
-            sc.append(sb.toString(), "    ");
-            sc.newLineIfNotEmpty();
+            buf.append("    ").append(requireNonNull(prefix));
+            indented("    ", sb.toString());
         }
         return this;
     }
 
+    @NonNullByDefault
+    private void indented(final String indent, final String text) {
+        final var len = text.length();
+        if (len == 0) {
+            // no-op
+            return;
+        }
+
+        int begin = 0;
+        do {
+            int nl = text.indexOf('\n', begin);
+            if (nl == -1) {
+                buf.append(indent).append(text, begin, len);
+                return;
+            }
+            if (begin == nl) {
+                buf.append('\n');
+                begin = nl + 1;
+                continue;
+            }
+
+            final var next = nl + 1;
+            buf.append(indent).append(text, begin, next);
+            begin = next;
+        } while (begin < len);
+    }
+
     // FIXME: remove this method
     @NonNull BlockBuilder indentedTwice(final @Nullable StringBuilder sb) {
-        if (sb != null) {
-            sc.append("        ");
-            sc.append(sb.toString(), "        ");
-            sc.newLineIfNotEmpty();
+        if (sb != null && !sb.isEmpty()) {
+            indented("        ", sb.toString());
         }
         return this;
     }
@@ -210,11 +232,11 @@ final class BlockBuilder implements Mutable {
     //    }
 
     @NonNull String toRawString() {
-        return verifyNotNull(sc.toString());
+        return verifyNotNull(buf.toString());
     }
 
     String toJavadocBlock() {
-        return sc.isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
+        return buf.isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
     }
 
     /**

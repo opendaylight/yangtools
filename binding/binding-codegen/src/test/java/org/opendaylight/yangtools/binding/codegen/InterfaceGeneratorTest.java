@@ -41,7 +41,6 @@ class InterfaceGeneratorTest {
             "",
             "",
             "    void ontest();",
-            "",
             "}",
             "",
             ""
@@ -69,7 +68,6 @@ class InterfaceGeneratorTest {
             "",
             "    @Deprecated",
             "    void ontest();",
-            "",
             "}",
             "",
             ""
