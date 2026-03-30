@@ -37,7 +37,8 @@ final class ListKeyTemplate extends ClassTemplate {
     }
 
     @Override
-    String allValuesConstructor() {
+    BlockBuilder allValuesConstructor() {
+        // FIXME: use BlockBuilder
         final var sb = new StringBuilder().append("""
             /**
              * Constructs an instance.
@@ -67,7 +68,9 @@ final class ListKeyTemplate extends ClassTemplate {
             }
         }
 
-        return sb.append("}\n").toString();
+        final var bb = new BlockBuilder();
+        bb.append(sb.append("}\n"));
+        return bb;
     }
 
     @Override

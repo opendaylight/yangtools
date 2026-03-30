@@ -843,8 +843,7 @@ class ClassTemplate extends BaseTemplate {
         }
     }
 
-    // FIXME: return a BlockBuilder
-    @NonNull CharSequence allValuesConstructor() {
+    @NonNull BlockBuilder allValuesConstructor() {
         //        public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
         //            «IF !parentProperties.empty»
         //                super(«parentProperties.asArguments»);
@@ -864,29 +863,23 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var bb = new BlockBuilder();
-        bb.str("public ").append(type().simpleName());
-        bb.str("(").append(asArgumentsDeclaration(allProperties));
+        bb.str("public ").str(type().simpleName()).str("(").append(asArgumentsDeclaration(allProperties));
         bb.append(") {\n");
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").append(asArguments(parentProperties));
-            bb.append(");\n");
+            bb.str("    super(").str(asArguments(parentProperties)).append(");\n");
         }
         for (var prop : allProperties) {
             bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
         }
         bb.newLine();
         for (var prop : properties) {
-            final var fieldName = BaseTemplate.fieldName(prop);
+            final var fieldName = fieldName(prop);
+
             if (prop.getReturnType().simpleName().endsWith("[]")) {
-                bb.str("    this.").append(fieldName);
-                bb.append(" = ");
-                bb.append(importedName(CODEHELPERS));
-                bb.str(".copyArray(").append(fieldName);
-                bb.append(");\n");
+                bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
+                    .str(fieldName).append(");\n");
             } else {
-                bb.str("    this.").append(fieldName);
-                bb.str(" = ").append(fieldName);
-                bb.append(";\n");
+                bb.str("    this.").str(fieldName).str(" = ").str(fieldName).append(";\n");
             }
         }
         bb.append("}\n");
@@ -963,15 +956,12 @@ class ClassTemplate extends BaseTemplate {
         //            «genPatternEnforcer(fieldName)»
         //        }
 
-        final var bb = new BlockBuilder();
-        bb.at().append(importedName(CONSTRUCTOR_PARAMETERS));
-        bb.str("(\"").str(VALUE_PROP).append("\")\n");
-        bb.str("public ").append(type().simpleName());
-        bb.str("(").append(asArgumentsDeclaration(allProperties));
-        bb.append(") {\n");
+        final var bb = new BlockBuilder()
+            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(\"").str(VALUE_PROP).str("\")").nl()
+            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(") {")
+                .nl();
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").append(asArguments(parentProperties));
-            bb.append(");\n");
+            bb.str("    super(").str(asArguments(parentProperties)).append(");\n");
         }
 
         final var value = valueProperty(allProperties);

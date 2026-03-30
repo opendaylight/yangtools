@@ -136,19 +136,17 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     /**
-     * Template method which generates sequence of the names of the class attributes from {@code parameters}.
-     *
+     * {@return string with the list of the parameter names of the {@code parameters}, separated by {@code ", "}}
      * @param parameters non-empty group of generated property instances which are transformed to the sequence
-     *                   of parameter names
-     * @return string with the list of the parameter names of the {@code parameters}
+     *                   of parameter names, must not be empty
      */
-    static final @NonNull StringBuilder asArguments(final @NonNull List<GeneratedProperty> parameters) {
+    static final @NonNull String asArguments(final @NonNull List<GeneratedProperty> parameters) {
         final var sb = new StringBuilder();
         final var it = parameters.iterator();
         while (true) {
             sb.append(fieldName(it.next()));
             if (!it.hasNext()) {
-                return sb;
+                return sb.toString();
             }
             sb.append(", ");
         }
