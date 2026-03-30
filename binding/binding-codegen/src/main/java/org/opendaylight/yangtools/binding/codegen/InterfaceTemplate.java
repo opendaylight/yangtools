@@ -433,32 +433,24 @@ class InterfaceTemplate extends BaseTemplate {
     final BlockBuilder generateBindingToString() {
         final var analysis = typeAnalysis();
 
-        final var bb = new BlockBuilder();
-        bb.append("/**\n");
-        bb.append(" * Default implementation of {@link ");
-        bb.append(importedName(OBJECT));
-        bb.append("#toString()} contract for this interface.\n");
-        bb.append(
-            " * Implementations of this interface are encouraged to defer to this method to get consistent string\n");
-        bb.append(" * representations across all implementations.\n");
-        bb.append(" *\n");
-        bb.append(" * @param obj Object for which to generate toString() result.\n");
-        bb.append(" * @return {@link ");
-        bb.append(importedName(Types.STRING));
-        bb.append("} value of data modeled by this interface.\n");
-        bb.append(" * @throws ");
-        bb.append(importedName(NPE));
-        bb.append(" if {@code obj} is {@code null}\n");
-        bb.append(" */\n");
-        bb.append("static ");
-        bb.append(importedName(Types.STRING));
-        bb.append(" ");
-        bb.append(BINDING_TO_STRING_NAME);
-        bb.append("(final ");
-        bb.append(fullyQualifiedNonNull(type()));
-        bb.append(" obj) {\n");
-        bb.str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
-            .str(type().simpleName()).append("\");\n");
+        final var bb = new BlockBuilder()
+            .eol("/**")
+            .str(" * Default implementation of {@link ").str(importedName(OBJECT))
+                .eol("#toString()} contract for this interface.")
+            .txt("""
+                   * Implementations of this interface are encouraged to defer to this method to get consistent string
+                   * representations across all implementations.
+                   *
+                   * @param obj Object for which to generate toString() result.
+                  """)
+            .str(" * @return {@link ").str(importedName(Types.STRING)).eol("} value of data modeled by this interface.")
+            .str(" * @throws ")       .str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
+            .eol(" */")
+            .str("static ").str(importedName(Types.STRING)).str(" " + BINDING_TO_STRING_NAME + "(final ")
+            .str(fullyQualifiedNonNull(type()))
+            .str(" obj) {").nl()
+            .str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
+            .str(type().simpleName()).str("\");").nl();
         for (var property : analysis.properties()) {
             bb.str("    ").str(importedName(CODEHELPERS)).str(".appendValue(helper, \"").str(property.getName())
                 .str("\", obj.").str(property.getGetterName()).append("());\n");
@@ -467,9 +459,9 @@ class InterfaceTemplate extends BaseTemplate {
             bb.str("    ").str(importedName(CODEHELPERS)).str(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD)
                 .append("\", obj);\n");
         }
-        bb.append("    return helper.toString();\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .eol("    return helper.toString();")
+            .str("}").nl();
     }
 
     private String accessorJavadoc(final MethodSignature method, final String orString) {
