@@ -148,7 +148,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                           private int hash = 0;
                           private volatile boolean hashValid = false;
 
-                          """)
+                      """)
                 .str("    @").eol(override)
                 .txt("""
                           public int hashCode() {
@@ -156,7 +156,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                                   return hash;
                               }
 
-                          """)
+                      """)
                 .str("        final int result = ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
                 .txt("""
                               hash = result;
@@ -164,7 +164,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                               return result;
                           }
 
-                    """)
+                      """)
                 .str("    @").eol(override)
                 .str("    public boolean equals(").str(importedName(Types.objectType())).str(" obj) {").nl()
                 .str("        return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, obj);")
