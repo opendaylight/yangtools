@@ -81,24 +81,6 @@ class InterfaceTemplate extends BaseTemplate {
 
     @Override
     final BlockBuilder body() {
-        //        «type.formatDataForJavaDoc.wrapToDocumentation»
-        //        «type.annotations.generateAnnotations»
-        //        «generatedAnnotation»
-        //        public interface «type.simpleName»
-        //            «superInterfaces»
-        //        {
-        //
-        //            «generateInnerClasses»
-        //
-        //            «generateInnerEnumTypeObjects(enums)»
-        //
-        //            «generateConstants»
-        //
-        //            «generateMethods»
-        //
-        //        }
-        //
-
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
         bb.append(generateAnnotations(type().getAnnotations()));
@@ -131,7 +113,7 @@ class InterfaceTemplate extends BaseTemplate {
             if (!it.hasNext()) {
                 break;
             }
-            bb.append(",\n");
+            bb.str(",").newLine();
         }
         return bb.str(" ");
     }
@@ -170,28 +152,10 @@ class InterfaceTemplate extends BaseTemplate {
             return null;
         }
 
-        //        «FOR m : methods SEPARATOR "\n"»
-        //            «IF m.isDefault»
-        //                «generateDefaultMethod(m)»
-        //            «ELSEIF m.isStatic»
-        //                «generateStaticMethod(m)»
-        //            «ELSEIF m.parameters.empty && m.name.isGetterMethodName»
-        //                «generateAccessorMethod(m)»
-        //            «ELSEIF m.parameters.empty && m.name.isNonnullMethodName»
-        //                «generateNonnullAccessorMethod(m)»
-        //            «ELSE»
-        //                «generateMethod(m)»
-        //            «ENDIF»
-        //        «ENDFOR»
-
         final var bb = new BlockBuilder();
-        boolean hasElements = false;
-        for (var method : methods) {
-            if (!hasElements) {
-                hasElements = true;
-            } else {
-                bb.newLine();
-            }
+        final var it = methods.iterator();
+        while (true) {
+            final var method = it.next();
             if (method.isDefault()) {
                 bb.append(generateDefaultMethod(method));
             } else if (method.isStatic()) {
@@ -203,6 +167,11 @@ class InterfaceTemplate extends BaseTemplate {
             } else {
                 bb.append(generateMethod(method));
             }
+
+            if (!it.hasNext()) {
+                break;
+            }
+            bb.newLine();
         }
         return bb;
     }
@@ -239,20 +208,13 @@ class InterfaceTemplate extends BaseTemplate {
         return switch (methodName) {
             case BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME -> generateDefaultImplementedInterface();
             default ->
-                JavaFileTemplate.VOID.equals(method.getReturnType().name()) ? generateNoopVoidInterfaceMethod(method)
+                JavaFileTemplate.VOID.equals(method.getReturnType().name())
+                    ? generateNoopVoidInterfaceMethod(method)
                     : null;
         };
     }
 
     private @NonNull BlockBuilder generateNonnullMethod(final MethodSignature method) {
-        //        «val ret = method.returnType»
-        //        «val name = method.name»
-        //        «accessorJavadoc(method, ", or an empty list if it is not present.")»
-        //        «method.annotations.generateAnnotations»
-        //        default «ret.importedNonNull» «name»() {
-        //            return «CODEHELPERS.importedName».nonnull(«name.getGetterMethodForNonnull»());
-        //        }
-
         final var bb = new BlockBuilder();
         final var ret = method.getReturnType();
         final var name = method.getName();
@@ -277,14 +239,6 @@ class InterfaceTemplate extends BaseTemplate {
     }
 
     private BlockBuilder generateRequireMethod(final MethodSignature method) {
-        //        «val ret = method.returnType»
-        //        «val name = method.name»
-        //        «val fieldName = name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")»
-        //        «accessorJavadoc(method, ", guaranteed to be non-null.", NSEE)»
-        //        default «ret.importedNonNull» «name»() {
-        //            return «CODEHELPERS.importedName».require(«getGetterMethodForRequire(name)»(), "«fieldName»");
-        //        }
-
         final var ret = method.getReturnType();
         final var name = method.getName();
         final var bb = new BlockBuilder();
@@ -297,10 +251,6 @@ class InterfaceTemplate extends BaseTemplate {
     }
 
     private BlockBuilder generateAccessorMethod(final MethodSignature method) {
-        //        «accessorJavadoc(method, ", or {@code null} if it is not present.")»
-        //        «method.generateAccessorAnnotations»
-        //        «method.returnType.nullableType» «method.name»();
-
         final var bb = new BlockBuilder();
         bb.append(accessorJavadoc(method, ", or {@code null} if it is not present."));
         bb.append(generateAccessorAnnotations(method));
@@ -370,17 +320,17 @@ class InterfaceTemplate extends BaseTemplate {
             bb.str("    final int prime = 31;").newLine();
             for (var property : props) {
                 bb.str("    result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
-                    .str(getterMethodName(property)).append("());\n");
+                    .str(getterMethodName(property)).str("());").newLine();
             }
         }
         if (augmentable) {
             bb
                 .str("    for (var augmentation : obj.augmentations().values()) {").nl()
-                .str("        result += augmentation.hashCode();").nl()
+                .eol("        result += augmentation.hashCode();")
                 .str("    }").newLine();
         }
         return  bb
-            .str("    return result;").nl()
+            .eol("    return result;")
             .str("}").nl();
     }
 
@@ -395,25 +345,26 @@ class InterfaceTemplate extends BaseTemplate {
         final var object = importedName(OBJECT);
 
         final var bb = new BlockBuilder()
-            .str("/**").nl()
+            .eol("/**")
             .str(" * Default implementation of {@link ").str(object).str("#equals(").str(object)
-                .str(")} contract for this interface.").nl()
-            .str(" * Implementations of this interface are encouraged to defer to this method to get consistent ")
-                .str("equality").nl()
-            .str(" * results across all implementations.").nl()
-            .str(" *").nl()
-            .str(" * @param thisObj Object acting as the receiver of equals invocation").nl()
-            .str(" * @param obj Object acting as argument to equals invocation").nl()
-            .str(" * @return True if thisObj and obj are considered equal").nl()
-            .str(" * @throws ").str(importedName(NPE)).str(" if {@code thisObj} is {@code null}").nl()
-            .str(" */").nl()
+                .eol(")} contract for this interface.")
+            .txt("""
+                   * Implementations of this interface are encouraged to defer to this method to get consistent equality
+                   * results across all implementations.
+                   *
+                   * @param thisObj Object acting as the receiver of equals invocation
+                   * @param obj Object acting as argument to equals invocation
+                   * @return True if thisObj and obj are considered equal
+                  """)
+            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code thisObj} is {@code null}")
+            .eol(" */")
             .str("static boolean " + BINDING_EQUALS_NAME + "(final ").str(fullyQualifiedNonNull(type()))
                 .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj) {").nl()
             .str("    if (thisObj == obj) {").nl()
-            .str("        return true;").nl()
+            .eol("        return true;")
             .str("    }").nl()
             .str("    final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
-                .str(type().canonicalName()).str(".class, obj);").nl()
+                .str(type().canonicalName()).eol(".class, obj);")
             .str("    return other != null");
 
         for (var property : ByTypeMemberComparator.sort(props)) {
@@ -424,52 +375,43 @@ class InterfaceTemplate extends BaseTemplate {
         if (augmentable) {
             bb.nl().append("        && thisObj.augmentations().equals(other.augmentations())");
         }
-        bb.append(";\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .eol(";")
+            .str("}").nl();
     }
 
     @VisibleForTesting
     final BlockBuilder generateBindingToString() {
         final var analysis = typeAnalysis();
 
-        final var bb = new BlockBuilder();
-        bb.append("/**\n");
-        bb.append(" * Default implementation of {@link ");
-        bb.append(importedName(OBJECT));
-        bb.append("#toString()} contract for this interface.\n");
-        bb.append(
-            " * Implementations of this interface are encouraged to defer to this method to get consistent string\n");
-        bb.append(" * representations across all implementations.\n");
-        bb.append(" *\n");
-        bb.append(" * @param obj Object for which to generate toString() result.\n");
-        bb.append(" * @return {@link ");
-        bb.append(importedName(Types.STRING));
-        bb.append("} value of data modeled by this interface.\n");
-        bb.append(" * @throws ");
-        bb.append(importedName(NPE));
-        bb.append(" if {@code obj} is {@code null}\n");
-        bb.append(" */\n");
-        bb.append("static ");
-        bb.append(importedName(Types.STRING));
-        bb.append(" ");
-        bb.append(BINDING_TO_STRING_NAME);
-        bb.append("(final ");
-        bb.append(fullyQualifiedNonNull(type()));
-        bb.append(" obj) {\n");
-        bb.str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
-            .str(type().simpleName()).append("\");\n");
+        final var bb = new BlockBuilder()
+            .eol("/**")
+            .str(" * Default implementation of {@link ").str(importedName(OBJECT))
+                .eol("#toString()} contract for this interface.")
+            .txt("""
+                   * Implementations of this interface are encouraged to defer to this method to get consistent string
+                   * representations across all implementations.
+                   *
+                   * @param obj Object for which to generate toString() result.
+                  """)
+            .str(" * @return {@link ").str(importedName(Types.STRING)).eol("} value of data modeled by this interface.")
+            .str(" * @throws ")       .str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
+            .eol(" */")
+            .str("static ").str(importedName(Types.STRING)).str(" " + BINDING_TO_STRING_NAME + "(final ")
+                .str(fullyQualifiedNonNull(type())).str(" obj) {").nl()
+            .str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
+                .str(type().simpleName()).eol("\");");
         for (var property : analysis.properties()) {
             bb.str("    ").str(importedName(CODEHELPERS)).str(".appendValue(helper, \"").str(property.getName())
-                .str("\", obj.").str(property.getGetterName()).append("());\n");
+                .str("\", obj.").str(property.getGetterName()).str("());").newLine();
         }
         if (analysis.augmentType() != null) {
-            bb.str("    ").str(importedName(CODEHELPERS)).str(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD)
-                .append("\", obj);\n");
+            bb.str("    ").str(importedName(CODEHELPERS))
+                .str(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);").newLine();
         }
-        bb.append("    return helper.toString();\n");
-        bb.append("}\n");
-        return bb;
+        return bb
+            .eol("    return helper.toString();")
+            .str("}").nl();
     }
 
     private String accessorJavadoc(final MethodSignature method, final String orString) {
