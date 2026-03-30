@@ -29,23 +29,21 @@ class InterfaceGeneratorTest {
         final var methSign = mockMethSign("on" + TEST);
         final var genType = mockGenType(methSign);
 
-        String expected = String.join(System.lineSeparator(),
-            "package test;",
-            "import javax.annotation.processing.Generated;",
-            "",
-            "@Generated(\"mdsal-binding-generator\")",
-            "public interface test",
-            "{",
-            "",
-            "",
-            "",
-            "",
-            "    void ontest();",
-            "}",
-            "",
-            ""
-        );
-        assertEquals(expected, new InterfaceGenerator(genType).generate());
+        assertEquals("""
+            package test;
+            import javax.annotation.processing.Generated;
+
+            @Generated("mdsal-binding-generator")
+            public interface test
+            {
+
+
+
+
+                void ontest();
+            }
+
+            """, new InterfaceGenerator(genType).generate());
     }
 
     @Test
@@ -54,25 +52,23 @@ class InterfaceGeneratorTest {
         addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
         final var genType = mockGenType(methSign);
 
-        String expected = String.join(System.lineSeparator(),
-            "package test;",
-            "import java.lang.Deprecated;",
-            "import javax.annotation.processing.Generated;",
-            "",
-            "@Generated(\"mdsal-binding-generator\")",
-            "public interface test",
-            "{",
-            "",
-            "",
-            "",
-            "",
-            "    @Deprecated",
-            "    void ontest();",
-            "}",
-            "",
-            ""
-        );
-        assertEquals(expected, new InterfaceGenerator(genType).generate());
+        assertEquals("""
+            package test;
+            import java.lang.Deprecated;
+            import javax.annotation.processing.Generated;
+
+            @Generated("mdsal-binding-generator")
+            public interface test
+            {
+
+
+
+
+                @Deprecated
+                void ontest();
+            }
+
+            """, new InterfaceGenerator(genType).generate());
     }
 
     @Test
@@ -82,28 +78,26 @@ class InterfaceGeneratorTest {
         doReturn(true).when(methSign).isDefault();
         final var genType = mockGenType(methSign);
 
-        String expected = String.join(System.lineSeparator(),
-            "package test;",
-            "import java.lang.Deprecated;",
-            "import javax.annotation.processing.Generated;",
-            "",
-            "@Generated(\"mdsal-binding-generator\")",
-            "public interface test",
-            "{",
-            "",
-            "",
-            "",
-            "",
-            "    @Deprecated",
-            "    default void ontest() {",
-            "        // No-op",
-            "    }",
-            "",
-            "}",
-            "",
-            ""
-        );
-        assertEquals(expected, new InterfaceGenerator(genType).generate());
+        assertEquals("""
+            package test;
+            import java.lang.Deprecated;
+            import javax.annotation.processing.Generated;
+
+            @Generated("mdsal-binding-generator")
+            public interface test
+            {
+
+
+
+
+                @Deprecated
+                default void ontest() {
+                    // No-op
+                }
+
+            }
+
+            """, new InterfaceGenerator(genType).generate());
     }
 
     private static GeneratedType mockGenType(final MethodSignature methSign) {
