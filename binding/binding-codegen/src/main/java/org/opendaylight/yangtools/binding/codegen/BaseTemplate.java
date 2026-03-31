@@ -10,21 +10,17 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -37,7 +33,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
@@ -61,8 +56,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract class BaseTemplate extends JavaFileTemplate {
-    private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
-    private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
         .addIgnoredStatement(ContactStatement.DEF)
         .addIgnoredStatement(DescriptionStatement.DEF)
@@ -334,33 +327,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
             .append("}\n");
     }
 
-    /**
-     * Template method which generates JAVA comments.
-     *
-     * @param comment string with the comment for whole JAVA class
-     * @return string with comment in JAVA format
-     */
-    static final @NonNull String asJavadoc(final @Nullable TypeMemberComment comment) {
-        if (comment == null) {
-            return "";
-        }
-
-        final var sb = new StringBuilder();
-        final var contract = comment.contractDescription();
-        if (contract != null) {
-            sb.append(contract).append("\n\n");
-        }
-        final var reference = comment.referenceDescription();
-        if (reference != null) {
-            sb.append(formatReference(reference));
-        }
-        final var signature = comment.typeSignature();
-        if (signature != null) {
-            sb.append(signature).append('\n');
-        }
-        return wrapToDocumentation(sb.toString());
-    }
-
     @NonNullByDefault
     String formatDataForJavaDoc(final GeneratedType type) {
         final var sb = new StringBuilder();
@@ -463,64 +429,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
             }
         }
         return null;
-    }
-
-    static final @NonNull String formatReference(final @Nullable String reference) {
-        if (reference == null) {
-            return "";
-        }
-
-        final var sb = new StringBuilder().append("""
-            <pre>
-                <code>
-            """);
-
-        // FIXME: use a {@code} block which will render some of this encoding superfluous, but it requires paying
-        //        attention to '}' pairing in input
-        var formattedText = BindingGeneratorUtil.encodeAngleBrackets(reference);
-        formattedText = WS_MATCHER.replaceFrom(JavaFileTemplate.encodeJavadocSymbols(formattedText), ' ');
-        formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ");
-
-        // FIXME: can we NOT use StringTokenizer here?
-        var lineBuilder = new StringBuilder();
-        var isFirstElementOnNewLineEmptyChar = false;
-        final var tokenizer = new StringTokenizer(formattedText, " ", true);
-        while (tokenizer.hasMoreTokens()) {
-            final var nextElement = tokenizer.nextToken();
-            final var lbLength = lineBuilder.length();
-
-            if (lbLength != 0 && lbLength + nextElement.length() > 80) {
-                final var limit = lbLength - 1;
-                if (lineBuilder.charAt(limit) == ' ') {
-                    lineBuilder.setLength(limit);
-                }
-                // FIXME: use append(CharSequence, int, int) instead
-                if (!lineBuilder.isEmpty() && lineBuilder.charAt(0) == ' ') {
-                    lineBuilder.deleteCharAt(0);
-                }
-                sb.append("        ").append(lineBuilder).append('\n');
-                lineBuilder.setLength(0);
-
-                if (" ".equals(nextElement)) {
-                    isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
-                }
-            }
-            if (isFirstElementOnNewLineEmptyChar) {
-                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
-            } else {
-                lineBuilder.append(nextElement);
-            }
-        }
-        if (!lineBuilder.isEmpty()) {
-            sb.append("        ").append(lineBuilder).append('\n');
-        }
-
-        return sb.append("""
-                </code>
-            </pre>
-
-            """)
-            .toString();
     }
 
     @NonNullByDefault
