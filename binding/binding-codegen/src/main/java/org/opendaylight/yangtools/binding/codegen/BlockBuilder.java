@@ -7,14 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Universal builder of a string block. A block is composed of one or more lines, concatenated using {@code '\n'}.
@@ -40,8 +45,182 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
 final class BlockBuilder implements Mutable {
-    // FIXME: replace with a StringBuilder-based state machine
+    /**
+     * An argument verification implementation.
+     */
+    @NonNullByDefault
+    @CheckReturnValue
+    @VisibleForTesting
+    abstract static sealed class ArgumentVerifier {
+        /**
+         * Verify the argument to {@link BlockBuilder#str(String)}.
+         *
+         * @param arg the argument
+         * @return the argument
+         */
+        abstract String verifyStr(String arg);
+
+        /**
+         * Verify the argument to {@link BlockBuilder#str(String)} which is known to be non-empty.
+         *
+         * @param arg the argument
+         * @return the argument
+         */
+        abstract String verifyNonEmptyStr(String arg);
+
+        /**
+         * Verify the argument to {@link BlockBuilder#txt(String)}.
+         *
+         * @param arg the argument
+         * @return the argument
+         */
+        abstract String verifyTxt(String arg);
+
+        /**
+         * Verify the argument to {@link BlockBuilder#txt(String)} known to have a newline at specified offset.
+         *
+         * @param arg the argument
+         * @param nl the offset
+         * @return the argument
+         */
+        abstract String verifyTxt(String arg, int nl);
+
+        /**
+         * The fast verifier: we just make sure there are no nulls.
+         */
+        @VisibleForTesting
+        static final class Fast extends ArgumentVerifier {
+            private Fast() {
+                // Hidden on purpose
+            }
+
+            @Override
+            String verifyStr(final String arg) {
+                return requireNonNull(arg);
+            }
+
+            @Override
+            String verifyNonEmptyStr(final String arg) {
+                return arg;
+            }
+
+            @Override
+            String verifyTxt(final String arg) {
+                return requireNonNull(arg);
+            }
+
+            @Override
+            String verifyTxt(final String arg, final int nl) {
+                return arg;
+            }
+        }
+
+        /**
+         * The strict verifier: we do full argument checks.
+         */
+        @VisibleForTesting
+        static final class Strict extends ArgumentVerifier {
+            private Strict() {
+                // Hidden on purpose
+            }
+
+            @Override
+            String verifyStr(final String arg) {
+                final var nl = arg.indexOf('\n');
+                if (nl != -1) {
+                    throw new VerifyException("newline at offset " + nl + " of '" + arg + "'");
+                }
+                return verifyNonEmptyStr(arg);
+            }
+
+            @Override
+            String verifyNonEmptyStr(final String arg) {
+                if (arg.isEmpty()) {
+                    throw new VerifyException("empty str");
+                }
+                return arg;
+            }
+
+            @Override
+            String verifyTxt(final String arg) {
+                if (arg.isEmpty()) {
+                    throw new VerifyException("empty txt");
+                }
+                final var nl = arg.indexOf('\n');
+                if (nl == -1) {
+                    throw new VerifyException("no newline in '" + arg + "'");
+                }
+                return arg;
+            }
+
+            @Override
+            String verifyTxt(final String arg, final int nl) {
+                verify(nl >= 0);
+                return verifyNotNull(arg);
+            }
+        }
+    }
+
+    // FIXME: document this property
+    private static final @NonNull String PROP_VERIFY = "odl.binding.codegen.verify";
+
+    /**
+     * The run-time constant verification.
+     */
+    @VisibleForTesting
+    static final @NonNull ArgumentVerifier ARGUMENT_VERIFIER = selectArgumentVerifier(
+        LoggerFactory.getLogger(BlockBuilder.class), System.getProperty(PROP_VERIFY));
+
+    @VisibleForTesting
+    static @NonNull ArgumentVerifier selectArgumentVerifier(final @NonNull Logger log, final @Nullable String prop) {
+        return switch (prop) {
+            case null -> {
+                log.debug("Using fast verification");
+                yield new ArgumentVerifier.Fast();
+            }
+            case "false" -> {
+                log.info("Using fast verification");
+                yield new ArgumentVerifier.Fast();
+            }
+            case "true" -> {
+                log.info("Using strict verification");
+                yield new ArgumentVerifier.Strict();
+            }
+            default -> {
+                log.warn("Bad {} value '{}', using strict verification", PROP_VERIFY, prop);
+                yield new ArgumentVerifier.Strict();
+            }
+        };
+    }
+
     //
+    // Bridge methods through ARGUMENT_VERIFIER. Kept here to keep callers as simple as possible.
+    //
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyStr(final String arg) {
+        return ARGUMENT_VERIFIER.verifyStr(arg);
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyNonEmptyStr(final String arg) {
+        return ARGUMENT_VERIFIER.verifyNonEmptyStr(arg);
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyTxt(final String arg) {
+        return ARGUMENT_VERIFIER.verifyTxt(arg);
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyTxt(final String arg, final int nl) {
+        return ARGUMENT_VERIFIER.verifyTxt(arg, nl);
+    }
+
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -108,21 +287,34 @@ final class BlockBuilder implements Mutable {
      *    <li>not contain new lines</li>
      * </ul>
      *
-     * @param content the {@link String}
+     * @param str the {@link String}
      * @return this instance
      */
     @NonNullByDefault
     @CheckReturnValue
-    BlockBuilder str(final String content) {
-        buf.append(validateStr(content));
+    BlockBuilder str(final String str) {
+        appendStr(str);
         return this;
     }
 
     @NonNullByDefault
     @CheckReturnValue
-    private static String validateStr(final String strArg) {
-        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
-        return requireNonNull(strArg);
+    BlockBuilder str(final String firstStr, final @Nullable String secondStr) {
+        appendStr(firstStr);
+        return secondStr == null ? this : str(secondStr);
+    }
+
+    @NonNullByDefault
+    BlockBuilder str(final @Nullable StringBuilder sb) {
+        if (sb != null) {
+            appendStr(sb.toString());
+        }
+        return this;
+    }
+
+    @NonNullByDefault
+    private void appendStr(final String str) {
+        buf.append(verifyStr(str));
     }
 
     // FIXME: convert {@code} to {@snippet}
@@ -161,15 +353,8 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder txt(final String text) {
-        buf.append(validateTxt(text));
+        buf.append(verifyTxt(text));
         return this;
-    }
-
-    @NonNullByDefault
-    @CheckReturnValue
-    private static String validateTxt(final String txtArg) {
-        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
-        return requireNonNull(txtArg);
     }
 
     /**
@@ -250,7 +435,7 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder gen(final String rawType) {
-        buf.append(validateStr(rawType)).append("<>");
+        buf.append(verifyStr(rawType)).append("<>");
         return this;
     }
 
@@ -287,14 +472,14 @@ final class BlockBuilder implements Mutable {
     private BlockBuilder genMulti(final String rawType, final String firstArg, final @NonNull String... others) {
         startGen(rawType, firstArg);
         for (var nextArg : others) {
-            buf.append(", ").append(validateStr(nextArg));
+            buf.append(", ").append(verifyStr(nextArg));
         }
         return endGen();
     }
 
     @NonNullByDefault
     private void startGen(final String rawType, final String args) {
-        buf.append(validateStr(rawType)).append('<').append(validateStr(args));
+        buf.append(verifyStr(rawType)).append('<').append(verifyStr(args));
     }
 
     @NonNullByDefault
@@ -323,14 +508,14 @@ final class BlockBuilder implements Mutable {
     // FIXME: remove this method
     @NonNullByDefault
     BlockBuilder ind(final String str) {
-        buf.append("    ").append(validateStr(str));
+        buf.append("    ").append(verifyStr(str));
         return this;
     }
 
     // FIXME: remove this method
     void append(final String str) {
         final int nl = str.indexOf('\n');
-        buf.append(nl == -1 ? validateStr(str) : validateTxt(str));
+        buf.append(nl == -1 ? verifyNonEmptyStr(str) : verifyTxt(str, nl));
     }
 
     // FIXME: remove this method
@@ -412,7 +597,11 @@ final class BlockBuilder implements Mutable {
     }
 
     String toJavadocBlock() {
-        return buf.isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
+        if (buf.isEmpty())  {
+            return "";
+        }
+        final var bb = BaseTemplate.wrapToDocumentation(toRawString());
+        return bb == null ? "" : bb.toRawString();
     }
 
     /**
