@@ -61,19 +61,18 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var override = importedName(OVERRIDE);
         final var type = archetype.canonicalName();
 
-        final var bb = new BlockBuilder();
-        bb.append(generateDefaultImplementedInterface());
-        bb
+        final var bb = new BlockBuilder()
+            .blk(generateDefaultImplementedInterface())
             .nl()
-            .at().str(override).nl()
+            .at().eol(override)
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
-            .str("default ").str(rootMeta).str("<").str(type).str("> " + DATA_ROOT_META_NAME + "() {").nl()
+            .str("default ").str(rootMeta).str("<").str(type).str("> " + DATA_ROOT_META_NAME + "()").oB()
             .str("    return " + META_STATIC_FIELD_NAME + ';').nl()
-            .append("}\n");
+            .cB();
 
         final var superMethods = super.generateMethods();
         if (superMethods != null) {
-            bb.nl().append(superMethods);
+            bb.nl().blk(superMethods);
         }
         return bb;
     }
