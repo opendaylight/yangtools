@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -16,13 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 final class BaseBitsType extends AbstractBaseType<BitsTypeDefinition> implements BitsTypeDefinition {
     private final @NonNull ImmutableList<Bit> bits;
 
-    BaseBitsType(final QName qname, final Collection<Bit> bits) {
+    BaseBitsType(final QName qname, final ImmutableList<Bit> bits) {
         super(qname);
-        this.bits = ImmutableList.copyOf(bits);
+        this.bits = requireNonNull(bits);
     }
 
     @Override
-    public Collection<? extends Bit> getBits() {
+    public ImmutableList<Bit> getBits() {
         return bits;
     }
 
