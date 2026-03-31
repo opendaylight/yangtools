@@ -62,22 +62,23 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     BlockBuilder body() {
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(targetType)));
-        bb.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
         bb
+            .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
             .eol(generatedAnnotation())
-            .str("public class ").str(type().simpleName()).str(" {").nl()
+            .str("public class ").str(type().simpleName()).oB()
             // FIXME: remove this newline
             .nl()
-            .indented(builderFields());
-        bb.nl().indented(constantsDeclarations());
-        bb.newLine();
+            .indented(builderFields())
+            .nl()
+            .indented(constantsDeclarations())
+            .newLine();
         if (augmentType != null) {
-            bb.append("    ");
+            bb.str("    ");
             final var augmentTypeRef = importedName(augmentType);
             final var mapTypeRef = importedName(JU_MAP);
 
             bb.str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef).str(">, ")
-                .str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).append(".of();\n");
+                .str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).eol(".of();");
         }
 
         final var targetTypeName = importedName(targetType);
@@ -88,7 +89,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                        * Construct an empty builder.
                        */
                   """)
-            .str("    public ").str(type().simpleName()).str("() {").nl()
+            .str("    public ").str(type().simpleName()).str("()").oB()
             .eol("        // No-op")
             .eol("    }")
             .indented(generateConstructorsFromIfcs())
@@ -118,12 +119,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .eol("     *")
             .str("     * @return A new {@link ").str(targetTypeName).eol("} instance.")
             .eol("     */")
-            .str("    public ").str(importedNonNull(targetType)).str(" build() {").nl()
+            .str("    public ").str(importedNonNull(targetType)).str(" build()").oB()
             .str("        return new ").str(importedName(type().getEnclosedTypes().getFirst())).eol("(this);")
             .str("    }").nl()
             .nl()
             .indented(implTemplate.body())
-            .str("}").nl();
+            .cB();
     }
 
     private @Nullable BlockBuilder builderFields() {
@@ -141,18 +142,18 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private BlockBuilder propertyFields() {
         final var bb = new BlockBuilder();
         for (var prop : properties) {
-            bb.str("private ").str(importedReturnType(prop)).str(" ").str(fieldName(prop)).append(";\n");
+            bb.str("private ").str(importedReturnType(prop)).str(" ").str(fieldName(prop)).eol(";");
         }
         return bb;
     }
 
     @Override
-    StringBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
-        final var sb = new StringBuilder().append('@');
+    BlockBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
+        final var bb = new BlockBuilder().at();
         final var forRemoval = ann.getParameter("forRemoval");
         return forRemoval != null
-            ? sb.append(importedName(DEPRECATED)).append("(forRemoval = ").append(forRemoval.getValue()).append(')')
-            : sb.append(importedName(SUPPRESS_WARNINGS)).append("(\"deprecation\")");
+            ? bb.str(importedName(DEPRECATED)).str("(forRemoval = ").str(forRemoval.getValue()).str(")")
+            : bb.str(importedName(SUPPRESS_WARNINGS)).str("(\"deprecation\")");
     }
 
     private @Nullable BlockBuilder generateConstructorsFromIfcs() {
@@ -169,7 +170,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 } else {
                     bb.newLine();
                 }
-                bb.append(generateConstructorFromIfc(genType));
+                bb.blk(generateConstructorFromIfc(genType));
             }
         }
         return bb;
@@ -188,14 +189,14 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 .eol(" *")
                 .str(" * @param arg ").str(typeName).eol(" from which the builder should be initialized")
                 .eol(" */")
-                .str("public ").str(type().simpleName()).str("(").str(typeName).str(" arg) {").nl()
+                .str("public ").str(type().simpleName()).str("(").str(typeName).str(" arg)").oB()
                 .indented(printConstructorPropertySetter(genType))
-                .eol("}")
+                .cB()
                 .newLine();
         }
         for (var implTypeImplement : genType.getImplements()) {
             if (implTypeImplement instanceof GeneratedType implType) {
-                bb.append(generateConstructorFromIfc(implType));
+                bb.blk(generateConstructorFromIfc(implType));
             }
         }
         return bb;
@@ -211,12 +212,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             if (isGetterMethodName(getter.getName())) {
                 bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                bb.append(";\n");
+                bb.eol(";");
             }
         }
 
         for (var impl : ifc.getImplements()) {
-            bb.append(printConstructorPropertySetter(impl, getSpecifiedGetters(ifc)));
+            bb.blk(printConstructorPropertySetter(impl, getSpecifiedGetters(ifc)));
         }
         return bb;
     }
@@ -232,12 +233,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             if (isGetterMethodName(getter.getName()) && getterByName(alreadySetProperties, getter.getName()) == null) {
                 bb.append(printPropertySetter(getter, "arg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                bb.str(";").newLine();
+                bb.eol(";");
             }
         }
 
         for (var descendant : ifc.getImplements()) {
-            bb.append(printConstructorPropertySetter(descendant,
+            bb.blk(printConstructorPropertySetter(descendant,
                 Sets.union(alreadySetProperties, getSpecifiedGetters(ifc))));
         }
         return bb;
@@ -270,8 +271,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         bb.append(generateMethodFieldsFromComment(targetType));
         bb
-            .str("public void fieldsFrom(final ").str(importedName(BindingTypes.GROUPING)).str(" arg) {").nl()
-            .str("    boolean isValidArg = false;").newLine();
+            .str("public void fieldsFrom(final ").str(importedName(BindingTypes.GROUPING)).str(" arg)").oB()
+            .eol("    boolean isValidArg = false;");
         for (var impl : getAllIfcs(targetType)) {
             bb.indented(generateIfCheck(impl, done));
         }
@@ -281,7 +282,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     .map(this::importedName)
                     .collect(Collectors.toUnmodifiableList()).toString())
                 .eol("\");")
-            .str("}").nl();
+            .cB();
     }
 
     /**
@@ -296,23 +297,23 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var targetName = targetType.simpleName();
 
         return new BlockBuilder()
-            .str("private static final class LazyEmpty {").nl()
+            .str("private static final class LazyEmpty").oB()
             .str("    static final ").str(nonnullTarget).str(" INSTANCE = new ").str(type().simpleName())
                 .eol("().build();")
             .nl()
-            .str("    private LazyEmpty() {").nl()
+            .str("    private LazyEmpty()").oB()
             .str("        // Hidden on purpose").nl()
             .str("    }").nl()
-            .str("}").nl()
+            .cB()
             .nl()
             .eol("/**")
             .str(" * Get empty instance of ").str(targetName).eol(".")
             .eol(" *")
             .str(" * @return An empty {@link ").str(targetName).eol("}")
             .eol(" */")
-            .str("public static ").str(nonnullTarget).str(" empty() {").nl()
+            .str("public static ").str(nonnullTarget).str(" empty()").oB()
             .eol("    return LazyEmpty.INSTANCE;")
-            .str("}").nl();
+            .cB();
     }
 
     private StringBuilder generateMethodFieldsFromComment(final GeneratedType type) {
@@ -356,10 +357,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
         return !(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType) ? null : new BlockBuilder()
-            .str("if (arg instanceof ").str(importedName(implType)).str(" castArg) {").nl()
+            .str("if (arg instanceof ").str(importedName(implType)).str(" castArg)").oB()
                 .indented(printPropertySetter(implType))
             .eol("    isValidArg = true;")
-            .str("}").nl();
+            .cB();
     }
 
     private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
@@ -372,36 +373,41 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             if (isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
                 bb.append(printPropertySetter(getter, "castArg." + getter.getName() + "()",
                     propertyNameFromGetter(getter)));
-                bb.str(";").newLine();
+                bb.eol(";");
             }
         }
         return bb;
     }
 
-    private String printPropertySetter(final MethodSignature getter, final String retrieveProperty,
-            final String propertyName) {
-        final var ownGetter = implTemplate.findGetter(getter.getName());
+    // FIXME: return BlockBuilder
+    @NonNullByDefault
+    private String printPropertySetter(final MethodSignature getter, final String receiver, final String propertyName) {
+        final var getterName =  getter.getName();
+
+        final var ownGetter = implTemplate.findGetter(getterName);
         final var ownGetterType = ownGetter.getReturnType();
         if (strictTypeEquals(getter.getReturnType(), ownGetterType)) {
-            return "this._" + propertyName + " = " + retrieveProperty;
+            return "this._" + propertyName + " = " + receiver + getterName + "()";
         }
         if (ownGetterType instanceof ParameterizedType parameterized) {
             final var itemType = parameterized.getActualTypeArguments().getFirst();
             if (Types.isListType(parameterized)) {
-                return printPropertySetter(retrieveProperty, propertyName, "checkListFieldCast",
+                return printPropertySetter(getterName, receiver, propertyName, "checkListFieldCast",
                     importedName(itemType));
             }
             if (Types.isSetType(parameterized)) {
-                return printPropertySetter(retrieveProperty, propertyName, "checkSetFieldCast", importedName(itemType));
+                return printPropertySetter(getterName, receiver, propertyName, "checkSetFieldCast",
+                    importedName(itemType));
             }
         }
-        return printPropertySetter(retrieveProperty, propertyName, "checkFieldCast", importedName(ownGetterType));
+        return printPropertySetter(getterName, receiver, propertyName, "checkFieldCast", importedName(ownGetterType));
     }
 
-    private String printPropertySetter(final String retrieveProperty, final String propertyName,
+    @NonNullByDefault
+    private String printPropertySetter(final String getterName, final String receiver, final String propertyName,
             final String checkerName, final String className) {
         return "this._" + propertyName + " = " + importedName(CODEHELPERS) + '.' + checkerName + '('
-            + className + ".class, \"" + propertyName + "\", " + retrieveProperty + ')';
+            + className + ".class, \"" + propertyName + "\", " + receiver + getterName + "())";
     }
 
     private static boolean strictTypeEquals(final Type type1, final Type type2) {
@@ -478,16 +484,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 continue;
             }
 
-            bb.append("private static final ");
-            bb.append(jurPatternRef);
-            bb.append("[] ");
-            bb.append(Constants.MEMBER_PATTERN_LIST);
-            bb.append(fieldSuffix);
-            bb.append(" = ");
-            bb.append(importedName(CODEHELPERS));
-            bb.append(".compilePatterns(");
-            bb.append(importedName(JU_LIST));
-            bb.append(".of(\n");
+            bb.str("private static final ").str(jurPatternRef).str("[] " + Constants.MEMBER_PATTERN_LIST)
+                .str(fieldSuffix).str(" = ").str(importedName(CODEHELPERS)).str(".compilePatterns(")
+                .str(importedName(JU_LIST)).append(".of(\n");
             {
                 boolean first = true;
                 for (var v : xsdToPattern.keySet()) {
@@ -538,55 +537,38 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @NonNull BlockBuilder generateListSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var restrictions = restrictionsForSetter(actualType);
-
         final var bb = new BlockBuilder();
+        final BlockBuilder argumentCheck;
+        final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
             bb.append(generateCheckers(field, restrictions, actualType));
+            argumentCheck = new BlockBuilder()
+                .str("if (values != null)").oB()
+                .str("   for (").str(importedName(actualType)).str(" value : values)").oB()
+                .indentedTwice(checkArgument(field, restrictions, actualType, "value"))
+                .str("   ").cB()
+                .cB();
+        } else {
+            argumentCheck = null;
         }
 
-        //
-        //    /**
-        //     * Set the property corresponding to {@link «targetType.importedName»#«field.getterName»()} to the
-        // specified
-        //     * value.
-        //     *
-        //     * @param values desired value
-        //     * @return this builder
-        //     */
-        //    public «type.simpleName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
-        bb
+        return bb
             .nl()
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
                 .str(field.getGetterName()).eol("()} to the specified")
-        .eol(" * value.")
-        .eol(" *")
-        .eol(" * @param values desired value")
-        .eol(" * @return this builder")
-        .eol(" */")
-        .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
-            .str(importedReturnType(field)).append(" values) {\n");
-
-        //        «IF restrictions !== null»
-        //            if (values != null) {
-        //               for («actualType.importedName» value : values) {
-        //                   «checkArgument(field, restrictions, actualType, "value")»
-        //               }
-        //            }
-        //        «ENDIF»
-        if (restrictions != null) {
-            bb.str("if (values != null) {").nl().str("   for (").str(importedName(actualType)).str(" value : values) {")
-                .newLine();
-            bb.indentedTwice(checkArgument(field, restrictions, actualType, "value"));
-            bb.append("   }\n");
-            bb.append("}\n");
-        }
-
-        return bb
+            .eol(" * value.")
+            .eol(" *")
+            .eol(" * @param values desired value")
+            .eol(" * @return this builder")
+            .eol(" */")
+            .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+                .str(importedReturnType(field)).str(" values)").oB()
+            // FIXME: indented?
+            .blk(argumentCheck)
             .str("    this.").str(fieldName(field)).eol(" = values;")
             .eol("    return this;")
-            .eol("}")
+            .cB()
             .nl();
     }
 
@@ -621,7 +603,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                  */
                 """)
             .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
-                .str(importedReturnType(field)).str(" values) {").newLine();
+                .str(importedReturnType(field)).str(" values)").oB();
 
         //        «IF restrictions !== null»
         //            if (values != null) {
@@ -633,7 +615,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         if (restrictions != null) {
             bb
                 .eol("if (values != null) {")
-                .str("   for (").str(importedName(actualType)).str(" value : values.values()) {").nl()
+                .str("   for (").str(importedName(actualType)).str(" value : values.values())").oB()
                 .indentedTwice(checkArgument(field, restrictions, actualType, "value"))
                 .eol("   }")
                 // FIXME: no nl() here ?
@@ -663,17 +645,17 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .eol(" * @return this builder")
             .eol(" */")
             .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
-                .str(importedReturnType(field)).str(" value) {").newLine();
+                .str(importedReturnType(field)).str(" value)").oB();
         if (restrictions != null) {
             bb
-                .str("    if (value != null) {").nl()
+                .str("    if (value != null)").oB()
                 .indentedTwice(checkArgument(field, restrictions, actualType, "value"))
-                .str("    }").newLine();
+                .str("    ").cB();
         }
         return bb
             .str("    this.").str(fieldName(field)).eol(" = value;")
             .eol("    return this;")
-            .str("}").nl();
+            .cB();
     }
 
     /**
@@ -694,7 +676,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                        */
                       """)
                 .str("public ").str(type().simpleName()).str(" withKey(final ").str(importedName(keyType))
-                    .str(" key) {").nl()
+                    .str(" key)").oB()
                 .txt("""
                           this.key = key;
                           return this;
@@ -702,7 +684,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                       """);
         }
         for (var property : properties) {
-            bb.append(generateSetter(property));
+            bb.blk(generateSetter(property));
         }
         bb.newLine();
         if (augmentType != null) {
@@ -719,8 +701,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null")
                 .eol(" */")
                 .str("public ").str(type().simpleName()).str(" addAugmentation(").str(augmentTypeRef)
-                    .str(" augmentation) {").nl()
-                .str("    if (!(this." + AUGMENTATION_FIELD + " instanceof ").str(hashMapRef).str(")) {").nl()
+                    .str(" augmentation)").oB()
+                .str("    if (!(this." + AUGMENTATION_FIELD + " instanceof ").str(hashMapRef).str("))").oB()
                 .str("        this." + AUGMENTATION_FIELD + " = new ").str(hashMapRef).eol("<>();")
                 .eol("    }")
                 .eol("    this." + AUGMENTATION_FIELD + ".put(augmentation."
@@ -739,12 +721,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                        */
                       """)
                 .str("public ").str(type().simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
-                    .str("<? extends ").str(augmentTypeRef).str("> augmentationType) {").nl()
-                .str("    if (this." + AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(") {").nl()
+                    .str("<? extends ").str(augmentTypeRef).str("> augmentationType)").oB()
+                .str("    if (this." + AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(")").oB()
                 .eol("        this." + AUGMENTATION_FIELD + ".remove(augmentationType);")
                 .eol("    }")
                 .eol("    return this;")
-                .str("}").newLine();
+                .cB();
         }
         return bb;
     }
@@ -761,7 +743,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                   <pre>
                     <code>
                   """)
-            .str("    ").str(target).str(" create").str(target).str("(int fooXyzzy, int barBaz) {").nl()
+            .str("    ").str(target).str(" create").str(target).eol("(int fooXyzzy, int barBaz) {")
             .str("        return new ").str(target).eol("Builder()")
             .txt("""
                               .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())
