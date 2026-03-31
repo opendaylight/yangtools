@@ -83,12 +83,56 @@ class InterfaceTemplate extends BaseTemplate {
     final BlockBuilder body() {
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
-        bb.append(generateAnnotations(type().getAnnotations()));
-        return bb
+
+        bb
+            .blk(generateAnnotations(type().getAnnotations()))
             .eol(generatedAnnotation())
-            .str("public interface ").str(type().simpleName()).nl()
-            .indented(superInterfaces()).str("{").nl()
-            .nl().indented(generateInnerClasses(enclosedGeneratedTypes))
+            .str("public interface ").append(type().simpleName());
+
+        // We can have three shapes here to ensure reasonable separation from inner members:
+        //
+        //   interface Foo {
+        //       int VALUE = 42;
+        //
+        // or
+        //
+        //   interface Foo extends One {
+        //       int VALUE = 42;
+        //
+        // or
+        //
+        //   interface Foo
+        //       extends One,
+        //               Two {
+        //       int VALUE = 42;
+        //
+        final var ifaces = type().getImplements();
+        switch (ifaces.size()) {
+            case 0 -> {
+                // No-op
+            }
+            case 1 -> bb.str(" extends ").append(importedName(ifaces.getFirst()));
+            default -> {
+                bb.nl().ind("extends ");
+
+                // Note: We could try to pack multiple references into a single line, but that would require us to pick
+                //       a length limit and peek into importedName to see how long it is.
+                //       Perhaps it is worth the added complexity: for now this simple approach just works
+                final var it = ifaces.iterator();
+                while (true) {
+                    bb.append(importedName(it.next()));
+                    if (!it.hasNext()) {
+                        break;
+                    }
+                    // space equivalent of 'extends'
+                    bb.eol(",").ind("        ");
+                }
+            }
+        }
+
+        return bb
+            .oB()
+            .indented(generateInnerClasses(enclosedGeneratedTypes))
             .nl()
             .indented(generateInnerEnumTypeObjects(enums))
             .nl()
@@ -96,26 +140,7 @@ class InterfaceTemplate extends BaseTemplate {
             .nl()
             .indented(generateMethods())
             .nl()
-            .eol("}")
-            .nl();
-    }
-
-    private @Nullable BlockBuilder superInterfaces() {
-        final var ifaces = type().getImplements();
-        if (ifaces.isEmpty()) {
-            return null;
-        }
-
-        final var bb = new BlockBuilder().str("extends").nl();
-        final var it = ifaces.iterator();
-        while (true) {
-            bb.append(importedName(it.next()));
-            if (!it.hasNext()) {
-                break;
-            }
-            bb.str(",").newLine();
-        }
-        return bb.str(" ");
+            .cB();
     }
 
     @Nullable StringBuilder generateConstants() {
@@ -141,10 +166,10 @@ class InterfaceTemplate extends BaseTemplate {
 
         return new BlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("default ").str(importedName(CLASS)).str("<").str(fqcn)
-                .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
-            .str("    return ").str(fqcn).str(".class;").nl()
-            .str("}").nl();
+            .str("default ").gen(importedName(CLASS), fqcn)
+                .str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
+                .ind("return ").str(fqcn).eol(".class;")
+                .cB();
     }
 
     @Nullable BlockBuilder generateMethods() {
@@ -156,17 +181,19 @@ class InterfaceTemplate extends BaseTemplate {
         final var it = methods.iterator();
         while (true) {
             final var method = it.next();
+            final BlockBuilder blk;
             if (method.isDefault()) {
-                bb.append(generateDefaultMethod(method));
+                blk = generateDefaultMethod(method);
             } else if (method.isStatic()) {
-                bb.append(generateStaticMethod(method));
+                blk = generateStaticMethod(method);
             } else if (method.getParameters().isEmpty() && isGetterMethodName(method.getName())) {
-                bb.append(generateAccessorMethod(method));
+                blk = generateAccessorMethod(method);
             } else if (method.getParameters().isEmpty() && isNonnullMethodName(method.getName())) {
-                bb.append(generateNonnullAccessorMethod(method));
+                blk = generateNonnullAccessorMethod(method);
             } else {
-                bb.append(generateMethod(method));
+                blk = generateMethod(method);
             }
+            bb.blk(blk);
 
             if (!it.hasNext()) {
                 break;
@@ -179,9 +206,9 @@ class InterfaceTemplate extends BaseTemplate {
     private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
         final var bb = new BlockBuilder();
         bb.append(asJavadoc(method.getComment()));
-        bb.append(generateAnnotations(method.getAnnotations()));
         return bb
-            .str(importedReturnType(method)).str(" ").str(method.getName()).str("(")
+            .blk(generateAnnotations(method.getAnnotations()))
+            .str(importedReturnType(method)).sp().str(method.getName()).str("(")
                 .str(generateParameters(method.getParameters())).str(");");
     }
 
@@ -192,7 +219,7 @@ class InterfaceTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         for (var annotation : annotations) {
-            bb.append(generateAnnotation(annotation));
+            bb.blk(generateAnnotation(annotation));
         }
         return bb;
     }
@@ -219,23 +246,23 @@ class InterfaceTemplate extends BaseTemplate {
         final var ret = method.getReturnType();
         final var name = method.getName();
         bb.append(accessorJavadoc(method, ", or an empty list if it is not present."));
-        bb.append(generateAnnotations(method.getAnnotations()));
         return bb
-            .str("default ").str(importedNonNull(ret)).str(" ").str(name).str("() {").nl()
+            .blk(generateAnnotations(method.getAnnotations()))
+            .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
             .str("    return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
                 .eol("());")
-            .str("}").nl();
+            .cB();
     }
 
     private @NonNull BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
         final var bb = new BlockBuilder();
         bb.append(asJavadoc(method.getComment()));
-        bb.append(generateAnnotations(method.getAnnotations()));
         return bb
-            .str("default ").str(importedName(VOID)).str(" ").str(method.getName()).str("(")
-                .str(generateParameters(method.getParameters())).str(") {").nl()
+            .blk(generateAnnotations(method.getAnnotations()))
+            .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("(")
+                .str(generateParameters(method.getParameters())).str(")").oB()
             .eol("    // No-op")
-            .str("}").nl();
+            .cB();
     }
 
     private BlockBuilder generateRequireMethod(final MethodSignature method) {
@@ -244,19 +271,18 @@ class InterfaceTemplate extends BaseTemplate {
         final var bb = new BlockBuilder();
         bb.append(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE));
         return bb
-            .str("default ").str(importedNonNull(ret)).str(" ").str(name).str("() {").nl()
+            .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
             .str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
                 .str("(), \"").str(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol("\");")
-            .eol("}");
+            .cB();
     }
 
     private BlockBuilder generateAccessorMethod(final MethodSignature method) {
         final var bb = new BlockBuilder();
         bb.append(accessorJavadoc(method, ", or {@code null} if it is not present."));
-        bb.append(generateAccessorAnnotations(method));
         return bb
-            .str(nullableType(method.getReturnType())).str(" ").str(method.getName())
-            .eol("();");
+            .blk(generateAccessorAnnotations(method))
+            .str(nullableType(method.getReturnType())).sp().str(method.getName()).eol("();");
     }
 
     private @Nullable BlockBuilder generateAccessorAnnotations(final MethodSignature method) {
@@ -268,7 +294,7 @@ class InterfaceTemplate extends BaseTemplate {
         final var bb = new BlockBuilder();
         for (var annotation : annotations) {
             if (!Types.BOOLEAN.equals(method.getReturnType()) || !OVERRIDE.equals(annotation.name())) {
-                bb.append(generateAnnotation(annotation));
+                bb.blk(generateAnnotation(annotation));
             }
         }
         return bb;
@@ -277,9 +303,9 @@ class InterfaceTemplate extends BaseTemplate {
     private BlockBuilder generateNonnullAccessorMethod(final MethodSignature method) {
         final var bb = new BlockBuilder();
         bb.append(accessorJavadoc(method, ", or an empty instance if it is not present."));
-        bb.append(generateAnnotations(method.getAnnotations()));
         return bb
-            .str(importedNonNull(method.getReturnType())).str(" ").str(method.getName()).eol("();");
+            .blk(generateAnnotations(method.getAnnotations()))
+            .str(importedNonNull(method.getReturnType())).sp().str(method.getName()).eol("();");
     }
 
     private @Nullable BlockBuilder generateStaticMethod(final MethodSignature method) {
@@ -311,27 +337,26 @@ class InterfaceTemplate extends BaseTemplate {
                    * @param obj Object for which to generate hashCode() result.
                    * @return Hash code value of data modeled by this interface.
                   """)
-            .str(" * @throws ").str(importedName(NPE)).str(" if {@code obj} is {@code null}").nl()
-            .str(" */").nl()
-            .str("static int " + BINDING_HASHCODE_NAME + "(final ").str(fullyQualifiedNonNull(type())).str(" obj) {")
-                .nl()
-            .str("    int result = 1;").nl();
+            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
+            .eol(" */")
+            .str("static int " + BINDING_HASHCODE_NAME + "(final ").str(fullyQualifiedNonNull(type())).str(" obj)").oB()
+            .eol("    int result = 1;");
         if (!props.isEmpty()) {
-            bb.str("    final int prime = 31;").newLine();
+            bb.eol("    final int prime = 31;");
             for (var property : props) {
                 bb.str("    result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
-                    .str(getterMethodName(property)).str("());").newLine();
+                    .str(getterMethodName(property)).eol("());");
             }
         }
         if (augmentable) {
             bb
-                .str("    for (var augmentation : obj.augmentations().values()) {").nl()
+                .str("    for (var augmentation : obj.augmentations().values())").oB()
                 .eol("        result += augmentation.hashCode();")
-                .str("    }").newLine();
+                .str("    ").cB();
         }
         return  bb
             .eol("    return result;")
-            .str("}").nl();
+            .cB();
     }
 
     private @Nullable BlockBuilder generateBindingEquals() {
@@ -359,8 +384,8 @@ class InterfaceTemplate extends BaseTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code thisObj} is {@code null}")
             .eol(" */")
             .str("static boolean " + BINDING_EQUALS_NAME + "(final ").str(fullyQualifiedNonNull(type()))
-                .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj) {").nl()
-            .str("    if (thisObj == obj) {").nl()
+                .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj)").oB()
+            .str("    if (thisObj == obj)").oB()
             .eol("        return true;")
             .str("    }").nl()
             .str("    final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
@@ -376,8 +401,8 @@ class InterfaceTemplate extends BaseTemplate {
             bb.nl().append("        && thisObj.augmentations().equals(other.augmentations())");
         }
         return bb
-            .eol(";")
-            .str("}").nl();
+            .eS()
+            .cB();
     }
 
     @VisibleForTesting
@@ -398,20 +423,22 @@ class InterfaceTemplate extends BaseTemplate {
             .str(" * @throws ")       .str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
             .eol(" */")
             .str("static ").str(importedName(Types.STRING)).str(" " + BINDING_TO_STRING_NAME + "(final ")
-                .str(fullyQualifiedNonNull(type())).str(" obj) {").nl()
-            .str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
-                .str(type().simpleName()).eol("\");");
+                .str(fullyQualifiedNonNull(type())).str(" obj)").oB()
+                .ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
+                    .str(type().simpleName()).eol("\");");
         for (var property : analysis.properties()) {
-            bb.str("    ").str(importedName(CODEHELPERS)).str(".appendValue(helper, \"").str(property.getName())
-                .str("\", obj.").str(property.getGetterName()).str("());").newLine();
+            bb
+                .ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, \"").str(property.getName())
+                    .str("\", obj.").str(property.getGetterName()).eol("());");
         }
         if (analysis.augmentType() != null) {
-            bb.str("    ").str(importedName(CODEHELPERS))
-                .str(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);").newLine();
+            bb
+                .ind(importedName(CODEHELPERS))
+                    .eol(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);");
         }
         return bb
             .eol("    return helper.toString();")
-            .str("}").nl();
+            .cB();
     }
 
     private String accessorJavadoc(final MethodSignature method, final String orString) {
@@ -442,9 +469,9 @@ class InterfaceTemplate extends BaseTemplate {
         }
         bb
             .nl()
-            .str("@return {@code ").str(importedReturnType(method)).str("} ").str(propReturn).newLine();
+            .str("@return {@code ").str(importedReturnType(method)).str("} ").eol(propReturn);
         if (exception != null) {
-            bb.str("@throws ").str(importedName(exception)).str(" if ").str(propName).str(" is not present").newLine();
+            bb.str("@throws ").str(importedName(exception)).str(" if ").str(propName).eol(" is not present");
         }
         return bb.toJavadocBlock();
     }

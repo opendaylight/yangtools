@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -34,15 +35,12 @@ class InterfaceGeneratorTest {
             import javax.annotation.processing.Generated;
 
             @Generated("mdsal-binding-generator")
-            public interface test
-            {
-
+            public interface test {
 
 
 
                 void ontest();
             }
-
             """, new InterfaceGenerator(genType).generate());
     }
 
@@ -58,16 +56,13 @@ class InterfaceGeneratorTest {
             import javax.annotation.processing.Generated;
 
             @Generated("mdsal-binding-generator")
-            public interface test
-            {
-
+            public interface test {
 
 
 
                 @Deprecated
                 void ontest();
             }
-
             """, new InterfaceGenerator(genType).generate());
     }
 
@@ -84,9 +79,7 @@ class InterfaceGeneratorTest {
             import javax.annotation.processing.Generated;
 
             @Generated("mdsal-binding-generator")
-            public interface test
-            {
-
+            public interface test {
 
 
 
@@ -96,11 +89,10 @@ class InterfaceGeneratorTest {
                 }
 
             }
-
             """, new InterfaceGenerator(genType).generate());
     }
 
-    private static GeneratedType mockGenType(final MethodSignature methSign) {
+    private static @NonNull GeneratedType mockGenType(final MethodSignature methSign) {
         final var genType = spy(GeneratedType.class);
         doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();
@@ -110,7 +102,7 @@ class InterfaceGeneratorTest {
         return genType;
     }
 
-    private static MethodSignature mockMethSign(final String methodeName) {
+    private static @NonNull MethodSignature mockMethSign(final String methodeName) {
         final var methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
         final var methType = Types.typeForClass(void.class);

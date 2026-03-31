@@ -20,7 +20,24 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * Universal builder of a string block. A block is composed of one or more lines, concatenated using {@code '\n'}.
  *
  * <p>The set of exposed methods is specifically tailored to callers. We do not use method overloads on purpose, so that
- * there is always a strong tie between then intended semantics and argument types.
+ * there is always a strong tie between then intended semantics and argument types. There may be exceptions to this rule
+ * as long as we can provide strong-enough type safety.
+ *
+ * <p>The intent here is provide a reasonable improvement to {@link StringBuilder}, such as
+ * <ul>
+ *   <li>short method names to keep concatenations concise</li>
+ *   <li>explicit control over end-of-line</li>
+ *   <li>simple indentation handling</li>
+ * </ul>
+ *
+ * <p>Methods ending with a capital letter terminate the current line, i.e. return the result of {@link #nl()}. Examples
+ * include {@link #oB()}, {@link #cB()}, {@link #oS()}.
+ *
+ * <p>When deciding on the shape of a method and its name, please consider it first and foremost its stringlu structure,
+ * as that is the layer we operate on.
+ *
+ * <p>We can have some common Java language things coming in, but those should be placed here only on temporary basis
+ * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
 final class BlockBuilder implements Mutable {
     // FIXME: replace with a StringBuilder-based state machine
@@ -52,6 +69,17 @@ final class BlockBuilder implements Mutable {
     @CheckReturnValue
     @NonNull BlockBuilder at() {
         buf.append('@');
+        return this;
+    }
+
+    /**
+     * Append a {@code ' '}.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder sp() {
+        buf.append(' ');
         return this;
     }
 
@@ -117,7 +145,6 @@ final class BlockBuilder implements Mutable {
      * @return this instance
      */
     @NonNullByDefault
-    @CheckReturnValue
     BlockBuilder eol(final String content) {
         return str(content).nl();
     }
@@ -145,6 +172,161 @@ final class BlockBuilder implements Mutable {
         return requireNonNull(txtArg);
     }
 
+    /**
+     * Open a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>.
+     * Short name for {@code openBlock}. Emits the equivalent of <pre><code>str(" {").nl()</code></pre>.
+     *
+     * <p>Methods calling this method are expected to also call the corresponding {@link #cB()} or {@link #cS()}.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder oB() {
+        // FIXME: also add indentation
+        buf.append(" {\n");
+        return this;
+    }
+
+    /**
+     * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
+     * previously opened via {@link #oB()}. Short name for {@code closeBlock}. Emits the equivalent of
+     * <pre><code>str("}").nl()</code></pre>.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder cB() {
+        // FIXME: also add indentation
+        buf.append("}\n");
+        return this;
+    }
+
+    /**
+     * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
+     * previously opened via {@link #oB()} and terminate current statement. Short name for {@code closeStatement}. Emits
+     * the equivalent of {@code str("}").eS()}.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder cS() {
+        // FIXME: also add indentation
+        buf.append("};\n");
+        return this;
+    }
+
+    /**
+     * Append a {@code ";\n". Short name for {@code endStatement}}.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder eS() {
+        buf.append(";\n");
+        return this;
+    }
+
+    /**
+     * Append the contents of an optional {@link BlockBuilder} to this instance if it is not {@code null}.
+     *
+     * @param source optional {@link BlockBuilder}
+     * @return this instance
+     */
+    // TODO: differentiate a blk(@NonNull Block blk)
+    @NonNullByDefault
+    BlockBuilder blk(final @Nullable BlockBuilder source) {
+        if (source != null) {
+            buf.append(source.buf);
+        }
+        return this;
+    }
+
+    /**
+     * Append type reference parameterized with diamond notation. Short name for {@code generic}.
+     * Shorthand for {@code str(rawType).str("<>")}.
+     *
+     * @param rawType the raw type
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder gen(final String rawType) {
+        buf.append(validateStr(rawType)).append("<>");
+        return this;
+    }
+
+    /**
+     * Append type reference parameterized with specified generic type arguments. Short name for {@code generic}.
+     * Shorthand for {@code str(rawType).str("<").str(args).str(">")}.
+     *
+     * <p>This serves single-parameter types directly and multi-parameter types when the concatenated form is available.
+     *
+     * @param rawType the raw type
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder gen(final String rawType, final String args) {
+        startGen(rawType, args);
+        return endGen();
+    }
+
+    /**
+     * Append type reference parameterized with specified generic type arguments. Short name for {@code generic}.
+     * Shorthand for {@code str(rawType).str("<").str(args).str(">")}.
+     *
+     * <p>This serves single-parameter types directly and multi-parameter types when the concatenated form is available.
+     *
+     * @param rawType the raw type
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder gen(final String rawType, final String firstArg, final @NonNull String... others) {
+        return others.length == 0 ? gen(rawType, firstArg) : genMulti(rawType, firstArg, others);
+    }
+
+    @NonNullByDefault
+    private BlockBuilder genMulti(final String rawType, final String firstArg, final @NonNull String... others) {
+        startGen(rawType, firstArg);
+        for (var nextArg : others) {
+            buf.append(", ").append(validateStr(nextArg));
+        }
+        return endGen();
+    }
+
+    @NonNullByDefault
+    private void startGen(final String rawType, final String args) {
+        buf.append(validateStr(rawType)).append('<').append(validateStr(args));
+    }
+
+    @NonNullByDefault
+    private BlockBuilder endGen() {
+        buf.append('>');
+        return this;
+    }
+
+    /**
+     * The equivalent of {@code str("    ")}. Short name for {@code indent}.
+     *
+     * @return this instance
+     */
+    // FIXME: remove this method
+    @NonNullByDefault
+    BlockBuilder ind() {
+        buf.append("    ");
+        return this;
+    }
+
+    /**
+     * The equivalent of {@code str("    ").str(str)}. Short name for {@code indent}.
+     *
+     * @return this instance
+     */
+    // FIXME: remove this method
+    @NonNullByDefault
+    BlockBuilder ind(final String str) {
+        buf.append("    ").append(validateStr(str));
+        return this;
+    }
+
     // FIXME: remove this method
     void append(final String str) {
         final int nl = str.indexOf('\n');
@@ -155,12 +337,6 @@ final class BlockBuilder implements Mutable {
     void append(final @Nullable StringBuilder src) {
         if (src != null) {
             buf.append(src);
-        }
-    }
-
-    void append(final @Nullable BlockBuilder bb) {
-        if (bb != null) {
-            buf.append(bb.buf);
         }
     }
 

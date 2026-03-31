@@ -37,20 +37,18 @@ final class FeatureTemplate extends ClassTemplate {
         final var typeName = type().simpleName();
 
         return new BlockBuilder()
-            .at().str(importedName(NONNULL_BY_DEFAULT)).nl()
-            .str("public final class ").str(typeName).str(" extends ").str(importedName(YANG_FEATURE))
-                .str("<").str(typeName).str(", ").str(importedName(dataRoot)).str(">");
+            .at().eol(importedName(NONNULL_BY_DEFAULT))
+            .str("public final class ").str(typeName).str(" extends ")
+                .gen(importedName(YANG_FEATURE), typeName, importedName(dataRoot));
     }
 
     @Override
     BlockBuilder constructors() {
-        final var typeName = type().simpleName();
-
         return new BlockBuilder()
             .nl()
-            .str("private ").str(typeName).str("() {").nl()
-            .eol("    // Hidden on purpose")
-            .str("}").nl();
+            .str("private ").str(type().simpleName()).str("()").oB()
+                .ind("// Hidden on purpose").nl()
+            .cB();
     }
 
     @Override
@@ -72,19 +70,18 @@ final class FeatureTemplate extends ClassTemplate {
         return new BlockBuilder()
             .nl()
             .at().eol(override)
-            .str("public ").str(clazz).str("<").str(typeName)
-                .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
-            .str("    return ").str(typeName).eol(".class;")
-            .str("}").nl()
+            .str("public ").gen(clazz, typeName).str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
+                .ind("return ").str(typeName).eol(".class;")
+            .cB()
             .nl()
             .at().eol(override)
-            .str("public ").str(importedName(QNAME)).str(" qname() {").nl()
-            .eol("    return " + QNAME_STATIC_FIELD_NAME + ';')
-            .str("}").nl()
+            .str("public ").str(importedName(QNAME)).str(" qname()").oB()
+                .ind("return " + QNAME_STATIC_FIELD_NAME + ';').nl()
+            .cB()
             .nl()
             .at().eol(override)
-            .str("public ").str(clazz).str("<").str(rootName).str("> definingModule() {").nl()
-            .str("    return ").str(rootName).eol(".class;")
-            .str("}").nl();
+            .str("public ").gen(clazz, rootName).str(" definingModule()").oB()
+                .ind("return ").str(rootName).eol(".class;")
+            .cB();
     }
 }

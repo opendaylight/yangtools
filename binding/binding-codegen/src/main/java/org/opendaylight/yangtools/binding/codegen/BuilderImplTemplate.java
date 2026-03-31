@@ -59,27 +59,27 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         final var impIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
 
-        final var bb = new BlockBuilder();
-        bb.append(generateDeprecatedAnnotation(targetType.getAnnotations()));
-        bb.str("private static final class ").str(type().simpleName()).newLine();
+        final var bb = new BlockBuilder()
+            .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
+            .str("private static final class ").eol(type().simpleName());
         if (keyType != null) {
-            bb.str("    extends ").str(importedName(ABSTRACT_ENTRY_OBJECT)).str("<").str(impIface).str(", ")
-                .str(importedName(keyType)).str(">").newLine();
+            bb.str("    extends ").gen(importedName(ABSTRACT_ENTRY_OBJECT), impIface, importedName(keyType)).newLine();
         } else if (augmentType != null) {
-            bb.str("    extends ").str(importedName(ABSTRACT_AUGMENTABLE)).str("<").str(impIface).append(">\n");
+            bb.str("    extends ").gen(importedName(ABSTRACT_AUGMENTABLE), impIface).newLine();
         }
-        bb.str("    implements ").str(impIface).str(" {").newLine();
+        bb.str("    implements ").str(impIface).oB();
 
         // generate instance fields
         if (!properties.isEmpty()) {
             bb.newLine();
             for (var prop : properties) {
-                bb.str("    private final ").str(importedReturnType(prop)).str(" ").str(fieldName(prop)).str(";")
-                    .newLine();
+                bb.str("    private final ").str(importedReturnType(prop)).sp().str(fieldName(prop)).eS();
             }
         }
 
-        bb.nl().indented(generateCopyConstructor(builder.type(), type()));
+        bb
+            .nl()
+            .indented(generateCopyConstructor(builder.type(), type()));
 
         if (keyType != null) {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
@@ -88,7 +88,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             bb
                 .nl()
                 .str("    private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
-                    .str(importedName(builder.type())).str(" base) {").nl()
+                    .str(importedName(builder.type())).str(" base)").oB()
                 .str("        final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
                 .eol("        return key != null ? key")
                 .str("            : new ").str(importedName(keyType)).append("(");
@@ -106,7 +106,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
             bb
                 .eol(");")
-                .str("    }").newLine();
+                .str("    ").cB();
         }
 
         // generate getters
@@ -124,13 +124,13 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
-                        .str("    @").eol(override)
-                        .str("    public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
-                            .str(toFirstUpper(field.getName())).str("() {").nl()
-                        .str("        return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
+                        .ind("@").eol(override)
+                        .ind("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
+                            .str(toFirstUpper(field.getName())).str("()").oB()
+                        .ind("    return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
                             .str(getterMethodName(field)).str("(), ").str(fieldType.canonicalName())
                             .eol(BUILDER_SUFFIX + ".empty());")
-                        .str("}").newLine();
+                        .cB();
                 }
 
                 if (!it.hasNext()) {
@@ -166,24 +166,23 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
                       """)
                 .str("    @").eol(override)
-                .str("    public boolean equals(").str(importedName(Types.objectType())).str(" obj) {").nl()
+                .str("    public boolean equals(").str(importedName(Types.objectType())).str(" obj)").oB()
                 .str("        return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, obj);")
-                .str("    }").newLine();
+                .str("    ").cB();
         }
 
         // generate equals()
         return bb
             .nl()
             .str("    @").eol(override)
-            .str("    public ").str(importedName(Types.STRING))
-            .str(" toString() {").nl()
+            .str("    public ").str(importedName(Types.STRING)).str(" toString()").oB()
             .str("        return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
-            .str("    }").nl()
-            .str("}").nl();
+            .str("    ").cB()
+            .cB();
     }
 
     @Override
-    StringBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
+    BlockBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
         return generateAnnotation(ann);
     }
 
