@@ -20,11 +20,15 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethod
 import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.CharMatcher;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -33,6 +37,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -40,6 +45,9 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
  * Template for generating JAVA interfaces.
  */
 class InterfaceTemplate extends BaseTemplate {
+    private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
+    private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
+
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
      */
@@ -179,12 +187,38 @@ class InterfaceTemplate extends BaseTemplate {
     }
 
     private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
-        final var bb = new BlockBuilder();
-        bb.append(asJavadoc(method.getComment()));
-        return bb
+        return new BlockBuilder()
+            .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
             .str(importedReturnType(method)).sp().str(method.getName()).str("(")
                 .str(generateParameters(method.getParameters())).str(");");
+    }
+
+    private static @Nullable BlockBuilder generateJavadoc(final @Nullable TypeMemberComment comment) {
+        if (comment == null) {
+            return null;
+        }
+
+        final var sb = new StringBuilder();
+        final var contract = comment.contractDescription();
+        if (contract != null) {
+            sb.append(contract).append("\n\n");
+        }
+        final var reference = comment.referenceDescription();
+        if (reference != null) {
+            sb.append(formatReference(reference).toRawString());
+        }
+        final var signature = comment.typeSignature();
+        if (signature != null) {
+            sb.append(signature).append('\n');
+        }
+        if (sb.isEmpty()) {
+            return null;
+        }
+
+        final var bb = new BlockBuilder();
+        appendAsJavadoc(bb, "", sb.toString());
+        return bb;
     }
 
     private @Nullable BlockBuilder generateAnnotations(final @NonNull List<AnnotationType> annotations) {
@@ -230,9 +264,8 @@ class InterfaceTemplate extends BaseTemplate {
     }
 
     private @NonNull BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
-        final var bb = new BlockBuilder();
-        bb.append(asJavadoc(method.getComment()));
-        return bb
+        return new BlockBuilder()
+            .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("(")
                 .str(generateParameters(method.getParameters())).str(")").oB()
@@ -424,21 +457,11 @@ class InterfaceTemplate extends BaseTemplate {
         final var propReturn = propName + orString;
         final var comment = method.getComment();
 
-        //        return wrapToDocumentation('''
-        //            Return «propReturn»
-        //
-        //            «method.comment?.referenceDescription.formatReference»
-        //            @return {@code «method.returnType.importedName»} «propReturn»
-        //            «IF exception !== null»
-        //                @throws «exception.importedName» if «propName» is not present
-        //            «ENDIF»
-        //        ''')
-
         final var bb = new BlockBuilder()
             .str("Return ").eol(propReturn);
         final var reference = comment == null ? null : comment.referenceDescription();
         if (reference != null) {
-            bb.append(formatReference(reference));
+            bb.blk(formatReference(reference));
         }
         bb
             .nl()
@@ -461,5 +484,63 @@ class InterfaceTemplate extends BaseTemplate {
     // The return type has a package, so it's not a primitive type
     private static boolean isObject(final Type type) {
         return !type.packageName().isEmpty();
+    }
+
+    @NonNullByDefault
+    private static BlockBuilder formatReference(final String reference) {
+        final var bb = new BlockBuilder()
+            .txt("""
+                <pre>
+                    <code>
+                """);
+
+        // FIXME: use a {@code} block which will render some of this encoding superfluous, but it requires paying
+        //        attention to '}' pairing in input
+        var formattedText = BindingGeneratorUtil.encodeAngleBrackets(reference);
+        formattedText = WS_MATCHER.replaceFrom(JavaFileTemplate.encodeJavadocSymbols(formattedText), ' ');
+        formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ");
+
+        // FIXME: add state keeping so that we can append direcly to BlockBuilder
+        var sb = new StringBuilder();
+        var isFirstElementOnNewLineEmptyChar = false;
+
+        // FIXME: use indexOf(' ') instead of StringTokenizer
+        final var tokenizer = new StringTokenizer(formattedText, " ", true);
+        while (tokenizer.hasMoreTokens()) {
+            final var nextElement = tokenizer.nextToken();
+            final var lbLength = sb.length();
+
+            if (lbLength != 0 && lbLength + nextElement.length() > 80) {
+                final var limit = lbLength - 1;
+                if (sb.charAt(limit) == ' ') {
+                    sb.setLength(limit);
+                }
+                // FIXME: use append(CharSequence, int, int) instead
+                if (!sb.isEmpty() && sb.charAt(0) == ' ') {
+                    sb.deleteCharAt(0);
+                }
+                bb.str("        ").eol(sb.toString());
+                sb.setLength(0);
+
+                if (" ".equals(nextElement)) {
+                    isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
+                }
+            }
+            if (isFirstElementOnNewLineEmptyChar) {
+                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
+            } else {
+                sb.append(nextElement);
+            }
+        }
+        if (!sb.isEmpty()) {
+            bb.str("        ").eol(sb.toString());
+        }
+
+        return bb
+            .txt("""
+                    </code>
+                </pre>
+
+                """);
     }
 }
