@@ -58,7 +58,7 @@ final class ListKeyTemplate extends ClassTemplate {
             final var fieldName = fieldName(prop);
             sb.append("    this.").append(fieldName).append(" = ")
                 .append(importedName(CODEHELPERS)).append(".requireKeyProp(").append(fieldName).append(", \"")
-                .append(prop.getName()).append("\")").append(cloneCall(prop)).append(";\n");
+                .append(prop.getName()).append("\")").append(cloneOrEmpty(prop)).append(";\n");
         }
 
         for (var prop : properties) {
@@ -87,7 +87,7 @@ final class ListKeyTemplate extends ClassTemplate {
             .append(" */\n")
             .append("public ").append(importedNonNull(returnType)).append(' ').append(getterMethodName(field))
                 .append("() {\n")
-            .append("    return ").append(fieldName(field)).append(cloneCall(field)).append(";\n")
+            .append("    return ").append(fieldName(field)).append(cloneOrEmpty(field)).append(";\n")
             .append("}\n");
     }
 

@@ -234,6 +234,7 @@ class JavaFileTemplate {
      * @return Imported class name
      */
     final @NonNull String importedUtilClass(final Type returnType) {
+        // FIXME: unify with isArrayProperty
         return importedName(returnType.simpleName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
     }
 
@@ -250,14 +251,25 @@ class JavaFileTemplate {
     }
 
     /**
-     * Generate a call to {@link Object#clone()} if target field represents an array. Returns an empty string otherwise.
-     *
-     * @param property Generated property
-     * @return The string used to clone the property, or an empty string
+     * {@return the string used to clone the property, or an empty string}
+     * @param property the property
      */
     @NonNullByDefault
-    static final String cloneCall(final GeneratedProperty property) {
-        return property.getReturnType().simpleName().endsWith("[]") ? ".clone()" : "";
+    static final String cloneOrEmpty(final GeneratedProperty property) {
+        return isArrayProperty(property) ? ".clone()" : "";
+    }
+
+    /**
+     * {@return the string used to clone the property, or {@code null}}
+     * @param property the property
+     */
+    static final @Nullable String cloneOrNull(final @NonNull GeneratedProperty property) {
+        return isArrayProperty(property) ? ".clone()" : null;
+    }
+
+    @NonNullByDefault
+    private static boolean isArrayProperty(final GeneratedProperty property) {
+        return property.getReturnType().simpleName().endsWith("[]");
     }
 
     static final @Nullable MethodSignature getterByName(final Collection<MethodSignature> methods,
