@@ -47,8 +47,9 @@ final class FeatureTemplate extends ClassTemplate {
         final var typeName = type().simpleName();
 
         return new BlockBuilder()
+            .nl()
             .str("private ").str(typeName).str("() {").nl()
-            .str("    // Hidden on purpose").nl()
+            .eol("    // Hidden on purpose")
             .str("}").nl();
     }
 
@@ -58,7 +59,7 @@ final class FeatureTemplate extends ClassTemplate {
         return "/**\n"
             +  " * {@link " + typeName + "} singleton instance.\n"
             +  " */\n"
-            +  "public static final " + typeName + ' ' + VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();";
+            +  "public static final " + typeName + ' ' + VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();\n";
     }
 
     @Override
@@ -69,20 +70,21 @@ final class FeatureTemplate extends ClassTemplate {
         final var rootName = importedName(dataRoot);
 
         return new BlockBuilder()
-            .at().str(override).nl()
+            .nl()
+            .at().eol(override)
             .str("public ").str(clazz).str("<").str(typeName)
                 .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
-            .str("    return ").str(typeName).str(".class;").nl()
+            .str("    return ").str(typeName).eol(".class;")
             .str("}").nl()
             .nl()
-            .at().str(override).nl()
+            .at().eol(override)
             .str("public ").str(importedName(QNAME)).str(" qname() {").nl()
-            .str("    return " + QNAME_STATIC_FIELD_NAME + ';').nl()
+            .eol("    return " + QNAME_STATIC_FIELD_NAME + ';')
             .str("}").nl()
             .nl()
-            .at().str(override).nl()
+            .at().eol(override)
             .str("public ").str(clazz).str("<").str(rootName).str("> definingModule() {").nl()
-            .str("    return ").str(rootName).str(".class;").nl()
+            .str("    return ").str(rootName).eol(".class;")
             .str("}").nl();
     }
 }
