@@ -47,6 +47,7 @@ final class FeatureTemplate extends ClassTemplate {
         final var typeName = type().simpleName();
 
         return new BlockBuilder()
+            .nl()
             .str("private ").str(typeName).str("() {").nl()
             .str("    // Hidden on purpose").nl()
             .str("}").nl();
@@ -58,7 +59,7 @@ final class FeatureTemplate extends ClassTemplate {
         return "/**\n"
             +  " * {@link " + typeName + "} singleton instance.\n"
             +  " */\n"
-            +  "public static final " + typeName + ' ' + VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();";
+            +  "public static final " + typeName + ' ' + VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();\n";
     }
 
     @Override
