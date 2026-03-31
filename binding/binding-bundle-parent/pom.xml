@@ -27,6 +27,18 @@
         <spotbugs.onlyAnalyze>!org.opendaylight.yang.gen.-,!org.opendaylight.yang.svc.-</spotbugs.onlyAnalyze>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
+
+        <!--
+            maven-javadoc-plugin override of https://github.com/apache/maven-javadoc-plugin/issues/1180:
+
+            -J-Duser.language= breaks JVM's detection of sun.jnu.encoding, rendering it unable to find references
+            to UTF-8-named classes.
+
+            We achieve the same effect by explicitly setting locale to "en". We are fine as long as javadoc tool
+            ends up using sun.jnu.encoding=utf8.
+        -->
+        <forceRootLocale>false</forceRootLocale>
+        <locale>en</locale>
     </properties>
 
     <dependencyManagement>
