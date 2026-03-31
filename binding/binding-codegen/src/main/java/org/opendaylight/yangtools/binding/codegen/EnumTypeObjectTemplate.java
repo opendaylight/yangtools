@@ -63,7 +63,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         // now build the body
         final var javadoc = formatDataForJavaDoc(archetype);
         if (!javadoc.isBlank()) {
-            appendAsJavadoc(bb, "", javadoc);
+            appendAsJavadoc(bb, null, javadoc);
             bb.newLine();
         }
 

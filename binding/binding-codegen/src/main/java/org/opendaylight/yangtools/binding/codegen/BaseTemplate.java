@@ -110,10 +110,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * @param parameters list of parameter instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in JAVA format
      */
-    final @NonNull String generateParameters(final @NonNull List<MethodSignature.Parameter> parameters) {
+    final @Nullable StringBuilder generateParameters(final @NonNull List<MethodSignature.Parameter> parameters) {
         final var it = parameters.iterator();
         if (!it.hasNext()) {
-            return "";
+            return null;
         }
 
         final var sb = new StringBuilder();
@@ -121,10 +121,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
             final var parameter = it.next();
             sb.append(importedName(parameter.type())).append(' ').append(parameter.name());
             if (!it.hasNext()) {
-                return sb.toString();
+                break;
             }
             sb.append(", ");
         }
+        return sb;
     }
 
     /**
@@ -481,43 +482,48 @@ abstract class BaseTemplate extends JavaFileTemplate {
         return getterMethodName(field.getName());
     }
 
-    @NonNullByDefault
-    static final String wrapToDocumentation(final String text) {
+    static final @Nullable BlockBuilder wrapToDocumentation(final @NonNull String text) {
         // TODO: isBlank()?
         if (text.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
-        appendAsJavadoc(bb, "", text);
-        return bb.toRawString();
+        appendAsJavadoc(bb, null, text);
+        return bb;
     }
 
     @NonNullByDefault
-    static final void appendAsJavadoc(final BlockBuilder bb, final String indent, final String text) {
-        final var sb = new StringBuilder().append(indent).append("/**\n");
+    static final void appendAsJavadoc(final BlockBuilder bb, final @Nullable String indent, final String text) {
+        appendIndent(bb, indent).eol("/**");
 
         final int length = text.length();
         int begin = 0;
         while (begin < length) {
-            sb.append(indent).append(" *");
+            appendIndent(bb, indent).str(" *");
 
             final int nl = text.indexOf('\n', begin);
             final int end = nl != -1 ? nl : length;
-            appendLine(sb, text, begin, end);
-            sb.append('\n');
+            appendLine(bb, text, begin, end);
             begin = end + 1;
         }
 
-        bb.append(sb.append(indent).append(" */\n").toString());
+        appendIndent(bb, indent).eol(" */");
     }
 
     @NonNullByDefault
-    private static void appendLine(final StringBuilder sb, final String str, final int start, final int limit) {
+    private static BlockBuilder appendIndent(final BlockBuilder bb, final @Nullable String indent) {
+        return indent != null ? bb.str(indent) : bb;
+    }
+
+
+    @NonNullByDefault
+    private static void appendLine(final BlockBuilder bb, final String str, final int start, final int limit) {
         // do not emit obvious trailing whitespace
         int end = limit;
         while (true) {
             if (end == start) {
+                bb.newLine();
                 return;
             }
 
@@ -530,7 +536,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
             end = prev;
         }
 
-        sb.append(' ').append(str, start, end);
+        bb.sp().eol(str, start, end);
     }
 
     @NonNullByDefault
