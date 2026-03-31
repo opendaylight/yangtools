@@ -56,6 +56,17 @@ final class BlockBuilder implements Mutable {
     }
 
     /**
+     * Append a {@code ' '}.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder sp() {
+        buf.append(' ');
+        return this;
+    }
+
+    /**
      * Append a {@code '\n'}.
      *
      * @return this instance
@@ -71,6 +82,17 @@ final class BlockBuilder implements Mutable {
      */
     void newLine() {
         buf.append('\n');
+    }
+
+    /**
+     * The equivalent of {@code str(";").nl()}.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder eS() {
+        buf.append(";\n");
+        return this;
     }
 
     /**
@@ -117,7 +139,6 @@ final class BlockBuilder implements Mutable {
      * @return this instance
      */
     @NonNullByDefault
-    @CheckReturnValue
     BlockBuilder eol(final String content) {
         return str(content).nl();
     }
@@ -145,6 +166,41 @@ final class BlockBuilder implements Mutable {
         return requireNonNull(txtArg);
     }
 
+    @NonNullByDefault
+    BlockBuilder oB() {
+        // FIXME: also add indentation
+        buf.append(" {\n");
+        return this;
+    }
+
+    @NonNullByDefault
+    BlockBuilder cB() {
+        // FIXME: also add indentation
+        buf.append("}\n");
+        return this;
+    }
+
+    @NonNullByDefault
+    BlockBuilder oS() {
+        return oB();
+    }
+
+    @NonNullByDefault
+    BlockBuilder cS() {
+        // FIXME: also add indentation
+        buf.append("};\n");
+        return this;
+    }
+
+    @NonNullByDefault
+    BlockBuilder blk(final @Nullable BlockBuilder bb) {
+        if (bb != null) {
+            buf.append(bb.buf);
+        }
+        return this;
+    }
+
+
     // FIXME: remove this method
     void append(final String str) {
         final int nl = str.indexOf('\n');
@@ -155,12 +211,6 @@ final class BlockBuilder implements Mutable {
     void append(final @Nullable StringBuilder src) {
         if (src != null) {
             buf.append(src);
-        }
-    }
-
-    void append(final @Nullable BlockBuilder bb) {
-        if (bb != null) {
-            buf.append(bb.buf);
         }
     }
 

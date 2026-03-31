@@ -203,20 +203,19 @@ class ClassTemplate extends BaseTemplate {
         final var bb = new BlockBuilder();
         bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
 
-        bb.append(annotationDeclaration());
+        bb.blk(annotationDeclaration());
 
         if (!isInnerClass) {
-            bb.str(generatedAnnotation()).newLine();
+            bb.eol(generatedAnnotation());
         }
-        bb.append(generateClassDeclaration(isInnerClass));
-        bb.str(" {").newLine();
+        bb.blk(generateClassDeclaration(isInnerClass)).oB();
 
         // serialVersionUID
         final var suid = genTO.getSUID();
         if (suid != null) {
             bb
                 .eol("    @java.io.Serial")
-                .str("    private static final long serialVersionUID = ").str(suid.getValue()).str("L;").newLine();
+                .str("    private static final long serialVersionUID = ").str(suid.getValue()).eol("L;");
         }
 
         bb
@@ -234,7 +233,7 @@ class ClassTemplate extends BaseTemplate {
                 if (field.isReadOnly()) {
                     bb.append("final ");
                 }
-                bb.str(importedReturnType(field)).str(" ").str(fieldName(field)).str(";").newLine();
+                bb.str(importedReturnType(field)).sp().str(fieldName(field)).eS();
             }
         }
 
@@ -278,8 +277,7 @@ class ClassTemplate extends BaseTemplate {
         if (toString != null) {
             bb.nl().indented(toString);
         }
-        bb.append("}\n");
-        return bb.nl();
+        return bb.cB().nl();
     }
 
     private boolean isBitsTypeObject() {
@@ -302,29 +300,38 @@ class ClassTemplate extends BaseTemplate {
         final var bb = new BlockBuilder()
             .nl()
             .at().eol(override)
-            .str("public ").str(importedName(IMMUTABLE_SET)).str("<").str(importedName(STRING)).str("> validNames() {")
-                .nl()
+            .str("public ").str(importedName(IMMUTABLE_SET)).str("<").str(importedName(STRING)).str("> validNames()")
+                .oB()
             .eol("    return " + VALID_NAMES_NAME + ";")
-            .str("}").nl()
+            .cB()
             .nl()
             .at().eol(override)
-            .str("public boolean[] values() {").nl()
-            .str("    return new boolean[] {").nl();
+            .str("public boolean[] values()").oB()
+            .str("    return new boolean[]").oS();
+        appendBooleanValues(bb, typedef);
+        return bb
+            .str("        ").cS()
+            .cB();
+    }
 
-        boolean first = true;
-        for (var bit : typedef.getBits()) {
-            if (first) {
-                first = false;
-            } else {
-                bb.str(",").newLine();
-            }
-            bb.str("            ").str(getterMethodName(getPropertyName(bit.getName()))).append("()");
+    @NonNullByDefault
+    private static void appendBooleanValues(final BlockBuilder bb, final BitsTypeDefinition typedef) {
+        final var bits = typedef.getBits();
+        if (bits.isEmpty()) {
+            bb.eol("        // empty");
+            return;
         }
 
-        return bb
-            .nl()
-            .eol("        };")
-            .str("}").nl();
+        final var it = bits.iterator();
+        while (true) {
+            final var bit = it.next();
+            bb.str("            ").str(getterMethodName(getPropertyName(bit.getName()))).str("()");
+            if (!it.hasNext()) {
+                bb.newLine();
+                break;
+            }
+            bb.eol(",");
+        }
     }
 
     private @Nullable BlockBuilder generateEquals() {
@@ -335,7 +342,7 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj) {").nl()
+            .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
             .str("    return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
         for (var property : equalsIdentifiers) {
             bb.nl().append("        && ");
@@ -350,8 +357,8 @@ class ClassTemplate extends BaseTemplate {
             }
         }
         return bb
-            .eol(";")
-            .str("}").nl();
+            .eS()
+            .cB();
     }
 
     private @Nullable BlockBuilder generateToString(final List<GeneratedProperty> props) {
@@ -361,17 +368,17 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("public ").str(importedName(STRING)).str(" toString() {").nl()
+            .str("public ").str(importedName(STRING)).str(" toString()").oB()
             .str("    final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
                 .str(importedName(type())).eol(".class);");
         for (var property : props) {
             bb
                 .str("    ").str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, \"")
-                .str(property.getName()).str("\", ").str(fieldName(property)).str(");").newLine();
+                .str(property.getName()).str("\", ").str(fieldName(property)).eol(");");
         }
         return bb
             .eol("    return helper.toString();")
-            .str("}").nl();
+            .cB();
     }
 
     // FIXME: this should be specialized in BitsTypeObjectTemplate
@@ -430,7 +437,7 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder();
         for (var annotation : annotations) {
-            bb.at().str(annotation.simpleName()).newLine();
+            bb.at().eol(annotation.simpleName());
         }
         return bb;
     }
@@ -531,10 +538,11 @@ class ClassTemplate extends BaseTemplate {
                 .eol(".compile(" + PATTERN_CONSTANT_NAME + ".getFirst());")
                 .str("private static final String " + MEMBER_REGEX_LIST + " = \"")
                     .append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
-            bb.str("\";").newLine();
+            bb.eol("\";");
             return;
         }
 
+        // FIXME: should be multi-line
         bb
             .str("[] " + MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
                 .eol(".compilePatterns(" + PATTERN_CONSTANT_NAME + ");")
@@ -551,7 +559,7 @@ class ClassTemplate extends BaseTemplate {
                 bb.append("\"");
             }
         }
-        bb.str(" };").newLine();
+        bb.eol(" };");
     }
 
     private void appendValidNames(final BlockBuilder bb, final BitsTypeDefinition bitsType) {
@@ -569,7 +577,7 @@ class ClassTemplate extends BaseTemplate {
                 bb.str("\"").str(bit.getName()).append("\"");
             }
         }
-        bb.str(");").newLine();
+        bb.eol(");");
     }
 
     // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
@@ -588,43 +596,45 @@ class ClassTemplate extends BaseTemplate {
         final var simpleName = genTO.simpleName();
         final var bb = new BlockBuilder()
             .nl()
-            .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue) {").nl();
+            .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").oB();
+        // FIXME: unify handling here ...
         if (VALUEOF_TYPES.contains(propType)) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .str(".valueOf(defaultValue));").newLine();
+                .eol(".valueOf(defaultValue));");
         } else if (propType.equals(PRIMITIVE_BOOLEAN)) {
+            // ... this case is different from all others: is this for type=bits?
             bb.indented(bitsDefaultInstanceBody());
         } else if (propType instanceof Decimal64Type decimal64) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .str(".valueOf(defaultValue).scaleTo(").iStr(decimal64.fractionDigits()).str("));").newLine();
+                .str(".valueOf(defaultValue).scaleTo(").iStr(decimal64.fractionDigits()).eol("));");
         } else if (propType.equals(STRING_TYPE)) {
-            bb.str("    return new ").str(simpleName).str("(defaultValue);").newLine();
+            bb.str("    return new ").str(simpleName).eol("(defaultValue);");
         } else if (propType.equals(BINARY_TYPE)) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
-                .str(".getDecoder().decode(defaultValue));").newLine();
+                .eol(".getDecoder().decode(defaultValue));");
         } else if (propType.equals(EMPTY_TYPE)) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
-                .str(".emptyFor(defaultValue));").newLine();
+                .eol(".emptyFor(defaultValue));");
         } else {
-            bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType)).str("(defaultValue));")
-                .newLine();
+            bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType)).eol("(defaultValue));");
         }
-        return bb.eol("}");
+        return bb.cB();
     }
 
     @Nullable BlockBuilder constructors() {
         final var bb = new BlockBuilder()
             .nl();
         if (genTO.isTypedef() && allProperties.size() == 1 && VALUE_PROP.equals(allProperties.getFirst().getName())) {
-            bb.append(typedefConstructor());
+            bb.blk(typedefConstructor());
         } else {
-            bb.append(allValuesConstructor());
+            bb.blk(allValuesConstructor());
         }
         if (!allProperties.isEmpty()) {
             bb.nl().append(copyConstructor());
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
-            bb.append(parentConstructor());
+            // FIXME: nl()?
+            bb.blk(parentConstructor());
         }
         return bb;
     }
@@ -638,10 +648,9 @@ class ClassTemplate extends BaseTemplate {
             return new BlockBuilder()
                 .nl()
                 .at().eol(importedName(OVERRIDE))
-                .str("public ").str(importedReturnType(field))
-                    .str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "() {").nl()
-                .str("    return ").str(fieldName(field)).str(cloneCall(field)).eol(";")
-                .str("}").nl();
+                .str("public ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()").oB()
+                .str("    return ").str(fieldName(field)).str(cloneCall(field)).eS()
+                .cB();
         }
 
         final var bb = new BlockBuilder();
@@ -684,7 +693,7 @@ class ClassTemplate extends BaseTemplate {
         //      }
         final var bb = new BlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("public int hashCode() {").nl();
+            .str("public int hashCode()").oB();
         if (size == 1) {
             bb.append("    return ");
             final var prop = props.getFirst();
@@ -693,21 +702,21 @@ class ClassTemplate extends BaseTemplate {
             } else {
                 bb.str(importedName(CODEHELPERS)).append(".wrapperHashCode(");
             }
-            bb.str(fieldName(prop)).append(");\n");
+            bb.str(fieldName(prop)).eol(");");
         } else {
             bb
                 .eol("    final int prime = 31;")
-                .str("    int result = 1;").newLine();
+                .eol("    int result = 1;");
             for (var property : props) {
                 final var type = property.getReturnType();
                 bb
                     .str("    result = prime * result + ")
                         .str(type.equals(PRIMITIVE_BOOLEAN) ? importedName(BOOLEAN) : importedUtilClass(type))
-                        .str(".hashCode(").str(fieldName(property)).str(");").newLine();
+                        .str(".hashCode(").str(fieldName(property)).eol(");");
             }
-            bb.str("    return result;").newLine();
+            bb.eol("    return result;");
         }
-        return bb.eol("}");
+        return bb.cB();
     }
 
     final @Nullable StringBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
@@ -752,10 +761,9 @@ class ClassTemplate extends BaseTemplate {
 
     @NonNull BlockBuilder allValuesConstructor() {
         final var bb = new BlockBuilder()
-            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(") {")
-                .nl();
+            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").str(asArguments(parentProperties)).str(");").newLine();
+            bb.str("    super(").str(asArguments(parentProperties)).eol(");");
         }
         for (var prop : allProperties) {
             bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
@@ -765,14 +773,15 @@ class ClassTemplate extends BaseTemplate {
 
             if (prop.getReturnType().simpleName().endsWith("[]")) {
                 bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
-                    .str(fieldName).str(");").newLine();
+                    .str(fieldName).eol(");");
             } else {
-                bb.str("    this.").str(fieldName).str(" = ").str(fieldName).str(";").newLine();
+                bb.str("    this.").str(fieldName).str(" = ").str(fieldName).eS();
             }
         }
-        return bb.eol("}");
+        return bb.cB();
     }
 
+    // FIXME: return BlockBuilder
     StringBuilder copyConstructor() {
         final var simpleName = type().simpleName();
 
@@ -803,10 +812,10 @@ class ClassTemplate extends BaseTemplate {
             .eol(" *")
             .eol(" * @param source Source object")
             .eol(" */")
-            .str("public ").str(type().simpleName()).str("(").str(importedSuper).str(" source) {").nl()
+            .str("public ").str(type().simpleName()).str("(").str(importedSuper).str(" source)").oB()
             .eol("    super(source);")
             .indented(genPatternEnforcer("getValue()"))
-            .eol("}");
+            .cB();
     }
 
     private BlockBuilder typedefConstructor() {
@@ -832,10 +841,9 @@ class ClassTemplate extends BaseTemplate {
 
         final var bb = new BlockBuilder()
             .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(\"").str(VALUE_PROP).eol("\")")
-            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(") {")
-                .nl();
+            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").str(asArguments(parentProperties)).str(");").newLine();
+            bb.str("    super(").str(asArguments(parentProperties)).eol(");");
         }
 
         final var value = valueProperty(allProperties);
@@ -850,14 +858,13 @@ class ClassTemplate extends BaseTemplate {
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
                 bb.str(", ").iStr(decimal64.fractionDigits());
             }
-            bb.str(")").append(cloneCall(value));
-            bb.str(";").newLine();
+            bb.str(")").str(cloneCall(value)).eS();
         }
         return bb
             .indented(generateRestrictions(type(), fieldName, value.getReturnType()))
             .nl()
             .indented(genPatternEnforcer(fieldName))
-            .eol("}");
+            .cB();
     }
 
     private static @Nullable GeneratedProperty valueProperty(final List<GeneratedProperty> props) {

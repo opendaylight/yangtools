@@ -524,28 +524,28 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    final StringBuilder generateAnnotation(final AnnotationType annotation) {
-        final var sb = new StringBuilder()
-            .append('@').append(importedName(annotation));
+    final BlockBuilder generateAnnotation(final AnnotationType annotation) {
+        final var bb = new BlockBuilder()
+            .at().str(importedName(annotation));
 
         final var params = annotation.getParameters();
         if (params != null && !params.isEmpty()) {
-            sb.append("(\n");
+            bb.eol("(");
 
             final var it = params.iterator();
             while (true) {
                 final var param = it.next();
-                sb.append("    ").append(param.getName()).append('=').append(param.getValue());
+                bb.str("    ").str(param.getName()).str("=").append(param.getValue());
                 if (!it.hasNext()) {
                     break;
                 }
-                sb.append(",\n");
+                bb.eol(",");
             }
 
-            sb.append("\n)");
+            bb.nl().str(")");
         }
 
-        return sb.append('\n');
+        return bb.nl();
     }
 
     @NonNullByDefault
@@ -710,7 +710,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var bb = new BlockBuilder();
         final var it = innerClasses.iterator();
         while (true) {
-            bb.append(it.next());
+            bb.blk(it.next());
             if (!it.hasNext()) {
                 break;
             }

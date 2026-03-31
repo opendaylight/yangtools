@@ -255,6 +255,7 @@ class JavaFileTemplate {
      * @param property Generated property
      * @return The string used to clone the property, or an empty string
      */
+    @NonNullByDefault
     static final String cloneCall(final GeneratedProperty property) {
         return property.getReturnType().simpleName().endsWith("[]") ? ".clone()" : "";
     }
@@ -270,11 +271,11 @@ class JavaFileTemplate {
         return null;
     }
 
-    protected static String propertyNameFromGetter(final MethodSignature getter) {
+    static final @NonNull String propertyNameFromGetter(final MethodSignature getter) {
         return propertyNameFromGetter(getter.getName());
     }
 
-    protected static String propertyNameFromGetter(final String getterName) {
+    static final @NonNull String propertyNameFromGetter(final String getterName) {
         final String prefix;
         if (Naming.isGetterMethodName(getterName)) {
             prefix = Naming.GETTER_PREFIX;
