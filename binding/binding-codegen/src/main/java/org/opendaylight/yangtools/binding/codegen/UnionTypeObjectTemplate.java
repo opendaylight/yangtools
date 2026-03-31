@@ -50,7 +50,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             bb.append(copyConstructor());
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
-            bb.append(parentConstructor());
+            bb.blk(parentConstructor());
         }
         bb.nl().append(generateStringValue());
         return bb;

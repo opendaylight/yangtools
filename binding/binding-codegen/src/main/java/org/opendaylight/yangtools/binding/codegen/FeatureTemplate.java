@@ -37,20 +37,18 @@ final class FeatureTemplate extends ClassTemplate {
         final var typeName = type().simpleName();
 
         return new BlockBuilder()
-            .at().str(importedName(NONNULL_BY_DEFAULT)).nl()
+            .at().eol(importedName(NONNULL_BY_DEFAULT))
             .str("public final class ").str(typeName).str(" extends ").str(importedName(YANG_FEATURE))
                 .str("<").str(typeName).str(", ").str(importedName(dataRoot)).str(">");
     }
 
     @Override
     BlockBuilder constructors() {
-        final var typeName = type().simpleName();
-
         return new BlockBuilder()
             .nl()
-            .str("private ").str(typeName).str("() {").nl()
+            .str("private ").str(type().simpleName()).str("()").oB()
             .eol("    // Hidden on purpose")
-            .str("}").nl();
+            .cB();
     }
 
     @Override
@@ -73,18 +71,18 @@ final class FeatureTemplate extends ClassTemplate {
             .nl()
             .at().eol(override)
             .str("public ").str(clazz).str("<").str(typeName)
-                .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {").nl()
+                .str("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
             .str("    return ").str(typeName).eol(".class;")
-            .str("}").nl()
+            .cB()
             .nl()
             .at().eol(override)
-            .str("public ").str(importedName(QNAME)).str(" qname() {").nl()
+            .str("public ").str(importedName(QNAME)).str(" qname()").oB()
             .eol("    return " + QNAME_STATIC_FIELD_NAME + ';')
-            .str("}").nl()
+            .cB()
             .nl()
             .at().eol(override)
-            .str("public ").str(clazz).str("<").str(rootName).str("> definingModule() {").nl()
+            .str("public ").str(clazz).str("<").str(rootName).str("> definingModule()").oB()
             .str("    return ").str(rootName).eol(".class;")
-            .str("}").nl();
+            .cB();
     }
 }
