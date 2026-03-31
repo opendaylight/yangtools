@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -480,19 +479,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
     static final @NonNull String getterMethodName(final GeneratedProperty field) {
         return getterMethodName(field.getName());
-    }
-
-    /**
-     * Return properties participating in the construction of a key type. Returned list is guaranteed to be ordered to
-     * match order the type constructor expects.
-     *
-     * @param keyType key type
-     * @return properties participating in the construction of a key type, in constructor order
-     */
-    static final @NonNull List<GeneratedProperty> keyConstructorArgs(final GeneratedTransferObject keyType) {
-        return keyType.getProperties().stream()
-            .sorted(Comparator.comparing(GeneratedProperty::getName))
-            .collect(Collectors.toList());
     }
 
     @NonNullByDefault
