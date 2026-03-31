@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.util.Collection;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -19,7 +19,7 @@ final class DerivedBitsType extends AbstractDerivedType<BitsTypeDefinition> impl
     }
 
     @Override
-    public Collection<? extends Bit> getBits() {
+    public List<Bit> getBits() {
         return baseType().getBits();
     }
 
