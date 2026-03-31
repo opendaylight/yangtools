@@ -89,13 +89,11 @@ class InterfaceTemplate extends BaseTemplate {
 
     @Override
     final BlockBuilder body() {
-        final var bb = new BlockBuilder();
-        bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
-
-        bb
+        final var bb = new BlockBuilder()
+            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
             .blk(generateAnnotations(type().getAnnotations()))
-            .eol(generatedAnnotation())
-            .str("public interface ").append(type().simpleName());
+            .eol(generatedAnnotation());
+        bb.str("public interface ").append(type().simpleName());
 
         // We can have three shapes here to ensure reasonable separation from inner members:
         //
@@ -242,7 +240,7 @@ class InterfaceTemplate extends BaseTemplate {
         }
 
         final var bb = new BlockBuilder();
-        appendAsJavadoc(bb, "", sb.toString());
+        appendAsJavadoc(bb, sb.toString());
         return bb;
     }
 
