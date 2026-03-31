@@ -40,8 +40,6 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
 final class BlockBuilder implements Mutable {
-    // FIXME: replace with a StringBuilder-based state machine
-    //
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -108,21 +106,33 @@ final class BlockBuilder implements Mutable {
      *    <li>not contain new lines</li>
      * </ul>
      *
-     * @param content the {@link String}
+     * @param str the {@link String}
      * @return this instance
      */
     @NonNullByDefault
-    @CheckReturnValue
-    BlockBuilder str(final String content) {
-        buf.append(validateStr(content));
+    BlockBuilder str(final String str) {
+        appendStr(str);
         return this;
     }
 
     @NonNullByDefault
     @CheckReturnValue
-    private static String validateStr(final String strArg) {
-        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
-        return requireNonNull(strArg);
+    BlockBuilder str(final String firstStr, final @Nullable String secondStr) {
+        appendStr(firstStr);
+        return secondStr == null ? this : str(secondStr);
+    }
+
+    @NonNullByDefault
+    BlockBuilder str(final @Nullable StringBuilder sb) {
+        if (sb != null) {
+            appendStr(sb.toString());
+        }
+        return this;
+    }
+
+    @NonNullByDefault
+    private void appendStr(final String str) {
+        buf.append(verifyStr(str));
     }
 
     // FIXME: convert {@code} to {@snippet}
@@ -149,6 +159,11 @@ final class BlockBuilder implements Mutable {
         return str(content).nl();
     }
 
+    @NonNullByDefault
+    BlockBuilder eol(final String str, final int beginIndex, final int endIndex) {
+        return eol(str.substring(beginIndex, endIndex));
+    }
+
     /**
      * Append a text block. The string has to be known to:
      * <ul>
@@ -161,15 +176,8 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder txt(final String text) {
-        buf.append(validateTxt(text));
+        buf.append(verifyTxt(text));
         return this;
-    }
-
-    @NonNullByDefault
-    @CheckReturnValue
-    private static String validateTxt(final String txtArg) {
-        // TODO: JVM-global flag to enforce content to be non-empty and not contain new lines
-        return requireNonNull(txtArg);
     }
 
     /**
@@ -242,59 +250,38 @@ final class BlockBuilder implements Mutable {
     }
 
     /**
-     * Append type reference parameterized with diamond notation. Short name for {@code generic}.
-     * Shorthand for {@code str(rawType).str("<>")}.
-     *
-     * @param rawType the raw type
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder gen(final String rawType) {
-        buf.append(validateStr(rawType)).append("<>");
-        return this;
-    }
-
-    /**
-     * Append type reference parameterized with specified generic type arguments. Short name for {@code generic}.
+     * Append type reference parameterized with specified generic type argument. Short name for {@code generic}.
      * Shorthand for {@code str(rawType).str("<").str(args).str(">")}.
      *
-     * <p>This serves single-parameter types directly and multi-parameter types when the concatenated form is available.
-     *
      * @param rawType the raw type
+     * @param arg the sole generic argument
      * @return this instance
      */
     @NonNullByDefault
-    BlockBuilder gen(final String rawType, final String args) {
-        startGen(rawType, args);
+    BlockBuilder gen(final String rawType, final String arg) {
+        startGen(rawType, arg);
         return endGen();
     }
 
     /**
      * Append type reference parameterized with specified generic type arguments. Short name for {@code generic}.
-     * Shorthand for {@code str(rawType).str("<").str(args).str(">")}.
-     *
-     * <p>This serves single-parameter types directly and multi-parameter types when the concatenated form is available.
+     * Shorthand for {@code str(rawType).str("<").str(arg0).str(", ").str(arg1).str(">")}.
      *
      * @param rawType the raw type
+     * @param arg0 the first generic argument
+     * @param arg1 the second generic argument
      * @return this instance
      */
     @NonNullByDefault
-    BlockBuilder gen(final String rawType, final String firstArg, final @NonNull String... others) {
-        return others.length == 0 ? gen(rawType, firstArg) : genMulti(rawType, firstArg, others);
-    }
-
-    @NonNullByDefault
-    private BlockBuilder genMulti(final String rawType, final String firstArg, final @NonNull String... others) {
-        startGen(rawType, firstArg);
-        for (var nextArg : others) {
-            buf.append(", ").append(validateStr(nextArg));
-        }
+    BlockBuilder gen(final String rawType, final String arg0, final String arg1) {
+        startGen(rawType, arg0);
+        buf.append(", ").append(verifyStr(arg1));
         return endGen();
     }
 
     @NonNullByDefault
     private void startGen(final String rawType, final String args) {
-        buf.append(validateStr(rawType)).append('<').append(validateStr(args));
+        buf.append(verifyStr(rawType)).append('<').append(verifyStr(args));
     }
 
     @NonNullByDefault
@@ -323,14 +310,14 @@ final class BlockBuilder implements Mutable {
     // FIXME: remove this method
     @NonNullByDefault
     BlockBuilder ind(final String str) {
-        buf.append("    ").append(validateStr(str));
+        buf.append("    ").append(verifyStr(str));
         return this;
     }
 
     // FIXME: remove this method
     void append(final String str) {
         final int nl = str.indexOf('\n');
-        buf.append(nl == -1 ? validateStr(str) : validateTxt(str));
+        buf.append(nl == -1 ? verifyNonEmptyStr(str) : verifyTxt(str, nl));
     }
 
     // FIXME: remove this method
@@ -412,7 +399,11 @@ final class BlockBuilder implements Mutable {
     }
 
     String toJavadocBlock() {
-        return buf.isEmpty() ? "" : BaseTemplate.wrapToDocumentation(toRawString());
+        if (buf.isEmpty())  {
+            return "";
+        }
+        final var bb = BaseTemplate.wrapToDocumentation(toRawString());
+        return bb == null ? "" : bb.toRawString();
     }
 
     /**
@@ -423,5 +414,32 @@ final class BlockBuilder implements Mutable {
     @Deprecated(forRemoval = true)
     public String toString() {
         return toRawString();
+    }
+
+    //
+    // Bridge methods to ArgumentVerifier. Kept here to keep callers as simple as possible.
+    //
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyStr(final String arg) {
+        return ArgumentVerifier.INSTANCE.verifyStr(arg);
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyNonEmptyStr(final String arg) {
+        return ArgumentVerifier.INSTANCE.verifyNonEmptyStr(arg);
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyTxt(final String arg) {
+        return ArgumentVerifier.INSTANCE.verifyTxt(arg);
+    }
+
+    @NonNullByDefault
+    @CheckReturnValue
+    private static String verifyTxt(final String arg, final int nl) {
+        return ArgumentVerifier.INSTANCE.verifyTxt(arg, nl);
     }
 }
