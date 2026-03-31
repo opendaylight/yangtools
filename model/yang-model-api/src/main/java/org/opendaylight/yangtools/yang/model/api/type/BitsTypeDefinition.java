@@ -24,6 +24,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
      *
      * @return list of {@code Bit} type instances with data about all individual bits of {@code bits} YANG built-in type
      */
+    // FIXME: List as the order is significant and they do go into hashCode(()/equals()
     @NonNull Collection<? extends @NonNull Bit> getBits();
 
     static int hashCode(final @NonNull BitsTypeDefinition type) {
