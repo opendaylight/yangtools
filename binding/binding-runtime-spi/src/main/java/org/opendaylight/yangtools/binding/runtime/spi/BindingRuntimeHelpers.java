@@ -18,6 +18,7 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
@@ -108,6 +109,12 @@ public final class BindingRuntimeHelpers {
             .collect(Collectors.toList()));
         return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.modelContext()), infos);
     }
+
+    public static @NonNull EffectiveModelContext createRuntimeContext(final YangParserFactory parserFactory,
+            final BindingRuntimeGenerator generator, final RootMeta<?> first, final RootMeta<?>... others) {
+
+    }
+
 
     @Deprecated(since = "15.0.0", forRemoval = true)
     public static @NonNull YangModuleInfo getYangModuleInfo(final Class<?> clazz) {
