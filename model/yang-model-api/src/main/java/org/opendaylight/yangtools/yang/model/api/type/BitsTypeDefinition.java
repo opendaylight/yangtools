@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -18,20 +18,39 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 /**
  * Makes is possible to access to the individual bits values of this type.
  */
+@NonNullByDefault
 public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
     /**
-     * Returns all bit values.
-     *
-     * @return list of {@code Bit} type instances with data about all individual bits of {@code bits} YANG built-in type
+     * Contains the methods for accessing the data about the individual bit of {@code bits} YANG type.
      */
-    @NonNull Collection<? extends @NonNull Bit> getBits();
+    interface Bit extends DocumentedNode.WithStatus {
+        /**
+         * Returns the name of the concrete bit.
+         *
+         * @return string with the name of the concrete bit
+         */
+        String getName();
 
-    static int hashCode(final @NonNull BitsTypeDefinition type) {
+        /**
+         * The position value MUST be in the range 0 to 4294967295, and it MUST
+         * be unique within the bits type.
+         *
+         * @return The position value of bit in range from 0 to 4294967295.
+         */
+        Uint32 getPosition();
+    }
+
+    /**
+     * {@return the list of individual {@link Bit}s, in the order of increasing {@link Bit#getPosition()}}
+     */
+    List<Bit> getBits();
+
+    static int hashCode(final BitsTypeDefinition type) {
         return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
             type.getDefaultValue().orElse(null), type.getBits());
     }
 
-    static boolean equals(final @NonNull BitsTypeDefinition type, final @Nullable Object obj) {
+    static boolean equals(final BitsTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -40,28 +59,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
         return other != null && type.getBits().equals(other.getBits());
     }
 
-    static String toString(final @NonNull BitsTypeDefinition type) {
+    static String toString(final BitsTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("bits", type.getBits()).toString();
-    }
-
-    /**
-     * Contains the methods for accessing the data about the individual bit of
-     * <code>bits</code> YANG type.
-     */
-    interface Bit extends DocumentedNode.WithStatus {
-        /**
-         * Returns the name of the concrete bit.
-         *
-         * @return string with the name of the concrete bit
-         */
-        @NonNull String getName();
-
-        /**
-         * The position value MUST be in the range 0 to 4294967295, and it MUST
-         * be unique within the bits type.
-         *
-         * @return The position value of bit in range from 0 to 4294967295.
-         */
-        @NonNull Uint32 getPosition();
     }
 }
