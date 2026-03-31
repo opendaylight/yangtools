@@ -14,10 +14,13 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
@@ -101,12 +104,36 @@ public final class BindingRuntimeHelpers {
         return createRuntimeContext(parserFactory, generator, Arrays.asList(classes));
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
             final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) throws YangParserException {
         final var infos = prepareContext(parserFactory, classes.stream()
             .map(BindingRuntimeHelpers::getYangModuleInfo)
             .collect(Collectors.toList()));
         return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.modelContext()), infos);
+    }
+
+    public static @NonNull BindingRuntimeContext createRuntimeContext(final @NonNull YangParserFactory parserFactory,
+            final @NonNull BindingRuntimeGenerator generator, final @NonNull RootMeta<?> first,
+            final @NonNull RootMeta<?>... others) throws YangParserException {
+        return createRuntimeContext(parserFactory, generator,
+            Stream.concat(Stream.of(first), Stream.of(others)).map(RootMeta::moduleInfo));
+    }
+
+    public static @NonNull BindingRuntimeContext createRuntimeContext(final @NonNull YangParserFactory parserFactory,
+            final @NonNull BindingRuntimeGenerator generator, final @NonNull List<? extends RootMeta<?>> rootMetas)
+                throws YangParserException {
+        if (rootMetas.isEmpty()) {
+            throw new IllegalArgumentException("empty rootMetas");
+        }
+        return createRuntimeContext(parserFactory, generator, rootMetas.stream().map(RootMeta::moduleInfo));
+    }
+
+    private static @NonNull BindingRuntimeContext createRuntimeContext(final @NonNull YangParserFactory parserFactory,
+            final @NonNull BindingRuntimeGenerator generator, final Stream<? extends YangModuleInfo> infos)
+                throws YangParserException {
+        final var snapshot = prepareContext(parserFactory, infos.collect(Collectors.toList()));
+        return new DefaultBindingRuntimeContext(generator.generateTypeMapping(snapshot.modelContext()), snapshot);
     }
 
     @Deprecated(since = "15.0.0", forRemoval = true)
