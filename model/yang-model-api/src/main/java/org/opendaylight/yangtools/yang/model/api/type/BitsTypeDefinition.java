@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -20,11 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
     /**
-     * Returns all bit values.
-     *
-     * @return list of {@code Bit} type instances with data about all individual bits of {@code bits} YANG built-in type
+     * {@return the list of individual {@link Bit}s, in the order of increasing {@link Bit#getPosition()}}
      */
-    @NonNull Collection<? extends @NonNull Bit> getBits();
+    @NonNull List<? extends @NonNull Bit> getBits();
 
     static int hashCode(final @NonNull BitsTypeDefinition type) {
         return Objects.hash(type.getQName(), type.getBaseType(), type.getUnits().orElse(null),
