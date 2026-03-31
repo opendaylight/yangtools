@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -179,12 +180,38 @@ class InterfaceTemplate extends BaseTemplate {
     }
 
     private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
-        final var bb = new BlockBuilder();
-        bb.append(asJavadoc(method.getComment()));
-        return bb
+        return new BlockBuilder()
+            .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
             .str(importedReturnType(method)).sp().str(method.getName()).str("(")
                 .str(generateParameters(method.getParameters())).str(");");
+    }
+
+    private static @Nullable BlockBuilder generateJavadoc(final @Nullable TypeMemberComment comment) {
+        if (comment == null) {
+            return null;
+        }
+
+        final var sb = new StringBuilder();
+        final var contract = comment.contractDescription();
+        if (contract != null) {
+            sb.append(contract).append("\n\n");
+        }
+        final var reference = comment.referenceDescription();
+        if (reference != null) {
+            sb.append(formatReference(reference));
+        }
+        final var signature = comment.typeSignature();
+        if (signature != null) {
+            sb.append(signature).append('\n');
+        }
+        if (sb.isEmpty()) {
+            return null;
+        }
+
+        final var bb = new BlockBuilder();
+        appendAsJavadoc(bb, "", sb.toString());
+        return bb;
     }
 
     private @Nullable BlockBuilder generateAnnotations(final @NonNull List<AnnotationType> annotations) {
@@ -230,9 +257,8 @@ class InterfaceTemplate extends BaseTemplate {
     }
 
     private @NonNull BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
-        final var bb = new BlockBuilder();
-        bb.append(asJavadoc(method.getComment()));
-        return bb
+        return new BlockBuilder()
+            .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("(")
                 .str(generateParameters(method.getParameters())).str(")").oB()

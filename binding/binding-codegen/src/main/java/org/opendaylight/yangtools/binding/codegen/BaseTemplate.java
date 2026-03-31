@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
@@ -332,33 +331,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
             .append("    this.").append(fieldName).append(" = value;\n")
             .append("    return this;\n")
             .append("}\n");
-    }
-
-    /**
-     * Template method which generates JAVA comments.
-     *
-     * @param comment string with the comment for whole JAVA class
-     * @return string with comment in JAVA format
-     */
-    static final @NonNull String asJavadoc(final @Nullable TypeMemberComment comment) {
-        if (comment == null) {
-            return "";
-        }
-
-        final var sb = new StringBuilder();
-        final var contract = comment.contractDescription();
-        if (contract != null) {
-            sb.append(contract).append("\n\n");
-        }
-        final var reference = comment.referenceDescription();
-        if (reference != null) {
-            sb.append(formatReference(reference));
-        }
-        final var signature = comment.typeSignature();
-        if (signature != null) {
-            sb.append(signature).append('\n');
-        }
-        return wrapToDocumentation(sb.toString());
     }
 
     @NonNullByDefault
