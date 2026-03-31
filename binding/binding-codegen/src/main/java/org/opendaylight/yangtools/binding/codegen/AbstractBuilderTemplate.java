@@ -12,8 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -135,7 +137,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
 
         if (keyType != null && targetType.getImplements().contains(BindingTypes.entryObject(targetType, keyType))) {
             final var allProps = new ArrayList<>(properties);
-            final var keyProps = BaseTemplate.keyConstructorArgs(keyType);
+            final var keyProps = keyConstructorArgs(keyType);
             for (var field : keyProps) {
                 removeProperty(allProps, field.getName());
             }
@@ -150,8 +152,23 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     }
 
     /**
+     * Return properties participating in the construction of a key type. Returned list is guaranteed to be ordered to
+     * match order the type constructor expects.
+     *
+     * @param keyType key type
+     * @return properties participating in the construction of a key type, in constructor order
+     */
+    @NonNullByDefault
+    static final List<GeneratedProperty> keyConstructorArgs(final GeneratedTransferObject keyType) {
+        return keyType.getProperties().stream()
+            .sorted(Comparator.comparing(GeneratedProperty::getName))
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Append the code to copy key components, with four spaces of indentation.
      */
+    @NonNullByDefault
     abstract void appendCopyKeys(StringBuilder sb, List<GeneratedProperty> keyProps);
 
     /**
