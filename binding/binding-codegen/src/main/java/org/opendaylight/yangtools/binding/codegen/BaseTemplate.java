@@ -110,10 +110,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * @param parameters list of parameter instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in JAVA format
      */
-    final @NonNull String generateParameters(final @NonNull List<MethodSignature.Parameter> parameters) {
+    final @Nullable StringBuilder generateParameters(final @NonNull List<MethodSignature.Parameter> parameters) {
         final var it = parameters.iterator();
         if (!it.hasNext()) {
-            return "";
+            return null;
         }
 
         final var sb = new StringBuilder();
@@ -121,10 +121,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
             final var parameter = it.next();
             sb.append(importedName(parameter.type())).append(' ').append(parameter.name());
             if (!it.hasNext()) {
-                return sb.toString();
+                break;
             }
             sb.append(", ");
         }
+        return sb;
     }
 
     /**
@@ -481,16 +482,15 @@ abstract class BaseTemplate extends JavaFileTemplate {
         return getterMethodName(field.getName());
     }
 
-    @NonNullByDefault
-    static final String wrapToDocumentation(final String text) {
+    static final @Nullable BlockBuilder wrapToDocumentation(final @NonNull String text) {
         // TODO: isBlank()?
         if (text.isEmpty()) {
-            return "";
+            return null;
         }
 
         final var bb = new BlockBuilder();
         appendAsJavadoc(bb, "", text);
-        return bb.toRawString();
+        return bb;
     }
 
     @NonNullByDefault

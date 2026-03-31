@@ -200,10 +200,9 @@ class ClassTemplate extends BaseTemplate {
         //            «generateToString(genTO.toStringIdentifiers)»
         //        }
 
-        final var bb = new BlockBuilder();
-        bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
-
-        bb.blk(annotationDeclaration());
+        final var bb = new BlockBuilder()
+            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
+            .blk(annotationDeclaration());
 
         if (!isInnerClass) {
             bb.eol(generatedAnnotation());
@@ -649,7 +648,7 @@ class ClassTemplate extends BaseTemplate {
                 .nl()
                 .at().eol(importedName(OVERRIDE))
                 .str("public ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()").oB()
-                .str("    return ").str(fieldName(field)).str(cloneCall(field)).eS()
+                .str("    return ").str(fieldName(field), cloneOrNull(field)).eS()
                 .cB();
         }
 
@@ -858,7 +857,7 @@ class ClassTemplate extends BaseTemplate {
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
                 bb.str(", ").iStr(decimal64.fractionDigits());
             }
-            bb.str(")").str(cloneCall(value)).eS();
+            bb.str(")", cloneOrNull(value)).eS();
         }
         return bb
             .indented(generateRestrictions(type(), fieldName, value.getReturnType()))

@@ -89,12 +89,11 @@ class InterfaceTemplate extends BaseTemplate {
 
     @Override
     final BlockBuilder body() {
-        final var bb = new BlockBuilder();
-        bb.append(wrapToDocumentation(formatDataForJavaDoc(type())));
-        return bb
+        return new BlockBuilder()
+            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
             .blk(generateAnnotations(type().getAnnotations()))
             .eol(generatedAnnotation())
-            .str("public interface ").str(type().simpleName()).nl()
+            .str("public interface ").eol(type().simpleName())
             .indented(superInterfaces()).oB()
             .nl()
             .indented(generateInnerClasses(enclosedGeneratedTypes))
