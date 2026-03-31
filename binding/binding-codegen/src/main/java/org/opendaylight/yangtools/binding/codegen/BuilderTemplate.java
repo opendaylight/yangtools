@@ -60,9 +60,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     @Override
     BlockBuilder body() {
-        final var bb = new BlockBuilder();
-        bb.append(wrapToDocumentation(formatDataForJavaDoc(targetType)));
-        bb
+        final var bb = new BlockBuilder()
+            .blk(wrapToDocumentation(formatDataForJavaDoc(targetType)))
             .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
             .eol(generatedAnnotation())
             .str("public class ").str(type().simpleName()).oB()
@@ -71,7 +70,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .indented(builderFields())
             .nl()
             .indented(constantsDeclarations())
-            .newLine();
+            .nl();
         if (augmentType != null) {
             final var augmentTypeRef = importedName(augmentType);
             final var mapTypeRef = importedName(JU_MAP);
