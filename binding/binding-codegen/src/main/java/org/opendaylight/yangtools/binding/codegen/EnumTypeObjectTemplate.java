@@ -83,7 +83,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
                         bb.newLine();
                     }
                 });
-                bb.str("    ").str(value.constantName()).str("(").strI(value.value()).str(", \"").str(value.name())
+                bb.str("    ").str(value.constantName()).str("(").iStr(value.value()).str(", \"").str(value.name())
                     .append("\")");
 
                 if (!it.hasNext()) {
@@ -143,7 +143,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
             .str("    public static ").str(nullableSelf).str(" forValue(int intValue) {").nl()
             .str("        return switch (intValue) {").newLine();
         for (var value : archetype.values()) {
-            bb.str("            case ").strI(value.value()).str(" -> ").str(value.constantName()).append(";\n");
+            bb.str("            case ").iStr(value.value()).str(" -> ").str(value.constantName()).append(";\n");
         }
         bb
             .str("            default -> null;").nl()

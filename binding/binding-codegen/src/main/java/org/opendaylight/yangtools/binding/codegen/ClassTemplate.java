@@ -596,7 +596,7 @@ class ClassTemplate extends BaseTemplate {
             bb.indented(bitsDefaultInstanceBody());
         } else if (propType instanceof Decimal64Type decimal64) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .str(".valueOf(defaultValue).scaleTo(").strI(decimal64.fractionDigits()).str("));").newLine();
+                .str(".valueOf(defaultValue).scaleTo(").iStr(decimal64.fractionDigits()).str("));").newLine();
         } else if (propType.equals(STRING_TYPE)) {
             bb.str("    return new ").str(simpleName).str("(defaultValue);").newLine();
         } else if (propType.equals(BINARY_TYPE)) {
@@ -848,7 +848,7 @@ class ClassTemplate extends BaseTemplate {
             bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
                 .append(fieldName);
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
-                bb.str(", ").strI(decimal64.fractionDigits());
+                bb.str(", ").iStr(decimal64.fractionDigits());
             }
             bb.str(")").append(cloneCall(value));
             bb.str(";").newLine();

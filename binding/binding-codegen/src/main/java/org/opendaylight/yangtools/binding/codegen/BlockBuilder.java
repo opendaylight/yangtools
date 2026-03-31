@@ -97,14 +97,15 @@ final class BlockBuilder implements Mutable {
         return requireNonNull(strArg);
     }
 
+    // FIXME: convert {@code} to {@snippet}
     /**
-     * Append {@code Integer.toString(value}.
+     * Append {@code Integer.toString(value)}.
      *
      * @param value the value
      * @return this instance
      */
     @NonNullByDefault
-    BlockBuilder strI(final int value) {
+    BlockBuilder iStr(final int value) {
         buf.append(value);
         return this;
     }
