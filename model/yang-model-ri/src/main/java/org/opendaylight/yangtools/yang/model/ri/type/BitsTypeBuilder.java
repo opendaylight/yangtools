@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
@@ -70,7 +71,9 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
             }
         }
 
-        return getBaseType() == null ? new BaseBitsType(getQName(), positionMap.values())
-                : new RestrictedBitsType(getBaseType(), getQName(), positionMap.values());
+        final var bits = ImmutableList.copyOf(positionMap.values());
+        final var qname = getQName();
+        final var baseType = getBaseType();
+        return baseType == null ? new BaseBitsType(qname, bits) : new RestrictedBitsType(baseType, qname, bits);
     }
 }
