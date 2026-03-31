@@ -164,7 +164,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      */
     abstract void appendCopyAugmentation(StringBuilder sb);
 
-    final @Nullable StringBuilder generateDeprecatedAnnotation(final @Nullable List<AnnotationType> annotations) {
+    final @Nullable BlockBuilder generateDeprecatedAnnotation(final @Nullable List<AnnotationType> annotations) {
         if (annotations != null) {
             for (var annotation : annotations) {
                 if (JavaFileTemplate.DEPRECATED.equals(annotation.name())) {
@@ -175,7 +175,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         return null;
     }
 
-    abstract StringBuilder generateDeprecatedAnnotation(@NonNull AnnotationType ann);
+    abstract BlockBuilder generateDeprecatedAnnotation(@NonNull AnnotationType ann);
 
     private static void removeProperty(final Collection<BuilderGeneratedProperty> props, final String name) {
         final var it = props.iterator();
