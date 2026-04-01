@@ -120,7 +120,7 @@ final class LengthGenerator {
 
     static @NonNull BlockBuilder generateLengthChecker(final String member, final @NonNull Type type,
             final LengthConstraint constraint, final JavaFileTemplate template) {
-        return JavaFileTemplate.isArrayType(TypeUtils.getBaseYangType(type))
+        return TypeUtils.getBaseYangType(type).isArray()
                 ? generateArrayLengthChecker(member, constraint, template)
                 : generateStringLengthChecker(member, constraint, template);
     }

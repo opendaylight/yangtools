@@ -43,4 +43,12 @@ public sealed interface Type extends Immutable
     default String canonicalName() {
         return name().canonicalName();
     }
+
+    /**
+     * {@return {@code true} if type represents a Java array type, {@code false} otherwise}
+     * @since 15.0.3
+     */
+    default boolean isArray() {
+        return name().isArray();
+    }
 }

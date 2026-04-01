@@ -292,7 +292,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var returnType = field.getReturnType();
         final var importedName = importedName(returnType);
         // any Java array type needs to be duplicated to prevent modification
-        final var codeHelpers = isArrayType(returnType) ? importedName(CODEHELPERS) : null;
+        final var codeHelpers = returnType.isArray() ? importedName(CODEHELPERS) : null;
 
         // emit separately
         final var sb = new StringBuilder()
