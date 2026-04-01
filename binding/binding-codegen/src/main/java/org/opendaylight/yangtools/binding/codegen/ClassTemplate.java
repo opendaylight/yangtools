@@ -227,9 +227,9 @@ class ClassTemplate extends BaseTemplate {
         // fields
         if (!properties.isEmpty()) {
             for (var field : properties) {
-                bb.append("    private ");
+                bb.str("    private ");
                 if (field.isReadOnly()) {
-                    bb.append("final ");
+                    bb.str("final ");
                 }
                 bb.str(importedReturnType(field)).sp().str(fieldName(field)).eS();
             }
@@ -342,15 +342,14 @@ class ClassTemplate extends BaseTemplate {
             .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
             .str("    return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
         for (var property : equalsIdentifiers) {
-            bb.nl().append("        && ");
+            bb.nl().str("        && ");
 
             final var fieldName = fieldName(property);
             final var type = property.getReturnType();
             if (type.equals(PRIMITIVE_BOOLEAN)) {
-                bb.str(fieldName).str(" == other.").append(fieldName);
+                bb.str(fieldName).str(" == other.").str(fieldName);
             } else {
-                bb.str(importedUtilClass(type)).str(".equals(").str(fieldName).str(", other.").str(fieldName)
-                    .append(")");
+                bb.str(importedUtilClass(type)).str(".equals(").str(fieldName).str(", other.").str(fieldName).str(")");
             }
         }
         return bb
@@ -449,29 +448,28 @@ class ClassTemplate extends BaseTemplate {
         final var bb = new BlockBuilder()
             .str("public");
         if (isInnerClass) {
-            bb.append(" static final ");
+            bb.str(" static final ");
         } else {
-            bb.append(type.isAbstract() ? " abstract " : finalClass());
+            bb.str(type.isAbstract() ? " abstract " : finalClass());
         }
-        bb.str("class ").append(type.simpleName());
+        bb.str("class ").str(type.simpleName());
 
         final var superType = genTO.getSuperType();
         if (superType != null) {
-            bb.append(" extends ");
-            bb.append(importedName(superType));
+            bb.str(" extends ").str(importedName(superType));
         }
 
         final var ifaces = type.getImplements();
         if (!ifaces.isEmpty()) {
-            bb.nl().append(" implements ");
+            bb.nl().str(" implements ");
 
             final var it = ifaces.iterator();
             while (true) {
-                bb.append(importedName(it.next()));
+                bb.str(importedName(it.next()));
                 if (!it.hasNext()) {
                     break;
                 }
-                bb.append(", ");
+                bb.str(", ");
             }
         }
         return bb;
@@ -487,7 +485,7 @@ class ClassTemplate extends BaseTemplate {
             switch (c.getName()) {
                 case PATTERN_CONSTANT_NAME -> appendPatternConstant(bb, (Map<String, String>) c.getValue());
                 case VALID_NAMES_NAME -> appendValidNames(bb, (BitsTypeDefinition) c.getValue());
-                default -> bb.append(emitConstant(c));
+                default -> bb.txt(emitConstant(c));
             }
         }
         return bb;
@@ -497,21 +495,6 @@ class ClassTemplate extends BaseTemplate {
         final var jurPattern = importedName(JUR_PATTERN);
         final var juList = importedName(JU_LIST);
 
-        //    «val jurPatternRef = JUR_PATTERN.importedName»
-        //    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» =
-        // «JU_LIST.importedName».of(«
-        //    FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
-        //    «IF cValue.size == 1»
-        //        private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(
-        //«TypeConstants.PATTERN_CONSTANT_NAME».getFirst());
-        //        private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.iterator.next
-        //.escapeJava»";
-        //    «ELSE»
-        //        private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST» = «CODEHELPERS.importedName»
-        //.compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
-        //        private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
-        //        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
-        //    «ENDIF»
         bb.str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME + " = ").str(juList)
             .str(".of(");
         {
@@ -520,14 +503,14 @@ class ClassTemplate extends BaseTemplate {
                 if (first) {
                     first = false;
                 } else {
-                    bb.append(", ");
+                    bb.str(", ");
                 }
                 bb.quotedJava(requireNonNull(value));
             }
         }
         bb
             .eol(");")
-            .str("private static final ").append(jurPattern);
+            .str("private static final ").str(jurPattern);
         if (constValue.size() == 1) {
             bb
                 .str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern)
@@ -548,7 +531,7 @@ class ClassTemplate extends BaseTemplate {
                 if (first) {
                     first = false;
                 } else {
-                    bb.append(", ");
+                    bb.str(", ");
                 }
                 bb.quotedJava(requireNonNull(value));
             }
@@ -559,7 +542,7 @@ class ClassTemplate extends BaseTemplate {
     private void appendValidNames(final BlockBuilder bb, final BitsTypeDefinition bitsType) {
         final var immutableSet = importedName(IMMUTABLE_SET);
         bb.str("protected static final ").gen(immutableSet, importedName(STRING)).str(" " + VALID_NAMES_NAME + " = ")
-            .str(immutableSet).append(".of(");
+            .str(immutableSet).str(".of(");
         // FIXME: refactor this block
         {
             boolean first = true;
@@ -567,7 +550,7 @@ class ClassTemplate extends BaseTemplate {
                 if (first) {
                     first = false;
                 } else {
-                    bb.append(", ");
+                    bb.str(", ");
                 }
                 bb.quoted(bit.getName());
             }
@@ -690,12 +673,12 @@ class ClassTemplate extends BaseTemplate {
             .at().eol(importedName(OVERRIDE))
             .str("public int hashCode()").oB();
         if (size == 1) {
-            bb.append("    return ");
+            bb.str("    return ");
             final var prop = props.getFirst();
             if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
-                bb.str(importedName(BOOLEAN)).append(".hashCode(");
+                bb.str(importedName(BOOLEAN)).str(".hashCode(");
             } else {
-                bb.str(importedName(CODEHELPERS)).append(".wrapperHashCode(");
+                bb.str(importedName(CODEHELPERS)).str(".wrapperHashCode(");
             }
             bb.str(fieldName(prop)).eol(");");
         } else {
@@ -849,7 +832,7 @@ class ClassTemplate extends BaseTemplate {
         final var fieldName = fieldName(value);
         if (valueProperty(properties) != null) {
             bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
-                .append(fieldName);
+                .str(fieldName);
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
                 bb.str(", ").iStr(decimal64.fractionDigits());
             }

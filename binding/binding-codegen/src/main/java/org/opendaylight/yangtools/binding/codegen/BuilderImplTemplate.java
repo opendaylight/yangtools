@@ -91,17 +91,17 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                     .str(importedName(builder.type())).str(" base)").oB()
                 .str("        final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
                 .eol("        return key != null ? key")
-                .str("            : new ").str(importedName(keyType)).append("(");
+                .str("            : new ").str(importedName(keyType)).str("(");
 
             // Note: keys have at least one component
             final var it = keyConstructorArgs(keyType).iterator();
             while (true) {
                 final var keyProp = it.next();
-                bb.str("base.").str(getterMethodName(keyProp)).append("()");
+                bb.str("base.").str(getterMethodName(keyProp)).str("()");
                 if (!it.hasNext()) {
                     break;
                 }
-                bb.append(", ");
+                bb.str(", ");
             }
 
             bb

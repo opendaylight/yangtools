@@ -92,8 +92,8 @@ class InterfaceTemplate extends BaseTemplate {
         final var bb = new BlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
             .blk(generateAnnotations(type().getAnnotations()))
-            .eol(generatedAnnotation());
-        bb.str("public interface ").append(type().simpleName());
+            .eol(generatedAnnotation())
+            .str("public interface ").str(type().simpleName());
 
         // We can have three shapes here to ensure reasonable separation from inner members:
         //
@@ -117,7 +117,7 @@ class InterfaceTemplate extends BaseTemplate {
             case 0 -> {
                 // No-op
             }
-            case 1 -> bb.str(" extends ").append(importedName(ifaces.getFirst()));
+            case 1 -> bb.str(" extends ").str(importedName(ifaces.getFirst()));
             default -> {
                 bb.nl().ind("extends ");
 
@@ -126,7 +126,7 @@ class InterfaceTemplate extends BaseTemplate {
                 //       Perhaps it is worth the added complexity: for now this simple approach just works
                 final var it = ifaces.iterator();
                 while (true) {
-                    bb.append(importedName(it.next()));
+                    bb.str(importedName(it.next()));
                     if (!it.hasNext()) {
                         break;
                     }
@@ -426,10 +426,10 @@ class InterfaceTemplate extends BaseTemplate {
         for (var property : ByTypeMemberComparator.sort(props)) {
             final var getterName = property.getGetterName();
             bb.nl().str("        && ").str(importedUtilClass(property)).str(".equals(thisObj.").str(getterName)
-                .str("(), other.").str(getterName).append("())");
+                .str("(), other.").str(getterName).str("())");
         }
         if (augmentable) {
-            bb.nl().append("        && thisObj.augmentations().equals(other.augmentations())");
+            bb.nl().str("        && thisObj.augmentations().equals(other.augmentations())");
         }
         return bb
             .eS()

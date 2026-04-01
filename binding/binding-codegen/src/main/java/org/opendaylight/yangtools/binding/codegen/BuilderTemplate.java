@@ -212,7 +212,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName())) {
-                bb.append(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
+                bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
         }
 
@@ -231,7 +231,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName()) && getterByName(alreadySetProperties, getter.getName()) == null) {
-                bb.append(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
+                bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
         }
 
@@ -362,7 +362,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
-                bb.append(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
+                bb.eol(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
             }
         }
         return bb;
@@ -376,7 +376,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var ownGetter = implTemplate.findGetter(getterName);
         final var ownGetterType = ownGetter.getReturnType();
         if (strictTypeEquals(getter.getReturnType(), ownGetterType)) {
-            return "this._" + propertyName + " = " + receiver + '.' + getterName + "();\n";
+            return "this._" + propertyName + " = " + receiver + '.' + getterName + "();";
         }
         if (ownGetterType instanceof ParameterizedType parameterized) {
             final var itemType = parameterized.getActualTypeArguments().getFirst();
@@ -396,7 +396,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private String printPropertySetter(final String getterName, final String receiver, final String propertyName,
             final String checkerName, final String className) {
         return "this._" + propertyName + " = " + importedName(CODEHELPERS) + '.' + checkerName + '('
-            + className + ".class, \"" + propertyName + "\", " + receiver + '.' + getterName + "());\n";
+            + className + ".class, \"" + propertyName + "\", " + receiver + '.' + getterName + "());";
     }
 
     private static boolean strictTypeEquals(final Type type1, final Type type2) {
@@ -440,7 +440,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         for (var def : type().getConstantDefinitions()) {
             if (!def.getName().startsWith(PATTERN_CONSTANT_NAME)) {
-                bb.append(emitConstant(def));
+                bb.txt(emitConstant(def));
                 continue;
             }
 
