@@ -242,10 +242,19 @@ class JavaFileTemplate {
         return "@" + importedName(GENERATED) + "(\"mdsal-binding-generator\")";
     }
 
+    /**
+     * Extract a {@link Type}'s {@link Restrictions}.
+     *
+     * @param actualType the type
+     * @return non-{@link Restrictions#isEmpty()} {@link Restrictions} or {@code null}
+     */
     static final @Nullable Restrictions restrictionsForSetter(final Type actualType) {
         return switch (actualType) {
             case GeneratedType genType -> null;
-            case RestrictedType restricted -> restricted.restrictions();
+            case RestrictedType restricted -> {
+                final var restrictions = restricted.restrictions();
+                yield restrictions.isEmpty() ? null : restrictions;
+            }
             case null, default -> null;
         };
     }

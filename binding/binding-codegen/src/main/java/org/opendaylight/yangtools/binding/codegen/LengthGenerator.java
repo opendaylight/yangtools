@@ -126,7 +126,7 @@ final class LengthGenerator {
     }
 
     @NonNullByDefault
-    static void appendCheckerCall(final StringBuilder sb, final String member, final String valueReference) {
-        sb.append(lengthCheckerName(member)).append('(').append(requireNonNull(valueReference)).append(");\n");
+    static void appendCheckerCall(final BlockBuilder bb, final String member, final String valueReference) {
+        bb.str(lengthCheckerName(member)).str("(").str(requireNonNull(valueReference)).eol(");");
     }
 }

@@ -74,21 +74,21 @@ final class ListKeyTemplate extends ClassTemplate {
     }
 
     @Override
-    StringBuilder asGetterMethod(final GeneratedProperty field) {
+    BlockBuilder asGetterMethod(final GeneratedProperty field) {
         final var fieldName = field.getName();
         final var returnType = field.getReturnType();
 
-        return new StringBuilder()
-            .append("/**\n")
-            .append(" * Return ").append(fieldName).append(", guaranteed to be non-null.\n")
-            .append(" *\n")
-            .append(" * @return {@code ").append(importedName(returnType)).append("} ").append(fieldName)
-                .append(", guaranteed to be non-null.\n")
-            .append(" */\n")
-            .append("public ").append(importedNonNull(returnType)).append(' ').append(getterMethodName(field))
-                .append("() {\n")
-            .append("    return ").append(fieldName(field)).append(cloneOrEmpty(field)).append(";\n")
-            .append("}\n");
+        return new BlockBuilder()
+            // FIXME: emit a {@return .. } javadoc
+            .eol("/**")
+            .str(" * Return ").str(fieldName).eol(", guaranteed to be non-null.")
+            .eol(" *")
+            .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
+                .eol(", guaranteed to be non-null.")
+            .eol(" */")
+            .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").oB()
+                .ind("return ").str(fieldName(field), cloneOrNull(field)).eS()
+            .cB();
     }
 
     @Override
