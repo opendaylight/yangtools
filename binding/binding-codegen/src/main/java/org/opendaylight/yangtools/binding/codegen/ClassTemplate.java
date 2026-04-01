@@ -381,42 +381,42 @@ class ClassTemplate extends BaseTemplate {
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
-    private StringBuilder bitsDefaultInstanceBody() {
-        final var sb = new StringBuilder()
-            .append("var values = ").append(importedName(CODEHELPERS)).append(".parseBitsDefaultValue(defaultValue, ");
+    private BlockBuilder bitsDefaultInstanceBody() {
+        final var bb = new BlockBuilder()
+            .str("var values = ").str(importedName(CODEHELPERS)).str(".parseBitsDefaultValue(defaultValue, ");
         final var size = allProperties.size();
         if (size != 0) {
             final var it = allProperties.iterator();
             while (true) {
                 final var prop = it.next();
-                sb.append('"').append(prop.getName()).append('"');
+                bb.quoted(prop.getName());
                 if (!it.hasNext()) {
                     break;
                 }
-                sb.append(",\n    ");
+                bb.eol(",").ind();
             }
         }
 
-        sb
-            .append(");\n")
-            .append("return new ").append(genTO.simpleName()).append("(");
+        bb
+            .eol(");")
+            .str("return new ").str(genTO.simpleName()).str("(");
         if (size != 0) {
-            sb.append('\n');
+            bb.newLine();
 
             final var last = size - 1;
             for (int i = 0; i < last; ++i) {
-                appendValue(sb, i);
-                sb.append(",\n");
+                appendValue(bb, i);
+                bb.eol(",");
             }
-            appendValue(sb, last);
+            appendValue(bb, last);
         }
 
-        return sb.append(");\n");
+        return bb.eol(");");
     }
 
     @NonNullByDefault
-    private static void appendValue(final StringBuilder sb, final int index) {
-        sb.append("    values[").append(index).append(']');
+    private static void appendValue(final BlockBuilder bb, final int index) {
+        bb.ind("values[").iStr(index).str("]");
     }
 
     @NonNull String finalClass() {
@@ -851,14 +851,14 @@ class ClassTemplate extends BaseTemplate {
         };
     }
 
-    private @Nullable StringBuilder genPatternEnforcer(final @NonNull String ref) {
-        final var sb = new StringBuilder();
+    private @NonNull BlockBuilder genPatternEnforcer(final @NonNull String ref) {
+        final var bb = new BlockBuilder();
         for (var constant : consts) {
             if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
-                sb.append(importedName(CODEHELPERS)).append(".checkPattern(").append(ref).append(", ")
-                    .append(MEMBER_PATTERN_LIST).append(", ").append(MEMBER_REGEX_LIST).append(");\n");
+                bb.str(importedName(CODEHELPERS)).str(".checkPattern(").str(ref).str(", ")
+                    .eol(MEMBER_PATTERN_LIST + ", " + MEMBER_REGEX_LIST + ");");
             }
         }
-        return sb.isEmpty() ? null : sb;
+        return bb;
     }
 }
