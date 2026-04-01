@@ -8,12 +8,20 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
+import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
+import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.GROUPING;
+import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
+import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -24,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -36,9 +43,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Template for generating JAVA builder classes.
@@ -252,30 +256,23 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return null;
         }
 
+        // FIXME: this is not used anywhere: I think this is meant to suppress duplicate checks?
         final var done = getBaseIfcs(targetType);
 
-        //        «generateMethodFieldsFromComment(targetType)»
-        //        public void fieldsFrom(final «GROUPING.importedName» arg) {
-        //            boolean isValidArg = false;
-        //            «FOR impl : targetType.getAllIfcs»
-        //                «generateIfCheck(impl, done)»
-        //            «ENDFOR»
-        //            «CODEHELPERS.importedName».validValue(isValidArg, arg, "«targetType.getAllIfcs.toListOfNames»");
-        //        }
         final var bb = new BlockBuilder();
         bb.append(generateMethodFieldsFromComment(targetType));
         bb
-            .str("public void fieldsFrom(final ").str(importedName(BindingTypes.GROUPING)).str(" arg)").oB()
-            .eol("    boolean isValidArg = false;");
+            .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").oB()
+                .ind("boolean isValidArg = false;").newLine();
         for (var impl : getAllIfcs(targetType)) {
             bb.indented(generateIfCheck(impl, done));
         }
         return bb
-            .str("    ").str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, \"")
-                .str(getAllIfcs(targetType).stream()
+            .str("    ").str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
+                .quoted(getAllIfcs(targetType).stream()
                     .map(this::importedName)
                     .collect(Collectors.toUnmodifiableList()).toString())
-                .eol("\");")
+                .eol(");")
             .cB();
     }
 
@@ -383,11 +380,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         }
         if (ownGetterType instanceof ParameterizedType parameterized) {
             final var itemType = parameterized.getActualTypeArguments().getFirst();
-            if (Types.isListType(parameterized)) {
+            if (isListType(parameterized)) {
                 return printPropertySetter(getterName, receiver, propertyName, "checkListFieldCast",
                     importedName(itemType));
             }
-            if (Types.isSetType(parameterized)) {
+            if (isSetType(parameterized)) {
                 return printPropertySetter(getterName, receiver, propertyName, "checkSetFieldCast",
                     importedName(itemType));
             }
@@ -442,73 +439,54 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private BlockBuilder constantsDeclarations() {
         final var bb = new BlockBuilder();
         for (var def : type().getConstantDefinitions()) {
-            if (!def.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
+            if (!def.getName().startsWith(PATTERN_CONSTANT_NAME)) {
                 bb.append(emitConstant(def));
                 continue;
             }
 
             final var xsdToPattern = (Map<String, String>) def.getValue();
-            final var fieldSuffix = def.getName().substring(TypeConstants.PATTERN_CONSTANT_NAME.length());
+            final var fieldSuffix = def.getName().substring(PATTERN_CONSTANT_NAME.length());
             final var jurPatternRef = importedName(JUR_PATTERN);
             if (xsdToPattern.size() == 1) {
                 final var firstEntry = xsdToPattern.entrySet().iterator().next();
-                //  private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «jurPatternRef»
-                //.compile("«firstEntry.key.escapeJava»");
-                //  private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» =
-                // "«firstEntry.value.escapeJava»";
-
-                bb.append("private static final ");
-                bb.append(jurPatternRef);
-                bb.append(" ");
-                bb.append(Constants.MEMBER_PATTERN_LIST);
-                bb.append(fieldSuffix);
-                bb.append(" = ");
-                bb.append(jurPatternRef);
-                bb.append(".compile(\"");
-                bb.append(StringEscapeUtils.escapeJava(firstEntry.getKey()));
-                bb.append("\");\n");
-                bb.append("private static final String ");
-                bb.append(Constants.MEMBER_REGEX_LIST);
-                bb.append(fieldSuffix);
-                bb.append(" = \"");
-                bb.append(StringEscapeUtils.escapeJava(firstEntry.getValue()));
-                bb.append("\";\n");
+                bb
+                    .str("private static final ").str(jurPatternRef).str(" " + MEMBER_PATTERN_LIST).str(fieldSuffix)
+                        .str(" = ").str(jurPatternRef).str(".compile(").quotedJava(firstEntry.getKey()).eol(");")
+                    .str("private static final String " + MEMBER_REGEX_LIST).str(fieldSuffix).str(" = ")
+                        .quotedJava(firstEntry.getValue()).eS();
                 continue;
             }
 
-            bb.str("private static final ").str(jurPatternRef).str("[] " + Constants.MEMBER_PATTERN_LIST)
-                .str(fieldSuffix).str(" = ").str(importedName(CODEHELPERS)).str(".compilePatterns(")
-                .str(importedName(JU_LIST)).append(".of(\n");
+            bb
+                .str("private static final ").str(jurPatternRef).str("[] " + MEMBER_PATTERN_LIST).str(fieldSuffix)
+                    .str(" = ").str(importedName(CODEHELPERS)).str(".compilePatterns(").str(importedName(JU_LIST))
+                    .eol(".of(");
             {
                 boolean first = true;
-                for (var v : xsdToPattern.keySet()) {
+                for (var xsd : xsdToPattern.keySet()) {
                     if (first) {
                         first = false;
                     } else {
-                        bb.append(", ");
+                        bb.str(", ");
                     }
-                    bb.str("\"").append(StringEscapeUtils.escapeJava(v));
-                    bb.append("\"");
+                    bb.quotedJava(xsd);
                 }
             }
-            bb.append("));\n");
-            bb.append("private static final String[] ");
-            bb.append(Constants.MEMBER_REGEX_LIST);
-            bb.append(fieldSuffix);
-            bb.append(" = { ");
+            bb
+                .eol("));")
+                .str("private static final String[] " + MEMBER_REGEX_LIST).str(fieldSuffix).str(" = { ");
             {
                 boolean first = true;
-                for (var v : xsdToPattern.values()) {
+                for (var pattern : xsdToPattern.values()) {
                     if (first) {
                         first = false;
                     } else {
-                        bb.append(", ");
+                        bb.str(", ");
                     }
-                    bb.str("\"").append(StringEscapeUtils.escapeJava(v));
-                    bb.append("\"");
+                    bb.quotedJava(pattern);
                 }
             }
-            bb.append(" };\n");
+            bb.eol(" };");
         }
         return bb;
     }
@@ -516,12 +494,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private @NonNull BlockBuilder generateSetter(final BuilderGeneratedProperty field) {
         final var returnType = field.getReturnType();
         if (returnType instanceof ParameterizedType parameterized) {
-            if (Types.isListType(parameterized) || Types.isSetType(parameterized)) {
+            if (isListType(parameterized) || isSetType(parameterized)) {
                 final var arguments = parameterized.getActualTypeArguments();
-                return arguments.isEmpty() ? generateListSetter(field, Types.objectType())
+                return arguments.isEmpty() ? generateListSetter(field, objectType())
                     : generateListSetter(field, arguments.getFirst());
             }
-            if (Types.isMapType(parameterized)) {
+            if (isMapType(parameterized)) {
                 return generateMapSetter(field, parameterized.getActualTypeArguments().get(1));
             }
         }

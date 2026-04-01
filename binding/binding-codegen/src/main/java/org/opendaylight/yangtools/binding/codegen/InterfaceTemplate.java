@@ -304,7 +304,7 @@ class InterfaceTemplate extends BaseTemplate {
         return bb
             .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
             .str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
-                .str("(), \"").str(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol("\");")
+                .str("(), ").quoted(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
             .cB();
     }
 
@@ -455,12 +455,12 @@ class InterfaceTemplate extends BaseTemplate {
             .eol(" */")
             .str("static ").str(importedName(Types.STRING)).str(" " + BINDING_TO_STRING_NAME + "(final ")
                 .str(fullyQualifiedNonNull(type())).str(" obj)").oB()
-                .ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(\"")
-                    .str(type().simpleName()).eol("\");");
+                .ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
+                    .quoted(type().simpleName()).eol(");");
         for (var property : analysis.properties()) {
             bb
-                .ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, \"").str(property.getName())
-                    .str("\", obj.").str(property.getGetterName()).eol("());");
+                .ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, ").quoted(property.getName())
+                    .str(", obj.").str(property.getGetterName()).eol("());");
         }
         if (analysis.augmentType() != null) {
             bb

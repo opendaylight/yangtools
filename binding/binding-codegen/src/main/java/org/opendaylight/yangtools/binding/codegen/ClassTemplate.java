@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -323,7 +322,7 @@ class ClassTemplate extends BaseTemplate {
         final var it = bits.iterator();
         while (true) {
             final var bit = it.next();
-            bb.str("            ").str(getterMethodName(getPropertyName(bit.getName()))).append("()");
+            bb.str("            ").str(getterMethodName(getPropertyName(bit.getName()))).str("()");
             if (!it.hasNext()) {
                 bb.newLine();
                 break;
@@ -371,8 +370,8 @@ class ClassTemplate extends BaseTemplate {
                     .str(importedName(type())).eol(".class);");
         for (var property : props) {
             bb
-                .str("    ").str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, \"")
-                .str(property.getName()).str("\", ").str(fieldName(property)).eol(");");
+                .str("    ").str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, ")
+                .quoted(property.getName()).str(", ").str(fieldName(property)).eol(");");
         }
         return bb
             .eol("    return helper.toString();")
@@ -514,7 +513,7 @@ class ClassTemplate extends BaseTemplate {
         //        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
         //    «ENDIF»
         bb.str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME + " = ").str(juList)
-            .append(".of(");
+            .str(".of(");
         {
             boolean first = true;
             for (var value : constValue.keySet()) {
@@ -523,8 +522,7 @@ class ClassTemplate extends BaseTemplate {
                 } else {
                     bb.append(", ");
                 }
-                bb.str("\"").append(StringEscapeUtils.escapeJava(value));
-                bb.append("\"");
+                bb.quotedJava(requireNonNull(value));
             }
         }
         bb
@@ -534,9 +532,8 @@ class ClassTemplate extends BaseTemplate {
             bb
                 .str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern)
                 .eol(".compile(" + PATTERN_CONSTANT_NAME + ".getFirst());")
-                .str("private static final String " + MEMBER_REGEX_LIST + " = \"")
-                    .append(StringEscapeUtils.escapeJava(constValue.values().iterator().next()));
-            bb.eol("\";");
+                .str("private static final String " + MEMBER_REGEX_LIST + " = ")
+                    .quotedJava(constValue.values().iterator().next()).eS();
             return;
         }
 
@@ -544,7 +541,7 @@ class ClassTemplate extends BaseTemplate {
         bb
             .str("[] " + MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
                 .eol(".compilePatterns(" + PATTERN_CONSTANT_NAME + ");")
-            .str("private static final String[] " + MEMBER_REGEX_LIST).append(" = { ");
+            .str("private static final String[] " + MEMBER_REGEX_LIST + " = { ");
         {
             boolean first = true;
             for (var value : constValue.values()) {
@@ -553,8 +550,7 @@ class ClassTemplate extends BaseTemplate {
                 } else {
                     bb.append(", ");
                 }
-                bb.str("\"").append(StringEscapeUtils.escapeJava(value));
-                bb.append("\"");
+                bb.quotedJava(requireNonNull(value));
             }
         }
         bb.eol(" };");
@@ -573,7 +569,7 @@ class ClassTemplate extends BaseTemplate {
                 } else {
                     bb.append(", ");
                 }
-                bb.str("\"").str(bit.getName()).append("\"");
+                bb.quoted(bit.getName());
             }
         }
         bb.eol(");");
@@ -839,7 +835,7 @@ class ClassTemplate extends BaseTemplate {
         //        }
 
         final var bb = new BlockBuilder()
-            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(\"").str(VALUE_PROP).eol("\")")
+            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").quoted(VALUE_PROP).eol(")")
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
         if (!parentProperties.isEmpty()) {
             bb.str("    super(").str(asArguments(parentProperties)).eol(");");
