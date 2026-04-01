@@ -334,22 +334,14 @@ final class BlockBuilder implements Mutable {
 
     @NonNullByDefault
     BlockBuilder quotedJava(final String str) {
-        // FIXME: verifyStr(str)?, e.g. quoted(escapeJava(str)) ?
-        buf.append('"');
         // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
-        appendImpl(StringEscapeUtils.escapeJava(str));
-        buf.append('"');
+        final var escaped = StringEscapeUtils.escapeJava(str);
+
+        // FIXME: verifyStr(str)?, e.g. quoted(escapeJava(str)) ?
+        final int nl = escaped.indexOf('\n');
+        final var verified =  nl == -1 ? verifyNonEmptyStr(escaped) : verifyTxt(escaped, nl);
+        buf.append('"').append(verified).append('"');
         return this;
-    }
-
-    private void appendImpl(final String str) {
-        final int nl = str.indexOf('\n');
-        buf.append(nl == -1 ? verifyNonEmptyStr(str) : verifyTxt(str, nl));
-    }
-
-    // FIXME: remove this method
-    void append(final String str) {
-        appendImpl(str);
     }
 
     // FIXME: remove this method

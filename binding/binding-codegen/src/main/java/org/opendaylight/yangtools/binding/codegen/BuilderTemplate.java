@@ -566,12 +566,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
         if (restrictions != null) {
             bb
-                .eol("if (values != null) {")
+                .eol("if (values != null)").oB()
                 .str("   for (").str(importedName(actualType)).str(" value : values.values())").oB()
                 .indentedTwice(checkArgument(field, restrictions, actualType, "value"))
-                .eol("   }")
-                // FIXME: no nl() here ?
-                .nl().append("}\n");
+                .str("   ").cB()
+                .cB();
         }
 
         return bb
