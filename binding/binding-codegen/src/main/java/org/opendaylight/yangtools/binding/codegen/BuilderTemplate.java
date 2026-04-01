@@ -259,11 +259,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         // FIXME: this is not used anywhere: I think this is meant to suppress duplicate checks?
         final var done = getBaseIfcs(targetType);
 
-        final var bb = new BlockBuilder();
-        bb.append(generateMethodFieldsFromComment(targetType));
-        bb
+        final var bb = new BlockBuilder()
+            .blk(generateMethodFieldsFromComment(targetType))
             .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").oB()
-                .ind("boolean isValidArg = false;").newLine();
+                .ind("boolean isValidArg = false;").nl();
         for (var impl : getAllIfcs(targetType)) {
             bb.indented(generateIfCheck(impl, done));
         }
@@ -307,35 +306,26 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .cB();
     }
 
-    private StringBuilder generateMethodFieldsFromComment(final GeneratedType type) {
-        //        /**
-        //         * Set fields from given grouping argument. Valid argument is instance of one of following types:
-        //         * <ul>
-        //         «FOR impl : type.getAllIfcs»
-        //         *   <li>{@link «impl.importedName»}</li>
-        //         «ENDFOR»
-        //         * </ul>
-        //         *
-        //         * @param arg grouping object
-        //         * @throws «IAE.importedName» if given argument is none of valid types or has property with
-        // incompatible value
-        //         */
-
-        final var sb = new StringBuilder()
-            .append("/**\n")
-            .append(
-                " * Set fields from given grouping argument. Valid argument is instance of one of following types:\n")
-            .append(" * <ul>\n");
+    @NonNullByDefault
+    private BlockBuilder generateMethodFieldsFromComment(final GeneratedType type) {
+        // FIXME: create a specialized JavadocBuilder to help with this
+        final var bb = new BlockBuilder().txt("""
+                    /**
+                     * Set fields from given grouping argument. Valid argument is instance of one of following types:
+                     * <ul>
+                    """);
         for (var impl : getAllIfcs(type)) {
-            sb.append(" *   <li>{@link ").append(importedName(impl)).append("}</li>\n");
+            bb.str(" *   <li>{@link ").str(importedName(impl)).eol("}</li>");
         }
-        return sb
-            .append(" * </ul>\n")
-            .append(" *\n")
-            .append(" * @param arg grouping object\n")
-            .append(" * @throws ").append(importedName(IAE))
-                .append(" if given argument is none of valid types or has property with incompatible value\n")
-            .append(" */\n");
+        return bb
+            .txt("""
+                 * </ul>
+                 *
+                 * @param arg grouping object
+                """)
+            .str(" * @throws ").str(importedName(IAE))
+                .eol(" if given argument is none of valid types or has property with incompatible value")
+            .eol(" */");
     }
 
     /**

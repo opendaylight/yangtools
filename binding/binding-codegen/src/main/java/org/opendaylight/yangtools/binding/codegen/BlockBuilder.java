@@ -200,6 +200,7 @@ final class BlockBuilder implements Mutable {
      *
      * @return this instance
      */
+    // FIXME: add javaBlock(Consumer<@NonNull BlockBuilder>) to encapsulate oB() -> body -> cB() encapsulation
     @NonNullByDefault
     BlockBuilder oB() {
         // FIXME: also add indentation
@@ -340,13 +341,6 @@ final class BlockBuilder implements Mutable {
         return this;
     }
 
-    // FIXME: remove this method
-    void append(final @Nullable StringBuilder src) {
-        if (src != null) {
-            buf.append(src);
-        }
-    }
-
     // FIXME: clarify contract
     @NonNull BlockBuilder indented(final @Nullable BlockBuilder bb) {
         if (bb != null && !bb.buf.isEmpty()) {
@@ -399,9 +393,12 @@ final class BlockBuilder implements Mutable {
     }
 
     // FIXME: remove this method
-    @NonNull BlockBuilder indentedTwice(final @Nullable StringBuilder sb) {
-        if (sb != null && !sb.isEmpty()) {
-            indented("        ", sb.toString());
+    @NonNull BlockBuilder indentedTwice(final @Nullable BlockBuilder sb) {
+        if (sb != null) {
+            final var str = sb.toRawString();
+            if (!str.isEmpty()) {
+                indented("        ", str);
+            }
         }
         return this;
     }

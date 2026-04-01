@@ -117,7 +117,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 sb
                     .append('@').append(importedName(OVERRIDE)).append('\n');
             }
-            sb.append(asGetterMethod(field));
+            sb.append(asGetterMethod(field).toRawString());
 
             if (!it.hasNext()) {
                 return sb;

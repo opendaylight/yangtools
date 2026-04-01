@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
-import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.isArrayProperty;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
@@ -57,8 +56,6 @@ import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 /**
 - * Template for generating JAVA class.
@@ -609,7 +606,7 @@ class ClassTemplate extends BaseTemplate {
             bb.blk(allValuesConstructor());
         }
         if (!allProperties.isEmpty()) {
-            bb.nl().append(copyConstructor());
+            bb.nl().blk(copyConstructor());
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
             // FIXME: nl()?
@@ -628,7 +625,7 @@ class ClassTemplate extends BaseTemplate {
                 .nl()
                 .at().eol(importedName(OVERRIDE))
                 .str("public ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()").oB()
-                .str("    return ").str(fieldName(field), cloneOrNull(field)).eS()
+                    .ind("return ").str(fieldName(field), cloneOrNull(field)).eS()
                 .cB();
         }
 
@@ -636,9 +633,9 @@ class ClassTemplate extends BaseTemplate {
         final var it = properties.iterator();
         do {
             final var field = it.next();
-            bb.nl().append(asGetterMethod(field));
+            bb.nl().blk(asGetterMethod(field));
             if (!field.isReadOnly()) {
-                bb.nl().append(asSetterMethod(field));
+                bb.nl().blk(asSetterMethod(field));
             }
         } while (it.hasNext());
         return bb;
@@ -698,7 +695,7 @@ class ClassTemplate extends BaseTemplate {
         return bb.cB();
     }
 
-    final @Nullable StringBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
+    final @Nullable BlockBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
             final @NonNull Type returnType) {
         final var typeRestrictions = switch (type) {
             case GeneratedTransferObject gto -> gto.getRestrictions();
@@ -714,28 +711,20 @@ class ClassTemplate extends BaseTemplate {
             return null;
         }
 
-        final var sb = new StringBuilder();
-        if (!paramName.equals("_value")) {
-            sb.append("if (").append(paramName).append(" != null) {\n");
-            appendCheckerCalls(sb, "    ", paramName, returnType, length, range);
-            sb.append("}\n");
-        } else {
-            appendCheckerCalls(sb, "", paramName, returnType, length, range);
-        }
-        return sb;
-    }
-
-    @NonNullByDefault
-    private void appendCheckerCalls(final StringBuilder sb, final String indent, final String paramName,
-            final Type returnType, final @Nullable LengthConstraint length, final @Nullable RangeConstraint<?> range) {
+        final var checkerCalls = new BlockBuilder();
         final var paramValue = returnType instanceof ConcreteType ? paramName : paramName + ".getValue()";
-        // Note: at least one of these is non-null
         if (length != null) {
-            LengthGenerator.appendCheckerCall(sb.append(indent), paramName, paramValue);
+            LengthGenerator.appendCheckerCall(checkerCalls, paramName, paramValue);
         }
         if (range != null) {
-            rangeGenerator.appendCheckerCall(sb.append(indent), paramName, paramValue);
+            rangeGenerator.appendCheckerCall(checkerCalls, paramName, paramValue);
         }
+
+        // FIXME: this wrapping should be specialized in ScalarTypeObjectTemplate vs. others (BitsTO, EnumTO, UnionTO)
+        return paramName.equals("_value") ? checkerCalls : new BlockBuilder()
+            .str("if (").str(paramName).str(" != null)").oB()
+                .indented(checkerCalls)
+                .cB();
     }
 
     @NonNull BlockBuilder allValuesConstructor() {
@@ -760,25 +749,27 @@ class ClassTemplate extends BaseTemplate {
         return bb.cB();
     }
 
-    // FIXME: return BlockBuilder
-    StringBuilder copyConstructor() {
+    @NonNullByDefault
+    BlockBuilder copyConstructor() {
         final var simpleName = type().simpleName();
 
-        final var sb = new StringBuilder()
-            .append("/**\n")
-            .append(" * Creates a copy from Source Object.\n")
-            .append(" *\n")
-            .append(" * @param source Source object\n")
-            .append(" */\n")
-            .append("public ").append(simpleName).append("(").append(simpleName).append(" source) {\n");
+        final var bb = new BlockBuilder().txt("""
+                  /**
+                   * Creates a copy from Source Object.
+                   *
+                   * @param source Source object
+                   */
+                  """)
+            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
+        // TODO: consider splitting into a 'Block copyConstructorBody()' once we can do efficient block copies
         if (!parentProperties.isEmpty()) {
-            sb.append("    super(source);\n");
+            bb.eol("    super(source);");
         }
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
-            sb.append("    this.").append(fieldName).append(" = source.").append(fieldName).append(";\n");
+            bb.str("    this.").str(fieldName).str(" = source.").str(fieldName).eS();
         }
-        return sb.append("}\n");
+        return bb.cB();
     }
 
     @NonNullByDefault

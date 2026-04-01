@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -100,6 +101,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     abstract @NonNull BlockBuilder generateRangeCheckerImplementation(@NonNull String checkerName,
             @NonNull RangeConstraint<?> constraints, Function<JavaTypeName, String> classImporter);
 
+    // FIXME: appendCheckerName(BlockBuilder bb)
     private static @NonNull String rangeCheckerName(final String member) {
         return "check" + member + "Range";
     }
@@ -110,12 +112,11 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     }
 
     @NonNullByDefault
-    final void appendCheckerCall(final StringBuilder sb, final String member, final String valueReference) {
-        sb.append(rangeCheckerName(member)).append('(').append(requireNonNull(valueReference)).append(primitiveRef())
-            .append(");\n");
+    final void appendCheckerCall(final BlockBuilder bb, final String member, final String valueReference) {
+        bb.str(rangeCheckerName(member)).str("(").str(valueReference, primitiveRef()).eol(");");
     }
 
-    String primitiveRef() {
-        return "";
+    @Nullable String primitiveRef() {
+        return null;
     }
 }

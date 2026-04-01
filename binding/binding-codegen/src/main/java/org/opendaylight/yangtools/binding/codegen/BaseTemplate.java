@@ -7,8 +7,24 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
+import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
+import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
 import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.extractAugmentationTarget;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
+import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
@@ -19,7 +35,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -35,8 +50,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -198,17 +211,17 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var type = constant.getType();
 
         return switch (name) {
-            case Naming.NAME_STATIC_FIELD_NAME -> {
+            case NAME_STATIC_FIELD_NAME -> {
                 @SuppressWarnings("unchecked")
                 final var entry = (Entry<JavaTypeName, YangDataName>) constant.getValue();
                 yield emitNameConstant(name, type, entry.getKey(), entry.getValue().name());
             }
-            case Naming.QNAME_STATIC_FIELD_NAME -> {
+            case QNAME_STATIC_FIELD_NAME -> {
                 @SuppressWarnings("unchecked")
                 final var entry = (Entry<JavaTypeName, String>) constant.getValue();
                 yield emitQNameConstant(name, type, entry.getKey(), entry.getValue());
             }
-            case Naming.VALUE_STATIC_FIELD_NAME -> emitValueConstant(name, type);
+            case VALUE_STATIC_FIELD_NAME -> emitValueConstant(name, type);
             default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.getValue() + ";\n";
         };
     }
@@ -220,8 +233,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
             /**
              * Yang Data template name of the statement represented by this class.
              */
-            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo) + '.'
-                + Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName + "\");\n";
+            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
+                + '.' + MODULE_INFO_YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName + "\");\n";
     }
 
     @NonNullByDefault
@@ -231,10 +244,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
             /**
              * YANG identifier of the statement represented by this class.
              */
-            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo) + '.'
-                + Naming.MODULE_INFO_QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
+            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
+                + '.' + MODULE_INFO_QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
     }
 
+    // FIXME: return a Block
     @NonNullByDefault
     String emitValueConstant(final String name, final Type type) {
         final var typeName = importedName(type);
@@ -248,8 +262,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
             +  "    private static final long serialVersionUID = 1L;\n"
             +  '\n'
             +  "    @" + override + '\n'
-            +  "    public " + importedName(CLASS) + '<' + typeName + "> "
-                + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "() {\n"
+            +  "    public " + importedName(CLASS) + '<' + typeName + "> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+                + "() {\n"
             +  "        return " + typeName + ".class;\n"
             +  "    }\n"
             +  '\n'
@@ -261,8 +275,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
             +  "    @" + override + '\n'
             +  "    public boolean equals(final " + importedName(Types.objectType()) + " obj) {\n"
             +  "        return obj == this || obj instanceof " + typeName + " other\n"
-            +  "            && " + typeName + ".class.equals(other."
-                + Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "());\n"
+            +  "            && " + typeName + ".class.equals(other." + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
+                + "());\n"
             +  "    }\n"
             +  '\n'
             +  "    @" + override + '\n'
@@ -284,8 +298,9 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * @param field generated property with data about field which is generated as the getter method
      * @return string with the getter method source code in JAVA format
      */
+    // FIXME: return a Block when we can do efficient copies
     @NonNullByDefault
-    StringBuilder asGetterMethod(final GeneratedProperty field) {
+    BlockBuilder asGetterMethod(final GeneratedProperty field) {
         // derive state
         final var fieldName = fieldName(field);
         final var methodName = getterMethodName(field);
@@ -295,15 +310,15 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var codeHelpers = returnType.isArray() ? importedName(CODEHELPERS) : null;
 
         // emit separately
-        final var sb = new StringBuilder()
-            .append("public ").append(importedName).append(' ').append(methodName).append("() {\n")
-            .append("    return ");
+        final var bb = new BlockBuilder()
+            .str("public ").str(importedName).sp().str(methodName).str("()").oB()
+            .str("    return ");
         if (codeHelpers != null) {
-            sb.append(codeHelpers).append(".copyArray(").append(fieldName).append(')');
+            bb.str(codeHelpers).str(".copyArray(").str(fieldName).eol(");");
         } else {
-            sb.append(fieldName);
+            bb.str(fieldName).eS();
         }
-        return sb.append(";\n}\n");
+        return bb.cB();
     }
 
     /**
@@ -313,18 +328,17 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * @return string with the setter method source code in JAVA format
      */
     @NonNullByDefault
-    final StringBuilder asSetterMethod(final GeneratedProperty field) {
+    final BlockBuilder asSetterMethod(final GeneratedProperty field) {
         final var fieldName = fieldName(field);
         final var fieldType = importedReturnType(field);
-        final var suffix = Naming.toFirstUpper(field.getName());
+        final var suffix = toFirstUpper(field.getName());
         final var typeName = type().simpleName();
 
-        return new StringBuilder()
-            .append("public ").append(typeName).append(" set").append(suffix).append('(').append(fieldType)
-                .append(" value) {\n")
-            .append("    this.").append(fieldName).append(" = value;\n")
-            .append("    return this;\n")
-            .append("}\n");
+        return new BlockBuilder()
+            .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").oB()
+                .ind("this.").str(fieldName).eol(" = value;")
+                .ind("return this;").nl()
+            .cB();
     }
 
     @NonNullByDefault
@@ -373,8 +387,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
 //                    sb.append("</i>\n");
 
                     if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
-                        || schema instanceof NotificationDefinition && !BindingTypes.isNotificationBody(genType)) {
-                        final String builderName = genType.simpleName() + Naming.BUILDER_SUFFIX;
+                        || schema instanceof NotificationDefinition && !isNotificationBody(genType)) {
+                        final var builderName = genType.simpleName() + BUILDER_SUFFIX;
 
                         sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
                         .append("}.\n")
@@ -382,7 +396,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
                         if (node instanceof ListSchemaNode list) {
                             final var keyDef = list.getKeyDefinition();
                             if (!keyDef.isEmpty()) {
-                                sb.append("@see ").append(genType.simpleName()).append(Naming.KEY_SUFFIX);
+                                sb.append("@see ").append(genType.simpleName()).append(KEY_SUFFIX);
                             }
                             sb.append('\n');
                         }
@@ -422,7 +436,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     private static @Nullable Type findAugmentationArgument(final GeneratedType genType) {
         for (var implType : genType.getImplements()) {
             if (implType instanceof ParameterizedType parameterized) {
-                final var augmentType = BindingTypes.extractAugmentationTarget(parameterized);
+                final var augmentType = extractAugmentationTarget(parameterized);
                 if (augmentType != null) {
                     return augmentType;
                 }
@@ -459,10 +473,12 @@ abstract class BaseTemplate extends JavaFileTemplate {
     @NonNullByDefault
     final BlockBuilder generateCheckers(final GeneratedProperty field, final Restrictions restrictions,
             final Type actualType) {
+        verify(!restrictions.isEmpty());
+
         final var bb = new BlockBuilder();
         restrictions.getRangeConstraint().ifPresent(range ->
             bb.blk(AbstractRangeGenerator.forType(actualType).generateRangeChecker(
-                    Naming.toFirstUpper(field.getName()), range, this)));
+                    toFirstUpper(field.getName()), range, this)));
         // FIXME: this call looks unlike the range checker call: it should be refactored to acquire a generator,
         //        so that we can suppress checker when not needed -- just like ranges do above
         restrictions.getLengthConstraint().ifPresent(length ->
@@ -471,8 +487,9 @@ abstract class BaseTemplate extends JavaFileTemplate {
         return bb;
     }
 
+    // FIXME: remove this concatenation
     static final @NonNull String getterMethodName(final @NonNull String propName) {
-        return Naming.GETTER_PREFIX + Naming.toFirstUpper(propName);
+        return GETTER_PREFIX + toFirstUpper(propName);
     }
 
     static final @NonNull String getterMethodName(final GeneratedProperty field) {
@@ -540,20 +557,23 @@ abstract class BaseTemplate extends JavaFileTemplate {
         bb.sp().eol(str, start, end);
     }
 
+    // FIXME: return a Block
     @NonNullByDefault
-    final StringBuilder checkArgument(final GeneratedProperty property, final Restrictions restrictions,
+    final BlockBuilder checkArgument(final GeneratedProperty property, final Restrictions restrictions,
             final Type actualType, final String value) {
+        verify(!restrictions.isEmpty());
+
         final var valueRef = actualType instanceof ConcreteType ? value : value + ".getValue()";
 
-        final var sb = new StringBuilder();
+        final var bb = new BlockBuilder();
         if (restrictions.getRangeConstraint().isPresent()) {
             AbstractRangeGenerator.forType(actualType)
-                .appendCheckerCall(sb, Naming.toFirstUpper(property.getName()), valueRef);
+                .appendCheckerCall(bb, toFirstUpper(property.getName()), valueRef);
         }
 
         final var fieldName = fieldName(property);
         if (restrictions.getLengthConstraint().isPresent()) {
-            LengthGenerator.appendCheckerCall(sb, fieldName, valueRef);
+            LengthGenerator.appendCheckerCall(bb, fieldName, valueRef);
         }
 
         final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);
@@ -561,15 +581,14 @@ abstract class BaseTemplate extends JavaFileTemplate {
         for (var currentConstant : type().getConstantDefinitions()) {
             final var currentName = currentConstant.getName();
 
-            if (currentName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
-                && fieldUpperCase.equals(currentName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length()))) {
-                sb.append(importedName(CODEHELPERS)).append(".checkPattern(value, ")
-                    .append(Constants.MEMBER_PATTERN_LIST).append(fieldName).append(", ")
-                    .append(Constants.MEMBER_REGEX_LIST).append(fieldName).append(");\n");
+            if (currentName.startsWith(PATTERN_CONSTANT_NAME)
+                && fieldUpperCase.equals(currentName.substring(PATTERN_CONSTANT_NAME.length()))) {
+                bb.str(importedName(CODEHELPERS)).str(".checkPattern(value, " + MEMBER_PATTERN_LIST)
+                    .str(fieldName).str(", " + MEMBER_REGEX_LIST).str(fieldName).eol(");");
             }
         }
 
-        return sb;
+        return bb;
     }
 
     /**

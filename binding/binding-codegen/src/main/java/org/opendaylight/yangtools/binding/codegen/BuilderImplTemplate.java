@@ -187,22 +187,23 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    StringBuilder asGetterMethod(final GeneratedProperty field) {
+    BlockBuilder asGetterMethod(final GeneratedProperty field) {
         final var fieldName = fieldName(field);
         final var type = field.getReturnType();
 
-        final var sb = new StringBuilder()
-            .append('@').append(importedName(OVERRIDE)).append('\n')
-            .append("public ").append(importedName(type)).append(' ').append(getterMethodName(field)).append("() {\n")
-            .append("    return ");
+        final var bb = new BlockBuilder()
+            .at().eol(importedName(OVERRIDE))
+            .str("public ").str(importedName(type)).sp().str(getterMethodName(field)).str("()").oB();
 
         if (type.isArray()) {
-            sb.append(importedName(CODEHELPERS)).append(".copyArray(").append(fieldName).append(')');
+            bb
+                .ind("return ").str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
         } else {
-            sb.append(fieldName);
+            bb
+                .ind("return ").str(fieldName).eS();
         }
 
-        return sb.append(";\n").append("}\n");
+        return bb.cB();
     }
 
     @NonNullByDefault

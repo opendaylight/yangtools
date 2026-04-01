@@ -7,23 +7,24 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isBitsType;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isIdentityType;
+import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.Iterables;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 final class UnionTypeObjectTemplate extends ClassTemplate {
     @NonNullByDefault
@@ -43,26 +44,28 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder constructors() {
-        final var bb = new BlockBuilder();
-        bb.append(unionConstructorsParentProperties());
-        bb.append(unionConstructors());
+        final var bb = new BlockBuilder()
+            .blk(unionConstructorsParentProperties())
+            .blk(unionConstructors());
+        // TODO: figure out a better flow here
         if (!allProperties.isEmpty()) {
-            bb.append(copyConstructor());
+            bb.blk(copyConstructor());
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
             bb.blk(parentConstructor());
         }
-        bb.nl().append(generateStringValue());
-        return bb;
+        return bb
+            .nl()
+            .blk(generateStringValue());
     }
 
-    private @Nullable StringBuilder unionConstructors() {
+    private @Nullable BlockBuilder unionConstructors() {
         if (finalProperties.isEmpty()) {
             return null;
         }
 
         final var simpleName = type().simpleName();
-        final var sb = new StringBuilder().append('\n');
+        final var bb = new BlockBuilder().nl();
         final var it = finalProperties.iterator();
         while (true) {
             final var property = it.next();
@@ -71,135 +74,129 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             final var propFieldName = fieldName(property);
 
             if (restrictions != null) {
-                final var checkers = generateCheckers(property, restrictions, actualType).toRawString();
-                if (!checkers.isEmpty()) {
-                    sb.append(checkers).append('\n');
-                }
+                bb.blk(generateCheckers(property, restrictions, actualType)).newLine();
             }
 
-            sb.append("public ").append(simpleName).append('(')
-                .append(asArgumentsDeclaration(propertyAndTopParentProperties)).append(") {\n");
+            bb
+                .str("public ").str(simpleName).str("(").str(asArgumentsDeclaration(propertyAndTopParentProperties))
+                    .str(")").oB();
             if (!parentProperties.isEmpty()) {
-                sb.append("    super(").append(asArguments(parentProperties)).append(");\n");
+                bb.str("    super(").str(asArguments(parentProperties)).eol(");");
             }
 
             final var restrictions = restrictionsForSetter(actualType);
             if (restrictions != null) {
-                final var checkArg = checkArgument(property, restrictions, actualType, propFieldName);
-                if (!checkArg.isEmpty()) {
-                    sb.append(checkArg).append('\n');
-                }
+                bb.blk(checkArgument(property, restrictions, actualType, propFieldName)).newLine();
             }
 
             for (var other : finalProperties) {
-                sb.append("    this.");
+                bb.str("    this.");
                 if (property.equals(other)) {
-                    sb.append(propFieldName).append(" = ").append(importedName(JU_OBJECTS)).append(".requireNonNull(")
-                        .append(propFieldName).append(");\n");
+                    bb.str(propFieldName).str(" = ").str(importedName(JU_OBJECTS)).str(".requireNonNull(")
+                        .str(propFieldName).eol(");");
                 } else {
-                    sb.append(fieldName(other)).append(" = null;\n");
+                    bb.str(fieldName(other)).eol(" = null;");
                 }
             }
 
-            sb.append("}\n");
+            bb.cB();
 
             if (!it.hasNext()) {
-                return sb;
+                return bb;
             }
-            sb.append('\n');
+            bb.newLine();
         }
     }
 
-    private @Nullable StringBuilder unionConstructorsParentProperties() {
+    private @Nullable BlockBuilder unionConstructorsParentProperties() {
         if (parentProperties.isEmpty()) {
             return null;
         }
 
-        final var sb = new StringBuilder();
+        final var bb = new BlockBuilder();
         final var it = parentProperties.iterator();
         final var simpleName = type().simpleName();
         while (true) {
             final var prop = it.next();
             final var fieldName = fieldName(prop);
             final var propType = importedReturnType(prop);
-            sb
-                .append("public ").append(simpleName).append('(').append(propType).append(' ').append(fieldName)
-                    .append(") {\n")
-                .append("    super(").append(fieldName).append(");\n")
-                .append("}\n");
+            bb
+                .str("public ").str(simpleName).str("(").str(propType).sp().str(fieldName).str(")").oB()
+                    .ind("super(").str(fieldName).eol(");")
+                .cB();
 
             if (!it.hasNext()) {
-                return sb;
+                return bb;
             }
-            sb.append('\n');
+            bb.newLine();
         }
     }
 
-    private StringBuilder generateStringValue() {
-        final var sb = new StringBuilder()
-            .append("""
-                /**
-                 * Return a String representing the value of this union.
-                 *
-                 * @return String representation of this union's value.
-                 */
-                public\s""").append(importedName(Types.STRING)).append(" stringValue() {\n");
+    @NonNullByDefault
+    private BlockBuilder generateStringValue() {
+        final var bb = new BlockBuilder().txt("""
+                      /**
+                       * Return a String representing the value of this union.
+                       *
+                       * @return String representation of this union's value.
+                       */
+                      """)
+                .str("public ").str(importedName(STRING)).str(" stringValue()").oB();
 
         for (var prop : finalProperties) {
             final var field = fieldName(prop);
             final var type = prop.getReturnType();
             final var fqcn = type.canonicalName();
 
-            sb
-                .append("    if (").append(field).append(" != null) {\n")
-                .append("        return ");
+            bb
+                .str("    if (").str(field).str(" != null)").oB()
+                .str("        return ");
 
             if (STRING_TYPE.equals(type)) {
                 // type string
-                sb.append(field);
+                bb.str(field).eS();
             } else if ("org.opendaylight.yangtools.binding.BindingInstanceIdentifier".equals(fqcn)) {
                 // type instance-identifier
-                sb.append(field).append(".toString()");
+                bb.str(field).eol(".toString();");
             } else if (BINARY_TYPE.equals(type)) {
                 // type binary
-                sb.append("new ").append(importedName(Types.STRING)).append('(').append(field).append(')');
+                bb.str("new ").str(importedName(STRING)).str("(").str(field).eol(");");
             } else if (fqcn.startsWith("java.lang") || type instanceof EnumTypeObjectArchetype) {
                 // type int* or enumeration*
-                sb.append(field).append(".toString()");
+                bb.str(field).eol(".toString();");
             } else if (fqcn.startsWith("org.opendaylight.yangtools.yang.common.Uint")
                         || fqcn.equals("org.opendaylight.yangtools.yang.common.Decimal64")) {
                 // type uint*, decimal64
-                sb.append(field).append(".toCanonicalString()");
+                bb.str(field).eol(".toCanonicalString();");
             } else if (type instanceof UnionTypeObjectArchetype) {
                 // union type
-                sb.append(field).append(".stringValue()");
+                bb.str(field).eol(".stringValue();");
             } else if (BOOLEAN_TYPE.equals(typedefReturnType(type))) {
                 // generated boolean typedef
-                sb.append(field).append(".isValue().toString()");
+                bb.str(field).eol(".isValue().toString();");
             } else if (BINARY_TYPE.equals(typedefReturnType(type))) {
                 // generated byte[] typedef
-                sb.append(importedName(JU_BASE64)).append(".getEncoder().encodeToString(").append(field)
-                    .append(".getValue())");
+                bb.str(importedName(JU_BASE64)).str(".getEncoder().encodeToString(").str(field).eol(".getValue());");
             } else if (EMPTY_TYPE.equals(type) || EMPTY_TYPE.equals(typedefReturnType(type))) {
                 // generated empty typedef
-                sb.append("\"\"");
-            } else if (BindingTypes.isBitsType(type)) {
+                bb.eol("\"\";");
+            } else if (isBitsType(type)) {
                 // generated bits typedef
-                sb.append(importedName(JU_ARRAYS)).append(".toString(").append(field).append(".values())");
-            } else if (BindingTypes.isIdentityType(type)) {
+                bb.str(importedName(JU_ARRAYS)).str(".toString(").str(field).eol(".values());");
+            } else if (isIdentityType(type)) {
                 // generated identity
-                sb.append(field).append('.').append(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
-                    .append("().toString()");
+                bb.str(field).eol("." + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "().toString();");
             } else {
                 // generated type
-                sb.append(field).append(".getValue().toString()");
+                bb.str(field).eol(".getValue().toString();");
             }
-            sb.append(";\n    }\n");
+            bb
+                .ind().cB();
         }
 
-        return sb
-            .append("    throw new IllegalStateException(\"No value assigned\");\n")
-            .append("}\n");
+        return bb
+            .eol("    throw new IllegalStateException(\"No value assigned\");")
+            .cB();
     }
 
     private static @Nullable Type typedefReturnType(final Type type) {
@@ -216,33 +213,33 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    StringBuilder copyConstructor() {
+    BlockBuilder copyConstructor() {
         final var type = type();
         final var simpleName = type.simpleName();
 
-        final var sb = new StringBuilder()
-            .append("""
-                /**
-                 * Creates a copy from Source Object.
-                 *
-                 * @param source Source object
-                 */
-                """)
-            .append("public ").append(simpleName).append('(').append(simpleName).append(" source) {\n");
+        final var bb = new BlockBuilder().txt("""
+                  /**
+                   * Creates a copy from Source Object.
+                   *
+                   * @param source Source object
+                   */
+                  """)
+            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
         if (!parentProperties.isEmpty()) {
-            sb.append("    super(source);\n");
+            bb.eol("    super(source);");
         }
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
-            sb.append("    this.").append(fieldName).append(" = ");
+            bb.str("    this.").str(fieldName).str(" = ");
+            // TODO: figure out a better flow
             if (isArrayProperty(prop)) {
-                sb.append(importedName(CODEHELPERS)).append(".copyArray(source.").append(fieldName).append(')');
+                bb.str(importedName(CODEHELPERS)).str(".copyArray(source.").str(fieldName).str(")");
             } else {
-                sb.append("source.").append(fieldName);
+                bb.str("source.").str(fieldName);
             }
-            sb.append(";\n");
+            bb.eS();
         }
-        return sb.append("}\n");
+        return bb.cB();
     }
 
     @Override
