@@ -511,7 +511,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final BlockBuilder argumentCheck;
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.append(generateCheckers(field, restrictions, actualType));
+            bb.blk(generateCheckers(field, restrictions, actualType));
             argumentCheck = new BlockBuilder()
                 .str("if (values != null)").oB()
                 .str("   for (").str(importedName(actualType)).str(" value : values)").oB()
@@ -546,19 +546,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.append(generateCheckers(field, restrictions, actualType));
+            bb.blk(generateCheckers(field, restrictions, actualType));
         }
-
-        //
-        //        /**
-        //         * Set the property corresponding to {@link «targetType.importedName»#«field.getterName»()} to the
-        // specified
-        //         * value.
-        //         *
-        //         * @param values desired value
-        //         * @return this builder
-        //         */
-        //        public «type.simpleName» set«field.name.toFirstUpper»(final «field.returnType.importedName» values) {
 
         bb
             .nl()
@@ -575,13 +564,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
                 .str(importedReturnType(field)).str(" values)").oB();
 
-        //        «IF restrictions !== null»
-        //            if (values != null) {
-        //               for («actualType.importedName» value : values.values()) {
-        //                   «checkArgument(field, restrictions, actualType, "value")»
-        //               }
-        //            }
-        //        «ENDIF»
         if (restrictions != null) {
             bb
                 .eol("if (values != null) {")
@@ -602,7 +584,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = new BlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.nl().append(generateCheckers(field, restrictions, actualType));
+            bb.nl().blk(generateCheckers(field, restrictions, actualType));
         }
         bb
             .nl()

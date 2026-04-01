@@ -292,7 +292,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var returnType = field.getReturnType();
         final var importedName = importedName(returnType);
         // any Java array type needs to be duplicated to prevent modification
-        final var codeHelpers = returnType.simpleName().endsWith("[]") ? importedName(CODEHELPERS) : null;
+        final var codeHelpers = isArrayType(returnType) ? importedName(CODEHELPERS) : null;
 
         // emit separately
         final var sb = new StringBuilder()
@@ -457,21 +457,18 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    final String generateCheckers(final GeneratedProperty field, final Restrictions restrictions,
+    final BlockBuilder generateCheckers(final GeneratedProperty field, final Restrictions restrictions,
             final Type actualType) {
-        final var sb = new StringBuilder();
-        restrictions.getRangeConstraint().ifPresent(
-            range -> sb
-                .append(AbstractRangeGenerator.forType(actualType)
-                    .generateRangeChecker(Naming.toFirstUpper(field.getName()), range, this))
-        );
+        final var bb = new BlockBuilder();
+        restrictions.getRangeConstraint().ifPresent(range ->
+            bb.blk(AbstractRangeGenerator.forType(actualType).generateRangeChecker(
+                    Naming.toFirstUpper(field.getName()), range, this)));
         // FIXME: this call looks unlike the range checker call: it should be refactored to acquire a generator,
         //        so that we can suppress checker when not needed -- just like ranges do above
-        restrictions.getLengthConstraint().ifPresent(
-            length -> sb.append(LengthGenerator.generateLengthChecker(fieldName(field), actualType, length, this))
-
+        restrictions.getLengthConstraint().ifPresent(length ->
+            bb.blk(LengthGenerator.generateLengthChecker(fieldName(field), actualType, length, this))
         );
-        return sb.toString();
+        return bb;
     }
 
     static final @NonNull String getterMethodName(final @NonNull String propName) {

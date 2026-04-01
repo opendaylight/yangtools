@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.isArrayType;
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
@@ -196,7 +197,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             .append("public ").append(importedName(type)).append(' ').append(getterMethodName(field)).append("() {\n")
             .append("    return ");
 
-        if (type.simpleName().endsWith("[]")) {
+        if (isArrayType(type)) {
             sb.append(importedName(CODEHELPERS)).append(".copyArray(").append(fieldName).append(')');
         } else {
             sb.append(fieldName);

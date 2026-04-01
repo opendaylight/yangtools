@@ -136,7 +136,6 @@ final class BlockBuilder implements Mutable {
         buf.append(verifyStr(str));
     }
 
-    // FIXME: convert {@code} to {@snippet}
     /**
      * Append {@code Integer.toString(value)}.
      *
@@ -145,6 +144,18 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder iStr(final int value) {
+        buf.append(value);
+        return this;
+    }
+
+    /**
+     * Append {@code Long.toString(value)}.
+     *
+     * @param value the value
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder lStr(final long value) {
         buf.append(value);
         return this;
     }
