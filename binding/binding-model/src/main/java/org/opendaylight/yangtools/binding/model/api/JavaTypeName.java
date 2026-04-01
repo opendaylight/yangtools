@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.slf4j.LoggerFactory;
  * <a href="https://docs.oracle.com/javase/specs/jls/se9/html/index.html">The Java Language Specification</a>, notably
  * sections 4 and 8. It deals with primitive, array and reference types.
  */
-@Beta
 @NonNullByDefault
 public abstract sealed class JavaTypeName implements Identifier, Immutable {
     private static final class Primitive extends JavaTypeName {
@@ -246,11 +244,11 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
      * @throws NullPointerException if clazz is null
      */
     public static JavaTypeName create(final Class<?> clazz) {
-        final Class<?> enclosing = clazz.getEnclosingClass();
-        if (enclosing != null) {
-            return create(enclosing).createEnclosed(clazz.getSimpleName());
+        final var enclosingClass = clazz.getEnclosingClass();
+        if (enclosingClass != null) {
+            return create(enclosingClass).createEnclosed(clazz.getSimpleName());
         }
-        final Package pkg = clazz.getPackage();
+        final var pkg = clazz.getPackage();
         return pkg == null ? new Primitive(clazz.getSimpleName()) : new TopLevel(pkg.getName(), clazz.getSimpleName());
     }
 
@@ -306,7 +304,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
         try {
             return createEnclosed(simpleName);
         } catch (IllegalArgumentException e) {
-            final String fallback = simpleName + fallbackSuffix;
+            final var fallback = simpleName + fallbackSuffix;
             LOG.debug("Failed to create enclosed type '{}', falling back to '{}'", simpleName, fallback, e);
             return createEnclosed(fallback);
         }
@@ -345,33 +343,33 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
     public abstract String packageName();
 
     /**
-     * Return the enclosing class JavaTypeName, if present.
-     *
-     * @return enclosing class JavaTypeName, or {@code null}
+     * {@return enclosing class JavaTypeName, or {@code null} if not present}
      */
     public abstract @Nullable JavaTypeName immediatelyEnclosingClass();
 
     /**
-     * Return the top-level class JavaTypeName which is containing this type, or self if this type is a top-level
-     * one.
-     *
-     * @return Top-level JavaTypeName
+     * {@return the top-level class JavaTypeName which is containing this type, or self if this type is a top-level one}
      */
     public abstract JavaTypeName topLevelClass();
 
     /**
-     * Return the package-local name by which this type can be referenced by classes living in the same package.
-     *
-     * @return Local name.
+     * {@return the package-local name by which this type can be referenced by classes living in the same package}
      */
     public abstract String localName();
 
     /**
-     * Return broken-down package-local name components.
-     *
-     * @return List of package-local components.
+     * {@return a List of broken-down package-local name components}
      */
     public abstract List<String> localNameComponents();
+
+    /**
+     * {@return {@code true} if this name represents a Java array type, {@code false} otherwise}
+     * @since 15.0.3
+     */
+    public final boolean isArray() {
+        // As per JLS Chapter 10. Arrays
+        return simpleName.endsWith("[]");
+    }
 
     @Override
     public final int hashCode() {

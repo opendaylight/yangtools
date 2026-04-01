@@ -235,7 +235,7 @@ class JavaFileTemplate {
      */
     @NonNullByDefault
     final String importedUtilClass(final Type returnType) {
-        return importedName(isArrayType(returnType) ? JU_ARRAYS : JU_OBJECTS);
+        return importedName(returnType.isArray() ? JU_ARRAYS : JU_OBJECTS);
     }
 
     final @NonNull String generatedAnnotation() {
@@ -269,13 +269,7 @@ class JavaFileTemplate {
 
     @NonNullByDefault
     static final boolean isArrayProperty(final GeneratedProperty property) {
-        return isArrayType(property.getReturnType());
-    }
-
-    @NonNullByDefault
-    static final boolean isArrayType(final Type type) {
-        // As per JLS Chapter 10. Arrays
-        return type.simpleName().endsWith("[]");
+        return property.getReturnType().isArray();
     }
 
     static final @Nullable MethodSignature getterByName(final Collection<MethodSignature> methods,
