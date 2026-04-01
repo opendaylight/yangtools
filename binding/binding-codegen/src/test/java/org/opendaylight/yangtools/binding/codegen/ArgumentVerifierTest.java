@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.doNothing;
 
@@ -39,11 +38,8 @@ class ArgumentVerifierTest {
         // quick checker does not detect these conditions:
         final var strWithNl = "abc\n";
         assertSame(strWithNl, quick.verifyStr(strWithNl));
-        final var strEmpty = "";
-        assertSame(strEmpty, quick.verifyNonEmptyStr(strEmpty));
         final var txtWithoutNl = "abc";
         assertSame(txtWithoutNl, quick.verifyTxt(txtWithoutNl));
-        assertNull(quick.verifyTxt(null, -1));
     }
 
     @Test

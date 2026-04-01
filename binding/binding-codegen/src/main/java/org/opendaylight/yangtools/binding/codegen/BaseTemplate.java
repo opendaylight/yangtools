@@ -443,14 +443,14 @@ abstract class BaseTemplate extends JavaFileTemplate {
             final var it = params.iterator();
             while (true) {
                 final var param = it.next();
-                bb.str("    ").str(param.getName()).str("=").append(param.getValue());
+                bb.str("    ").str(param.getName()).str("=").str(param.getValue());
                 if (!it.hasNext()) {
                     break;
                 }
                 bb.eol(",");
             }
 
-            bb.nl().append(")");
+            bb.nl().str(")");
         }
 
         return bb.nl();
