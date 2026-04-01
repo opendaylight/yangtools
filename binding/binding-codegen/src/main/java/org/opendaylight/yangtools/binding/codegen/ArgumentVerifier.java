@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
@@ -42,18 +39,8 @@ abstract sealed class ArgumentVerifier {
         }
 
         @Override
-        String verifyStr(final String arg) {
-            return verifyStrNotEmpty(arg);
-        }
-
-        @Override
-        String verifyNonEmptyStr(final String arg) {
-            return arg;
-        }
-
-        @Override
-        String verifyTxt(final String arg, final int nl) {
-            return arg;
+        void fullVerifyStr(final String arg) {
+            // No-op
         }
 
         @Override
@@ -72,23 +59,11 @@ abstract sealed class ArgumentVerifier {
         }
 
         @Override
-        String verifyStr(final String arg) {
+        void fullVerifyStr(final String arg) {
             final var nl = arg.indexOf('\n');
             if (nl != -1) {
                 throw new VerifyException("newline at offset " + nl + " of '" + arg + "'");
             }
-            return verifyNonEmptyStr(arg);
-        }
-
-        @Override
-        String verifyNonEmptyStr(final String arg) {
-            return verifyStrNotEmpty(arg);
-        }
-
-        @Override
-        String verifyTxt(final String arg, final int nl) {
-            verify(nl >= 0);
-            return verifyNotNull(arg);
         }
 
         @Override
@@ -140,15 +115,15 @@ abstract sealed class ArgumentVerifier {
      * @param arg the argument
      * @return the argument
      */
-    abstract String verifyStr(String arg);
+    final String verifyStr(final String arg) {
+        if (arg.isEmpty()) {
+            throw new VerifyException("empty str");
+        }
+        fullVerifyStr(arg);
+        return arg;
+    }
 
-    /**
-     * Verify the argument to {@link BlockBuilder#str(String)} which is known to be non-empty.
-     *
-     * @param arg the argument
-     * @return the argument
-     */
-    abstract String verifyNonEmptyStr(String arg);
+    abstract void fullVerifyStr(String arg);
 
     /**
      * Verify the argument to {@link BlockBuilder#txt(String)}.
@@ -165,25 +140,9 @@ abstract sealed class ArgumentVerifier {
     }
 
     /**
-     * Verify the argument to {@link BlockBuilder#txt(String)} known to have a newline at specified offset.
-     *
-     * @param arg the argument
-     * @param nl the offset
-     * @return the argument
-     */
-    abstract String verifyTxt(String arg, int nl);
-
-    /**
      * Run additional verification from {@link #verifyTxt(String)}.
      *
      * @param arg the argument
      */
     abstract void fullVerifyTxt(String arg);
-
-    private static String verifyStrNotEmpty(final String arg) {
-        if (arg.isEmpty()) {
-            throw new VerifyException("empty str");
-        }
-        return arg;
-    }
 }
