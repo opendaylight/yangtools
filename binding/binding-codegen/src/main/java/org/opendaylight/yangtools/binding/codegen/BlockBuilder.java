@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.errorprone.annotations.CheckReturnValue;
+import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -314,10 +315,30 @@ final class BlockBuilder implements Mutable {
         return this;
     }
 
-    // FIXME: remove this method
-    void append(final String str) {
+    @NonNullByDefault
+    BlockBuilder quoted(final String str) {
+        buf.append('"').append(verifyStr(str)).append('"');
+        return this;
+    }
+
+    @NonNullByDefault
+    BlockBuilder quotedJava(final String str) {
+        // FIXME: verifyStr(str)?, e.g. quoted(escapeJava(str)) ?
+        buf.append('"');
+        // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
+        appendImpl(StringEscapeUtils.escapeJava(str));
+        buf.append('"');
+        return this;
+    }
+
+    private void appendImpl(final String str) {
         final int nl = str.indexOf('\n');
         buf.append(nl == -1 ? verifyNonEmptyStr(str) : verifyTxt(str, nl));
+    }
+
+    // FIXME: remove this method
+    void append(final String str) {
+        appendImpl(str);
     }
 
     // FIXME: remove this method
