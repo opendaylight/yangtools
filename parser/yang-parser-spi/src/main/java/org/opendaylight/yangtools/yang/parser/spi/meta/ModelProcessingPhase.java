@@ -10,12 +10,10 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 // FIXME: YANGTOOLS-1150: this should go into yang-reactor-api
-@NonNullByDefault
 public enum ModelProcessingPhase {
     INIT(),
 
@@ -95,14 +93,13 @@ public enum ModelProcessingPhase {
     private final @Nullable ModelProcessingPhase previousPhase;
     private final byte executionOrder;
 
-    @SuppressFBWarnings(value = "NP_STORE_INTO_NONNULL_FIELD",
-        justification = "https://github.com/spotbugs/spotbugs/issues/743")
     // For INIT only
     ModelProcessingPhase() {
         previousPhase = null;
         executionOrder = ExecutionOrder.INIT;
     }
 
+    @NonNullByDefault
     ModelProcessingPhase(final ModelProcessingPhase previousPhase, final int executionOrder) {
         this.previousPhase = requireNonNull(previousPhase);
         this.executionOrder = (byte) executionOrder;
