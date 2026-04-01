@@ -122,26 +122,25 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     }
 
     @Override
-    protected final StringBuilder generateRangeCheckerImplementation(final String checkerName,
+    final BlockBuilder generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraints, final Function<JavaTypeName, String> classImporter) {
-        final var sb = new StringBuilder();
         final var expressions = createExpressions(constraints, classImporter);
 
-        sb.append("private static void ").append(checkerName).append("(final ").append(primitiveName)
-            .append(" value) {\n");
+        final var bb = new BlockBuilder()
+            .str("private static void ").str(checkerName).str("(final ").str(primitiveName).str(" value)").oB();
 
         if (!expressions.isEmpty()) {
             for (var exp : expressions) {
-                sb.append("    if (").append(exp).append(") {\n");
-                sb.append("        return;\n");
-                sb.append("    }\n");
+                bb
+                    .str("    if (").str(exp).str(")").oB()
+                    .eol("        return;")
+                    .str("    ").cB();
             }
 
-            sb.append("    ").append(classImporter.apply(JavaFileTemplate.CODEHELPERS))
-                .append('.').append(codeHelpersThrow()).append("(\"").append(createRangeString(constraints))
-                .append("\", value);\n");
+            bb.str("    ").str(classImporter.apply(JavaFileTemplate.CODEHELPERS))
+                .str(".").str(codeHelpersThrow()).str("(").quoted(createRangeString(constraints)).eol(", value);");
         }
 
-        return sb.append("}\n");
+        return bb.cB();
     }
 }

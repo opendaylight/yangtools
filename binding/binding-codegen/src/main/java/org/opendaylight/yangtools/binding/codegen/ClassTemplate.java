@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
+import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.isArrayProperty;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
@@ -749,7 +750,7 @@ class ClassTemplate extends BaseTemplate {
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
 
-            if (prop.getReturnType().simpleName().endsWith("[]")) {
+            if (isArrayProperty(prop)) {
                 bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
                     .str(fieldName).eol(");");
             } else {

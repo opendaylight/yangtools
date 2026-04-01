@@ -71,7 +71,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             final var propFieldName = fieldName(property);
 
             if (restrictions != null) {
-                final var checkers = generateCheckers(property, restrictions, actualType);
+                final var checkers = generateCheckers(property, restrictions, actualType).toRawString();
                 if (!checkers.isEmpty()) {
                     sb.append(checkers).append('\n');
                 }
@@ -235,7 +235,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
             sb.append("    this.").append(fieldName).append(" = ");
-            if (prop.getReturnType().simpleName().endsWith("[]")) {
+            if (isArrayProperty(prop)) {
                 sb.append(importedName(CODEHELPERS)).append(".copyArray(source.").append(fieldName).append(')');
             } else {
                 sb.append("source.").append(fieldName);

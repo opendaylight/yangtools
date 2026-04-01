@@ -233,9 +233,9 @@ class JavaFileTemplate {
      * @param returnType A property return Type
      * @return Imported class name
      */
-    final @NonNull String importedUtilClass(final Type returnType) {
-        // FIXME: unify with isArrayProperty
-        return importedName(returnType.simpleName().indexOf('[') != -1 ? JU_ARRAYS : JU_OBJECTS);
+    @NonNullByDefault
+    final String importedUtilClass(final Type returnType) {
+        return importedName(isArrayType(returnType) ? JU_ARRAYS : JU_OBJECTS);
     }
 
     final @NonNull String generatedAnnotation() {
@@ -268,8 +268,14 @@ class JavaFileTemplate {
     }
 
     @NonNullByDefault
-    private static boolean isArrayProperty(final GeneratedProperty property) {
-        return property.getReturnType().simpleName().endsWith("[]");
+    static final boolean isArrayProperty(final GeneratedProperty property) {
+        return isArrayType(property.getReturnType());
+    }
+
+    @NonNullByDefault
+    static final boolean isArrayType(final Type type) {
+        // As per JLS Chapter 10. Arrays
+        return type.simpleName().endsWith("[]");
     }
 
     static final @Nullable MethodSignature getterByName(final Collection<MethodSignature> methods,

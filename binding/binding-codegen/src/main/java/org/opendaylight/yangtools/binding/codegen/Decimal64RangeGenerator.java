@@ -54,16 +54,16 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
     }
 
     @Override
-    protected StringBuilder generateRangeCheckerImplementation(final String checkerName,
+    BlockBuilder generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraint, final Function<JavaTypeName, String> classImporter) {
         final var constraints = constraint.getAllowedRanges().asRanges();
         final var codeHelpers = classImporter.apply(JavaFileTemplate.CODEHELPERS);
 
-        final var sb = new StringBuilder();
-        sb.append("private static void ").append(checkerName).append("(final ").append(classImporter.apply(DECIMAL64))
-            .append(" value) {\n");
-        sb.append("    final var unscaled = ").append(codeHelpers).append(".checkScale(value, ").append(fractionDigits)
-            .append(");\n");
+        final var bb = new BlockBuilder()
+            .str("private static void ").str(checkerName).str("(final ").str(classImporter.apply(DECIMAL64))
+                .str(" value)").oB()
+                .str("    final var unscaled = ").str(codeHelpers).str(".checkScale(value, ").iStr(fractionDigits)
+                    .eol(");");
 
         final var msg = new StringBuilder().append("\"[");
         final var it = constraints.iterator();
@@ -73,10 +73,11 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
             final var max = getValue(range.upperEndpoint());
             msg.append('[').append(min).append("..").append(max).append(']');
 
-            sb.append("    if (unscaled >= ").append(min.unscaledValue()).append("L && unscaled <= ")
-                .append(max.unscaledValue()).append("L) {\n");
-            sb.append("        return;\n");
-            sb.append("    }\n");
+            bb
+                .str("    if (unscaled >= ").lStr(min.unscaledValue()).str("L && unscaled <= ")
+                    .lStr(max.unscaledValue()).str("L)").oB()
+                .eol("        return;")
+                .str("    ").cB();
 
             if (!it.hasNext()) {
                 break;
@@ -84,9 +85,8 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
             msg.append(", ");
         }
 
-        sb.append("    ").append(codeHelpers).append(".throwInvalidRange(").append(msg).append("]\", value);\n");
-        sb.append("}\n");
-
-        return sb;
+        return bb
+            .str("    ").str(codeHelpers).str(".throwInvalidRange(").str(msg).eol("]\", value);")
+            .cB();
     }
 }

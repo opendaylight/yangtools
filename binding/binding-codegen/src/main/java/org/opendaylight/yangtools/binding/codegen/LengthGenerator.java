@@ -71,56 +71,56 @@ final class LengthGenerator {
         return new ArrayList<>(constraint.getAllowedRanges().asRanges()).toString();
     }
 
-    private static StringBuilder generateArrayLengthChecker(final String member, final LengthConstraint constraint,
-            final JavaFileTemplate template) {
-        final var sb = new StringBuilder();
+    private static @NonNull BlockBuilder generateArrayLengthChecker(final String member,
+            final LengthConstraint constraint, final JavaFileTemplate template) {
         final var expressions = createExpressions(constraint);
 
-        sb.append("private static void ").append(lengthCheckerName(member)).append("(final byte[] value) {\n");
+        final var bb = new BlockBuilder()
+            .str("private static void ").str(lengthCheckerName(member)).str("(final byte[] value)").oB();
 
         if (!expressions.isEmpty()) {
-            sb.append("    final int length = value.length;\n");
+            bb.eol("    final int length = value.length;");
 
             for (var exp : expressions) {
-                sb.append("    if (").append(exp).append(") {\n");
-                sb.append("        return;\n");
-                sb.append("    }\n");
+                bb.str("    if (").str(exp).str(")").oB();
+                bb.eol("        return;");
+                bb.str("    ").cB();
             }
 
-            sb.append("    ").append(template.importedName(JavaFileTemplate.CODEHELPERS))
-            .append(".throwInvalidLength(\"").append(createLengthString(constraint)).append("\", value);\n");
+            bb.str("    ").str(template.importedName(JavaFileTemplate.CODEHELPERS)).str(".throwInvalidLength(")
+                .quoted(createLengthString(constraint)).eol(", value);");
         }
 
-        return sb.append("}\n");
+        return bb.cB();
     }
 
-    private static StringBuilder generateStringLengthChecker(final String member, final LengthConstraint constraint,
-            final JavaFileTemplate template) {
-        final var sb = new StringBuilder();
-        final var expressions = createExpressions(constraint);
-
-        sb.append("private static void ").append(lengthCheckerName(member))
-            .append("(final ").append(template.importedName(Types.STRING)).append(" value) {\n");
-
-        if (!expressions.isEmpty()) {
-            sb.append("    final int length = value.codePointCount(0, value.length());\n");
-
-            for (String exp : expressions) {
-                sb.append("    if (").append(exp).append(") {\n");
-                sb.append("        return;\n");
-                sb.append("    }\n");
-            }
-
-            sb.append("    ").append(template.importedName(JavaFileTemplate.CODEHELPERS))
-            .append(".throwInvalidLength(\"").append(createLengthString(constraint)).append("\", value);\n");
-        }
-
-        return sb.append("}\n");
-    }
-
-    static StringBuilder generateLengthChecker(final String member, final @NonNull Type type,
+    private static @NonNull BlockBuilder generateStringLengthChecker(final String member,
             final LengthConstraint constraint, final JavaFileTemplate template) {
-        return TypeUtils.getBaseYangType(type).simpleName().indexOf('[') != -1
+        final var bb = new BlockBuilder()
+            .str("private static void ").str(lengthCheckerName(member)).str("(final ")
+                .str(template.importedName(Types.STRING)).str(" value)").oB();
+
+        final var expressions = createExpressions(constraint);
+        if (!expressions.isEmpty()) {
+            bb.eol("    final int length = value.codePointCount(0, value.length());");
+
+            for (var exp : expressions) {
+                bb
+                    .str("    if (").str(exp).str(")").oB()
+                    .eol("        return;")
+                    .str("    ").cB();
+            }
+
+            bb.str("    ").str(template.importedName(JavaFileTemplate.CODEHELPERS)).str(".throwInvalidLength(")
+                .quoted(createLengthString(constraint)).eol(", value);");
+        }
+
+        return bb.cB();
+    }
+
+    static @NonNull BlockBuilder generateLengthChecker(final String member, final @NonNull Type type,
+            final LengthConstraint constraint, final JavaFileTemplate template) {
+        return JavaFileTemplate.isArrayType(TypeUtils.getBaseYangType(type))
                 ? generateArrayLengthChecker(member, constraint, template)
                 : generateStringLengthChecker(member, constraint, template);
     }
