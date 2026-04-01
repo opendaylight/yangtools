@@ -43,11 +43,11 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder constructors() {
-        final var bb = new BlockBuilder();
-        bb.append(unionConstructorsParentProperties());
-        bb.append(unionConstructors());
+        final var bb = new BlockBuilder()
+            .blk(unionConstructorsParentProperties())
+            .blk(unionConstructors());
         if (!allProperties.isEmpty()) {
-            bb.append(copyConstructor());
+            bb.blk(copyConstructor());
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
             bb.blk(parentConstructor());
@@ -56,13 +56,13 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         return bb;
     }
 
-    private @Nullable StringBuilder unionConstructors() {
+    private @Nullable BlockBuilder unionConstructors() {
         if (finalProperties.isEmpty()) {
             return null;
         }
 
         final var simpleName = type().simpleName();
-        final var sb = new StringBuilder().append('\n');
+        final var bb = new BlockBuilder().nl();
         final var it = finalProperties.iterator();
         while (true) {
             final var property = it.next();
@@ -71,70 +71,69 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             final var propFieldName = fieldName(property);
 
             if (restrictions != null) {
-                final var checkers = generateCheckers(property, restrictions, actualType).toRawString();
-                if (!checkers.isEmpty()) {
-                    sb.append(checkers).append('\n');
-                }
+                bb.blk(generateCheckers(property, restrictions, actualType)).newLine();
             }
 
-            sb.append("public ").append(simpleName).append('(')
-                .append(asArgumentsDeclaration(propertyAndTopParentProperties)).append(") {\n");
+            bb
+                .str("public ").str(simpleName).str("(").str(asArgumentsDeclaration(propertyAndTopParentProperties))
+                    .str(")").oB();
             if (!parentProperties.isEmpty()) {
-                sb.append("    super(").append(asArguments(parentProperties)).append(");\n");
+                bb.str("    super(").str(asArguments(parentProperties)).eol(");");
             }
 
             final var restrictions = restrictionsForSetter(actualType);
             if (restrictions != null) {
                 final var checkArg = checkArgument(property, restrictions, actualType, propFieldName);
                 if (!checkArg.isEmpty()) {
-                    sb.append(checkArg).append('\n');
+                    bb.append(checkArg);
+                    bb.newLine();
                 }
             }
 
             for (var other : finalProperties) {
-                sb.append("    this.");
+                bb.str("    this.");
                 if (property.equals(other)) {
-                    sb.append(propFieldName).append(" = ").append(importedName(JU_OBJECTS)).append(".requireNonNull(")
-                        .append(propFieldName).append(");\n");
+                    bb.str(propFieldName).str(" = ").str(importedName(JU_OBJECTS)).str(".requireNonNull(")
+                        .str(propFieldName).eol(");");
                 } else {
-                    sb.append(fieldName(other)).append(" = null;\n");
+                    bb.str(fieldName(other)).eol(" = null;");
                 }
             }
 
-            sb.append("}\n");
+            bb.cB();
 
             if (!it.hasNext()) {
-                return sb;
+                return bb;
             }
-            sb.append('\n');
+            bb.newLine();
         }
     }
 
-    private @Nullable StringBuilder unionConstructorsParentProperties() {
+    private @Nullable BlockBuilder unionConstructorsParentProperties() {
         if (parentProperties.isEmpty()) {
             return null;
         }
 
-        final var sb = new StringBuilder();
+        final var bb = new BlockBuilder();
         final var it = parentProperties.iterator();
         final var simpleName = type().simpleName();
         while (true) {
             final var prop = it.next();
             final var fieldName = fieldName(prop);
             final var propType = importedReturnType(prop);
-            sb
-                .append("public ").append(simpleName).append('(').append(propType).append(' ').append(fieldName)
-                    .append(") {\n")
-                .append("    super(").append(fieldName).append(");\n")
-                .append("}\n");
+            bb
+                .str("public ").str(simpleName).str("(").str(propType).sp().str(fieldName).str(")").oB()
+                    .ind("super(").str(fieldName).eol(");")
+                .cB();
 
             if (!it.hasNext()) {
-                return sb;
+                return bb;
             }
-            sb.append('\n');
+            bb.newLine();
         }
     }
 
+    // FIXME: return a BlockBuilder
     private StringBuilder generateStringValue() {
         final var sb = new StringBuilder()
             .append("""
@@ -216,33 +215,33 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    StringBuilder copyConstructor() {
+    BlockBuilder copyConstructor() {
         final var type = type();
         final var simpleName = type.simpleName();
 
-        final var sb = new StringBuilder()
-            .append("""
-                /**
-                 * Creates a copy from Source Object.
-                 *
-                 * @param source Source object
-                 */
-                """)
-            .append("public ").append(simpleName).append('(').append(simpleName).append(" source) {\n");
+        final var bb = new BlockBuilder().txt("""
+                  /**
+                   * Creates a copy from Source Object.
+                   *
+                   * @param source Source object
+                   */
+                  """)
+            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
         if (!parentProperties.isEmpty()) {
-            sb.append("    super(source);\n");
+            bb.eol("    super(source);");
         }
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
-            sb.append("    this.").append(fieldName).append(" = ");
+            bb.str("    this.").str(fieldName).str(" = ");
+            // TODO: figure out a better flow
             if (isArrayProperty(prop)) {
-                sb.append(importedName(CODEHELPERS)).append(".copyArray(source.").append(fieldName).append(')');
+                bb.str(importedName(CODEHELPERS)).str(".copyArray(source.").str(fieldName).str(")");
             } else {
-                sb.append("source.").append(fieldName);
+                bb.str("source.").str(fieldName);
             }
-            sb.append(";\n");
+            bb.eS();
         }
-        return sb.append("}\n");
+        return bb.cB();
     }
 
     @Override

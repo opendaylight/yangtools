@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
-import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.isArrayProperty;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
@@ -609,7 +608,7 @@ class ClassTemplate extends BaseTemplate {
             bb.blk(allValuesConstructor());
         }
         if (!allProperties.isEmpty()) {
-            bb.nl().append(copyConstructor());
+            bb.nl().blk(copyConstructor());
         }
         if (properties.isEmpty() && !parentProperties.isEmpty()) {
             // FIXME: nl()?
@@ -628,7 +627,7 @@ class ClassTemplate extends BaseTemplate {
                 .nl()
                 .at().eol(importedName(OVERRIDE))
                 .str("public ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()").oB()
-                .str("    return ").str(fieldName(field), cloneOrNull(field)).eS()
+                    .ind("return ").str(fieldName(field), cloneOrNull(field)).eS()
                 .cB();
         }
 
@@ -760,25 +759,27 @@ class ClassTemplate extends BaseTemplate {
         return bb.cB();
     }
 
-    // FIXME: return BlockBuilder
-    StringBuilder copyConstructor() {
+    @NonNullByDefault
+    BlockBuilder copyConstructor() {
         final var simpleName = type().simpleName();
 
-        final var sb = new StringBuilder()
-            .append("/**\n")
-            .append(" * Creates a copy from Source Object.\n")
-            .append(" *\n")
-            .append(" * @param source Source object\n")
-            .append(" */\n")
-            .append("public ").append(simpleName).append("(").append(simpleName).append(" source) {\n");
+        final var bb = new BlockBuilder().txt("""
+                  /**
+                   * Creates a copy from Source Object.
+                   *
+                   * @param source Source object
+                   */
+                  """)
+            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
+        // TODO: consider splitting into a 'Block copyConstructorBody()' once we can do efficient block copies
         if (!parentProperties.isEmpty()) {
-            sb.append("    super(source);\n");
+            bb.eol("    super(source);");
         }
         for (var prop : properties) {
             final var fieldName = fieldName(prop);
-            sb.append("    this.").append(fieldName).append(" = source.").append(fieldName).append(";\n");
+            bb.str("    this.").str(fieldName).str(" = source.").str(fieldName).eS();
         }
-        return sb.append("}\n");
+        return bb.cB();
     }
 
     @NonNullByDefault
