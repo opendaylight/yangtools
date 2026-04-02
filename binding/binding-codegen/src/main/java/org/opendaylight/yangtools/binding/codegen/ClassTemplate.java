@@ -95,11 +95,11 @@ class ClassTemplate extends BaseTemplate {
 
     @NonNullByDefault
     ClassTemplate(final GeneratedTransferObject genType) {
-        this(new TopLevelJavaGeneratedType(genType), genType);
+        this(GeneratedClass.of(genType), genType);
     }
 
     @NonNullByDefault
-    ClassTemplate(final AbstractJavaGeneratedType javaType, final GeneratedTransferObject genType) {
+    ClassTemplate(final GeneratedClass javaType, final GeneratedTransferObject genType) {
         super(javaType, genType);
         genTO = requireNonNull(genType);
         properties = genTO.getProperties();
@@ -199,11 +199,11 @@ class ClassTemplate extends BaseTemplate {
             if (length.isPresent()) {
                 bb.nl().indented(
                     LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
-                        length.orElseThrow(), this));
+                        length.orElseThrow(), javaType()));
             }
             final var range = restrictions.getRangeConstraint();
             if (range.isPresent()) {
-                bb.nl().indented(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), this));
+                bb.nl().indented(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), javaType()));
             }
         }
 

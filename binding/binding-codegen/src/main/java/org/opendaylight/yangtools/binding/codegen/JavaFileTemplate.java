@@ -143,20 +143,20 @@ class JavaFileTemplate {
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
 
-    private final @NonNull AbstractJavaGeneratedType javaType;
+    private final @NonNull GeneratedClass javaType;
     private final @NonNull GeneratedType type;
 
     JavaFileTemplate(final @NonNull GeneratedType type) {
-        this(new TopLevelJavaGeneratedType(type), type);
+        this(GeneratedClass.of(type), type);
     }
 
     @NonNullByDefault
-    JavaFileTemplate(final AbstractJavaGeneratedType javaType, final GeneratedType type) {
+    JavaFileTemplate(final GeneratedClass javaType, final GeneratedType type) {
         this.javaType = requireNonNull(javaType);
         this.type = requireNonNull(type);
     }
 
-    final @NonNull AbstractJavaGeneratedType javaType() {
+    final @NonNull GeneratedClass javaType() {
         return javaType;
     }
 

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.CODEHELPERS;
+
 import com.google.common.collect.Range;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -54,13 +55,13 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
     }
 
     @Override
-    BlockBuilder generateRangeCheckerImplementation(final String checkerName,
-            final RangeConstraint<?> constraint, final Function<JavaTypeName, String> classImporter) {
+    BlockBuilder generateRangeCheckerImplementation(final String checkerName, final RangeConstraint<?> constraint,
+            final GeneratedClass javaClass) {
         final var constraints = constraint.getAllowedRanges().asRanges();
-        final var codeHelpers = classImporter.apply(JavaFileTemplate.CODEHELPERS);
+        final var codeHelpers = javaClass.getReferenceString(CODEHELPERS);
 
         final var bb = new BlockBuilder()
-            .str("private static void ").str(checkerName).str("(final ").str(classImporter.apply(DECIMAL64))
+            .str("private static void ").str(checkerName).str("(final ").str(javaClass.getReferenceString(DECIMAL64))
                 .str(" value)").oB()
                 .str("    final var unscaled = ").str(codeHelpers).str(".checkScale(value, ").jInt(fractionDigits)
                     .eol(");");
