@@ -376,7 +376,7 @@ class ClassTemplate extends BaseTemplate {
 
     @NonNullByDefault
     private static void appendValue(final BlockBuilder bb, final int index) {
-        bb.ind("values[").iStr(index).str("]");
+        bb.ind("values[").jInt(index).str("]");
     }
 
     @NonNull String finalClass() {
@@ -542,7 +542,7 @@ class ClassTemplate extends BaseTemplate {
             bb.indented(bitsDefaultInstanceBody());
         } else if (propType instanceof Decimal64Type decimal64) {
             bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .str(".valueOf(defaultValue).scaleTo(").iStr(decimal64.fractionDigits()).eol("));");
+                .str(".valueOf(defaultValue).scaleTo(").jInt(decimal64.fractionDigits()).eol("));");
         } else if (propType.equals(STRING_TYPE)) {
             bb.str("    return new ").str(simpleName).eol("(defaultValue);");
         } else if (propType.equals(BINARY_TYPE)) {
@@ -747,7 +747,7 @@ class ClassTemplate extends BaseTemplate {
             bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
                 .str(fieldName);
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
-                bb.str(", ").iStr(decimal64.fractionDigits());
+                bb.str(", ").jInt(decimal64.fractionDigits());
             }
             bb.str(")", cloneOrNull(value)).eS();
         }
