@@ -33,11 +33,9 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     }
 
     /**
-     * Return the name of the primitive type, as known by the Java language.
-     *
-     * @return Primitive type name
+     * {@return the name of the primitive type, as known by the Java language}
      */
-    protected final @NonNull String getPrimitiveName() {
+    final @NonNull String primitiveName() {
         return primitiveName;
     }
 
@@ -92,13 +90,12 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     }
 
     /**
-     * Format a value into a Java-compilable expression which results in the appropriate
-     * type.
+     * Format a value into a Java-compilable expression which results in the appropriate type.
      *
      * @param value Number value
      * @return Java language string representation
      */
-    protected abstract @NonNull String format(T value);
+    abstract @NonNull String format(T value);
 
     /**
      * {@return the {@link org.opendaylight.yangtools.binding.lib.CodeHelpers} {@code throwInvalidRange} variant
@@ -122,23 +119,20 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     @Override
     final BlockBuilder generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraints, final GeneratedClass javaClass) {
-        final var expressions = createExpressions(constraints, javaClass);
-
-        final var bb = new BlockBuilder()
-            .str("private static void ").str(checkerName).str("(final ").str(primitiveName).str(" value)").oB();
-
-        if (!expressions.isEmpty()) {
-            for (var exp : expressions) {
-                bb
-                    .str("    if (").str(exp).str(")").oB()
-                    .eol("        return;")
-                    .str("    ").cB();
-            }
-
-            bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".").str(codeHelpersThrow()).str("(")
-                .quoted(createRangeString(constraints)).eol(", value);");
-        }
-
-        return bb.cB();
+        return javaClass.newBlockBuilder()
+            .str("private static void ").str(checkerName).str("(final ").str(primitiveName).str(" value)")
+            .jBlock(bb -> {
+                final var expressions = createExpressions(constraints, javaClass);
+                if (!expressions.isEmpty()) {
+                    for (var exp : expressions) {
+                        bb
+                            .str("    if (").str(exp).str(")").oB()
+                            .eol("        return;")
+                            .str("    ").cB();
+                    }
+                    bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".").str(codeHelpersThrow())
+                        .str("(").quoted(createRangeString(constraints)).eol(", value);");
+                }
+            }).nl();
     }
 }

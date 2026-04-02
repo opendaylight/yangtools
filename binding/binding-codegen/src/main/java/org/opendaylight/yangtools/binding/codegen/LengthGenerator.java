@@ -74,7 +74,7 @@ final class LengthGenerator {
             final LengthConstraint constraint, final GeneratedClass javaClass) {
         final var expressions = createExpressions(constraint);
 
-        final var bb = new BlockBuilder()
+        final var bb = javaClass.newBlockBuilder()
             .str("private static void ").str(lengthCheckerName(member)).str("(final byte[] value)").oB();
 
         if (!expressions.isEmpty()) {
@@ -95,7 +95,7 @@ final class LengthGenerator {
 
     private static @NonNull BlockBuilder generateStringLengthChecker(final String member,
             final LengthConstraint constraint, final GeneratedClass javaClass) {
-        final var bb = new BlockBuilder()
+        final var bb = javaClass.newBlockBuilder()
             .str("private static void ").str(lengthCheckerName(member)).str("(final ")
                 .str(javaClass.getReferenceString(Types.STRING)).str(" value)").oB();
 

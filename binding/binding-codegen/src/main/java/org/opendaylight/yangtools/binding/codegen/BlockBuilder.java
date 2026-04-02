@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * </ul>
  *
  * <p>Methods ending with a capital letter terminate the current line, i.e. return the result of {@link #nl()}. Examples
- * include {@link #oB()}, {@link #cB()}, {@link #oS()}.
+ * include {@link #oB()}, {@link #cB()}, {@link #eS()}.
  *
  * <p>When deciding on the shape of a method and its name, please consider it first and foremost its stringlu structure,
  * as that is the layer we operate on.
@@ -114,13 +114,8 @@ final class BlockBuilder implements Mutable {
         return this;
     }
 
-    @NonNullByDefault
-    @CheckReturnValue
-    BlockBuilder str(final String firstStr, final @Nullable String secondStr) {
-        appendStr(firstStr);
-        return secondStr == null ? this : str(secondStr);
-    }
-
+    // FIXME: remove this method
+    @Deprecated
     @NonNullByDefault
     BlockBuilder str(final @Nullable StringBuilder sb) {
         if (sb != null) {
@@ -132,6 +127,12 @@ final class BlockBuilder implements Mutable {
     @NonNullByDefault
     private void appendStr(final String str) {
         buf.append(verifyStr(str));
+    }
+
+    @NonNullByDefault
+    BlockBuilder jBlock(final BlockFragment fragment) {
+        fragment.appendTo(oB());
+        return cb();
     }
 
     /**
@@ -194,11 +195,10 @@ final class BlockBuilder implements Mutable {
      * Open a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>.
      * Short name for {@code openBlock}. Emits the equivalent of <pre><code>str(" {").nl()</code></pre>.
      *
-     * <p>Methods calling this method are expected to also call the corresponding {@link #cB()} or {@link #cS()}.
+     * <p>Methods calling this method are expected to also call the corresponding {@link #cb()} or {@link #cB()}.
      *
      * @return this instance
      */
-    // FIXME: add javaBlock(Consumer<@NonNull BlockBuilder>) to encapsulate oB() -> body -> cB() encapsulation
     @NonNullByDefault
     BlockBuilder oB() {
         // FIXME: also add indentation
@@ -209,7 +209,21 @@ final class BlockBuilder implements Mutable {
     /**
      * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
      * previously opened via {@link #oB()}. Short name for {@code closeBlock}. Emits the equivalent of
-     * <pre><code>str("}").nl()</code></pre>.
+     * <pre><code>str("}")</code></pre>.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder cb() {
+        // FIXME: also add indentation
+        buf.append('}');
+        return this;
+    }
+
+    /**
+     * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
+     * previously opened via {@link #oB()}. Short name for {@code closeBlock}. Emits the equivalent of
+     * <pre><code>cb().nl()</code></pre>.
      *
      * @return this instance
      */
@@ -217,20 +231,6 @@ final class BlockBuilder implements Mutable {
     BlockBuilder cB() {
         // FIXME: also add indentation
         buf.append("}\n");
-        return this;
-    }
-
-    /**
-     * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
-     * previously opened via {@link #oB()} and terminate current statement. Short name for {@code closeStatement}. Emits
-     * the equivalent of {@code str("}").eS()}.
-     *
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder cS() {
-        // FIXME: also add indentation
-        buf.append("};\n");
         return this;
     }
 
@@ -246,16 +246,48 @@ final class BlockBuilder implements Mutable {
     }
 
     /**
-     * Append the contents of an optional {@link BlockBuilder} to this instance if it is not {@code null}.
+     * Append the contents of a {@link BlockBuilder} to this instance if it is not {@code null}.
      *
      * @param source optional {@link BlockBuilder}
      * @return this instance
      */
-    // TODO: differentiate a blk(@NonNull Block blk)
+    // FIXME: consider a new name:
+    //        - this does the equivalent of frg(BlockFragment) in that it merges the states
+    //        - it would be natural to perform BlockBuilder.build().appendTo(this),
+    //        the two have different semantics and we should probably do the latter -- and perhaps have a
+    //        'BlockFragment toFragment()' method.
     @NonNullByDefault
     BlockBuilder blk(final @Nullable BlockBuilder source) {
         if (source != null) {
             buf.append(source.buf);
+        }
+        return this;
+    }
+
+    /**
+     * Append the contents of a {@link Block} to this instance if it is not {@code null}.
+     *
+     * @param blk optional {@link Block}
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder blk(final @Nullable Block blk) {
+        if (blk != null) {
+            blk.appendTo(this);
+        }
+        return this;
+    }
+
+    /**
+     * Append the contents of a {@link BlockFragment} to this instance if it is not {@code null}.
+     *
+     * @param fragment optional {@link BlockFragment}
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder frg(final @Nullable BlockFragment fragment) {
+        if (fragment != null) {
+            fragment.appendTo(this);
         }
         return this;
     }

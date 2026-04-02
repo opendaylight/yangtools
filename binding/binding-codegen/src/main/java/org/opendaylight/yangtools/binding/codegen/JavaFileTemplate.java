@@ -264,11 +264,11 @@ sealed class JavaFileTemplate permits BaseTemplate {
     }
 
     /**
-     * {@return the string used to clone the property, or {@code null}}
+     * {@return the {@link BlockFragment} used to clone the property, or {@code null}}
      * @param property the property
      */
-    static final @Nullable String cloneOrNull(final @NonNull GeneratedProperty property) {
-        return isArrayProperty(property) ? ".clone()" : null;
+    static final @Nullable BlockFragment cloneOrNull(final @NonNull GeneratedProperty property) {
+        return isArrayProperty(property) ? bb -> bb.str(".clone()") : null;
     }
 
     @NonNullByDefault

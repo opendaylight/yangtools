@@ -15,8 +15,8 @@ abstract class AbstractSubIntegerRangeGenerator<T extends Number & Comparable<T>
     }
 
     @Override
-    protected final String format(final T value) {
+    final String format(final T value) {
         // Make sure the number constant is cast to the corresponding primitive type
-        return '(' + getPrimitiveName() + ')' + value;
+        return '(' + primitiveName() + ')' + value;
     }
 }

@@ -24,7 +24,7 @@ final class Uint8RangeGenerator extends AbstractUnsignedRangeGenerator<Uint8> {
     }
 
     @Override
-    protected String format(final Uint8 value) {
+    String format(final Uint8 value) {
         return "(short)" + value.toCanonicalString();
     }
 }

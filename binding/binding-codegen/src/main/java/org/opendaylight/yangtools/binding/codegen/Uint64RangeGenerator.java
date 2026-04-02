@@ -35,7 +35,7 @@ final class Uint64RangeGenerator extends AbstractUnsignedRangeGenerator<Uint64> 
     }
 
     @Override
-    protected String format(final Uint64 value) {
+    String format(final Uint64 value) {
         throw new UnsupportedOperationException();
     }
 
