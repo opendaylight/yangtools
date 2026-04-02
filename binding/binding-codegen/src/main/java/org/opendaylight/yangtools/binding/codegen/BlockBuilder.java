@@ -143,20 +143,20 @@ final class BlockBuilder implements Mutable {
      * @return this instance
      */
     @NonNullByDefault
-    BlockBuilder iStr(final int value) {
+    BlockBuilder jInt(final int value) {
         buf.append(value);
         return this;
     }
 
     /**
-     * Append {@code Long.toString(value)}.
+     * Append {@code Long.toString(value)} followed by {@code L}.
      *
      * @param value the value
      * @return this instance
      */
     @NonNullByDefault
-    BlockBuilder lStr(final long value) {
-        buf.append(value);
+    BlockBuilder jLong(final long value) {
+        buf.append(value).append('L');
         return this;
     }
 

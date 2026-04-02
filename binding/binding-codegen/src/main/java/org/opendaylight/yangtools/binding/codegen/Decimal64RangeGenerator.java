@@ -62,7 +62,7 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         final var bb = new BlockBuilder()
             .str("private static void ").str(checkerName).str("(final ").str(classImporter.apply(DECIMAL64))
                 .str(" value)").oB()
-                .str("    final var unscaled = ").str(codeHelpers).str(".checkScale(value, ").iStr(fractionDigits)
+                .str("    final var unscaled = ").str(codeHelpers).str(".checkScale(value, ").jInt(fractionDigits)
                     .eol(");");
 
         final var msg = new StringBuilder().append("\"[");
@@ -74,8 +74,8 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
             msg.append('[').append(min).append("..").append(max).append(']');
 
             bb
-                .str("    if (unscaled >= ").lStr(min.unscaledValue()).str("L && unscaled <= ")
-                    .lStr(max.unscaledValue()).str("L)").oB()
+                .str("    if (unscaled >= ").jLong(min.unscaledValue()).str(" && unscaled <= ")
+                    .jLong(max.unscaledValue()).str(")").oB()
                 .eol("        return;")
                 .str("    ").cB();
 
