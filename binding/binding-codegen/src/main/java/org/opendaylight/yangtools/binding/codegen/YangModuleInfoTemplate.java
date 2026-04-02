@@ -8,6 +8,13 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODEL_BINDING_PROVIDER_CLASS_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_CLASS_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.getClassName;
+import static org.opendaylight.yangtools.binding.contract.Naming.getServicePackageName;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -16,7 +23,6 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -70,8 +76,8 @@ public final class YangModuleInfoTemplate {
         this.module = requireNonNull(module);
         this.modelContext = requireNonNull(modelContext);
         this.moduleFilePathResolver = requireNonNull(moduleFilePathResolver);
-        packageName = Naming.getServicePackageName(module.getQNameModule());
-        modelBindingProviderName = packageName + '.' + Naming.MODEL_BINDING_PROVIDER_CLASS_NAME;
+        packageName = getServicePackageName(module.getQNameModule());
+        modelBindingProviderName = packageName + '.' + MODEL_BINDING_PROVIDER_CLASS_NAME;
         hasYangData = module.asEffectiveStatement().findFirstEffectiveSubstatement(YangDataEffectiveStatement.class)
             .isPresent();
     }
@@ -88,31 +94,29 @@ public final class YangModuleInfoTemplate {
         final var submodules = new LinkedHashSet<Submodule>();
         collectSubmodules(submodules, module);
 
-        // FIXME: use BlockBuilder
-        var sb = new StringBuilder()
-            .append("/**\n")
-            .append(" * The {@link ResourceYangModuleInfo} for {@code ").append(module.getName()).append("} module.\n")
-            .append(" */\n")
-            .append('@').append(JavaFileTemplate.GENERATED).append("(\"mdsal-binding-generator\")\n")
-            .append("public final class ").append(Naming.MODULE_INFO_CLASS_NAME)
-                .append(" extends ResourceYangModuleInfo {\n")
-            .append("    private static final @NonNull QName NAME = QName.create(\"")
-                .append(module.getQNameModule().namespace()).append("\", ");
-        module.getRevision().ifPresent(revision -> sb.append('"').append(revision).append("\", "));
-        sb
-            .append('"').append(module.getName()).append("\").intern();\n")
-            .append('\n')
-            .append("    /**\n")
-            .append("     * The singleton instance.\n")
-            .append("     */\n")
-            .append("    public static final @NonNull YangModuleInfo ").append(Naming.MODULE_INFO_INSTANCE_FIELD_NAME)
-                .append(" = new ").append(Naming.MODULE_INFO_CLASS_NAME).append("();\n")
-            .append('\n')
-            .append("    private final @NonNull ImmutableSet<YangModuleInfo> importedModules;\n")
-            .append('\n')
+        var bb = new BlockBuilder()
+            .eol("/**")
+            .str(" * The {@link ResourceYangModuleInfo} for {@code ").str(module.getName()).eol("} module.")
+            .eol(" */")
+            .eol("@javax.annotation.processing.Generated(\"mdsal-binding-generator\")")
+            .str("public final class " + MODULE_INFO_CLASS_NAME + " extends ResourceYangModuleInfo").oB()
+            .str("    private static final @NonNull QName NAME = QName.create(")
+                .quoted(module.getQNameModule().namespace().toString()).str(", ");
+        module.getRevision().ifPresent(revision -> bb.quoted(revision.toString()).str(", "));
+        bb
+            .quoted(module.getName()).eol(").intern();")
+            .txt("""
+
+                      /**
+                       * The singleton instance.
+                       */
+                  """)
+            .eol("    public static final @NonNull YangModuleInfo " + MODULE_INFO_INSTANCE_FIELD_NAME + " = new "
+                + MODULE_INFO_CLASS_NAME + "();")
+            .txt('\n' + "    private final @NonNull ImmutableSet<YangModuleInfo> importedModules;\n" + '\n')
             // FIXME: BlockBuilder.indented()
-            .append(classBody(module, Naming.MODULE_INFO_CLASS_NAME, submodules)).append("\n")
-            .append("""
+            .blk(classBody(module, MODULE_INFO_CLASS_NAME, submodules)).nl()
+            .txt("""
                     /**
                      * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this
                      * module.
@@ -123,14 +127,14 @@ public final class YangModuleInfoTemplate {
                      * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
                      */
                 """)
-            .append("    public static @NonNull QName ").append(Naming.MODULE_INFO_QNAMEOF_METHOD_NAME)
-                .append("(final String localName) {\n")
-            .append("        return QName.create(NAME, localName).intern();\n")
-            .append("    }\n");
+            .str("    public static @NonNull QName " + MODULE_INFO_QNAMEOF_METHOD_NAME + "(final String localName)")
+                .oB()
+            .eol("        return QName.create(NAME, localName).intern();")
+            .str("    ").cB();
 
         if (hasYangData) {
-            sb
-                .append("""
+            bb
+                .txt("""
 
                     /**
                      * Create an interned {@link YangDataName} with specified {@code templateName} and \
@@ -143,21 +147,21 @@ public final class YangModuleInfoTemplate {
                      * @throws IllegalArgumentException if {@code templateName} is empty
                      */
                  """)
-                .append("    public static @NonNull YangDataName ")
-                    .append(Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME).append("(final String templateName) {\n")
-                .append("        return new YangDataName(NAME.getModule(), templateName).intern();\n")
-                .append("    }\n");
+                .str("    public static @NonNull YangDataName " + MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
+                    + "(final String templateName)").oB()
+                .eol("        return new YangDataName(NAME.getModule(), templateName).intern();")
+                .str("    ").cB();
         }
-        final var body = sb.append("}\n").toString();
+        final var body = bb.cB().toRawString();
 
-        final var sb2 = new StringBuilder()
+        final var sb = new StringBuilder()
             .append("package ").append(packageName).append(";\n")
             .append('\n')
             .append(importedTypes);
         if (hasYangData) {
-            sb2.append("import org.opendaylight.yangtools.yang.common.YangDataName;\n");
+            sb.append("import org.opendaylight.yangtools.yang.common.YangDataName;\n");
         }
-        return sb2
+        return sb
             .append('\n')
             .append(body)
             .toString();
@@ -179,20 +183,19 @@ public final class YangModuleInfoTemplate {
             +  " * directly, but rather through {@link ServiceLoader}.\n"
             +  " */\n"
             +  '@' + JavaFileTemplate.GENERATED + "(\"mdsal-binding-generator\")\n"
-            +  "public final class " + Naming.MODEL_BINDING_PROVIDER_CLASS_NAME
-                + " implements YangModelBindingProvider {\n"
+            +  "public final class " + MODEL_BINDING_PROVIDER_CLASS_NAME + " implements YangModelBindingProvider {\n"
             +  """
                     /**
                      * Construct a new provider.
                      */
                 """
-            +  "    public " + Naming.MODEL_BINDING_PROVIDER_CLASS_NAME + "() {\n"
+            +  "    public " + MODEL_BINDING_PROVIDER_CLASS_NAME + "() {\n"
             +  "        // Nothing else\n"
             +  "    }\n"
             +  '\n'
             +  "    @Override\n"
             +  "    public YangModuleInfo getModuleInfo() {\n"
-            +  "        return " + Naming.MODULE_INFO_CLASS_NAME + ".INSTANCE;\n"
+            +  "        return " + MODULE_INFO_CLASS_NAME + ".INSTANCE;\n"
             +  "    }\n"
             +  "}\n";
     }
@@ -207,13 +210,12 @@ public final class YangModuleInfoTemplate {
 
     @NonNullByDefault
     private BlockBuilder classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
-        // FIXME: use BlockBuilder here
-        final var sb = new StringBuilder()
-            .append("private ").append(className).append("() {\n");
+        final var bb = new BlockBuilder()
+            .str("private ").str(className).str("()").oB();
 
         if (!mod.getImports().isEmpty() || !submodules.isEmpty()) {
             importedTypes = YangModuleInfoTemplate.EXT_IMPORT_STR;
-            sb.append("    Set<YangModuleInfo> set = new HashSet<>();\n");
+            bb.eol("    Set<YangModuleInfo> set = new HashSet<>();");
         }
 
         for (var imp : mod.getImports()) {
@@ -233,18 +235,18 @@ public final class YangModuleInfoTemplate {
                 qnameModule = modelContext.findModule(name, optRrev).orElseThrow().getQNameModule();
             }
 
-            sb.append("    set.add(").append(Naming.getServicePackageName(qnameModule)).append('.')
-                .append(Naming.MODULE_INFO_CLASS_NAME).append(".INSTANCE);\n");
+            bb.str("    set.add(").str(getServicePackageName(qnameModule))
+                .eol('.' + MODULE_INFO_CLASS_NAME + ".INSTANCE);");
         }
 
         for (var submodule : submodules) {
-            sb.append("    set.add(").append(Naming.getClassName(submodule.getName())).append("Info.INSTANCE);\n");
+            bb.str("    set.add(").str(getClassName(submodule.getName())).eol("Info.INSTANCE);");
         }
 
         if (mod.getImports().isEmpty() && submodules.isEmpty()) {
-            sb.append("    importedModules = ImmutableSet.of();\n");
+            bb.eol("    importedModules = ImmutableSet.of();");
         } else {
-            sb.append("    importedModules = ImmutableSet.copyOf(set);\n");
+            bb.eol("    importedModules = ImmutableSet.copyOf(set);");
         }
 
         final var pathItems = moduleFilePathResolver.apply(mod);
@@ -252,55 +254,53 @@ public final class YangModuleInfoTemplate {
             throw new IllegalStateException("Module " + mod + " does not have a file path");
         }
 
-        sb
-            .append("""
-                }
+        bb
+            .txt("""
+                  }
 
-                @Override
-                public QName getName() {
-                    return NAME;
-                }
+                  @Override
+                  public QName getName() {
+                      return NAME;
+                  }
 
-                @Override
-                protected String resourceName() {
-                """)
-            .append("    return \"");
+                  @Override
+                  protected String resourceName() {
+                  """)
+            .str("    return \"");
         for (var pathItem : pathItems) {
-            sb.append('/').append(pathItem);
+            bb.str("/").str(pathItem);
         }
-        sb.append("\";\n")
-            .append("""
-                }
+        bb
+            .eol("\";")
+            .txt("""
+                  }
 
-                @Override
-                public ImmutableSet<YangModuleInfo> getImportedModules() {
-                    return importedModules;
-                }
-                """);
+                  @Override
+                  public ImmutableSet<YangModuleInfo> getImportedModules() {
+                      return importedModules;
+                  }
+                  """);
 
         for (var sub : submodules) {
-            final var subName = Naming.getClassName(sub.getName());
+            final var subName = getClassName(sub.getName());
 
-            sb
-                .append('\n')
-                .append("private static final class ").append(subName)
-                    .append("Info extends ResourceYangModuleInfo {\n")
-                .append("    private final @NonNull QName NAME = QName.create(\"")
-                    .append(sub.getQNameModule().namespace()).append("\", ");
-            sub.getRevision().ifPresent(rev -> sb.append("\"").append(rev).append("\", "));
-            sb
-                .append('"').append(sub.getName()).append("\").intern();\n")
-                .append('\n')
-                .append("    static final @NonNull YangModuleInfo INSTANCE = new ").append(subName)
-                    .append("Info();\n")
-                .append('\n')
-                .append("    private final @NonNull ImmutableSet<YangModuleInfo> importedModules;\n")
-                .append('\n')
-                // FIXME: BlockBuilder.indented()
-                .append(classBody(sub, subName + "Info", Set.of()))
-                .append("}\n");
+            bb
+                .nl()
+                .str("private static final class ").str(subName).str("Info extends ResourceYangModuleInfo").oB()
+                .str("    private final @NonNull QName NAME = QName.create(")
+                    .quoted(sub.getQNameModule().namespace().toString()).str(", ");
+            sub.getRevision().ifPresent(rev -> bb.quoted(rev.toString()).str(", "));
+            bb
+                .quoted(sub.getName()).eol(").intern();")
+                .nl()
+                .str("    static final @NonNull YangModuleInfo INSTANCE = new ").str(subName).eol("Info();")
+                .nl()
+                .eol("    private final @NonNull ImmutableSet<YangModuleInfo> importedModules;")
+                .nl()
+                .blk(classBody(sub, subName + "Info", Set.of()))
+                .cB();
         }
 
-        return new BlockBuilder().indented(sb);
+        return new BlockBuilder().indented(bb);
     }
 }
