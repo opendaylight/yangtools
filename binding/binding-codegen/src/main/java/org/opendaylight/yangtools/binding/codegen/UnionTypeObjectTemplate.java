@@ -65,7 +65,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         }
 
         final var simpleName = type().simpleName();
-        final var bb = new BlockBuilder().nl();
+        final var bb = newBlockBuilder().nl();
         final var it = finalProperties.iterator();
         while (true) {
             final var property = it.next();
@@ -113,7 +113,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         final var it = parentProperties.iterator();
         final var simpleName = type().simpleName();
         while (true) {
@@ -134,7 +134,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
 
     @NonNullByDefault
     private BlockBuilder generateStringValue() {
-        final var bb = new BlockBuilder().txt("""
+        final var bb = newBlockBuilder().txt("""
                       /**
                        * Return a String representing the value of this union.
                        *
@@ -214,32 +214,32 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder copyConstructor() {
-        final var type = type();
-        final var simpleName = type.simpleName();
+        final var simpleName = type().simpleName();
 
-        final var bb = newBlockBuilder().txt("""
+        return newBlockBuilder().txt("""
                   /**
                    * Creates a copy from Source Object.
                    *
                    * @param source Source object
                    */
                   """)
-            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
-        if (!parentProperties.isEmpty()) {
-            bb.eol("    super(source);");
-        }
-        for (var prop : properties) {
-            final var fieldName = fieldName(prop);
-            bb.str("    this.").str(fieldName).str(" = ");
-            // TODO: figure out a better flow
-            if (isArrayProperty(prop)) {
-                bb.str(importedName(CODEHELPERS)).str(".copyArray(source.").str(fieldName).str(")");
-            } else {
-                bb.str("source.").str(fieldName);
-            }
-            bb.eS();
-        }
-        return bb.cB();
+            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").jBlock(bb -> {
+                if (!parentProperties.isEmpty()) {
+                    bb.eol("    super(source);");
+                }
+                for (var prop : properties) {
+                    final var fieldName = fieldName(prop);
+
+                    // TODO: figure out a better flow
+                    bb.str("    this.").str(fieldName).str(" = ");
+                    if (isArrayProperty(prop)) {
+                        bb.str(importedName(CODEHELPERS)).str(".copyArray(source.").str(fieldName).str(")");
+                    } else {
+                        bb.str("source.").str(fieldName);
+                    }
+                    bb.eS();
+                }
+            }).nl();
     }
 
     @Override

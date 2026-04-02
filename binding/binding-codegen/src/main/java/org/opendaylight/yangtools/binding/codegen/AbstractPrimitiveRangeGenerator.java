@@ -124,7 +124,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
             final RangeConstraint<?> constraints, final GeneratedClass javaClass) {
         final var expressions = createExpressions(constraints, javaClass);
 
-        final var bb = new BlockBuilder()
+        final var bb = javaClass.newBlockBuilder()
             .str("private static void ").str(checkerName).str("(final ").str(primitiveName).str(" value)").oB();
 
         if (!expressions.isEmpty()) {
