@@ -727,25 +727,26 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return createDescription(type).toRawString();
     }
 
-    private StringBuilder generateAugmentation() {
-        return new StringBuilder()
-            .append("""
+    @NonNullByDefault
+    private BlockBuilder generateAugmentation() {
+        return new BlockBuilder()
+            .txt("""
                      /**
                       * Return the specified augmentation, if it is present in this builder.
                       *
                       * @param <E$$> augmentation type
                       * @param augmentationType augmentation type class
                       * @return Augmentation object from this builder, or {@code null} if not present
-                      * @throws\s""").append(importedName(NPE)).append(" if {@code augmentType} is {@code null}\n")
-            .append(" */\n")
-            .append('@').append(importedName(SUPPRESS_WARNINGS))
-                .append("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})\n")
-            .append("public <E$$ extends ").append(importedName(augmentType)).append("> E$$ ")
-                .append(AUGMENTABLE_AUGMENTATION_NAME).append("(").append(importedName(CLASS))
-                .append("<E$$> augmentationType) {\n")
-            .append("    return (E$$) ").append(AUGMENTATION_FIELD).append(".get(")
-                .append(importedName(JU_OBJECTS)).append(".requireNonNull(augmentationType));\n")
-            .append("}\n");
+                     """)
+            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
+            .eol(" */")
+            .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
+            .str("public <E$$ extends ").str(importedName(augmentType))
+                .str("> E$$ " + AUGMENTABLE_AUGMENTATION_NAME + '(').str(importedName(CLASS))
+                .str("<E$$> augmentationType)").oB()
+            .str("    return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
+                .eol(".requireNonNull(augmentationType));")
+            .cB();
     }
 
     @Override

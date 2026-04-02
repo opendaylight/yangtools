@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.META_STATIC_FIE
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
  * Template for {@link DataRoot} specializations.
  */
 final class DataRootTemplate extends InterfaceTemplate {
+    @NonNullByDefault
     DataRootTemplate(final DataRootArchetype archetype) {
         super(archetype);
     }
@@ -29,7 +31,7 @@ final class DataRootTemplate extends InterfaceTemplate {
     }
 
     @Override
-    StringBuilder generateConstants() {
+    BlockBuilder generateConstants() {
         final var archetype = archetype();
 
         // pre-compute constants: split out for future isolation
@@ -40,15 +42,14 @@ final class DataRootTemplate extends InterfaceTemplate {
         // FIXME: YANGTOOLS-1808: use importedName()
         final var type = archetype.canonicalName();
 
-        return new StringBuilder(
-             "/**\n"
-            +  " * The {@link ").append(rootMetaRaw).append("} associated with this module root.\n").append(
-               " */\n"
-            +  '@').append(nonNullByDefault).append('\n')
+        return new BlockBuilder()
+            .eol("/**")
+            .str(" * The {@link ").str(rootMetaRaw).eol("} associated with this module root.")
+            .eol(" */")
+            .at().eol(nonNullByDefault)
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
-            .append(rootMetaRaw).append('<').append(type).append("> META = new ").append(rootMetaRaw).append("<>(")
-                .append(type).append(".class, ").append(moduleInfo)
-                .append('.' + MODULE_INFO_INSTANCE_FIELD_NAME + ");\n");
+            .str(rootMetaRaw).str("<").str(type).str("> META = new ").str(rootMetaRaw).str("<>(").str(type)
+                .str(".class, ").str(moduleInfo).eol('.' + MODULE_INFO_INSTANCE_FIELD_NAME + ");");
     }
 
     @Override
