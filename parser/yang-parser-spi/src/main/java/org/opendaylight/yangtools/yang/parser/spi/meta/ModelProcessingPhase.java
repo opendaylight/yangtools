@@ -26,11 +26,37 @@ public enum ModelProcessingPhase {
      * are processed.
      *
      * <p>At end of this phase all source related contexts should be bind to their imports and includes to allow
-     * visibility of custom defined statements in subsequent phases.
+     * visibility of custom defined statements in subsequent phases. Most notably all
+     * {@link ParserNamespace#readOnly(String)} namespaces are initialized.
      */
     SOURCE_LINKAGE(INIT, ExecutionOrder.SOURCE_LINKAGE),
+    // FIXME: YANGTOOLS-1840: this phase should include all statements except TypeStatement and DefaultStatement
+    // FIXME: document the following namespaces as frozen:
+    //        - ParserNamespaces.EXTENSION
+    //        - ParserNamespaces.FEATURE
+    //        - ParserNamespaces.GROUPING
+    //        - ParserNamespaces.IDENTITY
+    //        - ParserNamespaces.TYPE
     STATEMENT_DEFINITION(SOURCE_LINKAGE, ExecutionOrder.STATEMENT_DEFINITION),
+
+    // FIXME: YANGTOOLS-1840: this phase should add TypeStatatementSupport
+    //        The idea is to replace wiring around getSupportSpecificForArgument() so that it has a QName rather than
+    //        a String. That way we can discern type reference it is:
+    //          - static (e.g. 'type uint32')
+    //          - dynamic (e.g. 'type decimal64')
+    //          - typedef namespace (e.g. 'type foo', 'type foo:bar')
+    //        This way we can create check the target exists and a FULL_DECLARATION dependency as part of
+    //        onStatementAdded() -- and have it change return type from void to 'StatementSupport<A, D, E>'.
+    // TYPE_LINKAGE,
+
+    // FIXME: YANGTOOLS-1762: this phase should add DefaultStatementSupport
+    //        The idea is that by the time parseArgument() is called we know everything else, most notably all sibling
+    //        'type' statements have been linked and we can therefore parse the argument onto its correct type, e.g.
+    //        uint32, instance-identifier, uinion, etc.
+
+    // FIXME: add documentation
     FULL_DECLARATION(STATEMENT_DEFINITION, ExecutionOrder.FULL_DECLARATION),
+    // FIXME: add documentation
     EFFECTIVE_MODEL(FULL_DECLARATION, ExecutionOrder.EFFECTIVE_MODEL);
 
     /**
