@@ -749,29 +749,26 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    void appendCopyKeys(final StringBuilder sb, final List<GeneratedProperty> keyProps) {
-        sb.append("    this.key = base.").append(KEY_AWARE_KEY_NAME).append("();\n");
+    void appendCopyKeys(final BlockBuilder bb, final List<GeneratedProperty> keyProps) {
+        bb.eol("    this.key = base." + KEY_AWARE_KEY_NAME + "();");
         for (var field : keyProps) {
-            sb.append("    this.").append(fieldName(field)).append(" = base.").append(getterMethodName(field))
-                .append("();\n");
+            bb.str("    this.").str(fieldName(field)).str(" = base.").str(getterMethodName(field)).eol("();");
         }
     }
 
     @Override
-    void appendCopyNonKeys(final StringBuilder sb, final Collection<BuilderGeneratedProperty> props) {
+    void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
-            sb.append("    this.").append(fieldName(field)).append(" = base.").append(field.getGetterName())
-                .append("();\n");
+            bb.str("    this.").str(fieldName(field)).str(" = base.").str(field.getGetterName()).eol("();");
         }
     }
 
     @Override
-    void appendCopyAugmentation(final StringBuilder sb) {
-        sb
-            .append("    final var aug = base.augmentations();\n")
-            .append("    if (!aug.isEmpty()) {\n")
-            .append("        this.").append(AUGMENTATION_FIELD).append(" = new ").append(importedName(JU_HASHMAP))
-                .append("<>(aug);\n")
-            .append("    }\n");
+    void appendCopyAugmentation(final BlockBuilder bb) {
+        bb
+            .eol("    final var aug = base.augmentations();")
+            .str("    if (!aug.isEmpty())").oB()
+            .str("        this." + AUGMENTATION_FIELD + " = new ").str(importedName(JU_HASHMAP)).eol("<>(aug);")
+            .str("    ").cB();
     }
 }

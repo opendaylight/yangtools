@@ -127,12 +127,13 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         }
     }
 
-    final StringBuilder generateCopyConstructor(final Type fromType, final Type implType) {
-        final var sb = new StringBuilder()
-            .append(type().simpleName()).append("(final ").append(importedName(fromType)).append(" base) {\n");
+    @NonNullByDefault
+    final BlockBuilder generateCopyConstructor(final Type fromType, final Type implType) {
+        final var bb = new BlockBuilder()
+            .str(type().simpleName()).str("(final ").str(importedName(fromType)).str(" base)").oB();
 
         if (augmentType != null) {
-            appendCopyAugmentation(sb);
+            appendCopyAugmentation(bb);
         }
 
         if (keyType != null && targetType.getImplements().contains(BindingTypes.entryObject(targetType, keyType))) {
@@ -142,13 +143,13 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 removeProperty(allProps, field.getName());
             }
 
-            appendCopyKeys(sb, keyProps);
-            appendCopyNonKeys(sb, allProps);
+            appendCopyKeys(bb, keyProps);
+            appendCopyNonKeys(bb, allProps);
         } else {
-            appendCopyNonKeys(sb, properties);
+            appendCopyNonKeys(bb, properties);
         }
 
-        return sb.append("}\n");
+        return bb.cB();
     }
 
     /**
@@ -169,17 +170,17 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      * Append the code to copy key components, with four spaces of indentation.
      */
     @NonNullByDefault
-    abstract void appendCopyKeys(StringBuilder sb, List<GeneratedProperty> keyProps);
+    abstract void appendCopyKeys(BlockBuilder bb, List<GeneratedProperty> keyProps);
 
     /**
      * Append the code to copy non-key-components, with four spaces of indentation.
      */
-    abstract void appendCopyNonKeys(StringBuilder sb, Collection<BuilderGeneratedProperty> props);
+    abstract void appendCopyNonKeys(BlockBuilder bb, Collection<BuilderGeneratedProperty> props);
 
     /**
      * Append the code to copy augmentations from a {@code base} local variable, with four spaces of indentation.
      */
-    abstract void appendCopyAugmentation(StringBuilder sb);
+    abstract void appendCopyAugmentation(BlockBuilder bb);
 
     final @Nullable BlockBuilder generateDeprecatedAnnotation(final @Nullable List<AnnotationType> annotations) {
         if (annotations != null) {

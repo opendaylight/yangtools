@@ -236,34 +236,32 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    void appendCopyKeys(final StringBuilder sb, final List<GeneratedProperty> keyProps) {
-        sb.append("    final var key = key();\n");
+    void appendCopyKeys(final BlockBuilder bb, final List<GeneratedProperty> keyProps) {
+        bb.eol("    final var key = key();");
         for (var field : keyProps) {
-            sb.append("    this.").append(fieldName(field)).append(" = key.").append(getterMethodName(field))
-                .append("();\n");
+            bb.str("    this.").str(fieldName(field)).str(" = key.").str(getterMethodName(field)).eol("();");
         }
     }
 
     @Override
-    void appendCopyNonKeys(final StringBuilder sb, final Collection<BuilderGeneratedProperty> props) {
+    void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
-            sb.append("    this.").append(fieldName(field)).append(" = ");
+            bb.str("    this.").str(fieldName(field)).str(" = ");
 
             if (field.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
-                sb.append(importedName(CODEHELPERS)).append(".emptyToNull(base.").append(field.getGetterName())
-                    .append("());\n");
+                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
             } else {
-                sb.append("base.").append(field.getGetterName()).append("();\n");
+                bb.str("base.").str(field.getGetterName()).eol("();");
             }
         }
     }
 
     @Override
-    void appendCopyAugmentation(final StringBuilder sb) {
-        sb.append("    super(base." + AUGMENTATION_FIELD);
+    void appendCopyAugmentation(final BlockBuilder bb) {
+        bb.ind("super(base." + AUGMENTATION_FIELD);
         if (keyType != null) {
-            sb.append(", extractKey(base)");
+            bb.str(", extractKey(base)");
         }
-        sb.append(");\n");
+        bb.eol(");");
     }
 }
