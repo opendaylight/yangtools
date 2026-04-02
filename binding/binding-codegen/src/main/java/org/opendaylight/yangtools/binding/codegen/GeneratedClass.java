@@ -11,12 +11,14 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,11 +36,12 @@ import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
- * Abstract class representing a generated class, either top-level or nested. It takes care of tracking references
- * to other Java types and resolving them as best as possible. This class is NOT thread-safe.
+ * State related to generating a Java class, either top-level or nested. It takes care of tracking references to other
+ * Java types and resolving them as best as possible. This class is NOT thread-safe.
  */
 @NonNullByDefault
-abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.Nested, GeneratedClass.TopLevel {
+abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
+        permits GeneratedClass.Nested, GeneratedClass.TopLevel {
     /**
      * A class which is nested inside some other type. It defers import decisions to its enclosing type, eventually
      * arriving at a {@link TopLevelJavaGeneratedType}.
@@ -60,19 +63,22 @@ abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.N
         @Override
         String localTypeName(final JavaTypeName type) {
             // Check if the type is a reference to our immediately-enclosing type
-            if (enclosingClass.getName().equals(type)) {
-                return enclosingClass.getSimpleName();
-            }
+            final var enclosingName = enclosingClass.name();
+            return enclosingName.equals(type) ? enclosingName.simpleName() : findLocalTypeName(type);
 
+        }
+
+        private String findLocalTypeName(final JavaTypeName type) {
             final var descendant = findDescandantPath(type);
-            if (descendant == null) {
+            return descendant == null
                 // The type is not present in our hierarchy, defer to our immediately-enclosing type, which may be able
                 // to find the target.
-                return enclosingClass.localTypeName(type);
-            }
+                ? enclosingClass.localTypeName(type)
+                // Target type is a declared as a enclosed type of us and we have the path where it lurks.
+                : printLocalTypeName(descendant);
+        }
 
-            // Target type is a declared as a enclosed type of us and we have the path where it lurks.
-            final var it = descendant.iterator();
+        private static String printLocalTypeName(final Iterator<String> it) {
             final var sb = new StringBuilder().append(it.next());
             while (it.hasNext()) {
                 sb.append('.').append(it.next());
@@ -80,19 +86,23 @@ abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.N
             return sb.toString();
         }
 
-        private @Nullable Iterable<String> findDescandantPath(final JavaTypeName type) {
-            var enclosing = verifyNotNull(type.immediatelyEnclosingClass());
+        private @Nullable Iterator<String> findDescandantPath(final JavaTypeName type) {
+            var enclosing = type.immediatelyEnclosingClass();
+            if (enclosing == null) {
+                throw new VerifyException("no immediately enclosing class in " + type);
+            }
 
-            final var queue = new ArrayDeque<String>();
-            queue.addFirst(type.simpleName());
-            while (enclosing != null) {
-                if (enclosing.equals(getName())) {
-                    return queue;
+            final var myName = name();
+            final var reversePath = new ArrayList<String>();
+            reversePath.add(type.simpleName());
+            do  {
+                if (enclosing.equals(myName)) {
+                    return reversePath.reversed().iterator();
                 }
 
-                queue.addFirst(enclosing.simpleName());
+                reversePath.add(enclosing.simpleName());
                 enclosing = enclosing.immediatelyEnclosingClass();
-            }
+            } while (enclosing != null);
 
             return null;
         }
@@ -109,6 +119,8 @@ abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.N
             super(genType);
         }
 
+        // FIXME: this method should not be exposed
+        @Deprecated
         Stream<JavaTypeName> imports() {
             return importedTypes.entrySet().stream()
                 .filter(this::needsExplicitImport)
@@ -145,7 +157,7 @@ abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.N
         private boolean needsExplicitImport(final Entry<JavaTypeName, String> entry) {
             final var name = entry.getKey();
 
-            if (!getName().packageName().equals(name.packageName())) {
+            if (!name().packageName().equals(name.packageName())) {
                 // Different package: need to import it
                 return true;
             }
@@ -195,21 +207,28 @@ abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.N
     }
 
     /**
-     * {@return a new {@GeneratedClass.TopLevel top-level class} for the specified {@link GeneratedType}.
+     * {@return a new {@GeneratedClass.TopLevel top-level class} for the specified {@link GeneratedType}}
      * @param genType the generated type
      */
+    // FIXME: this method should:
+    //        - accept a GeneratedType -> Template resolver
+    //        - do the work of BaseTemplate.generate()
+    //        - return a Block
     static GeneratedClass.TopLevel of(final GeneratedType genType) {
         return new TopLevel(genType);
     }
 
-    // FIXME: rename to name()
-    final JavaTypeName getName() {
+    /**
+     * {@return the {@link JavaTypeName name} of this class}
+     */
+    final JavaTypeName name() {
         return name;
     }
 
-    // FIXME: rename to simpleName()
-    final String getSimpleName() {
-        return name.simpleName();
+    // TODO: for now just a simple BlockBuilder, but we can also do things like importedName(), so more concise
+    @Override
+    public final BlockBuilder newBlockBuilder() {
+        return new BlockBuilder();
     }
 
     private String annotateReference(final String ref, final Type type, final String annotation) {
@@ -298,8 +317,8 @@ abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.N
 
     final boolean checkAndImportType(final JavaTypeName type) {
         // We can import the type only if it does not conflict with us or our immediately-enclosed types
-        final String simpleName = type.simpleName();
-        return !simpleName.equals(getSimpleName()) && !nestedClasses.containsKey(simpleName)
+        final var simpleName = type.simpleName();
+        return !simpleName.equals(name().simpleName()) && !nestedClasses.containsKey(simpleName)
                 && !conflictingNames.contains(simpleName) && importCheckedType(type);
     }
 

@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeMember;
 /**
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
  */
-class JavaFileTemplate {
+sealed class JavaFileTemplate permits BaseTemplate {
     /**
      * {@code java.lang.Class} as a JavaTypeName.
      */
@@ -162,6 +162,10 @@ class JavaFileTemplate {
 
     final @NonNull GeneratedType type() {
         return type;
+    }
+
+    final @NonNull BlockBuilder newBlockBuilder() {
+        return javaType.newBlockBuilder();
     }
 
     @NonNullByDefault

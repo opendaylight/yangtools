@@ -44,7 +44,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder constructors() {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .blk(unionConstructorsParentProperties())
             .blk(unionConstructors());
         // TODO: figure out a better flow here
@@ -217,7 +217,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         final var type = type();
         final var simpleName = type.simpleName();
 
-        final var bb = new BlockBuilder().txt("""
+        final var bb = newBlockBuilder().txt("""
                   /**
                    * Creates a copy from Source Object.
                    *

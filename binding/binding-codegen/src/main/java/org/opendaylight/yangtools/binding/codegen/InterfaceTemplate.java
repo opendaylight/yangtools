@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
 /**
  * Template for generating JAVA interfaces.
  */
-class InterfaceTemplate extends BaseTemplate {
+sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 
@@ -89,7 +89,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     @Override
     final BlockBuilder body() {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
             .blk(generateAnnotations(type().getAnnotations()))
             .eol(generatedAnnotation())
@@ -222,6 +222,7 @@ class InterfaceTemplate extends BaseTemplate {
             return null;
         }
 
+        // FIXME: use a BlockBuilder
         final var sb = new StringBuilder();
         final var contract = comment.contractDescription();
         if (contract != null) {
@@ -249,7 +250,7 @@ class InterfaceTemplate extends BaseTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var annotation : annotations) {
             bb.blk(generateAnnotation(annotation));
         }
@@ -313,7 +314,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     @NonNullByDefault
     private BlockBuilder generateAccessorMethod(final MethodSignature method) {
-        return new BlockBuilder()
+        return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or {@code null} if it is not present."))
             .blk(generateAccessorAnnotations(method))
             .str(nullableType(method.getReturnType())).sp().str(method.getName()).eol("();");
@@ -325,7 +326,7 @@ class InterfaceTemplate extends BaseTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var annotation : annotations) {
             if (!Types.BOOLEAN.equals(method.getReturnType()) || !OVERRIDE.equals(annotation.name())) {
                 bb.blk(generateAnnotation(annotation));
@@ -488,7 +489,7 @@ class InterfaceTemplate extends BaseTemplate {
         final var propName = propertyNameFromGetter(method);
         final var comment = method.getComment();
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .str("Return ").str(propName).eol(orString);
         final var reference = comment == null ? null : comment.referenceDescription();
         if (reference != null) {

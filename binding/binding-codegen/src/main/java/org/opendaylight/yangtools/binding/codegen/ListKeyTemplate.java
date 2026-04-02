@@ -38,7 +38,7 @@ final class ListKeyTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder allValuesConstructor() {
-        final var bb = new BlockBuilder().txt("""
+        final var bb = newBlockBuilder().txt("""
             /**
              * Constructs an instance.
              *
@@ -75,7 +75,7 @@ final class ListKeyTemplate extends ClassTemplate {
         final var fieldName = field.getName();
         final var returnType = field.getReturnType();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             // FIXME: emit a {@return .. } javadoc
             .eol("/**")
             .str(" * Return ").str(fieldName).eol(", guaranteed to be non-null.")
