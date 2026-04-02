@@ -49,7 +49,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
 
     final GeneratedType targetType;
 
-    AbstractBuilderTemplate(final @NonNull AbstractJavaGeneratedType javaType, final @NonNull GeneratedType type,
+    AbstractBuilderTemplate(final @NonNull GeneratedClass javaType, final @NonNull GeneratedType type,
             final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties,
             final ParameterizedType augmentType, final GeneratedTransferObject keyType) {
         super(javaType, type);

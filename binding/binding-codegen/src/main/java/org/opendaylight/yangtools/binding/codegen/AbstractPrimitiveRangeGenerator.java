@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.CODEHELPERS;
 
 import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +49,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
         return minValue.compareTo(minToEnforce) < 0;
     }
 
-    private Collection<String> createExpressions(final RangeConstraint<?> constraint,
-            final Function<JavaTypeName, String> classImporter) {
+    private Collection<String> createExpressions(final RangeConstraint<?> constraint, final GeneratedClass javaClass) {
         final var constraints = constraint.getAllowedRanges().asRanges();
         final var ret = new ArrayList<String>(constraints.size());
 
@@ -70,13 +68,13 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
 
             final var sb = new StringBuilder();
             if (needMin) {
-                appendMinCheck(sb, min, classImporter);
+                appendMinCheck(sb, min, javaClass);
             }
             if (needMax) {
                 if (needMin) {
                     sb.append(" && ");
                 }
-                appendMaxCheck(sb, max, classImporter);
+                appendMaxCheck(sb, max, javaClass);
             }
 
             ret.add(sb.toString());
@@ -85,11 +83,11 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
         return ret;
     }
 
-    void appendMaxCheck(final StringBuilder sb, final T max, final Function<JavaTypeName, String> classImporter) {
+    void appendMaxCheck(final StringBuilder sb, final T max, final GeneratedClass javaClass) {
         sb.append("value <= ").append(format(max));
     }
 
-    void appendMinCheck(final StringBuilder sb, final T min, final Function<JavaTypeName, String> classImporter) {
+    void appendMinCheck(final StringBuilder sb, final T min, final GeneratedClass javaClass) {
         sb.append("value >= ").append(format(min));
     }
 
@@ -123,8 +121,8 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
 
     @Override
     final BlockBuilder generateRangeCheckerImplementation(final String checkerName,
-            final RangeConstraint<?> constraints, final Function<JavaTypeName, String> classImporter) {
-        final var expressions = createExpressions(constraints, classImporter);
+            final RangeConstraint<?> constraints, final GeneratedClass javaClass) {
+        final var expressions = createExpressions(constraints, javaClass);
 
         final var bb = new BlockBuilder()
             .str("private static void ").str(checkerName).str("(final ").str(primitiveName).str(" value)").oB();
@@ -137,8 +135,8 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
                     .str("    ").cB();
             }
 
-            bb.str("    ").str(classImporter.apply(JavaFileTemplate.CODEHELPERS))
-                .str(".").str(codeHelpersThrow()).str("(").quoted(createRangeString(constraints)).eol(", value);");
+            bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".").str(codeHelpersThrow()).str("(")
+                .quoted(createRangeString(constraints)).eol(", value);");
         }
 
         return bb.cB();

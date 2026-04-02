@@ -18,7 +18,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.Iterables;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -28,7 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
 final class UnionTypeObjectTemplate extends ClassTemplate {
     @NonNullByDefault
-    private UnionTypeObjectTemplate(final NestedJavaGeneratedType javaType, final UnionTypeObjectArchetype archetype) {
+    private UnionTypeObjectTemplate(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype) {
         super(javaType, archetype);
     }
 
@@ -37,8 +36,9 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
         super(archetype);
     }
 
-    static @NonNull BlockBuilder generateAsInner(final @NonNull NestedJavaGeneratedType javaType,
-            final @NonNull UnionTypeObjectArchetype archetype) {
+    @NonNullByDefault
+    static BlockBuilder generateAsInner(final GeneratedClass.Nested javaType,
+            final UnionTypeObjectArchetype archetype) {
         return new UnionTypeObjectTemplate(javaType, archetype).generateAsInnerClass();
     }
 

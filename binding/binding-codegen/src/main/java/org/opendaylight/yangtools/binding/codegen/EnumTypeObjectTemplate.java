@@ -25,7 +25,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
 
     private final EnumTypeObjectArchetype archetype;
 
-    private EnumTypeObjectTemplate(final AbstractJavaGeneratedType javaType, final EnumTypeObjectArchetype archetype) {
+    private EnumTypeObjectTemplate(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype) {
         super(javaType, archetype);
         this.archetype = requireNonNull(archetype);
     }
@@ -35,7 +35,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         this.archetype = requireNonNull(archetype);
     }
 
-    static void generateAsInner(final AbstractJavaGeneratedType javaType, final EnumTypeObjectArchetype archetype,
+    static void generateAsInner(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
             final BlockBuilder bb) {
         new EnumTypeObjectTemplate(javaType, archetype).appendBody(bb);
     }

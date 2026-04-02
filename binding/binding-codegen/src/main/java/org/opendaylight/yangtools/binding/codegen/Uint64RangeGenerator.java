@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.Uint16;
@@ -46,18 +45,18 @@ final class Uint64RangeGenerator extends AbstractUnsignedRangeGenerator<Uint64> 
     }
 
     @Override
-    void appendMaxCheck(final StringBuilder sb, final Uint64 max, final Function<JavaTypeName, String> classImporter) {
-        appendCompare(sb, classImporter, max, "<=");
+    void appendMaxCheck(final StringBuilder sb, final Uint64 max, final GeneratedClass javaClass) {
+        appendCompare(sb, javaClass, max, "<=");
     }
 
     @Override
-    void appendMinCheck(final StringBuilder sb, final Uint64 min, final Function<JavaTypeName, String> classImporter) {
-        appendCompare(sb, classImporter, min, ">=");
+    void appendMinCheck(final StringBuilder sb, final Uint64 min, final GeneratedClass javaClass) {
+        appendCompare(sb, javaClass, min, ">=");
     }
 
     private static StringBuilder appendCompare(final StringBuilder sb,
-            final Function<JavaTypeName, String> classImporter, final Uint64 val, final String operator) {
-        return sb.append(classImporter.apply(LONG)).append(".compareUnsigned(value, ").append(val.longValue())
+            final GeneratedClass javaClass, final Uint64 val, final String operator) {
+        return sb.append(javaClass.getReferenceString(LONG)).append(".compareUnsigned(value, ").append(val.longValue())
             .append("L) ").append(operator).append(" 0");
     }
 }
