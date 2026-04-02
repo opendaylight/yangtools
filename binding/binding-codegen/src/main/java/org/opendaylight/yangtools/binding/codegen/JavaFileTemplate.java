@@ -260,15 +260,6 @@ class JavaFileTemplate {
     }
 
     /**
-     * {@return the string used to clone the property, or an empty string}
-     * @param property the property
-     */
-    @NonNullByDefault
-    static final String cloneOrEmpty(final GeneratedProperty property) {
-        return isArrayProperty(property) ? ".clone()" : "";
-    }
-
-    /**
      * {@return the string used to clone the property, or {@code null}}
      * @param property the property
      */

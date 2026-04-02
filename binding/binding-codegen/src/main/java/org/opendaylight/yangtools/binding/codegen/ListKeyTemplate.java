@@ -38,39 +38,36 @@ final class ListKeyTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder allValuesConstructor() {
-        // FIXME: use BlockBuilder
-        final var sb = new StringBuilder().append("""
+        final var bb = new BlockBuilder().txt("""
             /**
              * Constructs an instance.
              *
             """);
         for (var prop : allProperties) {
-            sb.append(" * @param ").append(fieldName(prop)).append(" the entity ").append(prop.getName()).append('\n');
+            bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
         }
 
-        sb.append("""
+        bb.txt("""
              * @throws NullPointerException if any of the arguments are null
              */
-            public\s""").append(type().simpleName()).append('(').append(asNonNullArgumentsDeclaration(allProperties))
-                .append(") {\n");
+            """)
+            .str("public ").str(type().simpleName()).str("(").str(asNonNullArgumentsDeclaration(allProperties)).str(")")
+                .oB();
 
         for (var prop : allProperties) {
             final var fieldName = fieldName(prop);
-            sb.append("    this.").append(fieldName).append(" = ")
-                .append(importedName(CODEHELPERS)).append(".requireKeyProp(").append(fieldName).append(", \"")
-                .append(prop.getName()).append("\")").append(cloneOrEmpty(prop)).append(";\n");
+            bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
+                .str(fieldName).str(", ").quoted(prop.getName()).str(")", cloneOrNull(prop)).eS();
         }
 
         for (var prop : properties) {
             final var restrictions = generateRestrictions(type(), fieldName(prop), prop.getReturnType());
             if (restrictions != null) {
-                sb.append(restrictions);
+                bb.blk(restrictions);
             }
         }
 
-        return new BlockBuilder()
-            .txt(sb.toString())
-            .eol("}");
+        return bb.cB();
     }
 
     @Override
