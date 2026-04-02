@@ -42,7 +42,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
 
     @Override
     BlockBuilder body() {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         appendBody(bb);
         return bb;
     }

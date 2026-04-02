@@ -64,7 +64,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     @Override
     BlockBuilder body() {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(targetType)))
             .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
             .eol(generatedAnnotation())
@@ -427,7 +427,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     @NonNullByDefault
     private BlockBuilder constantsDeclarations() {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var def : type().getConstantDefinitions()) {
             if (!def.getName().startsWith(PATTERN_CONSTANT_NAME)) {
                 bb.txt(emitConstant(def));
@@ -674,7 +674,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     private @NonNull BlockBuilder createDescription(final GeneratedType targetType) {
         final var target = importedName(targetType);
-        return new BlockBuilder()
+        return newBlockBuilder()
             .str("Class that builds {@link ").str(target).eol("} instances. Overall design of the class is that of a")
             .txt("""
                   <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent interface</a>, where method chaining \

@@ -61,7 +61,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         final var impIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
             .str("private static final class ").eol(type().simpleName());
         if (keyType != null) {
@@ -193,7 +193,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         final var fieldName = fieldName(field);
         final var type = field.getReturnType();
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("public ").str(importedName(type)).sp().str(getterMethodName(field)).str("()").oB();
 

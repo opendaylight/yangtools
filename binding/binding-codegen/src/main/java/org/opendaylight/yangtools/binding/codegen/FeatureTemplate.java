@@ -44,7 +44,7 @@ final class FeatureTemplate extends ClassTemplate {
 
     @Override
     BlockBuilder constructors() {
-        return new BlockBuilder()
+        return newBlockBuilder()
             .nl()
             .str("private ").str(type().simpleName()).str("()").oB()
                 .ind("// Hidden on purpose").nl()

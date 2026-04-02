@@ -60,7 +60,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 /**
 - * Template for generating JAVA class.
  */
-class ClassTemplate extends BaseTemplate {
+sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKeyTemplate, UnionTypeObjectTemplate {
     private static final Comparator<GeneratedProperty> PROP_COMPARATOR =
         Comparator.comparing(GeneratedProperty::getName);
 
@@ -342,7 +342,7 @@ class ClassTemplate extends BaseTemplate {
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
     private BlockBuilder bitsDefaultInstanceBody() {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .str("var values = ").str(importedName(CODEHELPERS)).str(".parseBitsDefaultValue(defaultValue, ");
         final var size = allProperties.size();
         if (size != 0) {
@@ -389,7 +389,7 @@ class ClassTemplate extends BaseTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var annotation : annotations) {
             bb.at().eol(annotation.simpleName());
         }
@@ -438,7 +438,7 @@ class ClassTemplate extends BaseTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var c : consts) {
             switch (c.getName()) {
                 case PATTERN_CONSTANT_NAME -> appendPatternConstant(bb, (Map<String, String>) c.getValue());
@@ -530,7 +530,7 @@ class ClassTemplate extends BaseTemplate {
         }
 
         final var simpleName = genTO.simpleName();
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .nl()
             .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").oB();
         // FIXME: unify handling here ...
@@ -558,7 +558,7 @@ class ClassTemplate extends BaseTemplate {
     }
 
     @Nullable BlockBuilder constructors() {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .nl();
         if (genTO.isTypedef() && allProperties.size() == 1 && VALUE_PROP.equals(allProperties.getFirst().getName())) {
             bb.blk(typedefConstructor());
@@ -581,7 +581,7 @@ class ClassTemplate extends BaseTemplate {
         }
         if (genTO.getImplements().stream().anyMatch(ifc -> SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
             final var field = properties.getFirst();
-            return new BlockBuilder()
+            return newBlockBuilder()
                 .nl()
                 .at().eol(importedName(OVERRIDE))
                 .str("public ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()").oB()
@@ -669,7 +669,7 @@ class ClassTemplate extends BaseTemplate {
     }
 
     @NonNull BlockBuilder allValuesConstructor() {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
         if (!parentProperties.isEmpty()) {
             bb.str("    super(").str(asArguments(parentProperties)).eol(");");
@@ -694,7 +694,7 @@ class ClassTemplate extends BaseTemplate {
     BlockBuilder copyConstructor() {
         final var simpleName = type().simpleName();
 
-        final var bb = new BlockBuilder().txt("""
+        final var bb = newBlockBuilder().txt("""
                   /**
                    * Creates a copy from Source Object.
                    *

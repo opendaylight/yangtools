@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-abstract class AbstractBuilderTemplate extends BaseTemplate {
+abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits BuilderTemplate, BuilderImplTemplate {
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
      */

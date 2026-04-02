@@ -67,7 +67,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
-abstract class BaseTemplate extends JavaFileTemplate {
+abstract sealed class BaseTemplate extends JavaFileTemplate
+        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, InterfaceTemplate {
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
         .addIgnoredStatement(ContactStatement.DEF)
         .addIgnoredStatement(DescriptionStatement.DEF)
@@ -85,26 +86,26 @@ abstract class BaseTemplate extends JavaFileTemplate {
         super(javaType, type);
     }
 
+    // FIXME: this code should live in GeneratedClass.of()
+    @Deprecated
     final @NonNull String generate() {
+
         final var sb = new StringBuilder()
             .append("package ").append(type().packageName()).append(";\n");
 
         // Has side-effects
         final var body = body();
 
-        final var importBlock = generateImportBlock();
+        final var javaType = javaType();
+        if (!(javaType instanceof GeneratedClass.TopLevel topLevel)) {
+            throw new VerifyException("Unexpected type " + javaType);
+        }
+
+        final var importBlock = topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
         if (!importBlock.isEmpty()) {
             sb.append(importBlock).append('\n');
         }
         return sb.append(body).toString();
-    }
-
-    private String generateImportBlock() {
-        final var javaType = javaType();
-        if (javaType instanceof GeneratedClass.TopLevel topLevel) {
-            return topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
-        }
-        throw new VerifyException("Unexpected type " + javaType);
     }
 
     /**
@@ -310,7 +311,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var codeHelpers = returnType.isArray() ? importedName(CODEHELPERS) : null;
 
         // emit separately
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .str("public ").str(importedName).sp().str(methodName).str("()").oB()
             .str("    return ");
         if (codeHelpers != null) {
@@ -334,7 +335,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var suffix = toFirstUpper(field.getName());
         final var typeName = type().simpleName();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").oB()
                 .ind("this.").str(fieldName).eol(" = value;")
                 .ind("return this;").nl()
@@ -447,7 +448,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
     @NonNullByDefault
     final BlockBuilder generateAnnotation(final AnnotationType annotation) {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .at().str(importedName(annotation));
 
         final var params = annotation.getParameters();
@@ -565,7 +566,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
         final var valueRef = actualType instanceof ConcreteType ? value : value + ".getValue()";
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         if (restrictions.getRangeConstraint().isPresent()) {
             AbstractRangeGenerator.forType(actualType)
                 .appendCheckerCall(bb, toFirstUpper(property.getName()), valueRef);
