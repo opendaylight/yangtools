@@ -36,7 +36,7 @@ final class FeatureTemplate extends ClassTemplate {
     protected BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
         final var typeName = type().simpleName();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .at().eol(importedName(NONNULL_BY_DEFAULT))
             .str("public final class ").str(typeName).str(" extends ")
                 .gen(importedName(YANG_FEATURE), typeName, importedName(dataRoot));
@@ -67,7 +67,7 @@ final class FeatureTemplate extends ClassTemplate {
         final var clazz = importedName(CLASS);
         final var rootName = importedName(dataRoot);
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .nl()
             .at().eol(override)
             .str("public ").gen(clazz, typeName).str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()

@@ -142,7 +142,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     @NonNullByDefault
     private BlockBuilder propertyFields() {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var prop : properties) {
             bb.str("private ").str(importedReturnType(prop)).sp().str(fieldName(prop)).eS();
         }
@@ -151,7 +151,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     @Override
     BlockBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
-        final var bb = new BlockBuilder().at();
+        final var bb = newBlockBuilder().at();
         final var forRemoval = ann.getParameter("forRemoval");
         return forRemoval != null
             ? bb.str(importedName(DEPRECATED)).str("(forRemoval = ").str(forRemoval.getValue()).str(")")
@@ -163,7 +163,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder().nl();
+        final var bb = newBlockBuilder().nl();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
             if (impl instanceof GeneratedType genType) {
@@ -182,7 +182,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      * Generate constructor with argument of given type.
      */
     private @NonNull BlockBuilder generateConstructorFromIfc(final GeneratedType genType) {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
             bb
@@ -209,7 +209,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName())) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
@@ -228,7 +228,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName()) && getterByName(alreadySetProperties, getter.getName()) == null) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
@@ -259,7 +259,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         // FIXME: this is not used anywhere: I think this is meant to suppress duplicate checks?
         final var done = getBaseIfcs(targetType);
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .blk(generateMethodFieldsFromComment(targetType))
             .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").oB()
                 .ind("boolean isValidArg = false;").nl();
@@ -286,7 +286,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var nonnullTarget = importedNonNull(targetType);
         final var targetName = targetType.simpleName();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .str("private static final class LazyEmpty").oB()
             .str("    static final ").str(nonnullTarget).str(" INSTANCE = new ").str(type().simpleName())
                 .eol("().build();")
@@ -309,7 +309,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     @NonNullByDefault
     private BlockBuilder generateMethodFieldsFromComment(final GeneratedType type) {
         // FIXME: create a specialized JavadocBuilder to help with this
-        final var bb = new BlockBuilder().txt("""
+        final var bb = newBlockBuilder().txt("""
                     /**
                      * Set fields from given grouping argument. Valid argument is instance of one of following types:
                      * <ul>
@@ -337,7 +337,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
-        return !(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType) ? null : new BlockBuilder()
+        return !(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType) ? null : newBlockBuilder()
             .str("if (arg instanceof ").str(importedName(implType)).str(" castArg)").oB()
                 .indented(printPropertySetter(implType))
             .eol("    isValidArg = true;")
@@ -349,7 +349,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
             if (isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
                 bb.eol(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
@@ -497,12 +497,12 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @NonNull BlockBuilder generateListSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         final BlockBuilder argumentCheck;
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
             bb.blk(generateCheckers(field, restrictions, actualType));
-            argumentCheck = new BlockBuilder()
+            argumentCheck = newBlockBuilder()
                 .str("if (values != null)").oB()
                 .str("   for (").str(importedName(actualType)).str(" value : values)").oB()
                 .indentedTwice(checkArgument(field, restrictions, actualType, "value"))
@@ -533,7 +533,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @NonNull BlockBuilder generateMapSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
             bb.blk(generateCheckers(field, restrictions, actualType));
@@ -570,7 +570,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @NonNull BlockBuilder generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
             bb.nl().blk(generateCheckers(field, restrictions, actualType));
@@ -603,7 +603,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      * {@return string with the setter methods}
      */
     private @NonNull BlockBuilder generateSetters() {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         if (keyType != null) {
             bb
                 .eol("/**")
@@ -729,7 +729,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     @NonNullByDefault
     private BlockBuilder generateAugmentation() {
-        return new BlockBuilder()
+        return newBlockBuilder()
             .txt("""
                      /**
                       * Return the specified augmentation, if it is present in this builder.

@@ -60,7 +60,7 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         final var constraints = constraint.getAllowedRanges().asRanges();
         final var codeHelpers = javaClass.getReferenceString(CODEHELPERS);
 
-        final var bb = new BlockBuilder()
+        final var bb = javaClass.newBlockBuilder()
             .str("private static void ").str(checkerName).str("(final ").str(javaClass.getReferenceString(DECIMAL64))
                 .str(" value)").oB()
                 .str("    final var unscaled = ").str(codeHelpers).str(".checkScale(value, ").jInt(fractionDigits)
