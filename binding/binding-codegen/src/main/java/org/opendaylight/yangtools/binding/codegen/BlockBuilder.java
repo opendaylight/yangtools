@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * </ul>
  *
  * <p>Methods ending with a capital letter terminate the current line, i.e. return the result of {@link #nl()}. Examples
- * include {@link #oB()}, {@link #cB()}, {@link #oS()}.
+ * include {@link #oB()}, {@link #cB()}, {@link #eS()}.
  *
  * <p>When deciding on the shape of a method and its name, please consider it first and foremost its stringlu structure,
  * as that is the layer we operate on.
@@ -134,6 +134,12 @@ final class BlockBuilder implements Mutable {
         buf.append(verifyStr(str));
     }
 
+    @NonNullByDefault
+    BlockBuilder jBlock(final BlockFragment fragment) {
+        fragment.appendTo(oB());
+        return cb();
+    }
+
     /**
      * The equivalent of {@code str(Integer.toString(value))}.
      *
@@ -194,11 +200,10 @@ final class BlockBuilder implements Mutable {
      * Open a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>.
      * Short name for {@code openBlock}. Emits the equivalent of <pre><code>str(" {").nl()</code></pre>.
      *
-     * <p>Methods calling this method are expected to also call the corresponding {@link #cB()} or {@link #cS()}.
+     * <p>Methods calling this method are expected to also call the corresponding {@link #cb()} or {@link #cB()}.
      *
      * @return this instance
      */
-    // FIXME: add javaBlock(Consumer<@NonNull BlockBuilder>) to encapsulate oB() -> body -> cB() encapsulation
     @NonNullByDefault
     BlockBuilder oB() {
         // FIXME: also add indentation
@@ -209,7 +214,21 @@ final class BlockBuilder implements Mutable {
     /**
      * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
      * previously opened via {@link #oB()}. Short name for {@code closeBlock}. Emits the equivalent of
-     * <pre><code>str("}").nl()</code></pre>.
+     * <pre><code>str("}")</code></pre>.
+     *
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder cb() {
+        // FIXME: also add indentation
+        buf.append('}');
+        return this;
+    }
+
+    /**
+     * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
+     * previously opened via {@link #oB()}. Short name for {@code closeBlock}. Emits the equivalent of
+     * <pre><code>cb().nl()</code></pre>.
      *
      * @return this instance
      */
@@ -217,20 +236,6 @@ final class BlockBuilder implements Mutable {
     BlockBuilder cB() {
         // FIXME: also add indentation
         buf.append("}\n");
-        return this;
-    }
-
-    /**
-     * Close a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>
-     * previously opened via {@link #oB()} and terminate current statement. Short name for {@code closeStatement}. Emits
-     * the equivalent of {@code str("}").eS()}.
-     *
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder cS() {
-        // FIXME: also add indentation
-        buf.append("};\n");
         return this;
     }
 

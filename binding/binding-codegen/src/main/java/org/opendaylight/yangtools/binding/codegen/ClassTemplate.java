@@ -157,7 +157,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
      * @param isInnerClass {@code true} if generated class is an inner class
      */
     private @NonNull BlockBuilder generateBody(final boolean isInnerClass) {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
             .blk(annotationDeclaration());
 
@@ -253,20 +253,21 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
     private BlockBuilder validNamesAndValues(final BitsTypeDefinition typedef) {
         final var override = importedName(OVERRIDE);
 
-        final var bb = new BlockBuilder()
+        return newBlockBuilder()
             .nl()
             .at().eol(override)
-            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING)).str(" validNames()").oB()
-                .ind("return " + VALID_NAMES_NAME + ";").nl()
-            .cB()
-            .nl()
-            .at().eol(override)
-            .str("public boolean[] values()").oB()
-                .ind("return new boolean[]").oB();
-        appendBooleanValues(bb, typedef);
-        return bb
-            .str("        ").cS()
-            .cB();
+            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING)).str(" validNames()").jBlock(bb -> {
+                bb
+                    .ind("return " + VALID_NAMES_NAME + ";").nl()
+                    .cB()
+                    .nl()
+                    .at().eol(override)
+                    .str("public boolean[] values()").oB()
+                        .ind("return new boolean[]").oB();
+                appendBooleanValues(bb, typedef);
+                bb
+                    .str("        ").cb().eS();
+            }).nl();
     }
 
     @NonNullByDefault
@@ -291,28 +292,24 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
 
     private @Nullable BlockBuilder generateEquals() {
         final var equalsIdentifiers = genTO.getEqualsIdentifiers();
-        if (equalsIdentifiers.isEmpty()) {
-            return null;
-        }
-
-        final var bb = new BlockBuilder()
+        return equalsIdentifiers.isEmpty() ? null : newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
-            .str("    return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
-        for (var property : equalsIdentifiers) {
-            bb.nl().str("        && ");
+            .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").jBlock(bb -> {
+                bb.str("    return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
+                for (var property : equalsIdentifiers) {
+                    bb.nl().str("        && ");
 
-            final var fieldName = fieldName(property);
-            final var type = property.getReturnType();
-            if (type.equals(PRIMITIVE_BOOLEAN)) {
-                bb.str(fieldName).str(" == other.").str(fieldName);
-            } else {
-                bb.str(importedUtilClass(type)).str(".equals(").str(fieldName).str(", other.").str(fieldName).str(")");
-            }
-        }
-        return bb
-            .eS()
-            .cB();
+                    final var fieldName = fieldName(property);
+                    final var type = property.getReturnType();
+                    if (type.equals(PRIMITIVE_BOOLEAN)) {
+                        bb.str(fieldName).str(" == other.").str(fieldName);
+                    } else {
+                        bb.str(importedUtilClass(type)).str(".equals(").str(fieldName).str(", other.").str(fieldName)
+                            .str(")");
+                    }
+                }
+                bb.eS();
+            }).nl();
     }
 
     private @Nullable BlockBuilder generateToString(final List<GeneratedProperty> props) {
@@ -320,7 +317,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             return null;
         }
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("public ").str(importedName(STRING)).str(" toString()").oB()
                 .ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
@@ -403,7 +400,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
     @Nullable BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
         final var type = type();
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .str("public");
         if (isInnerClass) {
             bb.str(" static final ");
@@ -530,31 +527,32 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         }
 
         final var simpleName = genTO.simpleName();
-        final var bb = newBlockBuilder()
+        return newBlockBuilder()
             .nl()
-            .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").oB();
-        // FIXME: unify handling here ...
-        if (VALUEOF_TYPES.contains(propType)) {
-            bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .eol(".valueOf(defaultValue));");
-        } else if (propType.equals(PRIMITIVE_BOOLEAN)) {
-            // ... this case is different from all others: is this for type=bits?
-            bb.indented(bitsDefaultInstanceBody());
-        } else if (propType instanceof Decimal64Type decimal64) {
-            bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
-                .str(".valueOf(defaultValue).scaleTo(").jInt(decimal64.fractionDigits()).eol("));");
-        } else if (propType.equals(STRING_TYPE)) {
-            bb.str("    return new ").str(simpleName).eol("(defaultValue);");
-        } else if (propType.equals(BINARY_TYPE)) {
-            bb.str("    return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
-                .eol(".getDecoder().decode(defaultValue));");
-        } else if (propType.equals(EMPTY_TYPE)) {
-            bb.str("    return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
-                .eol(".emptyFor(defaultValue));");
-        } else {
-            bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType)).eol("(defaultValue));");
-        }
-        return bb.cB();
+            .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").jBlock(bb -> {
+                // FIXME: unify handling here ...
+                if (VALUEOF_TYPES.contains(propType)) {
+                    bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
+                    .eol(".valueOf(defaultValue));");
+                } else if (propType.equals(PRIMITIVE_BOOLEAN)) {
+                    // ... this case is different from all others: is this for type=bits?
+                    bb.indented(bitsDefaultInstanceBody());
+                } else if (propType instanceof Decimal64Type decimal64) {
+                    bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
+                    .str(".valueOf(defaultValue).scaleTo(").jInt(decimal64.fractionDigits()).eol("));");
+                } else if (propType.equals(STRING_TYPE)) {
+                    bb.str("    return new ").str(simpleName).eol("(defaultValue);");
+                } else if (propType.equals(BINARY_TYPE)) {
+                    bb.str("    return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
+                    .eol(".getDecoder().decode(defaultValue));");
+                } else if (propType.equals(EMPTY_TYPE)) {
+                    bb.str("    return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
+                    .eol(".emptyFor(defaultValue));");
+                } else {
+                    bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType))
+                        .eol("(defaultValue));");
+                }
+            }).nl();
     }
 
     @Nullable BlockBuilder constructors() {
@@ -589,7 +587,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 .cB();
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         final var it = properties.iterator();
         do {
             final var field = it.next();
@@ -608,32 +606,34 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             return null;
         }
 
-        final var bb = new BlockBuilder()
+        return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("public int hashCode()").oB();
-        if (size == 1) {
-            bb.str("    return ");
-            final var prop = props.getFirst();
-            if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
-                bb.str(importedName(BOOLEAN)).str(".hashCode(");
-            } else {
-                bb.str(importedName(CODEHELPERS)).str(".wrapperHashCode(");
-            }
-            bb.str(fieldName(prop)).eol(");");
-        } else {
-            bb
-                .eol("    final int prime = 31;")
-                .eol("    int result = 1;");
-            for (var property : props) {
-                final var type = property.getReturnType();
-                bb
-                    .str("    result = prime * result + ")
-                        .str(type.equals(PRIMITIVE_BOOLEAN) ? importedName(BOOLEAN) : importedUtilClass(type))
-                        .str(".hashCode(").str(fieldName(property)).eol(");");
-            }
-            bb.eol("    return result;");
-        }
-        return bb.cB();
+            .str("public int hashCode()").jBlock(bb -> {
+                if (size == 1) {
+                    bb.str("    return ");
+                    final var prop = props.getFirst();
+                    if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
+                        bb.str(importedName(BOOLEAN)).str(".hashCode(");
+                    } else {
+                        bb.str(importedName(CODEHELPERS)).str(".wrapperHashCode(");
+                    }
+                    bb.str(fieldName(prop)).eol(");");
+                } else {
+                    bb
+                        .eol("    final int prime = 31;")
+                        .eol("    int result = 1;");
+                    for (var property : props) {
+                        final var type = property.getReturnType();
+                        final var receiver = type.equals(PRIMITIVE_BOOLEAN)
+                            // FIXME: unified perhaps?
+                            ? importedName(BOOLEAN) : importedUtilClass(type);
+
+                        bb.str("    result = prime * result + ").str(receiver).str(".hashCode(")
+                            .str(fieldName(property)).eol(");");
+                    }
+                    bb.eol("    return result;");
+                }
+            }).nl();
     }
 
     final @Nullable BlockBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
@@ -652,7 +652,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             return null;
         }
 
-        final var checkerCalls = new BlockBuilder();
+        final var checkerCalls = newBlockBuilder();
         final var paramValue = returnType instanceof ConcreteType ? paramName : paramName + ".getValue()";
         if (length != null) {
             LengthGenerator.appendCheckerCall(checkerCalls, paramName, paramValue);
@@ -662,62 +662,63 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         }
 
         // FIXME: this wrapping should be specialized in ScalarTypeObjectTemplate vs. others (BitsTO, EnumTO, UnionTO)
-        return paramName.equals("_value") ? checkerCalls : new BlockBuilder()
+        return paramName.equals("_value") ? checkerCalls : newBlockBuilder()
             .str("if (").str(paramName).str(" != null)").oB()
                 .indented(checkerCalls)
                 .cB();
     }
 
     @NonNull BlockBuilder allValuesConstructor() {
-        final var bb = newBlockBuilder()
-            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
-        if (!parentProperties.isEmpty()) {
-            bb.str("    super(").str(asArguments(parentProperties)).eol(");");
-        }
-        for (var prop : allProperties) {
-            bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
-        }
-        for (var prop : properties) {
-            final var fieldName = fieldName(prop);
+        return newBlockBuilder()
+            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")")
+            .jBlock(bb -> {
+                if (!parentProperties.isEmpty()) {
+                    bb.str("    super(").str(asArguments(parentProperties)).eol(");");
+                }
+                for (var prop : allProperties) {
+                    bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
+                }
+                for (var prop : properties) {
+                    final var fieldName = fieldName(prop);
 
-            if (isArrayProperty(prop)) {
-                bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
-                    .str(fieldName).eol(");");
-            } else {
-                bb.str("    this.").str(fieldName).str(" = ").str(fieldName).eS();
-            }
-        }
-        return bb.cB();
+                    if (isArrayProperty(prop)) {
+                        bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
+                            .str(fieldName).eol(");");
+                    } else {
+                        bb.str("    this.").str(fieldName).str(" = ").str(fieldName).eS();
+                    }
+                }
+            }).nl();
     }
 
     @NonNullByDefault
     BlockBuilder copyConstructor() {
         final var simpleName = type().simpleName();
 
-        final var bb = newBlockBuilder().txt("""
+        return newBlockBuilder().txt("""
                   /**
                    * Creates a copy from Source Object.
                    *
                    * @param source Source object
                    */
                   """)
-            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
-        // TODO: consider splitting into a 'Block copyConstructorBody()' once we can do efficient block copies
-        if (!parentProperties.isEmpty()) {
-            bb.eol("    super(source);");
-        }
-        for (var prop : properties) {
-            final var fieldName = fieldName(prop);
-            bb.str("    this.").str(fieldName).str(" = source.").str(fieldName).eS();
-        }
-        return bb.cB();
+            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").jBlock(bb -> {
+                // TODO: consider splitting into a 'Block copyConstructorBody()' once we can do efficient block copies
+                if (!parentProperties.isEmpty()) {
+                    bb.eol("    super(source);");
+                }
+                for (var prop : properties) {
+                    final var fieldName = fieldName(prop);
+                    bb.str("    this.").str(fieldName).str(" = source.").str(fieldName).eS();
+                }
+            }).nl();
     }
 
     @NonNullByDefault
     final BlockBuilder parentConstructor() {
         final var importedSuper = importedName(genTO.getSuperType());
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .eol("/**")
             .str(" * Creates a new instance from ").eol(importedSuper)
             .eol(" *")
@@ -730,7 +731,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
     }
 
     private BlockBuilder typedefConstructor() {
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").quoted(VALUE_PROP).eol(")")
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
         if (!parentProperties.isEmpty()) {
@@ -775,7 +776,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
     }
 
     private @NonNull BlockBuilder genPatternEnforcer(final @NonNull String ref) {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var constant : consts) {
             if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
                 bb.str(importedName(CODEHELPERS)).str(".checkPattern(").str(ref).str(", ")

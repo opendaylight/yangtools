@@ -154,7 +154,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         for (var constant : consts) {
             // Pattern constants are emitted separately
             if (!constant.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
@@ -170,7 +170,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         // FIXME: use selfRef()
         final var fqcn = type().canonicalName();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("default ").gen(importedName(CLASS), fqcn)
                 .str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
@@ -183,7 +183,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         final var it = methods.iterator();
         while (true) {
             final var method = it.next();
@@ -210,7 +210,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     }
 
     private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
-        return new BlockBuilder()
+        return newBlockBuilder()
             .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
             .str(importedReturnType(method)).sp().str(method.getName()).str("(")
@@ -279,7 +279,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         final var ret = method.getReturnType();
         final var name = method.getName();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty list if it is not present."))
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
@@ -290,7 +290,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
     @NonNullByDefault
     private BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
-        return new BlockBuilder()
+        return newBlockBuilder()
             .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("(")
@@ -303,7 +303,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     private BlockBuilder generateRequireMethod(final MethodSignature method) {
         final var name = method.getName();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE))
             .str("default ").str(importedNonNull(method.getReturnType())).sp().str(name).str("()").oB()
             .str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
@@ -337,7 +337,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
     @NonNullByDefault
     private BlockBuilder generateNonnullAccessorMethod(final MethodSignature method) {
-        return new BlockBuilder()
+        return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty instance if it is not present."))
             .blk(generateAnnotations(method.getAnnotations()))
             .str(importedNonNull(method.getReturnType())).sp().str(method.getName()).eol("();");
@@ -361,7 +361,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .eol("/**")
             .str(" * Default implementation of {@link ").str(importedName(OBJECT))
                 .eol("#hashCode()} contract for this interface.")
@@ -404,7 +404,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
         final var object = importedName(OBJECT);
 
-        final var bb = new BlockBuilder()
+        return newBlockBuilder()
             .eol("/**")
             .str(" * Default implementation of {@link ").str(object).str("#equals(").str(object)
                 .eol(")} contract for this interface.")
@@ -419,32 +419,29 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code thisObj} is {@code null}")
             .eol(" */")
             .str("static boolean " + BINDING_EQUALS_NAME + "(final ").str(fullyQualifiedNonNull(type()))
-                .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj)").oB()
-            .str("    if (thisObj == obj)").oB()
-            .eol("        return true;")
-            .str("    }").nl()
-            .str("    final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
-                .str(type().canonicalName()).eol(".class, obj);")
-            .str("    return other != null");
+                .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj)").jBlock(bb -> {
+                    bb.str("    if (thisObj == obj)").oB()
+                        .eol("        return true;")
+                        .str("    }").nl()
+                        .str("    final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
+                        .str(type().canonicalName()).eol(".class, obj);")
+                        .str("    return other != null");
 
-        for (var property : ByTypeMemberComparator.sort(props)) {
-            final var getterName = property.getGetterName();
-            bb.nl().str("        && ").str(importedUtilClass(property)).str(".equals(thisObj.").str(getterName)
-                .str("(), other.").str(getterName).str("())");
-        }
-        if (augmentable) {
-            bb.nl().str("        && thisObj.augmentations().equals(other.augmentations())");
-        }
-        return bb
-            .eS()
-            .cB();
+                    for (var property : ByTypeMemberComparator.sort(props)) {
+                        final var getterName = property.getGetterName();
+                        bb.nl().str("        && ").str(importedUtilClass(property)).str(".equals(thisObj.")
+                            .str(getterName).str("(), other.").str(getterName).str("());");
+                    }
+                    if (augmentable) {
+                        bb.nl().str("        && thisObj.augmentations().equals(other.augmentations());");
+                    }
+                    bb.newLine();
+                }).nl();
     }
 
     @VisibleForTesting
     final BlockBuilder generateBindingToString() {
-        final var analysis = typeAnalysis();
-
-        final var bb = new BlockBuilder()
+        return newBlockBuilder()
             .eol("/**")
             .str(" * Default implementation of {@link ").str(importedName(OBJECT))
                 .eol("#toString()} contract for this interface.")
@@ -458,22 +455,21 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .str(" * @throws ")       .str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
             .eol(" */")
             .str("static ").str(importedName(Types.STRING)).str(" " + BINDING_TO_STRING_NAME + "(final ")
-                .str(fullyQualifiedNonNull(type())).str(" obj)").oB()
-                .ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                    .quoted(type().simpleName()).eol(");");
-        for (var property : analysis.properties()) {
-            bb
-                .ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, ").quoted(property.getName())
-                    .str(", obj.").str(property.getGetterName()).eol("());");
-        }
-        if (analysis.augmentType() != null) {
-            bb
-                .ind(importedName(CODEHELPERS))
-                    .eol(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);");
-        }
-        return bb
-            .eol("    return helper.toString();")
-            .cB();
+                .str(fullyQualifiedNonNull(type())).str(" obj)").jBlock(bb -> {
+                    final var analysis = typeAnalysis();
+
+                    bb.ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
+                        .quoted(type().simpleName()).eol(");");
+                    for (var property : analysis.properties()) {
+                        bb.ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
+                            .quoted(property.getName()).str(", obj.").str(property.getGetterName()).eol("());");
+                    }
+                    if (analysis.augmentType() != null) {
+                        bb.ind(importedName(CODEHELPERS))
+                            .eol(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);");
+                    }
+                    bb.eol("    return helper.toString();");
+                }).nl();
     }
 
     // FIXME: return a Block

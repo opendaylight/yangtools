@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
 
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits BuilderTemplate, BuilderImplTemplate {
@@ -75,7 +75,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      * @return string with getter methods
      */
     final @NonNull BlockBuilder generateGetters(final boolean addOverride) {
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
 
         if (keyType != null) {
             if (!addOverride) {
@@ -128,27 +128,25 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
 
     @NonNullByDefault
     final BlockBuilder generateCopyConstructor(final Type fromType, final Type implType) {
-        final var bb = new BlockBuilder()
-            .str(type().simpleName()).str("(final ").str(importedName(fromType)).str(" base)").oB();
+        return newBlockBuilder()
+            .str(type().simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
+                if (augmentType != null) {
+                    appendCopyAugmentation(bb);
+                }
 
-        if (augmentType != null) {
-            appendCopyAugmentation(bb);
-        }
+                if (keyType != null && targetType.getImplements().contains(entryObject(targetType, keyType))) {
+                    final var allProps = new ArrayList<>(properties);
+                    final var keyProps = keyConstructorArgs(keyType);
+                    for (var field : keyProps) {
+                        removeProperty(allProps, field.getName());
+                    }
 
-        if (keyType != null && targetType.getImplements().contains(BindingTypes.entryObject(targetType, keyType))) {
-            final var allProps = new ArrayList<>(properties);
-            final var keyProps = keyConstructorArgs(keyType);
-            for (var field : keyProps) {
-                removeProperty(allProps, field.getName());
-            }
-
-            appendCopyKeys(bb, keyProps);
-            appendCopyNonKeys(bb, allProps);
-        } else {
-            appendCopyNonKeys(bb, properties);
-        }
-
-        return bb.cB();
+                    appendCopyKeys(bb, keyProps);
+                    appendCopyNonKeys(bb, allProps);
+                } else {
+                    appendCopyNonKeys(bb, properties);
+                }
+            }).nl();
     }
 
     /**
