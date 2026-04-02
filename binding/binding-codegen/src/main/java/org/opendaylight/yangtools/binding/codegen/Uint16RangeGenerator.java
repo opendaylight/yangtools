@@ -25,7 +25,7 @@ final class Uint16RangeGenerator extends AbstractUnsignedRangeGenerator<Uint16> 
     }
 
     @Override
-    protected String format(final Uint16 value) {
+    String format(final Uint16 value) {
         return value.toCanonicalString();
     }
 }

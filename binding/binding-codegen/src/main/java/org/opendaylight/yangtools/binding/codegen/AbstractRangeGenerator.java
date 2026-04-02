@@ -112,10 +112,10 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
 
     @NonNullByDefault
     final void appendCheckerCall(final BlockBuilder bb, final String member, final String valueReference) {
-        bb.str(rangeCheckerName(member)).str("(").str(valueReference, primitiveRef()).eol(");");
+        bb.str(rangeCheckerName(member)).str("(").str(valueReference).frg(primitiveRef()).eol(");");
     }
 
-    @Nullable String primitiveRef() {
+    @Nullable BlockFragment primitiveRef() {
         return null;
     }
 }

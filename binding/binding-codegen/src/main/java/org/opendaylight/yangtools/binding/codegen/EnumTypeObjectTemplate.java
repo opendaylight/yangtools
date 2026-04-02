@@ -129,7 +129,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         }
         bb
             .eol("            default -> null;")
-            .str("        ").cS()
+            .str("        ").cb().eS()
             .str("    ").cB()
             .nl()
             .eol("    /**")
@@ -145,7 +145,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         }
         bb
             .eol("            default -> null;")
-            .str("        ").cS()
+            .str("        ").cb().eS()
             .str("    ").cB()
             .nl()
             // FIXME: txt()

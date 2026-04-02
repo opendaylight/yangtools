@@ -57,7 +57,7 @@ final class ListKeyTemplate extends ClassTemplate {
         for (var prop : allProperties) {
             final var fieldName = fieldName(prop);
             bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
-                .str(fieldName).str(", ").quoted(prop.getName()).str(")", cloneOrNull(prop)).eS();
+                .str(fieldName).str(", ").quoted(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
         }
 
         for (var prop : properties) {
@@ -83,9 +83,9 @@ final class ListKeyTemplate extends ClassTemplate {
             .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
                 .eol(", guaranteed to be non-null.")
             .eol(" */")
-            .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").oB()
-                .ind("return ").str(fieldName(field), cloneOrNull(field)).eS()
-            .cB();
+            .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
+                bb.ind("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS();
+            }).nl();
     }
 
     @Override

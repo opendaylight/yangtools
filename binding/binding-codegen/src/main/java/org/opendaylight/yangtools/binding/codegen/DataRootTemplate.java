@@ -42,7 +42,7 @@ final class DataRootTemplate extends InterfaceTemplate {
         // FIXME: YANGTOOLS-1808: use importedName()
         final var type = archetype.canonicalName();
 
-        return new BlockBuilder()
+        return newBlockBuilder()
             .eol("/**")
             .str(" * The {@link ").str(rootMetaRaw).eol("} associated with this module root.")
             .eol(" */")
@@ -62,7 +62,7 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var override = importedName(OVERRIDE);
         final var type = archetype.canonicalName();
 
-        final var bb = new BlockBuilder()
+        final var bb = newBlockBuilder()
             .blk(generateDefaultImplementedInterface())
             .nl()
             .at().eol(override)

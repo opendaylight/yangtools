@@ -7,20 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 abstract class AbstractUnsignedRangeGenerator<T extends Number & Comparable<T>>
         extends AbstractPrimitiveRangeGenerator<T> {
-    private final @NonNull String primitiveRef;
-
     AbstractUnsignedRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue,
             final T maxValue) {
         super(typeClass, primitiveName, minValue, maxValue);
-        primitiveRef = "." + primitiveName + "Value()";
     }
 
     @Override
-    final String primitiveRef() {
-        return primitiveRef;
+    final BlockFragment primitiveRef() {
+        final var primitiveName = primitiveName();
+        return bb -> bb.str(".").str(primitiveName).str("Value()");
     }
 }

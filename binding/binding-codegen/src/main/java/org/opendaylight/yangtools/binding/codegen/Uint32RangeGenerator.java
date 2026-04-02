@@ -27,7 +27,7 @@ final class Uint32RangeGenerator extends AbstractUnsignedRangeGenerator<Uint32> 
     }
 
     @Override
-    protected String format(final Uint32 value) {
+    String format(final Uint32 value) {
         return value.toCanonicalString() + 'L';
     }
 }

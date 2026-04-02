@@ -302,24 +302,17 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     // FIXME: return a Block when we can do efficient copies
     @NonNullByDefault
     BlockBuilder asGetterMethod(final GeneratedProperty field) {
-        // derive state
-        final var fieldName = fieldName(field);
-        final var methodName = getterMethodName(field);
-        final var returnType = field.getReturnType();
-        final var importedName = importedName(returnType);
-        // any Java array type needs to be duplicated to prevent modification
-        final var codeHelpers = returnType.isArray() ? importedName(CODEHELPERS) : null;
-
-        // emit separately
-        final var bb = newBlockBuilder()
-            .str("public ").str(importedName).sp().str(methodName).str("()").oB()
-            .str("    return ");
-        if (codeHelpers != null) {
-            bb.str(codeHelpers).str(".copyArray(").str(fieldName).eol(");");
-        } else {
-            bb.str(fieldName).eS();
-        }
-        return bb.cB();
+        return newBlockBuilder()
+            .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
+                final var fieldName = fieldName(field);
+                bb.str("    return ");
+                // any Java array type needs to be duplicated to prevent modification
+                if (field.getReturnType().isArray()) {
+                    bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
+                } else {
+                    bb.str(fieldName).eS();
+                }
+            }).nl();
     }
 
     /**
@@ -330,16 +323,16 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
      */
     @NonNullByDefault
     final BlockBuilder asSetterMethod(final GeneratedProperty field) {
-        final var fieldName = fieldName(field);
         final var fieldType = importedReturnType(field);
         final var suffix = toFirstUpper(field.getName());
         final var typeName = type().simpleName();
 
         return newBlockBuilder()
-            .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").oB()
-                .ind("this.").str(fieldName).eol(" = value;")
-                .ind("return this;").nl()
-            .cB();
+            .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").jBlock(bb -> {
+                bb
+                    .ind("this.").str(fieldName(field)).eol(" = value;")
+                    .ind("return this;").newLine();
+            }).nl();
     }
 
     @NonNullByDefault
@@ -476,7 +469,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             final Type actualType) {
         verify(!restrictions.isEmpty());
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         restrictions.getRangeConstraint().ifPresent(range ->
             bb.blk(AbstractRangeGenerator.forType(actualType).generateRangeChecker(
                     toFirstUpper(field.getName()), range, javaType())));
@@ -603,7 +596,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         }
 
         final var it = archetypes.iterator();
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         while (true) {
             final var archetype = it.next();
             EnumTypeObjectTemplate.generateAsInner(javaType().getNestedClass(archetype), archetype, bb);
@@ -628,7 +621,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = newBlockBuilder();
         final var it = innerClasses.iterator();
         while (true) {
             bb.blk(it.next());
