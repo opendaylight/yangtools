@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -74,56 +74,55 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      *
      * @return string with getter methods
      */
-    final @NonNull StringBuilder generateGetters(final boolean addOverride) {
-        final var sb = new StringBuilder();
+    final @NonNull BlockBuilder generateGetters(final boolean addOverride) {
+        final var bb = new BlockBuilder();
 
         if (keyType != null) {
             if (!addOverride) {
-                sb
-                    .append("/**\n")
-                    .append(" * Return current value associated with the property corresponding to {@link ")
-                        .append(importedName(targetType)).append('#').append(Naming.KEY_AWARE_KEY_NAME)
-                        .append("()}.\n")
-                    .append(" *\n")
-                    .append(" * @return current value\n")
-                    .append(" */\n");
+                bb
+                    .eol("/**")
+                    .str(" * Return current value associated with the property corresponding to {@link ")
+                        .str(importedName(targetType)).eol('#' + KEY_AWARE_KEY_NAME + "()}.")
+                    .eol(" *")
+                    .eol(" * @return current value")
+                    .eol(" */");
             } else {
-                sb
-                    .append('@').append(importedName(OVERRIDE)).append('\n');
+                bb
+                    .at().eol(importedName(OVERRIDE));
             }
-            sb
-                .append("public ").append(importedName(keyType)).append(' ').append(Naming.KEY_AWARE_KEY_NAME)
-                    .append("() {\n")
-                .append("    return key;\n")
-                .append("}\n\n");
+            bb
+                .str("public ").str(importedName(keyType)).str(' ' + KEY_AWARE_KEY_NAME + "()").oB()
+                    .ind("return key;").nl()
+                .cB()
+                .newLine();
         }
 
         if (properties.isEmpty()) {
-            return sb;
+            return bb;
         }
 
         final var it = properties.iterator();
         while (true) {
             final var field = it.next();
             if (!addOverride) {
-                sb
-                    .append("/**\n")
-                    .append(" * Return current value associated with the property corresponding to {@link ")
-                        .append(importedName(targetType)).append('#').append(field.getGetterName()).append("()}.\n")
-                    .append(" *\n")
-                    .append(" * @return current value\n")
-                    .append(" */\n");
+                bb
+                    .eol("/**")
+                    .str(" * Return current value associated with the property corresponding to {@link ")
+                        .str(importedName(targetType)).str("#").str(field.getGetterName()).eol("()}.")
+                    .eol(" *")
+                    .eol(" * @return current value")
+                    .eol(" */");
             } else {
-                sb
-                    .append('@').append(importedName(OVERRIDE)).append('\n');
+                bb
+                    .at().eol(importedName(OVERRIDE));
             }
-            sb.append(asGetterMethod(field).toRawString());
+            bb.blk(asGetterMethod(field));
 
             if (!it.hasNext()) {
-                return sb;
+                return bb;
             }
 
-            sb.append('\n');
+            bb.newLine();
         }
     }
 

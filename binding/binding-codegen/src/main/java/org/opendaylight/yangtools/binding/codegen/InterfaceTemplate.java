@@ -149,20 +149,20 @@ class InterfaceTemplate extends BaseTemplate {
             .cB();
     }
 
-    @Nullable StringBuilder generateConstants() {
+    @Nullable BlockBuilder generateConstants() {
         if (consts.isEmpty()) {
             return null;
         }
 
-        final var sb = new StringBuilder();
+        final var bb = new BlockBuilder();
         for (var constant : consts) {
             // Pattern constants are emitted separately
             if (!constant.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
                 // FIXME: short circuit to statically-known case
-                sb.append(emitConstant(constant));
+                bb.txt(emitConstant(constant));
             }
         }
-        return sb;
+        return bb;
     }
 
     final @NonNull BlockBuilder generateDefaultImplementedInterface() {

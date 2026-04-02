@@ -350,14 +350,6 @@ final class BlockBuilder implements Mutable {
     }
 
     // FIXME: clarify contract
-    @NonNull BlockBuilder indented(final @Nullable StringBuilder sb) {
-        if (sb != null && !sb.isEmpty()) {
-            indented("    ", sb.toString());
-        }
-        return this;
-    }
-
-    // FIXME: clarify contract
     @NonNull BlockBuilder indented(final @NonNull String prefix, final @Nullable BlockBuilder bb) {
         if (bb != null) {
             buf.append("    ").append(requireNonNull(prefix));
