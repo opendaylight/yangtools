@@ -48,8 +48,10 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     private final @NonNull BuilderTemplate builder;
 
+    @NonNullByDefault
     BuilderImplTemplate(final BuilderTemplate builder, final GeneratedType type) {
-        super(builder.javaType().getEnclosedType(type.name()), type, builder.targetType, builder.properties,
+        // FIXME: pass builder to super?
+        super(builder.javaType().getNestedClass(type), type, builder.targetType, builder.properties,
             builder.augmentType, builder.keyType);
         this.builder = builder;
     }

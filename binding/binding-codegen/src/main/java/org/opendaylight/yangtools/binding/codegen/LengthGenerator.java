@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.CODEHELPERS;
 
-import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -35,15 +34,15 @@ final class LengthGenerator {
     }
 
     private static Collection<String> createExpressions(final LengthConstraint constraint) {
-        final Set<Range<Integer>> constraints = constraint.getAllowedRanges().asRanges();
-        final Collection<String> ret = new ArrayList<>(constraints.size());
+        final var constraints = constraint.getAllowedRanges().asRanges();
+        final var ret = new ArrayList<String>(constraints.size());
 
-        for (Range<Integer> l : constraints) {
+        for (var rangel : constraints) {
             // We have to deal with restrictions being out of integer's range
-            final String expr = createExpression(l.lowerEndpoint(), l.upperEndpoint());
+            final var expr = createExpression(rangel.lowerEndpoint(), rangel.upperEndpoint());
             if (expr == null) {
                 // This range is implicitly capped by String/byte[] length returns
-                LOG.debug("Constraint {} implied by int type value domain, skipping", l);
+                LOG.debug("Constraint {} implied by int type value domain, skipping", rangel);
             } else {
                 ret.add(expr);
             }
@@ -72,7 +71,7 @@ final class LengthGenerator {
     }
 
     private static @NonNull BlockBuilder generateArrayLengthChecker(final String member,
-            final LengthConstraint constraint, final JavaFileTemplate template) {
+            final LengthConstraint constraint, final GeneratedClass javaClass) {
         final var expressions = createExpressions(constraint);
 
         final var bb = new BlockBuilder()
@@ -87,7 +86,7 @@ final class LengthGenerator {
                 bb.str("    ").cB();
             }
 
-            bb.str("    ").str(template.importedName(JavaFileTemplate.CODEHELPERS)).str(".throwInvalidLength(")
+            bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
                 .quoted(createLengthString(constraint)).eol(", value);");
         }
 
@@ -95,10 +94,10 @@ final class LengthGenerator {
     }
 
     private static @NonNull BlockBuilder generateStringLengthChecker(final String member,
-            final LengthConstraint constraint, final JavaFileTemplate template) {
+            final LengthConstraint constraint, final GeneratedClass javaClass) {
         final var bb = new BlockBuilder()
             .str("private static void ").str(lengthCheckerName(member)).str("(final ")
-                .str(template.importedName(Types.STRING)).str(" value)").oB();
+                .str(javaClass.getReferenceString(Types.STRING)).str(" value)").oB();
 
         final var expressions = createExpressions(constraint);
         if (!expressions.isEmpty()) {
@@ -111,7 +110,7 @@ final class LengthGenerator {
                     .str("    ").cB();
             }
 
-            bb.str("    ").str(template.importedName(JavaFileTemplate.CODEHELPERS)).str(".throwInvalidLength(")
+            bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
                 .quoted(createLengthString(constraint)).eol(", value);");
         }
 
@@ -119,10 +118,10 @@ final class LengthGenerator {
     }
 
     static @NonNull BlockBuilder generateLengthChecker(final String member, final @NonNull Type type,
-            final LengthConstraint constraint, final JavaFileTemplate template) {
+            final LengthConstraint constraint, final @NonNull GeneratedClass javaClass) {
         return TypeUtils.getBaseYangType(type).isArray()
-                ? generateArrayLengthChecker(member, constraint, template)
-                : generateStringLengthChecker(member, constraint, template);
+                ? generateArrayLengthChecker(member, constraint, javaClass)
+                : generateStringLengthChecker(member, constraint, javaClass);
     }
 
     @NonNullByDefault
