@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -99,7 +98,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @return Method source code.
      */
     abstract @NonNull BlockBuilder generateRangeCheckerImplementation(@NonNull String checkerName,
-            @NonNull RangeConstraint<?> constraints, Function<JavaTypeName, String> classImporter);
+            @NonNull RangeConstraint<?> constraints, @NonNull GeneratedClass javaClass);
 
     // FIXME: appendCheckerName(BlockBuilder bb)
     private static @NonNull String rangeCheckerName(final String member) {
@@ -107,8 +106,8 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     }
 
     @NonNull BlockBuilder generateRangeChecker(final @NonNull String member,
-            final @NonNull RangeConstraint<?> constraints, final JavaFileTemplate template) {
-        return generateRangeCheckerImplementation(rangeCheckerName(member), constraints, template::importedName);
+            final @NonNull RangeConstraint<?> constraints, final @NonNull GeneratedClass javaClass) {
+        return generateRangeCheckerImplementation(rangeCheckerName(member), constraints, javaClass);
     }
 
     @NonNullByDefault

@@ -81,7 +81,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
     }
 
     @NonNullByDefault
-    BaseTemplate(final AbstractJavaGeneratedType javaType, final GeneratedType type) {
+    BaseTemplate(final GeneratedClass javaType, final GeneratedType type) {
         super(javaType, type);
     }
 
@@ -101,7 +101,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
     private String generateImportBlock() {
         final var javaType = javaType();
-        if (javaType() instanceof TopLevelJavaGeneratedType topLevel) {
+        if (javaType instanceof GeneratedClass.TopLevel topLevel) {
             return topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
         }
         throw new VerifyException("Unexpected type " + javaType);
@@ -478,11 +478,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var bb = new BlockBuilder();
         restrictions.getRangeConstraint().ifPresent(range ->
             bb.blk(AbstractRangeGenerator.forType(actualType).generateRangeChecker(
-                    toFirstUpper(field.getName()), range, this)));
+                    toFirstUpper(field.getName()), range, javaType())));
         // FIXME: this call looks unlike the range checker call: it should be refactored to acquire a generator,
         //        so that we can suppress checker when not needed -- just like ranges do above
         restrictions.getLengthConstraint().ifPresent(length ->
-            bb.blk(LengthGenerator.generateLengthChecker(fieldName(field), actualType, length, this))
+            bb.blk(LengthGenerator.generateLengthChecker(fieldName(field), actualType, length, javaType()))
         );
         return bb;
     }
@@ -605,7 +605,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var bb = new BlockBuilder();
         while (true) {
             final var archetype = it.next();
-            EnumTypeObjectTemplate.generateAsInner(javaType().getEnclosedType(archetype.name()), archetype, bb);
+            EnumTypeObjectTemplate.generateAsInner(javaType().getNestedClass(archetype), archetype, bb);
             if (!it.hasNext()) {
                 return bb;
             }
@@ -617,7 +617,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         final var innerClasses = new ArrayList<BlockBuilder>();
         for (var innerType : innerTypes) {
             if (innerType instanceof GeneratedTransferObject gto) {
-                final var innerJavaType = javaType().getEnclosedType(gto.name());
+                final var innerJavaType = javaType().getNestedClass(gto);
                 innerClasses.add(gto instanceof UnionTypeObjectArchetype union
                     ? UnionTypeObjectTemplate.generateAsInner(innerJavaType, union)
                     : new ClassTemplate(innerJavaType, gto).generateAsInnerClass());
