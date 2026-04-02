@@ -157,46 +157,6 @@ class ClassTemplate extends BaseTemplate {
      * @param isInnerClass {@code true} if generated class is an inner class
      */
     private @NonNull BlockBuilder generateBody(final boolean isInnerClass) {
-        //        «type.formatDataForJavaDoc.wrapToDocumentation»
-        //        «annotationDeclaration»
-        //        «IF !isInnerClass»
-        //            «generatedAnnotation»
-        //        «ENDIF»
-        //        «generateClassDeclaration(isInnerClass)» {
-        //            «suidDeclaration»
-        //            «generateInnerClasses(type.enclosedTypes)»
-        //            «generateInnerEnumTypeObjects(enums)»
-        //            «constantsDeclarations»
-        //            «generateFields»
-        //
-        //            «IF restrictions !== null»
-        //                «IF restrictions.lengthConstraint.present»
-        //                    «LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
-        //                        restrictions.lengthConstraint.orElseThrow, this)»
-        //                «ENDIF»
-        //                «IF restrictions.rangeConstraint.present»
-        //                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraint.orElseThrow,
-        // this)»
-        //                «ENDIF»
-        //            «ENDIF»
-        //
-        //            «constructors»
-        //
-        //            «defaultInstance»
-        //
-        //            «propertyMethods»
-        //
-        //            «IF isBitsTypeObject»
-        //                «validNamesAndValues»
-        //            «ENDIF»
-        //
-        //            «generateHashCode»
-        //
-        //            «generateEquals»
-        //
-        //            «generateToString(genTO.toStringIdentifiers)»
-        //        }
-
         final var bb = new BlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
             .blk(annotationDeclaration());
@@ -648,25 +608,6 @@ class ClassTemplate extends BaseTemplate {
             return null;
         }
 
-        //      @«OVERRIDE.importedName»
-        //      public int hashCode() {
-        //          «IF size != 1»
-        //              final int prime = 31;
-        //              int result = 1;
-        //              «FOR property : props»
-        //                  result = prime * result + «property.importedHashCodeUtilClass».hashCode(
-        //«property.fieldName»);
-        //              «ENDFOR»
-        //              return result;
-        //          «ELSE»
-        //              «val prop = props.first»
-        //              «IF prop.returnType.equals(Types.primitiveBooleanType())»
-        //                  return «BOOLEAN.importedName».hashCode(«prop.fieldName»);
-        //              «ELSE»
-        //                  return «CODEHELPERS.importedName».wrapperHashCode(«prop.fieldName»);
-        //              «ENDIF»
-        //          «ENDIF»
-        //      }
         final var bb = new BlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("public int hashCode()").oB();
@@ -789,26 +730,6 @@ class ClassTemplate extends BaseTemplate {
     }
 
     private BlockBuilder typedefConstructor() {
-        //        @«CONSTRUCTOR_PARAMETERS.importedName»("«TypeConstants.VALUE_PROP»")
-        //        public «type.simpleName»(«allProperties.asArgumentsDeclaration») {
-        //            «IF !parentProperties.empty»
-        //                super(«parentProperties.asArguments»);
-        //            «ENDIF»
-        //            «val value = Verify.verifyNotNull(allProperties.valueProperty)»
-        //            «val fieldName = value.fieldName»
-        //            «IF properties.valueProperty !== null»
-        //                this.«fieldName» = «CODEHELPERS.importedName».requireValue(«fieldName»«value.assignFieldTail»)
-        //«value.cloneCall»;
-        //            «ENDIF»
-        //            «generateRestrictions(type, fieldName, value.returnType)»
-        //            «/*
-        //             * If we have patterns, we need to apply them to the value field. This is a sad consequence of how
-        //this code is
-        //             * structured.
-        //             */»
-        //            «genPatternEnforcer(fieldName)»
-        //        }
-
         final var bb = new BlockBuilder()
             .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").quoted(VALUE_PROP).eol(")")
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
@@ -833,6 +754,8 @@ class ClassTemplate extends BaseTemplate {
         return bb
             .indented(generateRestrictions(type(), fieldName, value.getReturnType()))
             .nl()
+            // If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code
+            // is structured.
             .indented(genPatternEnforcer(fieldName))
             .cB();
     }
