@@ -18,11 +18,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
- * Universal builder of a string block. A block is composed of one or more lines, concatenated using {@code '\n'}.
- *
- * <p>The set of exposed methods is specifically tailored to callers. We do not use method overloads on purpose, so that
- * there is always a strong tie between then intended semantics and argument types. There may be exceptions to this rule
- * as long as we can provide strong-enough type safety.
+ * A builder of a {@link Block}. The set of exposed methods is specifically tailored to callers. We do not use method
+ * overloads on purpose, so that there is always a strong tie between then intended semantics and argument types. There
+ * may be exceptions to this rule as long as we can provide strong-enough type safety.
  *
  * <p>The intent here is provide a reasonable improvement to {@link StringBuilder}, such as
  * <ul>
@@ -402,6 +400,11 @@ final class BlockBuilder implements Mutable {
     //        super.append(property.getName());
     //        return this;
     //    }
+
+    @NonNull Block toBlock() {
+        // FIXME: implement this method
+        throw new UnsupportedOperationException();
+    }
 
     @NonNull String toRawString() {
         return verifyNotNull(buf.toString());
