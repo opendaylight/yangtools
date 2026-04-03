@@ -325,7 +325,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         for (var property : props) {
             bb
                 .str("    ").str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, ")
-                .quoted(property.getName()).str(", ").str(fieldName(property)).eol(");");
+                .jString(property.getName()).str(", ").str(fieldName(property)).eol(");");
         }
         return bb
             .eol("    return helper.toString();")
@@ -346,7 +346,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             final var it = allProperties.iterator();
             while (true) {
                 final var prop = it.next();
-                bb.quoted(prop.getName());
+                bb.jString(prop.getName());
                 if (!it.hasNext()) {
                     break;
                 }
@@ -460,7 +460,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 } else {
                     bb.str(", ");
                 }
-                bb.quotedJava(requireNonNull(value));
+                bb.jCode(requireNonNull(value));
             }
         }
         bb
@@ -471,7 +471,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 .str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern)
                 .eol(".compile(" + PATTERN_CONSTANT_NAME + ".getFirst());")
                 .str("private static final String " + MEMBER_REGEX_LIST + " = ")
-                    .quotedJava(constValue.values().iterator().next()).eS();
+                    .jCode(constValue.values().iterator().next()).eS();
             return;
         }
 
@@ -488,7 +488,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 } else {
                     bb.str(", ");
                 }
-                bb.quotedJava(requireNonNull(value));
+                bb.jCode(requireNonNull(value));
             }
         }
         bb.eol(" };");
@@ -507,7 +507,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 } else {
                     bb.str(", ");
                 }
-                bb.quoted(bit.getName());
+                bb.jString(bit.getName());
             }
         }
         bb.eol(");");
@@ -732,7 +732,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
 
     private BlockBuilder typedefConstructor() {
         final var bb = newBlockBuilder()
-            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").quoted(VALUE_PROP).eol(")")
+            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").jString(VALUE_PROP).eol(")")
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
         if (!parentProperties.isEmpty()) {
             bb.str("    super(").str(asArguments(parentProperties)).eol(");");
