@@ -308,7 +308,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .str("default ").str(importedNonNull(method.getReturnType())).sp().str(name).str("()").oB()
             .str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
                 // FIXME: what exactly is this replace() doing?
-                .str("(), ").quoted(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
+                .str("(), ").jString(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
             .cB();
     }
 
@@ -459,10 +459,10 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                     final var analysis = typeAnalysis();
 
                     bb.ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                        .quoted(type().simpleName()).eol(");");
+                        .jString(type().simpleName()).eol(");");
                     for (var property : analysis.properties()) {
                         bb.ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
-                            .quoted(property.getName()).str(", obj.").str(property.getGetterName()).eol("());");
+                            .jString(property.getName()).str(", obj.").str(property.getGetterName()).eol("());");
                     }
                     if (analysis.augmentType() != null) {
                         bb.ind(importedName(CODEHELPERS))

@@ -87,7 +87,7 @@ final class LengthGenerator {
             }
 
             bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
-                .quoted(createLengthString(constraint)).eol(", value);");
+                .jString(createLengthString(constraint)).eol(", value);");
         }
 
         return bb.cB();
@@ -111,7 +111,7 @@ final class LengthGenerator {
             }
 
             bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
-                .quoted(createLengthString(constraint)).eol(", value);");
+                .jString(createLengthString(constraint)).eol(", value);");
         }
 
         return bb.cB();

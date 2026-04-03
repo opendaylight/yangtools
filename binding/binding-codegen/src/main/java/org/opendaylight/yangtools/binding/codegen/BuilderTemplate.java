@@ -268,7 +268,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         }
         return bb
             .str("    ").str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
-                .quoted(getAllIfcs(targetType).stream()
+                .jString(getAllIfcs(targetType).stream()
                     .map(this::importedName)
                     .collect(Collectors.toUnmodifiableList()).toString())
                 .eol(");")
@@ -441,9 +441,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 final var firstEntry = xsdToPattern.entrySet().iterator().next();
                 bb
                     .str("private static final ").str(jurPatternRef).str(" " + MEMBER_PATTERN_LIST).str(fieldSuffix)
-                        .str(" = ").str(jurPatternRef).str(".compile(").quotedJava(firstEntry.getKey()).eol(");")
+                        .str(" = ").str(jurPatternRef).str(".compile(").jCode(firstEntry.getKey()).eol(");")
                     .str("private static final String " + MEMBER_REGEX_LIST).str(fieldSuffix).str(" = ")
-                        .quotedJava(firstEntry.getValue()).eS();
+                        .jCode(firstEntry.getValue()).eS();
                 continue;
             }
 
@@ -459,7 +459,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     } else {
                         bb.str(", ");
                     }
-                    bb.quotedJava(xsd);
+                    bb.jCode(xsd);
                 }
             }
             bb
@@ -473,7 +473,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     } else {
                         bb.str(", ");
                     }
-                    bb.quotedJava(pattern);
+                    bb.jCode(pattern);
                 }
             }
             bb.eol(" };");

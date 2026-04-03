@@ -149,6 +149,29 @@ final class BlockBuilder extends Block.Builder {
     }
 
     /**
+     * The equivalent of {@code str('"' + str + '"')}.
+     *
+     * @param str the string
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder jString(final String str) {
+        buf.append('"').append(verifyStr(str)).append('"');
+        return this;
+    }
+
+    // FIXME: add jText, which will format a text block
+
+    // FIXME: rename to jCode() or similar
+    @NonNullByDefault
+    BlockBuilder jCode(final String str) {
+        // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
+        final var escaped = StringEscapeUtils.escapeJava(verifyStr(str));
+        buf.append('"').append(escaped).append('"');
+        return this;
+    }
+
+    /**
      * Append a {@code '@'}.
      *
      * @return this instance
@@ -326,23 +349,6 @@ final class BlockBuilder extends Block.Builder {
     @NonNullByDefault
     BlockBuilder ind(final String str) {
         buf.append("    ").append(verifyStr(str));
-        return this;
-    }
-
-    // FIXME: rename to jString
-    // FIXME: also add jText, which will format a text block
-    @NonNullByDefault
-    BlockBuilder quoted(final String str) {
-        buf.append('"').append(verifyStr(str)).append('"');
-        return this;
-    }
-
-    // FIXME: rename to jCode() or similar
-    @NonNullByDefault
-    BlockBuilder quotedJava(final String str) {
-        // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
-        final var escaped = StringEscapeUtils.escapeJava(verifyStr(str));
-        buf.append('"').append(escaped).append('"');
         return this;
     }
 
