@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
@@ -52,11 +53,12 @@ final class BlockBuilder implements Mutable {
     //
     //    List<Blk> blocks; // completed blocks, with optional coalescence when indent matches
     //    int indent;       // current indent
-    //    StringBuilder sb; // current block
     //    int firstNl;      // offset of first known newline in current block, for quick single-line check
-    //    int lastNl;       // offset of the last known newline in current block, for quick complete-line check
 
+    // current block
     private final @NonNull StringBuilder buf = new StringBuilder();
+    // offset of the start of the current line, i.e. one past the last known newline in current block
+    private int currentLine;
 
     /**
      * Append a {@code '@'}.
@@ -96,6 +98,11 @@ final class BlockBuilder implements Mutable {
      */
     void newLine() {
         buf.append('\n');
+        markNl();
+    }
+
+    private void markNl() {
+        currentLine = buf.length();
     }
 
     /**
@@ -201,8 +208,9 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder oB() {
-        // FIXME: also add indentation
         buf.append(" {\n");
+        markNl();
+        // FIXME: adjust indentation
         return this;
     }
 
@@ -215,8 +223,9 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder cb() {
-        // FIXME: also add indentation
+        // FIXME: add indentation
         buf.append('}');
+        // FIXME: adjust indentation
         return this;
     }
 
@@ -229,8 +238,10 @@ final class BlockBuilder implements Mutable {
      */
     @NonNullByDefault
     BlockBuilder cB() {
-        // FIXME: also add indentation
+        // FIXME: add indentation
         buf.append("}\n");
+        markNl();
+        // FIXME: adjust indentation
         return this;
     }
 
@@ -242,6 +253,21 @@ final class BlockBuilder implements Mutable {
     @NonNullByDefault
     BlockBuilder eS() {
         buf.append(";\n");
+        markNl();
+        return this;
+    }
+
+    /**
+     * Append the contents of a {@link Block} to this instance if it is not {@code null}.
+     *
+     * @param blk optional {@link Block}
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder blk(final @Nullable Block blk) {
+        if (blk != null) {
+            blk.appendTo(this);
+        }
         return this;
     }
 
@@ -259,21 +285,14 @@ final class BlockBuilder implements Mutable {
     @NonNullByDefault
     BlockBuilder blk(final @Nullable BlockBuilder source) {
         if (source != null) {
-            buf.append(source.buf);
-        }
-        return this;
-    }
-
-    /**
-     * Append the contents of a {@link Block} to this instance if it is not {@code null}.
-     *
-     * @param blk optional {@link Block}
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder blk(final @Nullable Block blk) {
-        if (blk != null) {
-            blk.appendTo(this);
+            final var sb = source.buf;
+            if (!sb.isEmpty()) {
+                final var scl = source.currentLine;
+                if (scl != 0) {
+                    txt(sb.substring(0, scl));
+                }
+                buf.append(sb, scl, sb.length());
+            }
         }
         return this;
     }
@@ -406,9 +425,10 @@ final class BlockBuilder implements Mutable {
 
             final var next = nl + 1;
             if (begin == nl) {
-                buf.append('\n');
+                newLine();
             } else {
                 buf.append(indent).append(text, begin, next);
+                markNl();
             }
             begin = next;
         } while (begin < len);
@@ -433,9 +453,12 @@ final class BlockBuilder implements Mutable {
     //        return this;
     //    }
 
-    @NonNull Block toBlock() {
-        // FIXME: implement this method
-        throw new UnsupportedOperationException();
+    /**
+     * {@return a {@link Block} capturing the current state of this builder, or {@code null} if this builder is empty}
+     */
+    @Nullable Block toBlock() {
+        final var length = buf.length();
+        return length == 0 ? null : build(length);
     }
 
     @NonNull String toRawString() {
@@ -448,6 +471,31 @@ final class BlockBuilder implements Mutable {
         }
         final var bb = BaseTemplate.wrapToDocumentation(toRawString());
         return bb == null ? "" : bb.toRawString();
+    }
+
+    /**
+     * {@return a {@link Block} capturing the current state of this builder}
+     */
+    @NonNullByDefault
+    Block build() {
+        final var length = buf.length();
+        if (length == 0) {
+            throw new VerifyException("empty block");
+        }
+        return build(length);
+    }
+
+    @NonNullByDefault
+    private Block build(final int length) {
+        if (currentLine != length) {
+            throw new VerifyException("unterminated line " + buf.substring(currentLine));
+        }
+        if (currentLine == 1) {
+            return Block.ofEmptyLine();
+        }
+
+        // FIXME: implement this method
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     /**

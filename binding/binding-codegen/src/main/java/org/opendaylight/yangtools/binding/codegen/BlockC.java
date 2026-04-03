@@ -7,46 +7,39 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.DoNotCall;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import java.util.List;
 
 /**
- * A {@link Block} of two lines.
+ * A block that is a concatenation of two or more blocks.
  */
-@NonNullByDefault
-record Block2(String str, int nl) implements Block {
-    // two empty lines
-    static final Block2 EMPTY = new Block2("\n", 0);
-
-    Block2 {
-        if (str.isEmpty()) {
-            throw new VerifyException("empty str");
-        }
-        if (nl < 0) {
-            throw new VerifyException("bad offset " + nl);
-        }
+record BlockC(List<Block> blocks) implements Block {
+    BlockC {
+        blocks = List.copyOf(blocks);
     }
 
     @Override
     public void appendTo(final Appendable appendable) throws IOException {
-        appendable.append(str).append('\n');
+        for (var block : blocks) {
+            block.appendTo(appendable);
+        }
     }
 
     @Override
     public void appendTo(final BlockBuilder bb) {
-        if (nl == 0) {
-            bb.newLine();
-        } else {
-            bb.eol(str, 0, nl);
+        for (var block : blocks) {
+            block.appendTo(bb);
         }
-        bb.eol(str, nl + 1, str.length());
     }
 
     @Override
     public String toRawString() {
-        return str + '\n';
+        final var sb = new StringBuilder();
+        for (var block : blocks) {
+            block.appendTo(sb);
+        }
+        return sb.toString();
     }
 
     @Override

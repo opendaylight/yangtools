@@ -240,7 +240,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = Block.builder();
         appendAsJavadoc(bb, sb.toString());
         return bb;
     }
@@ -516,7 +516,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
     @NonNullByDefault
     private static BlockBuilder formatReference(final String reference) {
-        final var bb = new BlockBuilder()
+        final var bb = Block.builder()
             .txt("""
                 <pre>
                     <code>

@@ -496,7 +496,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             return null;
         }
 
-        final var bb = new BlockBuilder();
+        final var bb = Block.builder();
         appendAsJavadoc(bb, text);
         return bb;
     }

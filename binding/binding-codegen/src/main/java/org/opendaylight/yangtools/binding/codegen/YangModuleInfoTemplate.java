@@ -94,7 +94,7 @@ public final class YangModuleInfoTemplate {
         final var submodules = new LinkedHashSet<Submodule>();
         collectSubmodules(submodules, module);
 
-        var bb = new BlockBuilder()
+        var bb = Block.builder()
             .eol("/**")
             .str(" * The {@link ResourceYangModuleInfo} for {@code ").str(module.getName()).eol("} module.")
             .eol(" */")
@@ -210,7 +210,7 @@ public final class YangModuleInfoTemplate {
 
     @NonNullByDefault
     private BlockBuilder classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
-        final var bb = new BlockBuilder()
+        final var bb = Block.builder()
             .str("private ").str(className).str("()").oB();
 
         if (!mod.getImports().isEmpty() || !submodules.isEmpty()) {
@@ -301,6 +301,6 @@ public final class YangModuleInfoTemplate {
                 .cB();
         }
 
-        return new BlockBuilder().indented(bb);
+        return Block.builder().indented(bb);
     }
 }

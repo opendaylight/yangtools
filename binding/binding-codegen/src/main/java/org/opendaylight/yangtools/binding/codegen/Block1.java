@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 @NonNullByDefault
 record Block1(String line) implements Block.OfOne {
-
+    // one empty line
     static final Block1 EMPTY = new Block1("");
 
     Block1 {

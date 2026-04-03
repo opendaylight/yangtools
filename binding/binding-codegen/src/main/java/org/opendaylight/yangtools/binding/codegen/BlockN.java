@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * A block of three or more lines. Stored as a string fragment without the trailing newline.
  */
 @NonNullByDefault
-record BlockN(String str) implements Block.OfMore {
+record BlockN(String str) implements Block {
     BlockN {
         if (str.length() < 2) {
             throw new VerifyException("bad str '" + str + "'");

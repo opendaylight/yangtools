@@ -7,8 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.VerifyException;
+import com.google.errorprone.annotations.DoNotCall;
+import com.google.errorprone.annotations.InlineMe;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Iterator;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -16,7 +23,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * A non-empty set of {@code '\n'}-separated lines.
  */
 @NonNullByDefault
-sealed interface Block extends BlockFragment, Immutable {
+sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Block2, BlockC, BlockN {
     /**
      * A {@link Block} comprised of a single line.
      */
@@ -28,10 +35,10 @@ sealed interface Block extends BlockFragment, Immutable {
     }
 
     /**
-     * A {@link Block} comprised of multiple lines.
+     * {@return a new BlockBuilder}
      */
-    sealed interface OfMore extends Block permits Block2, BlockN {
-        // nothing else
+    static BlockBuilder builder() {
+        return new BlockBuilder();
     }
 
     static Block.OfOne ofEmptyLine() {
@@ -39,8 +46,58 @@ sealed interface Block extends BlockFragment, Immutable {
     }
 
     static Block.OfOne ofLine(final String line) {
-        // FIXME: add verification
-        return line.isEmpty() ? ofEmptyLine() : new Block1(line);
+        return line.isEmpty() ? ofEmptyLine()
+            // FIXME: add verification
+            : new Block1(line);
+    }
+
+    static Block ofLines(final String first, final String second) {
+        return first.isEmpty() && second.isEmpty() ? Block2.EMPTY
+            // FIXME: add verification
+            : new Block2(first + '\n' + second, first.length());
+    }
+
+    static Block ofLines(final String first, final String second, final String... others) {
+        if (others.length == 0) {
+            return ofLines(first, second);
+        }
+
+        final var bb = builder().eol(first).eol(second);
+        for (var other : others) {
+            bb.eol(other);
+        }
+        return bb.build();
+    }
+
+    static Block ofLines(final Iterable<String> lines) {
+        return ofLines(lines.iterator());
+    }
+
+    static Block ofLines(final Iterator<String> lines) {
+        if (!lines.hasNext()) {
+            throw new VerifyException("no lines");
+        }
+        final var first = lines.next();
+        if (!lines.hasNext()) {
+            return ofLine(first);
+        }
+        final var second = lines.next();
+        if (!lines.hasNext()) {
+            return ofLines(first, second);
+        }
+
+        final var bb = builder().eol(first).eol(second);
+        lines.forEachRemaining(bb::eol);
+        return bb.build();
+    }
+
+    static Block ofBlocks(final List<Block> blocks) {
+        final var size = blocks.size();
+        return switch (size) {
+            case 0 -> throw new VerifyException("no blocks)");
+            case 1 -> requireNonNull(blocks.getFirst());
+            default -> new BlockC(blocks);
+        };
     }
 
     /**
@@ -72,4 +129,13 @@ sealed interface Block extends BlockFragment, Immutable {
      * {@return the raw String representation of this block}
      */
     String toRawString();
+
+    /**
+     * {@return the equivalent of #toRawString()}
+     */
+    @Override
+    @DoNotCall
+    @Deprecated(forRemoval = true)
+    @InlineMe(replacement = "this.toRawString()")
+    String toString();
 }
