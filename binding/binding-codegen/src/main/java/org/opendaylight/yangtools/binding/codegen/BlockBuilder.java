@@ -149,6 +149,38 @@ final class BlockBuilder extends Block.Builder {
     }
 
     /**
+     * Append a string as a Java
+     * <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.5">String Literal</a>. The
+     * argument is expected to not need escaping.
+     *
+     * @param str the string, already escaped or not needing escaping
+     * @return this instance
+     * @see #jString(String)
+     */
+    @NonNullByDefault
+    BlockBuilder jStr(final String str) {
+        buf.append('"').append(verifyStr(str)).append('"');
+        return this;
+    }
+
+    /**
+     * Append a string as a Java
+     * <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.5">String Literal</a>, performing
+     * any escaping if needed.
+     *
+     * @param str the string
+     * @return this instance
+     * @see #jStr(String)
+     */
+    @NonNullByDefault
+    BlockBuilder jString(final String str) {
+        // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
+        return jStr(StringEscapeUtils.escapeJava(str));
+    }
+
+    // FIXME: add jText() which will format a string into a text block as per JLS 3.10.6
+
+    /**
      * Append a {@code '@'}.
      *
      * @return this instance
@@ -326,23 +358,6 @@ final class BlockBuilder extends Block.Builder {
     @NonNullByDefault
     BlockBuilder ind(final String str) {
         buf.append("    ").append(verifyStr(str));
-        return this;
-    }
-
-    // FIXME: rename to jString
-    // FIXME: also add jText, which will format a text block
-    @NonNullByDefault
-    BlockBuilder quoted(final String str) {
-        buf.append('"').append(verifyStr(str)).append('"');
-        return this;
-    }
-
-    // FIXME: rename to jCode() or similar
-    @NonNullByDefault
-    BlockBuilder quotedJava(final String str) {
-        // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
-        final var escaped = StringEscapeUtils.escapeJava(verifyStr(str));
-        buf.append('"').append(escaped).append('"');
         return this;
     }
 

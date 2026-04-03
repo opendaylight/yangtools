@@ -57,7 +57,7 @@ final class ListKeyTemplate extends ClassTemplate {
         for (var prop : allProperties) {
             final var fieldName = fieldName(prop);
             bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
-                .str(fieldName).str(", ").quoted(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
+                .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
         }
 
         for (var prop : properties) {

@@ -131,7 +131,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
                             .str("    ").cB();
                     }
                     bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".").str(codeHelpersThrow())
-                        .str("(").quoted(createRangeString(constraints)).eol(", value);");
+                        .str("(").jStr(createRangeString(constraints)).eol(", value);");
                 }
             }).nl();
     }
