@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.binding.codegen;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * A factory for creating {@link BlockBuilder}s.
+ * A factory for creating {@link Block.Builder}s.
  */
 @NonNullByDefault
 sealed interface BlockBuilderFactory permits GeneratedClass {
     /**
      * {@return a new {@link BlockBuilder}}
      */
-    BlockBuilder newBlockBuilder();
+    Block.Builder newBlockBuilder();
 }

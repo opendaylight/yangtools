@@ -16,22 +16,10 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
- * A builder of a {@link Block}. The set of exposed methods is specifically tailored to callers. We do not use method
- * overloads on purpose, so that there is always a strong tie between then intended semantics and argument types. There
- * may be exceptions to this rule as long as we can provide strong-enough type safety.
- *
- * <p>The intent here is provide a reasonable improvement to {@link StringBuilder}, such as
- * <ul>
- *   <li>short method names to keep concatenations concise</li>
- *   <li>explicit control over end-of-line</li>
- *   <li>simple indentation handling</li>
- * </ul>
- *
- * <p>Methods ending with a capital letter terminate the current line, i.e. return the result of {@link #nl()}. Examples
- * include {@link #oB()}, {@link #cB()}, {@link #eS()}.
+ * Default implementation of {@link Block.Builder}. Methods ending with a capital letter terminate the current line,
+ * i.e. return the result of {@link #nl()}. Examples include {@link #oB()}, {@link #cB()}, {@link #eS()}.
  *
  * <p>When deciding on the shape of a method and its name, please consider it first and foremost its stringlu structure,
  * as that is the layer we operate on.
@@ -39,7 +27,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * <p>We can have some common Java language things coming in, but those should be placed here only on temporary basis
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
-final class BlockBuilder implements Mutable {
+final class BlockBuilder extends Block.Builder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -60,42 +48,25 @@ final class BlockBuilder implements Mutable {
     // offset of the start of the current line, i.e. one past the last known newline in current block
     private int currentLine;
 
-    /**
-     * Append a {@code '@'}.
-     *
-     * @return this instance
-     */
-    @CheckReturnValue
-    @NonNull BlockBuilder at() {
-        buf.append('@');
+    BlockBuilder() {
+        // nothing else
+    }
+
+    @Override
+    BlockBuilder frg(final BlockFragment fragment) {
+        if (fragment != null) {
+            fragment.appendTo(this);
+        }
         return this;
     }
 
-    /**
-     * Append a {@code ' '}.
-     *
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder sp() {
-        buf.append(' ');
-        return this;
-    }
-
-    /**
-     * Append a {@code '\n'}.
-     *
-     * @return this instance
-     */
-    @CheckReturnValue
-    @NonNull BlockBuilder nl() {
+    @Override
+    BlockBuilder nl() {
         newLine();
         return this;
     }
 
-    /**
-     * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
-     */
+    @Override
     void newLine() {
         buf.append('\n');
         markNl();
@@ -105,17 +76,7 @@ final class BlockBuilder implements Mutable {
         currentLine = buf.length();
     }
 
-    /**
-     * Append a {@link String} simple string. The string has to be known to:
-     * <ul>
-     *    <li>be non-empty</li>
-     *    <li>not contain new lines</li>
-     * </ul>
-     *
-     * @param str the {@link String}
-     * @return this instance
-     */
-    @NonNullByDefault
+    @Override
     BlockBuilder str(final String str) {
         appendStr(str);
         return this;
@@ -131,9 +92,25 @@ final class BlockBuilder implements Mutable {
         return this;
     }
 
+    @Override
+    BlockBuilder txt(final String text) {
+        buf.append(verifyTxt(text));
+        return this;
+    }
+
     @NonNullByDefault
     private void appendStr(final String str) {
         buf.append(verifyStr(str));
+    }
+
+    @Override
+    BlockBuilder eol(final String content) {
+        return str(content).nl();
+    }
+
+    @Override
+    BlockBuilder eol(final String str, final int beginIndex, final int endIndex) {
+        return eol(str.substring(beginIndex, endIndex));
     }
 
     @NonNullByDefault
@@ -167,34 +144,24 @@ final class BlockBuilder implements Mutable {
     }
 
     /**
-     * The equivalent of {@code str(content).nl()}.
+     * Append a {@code '@'}.
      *
-     * @param content the {@link String}
      * @return this instance
      */
-    @NonNullByDefault
-    BlockBuilder eol(final String content) {
-        return str(content).nl();
-    }
-
-    @NonNullByDefault
-    BlockBuilder eol(final String str, final int beginIndex, final int endIndex) {
-        return eol(str.substring(beginIndex, endIndex));
+    @CheckReturnValue
+    @NonNull BlockBuilder at() {
+        buf.append('@');
+        return this;
     }
 
     /**
-     * Append a text block. The string has to be known to:
-     * <ul>
-     *    <li>be non-empty</li>
-     *    <li>contain one or more new lines</li>
-     * </ul>
+     * Append a {@code ' '}.
      *
-     * @param text the {@link String}
      * @return this instance
      */
     @NonNullByDefault
-    BlockBuilder txt(final String text) {
-        buf.append(verifyTxt(text));
+    BlockBuilder sp() {
+        buf.append(' ');
         return this;
     }
 
@@ -257,14 +224,8 @@ final class BlockBuilder implements Mutable {
         return this;
     }
 
-    /**
-     * Append the contents of a {@link Block} to this instance if it is not {@code null}.
-     *
-     * @param blk optional {@link Block}
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder blk(final @Nullable Block blk) {
+    @Override
+    BlockBuilder blk(final Block blk) {
         if (blk != null) {
             blk.appendTo(this);
         }
@@ -293,20 +254,6 @@ final class BlockBuilder implements Mutable {
                 }
                 buf.append(sb, scl, sb.length());
             }
-        }
-        return this;
-    }
-
-    /**
-     * Append the contents of a {@link BlockFragment} to this instance if it is not {@code null}.
-     *
-     * @param fragment optional {@link BlockFragment}
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder frg(final @Nullable BlockFragment fragment) {
-        if (fragment != null) {
-            fragment.appendTo(this);
         }
         return this;
     }
@@ -376,12 +323,15 @@ final class BlockBuilder implements Mutable {
         return this;
     }
 
+    // FIXME: rename to jString
+    // FIXME: also add jText, which will format a text block
     @NonNullByDefault
     BlockBuilder quoted(final String str) {
         buf.append('"').append(verifyStr(str)).append('"');
         return this;
     }
 
+    // FIXME: rename to jCode() or similar
     @NonNullByDefault
     BlockBuilder quotedJava(final String str) {
         // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
@@ -453,30 +403,8 @@ final class BlockBuilder implements Mutable {
     //        return this;
     //    }
 
-    /**
-     * {@return a {@link Block} capturing the current state of this builder, or {@code null} if this builder is empty}
-     */
-    @Nullable Block toBlock() {
-        final var length = buf.length();
-        return length == 0 ? null : build(length);
-    }
 
-    @NonNull String toRawString() {
-        return verifyNotNull(buf.toString());
-    }
-
-    String toJavadocBlock() {
-        if (buf.isEmpty())  {
-            return "";
-        }
-        final var bb = BaseTemplate.wrapToDocumentation(toRawString());
-        return bb == null ? "" : bb.toRawString();
-    }
-
-    /**
-     * {@return a {@link Block} capturing the current state of this builder}
-     */
-    @NonNullByDefault
+    @Override
     Block build() {
         final var length = buf.length();
         if (length == 0) {
@@ -498,14 +426,24 @@ final class BlockBuilder implements Mutable {
         throw new UnsupportedOperationException("not implemented yet");
     }
 
-    /**
-     * {@return the result of {@link #toRawString()}}
-     * @deprecated use {@link #toRawString()} directly
-     */
     @Override
-    @Deprecated(forRemoval = true)
-    public String toString() {
-        return toRawString();
+    Block toBlock() {
+        final var length = buf.length();
+        return length == 0 ? null : build(length);
+    }
+
+    // FIXME: split this out into JavadocBuilder
+    String toJavadocBlock() {
+        if (buf.isEmpty())  {
+            return "";
+        }
+        final var bb = BaseTemplate.wrapToDocumentation(toRawString());
+        return bb == null ? "" : bb.toRawString();
+    }
+
+    @Override
+    public String toRawString() {
+        return verifyNotNull(buf.toString());
     }
 
     //
