@@ -83,9 +83,9 @@ final class ListKeyTemplate extends ClassTemplate {
             .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
                 .eol(", guaranteed to be non-null.")
             .eol(" */")
-            .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
-                bb.ind("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS();
-            }).nl();
+            .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").oB()
+                .ind("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
+            .cB();
     }
 
     @Override
