@@ -37,12 +37,12 @@ final class LengthGenerator {
         final var constraints = constraint.getAllowedRanges().asRanges();
         final var ret = new ArrayList<String>(constraints.size());
 
-        for (var rangel : constraints) {
+        for (var range : constraints) {
             // We have to deal with restrictions being out of integer's range
-            final var expr = createExpression(rangel.lowerEndpoint(), rangel.upperEndpoint());
+            final var expr = createExpression(range.lowerEndpoint(), range.upperEndpoint());
             if (expr == null) {
                 // This range is implicitly capped by String/byte[] length returns
-                LOG.debug("Constraint {} implied by int type value domain, skipping", rangel);
+                LOG.debug("Constraint {} implied by int type value domain, skipping", range);
             } else {
                 ret.add(expr);
             }
