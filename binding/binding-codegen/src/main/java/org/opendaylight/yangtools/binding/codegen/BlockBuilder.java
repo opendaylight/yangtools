@@ -41,12 +41,13 @@ final class BlockBuilder extends Block.Builder {
     //
     //    List<Blk> blocks; // completed blocks, with optional coalescence when indent matches
     //    int indent;       // current indent
-    //    int firstNl;      // offset of first known newline in current block, for quick single-line check
 
-    // current block
+    // current block, containing newline-separated lines
     private final @NonNull StringBuilder buf = new StringBuilder();
     // offset of the start of the current line, i.e. one past the last known newline in current block
     private int currentLine;
+    // offset of the start of the second line, i.e. the one past the first newline in current block
+    private int secondLine = -1;
 
     BlockBuilder() {
         // nothing else
@@ -73,7 +74,11 @@ final class BlockBuilder extends Block.Builder {
     }
 
     private void markNl() {
-        currentLine = buf.length();
+        final var nextLine = buf.length();
+        if (secondLine == -1) {
+            secondLine = nextLine;
+        }
+        currentLine = nextLine;
     }
 
     @Override
@@ -272,6 +277,7 @@ final class BlockBuilder extends Block.Builder {
             final var sb = source.buf;
             if (!sb.isEmpty()) {
                 final var scl = source.currentLine;
+                // TODO: optimize with secondLine
                 if (scl != 0) {
                     txt(sb.substring(0, scl));
                 }
@@ -421,15 +427,15 @@ final class BlockBuilder extends Block.Builder {
 
     @NonNullByDefault
     private Block build(final int length) {
-        if (currentLine != length) {
+        if (length != currentLine) {
             throw new VerifyException("unterminated line " + buf.substring(currentLine));
         }
-        if (currentLine == 1) {
-            return Block.ofEmptyLine();
-        }
 
-        // FIXME: implement this method
-        throw new UnsupportedOperationException("not implemented yet");
+        final var str = buf.substring(0, length - 1);
+        if (length == secondLine) {
+            return str.isEmpty() ? Block1.EMPTY : new Block1(str);
+        }
+        return new BlockN(str);
     }
 
     @Override
