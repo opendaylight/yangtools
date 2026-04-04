@@ -54,6 +54,22 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
+    public void appendTo(final BlockBuilder bb) {
+        final var length = buf.length();
+        if (length == 0) {
+            return;
+        }
+        if (secondLine == -1) {
+            bb.str(buf.toString());
+            return;
+        }
+        bb.txt(buf.substring(0, currentLine));
+        if (currentLine != length) {
+            bb.str(buf.substring(currentLine));
+        }
+    }
+
+    @Override
     BlockBuilder frg(final BlockFragment fragment) {
         if (fragment != null) {
             fragment.appendTo(this);
@@ -290,23 +306,13 @@ final class BlockBuilder extends Block.Builder {
      * @param source optional {@link BlockBuilder}
      * @return this instance
      */
-    // FIXME: consider a new name:
-    //        - this does the equivalent of frg(BlockFragment) in that it merges the states
-    //        - it would be natural to perform BlockBuilder.build().appendTo(this),
-    //        the two have different semantics and we should probably do the latter -- and perhaps have a
-    //        'BlockFragment toFragment()' method.
     @NonNullByDefault
     BlockBuilder blk(final @Nullable BlockBuilder source) {
         verifyEmptyLine();
         if (source != null) {
-            final var sb = source.buf;
-            if (!sb.isEmpty()) {
-                final var scl = source.currentLine;
-                // TODO: optimize with secondLine
-                if (scl != 0) {
-                    txt(sb.substring(0, scl));
-                }
-                buf.append(sb, scl, sb.length());
+            final var blk = source.toBlock();
+            if (blk != null) {
+                blk.appendTo(this);
             }
         }
         return this;

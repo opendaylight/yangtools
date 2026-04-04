@@ -154,8 +154,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = newBlockBuilder().at();
         final var forRemoval = ann.getParameter("forRemoval");
         return forRemoval != null
-            ? bb.str(importedName(DEPRECATED)).str("(forRemoval = ").str(forRemoval.getValue()).str(")")
-            : bb.str(importedName(SUPPRESS_WARNINGS)).str("(\"deprecation\")");
+            ? bb.str(importedName(DEPRECATED)).str("(forRemoval = ").str(forRemoval.getValue()).eol(")")
+            : bb.str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
     }
 
     private @Nullable BlockBuilder generateConstructorsFromIfcs() {
