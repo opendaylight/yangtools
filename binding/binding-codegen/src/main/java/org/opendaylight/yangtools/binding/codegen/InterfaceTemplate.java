@@ -174,7 +174,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .at().eol(importedName(OVERRIDE))
             .str("default ").gen(importedName(CLASS), fqcn)
                 .str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
-                .ind("return ").str(fqcn).eol(".class;")
+                .str("return ").str(fqcn).eol(".class;")
                 .cB();
     }
 
@@ -295,7 +295,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("(")
                 .str(generateParameters(method.getParameters())).str(")").oB()
-            .eol("    // No-op")
+                .eol("// No-op")
             .cB();
     }
 
@@ -306,9 +306,9 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE))
             .str("default ").str(importedNonNull(method.getReturnType())).sp().str(name).str("()").oB()
-            .str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
-                // FIXME: what exactly is this replace() doing?
-                .str("(), ").jStr(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
+                .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
+                    // FIXME: what exactly is this replace() doing?
+                    .str("(), ").jStr(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
             .cB();
     }
 
@@ -458,14 +458,14 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                 .str(fullyQualifiedNonNull(type())).str(" obj)").jBlock(bb -> {
                     final var analysis = typeAnalysis();
 
-                    bb.ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
+                    bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
                         .jStr(type().simpleName()).eol(");");
                     for (var property : analysis.properties()) {
-                        bb.ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
+                        bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
                             .jStr(property.getName()).str(", obj.").str(property.getGetterName()).eol("());");
                     }
                     if (analysis.augmentType() != null) {
-                        bb.ind(importedName(CODEHELPERS))
+                        bb.str(importedName(CODEHELPERS))
                             .eol(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);");
                     }
                     bb.eol("    return helper.toString();");

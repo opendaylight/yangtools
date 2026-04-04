@@ -79,21 +79,21 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             final var augmentTypeRef = importedName(augmentType);
             final var mapTypeRef = importedName(JU_MAP);
 
-            bb.str("    ").str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef)
-                .str(">, ").str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).eol(".of();");
+            bb.str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef).str(">, ")
+                .str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).eol(".of();");
         }
 
         final var targetTypeName = importedName(targetType);
         bb
             .nl()
             .txt("""
-                      /**
-                       * Construct an empty builder.
-                       */
+                  /**
+                   * Construct an empty builder.
+                   */
                   """)
-            .str("    public ").str(type().simpleName()).str("()").oB()
-            .eol("        // No-op")
-            .eol("    }")
+            .str("public ").str(type().simpleName()).str("()").oB()
+                .eol("// No-op")
+            .cB()
             .indented(generateConstructorsFromIfcs())
             .nl()
             .eol("    /**")
@@ -262,16 +262,15 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         final var bb = newBlockBuilder()
             .blk(generateMethodFieldsFromComment(targetType))
             .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").oB()
-                .ind("boolean isValidArg = false;").nl();
+                .eol("boolean isValidArg = false;");
         for (var impl : getAllIfcs(targetType)) {
             bb.indented(generateIfCheck(impl, done));
         }
         return bb
-            .str("    ").str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
+            .str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
                 .jStr(getAllIfcs(targetType).stream()
                     .map(this::importedName)
-                    .collect(Collectors.toUnmodifiableList()).toString())
-                .eol(");")
+                    .collect(Collectors.toUnmodifiableList()).toString()).eol(");")
             .cB();
     }
 
@@ -731,45 +730,45 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private BlockBuilder generateAugmentation() {
         return newBlockBuilder()
             .txt("""
-                     /**
-                      * Return the specified augmentation, if it is present in this builder.
-                      *
-                      * @param <E$$> augmentation type
-                      * @param augmentationType augmentation type class
-                      * @return Augmentation object from this builder, or {@code null} if not present
-                     """)
+                  /**
+                   * Return the specified augmentation, if it is present in this builder.
+                   *
+                   * @param <E$$> augmentation type
+                   * @param augmentationType augmentation type class
+                   * @return Augmentation object from this builder, or {@code null} if not present
+                  """)
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
             .eol(" */")
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
             .str("public <E$$ extends ").str(importedName(augmentType))
                 .str("> E$$ " + AUGMENTABLE_AUGMENTATION_NAME + '(').str(importedName(CLASS))
                 .str("<E$$> augmentationType)").oB()
-            .str("    return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
-                .eol(".requireNonNull(augmentationType));")
+                .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
+                    .eol(".requireNonNull(augmentationType));")
             .cB();
     }
 
     @Override
     void appendCopyKeys(final BlockBuilder bb, final List<GeneratedProperty> keyProps) {
-        bb.eol("    this.key = base." + KEY_AWARE_KEY_NAME + "();");
+        bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
         for (var field : keyProps) {
-            bb.str("    this.").str(fieldName(field)).str(" = base.").str(getterMethodName(field)).eol("();");
+            bb.str("this.").str(fieldName(field)).str(" = base.").str(getterMethodName(field)).eol("();");
         }
     }
 
     @Override
     void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
-            bb.str("    this.").str(fieldName(field)).str(" = base.").str(field.getGetterName()).eol("();");
+            bb.str("this.").str(fieldName(field)).str(" = base.").str(field.getGetterName()).eol("();");
         }
     }
 
     @Override
     void appendCopyAugmentation(final BlockBuilder bb) {
         bb
-            .eol("    final var aug = base.augmentations();")
-            .str("    if (!aug.isEmpty())").oB()
-            .str("        this." + AUGMENTATION_FIELD + " = new ").str(importedName(JU_HASHMAP)).eol("<>(aug);")
-            .str("    ").cB();
+            .eol("final var aug = base.augmentations();")
+            .str("if (!aug.isEmpty())").oB()
+                .str("this." + AUGMENTATION_FIELD + " = new ").str(importedName(JU_HASHMAP)).eol("<>(aug);")
+            .cB();
     }
 }

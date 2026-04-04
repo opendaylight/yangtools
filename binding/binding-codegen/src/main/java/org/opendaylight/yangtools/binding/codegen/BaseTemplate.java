@@ -330,8 +330,8 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return newBlockBuilder()
             .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").jBlock(bb -> {
                 bb
-                    .ind("this.").str(fieldName(field)).eol(" = value;")
-                    .ind("return this;").newLine();
+                    .str("this.").str(fieldName(field)).eol(" = value;")
+                    .str("return this;").newLine();
             }).nl();
     }
 
