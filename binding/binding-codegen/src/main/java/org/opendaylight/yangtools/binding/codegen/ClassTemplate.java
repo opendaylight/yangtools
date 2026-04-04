@@ -176,11 +176,11 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
 
         bb
             // inner classes
-            .indented(generateInnerClasses(type().getEnclosedTypes()))
+            .blk(generateInnerClasses(type().getEnclosedTypes()))
             // inner EnumTypeObjects
-            .indented(generateInnerEnumTypeObjects(enums))
+            .blk(generateInnerEnumTypeObjects(enums))
             // constants
-            .indented(constantsDeclarations());
+            .blk(constantsDeclarations());
 
         // fields
         if (!properties.isEmpty()) {
@@ -197,41 +197,40 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         if (restrictions != null) {
             final var length = restrictions.getLengthConstraint();
             if (length.isPresent()) {
-                bb.nl().indented(
-                    LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
-                        length.orElseThrow(), javaType()));
+                bb.nl().blk(LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
+                    length.orElseThrow(), javaType()));
             }
             final var range = restrictions.getRangeConstraint();
             if (range.isPresent()) {
-                bb.nl().indented(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), javaType()));
+                bb.nl().blk(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), javaType()));
             }
         }
 
         bb
-            .indented(constructors())
-            .indented(defaultInstance())
-            .indented(propertyMethods());
+            .blk(constructors())
+            .blk(defaultInstance())
+            .blk(propertyMethods());
 
         if (isBitsTypeObject()) {
             for (var c : consts) {
                 if (VALID_NAMES_NAME.equals(c.getName())) {
-                    bb.nl().indented(validNamesAndValues((BitsTypeDefinition) c.getValue()));
+                    bb.nl().blk(validNamesAndValues((BitsTypeDefinition) c.getValue()));
                 }
             }
         }
 
         final var hashCode = generateHashCode();
         if (hashCode != null) {
-            bb.nl().indented(hashCode);
+            bb.nl().blk(hashCode);
         }
         final var equals = generateEquals();
         if (equals != null) {
-            bb.nl().indented(equals);
+            bb.nl().blk(equals);
         }
 
         final var toString = generateToString(genTO.getToStringIdentifiers());
         if (toString != null) {
-            bb.nl().indented(toString);
+            bb.nl().blk(toString);
         }
         return bb.cB().nl();
     }
@@ -258,12 +257,12 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .at().eol(override)
             .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING)).str(" validNames()").jBlock(bb -> {
                 bb
-                    .ind("return " + VALID_NAMES_NAME + ";").nl()
+                    .str("return " + VALID_NAMES_NAME + ";").nl()
                     .cB()
                     .nl()
                     .at().eol(override)
                     .str("public boolean[] values()").oB()
-                        .ind("return new boolean[]").oB();
+                        .str("return new boolean[]").oB();
                 appendBooleanValues(bb, typedef);
                 bb
                     .str("        ").cb().eS();
@@ -295,9 +294,9 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         return equalsIdentifiers.isEmpty() ? null : newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").jBlock(bb -> {
-                bb.str("    return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
+                bb.str("return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
                 for (var property : equalsIdentifiers) {
-                    bb.nl().str("        && ");
+                    bb.nl().str("    && ");
 
                     final var fieldName = fieldName(property);
                     final var type = property.getReturnType();
@@ -317,19 +316,17 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             return null;
         }
 
-        final var bb = newBlockBuilder()
+        return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("public ").str(importedName(STRING)).str(" toString()").oB()
-                .ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
+            .str("public ").str(importedName(STRING)).str(" toString()").jBlock(bb -> {
+                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
                     .str(importedName(type())).eol(".class);");
-        for (var property : props) {
-            bb
-                .str("    ").str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, ")
-                .jStr(property.getName()).str(", ").str(fieldName(property)).eol(");");
-        }
-        return bb
-            .eol("    return helper.toString();")
-            .cB();
+                for (var property : props) {
+                    bb.str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, ")
+                        .jStr(property.getName()).str(", ").str(fieldName(property)).eol(");");
+                }
+                bb.eol("return helper.toString();");
+            }).nl();
     }
 
     // FIXME: this should be specialized in BitsTypeObjectTemplate
@@ -532,24 +529,24 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").jBlock(bb -> {
                 // FIXME: unify handling here ...
                 if (VALUEOF_TYPES.contains(propType)) {
-                    bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
+                    bb.str("return new ").str(simpleName).str("(").str(importedName(propType))
                     .eol(".valueOf(defaultValue));");
                 } else if (propType.equals(PRIMITIVE_BOOLEAN)) {
                     // ... this case is different from all others: is this for type=bits?
-                    bb.indented(bitsDefaultInstanceBody());
+                    bb.blk(bitsDefaultInstanceBody());
                 } else if (propType instanceof Decimal64Type decimal64) {
-                    bb.str("    return new ").str(simpleName).str("(").str(importedName(propType))
+                    bb.str("return new ").str(simpleName).str("(").str(importedName(propType))
                     .str(".valueOf(defaultValue).scaleTo(").jInt(decimal64.fractionDigits()).eol("));");
                 } else if (propType.equals(STRING_TYPE)) {
-                    bb.str("    return new ").str(simpleName).eol("(defaultValue);");
+                    bb.str("return new ").str(simpleName).eol("(defaultValue);");
                 } else if (propType.equals(BINARY_TYPE)) {
-                    bb.str("    return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
+                    bb.str("return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
                     .eol(".getDecoder().decode(defaultValue));");
                 } else if (propType.equals(EMPTY_TYPE)) {
-                    bb.str("    return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
+                    bb.str("return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
                     .eol(".emptyFor(defaultValue));");
                 } else {
-                    bb.str("    return new ").str(simpleName).str("(new ").str(importedName(propType))
+                    bb.str("return new ").str(simpleName).str("(new ").str(importedName(propType))
                         .eol("(defaultValue));");
                 }
             }).nl();
@@ -583,7 +580,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 .nl()
                 .at().eol(importedName(OVERRIDE))
                 .str("public ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()").oB()
-                    .ind("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
+                    .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
                 .cB();
         }
 
@@ -610,7 +607,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .at().eol(importedName(OVERRIDE))
             .str("public int hashCode()").jBlock(bb -> {
                 if (size == 1) {
-                    bb.str("    return ");
+                    bb.str("return ");
                     final var prop = props.getFirst();
                     if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
                         bb.str(importedName(BOOLEAN)).str(".hashCode(");
@@ -620,18 +617,18 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                     bb.str(fieldName(prop)).eol(");");
                 } else {
                     bb
-                        .eol("    final int prime = 31;")
-                        .eol("    int result = 1;");
+                        .eol("final int prime = 31;")
+                        .eol("int result = 1;");
                     for (var property : props) {
                         final var type = property.getReturnType();
                         final var receiver = type.equals(PRIMITIVE_BOOLEAN)
                             // FIXME: unified perhaps?
                             ? importedName(BOOLEAN) : importedUtilClass(type);
 
-                        bb.str("    result = prime * result + ").str(receiver).str(".hashCode(")
-                            .str(fieldName(property)).eol(");");
+                        bb.str("result = prime * result + ").str(receiver).str(".hashCode(").str(fieldName(property))
+                            .eol(");");
                     }
-                    bb.eol("    return result;");
+                    bb.eol("return result;");
                 }
             }).nl();
     }
@@ -664,8 +661,8 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         // FIXME: this wrapping should be specialized in ScalarTypeObjectTemplate vs. others (BitsTO, EnumTO, UnionTO)
         return paramName.equals("_value") ? checkerCalls : newBlockBuilder()
             .str("if (").str(paramName).str(" != null)").oB()
-                .indented(checkerCalls)
-                .cB();
+                .blk(checkerCalls)
+            .cB();
     }
 
     @NonNull BlockBuilder allValuesConstructor() {
@@ -673,19 +670,19 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")")
             .jBlock(bb -> {
                 if (!parentProperties.isEmpty()) {
-                    bb.str("    super(").str(asArguments(parentProperties)).eol(");");
+                    bb.str("super(").str(asArguments(parentProperties)).eol(");");
                 }
                 for (var prop : allProperties) {
-                    bb.indented(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
+                    bb.blk(generateRestrictions(type(), BaseTemplate.fieldName(prop), prop.getReturnType()));
                 }
                 for (var prop : properties) {
                     final var fieldName = fieldName(prop);
 
                     if (isArrayProperty(prop)) {
-                        bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
+                        bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".copyArray(")
                             .str(fieldName).eol(");");
                     } else {
-                        bb.str("    this.").str(fieldName).str(" = ").str(fieldName).eS();
+                        bb.str("this.").str(fieldName).str(" = ").str(fieldName).eS();
                     }
                 }
             }).nl();
@@ -705,11 +702,11 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").jBlock(bb -> {
                 // TODO: consider splitting into a 'Block copyConstructorBody()' once we can do efficient block copies
                 if (!parentProperties.isEmpty()) {
-                    bb.eol("    super(source);");
+                    bb.eol("super(source);");
                 }
                 for (var prop : properties) {
                     final var fieldName = fieldName(prop);
-                    bb.str("    this.").str(fieldName).str(" = source.").str(fieldName).eS();
+                    bb.str("this.").str(fieldName).str(" = source.").str(fieldName).eS();
                 }
             }).nl();
     }
@@ -725,8 +722,8 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .eol(" * @param source Source object")
             .eol(" */")
             .str("public ").str(type().simpleName()).str("(").str(importedSuper).str(" source)").oB()
-            .eol("    super(source);")
-            .indented(genPatternEnforcer("getValue()"))
+                .eol("super(source);")
+                .blk(genPatternEnforcer("getValue()"))
             .cB();
     }
 
@@ -735,7 +732,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").jStr(VALUE_PROP).eol(")")
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
         if (!parentProperties.isEmpty()) {
-            bb.str("    super(").str(asArguments(parentProperties)).eol(");");
+            bb.str("super(").str(asArguments(parentProperties)).eol(");");
         }
 
         final var value = valueProperty(allProperties);
@@ -745,7 +742,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
 
         final var fieldName = fieldName(value);
         if (valueProperty(properties) != null) {
-            bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
+            bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
                 .str(fieldName);
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
                 bb.str(", ").jInt(decimal64.fractionDigits());
@@ -753,11 +750,11 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             bb.str(")").frg(cloneOrNull(value)).eS();
         }
         return bb
-            .indented(generateRestrictions(type(), fieldName, value.getReturnType()))
+            .blk(generateRestrictions(type(), fieldName, value.getReturnType()))
             .nl()
             // If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code
             // is structured.
-            .indented(genPatternEnforcer(fieldName))
+            .blk(genPatternEnforcer(fieldName))
             .cB();
     }
 

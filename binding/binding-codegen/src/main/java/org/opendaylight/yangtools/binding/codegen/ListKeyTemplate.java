@@ -56,7 +56,7 @@ final class ListKeyTemplate extends ClassTemplate {
 
         for (var prop : allProperties) {
             final var fieldName = fieldName(prop);
-            bb.str("    this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
+            bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
                 .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
         }
 
@@ -84,7 +84,7 @@ final class ListKeyTemplate extends ClassTemplate {
                 .eol(", guaranteed to be non-null.")
             .eol(" */")
             .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").oB()
-                .ind("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
+                .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
             .cB();
     }
 

@@ -75,13 +75,13 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         if (!properties.isEmpty()) {
             bb.newLine();
             for (var prop : properties) {
-                bb.str("    private final ").str(importedReturnType(prop)).sp().str(fieldName(prop)).eS();
+                bb.str("private final ").str(importedReturnType(prop)).sp().str(fieldName(prop)).eS();
             }
         }
 
         bb
             .nl()
-            .indented(generateCopyConstructor(builder.type(), type()));
+            .blk(generateCopyConstructor(builder.type(), type()));
 
         if (keyType != null) {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
@@ -89,11 +89,11 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
             bb
                 .nl()
-                .str("    private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
+                .str("private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
                     .str(importedName(builder.type())).str(" base)").oB()
-                .str("        final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
-                .eol("        return key != null ? key")
-                .str("            : new ").str(importedName(keyType)).str("(");
+                        .str("final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
+                        .eol("return key != null ? key")
+                        .str("    : new ").str(importedName(keyType)).str("(");
 
             // Note: keys have at least one component
             final var it = keyConstructorArgs(keyType).iterator();
@@ -108,7 +108,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
             bb
                 .eol(");")
-                .str("    ").cB();
+                .cB();
         }
 
         // generate getters
@@ -120,18 +120,18 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 final var field = it.next();
 
                 // getFoo()
-                bb.indented(asGetterMethod(field));
+                bb.blk(asGetterMethod(field));
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
-                        .ind("@").eol(override)
-                        .ind("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
+                        .at().eol(override)
+                        .str("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
                             .str(toFirstUpper(field.getName())).str("()").oB()
-                        .ind("    return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
-                            .str(getterMethodName(field)).str("(), ").str(fieldType.canonicalName())
-                            .eol(BUILDER_SUFFIX + ".empty());")
+                            .str("return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
+                                .str(getterMethodName(field)).str("(), ").str(fieldType.canonicalName())
+                                .eol(BUILDER_SUFFIX + ".empty());")
                         .cB();
                 }
 
@@ -151,7 +151,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                           private volatile boolean hashValid = false;
 
                       """)
-                .str("    @").eol(override)
+                .at().eol(override)
                 .txt("""
                           public int hashCode() {
                               if (hashValid) {
@@ -159,7 +159,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                               }
 
                       """)
-                .str("        final int result = ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
+                    .str("    final int result = ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
                 .txt("""
                               hash = result;
                               hashValid = true;
@@ -167,19 +167,19 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                           }
 
                       """)
-                .str("    @").eol(override)
-                .str("    public boolean equals(").str(importedName(Types.objectType())).str(" obj)").oB()
-                .str("        return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, obj);")
-                .str("    ").cB();
+                .at().eol(override)
+                .str("public boolean equals(").str(importedName(Types.objectType())).str(" obj)").oB()
+                    .str("return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, obj);")
+                .cB();
         }
 
         // generate equals()
         return bb
             .nl()
-            .str("    @").eol(override)
-            .str("    public ").str(importedName(Types.STRING)).str(" toString()").oB()
-            .str("        return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
-            .str("    ").cB()
+            .at().eol(override)
+            .str("public ").str(importedName(Types.STRING)).str(" toString()").oB()
+                .str("return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
+            .cB()
             .cB();
     }
 
@@ -195,9 +195,9 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
                 final var fieldName = fieldName(field);
                 if (field.getReturnType().isArray()) {
-                    bb.ind("return ").str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
+                    bb.str("return ").str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
                 } else {
-                    bb.ind("return ").str(fieldName).eS();
+                    bb.str("return ").str(fieldName).eS();
                 }
             }).nl();
     }
@@ -233,16 +233,16 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     @Override
     void appendCopyKeys(final BlockBuilder bb, final List<GeneratedProperty> keyProps) {
-        bb.eol("    final var key = key();");
+        bb.eol("final var key = key();");
         for (var field : keyProps) {
-            bb.str("    this.").str(fieldName(field)).str(" = key.").str(getterMethodName(field)).eol("();");
+            bb.str("this.").str(fieldName(field)).str(" = key.").str(getterMethodName(field)).eol("();");
         }
     }
 
     @Override
     void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
-            bb.str("    this.").str(fieldName(field)).str(" = ");
+            bb.str("this.").str(fieldName(field)).str(" = ");
 
             if (field.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
                 bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
@@ -254,7 +254,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     @Override
     void appendCopyAugmentation(final BlockBuilder bb) {
-        bb.ind("super(base." + AUGMENTATION_FIELD);
+        bb.str("super(base." + AUGMENTATION_FIELD);
         if (keyType != null) {
             bb.str(", extractKey(base)");
         }

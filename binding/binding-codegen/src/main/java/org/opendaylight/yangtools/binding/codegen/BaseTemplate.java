@@ -305,7 +305,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return newBlockBuilder()
             .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
                 final var fieldName = fieldName(field);
-                bb.str("    return ");
+                bb.str("return ");
                 // any Java array type needs to be duplicated to prevent modification
                 if (field.getReturnType().isArray()) {
                     bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
@@ -330,8 +330,8 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return newBlockBuilder()
             .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").jBlock(bb -> {
                 bb
-                    .ind("this.").str(fieldName(field)).eol(" = value;")
-                    .ind("return this;").newLine();
+                    .str("this.").str(fieldName(field)).eol(" = value;")
+                    .str("return this;").newLine();
             }).nl();
     }
 
