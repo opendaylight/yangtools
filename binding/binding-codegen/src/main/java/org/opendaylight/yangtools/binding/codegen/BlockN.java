@@ -33,19 +33,24 @@ record BlockN(String str) implements Block {
 
     @Override
     public void appendTo(final BlockBuilder bb) {
-        int from = 0;
+        final var end = str.length();
+        int begin = 0;
         while (true) {
-            final int nl = str.indexOf('\n', from);
+            final int nl = str.indexOf('\n', begin, end);
             if (nl == -1) {
-                bb.eol(str, from, str.length());
+                if (begin != end) {
+                    bb.eol(str, begin, end);
+                } else {
+                    bb.newLine();
+                }
                 return;
             }
-            if (nl == from) {
+            if (nl == begin) {
                 bb.newLine();
             } else {
-                bb.eol(str, from, nl);
+                bb.eol(str, begin, nl);
             }
-            from = nl + 1;
+            begin = nl + 1;
         }
     }
 
