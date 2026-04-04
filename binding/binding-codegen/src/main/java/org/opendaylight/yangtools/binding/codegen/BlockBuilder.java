@@ -40,14 +40,18 @@ final class BlockBuilder extends Block.Builder {
     //    }
     //
     //    List<Blk> blocks; // completed blocks, with optional coalescence when indent matches
-    //    int indent;       // current indent
 
     // current block, containing newline-separated lines
     private final @NonNull StringBuilder buf = new StringBuilder();
     // offset of the start of the current line, i.e. one past the last known newline in current block
-    private int currentLine;
+    private int currentLine = 0;
     // offset of the start of the second line, i.e. the one past the first newline in current block
     private int secondLine = -1;
+
+    // current indentation we are using
+    private int currentIndent = 0;
+    // the indentation that is currently missing
+    private int needIndent = 0;
 
     BlockBuilder() {
         // nothing else
@@ -69,21 +73,51 @@ final class BlockBuilder extends Block.Builder {
 
     @Override
     void newLine() {
-        buf.append('\n');
-        markNl();
+        markNl(buf.append('\n'));
     }
 
-    private void markNl() {
-        final var nextLine = buf.length();
+    private void markNl(final StringBuilder sb) {
+        final var nextLine = sb.length();
         if (secondLine == -1) {
             secondLine = nextLine;
         }
         currentLine = nextLine;
+        needIndent = currentIndent;
+    }
+
+    // Prepare the buffer to receive some content
+    @NonNullByDefault
+    private StringBuilder buf() {
+        return needIndent == 0 ? buf : applyIndent();
+    }
+
+    @NonNullByDefault
+    private StringBuilder applyIndent() {
+        needIndent = 0;
+        return buf.repeat("    ", currentIndent);
+    }
+
+    @NonNullByDefault
+    private StringBuilder incrementIndent(final StringBuilder sb) {
+        if (++currentIndent < 1) {
+            // FIXME: split out to verifier
+            throw new VerifyException("indent overflow");
+        }
+        return sb;
+    }
+
+    @NonNullByDefault
+    private StringBuilder decrementIndent() {
+        if (currentIndent-- == 0) {
+            // FIXME: split out to verifier
+            throw new VerifyException("indent underflow");
+        }
+        return buf;
     }
 
     @Override
     BlockBuilder str(final String str) {
-        appendStr(str);
+        strImpl(str);
         return this;
     }
 
@@ -92,9 +126,14 @@ final class BlockBuilder extends Block.Builder {
     @NonNullByDefault
     BlockBuilder str(final @Nullable StringBuilder sb) {
         if (sb != null) {
-            appendStr(sb.toString());
+            strImpl(sb.toString());
         }
         return this;
+    }
+
+    @NonNullByDefault
+    private void strImpl(final String str) {
+        buf().append(verifyStr(str));
     }
 
     @Override
@@ -114,11 +153,6 @@ final class BlockBuilder extends Block.Builder {
     private BlockBuilder txtSlow(final String text) {
         secondLine = buf.length() + text.indexOf('\n') + 1;
         return txtImpl(text);
-    }
-
-    @NonNullByDefault
-    private void appendStr(final String str) {
-        buf.append(verifyStr(str));
     }
 
     @Override
@@ -145,7 +179,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder jInt(final int value) {
-        buf.append(value);
+        buf().append(value);
         return this;
     }
 
@@ -157,7 +191,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder jLong(final long value) {
-        buf.append(value).append('L');
+        buf().append(value).append('L');
         return this;
     }
 
@@ -172,7 +206,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder jStr(final String str) {
-        buf.append('"').append(verifyStr(str)).append('"');
+        buf().append('"').append(verifyStr(str)).append('"');
         return this;
     }
 
@@ -200,7 +234,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @CheckReturnValue
     @NonNull BlockBuilder at() {
-        buf.append('@');
+        buf().append('@');
         return this;
     }
 
@@ -211,7 +245,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder sp() {
-        buf.append(' ');
+        buf().append(' ');
         return this;
     }
 
@@ -225,9 +259,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder oB() {
-        buf.append(" {\n");
-        markNl();
-        // FIXME: adjust indentation
+        markNl(incrementIndent(buf().append(" {\n")));
         return this;
     }
 
@@ -240,9 +272,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder cb() {
-        // FIXME: add indentation
-        buf.append('}');
-        // FIXME: adjust indentation
+        decrementIndent().append('}');
         return this;
     }
 
@@ -255,10 +285,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder cB() {
-        // FIXME: add indentation
-        buf.append("}\n");
-        markNl();
-        // FIXME: adjust indentation
+        markNl(decrementIndent().append("}\n"));
         return this;
     }
 
@@ -269,8 +296,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder eS() {
-        buf.append(";\n");
-        markNl();
+        markNl(buf().append(";\n"));
         return this;
     }
 
@@ -319,8 +345,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder gen(final String rawType, final String arg) {
-        startGen(rawType, arg);
-        return endGen();
+        return endGen(startGen(rawType, arg));
     }
 
     /**
@@ -334,19 +359,17 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder gen(final String rawType, final String arg0, final String arg1) {
-        startGen(rawType, arg0);
-        buf.append(", ").append(verifyStr(arg1));
-        return endGen();
+        return endGen(startGen(rawType, arg0).append(", ").append(verifyStr(arg1)));
     }
 
     @NonNullByDefault
-    private void startGen(final String rawType, final String args) {
-        buf.append(verifyStr(rawType)).append('<').append(verifyStr(args));
+    private StringBuilder startGen(final String rawType, final String args) {
+        return buf().append(verifyStr(rawType)).append('<').append(verifyStr(args));
     }
 
     @NonNullByDefault
-    private BlockBuilder endGen() {
-        buf.append('>');
+    private BlockBuilder endGen(final StringBuilder sb) {
+        sb.append('>');
         return this;
     }
 
@@ -358,7 +381,7 @@ final class BlockBuilder extends Block.Builder {
     // FIXME: remove this method
     @NonNullByDefault
     BlockBuilder ind() {
-        buf.append("    ");
+        buf().append("    ");
         return this;
     }
 
@@ -370,7 +393,7 @@ final class BlockBuilder extends Block.Builder {
     // FIXME: remove this method
     @NonNullByDefault
     BlockBuilder ind(final String str) {
-        buf.append("    ").append(verifyStr(str));
+        buf().append("    ").append(verifyStr(str));
         return this;
     }
 
@@ -411,8 +434,7 @@ final class BlockBuilder extends Block.Builder {
             if (begin == nl) {
                 newLine();
             } else {
-                buf.append(indent).append(text, begin, next);
-                markNl();
+                markNl(buf.append(indent).append(text, begin, next));
             }
             begin = next;
         } while (begin < len);
