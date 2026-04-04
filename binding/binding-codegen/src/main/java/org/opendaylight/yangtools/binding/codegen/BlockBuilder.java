@@ -99,6 +99,7 @@ final class BlockBuilder extends Block.Builder {
 
     @Override
     BlockBuilder txt(final String text) {
+        verifyEmptyLine();
         final var verified = verifyTxt(text);
         return secondLine != -1 ? txtImpl(verified) : txtSlow(verified);
     }
@@ -276,6 +277,7 @@ final class BlockBuilder extends Block.Builder {
 
     @Override
     BlockBuilder blk(final Block blk) {
+        verifyEmptyLine();
         if (blk != null) {
             blk.appendTo(this);
         }
@@ -295,6 +297,7 @@ final class BlockBuilder extends Block.Builder {
     //        'BlockFragment toFragment()' method.
     @NonNullByDefault
     BlockBuilder blk(final @Nullable BlockBuilder source) {
+        verifyEmptyLine();
         if (source != null) {
             final var sb = source.buf;
             if (!sb.isEmpty()) {
@@ -478,6 +481,12 @@ final class BlockBuilder extends Block.Builder {
     @Override
     public String toRawString() {
         return verifyNotNull(buf.toString());
+    }
+
+    private void verifyEmptyLine() {
+        if (currentLine != buf.length()) {
+            throw new VerifyException("trailing content '" + buf.substring(currentLine) + "'");
+        }
     }
 
     //

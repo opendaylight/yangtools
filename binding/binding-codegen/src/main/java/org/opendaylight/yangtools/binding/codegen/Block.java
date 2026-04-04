@@ -51,7 +51,8 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
      */
     abstract sealed class Builder implements Mutable permits BlockBuilder {
         /**
-         * Append the contents of a {@link Block} to this instance if it is not {@code null}.
+         * Append the contents of a {@link Block} to this instance if it is not {@code null}. The there must not be any
+         * content on the current line.
          *
          * @param blk optional {@link Block}
          * @return this instance
@@ -97,6 +98,8 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
          *    <li>to be non-empty</li>
          *    <li>end with a new line</li>
          * </ul>
+         *
+         * <p>The there must not be any content on the current line.
          *
          * @param text the {@link String}
          * @return this instance
