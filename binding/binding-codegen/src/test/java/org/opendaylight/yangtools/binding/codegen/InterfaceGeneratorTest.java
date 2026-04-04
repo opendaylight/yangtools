@@ -40,6 +40,7 @@ class InterfaceGeneratorTest {
 
 
                 void ontest();
+
             }
             """, new InterfaceGenerator(genType).generate());
     }
@@ -62,6 +63,7 @@ class InterfaceGeneratorTest {
 
                 @Deprecated
                 void ontest();
+
             }
             """, new InterfaceGenerator(genType).generate());
     }

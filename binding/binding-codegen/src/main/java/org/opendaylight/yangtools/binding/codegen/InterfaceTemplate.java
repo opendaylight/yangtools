@@ -214,7 +214,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
             .str(importedReturnType(method)).sp().str(method.getName()).str("(")
-                .str(generateParameters(method.getParameters())).str(");");
+                .str(generateParameters(method.getParameters())).eol(");");
     }
 
     private static @Nullable BlockBuilder generateJavadoc(final @Nullable TypeMemberComment comment) {

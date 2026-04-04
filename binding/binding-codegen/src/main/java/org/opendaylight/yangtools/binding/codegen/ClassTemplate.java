@@ -164,7 +164,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         if (!isInnerClass) {
             bb.eol(generatedAnnotation());
         }
-        bb.blk(generateClassDeclaration(isInnerClass)).oB();
+        bb.frg(generateClassDeclaration(isInnerClass)).oB();
 
         // serialVersionUID
         final var suid = genTO.getSUID();
