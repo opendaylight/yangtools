@@ -99,8 +99,21 @@ final class BlockBuilder extends Block.Builder {
 
     @Override
     BlockBuilder txt(final String text) {
-        buf.append(verifyTxt(text));
+        final var verified = verifyTxt(text);
+        return secondLine != -1 ? txtImpl(verified) : txtSlow(verified);
+    }
+
+    @NonNullByDefault
+    private BlockBuilder txtImpl(final String text) {
+        buf.append(text);
+        currentLine = buf.length();
         return this;
+    }
+
+    @NonNullByDefault
+    private BlockBuilder txtSlow(final String text) {
+        secondLine = buf.length() + text.indexOf('\n') + 1;
+        return txtImpl(text);
     }
 
     @NonNullByDefault

@@ -68,9 +68,13 @@ abstract sealed class ArgumentVerifier {
 
         @Override
         void fullVerifyTxt(final String arg) {
-            final var nl = arg.indexOf('\n');
+            final var nl = arg.lastIndexOf('\n');
             if (nl == -1) {
                 throw new VerifyException("no newline in '" + arg + "'");
+            }
+            final var tail = nl + 1;
+            if (tail != arg.length()) {
+                throw new VerifyException("trailing text fragment " + arg.substring(tail));
             }
         }
     }

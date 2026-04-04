@@ -82,8 +82,8 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
         /**
          * Append a {@link String} simple string. The string has to be known to:
          * <ul>
-         *    <li>be non-empty</li>
-         *    <li>not contain new lines</li>
+         *    <li>to be non-empty</li>
+         *    <li>to not contain new lines</li>
          * </ul>
          *
          * @param str the {@link String}
@@ -92,10 +92,10 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
         abstract Builder str(String str);
 
         /**
-         * Append a text block. The string has to be known to:
+         * Append a text block. The string has to be known:
          * <ul>
-         *    <li>be non-empty</li>
-         *    <li>contain one or more new lines</li>
+         *    <li>to be non-empty</li>
+         *    <li>end with a new line</li>
          * </ul>
          *
          * @param text the {@link String}
