@@ -47,7 +47,7 @@ final class FeatureTemplate extends ClassTemplate {
         return newBlockBuilder()
             .nl()
             .str("private ").str(type().simpleName()).str("()").oB()
-                .ind("// Hidden on purpose").nl()
+                .str("// Hidden on purpose").nl()
             .cB();
     }
 
