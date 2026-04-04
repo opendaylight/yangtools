@@ -84,7 +84,7 @@ final class ListKeyTemplate extends ClassTemplate {
                 .eol(", guaranteed to be non-null.")
             .eol(" */")
             .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").oB()
-                .ind("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
+                .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
             .cB();
     }
 
