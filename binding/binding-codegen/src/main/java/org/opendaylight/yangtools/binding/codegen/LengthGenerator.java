@@ -78,15 +78,15 @@ final class LengthGenerator {
             .str("private static void ").str(lengthCheckerName(member)).str("(final byte[] value)").oB();
 
         if (!expressions.isEmpty()) {
-            bb.eol("    final int length = value.length;");
+            bb.eol("final int length = value.length;");
 
             for (var exp : expressions) {
-                bb.str("    if (").str(exp).str(")").oB();
-                bb.eol("        return;");
-                bb.str("    ").cB();
+                bb.str("if (").str(exp).str(")").oB()
+                    .eol("return;")
+                .cB();
             }
 
-            bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
+            bb.str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
                 .jStr(createLengthString(constraint)).eol(", value);");
         }
 
@@ -101,16 +101,16 @@ final class LengthGenerator {
 
         final var expressions = createExpressions(constraint);
         if (!expressions.isEmpty()) {
-            bb.eol("    final int length = value.codePointCount(0, value.length());");
+            bb.eol("final int length = value.codePointCount(0, value.length());");
 
             for (var exp : expressions) {
                 bb
-                    .str("    if (").str(exp).str(")").oB()
-                    .eol("        return;")
-                    .str("    ").cB();
+                    .str("if (").str(exp).str(")").oB()
+                        .eol("return;")
+                    .cB();
             }
 
-            bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
+            bb.str(javaClass.getReferenceString(CODEHELPERS)).str(".throwInvalidLength(")
                 .jStr(createLengthString(constraint)).eol(", value);");
         }
 

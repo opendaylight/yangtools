@@ -92,7 +92,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
             }
             bb
                 .str("public ").str(importedName(keyType)).str(' ' + KEY_AWARE_KEY_NAME + "()").oB()
-                    .ind("return key;").nl()
+                    .eol("return key;")
                 .cB()
                 .newLine();
         }
