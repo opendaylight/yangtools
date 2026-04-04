@@ -305,7 +305,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return newBlockBuilder()
             .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
                 final var fieldName = fieldName(field);
-                bb.str("    return ");
+                bb.str("return ");
                 // any Java array type needs to be duplicated to prevent modification
                 if (field.getReturnType().isArray()) {
                     bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
@@ -330,8 +330,8 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return newBlockBuilder()
             .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").jBlock(bb -> {
                 bb
-                    .ind("this.").str(fieldName(field)).eol(" = value;")
-                    .ind("return this;").newLine();
+                    .str("this.").str(fieldName(field)).eol(" = value;")
+                    .str("return this;").newLine();
             }).nl();
     }
 
@@ -503,17 +503,12 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     @NonNullByDefault
     static final void appendAsJavadoc(final BlockBuilder bb, final String text) {
-        appendAsJavadoc(bb, text, false);
-    }
-
-    @NonNullByDefault
-    static final void appendAsJavadoc(final BlockBuilder bb, final String text, final boolean indent) {
-        appendIndent(bb, indent).eol("/**");
+        bb.eol("/**");
 
         final int length = text.length();
         int begin = 0;
         while (begin < length) {
-            appendIndent(bb, indent).str(" *");
+            bb.str(" *");
 
             final int nl = text.indexOf('\n', begin);
             final int end = nl != -1 ? nl : length;
@@ -521,12 +516,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             begin = end + 1;
         }
 
-        appendIndent(bb, indent).eol(" */");
-    }
-
-    @NonNullByDefault
-    private static BlockBuilder appendIndent(final BlockBuilder bb, final boolean indent) {
-        return indent ? bb.str("    ") : bb;
+        bb.eol(" */");
     }
 
     @NonNullByDefault

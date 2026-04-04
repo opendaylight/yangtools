@@ -68,7 +68,7 @@ final class DataRootTemplate extends InterfaceTemplate {
             .at().eol(override)
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
             .str("default ").gen(rootMeta, type).str(" " + DATA_ROOT_META_NAME + "()").oB()
-                .ind("return " + META_STATIC_FIELD_NAME + ';').nl()
+                .eol("return " + META_STATIC_FIELD_NAME + ';')
             .cB();
 
         final var superMethods = super.generateMethods();

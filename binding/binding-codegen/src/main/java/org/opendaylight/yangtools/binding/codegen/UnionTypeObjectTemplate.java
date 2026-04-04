@@ -81,7 +81,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
                 .str("public ").str(simpleName).str("(").str(asArgumentsDeclaration(propertyAndTopParentProperties))
                     .str(")").oB();
             if (!parentProperties.isEmpty()) {
-                bb.str("    super(").str(asArguments(parentProperties)).eol(");");
+                bb.str("super(").str(asArguments(parentProperties)).eol(");");
             }
 
             final var restrictions = restrictionsForSetter(actualType);
@@ -90,7 +90,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             }
 
             for (var other : finalProperties) {
-                bb.str("    this.");
+                bb.str("this.");
                 if (property.equals(other)) {
                     bb.str(propFieldName).str(" = ").str(importedName(JU_OBJECTS)).str(".requireNonNull(")
                         .str(propFieldName).eol(");");
@@ -122,7 +122,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             final var propType = importedReturnType(prop);
             bb
                 .str("public ").str(simpleName).str("(").str(propType).sp().str(fieldName).str(")").oB()
-                    .ind("super(").str(fieldName).eol(");")
+                    .str("super(").str(fieldName).eol(");")
                 .cB();
 
             if (!it.hasNext()) {
@@ -149,8 +149,8 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             final var fqcn = type.canonicalName();
 
             bb
-                .str("    if (").str(field).str(" != null)").oB()
-                .str("        return ");
+                .str("if (").str(field).str(" != null)").oB()
+                    .str("return ");
 
             if (STRING_TYPE.equals(type)) {
                 // type string
@@ -191,11 +191,11 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
                 bb.str(field).eol(".getValue().toString();");
             }
             bb
-                .ind().cB();
+                .cB();
         }
 
         return bb
-            .eol("    throw new IllegalStateException(\"No value assigned\");")
+            .eol("throw new IllegalStateException(\"No value assigned\");")
             .cB();
     }
 
@@ -225,13 +225,13 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
                   """)
             .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").jBlock(bb -> {
                 if (!parentProperties.isEmpty()) {
-                    bb.eol("    super(source);");
+                    bb.eol("super(source);");
                 }
                 for (var prop : properties) {
                     final var fieldName = fieldName(prop);
 
                     // TODO: figure out a better flow
-                    bb.str("    this.").str(fieldName).str(" = ");
+                    bb.str("this.").str(fieldName).str(" = ");
                     if (isArrayProperty(prop)) {
                         bb.str(importedName(CODEHELPERS)).str(".copyArray(source.").str(fieldName).str(")");
                     } else {

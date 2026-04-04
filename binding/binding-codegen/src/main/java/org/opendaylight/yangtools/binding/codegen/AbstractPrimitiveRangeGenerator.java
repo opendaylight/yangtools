@@ -126,12 +126,12 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
                 if (!expressions.isEmpty()) {
                     for (var exp : expressions) {
                         bb
-                            .str("    if (").str(exp).str(")").oB()
-                            .eol("        return;")
-                            .str("    ").cB();
+                            .str("if (").str(exp).str(")").oB()
+                                .eol("return;")
+                            .cB();
                     }
-                    bb.str("    ").str(javaClass.getReferenceString(CODEHELPERS)).str(".").str(codeHelpersThrow())
-                        .str("(").jStr(createRangeString(constraints)).eol(", value);");
+                    bb.str(javaClass.getReferenceString(CODEHELPERS)).str(".").str(codeHelpersThrow()).str("(")
+                        .jStr(createRangeString(constraints)).eol(", value);");
                 }
             }).nl();
     }

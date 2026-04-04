@@ -79,12 +79,11 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
                 value.getDescription().ifPresent(desc -> {
                     final var doc = encodeJavadocSymbols(BindingGeneratorUtil.encodeAngleBrackets(desc.trim()));
                     if (!doc.isEmpty()) {
-                        appendAsJavadoc(bb, doc, true);
+                        appendAsJavadoc(bb, doc);
                         bb.newLine();
                     }
                 });
-                bb.str("    ").str(value.constantName()).str("(").jInt(value.value()).str(", ").jStr(value.name())
-                    .str(")");
+                bb.str(value.constantName()).str("(").jInt(value.value()).str(", ").jStr(value.name()).str(")");
 
                 if (!it.hasNext()) {
                     break;
@@ -97,81 +96,81 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         }
 
         bb
-            .str("    private final ").str(nonnullString).eol(" name;")
-            .eol("    private final int value;")
+            .str("private final ").str(nonnullString).eol(" name;")
+            .eol("private final int value;")
             .nl()
-            .str("    private ").str(typeName).str("(int value, ").str(nonnullString).str(" name)").oB()
-            .eol("        this.value = value;")
-            .eol("        this.name = name;")
-            .str("    ").cB()
+            .str("private ").str(typeName).str("(int value, ").str(nonnullString).str(" name)").oB()
+                .eol("this.value = value;")
+                .eol("this.name = name;")
+            .cB()
             .nl()
-            .str("    @").eol(override)
-            .str("    public ").str(string).str(" getName()").oB()
-            .eol("        return name;")
-            .str("    ").cB()
+            .at().eol(override)
+            .str("public ").str(string).str(" getName()").oB()
+                .eol("return name;")
+            .cB()
             .nl()
-            .str("    @").eol(override)
-            .str("    public int getIntValue()").oB()
-            .eol("        return value;")
-            .str("    ").cB()
+            .at().eol(override)
+            .str("public int getIntValue()").oB()
+                .eol("return value;")
+            .cB()
             .nl()
-            .eol("    /**")
-            .eol("     * Return the enumeration member whose {@link #getName()} matches specified assigned name.")
-            .eol("     *")
-            .eol("     * @param name YANG assigned name")
-            .str("     * @return corresponding ").str(typeName).eol(" item, or {@code null} if no such item exists")
-            .str("     * @throws ").str(npe).eol(" if {@code name} is null")
-            .eol("     */")
-            .str("    public static ").str(nullableSelf).str(" forName(").str(string).str(" name)").oB()
-            .str("        return switch (name)").oB();
+            .eol("/**")
+            .eol(" * Return the enumeration member whose {@link #getName()} matches specified assigned name.")
+            .eol(" *")
+            .eol(" * @param name YANG assigned name")
+            .str(" * @return corresponding ").str(typeName).eol(" item, or {@code null} if no such item exists")
+            .str(" * @throws ").str(npe).eol(" if {@code name} is null")
+            .eol(" */")
+            .str("public static ").str(nullableSelf).str(" forName(").str(string).str(" name)").oB()
+                .str("return switch (name)").oB();
         for (var value : archetype.values()) {
-            bb.str("            case ").jStr(value.name()).str(" -> ").str(value.constantName()).eS();
+            bb.str("case ").jStr(value.name()).str(" -> ").str(value.constantName()).eS();
         }
         bb
-            .eol("            default -> null;")
-            .str("        ").cb().eS()
-            .str("    ").cB()
+            .eol("default -> null;")
+            .cb().eS()
+            .cB()
             .nl()
-            .eol("    /**")
-            .eol("     * Return the enumeration member whose {@link #getIntValue()} matches specified value.")
-            .eol("     *")
-            .eol("     * @param intValue integer value")
-            .str("     * @return corresponding ").str(typeName).eol(" item, or {@code null} if no such item exists")
-            .eol("     */")
-            .str("    public static ").str(nullableSelf).str(" forValue(int intValue)").oB()
-            .str("        return switch (intValue)").oB();
+            .eol("/**")
+            .eol(" * Return the enumeration member whose {@link #getIntValue()} matches specified value.")
+            .eol(" *")
+            .eol(" * @param intValue integer value")
+            .str(" * @return corresponding ").str(typeName).eol(" item, or {@code null} if no such item exists")
+            .eol(" */")
+            .str("public static ").str(nullableSelf).str(" forValue(int intValue)").oB()
+                .str("return switch (intValue)").oB();
         for (var value : archetype.values()) {
-            bb.str("            case ").jInt(value.value()).str(" -> ").str(value.constantName()).eS();
+            bb.str("case ").jInt(value.value()).str(" -> ").str(value.constantName()).eS();
         }
         bb
-            .eol("            default -> null;")
-            .str("        ").cb().eS()
-            .str("    ").cB()
+            .eol("default -> null;")
+            .cb().eS()
+            .cB()
             .nl()
             // FIXME: txt()
-            .eol("    /**").nl()
-            .str("     * Return the enumeration member whose {@link #getName()} matches specified assigned name.").nl()
-            .str("     *").nl()
-            .str("     * @param name YANG assigned name").nl()
-            .str("     * @return corresponding ").str(typeName).str(" item").nl()
-            .str("     * @throws ").str(npe).str(" if {@code name} is null").nl()
-            .str("     * @throws ").str(iae).str(" if {@code name} does not match any item").nl()
-            .str("     */").nl()
-            .str("    public static ").str(nonnullSelf).str(" ofName(").str(string).str(" name)").oB()
-            .eol("        return ").str(codeHelpers).str(".checkEnum(forName(name), name);")
-            .str("    ").cB()
+            .eol("/**").nl()
+            .str(" * Return the enumeration member whose {@link #getName()} matches specified assigned name.").nl()
+            .str(" *").nl()
+            .str(" * @param name YANG assigned name").nl()
+            .str(" * @return corresponding ").str(typeName).str(" item").nl()
+            .str(" * @throws ").str(npe).str(" if {@code name} is null").nl()
+            .str(" * @throws ").str(iae).str(" if {@code name} does not match any item").nl()
+            .str(" */").nl()
+            .str("public static ").str(nonnullSelf).str(" ofName(").str(string).str(" name)").oB()
+                .str("return ").str(codeHelpers).eol(".checkEnum(forName(name), name);")
+            .cB()
             .nl()
             // FIXME: txt()
-            .str("    /**").nl()
-            .str("     * Return the enumeration member whose {@link #getIntValue()} matches specified value.").nl()
-            .str("     *").nl()
-            .str("     * @param intValue integer value").nl()
-            .str("     * @return corresponding ").str(typeName).str(" item").nl()
-            .str("     * @throws ").str(iae).str(" if {@code intValue} does not match any item").nl()
-            .str("     */").nl()
-            .str("    public static ").str(nonnullSelf).str(" ofValue(int intValue)").oB()
-            .str("        return ").str(codeHelpers).eol(".checkEnum(forValue(intValue), intValue);")
-            .str("    ").cB()
+            .str("/**").nl()
+            .str(" * Return the enumeration member whose {@link #getIntValue()} matches specified value.").nl()
+            .str(" *").nl()
+            .str(" * @param intValue integer value").nl()
+            .str(" * @return corresponding ").str(typeName).str(" item").nl()
+            .str(" * @throws ").str(iae).str(" if {@code intValue} does not match any item").nl()
+            .str(" */").nl()
+            .str("public static ").str(nonnullSelf).str(" ofValue(int intValue)").oB()
+                .str("return ").str(codeHelpers).eol(".checkEnum(forValue(intValue), intValue);")
+            .cB()
             .cB();
     }
 }
