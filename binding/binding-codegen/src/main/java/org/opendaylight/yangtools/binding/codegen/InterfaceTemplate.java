@@ -138,13 +138,13 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
         return bb
             .oB()
-            .indented(generateInnerClasses(enclosedGeneratedTypes))
+            .blk(generateInnerClasses(enclosedGeneratedTypes))
             .nl()
-            .indented(generateInnerEnumTypeObjects(enums))
+            .blk(generateInnerEnumTypeObjects(enums))
             .nl()
-            .indented(generateConstants())
+            .blk(generateConstants())
             .nl()
-            .indented(generateMethods())
+            .blk(generateMethods())
             .nl()
             .cB();
     }
@@ -174,7 +174,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .at().eol(importedName(OVERRIDE))
             .str("default ").gen(importedName(CLASS), fqcn)
                 .str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
-                .ind("return ").str(fqcn).eol(".class;")
+                .str("return ").str(fqcn).eol(".class;")
                 .cB();
     }
 
@@ -283,8 +283,8 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .txt(accessorJavadoc(method, ", or an empty list if it is not present."))
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
-            .str("    return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
-                .eol("());")
+                .str("return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
+                    .eol("());")
             .cB();
     }
 
@@ -295,7 +295,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("(")
                 .str(generateParameters(method.getParameters())).str(")").oB()
-            .eol("    // No-op")
+                .eol("// No-op")
             .cB();
     }
 
@@ -306,9 +306,9 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE))
             .str("default ").str(importedNonNull(method.getReturnType())).sp().str(name).str("()").oB()
-            .str("    return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
-                // FIXME: what exactly is this replace() doing?
-                .str("(), ").jStr(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
+                .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
+                    // FIXME: what exactly is this replace() doing?
+                    .str("(), ").jStr(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
             .cB();
     }
 
@@ -375,22 +375,22 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
             .eol(" */")
             .str("static int " + BINDING_HASHCODE_NAME + "(final ").str(fullyQualifiedNonNull(type())).str(" obj)").oB()
-            .eol("    int result = 1;");
+                .eol("int result = 1;");
         if (!props.isEmpty()) {
-            bb.eol("    final int prime = 31;");
+            bb.eol("final int prime = 31;");
             for (var property : props) {
-                bb.str("    result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
+                bb.str("result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
                     .str(getterMethodName(property)).eol("());");
             }
         }
         if (augmentable) {
             bb
-                .str("    for (var augmentation : obj.augmentations().values())").oB()
-                .eol("        result += augmentation.hashCode();")
-                .str("    ").cB();
+                .str("for (var augmentation : obj.augmentations().values())").oB()
+                    .eol("result += augmentation.hashCode();")
+                .cB();
         }
-        return  bb
-            .eol("    return result;")
+        return bb
+            .eol("return result;")
             .cB();
     }
 
@@ -420,20 +420,21 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .eol(" */")
             .str("static boolean " + BINDING_EQUALS_NAME + "(final ").str(fullyQualifiedNonNull(type()))
                 .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj)").jBlock(bb -> {
-                    bb.str("    if (thisObj == obj)").oB()
-                        .eol("        return true;")
-                        .str("    }").nl()
-                        .str("    final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
-                        .str(type().canonicalName()).eol(".class, obj);")
-                        .str("    return other != null");
+                    bb
+                        .str("if (thisObj == obj)").oB()
+                            .eol("return true;")
+                        .cB()
+                        .str("final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
+                            .str(type().canonicalName()).eol(".class, obj);")
+                        .str("return other != null");
 
                     for (var property : ByTypeMemberComparator.sort(props)) {
                         final var getterName = property.getGetterName();
-                        bb.nl().str("        && ").str(importedUtilClass(property)).str(".equals(thisObj.")
-                            .str(getterName).str("(), other.").str(getterName).str("())");
+                        bb.nl().ind("&& ").str(importedUtilClass(property)).str(".equals(thisObj.").str(getterName)
+                            .str("(), other.").str(getterName).str("())");
                     }
                     if (augmentable) {
-                        bb.nl().str("        && thisObj.augmentations().equals(other.augmentations())");
+                        bb.nl().ind("&& thisObj.augmentations().equals(other.augmentations())");
                     }
                     bb.eS();
                 }).nl();
@@ -452,23 +453,23 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                    * @param obj Object for which to generate toString() result.
                   """)
             .str(" * @return {@link ").str(importedName(Types.STRING)).eol("} value of data modeled by this interface.")
-            .str(" * @throws ")       .str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
+            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
             .eol(" */")
             .str("static ").str(importedName(Types.STRING)).str(" " + BINDING_TO_STRING_NAME + "(final ")
                 .str(fullyQualifiedNonNull(type())).str(" obj)").jBlock(bb -> {
                     final var analysis = typeAnalysis();
 
-                    bb.ind("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
+                    bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
                         .jStr(type().simpleName()).eol(");");
                     for (var property : analysis.properties()) {
-                        bb.ind().str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
+                        bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
                             .jStr(property.getName()).str(", obj.").str(property.getGetterName()).eol("());");
                     }
                     if (analysis.augmentType() != null) {
-                        bb.ind(importedName(CODEHELPERS))
+                        bb.str(importedName(CODEHELPERS))
                             .eol(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);");
                     }
-                    bb.eol("    return helper.toString();");
+                    bb.eol("return helper.toString();");
                 }).nl();
     }
 

@@ -47,7 +47,7 @@ final class FeatureTemplate extends ClassTemplate {
         return newBlockBuilder()
             .nl()
             .str("private ").str(type().simpleName()).str("()").oB()
-                .ind("// Hidden on purpose").nl()
+                .str("// Hidden on purpose").nl()
             .cB();
     }
 
@@ -71,17 +71,17 @@ final class FeatureTemplate extends ClassTemplate {
             .nl()
             .at().eol(override)
             .str("public ").gen(clazz, typeName).str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
-                .ind("return ").str(typeName).eol(".class;")
+                .str("return ").str(typeName).eol(".class;")
             .cB()
             .nl()
             .at().eol(override)
             .str("public ").str(importedName(QNAME)).str(" qname()").oB()
-                .ind("return " + QNAME_STATIC_FIELD_NAME + ';').nl()
+                .str("return " + QNAME_STATIC_FIELD_NAME + ';').nl()
             .cB()
             .nl()
             .at().eol(override)
             .str("public ").gen(clazz, rootName).str(" definingModule()").oB()
-                .ind("return ").str(rootName).eol(".class;")
+                .str("return ").str(rootName).eol(".class;")
             .cB();
     }
 }
