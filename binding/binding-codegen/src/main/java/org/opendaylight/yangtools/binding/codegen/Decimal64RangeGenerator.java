@@ -63,7 +63,7 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         final var bb = javaClass.newBlockBuilder()
             .str("private static void ").str(checkerName).str("(final ").str(javaClass.getReferenceString(DECIMAL64))
                 .str(" value)").oB()
-                .str("    final var unscaled = ").str(codeHelpers).str(".checkScale(value, ").jInt(fractionDigits)
+                .str("final var unscaled = ").str(codeHelpers).str(".checkScale(value, ").jInt(fractionDigits)
                     .eol(");");
 
         final var msg = new StringBuilder().append("\"[");
@@ -75,10 +75,10 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
             msg.append('[').append(min).append("..").append(max).append(']');
 
             bb
-                .str("    if (unscaled >= ").jLong(min.unscaledValue()).str(" && unscaled <= ")
-                    .jLong(max.unscaledValue()).str(")").oB()
-                .eol("        return;")
-                .str("    ").cB();
+                .str("if (unscaled >= ").jLong(min.unscaledValue()).str(" && unscaled <= ").jLong(max.unscaledValue())
+                    .str(")").oB()
+                    .eol("return;")
+                .cB();
 
             if (!it.hasNext()) {
                 break;
@@ -87,7 +87,7 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         }
 
         return bb
-            .str("    ").str(codeHelpers).str(".throwInvalidRange(").str(msg).eol("]\", value);")
+            .str(codeHelpers).str(".throwInvalidRange(").str(msg).eol("]\", value);")
             .cB();
     }
 }
