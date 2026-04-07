@@ -65,7 +65,8 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
         for (var bit : map.values()) {
             final var conflict = positionMap.put(bit.getPosition(), bit);
             if (conflict != null) {
-                throw new InvalidBitDefinitionException(bit, "Bit %s conflicts on position with bit ", conflict);
+                throw new InvalidBitDefinitionException(bit, "Bit '%s' conflicts on position with bit '%s'.", conflict,
+                    bit);
             }
         }
 
