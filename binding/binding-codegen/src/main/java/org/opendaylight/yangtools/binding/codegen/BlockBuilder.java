@@ -280,7 +280,7 @@ final class BlockBuilder extends Block.Builder {
     }
 
     /**
-     * Append a {@code ";\n". Short name for {@code endStatement}}.
+     * Append a {@code ";\n"}. Short name for {@code endStatement}.
      *
      * @return this instance
      */
