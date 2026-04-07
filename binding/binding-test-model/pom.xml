@@ -21,6 +21,11 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <properties>
+        <!-- FIXME: disabled due to Jenkins images not having proper locale support -->
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
