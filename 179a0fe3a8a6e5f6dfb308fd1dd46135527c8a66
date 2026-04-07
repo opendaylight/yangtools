@@ -22,6 +22,30 @@
       },
       "revId": "179a0fe3a8a6e5f6dfb308fd1dd46135527c8a66",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4dbef5d5_561a0dbc",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/DataRootTemplate.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-04-07T19:12:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4de657e4_c1fb5402",
+      "range": {
+        "startLine": 27,
+        "startChar": 8,
+        "endLine": 27,
+        "endChar": 50
+      },
+      "revId": "179a0fe3a8a6e5f6dfb308fd1dd46135527c8a66",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
