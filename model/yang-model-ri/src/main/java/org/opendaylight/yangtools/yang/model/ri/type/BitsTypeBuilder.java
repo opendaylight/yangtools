@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,7 +39,7 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
 
     private void validateRestrictedBit(final @NonNull Bit item) {
         boolean isASubsetOfBaseBits = false;
-        for (Bit baseTypeBit : getBaseType().getBits()) {
+        for (var baseTypeBit : getBaseType().getBits()) {
             if (item.getName().equals(baseTypeBit.getName())) {
                 if (item.getPosition() != baseTypeBit.getPosition()) {
                     throw new InvalidBitDefinitionException(item, "Position of bit '%s' must be the same as the "
@@ -60,13 +59,13 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
 
     @Override
     public BitsTypeDefinition buildType() {
-        final Map<String, Bit> map = builder.build();
-        final Map<Uint32, Bit> positionMap = new TreeMap<>();
+        final var map = builder.build();
+        final var positionMap = new TreeMap<Uint32, Bit>();
 
-        for (Bit b : map.values()) {
-            final Bit conflict = positionMap.put(b.getPosition(), b);
+        for (var bit : map.values()) {
+            final var conflict = positionMap.put(bit.getPosition(), bit);
             if (conflict != null) {
-                throw new InvalidBitDefinitionException(b, "Bit %s conflicts on position with bit ", conflict);
+                throw new InvalidBitDefinitionException(bit, "Bit %s conflicts on position with bit ", conflict);
             }
         }
 
