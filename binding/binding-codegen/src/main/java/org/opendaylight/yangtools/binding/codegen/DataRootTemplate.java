@@ -21,6 +21,11 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
  * Template for {@link DataRoot} specializations.
  */
 final class DataRootTemplate extends InterfaceTemplate {
+    // TODO: allow sharing of the following between method invocations:
+    //    final var rootMetaType = BindingTypes.rootMeta(archetype);
+    //    final var rootMetaRaw = importedName(rootMetaType.getRawType());
+    //    final var type = archetype.selfReference();
+
     @NonNullByDefault
     DataRootTemplate(final DataRootArchetype archetype) {
         super(archetype);
