@@ -87,7 +87,7 @@ final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
         }
 
         return bb
-            .str(codeHelpers).str(".throwInvalidRange(").str(msg).eol("]\", value);")
+            .str(codeHelpers).str(".throwInvalidRange(").str(msg.toString()).eol("]\", value);")
             .cB();
     }
 }
