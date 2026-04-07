@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * A non-empty set of {@code '\n'}-separated lines.
  */
 @NonNullByDefault
-sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Block2, BlockC, BlockN {
+sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Block2, BlockC, BlockI, BlockN {
     /**
      * A {@link Block} comprised of a single line.
      */
@@ -226,12 +226,38 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
     }
 
     /**
-     * Append this block to an {@link Appendable}.
+     * {@return this block's indentation level, {@code 0} indicates a top-level block}
+     */
+    default int level() {
+        return 0;
+    }
+
+    /**
+     * {@return a {@link Block} with specified indentation level, containing the same significant content as this block.
+     * @param newLevel the new level, must be non-negative
+     */
+    default Block withLevel(final int newLevel) {
+        return newLevel == 0 ? this : new BlockI(this, newLevel);
+    }
+
+    /**
+     * Append this block to an {@link Appendable} using indentation {@link #level()}.
      *
      * @param appendable the {@link Appendable}
      * @throws IOException if an I/O error occurs
      */
-    void appendTo(Appendable appendable) throws IOException;
+    default void appendTo(final Appendable appendable) throws IOException {
+        appendTo(appendable, level());
+    }
+
+    /**
+     * Append this block to an {@link Appendable} using specified indentation level.
+     *
+     * @param appendable the {@link Appendable}
+     * @param depth the indentation level to use
+     * @throws IOException if an I/O error occurs
+     */
+    void appendTo(Appendable appendable, int depth) throws IOException;
 
     @Override
     void appendTo(BlockBuilder bb);
@@ -253,7 +279,11 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
     /**
      * {@return the raw String representation of this block}
      */
-    String toRawString();
+    default String toRawString() {
+        final var sb = new StringBuilder();
+        appendTo(sb);
+        return sb.toString();
+    }
 
     /**
      * {@return the result of {@link #toRawString()}}

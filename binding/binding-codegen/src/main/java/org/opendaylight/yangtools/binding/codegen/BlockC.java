@@ -20,9 +20,14 @@ record BlockC(List<Block> blocks) implements Block {
     }
 
     @Override
-    public void appendTo(final Appendable appendable) throws IOException {
+    public Block withLevel(final int newLevel) {
+        return newLevel == 0 ? this : new BlockI(this, newLevel);
+    }
+
+    @Override
+    public void appendTo(final Appendable appendable, final int level) throws IOException {
         for (var block : blocks) {
-            block.appendTo(appendable);
+            block.appendTo(appendable, block.level() + level);
         }
     }
 
@@ -31,15 +36,6 @@ record BlockC(List<Block> blocks) implements Block {
         for (var block : blocks) {
             block.appendTo(bb);
         }
-    }
-
-    @Override
-    public String toRawString() {
-        final var sb = new StringBuilder();
-        for (var block : blocks) {
-            block.appendTo(sb);
-        }
-        return sb.toString();
     }
 
     @Override

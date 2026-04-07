@@ -28,18 +28,44 @@ import org.eclipse.jdt.annotation.Nullable;
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
 final class BlockBuilder extends Block.Builder {
-    // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
-    // Typically this will be just a simple append, but we also need to track indentation.
+    // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next, so that
+    // we minimize object allocation while also efficiently handling nested blocks.
+
+
+    // FIXME: completed blocks, with optional coalescence when indent matches
     //
-    // Overall, the core state should look something like:
+    //    List<Block> blocks;
     //
-    //    // indent + block content
-    //    sealed interface Blk {
+    // The idea being that we do not track indent as 4 spaces in StringBuilder, but rather in Blocks with differing
+    // Block#level()s. When ever we are about to emit content with a different currentIndent, we create a Block{1..N}
+    // from the current StringBuilder, push it into the list and reset the StringBuilder.
     //
-    //        int indent();
-    //    }
+    // This way we should end up efficiently tracking structures, e.g.:
     //
-    //    List<Blk> blocks; // completed blocks, with optional coalescence when indent matches
+    //     class Foo {
+    //         public static final int CONSTANT = 42;
+    //
+    //         final String prop1;
+    //         final String prop2;
+    //
+    //         public int hashCode() {
+    //             int result = 0;
+    //             result = result * 31 +  prop1.hashCode();
+    //             result = result * 31 +  prop2.hashCode();
+    //             return result;
+    //         }
+    //     }
+    //
+    // should be result in a BlockC, consisting of
+    //   - line 1 as Block1
+    //   - lines 2-7 as BlockN level=1
+    //   - lines 8-11 as BlockN level=2
+    //   - line 12 as Block1 level=1
+    //   - line 13 as Block1
+    // i.e. 6 blocks.
+    //
+    // Nested blocks of 1 or 2 lines may paerhaps be concatenated into the current block for additional flattening, but
+    // that really depends on how the data density of will end up looking with real models.
 
     // current block, containing newline-separated lines
     private final @NonNull StringBuilder buf = new StringBuilder();
