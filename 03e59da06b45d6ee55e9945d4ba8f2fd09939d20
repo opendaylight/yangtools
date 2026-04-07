@@ -22,6 +22,30 @@
       },
       "revId": "03e59da06b45d6ee55e9945d4ba8f2fd09939d20",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4adf819_88ceb097",
+        "filename": "model/yang-model-ri/src/main/java/org/opendaylight/yangtools/yang/model/ri/type/BitsTypeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-04-07T19:14:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "35c7fda0_b73a2905",
+      "range": {
+        "startLine": 69,
+        "startChar": 98,
+        "endLine": 69,
+        "endChar": 101
+      },
+      "revId": "03e59da06b45d6ee55e9945d4ba8f2fd09939d20",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
