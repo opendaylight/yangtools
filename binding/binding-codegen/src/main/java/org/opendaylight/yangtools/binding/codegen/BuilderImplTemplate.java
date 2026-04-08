@@ -147,24 +147,24 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             bb
                 .txt("""
 
-                          private int hash = 0;
-                          private volatile boolean hashValid = false;
+                      private int hash = 0;
+                      private volatile boolean hashValid = false;
 
                       """)
                 .at().eol(override)
                 .txt("""
-                          public int hashCode() {
-                              if (hashValid) {
-                                  return hash;
-                              }
+                      public int hashCode() {
+                          if (hashValid) {
+                              return hash;
+                          }
 
                       """)
-                    .str("    final int result = ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
+                .str("    final int result = ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
                 .txt("""
-                              hash = result;
-                              hashValid = true;
-                              return result;
-                          }
+                          hash = result;
+                          hashValid = true;
+                          return result;
+                      }
 
                       """)
                 .at().eol(override)

@@ -107,9 +107,9 @@ public final class YangModuleInfoTemplate {
             .jStr(module.getName()).eol(").intern();")
             .txt("""
 
-                      /**
-                       * The singleton instance.
-                       */
+                  /**
+                   * The singleton instance.
+                   */
                   """)
             .eol("public static final @NonNull YangModuleInfo " + MODULE_INFO_INSTANCE_FIELD_NAME + " = new "
                 + MODULE_INFO_CLASS_NAME + "();")
@@ -119,16 +119,16 @@ public final class YangModuleInfoTemplate {
             .blk(classBody(module, MODULE_INFO_CLASS_NAME, submodules))
             .nl()
             .txt("""
-                    /**
-                     * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this
-                     * module.
-                     *
-                     * @param localName local name
-                     * @return A QName
-                     * @throws NullPointerException if {@code localName} is {@code null}
-                     * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
-                     */
-                """)
+                  /**
+                   * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this
+                   * module.
+                   *
+                   * @param localName local name
+                   * @return A QName
+                   * @throws NullPointerException if {@code localName} is {@code null}
+                   * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
+                   */
+                  """)
             .str("public static @NonNull QName " + MODULE_INFO_QNAMEOF_METHOD_NAME + "(final String localName)").oB()
                 .eol("return QName.create(NAME, localName).intern();")
             .cB();
@@ -137,17 +137,17 @@ public final class YangModuleInfoTemplate {
             bb
                 .txt("""
 
-                    /**
-                     * Create an interned {@link YangDataName} with specified {@code templateName} and \
-                namespace/revision of
-                     * this module.
-                     *
-                     * @param templateName template name
-                     * @return A YangDataName
-                     * @throws NullPointerException if {@code templateName} is {@code null}
-                     * @throws IllegalArgumentException if {@code templateName} is empty
-                     */
-                 """)
+                        /**
+                         * Create an interned {@link YangDataName} with specified {@code templateName} and \
+                    namespace/revision of
+                         * this module.
+                         *
+                         * @param templateName template name
+                         * @return A YangDataName
+                         * @throws NullPointerException if {@code templateName} is {@code null}
+                         * @throws IllegalArgumentException if {@code templateName} is empty
+                         */
+                     """)
                 .str("    public static @NonNull YangDataName " + MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
                     + "(final String templateName)").oB()
                 .eol("        return new YangDataName(NAME.getModule(), templateName).intern();")
