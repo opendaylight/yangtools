@@ -11,13 +11,18 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 import java.util.Base64;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 final class BinaryValue implements Immutable {
-    private final byte[] value;
+    private final byte @NonNull [] value;
 
     private BinaryValue(final byte[] value) {
         this.value = requireNonNull(value);
+    }
+
+    static Object unwrap(final Object value) {
+        return value instanceof BinaryValue binary ? binary.value : value;
     }
 
     static Object wrap(final Object value) {
