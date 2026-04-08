@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56319ff5_9a33aab8",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/Block.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-04-08T12:27:12Z",
+      "side": 1,
+      "message": "this part should be hidden: a Block is indent\u003d0, except for the special case of BlockI.",
+      "range": {
+        "startLine": 231,
+        "startChar": 4,
+        "endLine": 231,
+        "endChar": 25
+      },
+      "revId": "111de3762c03f420658a7d433a137e59c5209c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
