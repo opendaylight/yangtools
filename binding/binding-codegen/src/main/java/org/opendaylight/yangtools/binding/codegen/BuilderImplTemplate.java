@@ -23,6 +23,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+import org.opendaylight.yangtools.binding.lib.AugmentableDataContainer;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -36,15 +37,72 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
  */
 // FIXME: consider refactoring as an inner class in BuilderTemplate, as we are never a standalone template, which
 //        would allow proper specialization based on properties.isEmpty(), augmentType != null and keyType != null.
-final class BuilderImplTemplate extends AbstractBuilderTemplate {
-    /**
-     * {@link AbstractAugmentable} as a {@link JavaTypeName}.
-     */
-    private static final @NonNull JavaTypeName ABSTRACT_AUGMENTABLE = JavaTypeName.create(AbstractAugmentable.class);
-    /**
-     * {@link AbstractEntryObject} as a {@link JavaTypeName}.
-     */
-    private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject.class);
+abstract sealed class BuilderImplTemplate extends AbstractBuilderTemplate {
+    @NonNullByDefault
+    private static final class AugmentableImpl extends BuilderImplTemplate {
+        /**
+         * {@link AbstractAugmentable} as a {@link JavaTypeName}.
+         */
+        private static final JavaTypeName ABSTRACT_AUGMENTABLE = JavaTypeName.create(AbstractAugmentable.class);
+
+        AugmentableImpl(final BuilderTemplate builder, final GeneratedType type) {
+            super(builder, type);
+        }
+
+        @Override
+        BlockBuilder appendExtends(final BlockBuilder bb, final String implIface) {
+            return bb.str("    extends ").gen(importedName(ABSTRACT_AUGMENTABLE), implIface).nl();
+        }
+    }
+
+    @NonNullByDefault
+    private static final class AugmentableDataContainerImpl extends BuilderImplTemplate {
+        /**
+         * {@link AugmentableDataContainer} as a {@link JavaTypeName}.
+         */
+        private static final JavaTypeName AUGMENTABLE_DATA_CONTAINER =
+            JavaTypeName.create(AugmentableDataContainer.class);
+
+        AugmentableDataContainerImpl(final BuilderTemplate builder, final GeneratedType type) {
+            super(builder, type);
+        }
+
+        @Override
+        BlockBuilder appendExtends(final BlockBuilder bb, final String implIface) {
+            return bb.str("    extends ").gen(importedName(AUGMENTABLE_DATA_CONTAINER), implIface).nl();
+        }
+    }
+
+    @NonNullByDefault
+    private static final class EntryObjectImpl extends BuilderImplTemplate {
+        /**
+         * {@link AbstractEntryObject} as a {@link JavaTypeName}.
+         */
+        private static final JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject.class);
+
+        EntryObjectImpl(final BuilderTemplate builder, final GeneratedType type) {
+            super(builder, type);
+        }
+
+        @Override
+        BlockBuilder appendExtends(final BlockBuilder bb, final String implIface) {
+            return bb
+                .str("    extends ").gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(keyType))
+                .nl();
+        }
+    }
+
+    @NonNullByDefault
+    private static final class SimpleImpl extends BuilderImplTemplate {
+        SimpleImpl(final BuilderTemplate builder, final GeneratedType type) {
+            super(builder, type);
+        }
+
+        @Override
+        BlockBuilder appendExtends(final BlockBuilder bb, final String implIface) {
+            return bb;
+        }
+    }
 
     private final @NonNull BuilderTemplate builder;
 
@@ -56,6 +114,17 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         this.builder = builder;
     }
 
+    @NonNullByDefault
+    static BuilderImplTemplate of(final BuilderTemplate builder, final GeneratedType type) {
+        if (builder.keyType != null) {
+            return new EntryObjectImpl(builder, type);
+        }
+        if (builder.augmentType != null) {
+            return new AugmentableImpl(builder, type);
+        }
+        return new SimpleImpl(builder, type);
+    }
+
     @Override
     BlockBuilder body() {
         final var impIface = importedName(targetType);
@@ -64,12 +133,8 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         final var bb = newBlockBuilder()
             .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
             .str("private static final class ").eol(type().simpleName());
-        if (keyType != null) {
-            bb.str("    extends ").gen(importedName(ABSTRACT_ENTRY_OBJECT), impIface, importedName(keyType)).newLine();
-        } else if (augmentType != null) {
-            bb.str("    extends ").gen(importedName(ABSTRACT_AUGMENTABLE), impIface).newLine();
-        }
-        bb.str("    implements ").str(impIface).oB();
+
+        appendExtends(bb, impIface).str("    implements ").str(impIface).oB();
 
         // generate instance fields
         if (!properties.isEmpty()) {
@@ -182,6 +247,9 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             .cB()
             .cB();
     }
+
+    @NonNullByDefault
+    abstract BlockBuilder appendExtends(BlockBuilder bb, String implIface);
 
     @Override
     BlockBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
