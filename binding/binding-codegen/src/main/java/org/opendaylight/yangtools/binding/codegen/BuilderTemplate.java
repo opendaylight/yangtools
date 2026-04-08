@@ -90,7 +90,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                   /**
                    * Construct an empty builder.
                    */
-              """)
+                  """)
             .str("public ").str(type().simpleName()).str("()").oB()
                 .eol("// No-op")
             .cB()

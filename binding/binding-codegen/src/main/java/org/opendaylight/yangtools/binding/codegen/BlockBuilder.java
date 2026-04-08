@@ -156,11 +156,14 @@ final class BlockBuilder extends Block.Builder {
     BlockBuilder txt(final String text) {
         verifyEmptyLine();
         final var verified = verifyTxt(text);
-        return secondLine != -1 ? txtImpl(verified) : txtSlow(verified);
+        return currentIndent == 0 ? txtFast(verified) : txtSlow(verified);
     }
 
     @NonNullByDefault
-    private BlockBuilder txtImpl(final String text) {
+    private BlockBuilder txtFast(final String text) {
+        if (secondLine == -1) {
+            secondLine = buf.length() + text.indexOf('\n') + 1;
+        }
         buf.append(text);
         currentLine = buf.length();
         return this;
@@ -168,8 +171,8 @@ final class BlockBuilder extends Block.Builder {
 
     @NonNullByDefault
     private BlockBuilder txtSlow(final String text) {
-        secondLine = buf.length() + text.indexOf('\n') + 1;
-        return txtImpl(text);
+        new BlockN(text.substring(0, text.length() - 1)).appendTo(this);
+        return this;
     }
 
     @Override
