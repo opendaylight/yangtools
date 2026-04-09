@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.impl;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
 
@@ -16,13 +17,15 @@ import org.opendaylight.yangtools.binding.UnsafeSecret;
  * @since 15.1.0
  */
 @NonNullByDefault
+@SuppressWarnings("checkstyle:hideUtilityClassConstructor")
 public final class TheUnsafeSecret implements UnsafeSecret {
     /**
      * The singleton instance {@link UnsafeSecret}.
      */
     public static final UnsafeSecret INSTANCE = new TheUnsafeSecret();
 
-    private TheUnsafeSecret() {
+    @VisibleForTesting
+    TheUnsafeSecret() {
         // Hidden on purpose
     }
 }
