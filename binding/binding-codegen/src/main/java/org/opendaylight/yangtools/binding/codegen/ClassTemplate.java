@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_CLASS_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_UNSAFE_ACCESS_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getModelRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
@@ -811,7 +810,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 bb
                     // not 'importedName' on purpose: it would just stand out in imports
                     .str(yangModuleInfo.canonicalName())
-                        .eol("." + MODULE_INFO_UNSAFE_ACCESS_FIELD_NAME + ".registerScalarTypeObject(")
+                        .eol("." + YangModuleInfoTemplate.UNSAFE_ACCESS_FIELD_NAME + ".registerScalarTypeObject(")
                         .ind(selfRef).str(".class, ").str(selfRef).str("::new, ").str(selfRef).eol("::new);");
             }).nl();
     }
