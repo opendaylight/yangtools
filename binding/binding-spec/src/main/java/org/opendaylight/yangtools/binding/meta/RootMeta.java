@@ -35,7 +35,7 @@ public record RootMeta<R extends DataRoot<R>>(
         requireNonNull(unsafeAccess);
     }
 
-    @Deprecated(since = "15.0.3", forRemoval = true)
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public RootMeta(final @NonNull Class<R> rootClass, final @NonNull YangModuleInfo moduleInfo) {
         this(rootClass, moduleInfo, new DefaultUnsafeAccess(rootClass.getPackageName(), rootClass.getModule()));
     }

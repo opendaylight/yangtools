@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  *       {@link ScalarTypeObject}s will use the usual safe instantiation</li>
  * </ul>
  *
- * @since 15.0.3
+ * @since 15.1.0
  */
 @NonNullByDefault
 public final class DefaultUnsafeAccess implements UnsafeAccess {

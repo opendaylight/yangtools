@@ -423,7 +423,7 @@ public final class Naming {
      * @param str the string that should get an lower case first character. May be <code>null</code>.
      * @return the {@link String} {@code str} with an lower case first character or <code>null</code> if the input
      *         {@link String} {@code str} was empty.
-     * @since 15.0.3
+     * @since 15.1.0
      */
     @NonNullByDefault
     public static String toFirstLower(final String str) {

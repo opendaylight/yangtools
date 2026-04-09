@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
  * Marker interface for unsafe access. An instance of this interface is provided within this module and acts as proof of
  * invocation path.
  *
- * @since 15.0.3
+ * @since 15.1.0
  */
 public sealed interface UnsafeSecret permits TheUnsafeSecret {
     // Nothing else

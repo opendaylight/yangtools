@@ -364,7 +364,7 @@ public abstract sealed class JavaTypeName implements Identifier, Immutable {
 
     /**
      * {@return {@code true} if this name represents a Java array type, {@code false} otherwise}
-     * @since 15.0.3
+     * @since 15.1.0
      */
     public final boolean isArray() {
         // As per JLS Chapter 10. Arrays

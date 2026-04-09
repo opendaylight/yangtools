@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.UnsafeSecret;
 /**
  * The only implementation of {@link UnsafeSecret}.
  *
- * @since 15.0.3
+ * @since 15.1.0
  */
 @NonNullByDefault
 public final class TheUnsafeSecret implements UnsafeSecret {

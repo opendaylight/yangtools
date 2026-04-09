@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.binding.ScalarTypeObject;
 /**
  * Unsafe access to various aspects of binding code.
  *
- * @since 15.0.3
+ * @since 15.1.0
  */
 public interface UnsafeAccess {
     /**

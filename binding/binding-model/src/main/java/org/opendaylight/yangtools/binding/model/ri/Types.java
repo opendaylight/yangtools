@@ -98,7 +98,7 @@ public final class Types {
      * @return <code>ConcreteType</code> instance which represents {@link Object}
      * @deprecated use {@link #OBJECT}
      */
-    @Deprecated(since = "15.0.3", forRemoval = true)
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType objectType() {
         return OBJECT;
     }
@@ -109,7 +109,7 @@ public final class Types {
      * @return <code>ConcreteType</code> instance which represents JAVA <code>boolean</code>
      * @deprecated use {@link #OBJECT}
      */
-    @Deprecated(since = "15.0.3", forRemoval = true)
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType primitiveBooleanType() {
         return PRIMITIVE_BOOLEAN;
     }
@@ -120,7 +120,7 @@ public final class Types {
      * @return <code>ConcreteType</code> instance which represents JAVA <code>int</code>
      * @deprecated use {@link #OBJECT}
      */
-    @Deprecated(since = "15.0.3", forRemoval = true)
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType primitiveIntType() {
         return PRIMITIVE_INT;
     }
@@ -130,7 +130,7 @@ public final class Types {
      * @since 15.0.0
      * @deprecated use {@link #OBJECT}
      */
-    @Deprecated(since = "15.0.3", forRemoval = true)
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType primitiveLongType() {
         return PRIMITIVE_LONG;
     }
@@ -141,7 +141,7 @@ public final class Types {
      * @return <code>ConcreteType</code> instance which represents JAVA <code>void</code>
      * @deprecated use {@link #OBJECT}
      */
-    @Deprecated(since = "15.0.3", forRemoval = true)
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType primitiveVoidType() {
         return PRIMITIVE_VOID;
     }

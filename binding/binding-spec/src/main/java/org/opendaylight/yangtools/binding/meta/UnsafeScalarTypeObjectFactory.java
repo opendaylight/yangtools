@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.ScalarTypeObject;
 /**
  * An factory capable of giving out instances of a {@link ScalarTypeObject} type which do not validate their value.
  *
- * @since 15.0.3
+ * @since 15.1.0
  */
 public interface UnsafeScalarTypeObjectFactory<T extends ScalarTypeObject<V>, V> {
     /**
