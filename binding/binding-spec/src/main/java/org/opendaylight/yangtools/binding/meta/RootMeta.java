@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @param <R> the {@link DataRoot} type this metadata is tied to
  * @param rootClass the {@link DataRoot} class this metadata is tied to
  * @param moduleInfo the {@link YangModuleInfo}
- * @param unsafeAccess the {@link UnsafeAccess}
+ * @param unsafeAccess the {@link UnsafeAccess} servicing classes belonging to this YANG module
  * @since 15.0.0
  */
 public record RootMeta<R extends DataRoot<R>>(

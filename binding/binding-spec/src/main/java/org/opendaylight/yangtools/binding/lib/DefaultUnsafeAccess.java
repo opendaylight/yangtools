@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 public final class DefaultUnsafeAccess implements UnsafeAccess {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUnsafeAccess.class);
+    // TODO: project into SpringBoot metadata
     private static final String VERIFY_STO_PROP = "odl.binding.spec.unsafe.verify-sto";
     private static final boolean VERIFY_STO;
 
@@ -89,6 +90,11 @@ public final class DefaultUnsafeAccess implements UnsafeAccess {
 
         @SuppressWarnings("unchecked")
         final var ret = (UnsafeScalarTypeObjectFactory<T, V>) unsafeFactories.get(typeClass);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Acquired unsafe factory for {}", typeClass.getCanonicalName(), new Throwable());
+        } else {
+            LOG.debug("Acquired unsafe factory for {}", typeClass.getCanonicalName());
+        }
         return ret;
     }
 
