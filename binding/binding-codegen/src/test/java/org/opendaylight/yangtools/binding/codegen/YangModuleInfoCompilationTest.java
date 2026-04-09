@@ -79,6 +79,7 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
             import java.util.HashSet;
             import java.util.Set;
             import org.eclipse.jdt.annotation.NonNull;
+            import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
             import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
             import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
             import org.opendaylight.yangtools.yang.common.QName;
@@ -95,6 +96,13 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
                  * The singleton instance.
                  */
                 public static final @NonNull YangModuleInfo INSTANCE = new YangModuleInfoImpl();
+
+                /**
+                 * The {@link DefaultUnsafeAccess} instance.
+                 */
+                public static final @NonNull DefaultUnsafeAccess UNSAFE_ACCESS =
+                    new DefaultUnsafeAccess("org.opendaylight.yang.gen.v1.yang.test.main.rev140630", YangModuleInfoImpl\
+            .class.getModule());
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
 
