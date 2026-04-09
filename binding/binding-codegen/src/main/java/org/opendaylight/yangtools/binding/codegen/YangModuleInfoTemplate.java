@@ -12,8 +12,10 @@ import static org.opendaylight.yangtools.binding.contract.Naming.MODEL_BINDING_P
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_CLASS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_UNSAFE_ACCESS_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getClassName;
+import static org.opendaylight.yangtools.binding.contract.Naming.getRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getServicePackageName;
 
 import java.util.LinkedHashSet;
@@ -45,6 +47,7 @@ public final class YangModuleInfoTemplate {
         import java.lang.Override;
         import java.lang.String;
         import org.eclipse.jdt.annotation.NonNull;
+        import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
         import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
         import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
@@ -57,6 +60,7 @@ public final class YangModuleInfoTemplate {
         import java.util.HashSet;
         import java.util.Set;
         import org.eclipse.jdt.annotation.NonNull;
+        import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
         import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
         import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
@@ -113,6 +117,15 @@ public final class YangModuleInfoTemplate {
                   """)
             .eol("public static final @NonNull YangModuleInfo " + MODULE_INFO_INSTANCE_FIELD_NAME + " = new "
                 + MODULE_INFO_CLASS_NAME + "();")
+            .txt("""
+
+                  /**
+                   * The {@link DefaultUnsafeAccess} instance.
+                   */
+                  """)
+            .eol("public static final @NonNull DefaultUnsafeAccess " + MODULE_INFO_UNSAFE_ACCESS_FIELD_NAME + " =")
+                .ind("new DefaultUnsafeAccess(").jStr(getRootPackageName(module.getQNameModule()))
+                    .eol(", " + MODULE_INFO_CLASS_NAME + ".class.getModule());")
             .nl()
             .eol("private final @NonNull ImmutableSet<YangModuleInfo> importedModules;")
             .nl()
