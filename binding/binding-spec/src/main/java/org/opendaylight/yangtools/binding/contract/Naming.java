@@ -140,6 +140,7 @@ public final class Naming {
 
     public static final @NonNull String MODULE_INFO_CLASS_NAME = "YangModuleInfoImpl";
     public static final @NonNull String MODULE_INFO_INSTANCE_FIELD_NAME = "INSTANCE";
+    public static final @NonNull String MODULE_INFO_UNSAFE_ACCESS_FIELD_NAME = "UNSAFE_ACCESS";
     public static final @NonNull String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
     public static final @NonNull String MODULE_INFO_YANGDATANAMEOF_METHOD_NAME = "yangDataNameOf";
     public static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "YangModelBindingProviderImpl";
