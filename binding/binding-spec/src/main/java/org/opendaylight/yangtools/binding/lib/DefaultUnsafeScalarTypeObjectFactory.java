@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 import org.opendaylight.yangtools.binding.meta.UnsafeScalarTypeObjectFactory;
 
 @NonNullByDefault
-record DefaultUnsafeScalarTypeObjectFactory<T extends ScalarTypeObject<V>, V>(
+record DefaultUnsafeScalarTypeObjectFactory<V, T extends ScalarTypeObject<V>>(
         Class<T> target,
-        BiFunction<UnsafeSecret, V, T> ctor) implements UnsafeScalarTypeObjectFactory<T, V> {
+        BiFunction<UnsafeSecret, V, T> ctor) implements UnsafeScalarTypeObjectFactory<V, T> {
     DefaultUnsafeScalarTypeObjectFactory {
         requireNonNull(target);
         requireNonNull(ctor);

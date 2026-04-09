@@ -9,13 +9,16 @@ package org.opendaylight.yangtools.binding.meta;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * An factory capable of giving out instances of a {@link ScalarTypeObject} type which do not validate their value.
  *
+ * @param <V> value type
+ * @param <T> target {@link ScalarTypeObject} type
  * @since 15.1.0
  */
-public interface UnsafeScalarTypeObjectFactory<T extends ScalarTypeObject<V>, V> {
+public interface UnsafeScalarTypeObjectFactory<V, T extends ScalarTypeObject<V>> extends Immutable {
     /**
      * {@return the target {@link ScalarTypeObject} class}
      */

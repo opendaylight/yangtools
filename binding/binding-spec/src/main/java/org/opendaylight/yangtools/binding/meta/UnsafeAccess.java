@@ -21,24 +21,24 @@ public interface UnsafeAccess {
     /**
      * {@return the {@link UnsafeScalarTypeObjectFactory} for the specified {@code typeClass}, or {@code null} if not
      * found}
-     * @param <T> the {@link ScalarTypeObject} type
      * @param <V> the value type
+     * @param <T> the {@link ScalarTypeObject} type
      * @param typeObj an instance of the {@link ScalarTypeObject} class
      * @throws IllegalArgumentException if the specified class is not appropriate for this access
      */
-    <T extends ScalarTypeObject<V>, V>
-        @Nullable UnsafeScalarTypeObjectFactory<T, V> lookupUnsafeScalarTypeObjectFactory(@NonNull T typeObj);
+    <V, T extends ScalarTypeObject<V>>
+        @Nullable UnsafeScalarTypeObjectFactory<V, T> lookupUnsafeScalarTypeObjectFactory(@NonNull T typeObj);
 
     /**
      * {@return the {@link UnsafeScalarTypeObjectFactory} for the specified {@code typeClass}}
-     * @param <T> the {@link ScalarTypeObject} type
      * @param <V> the value type
+     * @param <T> the {@link ScalarTypeObject} type
      * @param typeObj an instance of the {@link ScalarTypeObject} class
      * @throws IllegalArgumentException if the specified class is not appropriate for this access
      * @throws NoSuchElementException if the factory cannot be found
      */
-    default <T extends ScalarTypeObject<V>, V>
-            @NonNull UnsafeScalarTypeObjectFactory<T, V> getUnsafeScalarTypeObjectFactory(final @NonNull T typeObj) {
+    default <V, T extends ScalarTypeObject<V>>
+            @NonNull UnsafeScalarTypeObjectFactory<V, T> getUnsafeScalarTypeObjectFactory(final @NonNull T typeObj) {
         final var result = lookupUnsafeScalarTypeObjectFactory(typeObj);
         if (result == null) {
             throw new NoSuchElementException("Factory for " + typeObj.getClass().getCanonicalName() + " not found");
