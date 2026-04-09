@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding;
 
 import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Marker interface for unsafe access. An instance of this interface is provided within this module and acts as proof of
@@ -15,6 +16,6 @@ import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
  *
  * @since 15.1.0
  */
-public sealed interface UnsafeSecret permits TheUnsafeSecret {
+public sealed interface UnsafeSecret extends Immutable permits TheUnsafeSecret {
     // Nothing else
 }

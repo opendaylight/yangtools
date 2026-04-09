@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.meta.UnsafeScalarTypeObjectFactory;
 
 @NonNullByDefault
-record VerifyingUnsafeScalarTypeObjectFactory<T extends ScalarTypeObject<V>, V>(Class<T> target, Function<V, T> ctor)
-        implements UnsafeScalarTypeObjectFactory<T, V> {
+record VerifyingUnsafeScalarTypeObjectFactory<V, T extends ScalarTypeObject<V>>(Class<T> target, Function<V, T> ctor)
+        implements UnsafeScalarTypeObjectFactory<V, T> {
     VerifyingUnsafeScalarTypeObjectFactory {
         requireNonNull(target);
         requireNonNull(ctor);
