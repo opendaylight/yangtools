@@ -572,7 +572,8 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             return newBlockBuilder()
                 .nl()
                 .at().eol(importedName(OVERRIDE))
-                .str("public ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()").oB()
+                .str("public final ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()")
+                    .oB()
                     .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
                 .cB();
         }
