@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.opendaylight.yangtools.binding.codegen.CompilationTestUtils.assertRegularFile;
 
 import com.google.common.collect.Range;
+import java.lang.reflect.AccessFlag;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -214,7 +216,8 @@ class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsFieldWithValue(myDecimalTypeClass, "serialVersionUID", Long.TYPE,
             3143735729419861095L, Decimal64.class);
         assertEquals(2, myDecimalTypeClass.getDeclaredFields().length);
-        CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, Decimal64.class, "getValue");
+        final var getValue = CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, Decimal64.class, "getValue");
+        assertThat(getValue.accessFlags()).contains(AccessFlag.FINAL);
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, Decimal64.class);
         CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, myDecimalTypeClass);
         assertEquals(2, myDecimalTypeClass.getDeclaredConstructors().length);
