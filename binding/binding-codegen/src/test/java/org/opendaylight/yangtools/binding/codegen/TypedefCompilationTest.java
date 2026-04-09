@@ -132,7 +132,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(int32Ext2Class, Integer.class);
         CompilationTestUtils.assertContainsConstructor(int32Ext2Class, int32Ext2Class);
         CompilationTestUtils.assertContainsConstructor(int32Ext2Class, int32Ext1Class);
-        assertEquals(3, int32Ext2Class.getDeclaredConstructors().length);
+        assertEquals(4, int32Ext2Class.getDeclaredConstructors().length);
         CompilationTestUtils.assertContainsMethod(int32Ext2Class, String.class, "toString");
         defInst = CompilationTestUtils.assertContainsMethod(int32Ext2Class, int32Ext2Class, "getDefaultInstance",
             String.class);
@@ -157,7 +157,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(5, stringExt1Class.getDeclaredFields().length);
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(stringExt1Class, String.class);
         CompilationTestUtils.assertContainsConstructor(stringExt1Class, stringExt1Class);
-        assertEquals(2, stringExt1Class.getDeclaredConstructors().length);
+        assertEquals(3, stringExt1Class.getDeclaredConstructors().length);
         CompilationTestUtils.assertContainsMethod(stringExt1Class, String.class, GET_VAL);
         defInst = CompilationTestUtils.assertContainsMethod(stringExt1Class, stringExt1Class, "getDefaultInstance",
             String.class);
@@ -181,7 +181,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(stringExt2Class, String.class);
         CompilationTestUtils.assertContainsConstructor(stringExt2Class, stringExt2Class);
         CompilationTestUtils.assertContainsConstructor(stringExt2Class, stringExt1Class);
-        assertEquals(3, stringExt2Class.getDeclaredConstructors().length);
+        assertEquals(4, stringExt2Class.getDeclaredConstructors().length);
         defInst = CompilationTestUtils.assertContainsMethod(stringExt2Class, stringExt2Class, "getDefaultInstance",
             String.class);
         assertEquals(2, stringExt2Class.getDeclaredMethods().length);
@@ -202,7 +202,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(stringExt3Class, String.class);
         CompilationTestUtils.assertContainsConstructor(stringExt3Class, stringExt3Class);
         CompilationTestUtils.assertContainsConstructor(stringExt3Class, stringExt2Class);
-        assertEquals(3, stringExt3Class.getDeclaredConstructors().length);
+        assertEquals(4, stringExt3Class.getDeclaredConstructors().length);
         defInst = CompilationTestUtils.assertContainsMethod(stringExt3Class, stringExt3Class, "getDefaultInstance",
             String.class);
         assertEquals(1, stringExt3Class.getDeclaredMethods().length);
@@ -220,7 +220,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         assertThat(getValue.accessFlags()).contains(AccessFlag.FINAL);
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, Decimal64.class);
         CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, myDecimalTypeClass);
-        assertEquals(2, myDecimalTypeClass.getDeclaredConstructors().length);
+        assertEquals(3, myDecimalTypeClass.getDeclaredConstructors().length);
         CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, Decimal64.class, GET_VAL);
         CompilationTestUtils.assertContainsDefaultMethods(myDecimalTypeClass);
         defInst = CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, myDecimalTypeClass,
@@ -246,7 +246,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsMethod(myDecimalType2Class, Decimal64.class, "getValue");
         expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalType2Class, Decimal64.class);
         CompilationTestUtils.assertContainsConstructor(myDecimalType2Class, myDecimalType2Class);
-        assertEquals(2, myDecimalType2Class.getDeclaredConstructors().length);
+        assertEquals(3, myDecimalType2Class.getDeclaredConstructors().length);
         CompilationTestUtils.assertContainsMethod(myDecimalType2Class, Decimal64.class, GET_VAL);
         CompilationTestUtils.assertContainsDefaultMethods(myDecimalType2Class);
         defInst = CompilationTestUtils.assertContainsMethod(myDecimalType2Class, myDecimalType2Class,
