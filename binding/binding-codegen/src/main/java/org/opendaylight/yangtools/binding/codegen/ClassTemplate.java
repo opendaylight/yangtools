@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
@@ -26,7 +28,6 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALID_NAMES_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PROP;
@@ -45,6 +46,7 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
@@ -75,6 +77,10 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
      * {@code com.google.common.collect.ImmutableSet} as a JavaTypeName.
      */
     private static final @NonNull JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
+    /**
+     * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a JavaTypeName.
+     */
+    private static final @NonNull JavaTypeName UNSAFE_SECRET = JavaTypeName.create(UnsafeSecret.class);
 
     final @NonNull List<GeneratedProperty> allProperties;
     final @NonNull List<GeneratedProperty> finalProperties;
@@ -92,6 +98,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
     private final @NonNull List<Constant> consts;
     private final @NonNull GeneratedTransferObject genTO;
     private final AbstractRangeGenerator<?> rangeGenerator;
+    private final @NonNull ScalarTypeKind scalarType;
 
     @NonNullByDefault
     ClassTemplate(final GeneratedTransferObject genType) {
@@ -117,6 +124,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         consts = genTO.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
             ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genTO))) : null;
+        scalarType = ScalarTypeKind.of(genTO);
     }
 
     /**
@@ -548,8 +556,9 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
     @Nullable BlockBuilder constructors() {
         final var bb = newBlockBuilder()
             .nl();
+        // FIXME: this part should be specialized in ScalarTypeObjectArchetype
         if (genTO.isTypedef() && allProperties.size() == 1 && VALUE_PROP.equals(allProperties.getFirst().getName())) {
-            bb.blk(typedefConstructor());
+            bb.blk(scalarTypeObjectConstructors());
         } else {
             bb.blk(allValuesConstructor());
         }
@@ -567,7 +576,8 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         if (properties.isEmpty()) {
             return null;
         }
-        if (genTO.getImplements().stream().anyMatch(ifc -> SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
+        // FIXME: this should be specialized in ScalarTypeObjectTemplate
+        if (scalarType.isRoot()) {
             final var field = properties.getFirst();
             return newBlockBuilder()
                 .nl()
@@ -721,35 +731,80 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .cB();
     }
 
-    private BlockBuilder typedefConstructor() {
-        final var bb = newBlockBuilder()
-            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").jStr(VALUE_PROP).eol(")")
-            .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")").oB();
-        if (!parentProperties.isEmpty()) {
-            bb.str("super(").str(asArguments(parentProperties)).eol(");");
-        }
-
+    // FIXME: this should be specialized in ScalarTypeObjectTemplate
+    private BlockBuilder scalarTypeObjectConstructors() {
+        verify(scalarType != ScalarTypeKind.NONE);
         final var value = valueProperty(allProperties);
         if (value == null) {
             throw new VerifyException("missing value property");
         }
-
         final var fieldName = fieldName(value);
+
+        // common body for complete field initialization
+        final var fieldInit = newBlockBuilder();
         if (valueProperty(properties) != null) {
-            bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
+            fieldInit.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
                 .str(fieldName);
             if (value.getReturnType() instanceof Decimal64Type decimal64) {
-                bb.str(", ").jInt(decimal64.fractionDigits());
+                fieldInit.str(", ").jInt(decimal64.fractionDigits());
             }
-            bb.str(")").frg(cloneOrNull(value)).eS();
+            fieldInit.str(")").frg(cloneOrNull(value)).eS();
         }
-        return bb
-            .blk(generateRestrictions(type(), fieldName, value.getReturnType()))
+
+        // FIXME: this should be just a single value, right?
+        final var argsDeclaration = asArgumentsDeclaration(allProperties);
+        // FIXME: base this check on ScalarTypeKind.isRoot(), asserting shape instead
+        final var superArgs = parentProperties.isEmpty() ? null : asArguments(parentProperties);
+
+        final var ret = newBlockBuilder()
+            // public constructor taking an encapsulated Java value and validating it
+            .at().eol(importedName(NONNULL_BY_DEFAULT))
+            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").jStr(VALUE_PROP).eol(")")
+            .str("public ").str(type().simpleName()).str("(").str(argsDeclaration).str(")")
+                .jBlock(bb -> {
+                    if (superArgs != null) {
+                        bb.str("super(").str(superArgs).eol(");");
+                    }
+                    bb.blk(fieldInit);
+
+                    final var checkerCalls = generateRestrictions(type(), fieldName, value.getReturnType());
+                    if (checkerCalls != null) {
+                        bb.blk(checkerCalls);
+                    }
+
+                    // If we have patterns, we need to apply them to the value field. This is a sad consequence of how
+                    // this code is structured.
+                    final var patternEnforcer = genPatternEnforcer(fieldName);
+                    if (patternEnforcer != null) {
+                        if (checkerCalls != null) {
+                            bb.newLine();
+                        }
+                        bb.blk(patternEnforcer);
+                    }
+                }).nl();
+
+        return !scalarType.hasRestrictions() ? ret : ret
+            // protected constructor taking an encapsulated Java value and an UnsafeSecret and performs initialization
             .nl()
-            // If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code
-            // is structured.
-            .blk(genPatternEnforcer(fieldName))
-            .cB();
+            .at().eol(importedName(NONNULL_BY_DEFAULT))
+            .str("protected ").str(type().simpleName()).str("(final ").str(importedName(UNSAFE_SECRET)).str(" secret, ")
+                .str(argsDeclaration).str(")").jBlock(bb -> {
+                    switch (scalarType) {
+                        case ROOT_RESTRICTING -> {
+                            verify(superArgs == null);
+                            bb.str(importedName(CODEHELPERS)).eol(".verifySecret(secret);");
+                        }
+                        case SUBCLASS_INHERITING ->
+                            bb.str("super(secret, ").str(verifyNotNull(superArgs)).eol(");");
+                        case SUBCLASS_RESTRICTING ->
+                            bb
+                                .str("super(").str(verifyNotNull(superArgs)).eol(");")
+                                .str(importedName(CODEHELPERS)).eol(".verifySecret(secret);");
+                        default -> verify(scalarType == ScalarTypeKind.SUBCLASS);
+                    }
+
+                    bb.blk(fieldInit);
+                }).nl();
     }
 
     private static @Nullable GeneratedProperty valueProperty(final List<GeneratedProperty> props) {
@@ -766,14 +821,14 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         };
     }
 
-    private @NonNull BlockBuilder genPatternEnforcer(final @NonNull String ref) {
-        final var bb = newBlockBuilder();
+    private @Nullable BlockBuilder genPatternEnforcer(final @NonNull String ref) {
         for (var constant : consts) {
             if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
-                bb.str(importedName(CODEHELPERS)).str(".checkPattern(").str(ref).str(", ")
-                    .eol(MEMBER_PATTERN_LIST + ", " + MEMBER_REGEX_LIST + ");");
+                return newBlockBuilder()
+                    .str(importedName(CODEHELPERS)).str(".checkPattern(").str(ref).str(", ")
+                        .eol(MEMBER_PATTERN_LIST + ", " + MEMBER_REGEX_LIST + ");");
             }
         }
-        return bb;
+        return null;
     }
 }

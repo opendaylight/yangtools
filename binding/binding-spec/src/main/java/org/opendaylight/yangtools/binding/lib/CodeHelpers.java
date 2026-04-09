@@ -29,7 +29,9 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
+import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 
@@ -566,5 +568,19 @@ public final class CodeHelpers {
             }
         }
         throw new IllegalArgumentException("invalid default parameter");
+    }
+
+    /**
+     * Verify that a provided {@link UnsafeSecret} matches the expected instance.
+     *
+     * @param secret provided secret
+     * @throws LinkageError if a mismatch is detected
+     * @since 15.1.0
+     */
+    @NonNullByDefault
+    public static void verifySecret(final UnsafeSecret secret) {
+        if (!secret.equals(TheUnsafeSecret.INSTANCE)) {
+            throw new LinkageError("UnsafeSecret mismatch: expecting " + TheUnsafeSecret.INSTANCE + ", got " + secret);
+        }
     }
 }
