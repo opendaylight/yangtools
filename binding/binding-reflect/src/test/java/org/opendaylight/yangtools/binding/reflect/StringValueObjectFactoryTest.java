@@ -14,7 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 // public for TestClass visibility
+@Deprecated(since = "15.1.0", forRemoval = true)
 public class StringValueObjectFactoryTest {
+    @Deprecated(since = "15.1.0", forRemoval = true)
     @Test
     void createTest() {
         final var stringValueObjectFactory = StringValueObjectFactory.create(TestClass.class, "testTemplate");
@@ -22,6 +24,7 @@ public class StringValueObjectFactoryTest {
         assertEquals("testTemplate", stringValueObjectFactory.getTemplate().toString());
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     @Test
     void newInstanceTest() {
         final var instance = StringValueObjectFactory.create(TestClass.class, "testTemplate");
@@ -29,6 +32,7 @@ public class StringValueObjectFactoryTest {
         assertEquals("instanceTest", instance.newInstance("instanceTest").toString());
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     @Test
     void createTestNoConstructor() {
         final var iae = assertThrows(IllegalArgumentException.class,
@@ -36,6 +40,7 @@ public class StringValueObjectFactoryTest {
         assertEquals("class java.lang.Object does not have a String constructor", iae.getMessage());
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     @Test
     void createTestNoField() {
         final var iae = assertThrows(IllegalArgumentException.class,
@@ -44,18 +49,22 @@ public class StringValueObjectFactoryTest {
             iae.getMessage());
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static final class TestClass {
         @SuppressWarnings("checkstyle:memberName")
         private final String _value;
 
+        @Deprecated(since = "15.1.0", forRemoval = true)
         public TestClass(final TestClass parent) {
             _value = parent._value;
         }
 
+        @Deprecated(since = "15.1.0", forRemoval = true)
         public TestClass(final String value) {
             _value = value;
         }
 
+        @Deprecated(since = "15.1.0", forRemoval = true)
         @Override
         public String toString() {
             return _value;
