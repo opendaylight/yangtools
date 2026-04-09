@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 
 @ExtendWith(MockitoExtension.class)
 class CodeHelpersTest {
@@ -83,5 +84,11 @@ class CodeHelpersTest {
         assertEquals("1234 is not a valid value", ex.getMessage());
 
         assertSame(enumTypeObject, CodeHelpers.checkEnum(enumTypeObject, 1234));
+    }
+
+    @Test
+    void verifySecretBasics() {
+        assertThrows(NullPointerException.class, () -> CodeHelpers.verifySecret(null));
+        CodeHelpers.verifySecret(TheUnsafeSecret.INSTANCE);
     }
 }
