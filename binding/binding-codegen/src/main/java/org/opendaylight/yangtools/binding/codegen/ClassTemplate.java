@@ -113,11 +113,10 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
 
-        enums = genType.getEnumerations();
-        consts = genType.getConstantDefinitions();
+        enums = genTO.getEnumerations();
+        consts = genTO.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
-            ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genType)))
-                : null;
+            ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genTO))) : null;
     }
 
     /**
