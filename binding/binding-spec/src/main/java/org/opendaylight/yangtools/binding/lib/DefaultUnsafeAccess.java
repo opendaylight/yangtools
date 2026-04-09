@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.UnsafeScalarTypeObjectFactory;
 import org.slf4j.Logger;
@@ -75,13 +76,17 @@ public final class DefaultUnsafeAccess implements UnsafeAccess {
     public DefaultUnsafeAccess(final String rootPackageName, final Module definingModule) {
         this.rootPackageName = requireNonNull(rootPackageName);
         this.definingModule = requireNonNull(definingModule);
+        if (!rootPackageName.startsWith(Naming.PACKAGE_PREFIX + ".")) {
+            throw new IllegalArgumentException("Invalid root package " + rootPackageName);
+        }
     }
 
     @Override
     public <T extends ScalarTypeObject<V>, V>
-            @Nullable UnsafeScalarTypeObjectFactory<T, V> lookupUnsafeScalarTypeObjectFactory(
-                final Class<T> typeClass) {
-        checkScalarTypeObject(typeClass);
+            @Nullable UnsafeScalarTypeObjectFactory<T, V> lookupUnsafeScalarTypeObjectFactory(final T typeObj) {
+        final var typeClass = typeObj.getClass();
+        checkClassMembership(typeClass);
+
         @SuppressWarnings("unchecked")
         final var ret = (UnsafeScalarTypeObjectFactory<T, V>) unsafeFactories.get(typeClass);
         return ret;
@@ -99,21 +104,15 @@ public final class DefaultUnsafeAccess implements UnsafeAccess {
      */
     public <T extends ScalarTypeObject<V>, V> void registerScalarTypeObject(final Class<T> typeClass,
             final Function<V, T> safeCtor, final BiFunction<UnsafeSecret, V, T> unsafeCtor) {
-        checkScalarTypeObject(typeClass);
-        final var typePackageName = typeClass.asSubclass(ScalarTypeObject.class).getPackageName();
-        if (!typePackageName.startsWith(rootPackageName)) {
-            throw new IllegalArgumentException(typePackageName + " does not match " + rootPackageName);
+        if (!ScalarTypeObject.class.isAssignableFrom(typeClass)) {
+            throw new IllegalArgumentException(typeClass + " is not a ScalarTypeObject");
         }
-        final var typeModule = typeClass.getModule();
-        if (!typeModule.equals(definingModule)) {
-            throw new IllegalArgumentException(typeModule + " does not match " + definingModule);
-        }
-
+        checkClassMembership(typeClass);
         final var safe = requireNonNull(safeCtor);
         final var unsafe = requireNonNull(unsafeCtor);
+
         final var factory = VERIFY_STO ? new VerifyingUnsafeScalarTypeObjectFactory<>(typeClass, safe)
             : new DefaultUnsafeScalarTypeObjectFactory<>(typeClass, unsafe);
-
         final var prev = unsafeFactories.putIfAbsent(typeClass, factory);
         if (prev != null) {
             throw new IllegalArgumentException(typeClass + " already registered as " + prev);
@@ -122,17 +121,22 @@ public final class DefaultUnsafeAccess implements UnsafeAccess {
         LOG.debug("Registered {} for unsafe instantiation", typeClass.getCanonicalName());
     }
 
+    private void checkClassMembership(final Class<?> typeClass) {
+        final var typePackageName = typeClass.getPackageName();
+        if (!typePackageName.startsWith(rootPackageName)) {
+            throw new IllegalArgumentException(typePackageName + " does not match " + rootPackageName);
+        }
+        final var typeModule = typeClass.getModule();
+        if (!typeModule.equals(definingModule)) {
+            throw new IllegalArgumentException(typeModule + " does not match " + definingModule);
+        }
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
             .add("rootPackage", rootPackageName)
             .add("module", definingModule)
             .toString();
-    }
-
-    private static void checkScalarTypeObject(final Class<?> clazz) {
-        if (!ScalarTypeObject.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException(clazz + " is not a ScalarTypeObject");
-        }
     }
 }
