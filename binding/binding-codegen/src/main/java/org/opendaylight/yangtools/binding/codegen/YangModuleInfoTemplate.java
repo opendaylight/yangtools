@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.MODEL_BINDING_P
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_CLASS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_UNSAFE_ACCESS_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getClassName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getRootPackageName;
@@ -25,6 +24,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -40,6 +40,11 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
  * QNAME constants.
  */
 public final class YangModuleInfoTemplate {
+    /**
+     * The name of the field holding the {@link DefaultUnsafeAccess} instance.
+     */
+    static final @NonNull String UNSAFE_ACCESS_FIELD_NAME = "UNSAFE_ACCESS";
+
     // These are always imported. Note we need to import even java.lang members, as there can be conflicting definitions
     // in our package
     private static final String CORE_IMPORT_STR = """
@@ -120,10 +125,10 @@ public final class YangModuleInfoTemplate {
             .txt("""
 
                   /**
-                   * The {@link DefaultUnsafeAccess} instance.
+                   * The {@link DefaultUnsafeAccess} instance. Exposed for technical reasons and may change at any time.
                    */
                   """)
-            .eol("public static final @NonNull DefaultUnsafeAccess " + MODULE_INFO_UNSAFE_ACCESS_FIELD_NAME + " =")
+            .eol("public static final @NonNull DefaultUnsafeAccess " + UNSAFE_ACCESS_FIELD_NAME + " =")
                 .ind("new DefaultUnsafeAccess(").jStr(getRootPackageName(module.getQNameModule()))
                     .eol(", " + MODULE_INFO_CLASS_NAME + ".class.getModule());")
             .nl()

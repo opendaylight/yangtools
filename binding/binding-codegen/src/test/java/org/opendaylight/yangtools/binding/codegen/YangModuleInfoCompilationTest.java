@@ -98,7 +98,7 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
                 public static final @NonNull YangModuleInfo INSTANCE = new YangModuleInfoImpl();
 
                 /**
-                 * The {@link DefaultUnsafeAccess} instance.
+                 * The {@link DefaultUnsafeAccess} instance. Exposed for technical reasons and may change at any time.
                  */
                 public static final @NonNull DefaultUnsafeAccess UNSAFE_ACCESS =
                     new DefaultUnsafeAccess("org.opendaylight.yang.gen.v1.yang.test.main.rev140630", YangModuleInfoImpl\
