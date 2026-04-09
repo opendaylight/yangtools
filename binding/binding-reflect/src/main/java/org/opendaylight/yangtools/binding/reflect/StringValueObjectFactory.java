@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.reflect;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -18,6 +17,8 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
+import org.opendaylight.yangtools.binding.meta.UnsafeScalarTypeObjectFactory;
 import org.opendaylight.yangtools.concepts.AccessControllerCompat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,10 @@ import org.slf4j.LoggerFactory;
  * IMPLICATIONS ON EVERY USER INTERACTING WITH THE RESULTING OBJECTS.
  *
  * @param <T> Resulting object type
+ * @deprecated Use {@link UnsafeAccess} to access a {@link UnsafeScalarTypeObjectFactory} as a replacement which works
+ *             without the use of deep reflection.
  */
-@Beta
+@Deprecated(since = "15.1.0", forRemoval = true)
 public final class StringValueObjectFactory<T> {
     private static final MethodType CONSTRUCTOR_METHOD_TYPE = MethodType.methodType(Object.class, Object.class);
     private static final MethodType SETTER_METHOD_TYPE = MethodType.methodType(void.class, Object.class, String.class);
@@ -51,6 +54,7 @@ public final class StringValueObjectFactory<T> {
         this.setter = requireNonNull(setter);
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static <T> StringValueObjectFactory<T> create(final Class<T> clazz, final String templateString) {
         final Constructor<T> stringConstructor;
         try {
@@ -133,6 +137,7 @@ public final class StringValueObjectFactory<T> {
         throw new IllegalArgumentException(orig + " nor its superclasses define required internal field _value", cause);
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     @SuppressWarnings("checkstyle:illegalCatch")
     public T newInstance(final String string) {
         requireNonNull(string, "Argument may not be null");
@@ -148,6 +153,7 @@ public final class StringValueObjectFactory<T> {
         }
     }
 
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public T getTemplate() {
         return template;
     }
