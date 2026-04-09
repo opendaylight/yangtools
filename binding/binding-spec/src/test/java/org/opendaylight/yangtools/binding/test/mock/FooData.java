@@ -10,24 +10,28 @@ package org.opendaylight.yangtools.binding.test.mock;
 import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface FooData extends DataRoot<FooData> {
     @NonNullByDefault
-    RootMeta<FooData> META = new RootMeta<>(FooData.class, new YangModuleInfo() {
+    RootMeta<FooData> META = new RootMeta<>(FooData.class,
         // Note: this usually supplied via YangModuleInfoProvider reference
-        @Override
-        public InputStream openYangTextStream() {
-            throw new UnsupportedOperationException();
-        }
+        new YangModuleInfo() {
+            @Override
+            public InputStream openYangTextStream() {
+                throw new UnsupportedOperationException();
+            }
 
-        @Override
-        public QName getName() {
-            throw new UnsupportedOperationException();
-        }
-    });
+            @Override
+            public QName getName() {
+                throw new UnsupportedOperationException();
+            }
+        },
+        new DefaultUnsafeAccess(Naming.PACKAGE_PREFIX + "mock", FooData.class.getModule()));
 
     @Override
     default Class<FooData> implementedInterface() {
