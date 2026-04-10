@@ -11,7 +11,7 @@ import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
+import org.opendaylight.yangtools.binding.lib.UnsafeAccessSupport;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,7 +31,7 @@ public interface FooData extends DataRoot<FooData> {
                 throw new UnsupportedOperationException();
             }
         },
-        new DefaultUnsafeAccess(Naming.PACKAGE_PREFIX + "mock", FooData.class.getModule()));
+        UnsafeAccessSupport.of(Naming.PACKAGE_PREFIX + "mock", FooData.class.getModule()).access());
 
     @Override
     default Class<FooData> implementedInterface() {

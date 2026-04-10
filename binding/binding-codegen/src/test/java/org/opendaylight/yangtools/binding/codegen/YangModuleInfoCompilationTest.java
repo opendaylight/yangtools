@@ -79,8 +79,10 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
             import java.util.HashSet;
             import java.util.Set;
             import org.eclipse.jdt.annotation.NonNull;
-            import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
             import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
+            import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
+            import org.opendaylight.yangtools.binding.lib.UnsafeAccessSupport;
+            import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
             import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
             import org.opendaylight.yangtools.yang.common.QName;
 
@@ -98,11 +100,24 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
                 public static final @NonNull YangModuleInfo INSTANCE = new YangModuleInfoImpl();
 
                 /**
-                 * The {@link DefaultUnsafeAccess} instance. Exposed for technical reasons and may change at any time.
+                 * The {@link ScalarTypeObjectRegistrar} instance. Exposed for technical reasons: this field should only
+                 * be referenced from a static initialization block of a generated ScalarTypeObject class.
                  */
-                public static final @NonNull DefaultUnsafeAccess UNSAFE_ACCESS =
-                    new DefaultUnsafeAccess("org.opendaylight.yang.gen.v1.yang.test.main.rev140630", YangModuleInfoImpl\
-            .class.getModule());
+                public static final @NonNull ScalarTypeObjectRegistrar STO_REGISTRAR;
+
+                /**
+                 * The {@link UnsafeAccess} instance. Exposed for technical reasons: use this module's DataRoot's
+                 * {@code META} field and acquire an instance through its {@code unsafeAccess()} method instead.
+                 */
+                public static final @NonNull UnsafeAccess UNSAFE_ACCESS;
+
+                static {
+                    final var support = UnsafeAccessSupport.of(
+                        "org.opendaylight.yang.gen.v1.yang.test.main.rev140630",
+                        YangModuleInfoImpl.class.getModule());
+                    UNSAFE_ACCESS = support.access();
+                    STO_REGISTRAR = support.stoRegistrar();
+                }
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
 

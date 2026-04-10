@@ -810,7 +810,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 bb
                     // not 'importedName' on purpose: it would just stand out in imports
                     .str(yangModuleInfo.canonicalName())
-                        .eol("." + YangModuleInfoTemplate.UNSAFE_ACCESS_FIELD_NAME + ".registerScalarTypeObject(")
+                        .eol("." + YangModuleInfoTemplate.CONST_STO_REGISTRAR + ".registerUnsafeSTO(")
                         .ind(selfRef).str(".class, ").str(selfRef).str("::new, ").str(selfRef).eol("::new);");
             }).nl();
     }

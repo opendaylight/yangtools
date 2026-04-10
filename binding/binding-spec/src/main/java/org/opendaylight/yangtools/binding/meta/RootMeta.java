@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataRoot;
-import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
+import org.opendaylight.yangtools.binding.lib.UnsafeAccessSupport;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -37,6 +37,6 @@ public record RootMeta<R extends DataRoot<R>>(
 
     @Deprecated(since = "15.1.0", forRemoval = true)
     public RootMeta(final @NonNull Class<R> rootClass, final @NonNull YangModuleInfo moduleInfo) {
-        this(rootClass, moduleInfo, new DefaultUnsafeAccess(rootClass.getPackageName(), rootClass.getModule()));
+        this(rootClass, moduleInfo, UnsafeAccessSupport.of(rootClass.getPackageName(), rootClass.getModule()).access());
     }
 }
