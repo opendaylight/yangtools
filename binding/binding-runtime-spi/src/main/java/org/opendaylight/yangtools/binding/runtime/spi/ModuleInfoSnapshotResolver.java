@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
-import org.opendaylight.yangtools.binding.reflect.BindingReflections;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -103,21 +102,6 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     public ModuleInfoSnapshotResolver(final String name, final YangTextToIRSourceTransformer textToIR,
             final YangParserFactory parserFactory) {
         ctxResolver = YangTextSchemaContextResolver.of(textToIR, parserFactory, name);
-    }
-
-    /**
-     * Register a set of {@link YangFeature}s as supported for a particular YANG module.
-     *
-     * @param <R> the module's {@link DataRoot}
-     * @param module the module's {@link RootMeta}
-     * @param supportedFeatures the set of supported features
-     * @return a {@link Registration}
-     * @deprecated Use {@link #registerModuleFeatures(RootMeta, Set)} instead.
-     */
-    @Deprecated(since = "15.0.1", forRemoval = true)
-    public <R extends @NonNull DataRoot<R>> Registration registerModuleFeatures(final Class<R> module,
-            final Set<? extends YangFeature<?, R>> supportedFeatures) {
-        return registerModuleFeatures(BindingReflections.getQNameModule(module), supportedFeatures);
     }
 
     /**
