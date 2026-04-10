@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.lib;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
@@ -17,10 +18,17 @@ import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 import org.opendaylight.yangtools.binding.meta.UnsafeScalarTypeObjectFactory;
 
 @NonNullByDefault
-record DefaultUnsafeScalarTypeObjectFactory<V, T extends ScalarTypeObject<V>>(
-        Class<T> target,
-        BiFunction<UnsafeSecret, V, T> ctor) implements UnsafeScalarTypeObjectFactory<V, T> {
-    DefaultUnsafeScalarTypeObjectFactory {
+record UnsafeSTOFactory<V, T extends ScalarTypeObject<V>>(Class<T> target, BiFunction<UnsafeSecret, V, T> ctor)
+        implements UnsafeScalarTypeObjectFactory<V, T> {
+
+    static final UnsafeSTOFactoryFactory FACTORY = UnsafeSTOFactory::new;
+
+    private UnsafeSTOFactory(final Class<T> clazz, final Function<V, T> safeCtor,
+            final BiFunction<UnsafeSecret, V, T> unsafeCtor) {
+        this(clazz, unsafeCtor);
+    }
+
+    UnsafeSTOFactory {
         requireNonNull(target);
         requireNonNull(ctor);
     }

@@ -20,7 +20,8 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
+import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
+import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
@@ -40,6 +41,15 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
  */
 public final class YangModuleInfoTemplate {
     /**
+     * The name of the static field holding the {@link UnsafeAccess} instance.
+     */
+    static final @NonNull String CONST_UNSAFE_ACCESS = "UNSAFE_ACCESS";
+    /**
+     * The name of the static field holding the {@link ScalarTypeObjectRegistrar} instance.
+     */
+    static final @NonNull String CONST_STO_REGISTRAR = "STO_REGISTRAR";
+
+    /**
      * The name of the {@link YangModuleInfo} implementation class.
      */
     @SuppressWarnings("removal")
@@ -54,10 +64,6 @@ public final class YangModuleInfoTemplate {
      */
     @SuppressWarnings("removal")
     static final @NonNull String INSTANCE_FIELD_NAME = Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
-    /**
-     * The name of the field holding the {@link DefaultUnsafeAccess} instance.
-     */
-    static final @NonNull String UNSAFE_ACCESS_FIELD_NAME = "UNSAFE_ACCESS";
     /**
      * The name of the {@link QName} factory method.
      */
@@ -76,8 +82,10 @@ public final class YangModuleInfoTemplate {
         import java.lang.Override;
         import java.lang.String;
         import org.eclipse.jdt.annotation.NonNull;
-        import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
         import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
+        import org.opendaylight.yangtools.binding.lib.UnsafeAccessSupport;
+        import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
         import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
         """;
@@ -89,8 +97,10 @@ public final class YangModuleInfoTemplate {
         import java.util.HashSet;
         import java.util.Set;
         import org.eclipse.jdt.annotation.NonNull;
-        import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
         import org.opendaylight.yangtools.binding.lib.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
+        import org.opendaylight.yangtools.binding.lib.UnsafeAccessSupport;
+        import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
         import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
         import org.opendaylight.yangtools.yang.common.QName;
         """;
@@ -147,13 +157,29 @@ public final class YangModuleInfoTemplate {
             .eol("public static final @NonNull YangModuleInfo " + INSTANCE_FIELD_NAME + " = new " + CLASS_NAME + "();")
             .txt("""
 
+                /**
+                 * The {@link ScalarTypeObjectRegistrar} instance. Exposed for technical reasons: this field should only
+                 * be referenced from a static initialization block of a generated ScalarTypeObject class.
+                 */
+                """)
+            .str("public static final @NonNull ScalarTypeObjectRegistrar " + CONST_STO_REGISTRAR).eS()
+            .txt("""
+
                   /**
-                   * The {@link DefaultUnsafeAccess} instance. Exposed for technical reasons and may change at any time.
+                   * The {@link UnsafeAccess} instance. Exposed for technical reasons: use this module's DataRoot's
+                   * {@code META} field and acquire an instance through its {@code unsafeAccess()} method instead.
                    */
                   """)
-            .eol("public static final @NonNull DefaultUnsafeAccess " + UNSAFE_ACCESS_FIELD_NAME + " =")
-                .ind("new DefaultUnsafeAccess(").jStr(getRootPackageName(module.getQNameModule()))
-                    .eol(", " + CLASS_NAME + ".class.getModule());")
+            .str("public static final @NonNull UnsafeAccess " + CONST_UNSAFE_ACCESS).eS()
+            .nl()
+            .str("static").jBlock(si -> {
+                si
+                    .eol("final var support = UnsafeAccessSupport.of(")
+                    .ind().jStr(getRootPackageName(module.getQNameModule())).eol(",")
+                    .ind().eol(CLASS_NAME + ".class.getModule());")
+                    .eol(CONST_UNSAFE_ACCESS + " = support.access();")
+                    .eol(CONST_STO_REGISTRAR + " = support.stoRegistrar();");
+            }).nl()
             .nl()
             .eol("private final @NonNull ImmutableSet<YangModuleInfo> importedModules;")
             .nl()
