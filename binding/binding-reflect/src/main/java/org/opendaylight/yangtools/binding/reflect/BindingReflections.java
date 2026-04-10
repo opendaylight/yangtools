@@ -17,9 +17,7 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -27,7 +25,6 @@ import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,15 +51,6 @@ public final class BindingReflections {
      */
     public static QName findQName(final Class<?> dataType) {
         return CLASS_TO_QNAME.getUnchecked(dataType).orElse(null);
-    }
-
-    public static @NonNull QNameModule getQNameModule(final Class<?> clz) {
-        if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)
-                || Action.class.isAssignableFrom(clz)) {
-            return findQName(clz).getModule();
-        }
-
-        return getModuleInfo(clz).getName().getModule();
     }
 
     /**

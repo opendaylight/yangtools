@@ -26,8 +26,7 @@ class BindingReflectionsTest {
 
     @Test
     void getModuleInfoWorks() {
-        assertEquals(Mdsal767Data.META.moduleInfo().getName().getModule(),
-            BindingReflections.getQNameModule(Mdsal767Data.class));
+        assertEquals(Mdsal767Data.META.moduleInfo().getName(), BindingReflections.findQName(Mdsal767Data.class));
     }
 
     static final class TestImplementation implements Augmentation<TestImplementation> {
