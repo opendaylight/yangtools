@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.meta.LeafPropertyMeta;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
 /**
@@ -27,5 +28,9 @@ public record LeafPropertyStep<C extends DataContainer, V>(
         requireNonNull(containerType);
         requireNonNull(valueType);
         requireNonNull(yangIdentifier);
+    }
+
+    public LeafPropertyStep(final @NonNull LeafPropertyMeta<C, V> propMeta) {
+        this(propMeta.containerType(), propMeta.valueType(), propMeta.yangIdentifier());
     }
 }
