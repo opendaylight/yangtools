@@ -8,11 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODEL_BINDING_PROVIDER_CLASS_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_CLASS_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getClassName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getServicePackageName;
@@ -24,11 +19,15 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.DefaultUnsafeAccess;
+import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.RevisionUnion;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
@@ -41,9 +40,34 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
  */
 public final class YangModuleInfoTemplate {
     /**
+     * The name of the {@link YangModuleInfo} implementation class.
+     */
+    @SuppressWarnings("removal")
+    static final @NonNull String CLASS_NAME = Naming.MODULE_INFO_CLASS_NAME;
+    /**
+     * The name of the {@link YangModelBindingProvider} implementation class.
+     */
+    @SuppressWarnings("removal")
+    static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = Naming.MODEL_BINDING_PROVIDER_CLASS_NAME;
+    /**
+     * The name of the field holding the {@link YangModuleInfo} instance.
+     */
+    @SuppressWarnings("removal")
+    static final @NonNull String INSTANCE_FIELD_NAME = Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
+    /**
      * The name of the field holding the {@link DefaultUnsafeAccess} instance.
      */
     static final @NonNull String UNSAFE_ACCESS_FIELD_NAME = "UNSAFE_ACCESS";
+    /**
+     * The name of the {@link QName} factory method.
+     */
+    @SuppressWarnings("removal")
+    static final @NonNull String QNAMEOF_METHOD_NAME = Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
+    /**
+     * The name of the {@link YangDataName} factory method.
+     */
+    @SuppressWarnings("removal")
+    static final @NonNull String YANGDATANAMEOF_METHOD_NAME = Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
 
     // These are always imported. Note we need to import even java.lang members, as there can be conflicting definitions
     // in our package
@@ -108,7 +132,7 @@ public final class YangModuleInfoTemplate {
             .str(" * The {@link ResourceYangModuleInfo} for {@code ").str(module.getName()).eol("} module.")
             .eol(" */")
             .eol("@javax.annotation.processing.Generated(\"mdsal-binding-generator\")")
-            .str("public final class " + MODULE_INFO_CLASS_NAME + " extends ResourceYangModuleInfo").oB()
+            .str("public final class " + CLASS_NAME + " extends ResourceYangModuleInfo").oB()
                 .str("private static final @NonNull QName NAME = QName.create(")
                     .jStr(module.getQNameModule().namespace().toString()).str(", ");
         module.getRevision().ifPresent(revision -> bb.jStr(revision.toString()).str(", "));
@@ -120,8 +144,7 @@ public final class YangModuleInfoTemplate {
                    * The singleton instance.
                    */
                   """)
-            .eol("public static final @NonNull YangModuleInfo " + MODULE_INFO_INSTANCE_FIELD_NAME + " = new "
-                + MODULE_INFO_CLASS_NAME + "();")
+            .eol("public static final @NonNull YangModuleInfo " + INSTANCE_FIELD_NAME + " = new " + CLASS_NAME + "();")
             .txt("""
 
                   /**
@@ -130,11 +153,11 @@ public final class YangModuleInfoTemplate {
                   """)
             .eol("public static final @NonNull DefaultUnsafeAccess " + UNSAFE_ACCESS_FIELD_NAME + " =")
                 .ind("new DefaultUnsafeAccess(").jStr(getRootPackageName(module.getQNameModule()))
-                    .eol(", " + MODULE_INFO_CLASS_NAME + ".class.getModule());")
+                    .eol(", " + CLASS_NAME + ".class.getModule());")
             .nl()
             .eol("private final @NonNull ImmutableSet<YangModuleInfo> importedModules;")
             .nl()
-            .blk(classBody(module, MODULE_INFO_CLASS_NAME, submodules))
+            .blk(classBody(module, CLASS_NAME, submodules))
             .nl()
             .txt("""
                   /**
@@ -147,7 +170,7 @@ public final class YangModuleInfoTemplate {
                    * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
                    */
                   """)
-            .str("public static @NonNull QName " + MODULE_INFO_QNAMEOF_METHOD_NAME + "(final String localName)").oB()
+            .str("public static @NonNull QName " + QNAMEOF_METHOD_NAME + "(final String localName)").oB()
                 .eol("return QName.create(NAME, localName).intern();")
             .cB();
 
@@ -166,7 +189,7 @@ public final class YangModuleInfoTemplate {
                        * @throws IllegalArgumentException if {@code templateName} is empty
                        */
                       """)
-                .str("public static @NonNull YangDataName " + MODULE_INFO_YANGDATANAMEOF_METHOD_NAME
+                .str("public static @NonNull YangDataName " + YANGDATANAMEOF_METHOD_NAME
                     + "(final String templateName)").oB()
                     .eol("return new YangDataName(NAME.getModule(), templateName).intern();")
                 .cB();
@@ -214,7 +237,7 @@ public final class YangModuleInfoTemplate {
             +  '\n'
             +  "    @Override\n"
             +  "    public YangModuleInfo getModuleInfo() {\n"
-            +  "        return " + MODULE_INFO_CLASS_NAME + ".INSTANCE;\n"
+            +  "        return " + CLASS_NAME + '.' + INSTANCE_FIELD_NAME + ";\n"
             +  "    }\n"
             +  "}\n";
     }
@@ -255,11 +278,11 @@ public final class YangModuleInfoTemplate {
             }
 
             bb.str("set.add(").str(getServicePackageName(qnameModule))
-                .eol('.' + MODULE_INFO_CLASS_NAME + ".INSTANCE);");
+                .eol('.' + CLASS_NAME + '.' + INSTANCE_FIELD_NAME + ");");
         }
 
         for (var submodule : submodules) {
-            bb.str("set.add(").str(getClassName(submodule.getName())).eol("Info.INSTANCE);");
+            bb.str("set.add(").str(getClassName(submodule.getName())).eol("Info." + INSTANCE_FIELD_NAME + ");");
         }
 
         if (mod.getImports().isEmpty() && submodules.isEmpty()) {

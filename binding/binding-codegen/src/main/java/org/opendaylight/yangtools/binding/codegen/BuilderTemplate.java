@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
 import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
@@ -35,6 +34,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -48,6 +48,12 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for generating JAVA builder classes.
  */
 final class BuilderTemplate extends AbstractBuilderTemplate {
+    /**
+     * The name of the field holding augmentations.
+     */
+    @SuppressWarnings("removal")
+    static final @NonNull String AUGMENTATION_FIELD = Naming.AUGMENTATION_FIELD;
+
     private final BuilderImplTemplate implTemplate;
 
     BuilderTemplate(final @NonNull GeneratedType type, final @NonNull GeneratedType targetType,

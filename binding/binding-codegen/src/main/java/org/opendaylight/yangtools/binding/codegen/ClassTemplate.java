@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_CLASS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getModelRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
@@ -805,7 +804,8 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
                 final var selfRef = type().simpleName();
                 // Yeah: not pretty but works
                 final var yangModuleInfo = JavaTypeName.create(
-                    rootToServicePackageName(getModelRootPackageName(type().packageName())), MODULE_INFO_CLASS_NAME);
+                    rootToServicePackageName(getModelRootPackageName(type().packageName())),
+                    YangModuleInfoTemplate.CLASS_NAME);
 
                 bb
                     // not 'importedName' on purpose: it would just stand out in imports

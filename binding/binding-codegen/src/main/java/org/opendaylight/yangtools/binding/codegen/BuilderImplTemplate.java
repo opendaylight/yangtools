@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
@@ -254,7 +253,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     @Override
     void appendCopyAugmentation(final BlockBuilder bb) {
-        bb.str("super(base." + AUGMENTATION_FIELD);
+        bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
         if (keyType != null) {
             bb.str(", extractKey(base)");
         }
