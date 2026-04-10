@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.BindingGenerator;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
@@ -31,8 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 final class JavaFileGenerator implements FileGenerator {
     public static final String CONFIG_IGNORE_DUPLICATE_FILES = "ignoreDuplicateFiles";
 
-    private static final String MODULE_INFO = Naming.MODULE_INFO_CLASS_NAME + ".java";
-    private static final String MODEL_BINDING_PROVIDER = Naming.MODEL_BINDING_PROVIDER_CLASS_NAME + ".java";
+    private static final String MODULE_INFO = YangModuleInfoTemplate.CLASS_NAME + ".java";
+    private static final String MODEL_BINDING_PROVIDER =
+        YangModuleInfoTemplate.MODEL_BINDING_PROVIDER_CLASS_NAME + ".java";
     private static final GeneratedFilePath MODEL_BINDING_PROVIDER_SERVICE =
         GeneratedFilePath.ofDirectoryFile("META-INF/services", YangModelBindingProvider.class.getName());
 

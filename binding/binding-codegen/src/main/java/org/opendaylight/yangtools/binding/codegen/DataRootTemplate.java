@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.opendaylight.yangtools.binding.contract.Naming.DATA_ROOT_META_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.META_STATIC_FIELD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -49,8 +48,8 @@ final class DataRootTemplate extends InterfaceTemplate {
             .at().eol(nonNullByDefault)
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
             .str(rootMetaRaw).str("<").str(type).str("> META = new ").str(rootMetaRaw).str("<>(").str(type)
-                .str(".class, ").str(moduleInfo).str('.' + MODULE_INFO_INSTANCE_FIELD_NAME + ", ").str(moduleInfo)
-                .eol('.' + YangModuleInfoTemplate.UNSAFE_ACCESS_FIELD_NAME + ");");
+                .str(".class, ").str(moduleInfo).str('.' + YangModuleInfoTemplate.INSTANCE_FIELD_NAME + ", ")
+                .str(moduleInfo).eol('.' + YangModuleInfoTemplate.UNSAFE_ACCESS_FIELD_NAME + ");");
     }
 
     @Override

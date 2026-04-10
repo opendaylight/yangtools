@@ -14,8 +14,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRAC
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
@@ -235,7 +233,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
              * Yang Data template name of the statement represented by this class.
              */
             public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
-                + '.' + MODULE_INFO_YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName + "\");\n";
+                + '.' + YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName + "\");\n";
     }
 
     @NonNullByDefault
@@ -246,7 +244,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
              * YANG identifier of the statement represented by this class.
              */
             public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
-                + '.' + MODULE_INFO_QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
+                + '.' + YangModuleInfoTemplate.QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
     }
 
     // FIXME: return a Block

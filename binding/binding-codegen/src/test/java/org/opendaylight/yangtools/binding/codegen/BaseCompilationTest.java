@@ -56,7 +56,7 @@ abstract class BaseCompilationTest {
 
             final var file = sourcesOutputDir
                 .resolve(Naming.getServicePackageName(module.getQNameModule()).replace('.', File.separatorChar))
-                .resolve(Naming.MODULE_INFO_CLASS_NAME + ".java");
+                .resolve("YangModuleInfoImpl.java");
 
 
             try {

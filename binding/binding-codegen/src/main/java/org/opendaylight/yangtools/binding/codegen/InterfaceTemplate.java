@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTATION_FIELD;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
@@ -467,7 +466,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                     }
                     if (analysis.augmentType() != null) {
                         bb.str(importedName(CODEHELPERS))
-                            .eol(".appendAugmentations(helper, \"" + AUGMENTATION_FIELD + "\", obj);");
+                            .eol(".appendAugmentations(helper, \"" + BuilderTemplate.AUGMENTATION_FIELD + "\", obj);");
                     }
                     bb.eol("return helper.toString();");
                 }).nl();
