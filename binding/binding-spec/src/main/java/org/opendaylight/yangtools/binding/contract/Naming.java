@@ -21,12 +21,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.meta.PropertyMeta;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -105,16 +107,26 @@ public final class Naming {
      *
      * @since 15.0.0
      */
+    // FIXME: rename to META_CONSTANT_NAME
     public static final @NonNull String META_STATIC_FIELD_NAME = "META";
+    /**
+     * {@link DataContainer} specializations typically have one or more properties, each of which is accompanied by
+     * a field with this prefix. Each such constant holds a {@link PropertyMeta}.
+     * @since 16.0.0
+     */
+    public static final @NonNull String PROP_CONSTANT_PREFIX = "PROP_";
 
     /**
      * The name of the field holding the {@code ietf-restconf:yang-data} argument, present in all {@link YangData}
      * specializations. The type of the field is requied to be {@link YangDataName}.
      */
+    // FIXME: rename to NAME_CONSTANT_NAME
     public static final @NonNull String NAME_STATIC_FIELD_NAME = "NAME";
     // everything that can have a QName (e.g. identifier bound to a namespace)
+    // FIXME: rename to QNAME_CONSTANT_NAME
     public static final @NonNull String QNAME_STATIC_FIELD_NAME = "QNAME";
     // concrete extensible contracts, for example 'feature', 'identity' and similar
+    // FIXME: rename to VALUE_CONSTANT_NAME
     public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
     /**
      * {@link ScalarTypeObject} specializations use this field to expose their {@code units} value, if present.
