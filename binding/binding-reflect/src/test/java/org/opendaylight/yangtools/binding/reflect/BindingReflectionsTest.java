@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.reflect;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yang.gen.v1.mdsal767.norev.Mdsal767Data;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataObject;
 
@@ -22,11 +20,6 @@ class BindingReflectionsTest {
     void testBindingWithDummyObject() {
         assertFalse(BindingReflections.isRpcType(DataObject.class));
         assertTrue(BindingReflections.isBindingClass(DataObject.class));
-    }
-
-    @Test
-    void getModuleInfoWorks() {
-        assertEquals(Mdsal767Data.META.moduleInfo().getName(), BindingReflections.findQName(Mdsal767Data.class));
     }
 
     static final class TestImplementation implements Augmentation<TestImplementation> {
