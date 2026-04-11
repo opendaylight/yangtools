@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -15,9 +14,13 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * @since 15.1.0
  */
-// FIXME: abstract class extends java.lang.Number
-@Beta
+// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public sealed interface YangNumber<T extends YangNumber<T>> extends CanonicalValue<T> permits YangInteger, Decimal64 {
-    // Nothing else
+public abstract sealed class YangNumber<T extends YangNumber<T>> extends Number implements CanonicalValue<T>
+        permits YangInteger, Decimal64 {
+    @java.io.Serial
+    private static final long serialVersionUID = 3127696955141110233L;
+
+    @java.io.Serial
+    protected abstract Object writeReplace();
 }
