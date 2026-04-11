@@ -174,21 +174,24 @@ public final class Revision implements RevisionUnion {
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObjectNoData() throws ObjectStreamException {
-        throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void writeObject(final ObjectOutputStream stream) throws IOException {
-        throwNSE();
+        throw nse();
     }
 
-    static void throwNSE() throws NotSerializableException {
-        throw new NotSerializableException(Revision.class.getName());
+    private static NotSerializableException nse() {
+        return new NotSerializableException(Revision.class.getName());
     }
 }

@@ -15,10 +15,10 @@ import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -98,23 +98,30 @@ public final class XMLNamespace implements Comparable<XMLNamespace>, Immutable, 
         return namespace;
     }
 
-    @Serial
+    @java.io.Serial
     Object writeReplace() {
         return new XNv1(this);
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        Revision.throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObjectNoData() throws ObjectStreamException {
-        Revision.throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void writeObject(final ObjectOutputStream stream) throws IOException {
-        Revision.throwNSE();
+        throw nse();
+    }
+
+    private static NotSerializableException nse() {
+        return new NotSerializableException(XMLNamespace.class.getName());
     }
 }

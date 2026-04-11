@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import java.io.DataInput;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
@@ -75,22 +76,30 @@ public final class NotRevision implements RevisionUnion {
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     Object writeReplace() {
         return new RUv1("");
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        Revision.throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObjectNoData() throws ObjectStreamException {
-        Revision.throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void writeObject(final ObjectOutputStream stream) throws IOException {
-        Revision.throwNSE();
+        throw nse();
+    }
+
+    private static NotSerializableException nse() {
+        return new NotSerializableException(NotRevision.class.getName());
     }
 }

@@ -15,6 +15,7 @@ import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
@@ -237,17 +238,24 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        Revision.throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void readObjectNoData() throws ObjectStreamException {
-        Revision.throwNSE();
+        throw nse();
     }
 
     @java.io.Serial
+    @SuppressWarnings("static-method")
     private void writeObject(final ObjectOutputStream stream) throws IOException {
-        Revision.throwNSE();
+        throw nse();
+    }
+
+    private static NotSerializableException nse() {
+        return new NotSerializableException(QNameModule.class.getName());
     }
 }
