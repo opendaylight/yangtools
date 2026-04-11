@@ -22,6 +22,18 @@ package org.opendaylight.yangtools.binding;
  * </ul>
  */
 public sealed interface DataContainer extends BindingContract<DataContainer>
-    permits BaseNotification, ChoiceIn, DataObject, DataRoot, Grouping, YangData {
-    // Nothing else
+        permits BaseNotification, ChoiceIn, DataObject, DataRoot, Grouping, YangData {
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Implementations are required to return a non-zero result.
+     */
+    @Override
+    int hashCode();
+
+    @Override
+    boolean equals(Object obj);
+
+    @Override
+    String toString();
 }
