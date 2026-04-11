@@ -33,7 +33,6 @@ final class VersionedNormalizedNodeDataInput extends ForwardingNormalizedNodeDat
 
         final short version = input.readShort();
         final NormalizedNodeDataInput ret = switch (version) {
-            case TokenTypes.MAGNESIUM_VERSION -> new MagnesiumDataInput(input);
             case TokenTypes.POTASSIUM_VERSION -> new PotassiumDataInput(input);
             default -> throw defunct("Unhandled stream version %s", version);
         };
