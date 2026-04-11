@@ -25,8 +25,18 @@ import org.opendaylight.yangtools.concepts.Either;
 @NonNullByDefault
 public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
     public static final class Support extends AbstractCanonicalValueSupport<Decimal64> {
+        private static final CanonicalValueSupport<Decimal64> INSTANCE = new Support();
+
+        @Deprecated(since = "15.1.0", forRemoval = true)
         public Support() {
             super(Decimal64.class);
+        }
+
+        /**
+         * {@return the singleton instance}
+         */
+        public static CanonicalValueSupport<Decimal64> instance() {
+            return INSTANCE;
         }
 
         @Override
@@ -158,7 +168,6 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         }
     }
 
-    private static final CanonicalValueSupport<Decimal64> SUPPORT = new Support();
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
@@ -329,7 +338,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      * @throws NumberFormatException if the string does not contain a parsable decimal64.
      */
     public static Decimal64 valueOf(final String str) {
-        final var variant = SUPPORT.fromString(str);
+        final var variant = Support.instance().fromString(str);
         final var value = variant.tryFirst();
         if (value.isPresent()) {
             return value.orElseThrow();
@@ -583,7 +592,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     @Override
     public final CanonicalValueSupport<Decimal64> support() {
-        return SUPPORT;
+        return Support.instance();
     }
 
     @Override

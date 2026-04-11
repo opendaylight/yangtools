@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -429,5 +431,12 @@ class Decimal64Test {
         final var parsed = Decimal64.valueOf(str);
         assertEquals(new Decimal64((byte) digits, intPart, fracPart, negative), parsed);
         return parsed;
+    }
+
+    @Test
+    void supportReturnsSingleton() {
+        final var reported = Decimal64.minValueIn(1).support();
+        assertNotNull(reported);
+        assertSame(reported, Decimal64.Support.instance());
     }
 }

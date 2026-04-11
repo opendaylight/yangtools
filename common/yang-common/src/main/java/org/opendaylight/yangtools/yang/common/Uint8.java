@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serial;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -21,8 +20,18 @@ import org.opendaylight.yangtools.concepts.Either;
 @NonNullByDefault
 public class Uint8 extends Number implements CanonicalValue<Uint8> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint8> {
+        private static final CanonicalValueSupport<Uint8> INSTANCE = new Support();
+
+        @Deprecated(since = "15.1.0", forRemoval = true)
         public Support() {
             super(Uint8.class);
+        }
+
+        /**
+         * {@return the singleton instance}
+         */
+        public static CanonicalValueSupport<Uint8> instance() {
+            return INSTANCE;
         }
 
         @Override
@@ -35,12 +44,10 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         }
     }
 
-    private static final CanonicalValueSupport<Uint8> SUPPORT = new Support();
-
     private static final short MAX_VALUE_SHORT = 255;
     private static final String MAX_VALUE_STR = "255";
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private static final @NonNull Uint8[] CACHE;
@@ -321,7 +328,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
 
     @Override
     public final CanonicalValueSupport<Uint8> support() {
-        return SUPPORT;
+        return Support.instance();
     }
 
     /**
@@ -385,7 +392,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         return toCanonicalString();
     }
 
-    @Serial
+    @java.io.Serial
     private Object readResolve() {
         return instanceFor(value);
     }
