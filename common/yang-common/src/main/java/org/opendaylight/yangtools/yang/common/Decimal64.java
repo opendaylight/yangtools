@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.common.CanonicalValueValidator.ValidatedV
  * efficient storage, as it has fixed precision.
  */
 @NonNullByDefault
-public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
+public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64> {
     public static final class Support extends AbstractCanonicalValueSupport<Decimal64> {
         private static final CanonicalValueSupport<Decimal64> INSTANCE = new Support();
 
