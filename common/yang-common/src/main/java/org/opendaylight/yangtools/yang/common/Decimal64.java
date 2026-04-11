@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
@@ -25,8 +24,9 @@ import org.opendaylight.yangtools.yang.common.CanonicalValueValidator.ValidatedV
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
  * efficient storage, as it has fixed precision.
  */
+// TODO: value class when we have JEP-401 available
 @NonNullByDefault
-public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64> {
+public abstract non-sealed class Decimal64 extends YangNumber<Decimal64> {
     /**
      * Tri-state indicator of how a non-zero remainder is significant to rounding.
      */
@@ -56,7 +56,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
     }
 
     @java.io.Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     static final int MAX_SCALE = 18;
 
@@ -92,35 +92,32 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
         MIN_VALUE = new Decimal64[MAX_SCALE];
         MAX_VALUE = new Decimal64[MAX_SCALE];
         for (byte i = 0; i < MAX_SCALE; ++i) {
-            MIN_VALUE[i] = new Decimal64(i, Long.MIN_VALUE);
-            MAX_VALUE[i] = new Decimal64(i, Long.MAX_VALUE);
+            MIN_VALUE[i] = new Decimal64Impl(i, Long.MIN_VALUE);
+            MAX_VALUE[i] = new Decimal64Impl(i, Long.MAX_VALUE);
         }
     }
 
     private final byte offset;
     private final long value;
 
-    @VisibleForTesting
-    Decimal64(final int scale, final long intPart, final long fracPart, final boolean negative) {
-        offset = offsetOf(scale);
-
-        final long bits = intPart * FACTOR[offset] + fracPart;
-        value = negative ? -bits : bits;
-    }
-
-    private Decimal64(final byte offset, final long intPart, final boolean negative) {
-        this.offset = offset;
-        final long bits = intPart * FACTOR[offset];
-        value = negative ? -bits : bits;
-    }
-
-    private Decimal64(final byte offset, final long value) {
+    Decimal64(final byte offset, final long value) {
         this.offset = offset;
         this.value = value;
     }
 
     protected Decimal64(final Decimal64 other) {
         this(other.offset, other.value);
+    }
+
+    static Decimal64 of(final int scale, final long intPart, final long fracPart, final boolean negative) {
+        final var offset = offsetOf(scale);
+        final long bits = intPart * FACTOR[offset] + fracPart;
+        return new Decimal64Impl(offset, negative ? -bits : bits);
+    }
+
+    private static Decimal64 of(final byte offset, final long intPart, final boolean negative) {
+        final long bits = intPart * FACTOR[offset];
+        return new Decimal64Impl(offset, negative ? -bits : bits);
     }
 
     /**
@@ -132,7 +129,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
      * @throws IllegalArgumentException if {@code scale} is not in range {@code [1..18]}
      */
     public static Decimal64 of(final int scale, final long unscaledValue) {
-        return new Decimal64(offsetOf(scale), unscaledValue);
+        return new Decimal64Impl(offsetOf(scale), unscaledValue);
     }
 
     /**
@@ -164,7 +161,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
         if (byteVal < conv.minByte || byteVal > conv.maxByte) {
             throw iae(scale, byteVal, conv);
         }
-        return byteVal < 0 ? new Decimal64(offset, -byteVal, true) : new Decimal64(offset, byteVal, false);
+        return byteVal < 0 ? of(offset, -byteVal, true) : of(offset, byteVal, false);
     }
 
     public static Decimal64 valueOf(final int scale, final short shortVal) {
@@ -173,7 +170,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
         if (shortVal < conv.minShort || shortVal > conv.maxShort) {
             throw iae(scale, shortVal, conv);
         }
-        return shortVal < 0 ? new Decimal64(offset, -shortVal, true) : new Decimal64(offset, shortVal, false);
+        return shortVal < 0 ? of(offset, -shortVal, true) : of(offset, shortVal, false);
     }
 
     public static Decimal64 valueOf(final int scale, final int intVal) {
@@ -182,7 +179,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
         if (intVal < conv.minInt || intVal > conv.maxInt) {
             throw iae(scale, intVal, conv);
         }
-        return intVal < 0 ? new Decimal64(offset, - (long)intVal, true) : new Decimal64(offset, intVal, false);
+        return intVal < 0 ? of(offset, - (long)intVal, true) : of(offset, intVal, false);
     }
 
     public static Decimal64 valueOf(final int scale, final long longVal) {
@@ -191,7 +188,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
         if (longVal < conv.minLong || longVal > conv.maxLong) {
             throw iae(scale, longVal, conv);
         }
-        return longVal < 0 ? new Decimal64(offset, -longVal, true) : new Decimal64(offset, longVal, false);
+        return longVal < 0 ? of(offset, -longVal, true) : of(offset, longVal, false);
     }
 
     // <<< FIXME
@@ -284,7 +281,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
         }
         if (value == 0) {
             // Zero is special, as it has the same unscaled value in all scales
-            return new Decimal64(scaleOffset, 0);
+            return new Decimal64Impl(scaleOffset, 0);
         }
 
         if (diff > 0) {
@@ -295,7 +292,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
             if (value < conv.minLong || value > conv.maxLong) {
                 throw new ArithmeticException("Increasing scale of " + this + " to " + scale + " would overflow");
             }
-            return new Decimal64(scaleOffset, value * FACTOR[diffOffset]);
+            return new Decimal64Impl(scaleOffset, value * FACTOR[diffOffset]);
         }
 
         // Decreasing scale is hard, as we need to deal with rounding
@@ -306,7 +303,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
 
         // No remainder, we do not need to involve rounding
         if (remainder == 0) {
-            return new Decimal64(scaleOffset, trunc);
+            return new Decimal64Impl(scaleOffset, trunc);
         }
 
         final long increment = switch (mode) {
@@ -334,7 +331,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
                 throw new ArithmeticException("Decreasing scale of " + this + " to " + scale + " requires rounding");
         };
 
-        return new Decimal64(scaleOffset, trunc + increment);
+        return new Decimal64Impl(scaleOffset, trunc + increment);
     }
 
     public final BigDecimal decimalValue() {
@@ -522,7 +519,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
         return value % FACTOR[offset];
     }
 
-    @java.io.Serial
+    @Override
     protected Object writeReplace() {
         return new D8v1((byte) (offset + 1), value);
     }

@@ -69,7 +69,7 @@ class Uint8Test {
         final var zero = Uint8.valueOf(0);
         final var max = Uint8.valueOf(255);
 
-        final var test = new Uint8(five);
+        final var test = new Uint8Impl(five.byteValue());
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
@@ -93,12 +93,12 @@ class Uint8Test {
 
     @Test
     void testFloatValue() {
-        assertEquals(0, Uint8.valueOf(0).floatValue(), 0);
+        assertEquals(0, Uint8.ZERO.floatValue(), 0);
     }
 
     @Test
     void testDoubleValue() {
-        assertEquals(0, Uint8.valueOf(0).doubleValue(), 0);
+        assertEquals(0, Uint8.ZERO.doubleValue(), 0);
     }
 
     @Test
