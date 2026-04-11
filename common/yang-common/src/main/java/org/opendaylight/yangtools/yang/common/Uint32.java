@@ -22,8 +22,9 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Dedicated type for YANG's {@code type uint32} type.
  */
+// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
+public abstract non-sealed class Uint32 extends YangUint<Uint32> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint32> {
         private static final CanonicalValueSupport<Uint32> INSTANCE = new Support();
 
@@ -50,7 +51,7 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
     }
 
     @java.io.Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private static final long MAX_VALUE_LONG = 4294967295L;
     private static final String MAX_VALUE_STR = "4294967295";
 
@@ -68,12 +69,12 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
         CACHE_SIZE = p >= 0 ? Math.min(p, Integer.MAX_VALUE) : DEFAULT_CACHE_SIZE;
     }
 
-    private static final @NonNull Uint32[] CACHE;
+    private static final @NonNull Uint32Impl[] CACHE;
 
     static {
-        final Uint32[] c = new Uint32[CACHE_SIZE];
+        final var c = new Uint32Impl[CACHE_SIZE];
         for (int i = 0; i < c.length; ++i) {
-            c[i] = new Uint32(i);
+            c[i] = new Uint32Impl(i);
         }
         CACHE = c;
     }
@@ -103,7 +104,7 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
 
     private final int value;
 
-    private Uint32(final int value) {
+    Uint32(final int value) {
         this.value = value;
     }
 
@@ -111,9 +112,9 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
         this(other.value);
     }
 
-    private static Uint32 instanceFor(final int value) {
+    private static Uint32Impl instanceFor(final int value) {
         final long longSlot = Integer.toUnsignedLong(value);
-        return longSlot < CACHE.length ? CACHE[(int)longSlot] : new Uint32(value);
+        return longSlot < CACHE.length ? CACHE[(int)longSlot] : new Uint32Impl(value);
     }
 
     /**
@@ -437,12 +438,12 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
         return toCanonicalString();
     }
 
-    @java.io.Serial
+    @Override
     protected Object readResolve() {
         return instanceFor(value);
     }
 
-    @java.io.Serial
+    @Override
     protected Object writeReplace() {
         return new U4v1(value);
     }

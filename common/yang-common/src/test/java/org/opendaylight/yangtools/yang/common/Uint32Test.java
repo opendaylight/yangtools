@@ -70,7 +70,7 @@ class Uint32Test {
         final var zero = Uint32.valueOf(0);
         final var max = Uint32.valueOf(4294967295L);
 
-        final var test = new Uint32(five);
+        final var test = new Uint32Impl(five.intValue());
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
@@ -81,7 +81,7 @@ class Uint32Test {
 
     @Test
     void testToString() {
-        assertEquals("0", Uint32.valueOf(0).toString());
+        assertEquals("0", Uint32.ZERO.toString());
         assertEquals("2147483647", Uint32.valueOf(2147483647L).toString());
         assertEquals("2147483648", Uint32.valueOf(2147483648L).toString());
         assertEquals("4294967295", Uint32.valueOf(4294967295L).toString());
@@ -94,12 +94,12 @@ class Uint32Test {
 
     @Test
     void testFloatValue() {
-        assertEquals(0, Uint32.valueOf(0).floatValue(), 0);
+        assertEquals(0, Uint32.ZERO.floatValue(), 0);
     }
 
     @Test
     void testDoubleValue() {
-        assertEquals(0, Uint32.valueOf(0).doubleValue(), 0);
+        assertEquals(0, Uint32.ZERO.doubleValue(), 0);
     }
 
     @Test

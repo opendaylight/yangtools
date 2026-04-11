@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.common;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Common interface for YANG unsigned integer types.
- *
- * @param <T> unsigned integer type
- * @since 15.1.0
+ * Default implementation of {@link Uint16}.
  */
-// TODO: abstract value class when we have JEP-401 available
+// TODO: value class when we have JEP-401 available
 @NonNullByDefault
-public abstract sealed class YangUint<T extends YangUint<T>> extends YangInteger<T>
-        permits Uint8, Uint16, Uint32, Uint64 {
+final class Uint16Impl extends Uint16 {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
+
+    Uint16Impl(final short value) {
+        super(value);
+    }
 }
