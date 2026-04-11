@@ -23,8 +23,18 @@ import org.opendaylight.yangtools.concepts.Either;
 @NonNullByDefault
 public class Uint16 extends Number implements CanonicalValue<Uint16> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint16> {
+        private static final CanonicalValueSupport<Uint16> INSTANCE = new Support();
+
+        @Deprecated(since = "15.1.0", forRemoval = true)
         public Support() {
             super(Uint16.class);
+        }
+
+        /**
+         * {@return the singleton instance}
+         */
+        public static CanonicalValueSupport<Uint16> instance() {
+            return INSTANCE;
         }
 
         @Override
@@ -37,8 +47,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         }
     }
 
-    private static final CanonicalValueSupport<Uint16> SUPPORT = new Support();
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final int MAX_VALUE_INT = 65535;
     private static final String MAX_VALUE_STR = "65535";
@@ -332,7 +341,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     @Override
     public final CanonicalValueSupport<Uint16> support() {
-        return SUPPORT;
+        return Support.instance();
     }
 
     /**
