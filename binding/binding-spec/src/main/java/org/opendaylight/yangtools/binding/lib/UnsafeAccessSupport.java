@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * @since 15.1.0
  */
+// TODO: value record when we have JEP-401 available
 @NonNullByDefault
 public record UnsafeAccessSupport(UnsafeAccess access, ScalarTypeObjectRegistrar stoRegistrar) {
     // TODO: project into SpringBoot metadata
