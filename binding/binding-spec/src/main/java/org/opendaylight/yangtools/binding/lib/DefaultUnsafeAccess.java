@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.meta.UnsafeScalarTypeObjectFactory;
  * Default implementation of {@link UnsafeAccess}. Hidden on purpose: we give these out paired with
  * {@link DefaultSTORegistrar}.
  */
+// TODO: value record when we have JEP-401 available
 @NonNullByDefault
 record DefaultUnsafeAccess(UnsafeAccessState state) implements UnsafeAccess {
     DefaultUnsafeAccess {

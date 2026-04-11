@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * State shared between {@link DefaultSTORegistrar} and {@link DefaultUnsafeAccess}.
  */
+// TODO: value class when we have JEP-401 available
 @NonNullByDefault
 final class UnsafeAccessState {
     private static final Logger LOG = LoggerFactory.getLogger(UnsafeAccessState.class);
