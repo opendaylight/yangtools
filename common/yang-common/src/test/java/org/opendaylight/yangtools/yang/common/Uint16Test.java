@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -161,5 +162,12 @@ class Uint16Test {
     @Test
     void testNullValueOfString() {
         assertThrows(NullPointerException.class, () -> Uint16.valueOf((String) null));
+    }
+
+    @Test
+    void supportReturnsSingleton() {
+        final var reported = Uint16.ZERO.support();
+        assertNotNull(reported);
+        assertSame(reported, Uint16.Support.instance());
     }
 }
