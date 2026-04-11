@@ -49,7 +49,7 @@ import org.xml.sax.SAXException;
 /**
  * NormalizedNodeDataInput based on {@link MagnesiumNode}, {@link MagnesiumPathArgument} and {@link MagnesiumValue}.
  */
-final class MagnesiumDataInput extends AbstractLegacyDataInput {
+final class MagnesiumDataInput extends AbstractNormalizedNodeDataInput {
     private static final Logger LOG = LoggerFactory.getLogger(MagnesiumDataInput.class);
 
     // Known singleton objects
@@ -376,6 +376,15 @@ final class MagnesiumDataInput extends AbstractLegacyDataInput {
             case MagnesiumValue.QNAME_REF_4B -> decodeQNameRef4();
             default -> throw new InvalidNormalizedNodeStreamException("Unexpected QName type " + type);
         };
+    }
+
+    @Override
+    public PathArgument readPathArgument() throws IOException {
+        final var legacy = readLegacyPathArgument();
+        if (legacy.isFirst()) {
+            return legacy.getFirst();
+        }
+        throw new InvalidNormalizedNodeStreamException(legacy.getSecond() + " does not have a representation");
     }
 
     @Override
