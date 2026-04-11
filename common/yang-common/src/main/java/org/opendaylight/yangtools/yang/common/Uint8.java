@@ -19,20 +19,21 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Dedicated type for YANG's {@code type uint8} type.
  */
+// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public non-sealed class Uint8 extends Number implements YangUint<Uint8> {
+public abstract non-sealed class Uint8 extends YangUint<Uint8> {
     private static final short MAX_VALUE_SHORT = 255;
     private static final String MAX_VALUE_STR = "255";
 
     @java.io.Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    private static final @NonNull Uint8[] CACHE;
+    private static final @NonNull Uint8Impl[] CACHE;
 
     static {
-        final Uint8[] c = new Uint8[MAX_VALUE_SHORT + 1];
+        final var c = new Uint8Impl[MAX_VALUE_SHORT + 1];
         for (int i = 0; i <= MAX_VALUE_SHORT; ++i) {
-            c[i] = new Uint8((byte)i);
+            c[i] = new Uint8Impl((byte)i);
         }
         CACHE = c;
     }
@@ -60,7 +61,7 @@ public non-sealed class Uint8 extends Number implements YangUint<Uint8> {
 
     private final byte value;
 
-    private Uint8(final byte value) {
+    Uint8(final byte value) {
         this.value = value;
     }
 
@@ -68,7 +69,7 @@ public non-sealed class Uint8 extends Number implements YangUint<Uint8> {
         this(other.value);
     }
 
-    private static Uint8 instanceFor(final byte value) {
+    private static Uint8Impl instanceFor(final byte value) {
         return CACHE[Byte.toUnsignedInt(value)];
     }
 
@@ -369,12 +370,12 @@ public non-sealed class Uint8 extends Number implements YangUint<Uint8> {
         return toCanonicalString();
     }
 
-    @java.io.Serial
+    @Override
     protected Object readResolve() {
         return instanceFor(value);
     }
 
-    @java.io.Serial
+    @Override
     protected Object writeReplace() {
         return new U1v1(value);
     }
