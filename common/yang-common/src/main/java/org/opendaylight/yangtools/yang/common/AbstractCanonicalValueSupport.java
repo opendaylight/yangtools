@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import java.lang.reflect.Modifier;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
@@ -42,7 +41,7 @@ public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>>
     };
     private static final ClassValue<Boolean> VALUES = new AbstractCanonicalValueImplementationValidator() {
         @Override
-        void checkCompareTo(final @NonNull Class<?> type) {
+        void checkCompareTo(final Class<?> type) {
             checkFinalMethod(type, "compareTo", type);
         }
     };
