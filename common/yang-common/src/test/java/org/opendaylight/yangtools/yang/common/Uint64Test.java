@@ -74,7 +74,7 @@ class Uint64Test {
         final var zero = Uint64.valueOf(0);
         final var max = Uint64.valueOf(4294967295L);
 
-        final var test = new Uint64(five);
+        final var test = new Uint64Impl(five.longValue());
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
@@ -85,7 +85,7 @@ class Uint64Test {
 
     @Test
     void testToString() {
-        assertEquals("0", Uint64.valueOf(0).toString());
+        assertEquals("0", Uint64.ZERO.toString());
         assertEquals("2147483647", Uint64.valueOf(2147483647L).toString());
         assertEquals("2147483648", Uint64.valueOf(2147483648L).toString());
         assertEquals("4294967295", Uint64.valueOf(4294967295L).toString());
@@ -98,12 +98,12 @@ class Uint64Test {
 
     @Test
     void testFloatValue() {
-        assertEquals(0, Uint64.valueOf(0).floatValue(), 0);
+        assertEquals(0, Uint64.ZERO.floatValue(), 0);
     }
 
     @Test
     void testDoubleValue() {
-        assertEquals(0, Uint64.valueOf(0).doubleValue(), 0);
+        assertEquals(0, Uint64.ZERO.doubleValue(), 0);
     }
 
     @Test
