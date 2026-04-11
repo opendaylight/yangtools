@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Dedicated type for YANG's {@code type uint8} type.
@@ -35,11 +34,11 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         }
 
         @Override
-        public Either<Uint8, CanonicalValueViolation> fromString(final String str) {
+        public ValidationResult<Uint8> fromString(final String str) {
             try {
-                return Either.ofFirst(Uint8.valueOf(str));
+                return new ValidatedValue<>(Uint8.valueOf(str));
             } catch (IllegalArgumentException e) {
-                return CanonicalValueViolation.variantOf(e);
+                return CanonicalValueViolation.of(e);
             }
         }
     }

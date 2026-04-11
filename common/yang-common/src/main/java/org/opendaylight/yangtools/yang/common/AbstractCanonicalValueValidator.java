@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Abstract base class for implementing validators.
@@ -52,16 +51,15 @@ public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>
     }
 
     @Override
-    public final Either<T, CanonicalValueViolation> validateRepresentation(final T value) {
+    public final ValidationResult<T> validateRepresentation(final T value) {
         return validatedClass.isAssignableFrom(value.validator().getValidatedRepresentationClass())
-                ? Either.ofFirst(validatedClass.cast(value)) : validate(value);
+                ? new ValidatedValue<>(validatedClass.cast(value)) : validate(value);
     }
 
     @Override
-    public final Either<T, CanonicalValueViolation> validateRepresentation(final T value,
-            final String canonicalString) {
+    public final ValidationResult<T> validateRepresentation(final T value, final String canonicalString) {
         return validatedClass.isAssignableFrom(value.validator().getValidatedRepresentationClass())
-                ? Either.ofFirst(validatedClass.cast(value)) : validate(value, requireNonNull(canonicalString));
+                ? new ValidatedValue<>(validatedClass.cast(value)) : validate(value, requireNonNull(canonicalString));
     }
 
     /**
@@ -72,7 +70,7 @@ public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>
      * @return Validated representation or CanonicalValueViolation
      * @throws NullPointerException if {@code value} is null
      */
-    protected Either<T, CanonicalValueViolation> validate(final T value) {
+    protected ValidationResult<T> validate(final T value) {
         return validate(value, value.toCanonicalString());
     }
 
@@ -85,5 +83,5 @@ public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>
      * @return Validated representation
      * @throws NullPointerException if {@code value} or {@code canonicalString} is null.
      */
-    protected abstract Either<T, CanonicalValueViolation> validate(T value, String canonicalString);
+    protected abstract ValidationResult<T> validate(T value, String canonicalString);
 }

@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Either;
+import org.opendaylight.yangtools.yang.common.CanonicalValueValidator.ValidatedValue;
 
 /**
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
@@ -40,7 +40,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         }
 
         @Override
-        public Either<Decimal64, CanonicalValueViolation> fromString(final String str) {
+        public ValidationResult<Decimal64> fromString(final String str) {
             // https://www.rfc-editor.org/rfc/rfc6020#section-9.3.1
             //
             // A decimal64 value is lexically represented as an optional sign ("+"
@@ -48,7 +48,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
             // followed by a period ('.') as a decimal indicator and a sequence of
             // decimal digits.  If no sign is specified, "+" is assumed.
             if (str.isEmpty()) {
-                return CanonicalValueViolation.variantOf("Empty string is not a valid decimal64 representation");
+                return CanonicalValueViolation.of(null, "Empty string is not a valid decimal64 representation");
             }
 
             // Deal with optional sign
@@ -69,7 +69,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
             };
             // Sanity check length
             if (idx == str.length()) {
-                return CanonicalValueViolation.variantOf("Missing digits after sign");
+                return CanonicalValueViolation.of(null, "Missing digits after sign");
             }
 
             // Character limit, used for caching and cutting trailing zeroes
@@ -94,8 +94,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
                     break;
                 }
                 if (intLen == MAX_SCALE) {
-                    return CanonicalValueViolation.variantOf(
-                        "Integer part is longer than " + MAX_SCALE + " digits");
+                    return CanonicalValueViolation.of(null, "Integer part is longer than " + MAX_SCALE + " digits");
                 }
 
                 intPart = 10 * intPart + toInt(ch, idx);
@@ -103,13 +102,13 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
             if (idx > limit) {
                 // No fraction digits, we are done
-                return Either.ofFirst(new Decimal64((byte)1, intPart, 0, negative));
+                return new ValidatedValue<>(new Decimal64((byte)1, intPart, 0, negative));
             }
 
             // Bump index to skip over period and check the remainder
             idx++;
             if (idx > limit) {
-                return CanonicalValueViolation.variantOf("Value '" + str + "' is missing fraction digits");
+                return CanonicalValueViolation.of(null, "Value '" + str + "' is missing fraction digits");
             }
 
             // Trim trailing zeroes, if any
@@ -123,13 +122,13 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
             for (; idx <= limit; idx++, fracLen++) {
                 final char ch = str.charAt(idx);
                 if (fracLen == fracLimit) {
-                    return CanonicalValueViolation.variantOf("Fraction part longer than " + fracLimit + " digits");
+                    return CanonicalValueViolation.of(null, "Fraction part longer than " + fracLimit + " digits");
                 }
 
                 fracPart = 10 * fracPart + toInt(ch, idx);
             }
 
-            return Either.ofFirst(new Decimal64(fracLen, intPart, fracPart, negative));
+            return new ValidatedValue<>(new Decimal64(fracLen, intPart, fracPart, negative));
         }
 
         private static int toInt(final char ch, final int index) {
@@ -338,13 +337,13 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      * @throws NumberFormatException if the string does not contain a parsable decimal64.
      */
     public static Decimal64 valueOf(final String str) {
-        final var variant = Support.instance().fromString(str);
-        final var value = variant.tryFirst();
-        if (value.isPresent()) {
-            return value.orElseThrow();
-        }
-        final var message = variant.getSecond().getMessage();
-        throw message.isPresent() ? new NumberFormatException(message.orElseThrow()) : new NumberFormatException();
+        return switch (Support.instance().fromString(str)) {
+            case ValidatedValue(var value) -> value;
+            case CanonicalValueViolation<?> violation -> {
+                final var message = violation.message();
+                throw message != null ? new NumberFormatException(message) : new NumberFormatException();
+            }
+        };
     }
 
     /**

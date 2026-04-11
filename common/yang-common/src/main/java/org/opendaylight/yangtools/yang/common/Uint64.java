@@ -16,7 +16,6 @@ import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Dedicated type for YANG's {@code type uint64} type.
@@ -39,11 +38,11 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         }
 
         @Override
-        public Either<Uint64, CanonicalValueViolation> fromString(final String str) {
+        public ValidationResult<Uint64> fromString(final String str) {
             try {
-                return Either.ofFirst(Uint64.valueOf(str));
+                return new ValidatedValue<>(Uint64.valueOf(str));
             } catch (IllegalArgumentException e) {
-                return CanonicalValueViolation.variantOf(e);
+                return CanonicalValueViolation.of(e);
             }
         }
     }

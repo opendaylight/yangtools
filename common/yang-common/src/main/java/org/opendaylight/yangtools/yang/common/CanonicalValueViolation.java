@@ -17,16 +17,15 @@ import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Either;
-import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * A violation of a {@link CanonicalValue} validation. Contains details as mandated by RFC7950 Section 8.3.1.
  */
 @Beta
 @NonNullByDefault
-public abstract class CanonicalValueViolation implements Immutable, Serializable {
-    public static class Regular extends CanonicalValueViolation {
+public abstract sealed class CanonicalValueViolation<T extends CanonicalValue<T>>
+        implements CanonicalValueValidator.ValidationResult<T>, Serializable {
+    private static final class Regular<T extends CanonicalValue<T>> extends CanonicalValueViolation<T> {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
@@ -39,12 +38,12 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
         }
 
         @Override
-        @Nullable String appTag() {
+        public @Nullable String appTag() {
             return appTag;
         }
 
         @Override
-        @Nullable String message() {
+        public @Nullable String message() {
             return message;
         }
 
@@ -54,7 +53,7 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
         }
     }
 
-    public static final class WithCause extends CanonicalValueViolation {
+    public static final class WithCause<T extends CanonicalValue<T>> extends CanonicalValueViolation<T> {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
@@ -65,15 +64,18 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
         }
 
         @Override
-        @Nullable String appTag() {
+        public @Nullable String appTag() {
             return null;
         }
 
         @Override
-        @Nullable String message() {
+        public @Nullable String message() {
             return cause.getMessage();
         }
 
+        /**
+         * {@return the underlying Exception which caused this violation}
+         */
         public Exception getCause() {
             return cause;
         }
@@ -86,37 +88,20 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
-    private static final CanonicalValueViolation EMPTY = new Regular(null, null);
-    private static final Either<?, CanonicalValueViolation> EMPTY_VARIANT = Either.ofSecond(EMPTY);
-
-    public static CanonicalValueViolation empty() {
-        return EMPTY;
-    }
-
-    public static CanonicalValueViolation of(final Exception cause) {
-        return new WithCause(cause);
-    }
-
-    public static CanonicalValueViolation of(final @Nullable String appTag, final @Nullable String message) {
-        return appTag == null && message == null ? EMPTY : new Regular(appTag, message);
-    }
+    private static final CanonicalValueViolation<?> EMPTY = new Regular<>(null, null);
 
     @SuppressWarnings("unchecked")
-    public static <T> Either<T, CanonicalValueViolation> emptyVariant() {
-        return (Either<T, CanonicalValueViolation>) EMPTY_VARIANT;
+    public static <T extends CanonicalValue<T>> CanonicalValueViolation<T> empty() {
+        return (CanonicalValueViolation<T>) EMPTY;
     }
 
-    public static <T> Either<T, CanonicalValueViolation> variantOf(final Exception cause) {
-        return Either.ofSecond(CanonicalValueViolation.of(cause));
+    public static <T extends CanonicalValue<T>> CanonicalValueViolation<T> of(final Exception cause) {
+        return new WithCause<>(cause);
     }
 
-    public static <T> Either<T, CanonicalValueViolation> variantOf(final String message) {
-        return variantOf(null, message);
-    }
-
-    public static <T> Either<T, CanonicalValueViolation> variantOf(final @Nullable String appTag,
-            final String message) {
-        return Either.ofSecond(CanonicalValueViolation.of(appTag, message));
+    public static <T extends CanonicalValue<T>> CanonicalValueViolation<T> of(final @Nullable String appTag,
+            final @Nullable String message) {
+        return appTag == null && message == null ? empty() : new Regular<>(appTag, message);
     }
 
     public final Optional<String> getAppTag() {
@@ -127,9 +112,9 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
         return nullableString(message());
     }
 
-    abstract @Nullable String appTag();
+    public abstract @Nullable String appTag();
 
-    abstract @Nullable String message();
+    public abstract @Nullable String message();
 
     @Override
     public final int hashCode() {
