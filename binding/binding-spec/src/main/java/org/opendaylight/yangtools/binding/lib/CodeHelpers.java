@@ -377,11 +377,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static int bindingHashCode(final int... hashCodes) {
-        int result = 1;
-        for (var hashCode : hashCodes) {
-            result = 31 * result + hashCode;
-        }
-        return result;
+        return nonzero(sumHashes(hashCodes));
     }
 
     /**
@@ -394,7 +390,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static int bindingHashCode(final Augmentable<?> augmentable, final int... hashCodes) {
-        return hashAugmentations(augmentable) + bindingHashCode(hashCodes);
+        return nonzero(hashAugmentations(augmentable) + sumHashes(hashCodes));
     }
 
     /**
@@ -404,7 +400,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static int bindingHashCode0(final Augmentable<?> augmentable) {
-        return 1 + hashAugmentations(augmentable);
+        return nonzero(1 + hashAugmentations(augmentable));
     }
 
     /**
@@ -414,7 +410,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static int bindingHashCode1(final @Nullable Object prop) {
-        return 31 + Objects.hashCode(prop);
+        return nonzero(31 + Objects.hashCode(prop));
     }
 
     /**
@@ -424,7 +420,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static int bindingHashCode1(final byte @Nullable [] prop) {
-        return 31 + Arrays.hashCode(prop);
+        return nonzero(31 + Arrays.hashCode(prop));
     }
 
     /**
@@ -434,7 +430,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static int bindingHashCode1(final Augmentable<?> augmentable, final @Nullable Object prop) {
-        return 31 + hashAugmentations(augmentable) + Objects.hashCode(prop);
+        return nonzero(31 + hashAugmentations(augmentable) + Objects.hashCode(prop));
     }
 
     /**
@@ -444,35 +440,27 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static int bindingHashCode1(final Augmentable<?> augmentable, final byte @Nullable [] prop) {
-        return 31 + hashAugmentations(augmentable) + Arrays.hashCode(prop);
+        return nonzero(31 + hashAugmentations(augmentable) + Arrays.hashCode(prop));
     }
 
     @NonNullByDefault
     public static int bindingHashCodeN(final @Nullable Object... props) {
-        int result = 1;
-        for (var prop : props) {
-            result = 31 * result + Objects.hashCode(prop);
-        }
-        return result;
+        return nonzero(hashProperties(props));
     }
 
     @NonNullByDefault
     public static int bindingHashCodeN(final byte[] @Nullable... props) {
-        int result = 1;
-        for (var prop : props) {
-            result = 31 * result + Arrays.hashCode(prop);
-        }
-        return result;
+       return nonzero(hashProperties(props));
     }
 
     @NonNullByDefault
     public static int bindingHashCodeN(final Augmentable<?> augmentable, final @Nullable Object... props) {
-        return hashAugmentations(augmentable) + bindingHashCodeN(props);
+        return nonzero(hashAugmentations(augmentable) + hashProperties(props));
     }
 
     @NonNullByDefault
     public static int bindingHashCodeN(final Augmentable<?> augmentable, final byte[] @Nullable... props) {
-        return hashAugmentations(augmentable) + bindingHashCodeN(props);
+        return nonzero(hashAugmentations(augmentable) + hashProperties(props));
     }
 
     @NonNullByDefault
@@ -481,12 +469,49 @@ public final class CodeHelpers {
         return augmentations.isEmpty() ? 0 : hashAugmentations(augmentations.values());
     }
 
-    private static int hashAugmentations(final Collection<? extends @NonNull Augmentation<?>> augmentations) {
+    @NonNullByDefault
+    private static int hashAugmentations(final Collection<? extends Augmentation<?>> augmentations) {
         int result = 0;
         for (var augmentation : augmentations) {
             result += augmentation.hashCode();
         }
         return result;
+    }
+
+    @NonNullByDefault
+    private static int hashProperties(final byte[] @Nullable [] props) {
+        int result = 1;
+        for (var prop : props) {
+            result = 31 * result + Arrays.hashCode(prop);
+        }
+        return result;
+    }
+
+    @NonNullByDefault
+    private static int hashProperties(final @Nullable Object[] props) {
+        int result = 1;
+        for (var prop : props) {
+            result = 31 * result + Objects.hashCode(prop);
+        }
+        return result;
+    }
+
+    @NonNullByDefault
+    private static int sumHashes(final int... hashCodes) {
+        int result = 1;
+        for (var hashCode : hashCodes) {
+            result = 31 * result + hashCode;
+        }
+        return result;
+    }
+
+    // Mask hash == 0 for the purposes of bindingHashCode(). The value we report when hash == 0 is completely arbitrary
+    // as long as all implementations are consistent.has
+    private static int nonzero(final int hash) {
+        // We pick -1 for two reasons:
+        // - easily recognizable value and bit pattern (0xFFFFFFFF)
+        // - uses iconst_m1 instead of bipush
+        return hash == 0 ? -1 : hash;
     }
 
     /**
