@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * Dedicated type for YANG's {@code type uint64} type.
  */
 @NonNullByDefault
-public non-sealed class Uint64 extends Number implements YangUint<Uint64> {
+public abstract non-sealed class Uint64 extends Number implements YangUint<Uint64> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint64> {
         private static final CanonicalValueSupport<Uint64> INSTANCE = new Support();
 
@@ -73,7 +73,7 @@ public non-sealed class Uint64 extends Number implements YangUint<Uint64> {
     static {
         final Uint64[] c = new Uint64[(int) CACHE_SIZE];
         for (int i = 0; i < c.length; ++i) {
-            c[i] = new Uint64(i);
+            c[i] = new Uint64Impl(i);
         }
         CACHE = c;
     }
@@ -103,7 +103,7 @@ public non-sealed class Uint64 extends Number implements YangUint<Uint64> {
 
     private final long value;
 
-    private Uint64(final long value) {
+    Uint64(final long value) {
         this.value = value;
     }
 
@@ -112,7 +112,7 @@ public non-sealed class Uint64 extends Number implements YangUint<Uint64> {
     }
 
     private static Uint64 instanceFor(final long value) {
-        return value >= 0 && value < CACHE.length ? CACHE[(int) value] : new Uint64(value);
+        return value >= 0 && value < CACHE.length ? CACHE[(int) value] : new Uint64Impl(value);
     }
 
     /**
