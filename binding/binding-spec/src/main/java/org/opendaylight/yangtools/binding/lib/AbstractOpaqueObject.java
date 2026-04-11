@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.OpaqueObject;
  *
  * @param <T> Implemented OpaqueObject type
  */
+// TODO: abstract value class when we have JEP-401 available
 @Beta
 public abstract class AbstractOpaqueObject<T extends OpaqueObject<T>> implements OpaqueObject<T> {
     @Override

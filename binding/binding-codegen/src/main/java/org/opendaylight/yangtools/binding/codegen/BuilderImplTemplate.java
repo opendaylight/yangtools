@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
@@ -20,8 +21,9 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
-import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
+import org.opendaylight.yangtools.binding.lib.AugmentableDataContainer;
+import org.opendaylight.yangtools.binding.lib.BaseEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -37,13 +39,19 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
 //        would allow proper specialization based on properties.isEmpty(), augmentType != null and keyType != null.
 final class BuilderImplTemplate extends AbstractBuilderTemplate {
     /**
-     * {@link AbstractAugmentable} as a {@link JavaTypeName}.
+     * {@link AbstractDataContainer} as a {@link JavaTypeName}.
      */
-    private static final @NonNull JavaTypeName ABSTRACT_AUGMENTABLE = JavaTypeName.create(AbstractAugmentable.class);
+    private static final @NonNull JavaTypeName ABSTRACT_DATA_CONTAINER =
+        JavaTypeName.create(AbstractDataContainer.class);
     /**
-     * {@link AbstractEntryObject} as a {@link JavaTypeName}.
+     * {@link AugmentableDataContainer} as a {@link JavaTypeName}.
      */
-    private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject.class);
+    private static final @NonNull JavaTypeName ABSTRACT_AUGMENTABLE =
+        JavaTypeName.create(AugmentableDataContainer.class);
+    /**
+     * {@link BaseEntryObject} as a {@link JavaTypeName}.
+     */
+    private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(BaseEntryObject.class);
 
     private final @NonNull BuilderTemplate builder;
 
@@ -62,17 +70,21 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
         final var bb = newBlockBuilder()
             .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
-            .str("private static final class ").eol(type().simpleName());
+            .str("private static final class ").str(type().simpleName()).str(" extends ");
         if (keyType != null) {
-            bb.str("    extends ").gen(importedName(ABSTRACT_ENTRY_OBJECT), impIface, importedName(keyType)).newLine();
+            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), impIface, importedName(keyType));
         } else if (augmentType != null) {
-            bb.str("    extends ").gen(importedName(ABSTRACT_AUGMENTABLE), impIface).newLine();
+            // covers everything except YangData
+            bb.gen(importedName(ABSTRACT_AUGMENTABLE), impIface);
+        } else {
+            // YangData: requires at least one property
+            verify(!properties.isEmpty());
+            bb.gen(importedName(ABSTRACT_DATA_CONTAINER), impIface);
         }
-        bb.str("    implements ").str(impIface).oB();
+        bb.str(" implements ").str(impIface).oB();
 
         // generate instance fields
         if (!properties.isEmpty()) {
-            bb.newLine();
             for (var prop : properties) {
                 bb.str("private final ").str(importedReturnType(prop)).sp().str(fieldName(prop)).eS();
             }
@@ -141,42 +153,26 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        // generate hashCode/equals if needed
-        if (!properties.isEmpty() || augmentType != null) {
-            bb
-                .txt("""
-
-                      private int hash = 0;
-                      private volatile boolean hashValid = false;
-
-                      """)
-                .at().eol(override)
-                .txt("""
-                      public int hashCode() {
-                          if (hashValid) {
-                              return hash;
-                          }
-
-                      """)
-                .str("    final int result = ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
-                .txt("""
-                          hash = result;
-                          hashValid = true;
-                          return result;
-                      }
-
-                      """)
-                .at().eol(override)
-                .str("public boolean equals(").str(importedName(Types.objectType())).str(" obj)").oB()
-                    .str("return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, obj);")
-                .cB();
-        }
-
-        // generate equals()
+        // generate equalityClass()/computehashCode()/computeEquals()/computeToString()
         return bb
             .nl()
             .at().eol(override)
-            .str("public ").str(importedName(Types.STRING)).str(" toString()").oB()
+            .str("protected ").gen(importedName(CLASS), impIface).str(" equalityClass()").oB()
+                .eol("return implementedInterface();")
+            .cB()
+            .nl()
+            .at().eol(override)
+            .str("protected int computeHashCode()").oB()
+                .str("return ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
+            .cB()
+            .nl()
+            .at().eol(override)
+            .str("protected boolean computeEquals(").str(impIface).str(" other)").oB()
+                .str("return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, other);")
+            .cB()
+            .nl()
+            .at().eol(override)
+            .str("protected ").str(importedName(Types.STRING)).str(" computeToString()").oB()
                 .str("return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
             .cB()
             .cB();

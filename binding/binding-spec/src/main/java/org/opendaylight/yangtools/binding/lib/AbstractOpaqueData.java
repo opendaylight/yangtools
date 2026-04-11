@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.binding.OpaqueData;
  *
  * @param <T> Data object model type
  */
+// TODO: abstract value class when we have JEP-401 available
 @Beta
 public abstract class AbstractOpaqueData<T> implements OpaqueData<T> {
     @Override
