@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.binding.Key;
  *
  * @param <T> {@link EntryObject} type
  * @param <K> {@link Key} type
+ * @see BaseEntryObject
  */
 public abstract class AbstractEntryObject<T extends EntryObject<T, K>, K extends Key<T>>
-        // FIXME: 16.0.0: extends AugmentableDataContainer
         extends AbstractAugmentable<T> implements EntryObject<T, K> {
     private final @NonNull K key;
 

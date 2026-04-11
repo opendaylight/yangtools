@@ -10,28 +10,28 @@ package org.opendaylight.yangtools.binding.lib;
 import com.google.common.annotations.Beta;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingContract;
-import org.opendaylight.yangtools.binding.DataContainer;
+import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.Key;
 
 /**
- * An extension of {@link AbstractAugmentable} for {@link DataContainer} specializations. It implements
- * {@link #hashCode()} caching and common handling of {@link #equals(Object)} and {@link #toString()}.
+ * An extension of {@link AbstractEntryObject} implementing {@link #hashCode()} caching and common handling of
+ * {@link #equals(Object)} and {@link #toString()}.
  *
- * @param <T> the {@link Augmentable} {@link DataContainer} type
+ * @param <T> {@link EntryObject} type
+ * @param <K> {@link Key} type
  * @since 15.1.0
  */
 // FIXME: remove when AbstractAugmentable extends AbstractDataContainer
 @Beta
-public abstract class AugmentableDataContainer<T extends DataContainer & Augmentable<T>>
-        extends AbstractAugmentable<T> {
+public abstract class BaseEntryObject<T extends EntryObject<T, K>, K extends Key<T>> extends AbstractEntryObject<T, K> {
     // TODO: single field when hashCode() is defined to be != 0
     private int hashCode;
     private volatile boolean hashCodeValid;
 
-    protected AugmentableDataContainer(final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations) {
-        super(augmentations);
+    protected BaseEntryObject(final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations, final K key) {
+        super(augmentations, key);
     }
 
     /**
