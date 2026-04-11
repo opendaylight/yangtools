@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.concepts;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -24,10 +23,10 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <T> First alternative type
  * @param <U> Second alternative type
- * @author Robert Varga
+ * @deprecated Model the domain as a sealed interface with two (or more) possible subclasses and use pattern matching.
  */
-@Beta
 @NonNullByDefault
+@Deprecated(since = "15.1.0", forRemoval = true)
 public class Either<T, U> implements Immutable {
     private final @Nullable T first;
     private final @Nullable U second;

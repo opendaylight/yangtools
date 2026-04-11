@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.concepts;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
@@ -28,10 +27,10 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <T> Value type
  * @param <E> Exception type
- * @author Robert Varga
+ * @deprecated Model the domain as a sealed interface with two (or more) possible subclasses and use pattern matching.
  */
-@Beta
 @NonNullByDefault
+@Deprecated(since = "15.1.0", forRemoval = true)
 public class CheckedValue<T, E extends Exception> extends Either<T, E> {
     protected CheckedValue(final T value) {
         super(value);
