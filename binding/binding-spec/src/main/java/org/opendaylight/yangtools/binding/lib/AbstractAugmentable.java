@@ -20,9 +20,11 @@ import org.opendaylight.yangtools.binding.Augmentation;
  *
  * @param <T> Augmentable type
  */
+// TODO: abstract value class when we have JEP-401 available
 public abstract class AbstractAugmentable<T extends Augmentable<T>> implements Augmentable<T> {
     private final @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations;
 
+    // FIXME: reconsider usefulness of this constructor: document it or remove it
     protected AbstractAugmentable() {
         augmentations = ImmutableMap.of();
     }

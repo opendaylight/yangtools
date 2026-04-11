@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.UnsafeSecret;
  * Default implementation of {@link ScalarTypeObjectRegistrar}. Hidden on purpose: we give these out paired with
  * {@link DefaultUnsafeAccess}.
  */
+// TODO: value record when we have JEP-401 available
 @NonNullByDefault
 record DefaultSTORegistrar(UnsafeAccessState state) implements ScalarTypeObjectRegistrar {
     DefaultSTORegistrar {
