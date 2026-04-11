@@ -16,10 +16,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @param <T> numeric type
  * @since 15.1.0
  */
-// TODO: abstract value class when we have JEP-401 available
 @Beta
 @NonNullByDefault
-public abstract sealed class YangInteger<T extends YangInteger<T>> extends YangNumber<T>
+public abstract sealed value class YangInteger<T extends YangInteger<T>> extends YangNumber<T>
         // FIXME: permits YangInt when we can match the convenience of Byte, Short, Int, Long
         permits YangUint {
     @java.io.Serial

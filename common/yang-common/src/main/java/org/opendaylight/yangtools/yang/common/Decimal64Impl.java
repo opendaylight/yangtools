@@ -12,9 +12,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 /**
  * Default implementation of {@link Decimal64}.
  */
-// TODO: value class when we have JEP-401 available
 @NonNullByDefault
-final class Decimal64Impl extends Decimal64 {
+value class Decimal64Impl extends Decimal64 {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 

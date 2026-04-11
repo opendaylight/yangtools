@@ -19,9 +19,8 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Dedicated type for YANG's {@code type uint8} type.
  */
-// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public abstract non-sealed class Uint8 extends YangUint<Uint8> {
+public abstract non-sealed value class Uint8 extends YangUint<Uint8> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint8> {
         private static final CanonicalValueSupport<Uint8> INSTANCE = new Support();
 

@@ -12,9 +12,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 /**
  * Default implementation of {@link Uint8}.
  */
-// TODO: value class when we have JEP-401 available
 @NonNullByDefault
-final class Uint8Impl extends Uint8 {
+value class Uint8Impl extends Uint8 {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 

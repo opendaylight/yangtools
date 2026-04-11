@@ -12,9 +12,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 /**
  * Default implementation of {@link Uint32}.
  */
-// TODO: value class when we have JEP-401 available
 @NonNullByDefault
-final class Uint32Impl extends Uint32 {
+value class Uint32Impl extends Uint32 {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
