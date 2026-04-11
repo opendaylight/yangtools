@@ -128,19 +128,16 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
      * @throws NullPointerException if {@code input} is {@code null}
      */
     static @NonNull NormalizedNodeDataInput newDataInput(final @NonNull DataInput input) throws IOException {
-        return new VersionedNormalizedNodeDataInput(input).delegate();
-    }
+        final byte marker = input.readByte();
+        if (marker != TokenTypes.SIGNATURE_MARKER) {
+            throw new InvalidNormalizedNodeStreamException("Invalid signature marker: " + marker);
+        }
 
-    /**
-     * Creates a new {@link NormalizedNodeDataInput} instance that reads from the given input. This method does not
-     * perform any initial validation of the input stream.
-     *
-     * @param input the DataInput to read from
-     * @return a new {@link NormalizedNodeDataInput} instance
-     * @deprecated Use {@link #newDataInput(DataInput)} instead.
-     */
-    @Deprecated(since = "5.0.0", forRemoval = true)
-    static @NonNull NormalizedNodeDataInput newDataInputWithoutValidation(final @NonNull DataInput input) {
-        return new VersionedNormalizedNodeDataInput(input);
+        final short version = input.readShort();
+        return switch (version) {
+            case TokenTypes.MAGNESIUM_VERSION -> new MagnesiumDataInput(input);
+            case TokenTypes.POTASSIUM_VERSION -> new PotassiumDataInput(input);
+            default -> throw new InvalidNormalizedNodeStreamException("Unhandled stream version " + version);
+        };
     }
 }
