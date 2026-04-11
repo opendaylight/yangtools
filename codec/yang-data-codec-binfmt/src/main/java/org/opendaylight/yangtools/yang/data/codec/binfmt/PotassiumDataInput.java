@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Either;
 import org.opendaylight.yangtools.concepts.WritableObjects;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.Decimal64;
@@ -252,7 +251,7 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
 
     private NodeIdentifier decodeNodeIdentifier(final byte nodeHeader, final PathArgument parent) throws IOException {
         return switch (nodeHeader & PotassiumNode.ADDR_MASK) {
-            case PotassiumNode.ADDR_DEFINE -> readNodeIdentifier();
+            case PotassiumNode.ADDR_DEFINE -> decodeNodeIdentifier();
             case PotassiumNode.ADDR_LOOKUP_1B -> lookupNodeIdentifier(input.readUnsignedByte());
             case PotassiumNode.ADDR_LOOKUP_4B -> lookupNodeIdentifier(input.readInt());
             case PotassiumNode.ADDR_PARENT -> {
@@ -271,12 +270,12 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         final byte type = input.readByte();
         if (type == PotassiumValue.YIID) {
             return readYangInstanceIdentifier(input.readInt());
-        } else if (type >= PotassiumValue.YIID_0) {
+        }
+        if (type >= PotassiumValue.YIID_0) {
             // Note 'byte' is range limited, so it is always '&& type <= PotassiumValue.YIID_31'
             return readYangInstanceIdentifier(type - PotassiumValue.YIID_0);
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Unexpected YangInstanceIdentifier type " + type);
         }
+        throw new InvalidNormalizedNodeStreamException("Unexpected YangInstanceIdentifier type " + type);
     }
 
     private @NonNull YangInstanceIdentifier readYangInstanceIdentifier(final int size) throws IOException {
@@ -286,11 +285,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
                 builder.add(readPathArgument());
             }
             return YangInstanceIdentifier.of(builder.build());
-        } else if (size == 0) {
-            return YangInstanceIdentifier.of();
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Invalid YangInstanceIdentifier size " + size);
         }
+        if (size == 0) {
+            return YangInstanceIdentifier.of();
+        }
+        throw new InvalidNormalizedNodeStreamException("Invalid YangInstanceIdentifier size " + size);
     }
 
     @Override
@@ -322,16 +321,6 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
         };
     }
 
-    @Override
-    @Deprecated(since = "11.0.0", forRemoval = true)
-    public Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException {
-        return Either.ofFirst(readPathArgument());
-    }
-
-    private @NonNull NodeIdentifier readNodeIdentifier() throws IOException {
-        return decodeNodeIdentifier();
-    }
-
     private @NonNull NodeIdentifier readNodeIdentifier(final byte header) throws IOException {
         return switch (header & PotassiumPathArgument.QNAME_MASK) {
             case PotassiumPathArgument.QNAME_DEF -> decodeNodeIdentifier();
@@ -357,17 +346,18 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             throws IOException {
         if (size == 1) {
             return NodeIdentifierWithPredicates.of(qname, readQName(), readLeafValue());
-        } else if (size > 1) {
+        }
+        if (size > 1) {
             final var builder = ImmutableMap.<QName, Object>builderWithExpectedSize(size);
             for (int i = 0; i < size; ++i) {
                 builder.put(readQName(), readLeafValue());
             }
             return NodeIdentifierWithPredicates.of(qname, builder.build());
-        } else if (size == 0) {
-            return NodeIdentifierWithPredicates.of(qname);
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Invalid predicate count " + size);
         }
+        if (size == 0) {
+            return NodeIdentifierWithPredicates.of(qname);
+        }
+        throw new InvalidNormalizedNodeStreamException("Invalid predicate count " + size);
     }
 
     private @NonNull NodeWithValue<?> readNodeWithValue(final byte header) throws IOException {
@@ -495,11 +485,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             final var bytes = new byte[size];
             input.readFully(bytes);
             return new String(bytes, StandardCharsets.UTF_8);
-        } else if (size == 0) {
-            return "";
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Invalid String bytes length " + size);
         }
+        if (size == 0) {
+            return "";
+        }
+        throw new InvalidNormalizedNodeStreamException("Invalid String bytes length " + size);
     }
 
     private @NonNull String readCharsString() throws IOException {
@@ -510,11 +500,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
                 chars[i] = input.readChar();
             }
             return String.valueOf(chars);
-        } else if (size == 0) {
-            return "";
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Invalid String chars length " + size);
         }
+        if (size == 0) {
+            return "";
+        }
+        throw new InvalidNormalizedNodeStreamException("Invalid String chars length " + size);
     }
 
     private @NonNull NodeIdentifier lookupNodeIdentifier(final int index) throws InvalidNormalizedNodeStreamException {
@@ -613,11 +603,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
             final var ret = new byte[size];
             input.readFully(ret);
             return ret;
-        } else if (size == 0) {
-            return BINARY_0;
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Invalid binary length " + size);
         }
+        if (size == 0) {
+            return BINARY_0;
+        }
+        throw new InvalidNormalizedNodeStreamException("Invalid binary length " + size);
     }
 
     private @NonNull ImmutableSet<String> readBits(final int size) throws IOException {
@@ -627,11 +617,11 @@ final class PotassiumDataInput extends AbstractNormalizedNodeDataInput {
                 builder.add(readRefString());
             }
             return builder.build();
-        } else if (size == 0) {
-            return ImmutableSet.of();
-        } else {
-            throw new InvalidNormalizedNodeStreamException("Invalid bits length " + size);
         }
+        if (size == 0) {
+            return ImmutableSet.of();
+        }
+        throw new InvalidNormalizedNodeStreamException("Invalid bits length " + size);
     }
 
     private static byte mask(final byte header, final byte mask) {
