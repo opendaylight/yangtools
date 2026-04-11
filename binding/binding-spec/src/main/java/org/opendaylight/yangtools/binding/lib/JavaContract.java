@@ -23,7 +23,7 @@ public sealed interface JavaContract<B extends BindingContract<B>, T extends B> 
     /**
      * Canonical implementation of Java {@link #hashCode()} contract specified by {@link #implementedInterface()}.
      *
-     * @return the hash code value for this object
+     * @return the hash code value for this object, guaranteed to be non-{@code 0}
      */
     int bindingHashCode();
 
