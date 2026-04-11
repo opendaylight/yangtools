@@ -11,7 +11,6 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Either;
 import org.opendaylight.yangtools.yang.common.QNameAwareDataInput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -83,15 +82,6 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
     @NonNull PathArgument readPathArgument() throws IOException;
 
     /**
-     * Read a {@link PathArgument} or a {@link LegacyPathArgument} from the reader.
-     *
-     * @return {@link Either} a {@link PathArgument} or a {@link LegacyPathArgument}
-     * @throws IOException if an error occurs
-     */
-    @Deprecated(since = "11.0.0")
-    @NonNull Either<PathArgument, LegacyPathArgument> readLegacyPathArgument() throws IOException;
-
-    /**
      * Read a {@link SchemaNodeIdentifier}.
      *
      * @return a {@link SchemaNodeIdentifier}
@@ -135,7 +125,6 @@ public interface NormalizedNodeDataInput extends QNameAwareDataInput {
 
         final short version = input.readShort();
         return switch (version) {
-            case TokenTypes.MAGNESIUM_VERSION -> new MagnesiumDataInput(input);
             case TokenTypes.POTASSIUM_VERSION -> new PotassiumDataInput(input);
             default -> throw new InvalidNormalizedNodeStreamException("Unhandled stream version " + version);
         };

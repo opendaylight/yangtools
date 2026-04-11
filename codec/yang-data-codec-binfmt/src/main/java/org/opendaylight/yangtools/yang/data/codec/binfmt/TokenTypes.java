@@ -19,12 +19,10 @@ final class TokenTypes {
     //
     // From-scratch designed version shipping in Sodium SR1.
     // SODIUM_SR1_VERSION = 3;
+    //
+    // Revised stream version from SODIUM_SR1_VERSION. Does not allow BigIntegers to be present.
+    // MAGNESIUM_VERSION = 4;
 
-    /**
-     * Magnesium version. Structurally matches {@link #SODIUM_SR1_VERSION}, but does not allow BigIntegers to be
-     * present.
-     */
-    static final short MAGNESIUM_VERSION = 4;
     /**
      * Potassium version. Breaks compatibility from Magnesium in terms of NormalizedNode structure, as AugmentationNodes
      * and AugmentationIdentifiers are not preserved.
