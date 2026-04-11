@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 import org.opendaylight.yangtools.binding.meta.UnsafeScalarTypeObjectFactory;
 
+// TODO: value record when we have JEP-401 available
 @NonNullByDefault
 record UnsafeSTOFactory<V, T extends ScalarTypeObject<V>>(Class<T> target, BiFunction<UnsafeSecret, V, T> ctor)
         implements UnsafeScalarTypeObjectFactory<V, T> {

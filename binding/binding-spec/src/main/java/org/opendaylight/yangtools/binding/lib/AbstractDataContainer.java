@@ -7,32 +7,21 @@
  */
 package org.opendaylight.yangtools.binding.lib;
 
-import com.google.common.annotations.Beta;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.Augmentable;
-import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
- * An extension of {@link AbstractAugmentable} for {@link DataContainer} specializations. It implements
- * {@link #hashCode()} caching and common handling of {@link #equals(Object)} and {@link #toString()}.
+ * Abstract base class for {@link DataContainer} implementations. It implements {@link #hashCode()} caching and common
+ * handling of {@link #equals(Object)} and {@link #toString()}.
  *
- * @param <T> the {@link Augmentable} {@link DataContainer} type
+ * @param <T> the {@link DataContainer} type
  * @since 15.1.0
  */
-// FIXME: remove when AbstractAugmentable extends AbstractDataContainer
-@Beta
-public abstract class AugmentableDataContainer<T extends DataContainer & Augmentable<T>>
-        extends AbstractAugmentable<T> {
+public abstract class AbstractDataContainer<T extends DataContainer> {
     // TODO: single field when hashCode() is defined to be != 0
     private int hashCode;
     private volatile boolean hashCodeValid;
-
-    protected AugmentableDataContainer(final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations) {
-        super(augmentations);
-    }
 
     /**
      * {@return the equality class, should always be the same as {@link BindingContract#implementedInterface()}}
