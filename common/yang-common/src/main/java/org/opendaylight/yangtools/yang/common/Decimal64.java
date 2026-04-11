@@ -25,9 +25,8 @@ import org.opendaylight.yangtools.yang.common.CanonicalValueValidator.ValidatedV
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
  * efficient storage, as it has fixed precision.
  */
-// TODO: value class when we have JEP-401 available
 @NonNullByDefault
-public abstract non-sealed class Decimal64 extends YangNumber<Decimal64> {
+public abstract non-sealed value class Decimal64 extends YangNumber<Decimal64> {
     public static final class Support extends AbstractCanonicalValueSupport<Decimal64> {
         private static final CanonicalValueSupport<Decimal64> INSTANCE = new Support();
 

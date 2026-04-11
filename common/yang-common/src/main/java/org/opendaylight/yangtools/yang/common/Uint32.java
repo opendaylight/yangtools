@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
 import java.io.IOException;
 import java.io.InvalidClassException;
@@ -22,9 +20,8 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Dedicated type for YANG's {@code type uint32} type.
  */
-// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public abstract non-sealed class Uint32 extends YangUint<Uint32> {
+public abstract non-sealed value class Uint32 extends YangUint<Uint32> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint32> {
         private static final CanonicalValueSupport<Uint32> INSTANCE = new Support();
 
@@ -78,8 +75,6 @@ public abstract non-sealed class Uint32 extends YangUint<Uint32> {
         }
         CACHE = c;
     }
-
-    private static final Interner<Uint32> INTERNER = Interners.newWeakInterner();
 
     /**
      * Value of {@code 0}.
@@ -348,12 +343,11 @@ public abstract non-sealed class Uint32 extends YangUint<Uint32> {
     }
 
     /**
-     * Return an interned (shared) instance equivalent to this object. This may return the same object.
-     *
-     * @return A shared instance.
+     * {@return this instance}
      */
+    @Deprecated(forRemoval = true)
     public final Uint32 intern() {
-        return value >= 0 && value < CACHE_SIZE ? this : INTERNER.intern(this);
+        return this;
     }
 
     /**

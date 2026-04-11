@@ -14,9 +14,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * @since 15.1.0
  */
-// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public abstract sealed class YangNumber<T extends YangNumber<T>> extends Number implements CanonicalValue<T>
+public abstract sealed value class YangNumber<T extends YangNumber<T>> extends Number implements CanonicalValue<T>
         permits YangInteger, Decimal64 {
     @java.io.Serial
     private static final long serialVersionUID = 3127696955141110233L;

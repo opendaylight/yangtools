@@ -15,9 +15,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @param <T> unsigned integer type
  * @since 15.1.0
  */
-// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public abstract sealed class YangUint<T extends YangUint<T>> extends YangInteger<T>
+public abstract sealed value class YangUint<T extends YangUint<T>> extends YangInteger<T>
         permits Uint8, Uint16, Uint32, Uint64 {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
