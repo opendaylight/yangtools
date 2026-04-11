@@ -21,8 +21,9 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Dedicated type for YANG's {@code type uint16} type.
  */
+// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public non-sealed class Uint16 extends Number implements YangUint<Uint16> {
+public abstract non-sealed class Uint16 extends Number implements YangUint<Uint16> {
     public static final class Support extends AbstractCanonicalValueSupport<Uint16> {
         private static final CanonicalValueSupport<Uint16> INSTANCE = new Support();
 
@@ -72,7 +73,7 @@ public non-sealed class Uint16 extends Number implements YangUint<Uint16> {
     static {
         final Uint16[] c = new Uint16[CACHE_SIZE];
         for (int i = 0; i < c.length; ++i) {
-            c[i] = new Uint16((short) i);
+            c[i] = new Uint16Impl((short) i);
         }
         CACHE = c;
     }
@@ -102,7 +103,7 @@ public non-sealed class Uint16 extends Number implements YangUint<Uint16> {
 
     private final short value;
 
-    private Uint16(final short value) {
+    Uint16(final short value) {
         this.value = value;
     }
 
@@ -112,7 +113,7 @@ public non-sealed class Uint16 extends Number implements YangUint<Uint16> {
 
     private static Uint16 instanceFor(final short value) {
         final int slot = Short.toUnsignedInt(value);
-        return slot < CACHE.length ? CACHE[slot] : new Uint16(value);
+        return slot < CACHE.length ? CACHE[slot] : new Uint16Impl(value);
     }
 
     /**
