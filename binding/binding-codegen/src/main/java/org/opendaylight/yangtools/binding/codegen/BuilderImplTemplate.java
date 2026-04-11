@@ -21,9 +21,9 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
-import org.opendaylight.yangtools.binding.lib.AugmentableDataContainer;
-import org.opendaylight.yangtools.binding.lib.BaseEntryObject;
+import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -44,14 +44,14 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     private static final @NonNull JavaTypeName ABSTRACT_DATA_CONTAINER =
         JavaTypeName.create(AbstractDataContainer.class);
     /**
-     * {@link AugmentableDataContainer} as a {@link JavaTypeName}.
+     * {@link AbstractAugmentable} as a {@link JavaTypeName}.
      */
     private static final @NonNull JavaTypeName ABSTRACT_AUGMENTABLE =
-        JavaTypeName.create(AugmentableDataContainer.class);
+        JavaTypeName.create(AbstractAugmentable.class);
     /**
-     * {@link BaseEntryObject} as a {@link JavaTypeName}.
+     * {@link AbstractEntryObject} as a {@link JavaTypeName}.
      */
-    private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(BaseEntryObject.class);
+    private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject.class);
 
     private final @NonNull BuilderTemplate builder;
 
