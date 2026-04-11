@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import java.lang.reflect.Modifier;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Base implementation of {@link CanonicalValueSupport}. This class should be used as superclass to all implementations
@@ -65,13 +64,12 @@ public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>>
     }
 
     @Override
-    public final Either<T, CanonicalValueViolation> validateRepresentation(final T value) {
-        return Either.ofFirst(value);
+    public final ValidationResult<T> validateRepresentation(final T value) {
+        return new ValidatedValue<>(value);
     }
 
     @Override
-    public final Either<T, CanonicalValueViolation> validateRepresentation(final T value,
-            final String canonicalString) {
-        return Either.ofFirst(value);
+    public final ValidationResult<T> validateRepresentation(final T value, final String canonicalString) {
+        return new ValidatedValue<>(value);
     }
 }

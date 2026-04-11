@@ -14,7 +14,6 @@ import com.google.common.collect.Interners;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Dedicated type for YANG's {@code type uint16} type.
@@ -37,11 +36,11 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         }
 
         @Override
-        public Either<Uint16, CanonicalValueViolation> fromString(final String str) {
+        public ValidationResult<Uint16> fromString(final String str) {
             try {
-                return Either.ofFirst(Uint16.valueOf(str));
+                return new ValidatedValue<>(Uint16.valueOf(str));
             } catch (IllegalArgumentException e) {
-                return CanonicalValueViolation.variantOf(e);
+                return CanonicalValueViolation.of(e);
             }
         }
     }

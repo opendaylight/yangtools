@@ -15,7 +15,6 @@ import com.google.common.primitives.UnsignedInteger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Dedicated type for YANG's {@code type uint32} type.
@@ -38,11 +37,11 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         }
 
         @Override
-        public Either<Uint32, CanonicalValueViolation> fromString(final String str) {
+        public ValidationResult<Uint32> fromString(final String str) {
             try {
-                return Either.ofFirst(Uint32.valueOf(str));
+                return new ValidatedValue<>(Uint32.valueOf(str));
             } catch (IllegalArgumentException e) {
-                return CanonicalValueViolation.variantOf(e);
+                return CanonicalValueViolation.of(e);
             }
         }
     }

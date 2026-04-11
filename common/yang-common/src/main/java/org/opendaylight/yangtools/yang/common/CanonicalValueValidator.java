@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Either;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -25,6 +26,32 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @Beta
 @NonNullByDefault
 public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends T> extends Immutable {
+    /**
+     * The result of a validation operation: either a {@link ValidatedValue} or a {@link CanonicalValueSupport}.
+     *
+     * @param <T> canonical value type
+     */
+    sealed interface ValidationResult<T extends CanonicalValue<T>> extends Immutable
+            permits CanonicalValueViolation, ValidatedValue {
+        // Nothing else
+    }
+
+    /**
+     * A successful {@link ValidationResult}.
+     *
+     * @param <T> canonical value type
+     */
+    record ValidatedValue<T extends CanonicalValue<T>>(T value) implements ValidationResult<T> {
+        /**
+         * Construct a new instance.
+         *
+         * @param value the value
+         */
+        public ValidatedValue {
+            requireNonNull(value);
+        }
+    }
+
     /**
      * Returns the instantiated representation class. The representation class is a {@link CanonicalValue} which
      * understands the semantics of modeled data and has some internal representation of it. All {@link CanonicalValue}s
@@ -47,10 +74,10 @@ public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends 
      * provide a validation algorithm which does not rely on canonical strings but works on representation state only.
      *
      * @param value Representation value
-     * @return Validated representation or a {@link CanonicalValueViolation}
+     * @return a {@link ValidationResult}
      * @throws NullPointerException if {@code value} is null
      */
-    default Either<T, CanonicalValueViolation> validateRepresentation(final T value) {
+    default ValidationResult<T> validateRepresentation(final T value) {
         return validateRepresentation(value, value.toCanonicalString());
     }
 
@@ -61,8 +88,8 @@ public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends 
      *
      * @param value Representation value
      * @param canonicalString Canonical string matching the representation value
-     * @return Validated representation or a {@link CanonicalValueViolation}
+     * @return a {@link ValidationResult}
      * @throws NullPointerException if {@code value} or {@code canonicalString} is null.
      */
-    Either<T, CanonicalValueViolation> validateRepresentation(T value, String canonicalString);
+    ValidationResult<T> validateRepresentation(T value, String canonicalString);
 }

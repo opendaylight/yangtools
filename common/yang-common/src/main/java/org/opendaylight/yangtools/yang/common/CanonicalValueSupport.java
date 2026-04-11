@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Support for a {@link CanonicalValue} subclasses. An implementation of this interface must be registered
@@ -33,10 +32,10 @@ public interface CanonicalValueSupport<T extends CanonicalValue<T>> extends Cano
      * strings must be accepted and result in objects equal to objects obtained from the corresponding canonical format.
      *
      * @param str String representation
-     * @return A {@link CanonicalValue} instance or CanonicalValueViolation if {@code str} does not conform
+     * @return A {@link CanonicalValue} instance or a {@link CanonicalValueViolation} if {@code str} does not conform
      * @throws NullPointerException if {@code str} is null
      */
-    Either<T, CanonicalValueViolation> fromString(String str);
+    ValidationResult<T> fromString(String str);
 
     /**
      * Create a instance for the canonical string representation. Implementations of this method may perform
@@ -44,10 +43,10 @@ public interface CanonicalValueSupport<T extends CanonicalValue<T>> extends Cano
      * is detected.
      *
      * @param str String representation
-     * @return A {@link CanonicalValue} instance or CanonicalValueViolation if {@code str} does not conform
+     * @return A {@link CanonicalValue} instance or {@link CanonicalValueViolation} if {@code str} does not conform
      * @throws NullPointerException if {@code str} is null
      */
-    default Either<T, CanonicalValueViolation> fromCanonicalString(final String str) {
+    default ValidationResult<T> fromCanonicalString(final String str) {
         return fromString(requireNonNull(str));
     }
 

@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.concepts.Either;
 
 @NonNullByDefault
 class DerivedStringTest {
@@ -22,8 +21,8 @@ class DerivedStringTest {
         }
 
         @Override
-        public Either<EagerDerivedString, CanonicalValueViolation> fromString(final String str) {
-            return Either.ofFirst(new EagerDerivedString(str));
+        public ValidatedValue<EagerDerivedString> fromString(final String str) {
+            return new ValidatedValue<>(new EagerDerivedString(str));
         }
     }
 
@@ -33,8 +32,8 @@ class DerivedStringTest {
         }
 
         @Override
-        public Either<LazyDerivedString, CanonicalValueViolation> fromString(final String str) {
-            return Either.ofFirst(new LazyDerivedString(str));
+        public ValidatedValue<LazyDerivedString> fromString(final String str) {
+            return new ValidatedValue<>(new LazyDerivedString(str));
         }
     }
 
