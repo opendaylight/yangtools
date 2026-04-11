@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -16,8 +15,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @param <T> unsigned integer type
  * @since 15.1.0
  */
-@Beta
+// TODO: abstract value class when we have JEP-401 available
 @NonNullByDefault
-public sealed interface YangUint<T extends YangUint<T>> extends YangInteger<T> permits Uint8, Uint16, Uint32, Uint64 {
-    // Nothing else
+public abstract sealed class YangUint<T extends YangUint<T>> extends YangInteger<T>
+        permits Uint8, Uint16, Uint32, Uint64 {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
 }
