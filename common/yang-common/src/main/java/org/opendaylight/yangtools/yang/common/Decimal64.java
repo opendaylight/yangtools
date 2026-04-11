@@ -12,10 +12,8 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Either;
@@ -155,16 +153,13 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
             if (absRemainder > half) {
                 return GT_HALF;
-            } else if (absRemainder < half) {
-                return LT_HALF;
-            } else {
-                return HALF;
             }
+            return absRemainder < half ? LT_HALF : HALF;
         }
     }
 
     private static final CanonicalValueSupport<Decimal64> SUPPORT = new Support();
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private static final int MAX_SCALE = 18;
@@ -334,12 +329,12 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      * @throws NumberFormatException if the string does not contain a parsable decimal64.
      */
     public static Decimal64 valueOf(final String str) {
-        final Either<Decimal64, CanonicalValueViolation> variant = SUPPORT.fromString(str);
-        final Optional<Decimal64> value = variant.tryFirst();
+        final var variant = SUPPORT.fromString(str);
+        final var value = variant.tryFirst();
         if (value.isPresent()) {
             return value.orElseThrow();
         }
-        final Optional<String> message = variant.getSecond().getMessage();
+        final var message = variant.getSecond().getMessage();
         throw message.isPresent() ? new NumberFormatException(message.orElseThrow()) : new NumberFormatException();
     }
 
@@ -390,7 +385,8 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         if (diff == 0) {
             // Same scale, no-op
             return this;
-        } else if (value == 0) {
+        }
+        if (value == 0) {
             // Zero is special, as it has the same unscaled value in all scales
             return new Decimal64(scaleOffset, 0);
         }
