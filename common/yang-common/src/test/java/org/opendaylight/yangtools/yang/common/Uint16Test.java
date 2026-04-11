@@ -70,7 +70,7 @@ class Uint16Test {
         final var zero = Uint16.valueOf(0);
         final var max = Uint16.valueOf(65535);
 
-        final var test = new Uint16(five);
+        final var test = new Uint16Impl(five.shortValue());
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
@@ -81,7 +81,7 @@ class Uint16Test {
 
     @Test
     void testToString() {
-        assertEquals("0", Uint16.valueOf(0).toString());
+        assertEquals("0", Uint16.ZERO.toString());
         assertEquals("32767", Uint16.valueOf(32767).toString());
         assertEquals("32768", Uint16.valueOf(32768).toString());
         assertEquals("65535", Uint16.valueOf(65535).toString());
@@ -94,12 +94,12 @@ class Uint16Test {
 
     @Test
     void testFloatValue() {
-        assertEquals(0, Uint16.valueOf(0).floatValue(), 0);
+        assertEquals(0, Uint16.ZERO.floatValue(), 0);
     }
 
     @Test
     void testDoubleValue() {
-        assertEquals(0, Uint16.valueOf(0).doubleValue(), 0);
+        assertEquals(0, Uint16.ZERO.doubleValue(), 0);
     }
 
     @Test

@@ -81,7 +81,7 @@ final class Decimal64Support extends AbstractCanonicalValueSupport<Decimal64> {
 
         if (idx > limit) {
             // No fraction digits, we are done
-            return new ValidatedValue<>(new Decimal64((byte)1, intPart, 0, negative));
+            return new ValidatedValue<>(Decimal64.of((byte)1, intPart, 0, negative));
         }
 
         // Bump index to skip over period and check the remainder
@@ -107,7 +107,7 @@ final class Decimal64Support extends AbstractCanonicalValueSupport<Decimal64> {
             fracPart = 10 * fracPart + toInt(ch, idx);
         }
 
-        return new ValidatedValue<>(new Decimal64(fracLen, intPart, fracPart, negative));
+        return new ValidatedValue<>(Decimal64.of(fracLen, intPart, fracPart, negative));
     }
 
     private static int toInt(final char ch, final int index) {
