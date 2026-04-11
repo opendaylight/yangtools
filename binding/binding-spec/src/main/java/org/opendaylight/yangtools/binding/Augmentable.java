@@ -23,7 +23,7 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <T> Base class which should implements this interface and is target for augmentation.
  */
-public interface Augmentable<T> {
+public interface Augmentable<T extends Augmentable<T> & DataContainer> {
     /**
      * Returns instance of augmentation, if present.
      *

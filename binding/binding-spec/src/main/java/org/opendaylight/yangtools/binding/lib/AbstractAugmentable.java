@@ -14,14 +14,15 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
  * Abstract base class for implementing immutable {@link Augmentable} classes. This class is provided as a convenience.
  *
  * @param <T> Augmentable type
  */
-// FIXME: extends AbstractDataContainer
-public abstract class AbstractAugmentable<T extends Augmentable<T>> implements Augmentable<T> {
+public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContainer> extends AbstractDataContainer<T>
+        implements Augmentable<T> {
     private final @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations;
 
     // FIXME: reconsider usefulness of this constructor: document it or remove it
@@ -52,13 +53,4 @@ public abstract class AbstractAugmentable<T extends Augmentable<T>> implements A
     public final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
         return augmentations;
     }
-
-    @Override
-    public abstract int hashCode();
-
-    @Override
-    public abstract boolean equals(Object obj);
-
-    @Override
-    public abstract String toString();
 }
