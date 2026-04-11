@@ -25,7 +25,29 @@
 
     <properties>
         <odlparent.dependency.enforce>true</odlparent.dependency.enforce>
+
+        <!-- Hacks for Valhalla  -->
+        <jacoco.skip>true</jacoco.skip>
+        <maven.compiler.release>27</maven.compiler.release>
+        <maven.compiler.enablePreview>true</maven.compiler.enablePreview>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <odlparent.checkstyle.skip>true</odlparent.checkstyle.skip>
+        <odlparent.dependency.skip>true</odlparent.dependency.skip>
+        <odlparent.modernizer.skip>true</odlparent.modernizer.skip>
+        <odlparent.spotbugs.skip>true</odlparent.spotbugs.skip>
     </properties>
+
+    <!-- Hack for Valhalla  -->
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} --enable-preview</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencyManagement>
         <dependencies>
