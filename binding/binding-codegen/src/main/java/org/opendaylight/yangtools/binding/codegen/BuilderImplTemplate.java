@@ -7,9 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+<<<<<<< HEAD
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
+||||||| parent of 045c5bbb19 (WIP: Add binding.lib.JavaContract)
+import static com.google.common.base.Verify.verify;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
+=======
+import static com.google.common.base.Verify.verify;
+>>>>>>> 045c5bbb19 (WIP: Add binding.lib.JavaContract)
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
@@ -29,7 +38,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * A template for the inner implementation class supported by a {@link BuilderTemplate}.
@@ -152,24 +160,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        // generate bindingHashCode()/bindingEquals()/bindingToString() routing
-        return bb
-            .nl()
-            .at().eol(override)
-            .str("protected int bindingHashCode()").oB()
-                .str("return ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
-            .cB()
-            .nl()
-            .at().eol(override)
-            .str("protected boolean bindingEquals(").str(impIface).str(" other)").oB()
-                .str("return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, other);")
-            .cB()
-            .nl()
-            .at().eol(override)
-            .str("protected ").str(importedName(Types.STRING)).str(" bindingToString()").oB()
-                .str("return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
-            .cB()
-            .cB();
+        return bb.cB();
     }
 
     @Override
