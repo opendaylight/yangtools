@@ -97,7 +97,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <odl.binding.codegen.verify>true</odl.binding.codegen.verify>
+                        <odl.binding.codegen.verify>strict</odl.binding.codegen.verify>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
