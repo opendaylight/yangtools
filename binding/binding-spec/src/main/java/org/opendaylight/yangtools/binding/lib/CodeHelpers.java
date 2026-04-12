@@ -26,6 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
@@ -368,16 +369,121 @@ public final class CodeHelpers {
     }
 
     /**
-     * Provide the combined hash code of {@link Augmentable}'s {@link Augmentable#augmentations()}.
+     * Reference implementation of {@link JavaDataContainer#bindingHashCode()}.
      *
-     * @param augmentable Augmentable object to hash
-     * @throws NullPointerException if any argument is {@code null}
-     * @since 15.1.0
+     * @param hashCodes component hash codes
+     * @return the hash code
+     * @since 16.0.0
      */
     @NonNullByDefault
-    public static int hashAugmentations(final Augmentable<?> augmentable) {
+    public static int bindingHashCode(final int... hashCodes) {
+        int result = 1;
+        for (var hashCode : hashCodes) {
+            result = 31 * result + hashCode;
+        }
+        return result;
+    }
+
+    /**
+     * Reference implementation of {@link JavaDataContainer#bindingHashCode()} which is also {@link Augmentable}.
+     *
+     * @param augmentable the {@link Augmentable} instance
+     * @param hashCodes component hash codes
+     * @return the hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int bindingHashCode(final Augmentable<?> augmentable, final int... hashCodes) {
+        return hashAugmentations(augmentable) + bindingHashCode(hashCodes);
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(augmentable, new int[0])}}
+     * @param augmentable the {@link Augmentable} instance
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int bindingHashCode0(final Augmentable<?> augmentable) {
+        return 1 + hashAugmentations(augmentable);
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(Objects.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int bindingHashCode1(final @Nullable Object prop) {
+        return 31 + Objects.hashCode(prop);
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(Arrays.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int bindingHashCode1(final byte @Nullable [] prop) {
+        return 31 + Arrays.hashCode(prop);
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(augmentable, Objects.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int bindingHashCode1(final Augmentable<?> augmentable, final @Nullable Object prop) {
+        return 31 + hashAugmentations(augmentable) + Objects.hashCode(prop);
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(augmentable, Arrays.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int bindingHashCode1(final Augmentable<?> augmentable, final byte @Nullable [] prop) {
+        return 31 + hashAugmentations(augmentable) + Arrays.hashCode(prop);
+    }
+
+    @NonNullByDefault
+    public static int bindingHashCodeN(final @Nullable Object... props) {
+        int result = 1;
+        for (var prop : props) {
+            result = 31 * result + Objects.hashCode(prop);
+        }
+        return result;
+    }
+
+    @NonNullByDefault
+    public static int bindingHashCodeN(final byte[] @Nullable... props) {
+        int result = 1;
+        for (var prop : props) {
+            result = 31 * result + Arrays.hashCode(prop);
+        }
+        return result;
+    }
+
+    @NonNullByDefault
+    public static int bindingHashCodeN(final Augmentable<?> augmentable, final @Nullable Object... props) {
+        return hashAugmentations(augmentable) + bindingHashCodeN(props);
+    }
+
+    @NonNullByDefault
+    public static int bindingHashCodeN(final Augmentable<?> augmentable, final byte[] @Nullable... props) {
+        return hashAugmentations(augmentable) + bindingHashCodeN(props);
+    }
+
+    @NonNullByDefault
+    private static int hashAugmentations(final Augmentable<?> augmentable) {
+        final var augmentations = augmentable.augmentations();
+        return augmentations.isEmpty() ? 0 : hashAugmentations(augmentations.values());
+    }
+
+    private static int hashAugmentations(final Collection<? extends @NonNull Augmentation<?>> augmentations) {
         int result = 0;
-        for (var augmentation : augmentable.augmentations().values()) {
+        for (var augmentation : augmentations) {
             result += augmentation.hashCode();
         }
         return result;

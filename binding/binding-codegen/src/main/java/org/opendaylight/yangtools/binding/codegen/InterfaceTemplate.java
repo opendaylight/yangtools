@@ -18,6 +18,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethod
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -368,37 +369,85 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                 switch (props.size()) {
                     case 0 -> {
                         if (augmentable) {
-                            bb.str("return 1 + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(this);");
+                            bb.str("return ").str(importedName(CODEHELPERS)).eol(".bindingHashCode0(this);");
                         } else {
                             bb.eol("return 1;");
                         }
                     }
                     case 1 -> {
                         final var property = props.iterator().next();
-                        bb.str("return 31 + ").str(importedUtilClass(property)).str(".hashCode(")
-                            .str(getterMethodName(property)).str("())");
+                        bb.str("return ").str(importedName(CODEHELPERS)).str(".bindingHashCode1(");
                         if (augmentable) {
-                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(this);");
-                        } else {
-                            bb.eS();
+                            bb.str("this, ");
                         }
+                        bb.str(getterMethodName(property)).eol("());");
                     }
-                    default -> {
-                        bb.eol("int result = 1;");
-                        bb.eol("final int prime = 31;");
-                        for (var property : props) {
-                            bb.str("result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(")
-                                .str(getterMethodName(property)).eol("());");
-                        }
-                        bb.str("return result");
-                        if (augmentable) {
-                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(this);");
-                        } else {
-                            bb.eS();
-                        }
-                    }
+                    // TODO: consider specializing for N=2 (sngle line) for the cost of 8 new methods in CodeHelpers
+                    default -> appendBindingHashCode(bb, props, augmentable);
                 }
             }).nl();
+    }
+
+    @NonNullByDefault
+    private void appendBindingHashCode(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props,
+            final boolean augmentable) {
+        // determine the composition of properties
+        final int size = props.size();
+        final boolean[] isBinary = new boolean[size];
+        int cnt = 0;
+        int binaryCount = 0;
+        for (var prop : props) {
+            final var tmp = prop.getReturnType().isArray();
+            if (tmp) {
+                binaryCount++;
+            }
+            isBinary[cnt++] = tmp;
+        }
+
+        if (binaryCount == 0 || binaryCount == size) {
+            // all properties are the same: let CodeHelpers deal with invoking hashCode()
+            bb.str("return ").str(importedName(CODEHELPERS)).str(".bindingHashCodeN(");
+            if (augmentable) {
+                bb.eol("this,");
+            } else {
+                bb.newLine();
+            }
+
+            final var it = props.iterator();
+            while (true) {
+                final var prop = it.next();
+                bb.ind(getterMethodName(prop)).str("()");
+                if (!it.hasNext()) {
+                    break;
+                }
+                bb.eol(",");
+            }
+            bb.eol(");");
+            return;
+        }
+
+        // we have at least one Object and one byte[] property, we do the hashing ourselves.
+        bb.str("return ").str(importedName(CODEHELPERS)).str(".bindingHashCode(");
+        if (augmentable) {
+            bb.eol("this,");
+        } else {
+            bb.newLine();
+        }
+
+        final var arrays = importedName(JU_ARRAYS);
+        final var objects = importedName(JU_OBJECTS);
+
+        cnt = 0;
+        final var it = props.iterator();
+        while (true) {
+            final var prop = it.next();
+            bb.ind(isBinary[cnt++] ? arrays : objects).str(".hashCode(").str(getterMethodName(prop)).str("())");
+            if (!it.hasNext()) {
+                break;
+            }
+            bb.eol(",");
+        }
+        bb.eol(");");
     }
 
     private @NonNull BlockBuilder generateBindingEquals() {
