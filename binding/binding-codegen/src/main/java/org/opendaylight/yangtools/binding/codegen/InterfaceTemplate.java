@@ -7,10 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire;
@@ -37,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -144,7 +143,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .blk(generateConstants())
             .nl()
             .blk(generateMethods())
-            .nl()
+            .blk(generateJavaDataContainerMethods())
             .cB();
     }
 
@@ -190,7 +189,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             if (method.isDefault()) {
                 blk = generateDefaultMethod(method);
             } else if (method.isStatic()) {
-                blk = generateStaticMethod(method);
+                blk = null;
             } else if (method.getParameters().isEmpty() && isGetterMethodName(method.getName())) {
                 blk = generateAccessorMethod(method);
             } else if (method.getParameters().isEmpty() && isNonnullMethodName(method.getName())) {
@@ -342,13 +341,19 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .str(importedNonNull(method.getReturnType())).sp().str(method.getName()).eol("();");
     }
 
-    private @Nullable BlockBuilder generateStaticMethod(final MethodSignature method) {
-        return switch (method.getName()) {
-            case BINDING_EQUALS_NAME -> generateBindingEquals();
-            case BINDING_HASHCODE_NAME -> generateBindingHashCode();
-            case BINDING_TO_STRING_NAME -> generateBindingToString();
-            default -> null;
-        };
+    private @Nullable BlockBuilder generateJavaDataContainerMethods() {
+        if (type().getImplements().stream()
+                .noneMatch(iface -> iface.name().equals(BindingTypes.JAVA_DATACONTAINER.name()))) {
+            return null;
+        }
+
+        return newBlockBuilder()
+            .nl()
+            .blk(verifyNotNull(generateBindingHashCode()))
+            .nl()
+            .blk(verifyNotNull(generateBindingEquals()))
+            .nl()
+            .blk(verifyNotNull(generateBindingToString()));
     }
 
     @VisibleForTesting
@@ -358,35 +363,19 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         final var props = analysis.properties();
         final var propCount = props.size();
 
-        if (!augmentable && propCount == 0) {
-            return null;
-        }
-
-        return newBlockBuilder()
-            .eol("/**")
-            .str(" * Default implementation of {@link ").str(importedName(OBJECT))
-                .eol("#hashCode()} contract for this interface.")
-            .txt("""
-                   * Implementations of this interface are encouraged to defer to this method to get consistent hashing
-                   * results across all implementations.
-                   *
-                   * @param obj Object for which to generate hashCode() result.
-                   * @return Hash code value of data modeled by this interface.
-                  """)
-            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
-            .eol(" */")
-            .str("static int " + BINDING_HASHCODE_NAME + "(").str(fullyQualifiedNonNull(type())).str(" obj)")
-            .jBlock(bb -> {
+        return !augmentable && propCount == 0 ? null : newBlockBuilder()
+            .at().eol(importedName(OVERRIDE))
+            .str("default int bindingHashCode()").jBlock(bb -> {
                 switch (propCount) {
                     case 0 -> {
-                        bb.str("return 1 + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                        bb.str("return 1 + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(this);");
                     }
                     case 1 -> {
                         final var property = props.iterator().next();
-                        bb.str("return 31 + ").str(importedUtilClass(property)).str(".hashCode(obj.")
+                        bb.str("return 31 + ").str(importedUtilClass(property)).str(".hashCode(")
                             .str(getterMethodName(property)).str("())");
                         if (augmentable) {
-                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(this);");
                         } else {
                             bb.eS();
                         }
@@ -395,12 +384,12 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                         bb.eol("int result = 1;");
                         bb.eol("final int prime = 31;");
                         for (var property : props) {
-                            bb.str("result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
+                            bb.str("result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(")
                                 .str(getterMethodName(property)).eol("());");
                         }
                         bb.str("return result");
                         if (augmentable) {
-                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(this);");
                         } else {
                             bb.eS();
                         }
@@ -417,75 +406,43 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             return null;
         }
 
-        final var object = importedName(OBJECT);
-
         return newBlockBuilder()
-            .eol("/**")
-            .str(" * Default implementation of {@link ").str(object).str("#equals(").str(object)
-                .eol(")} contract for this interface.")
-            .txt("""
-                   * Implementations of this interface are encouraged to defer to this method to get consistent equality
-                   * results across all implementations.
-                   *
-                   * @param thisObj Object acting as the receiver of equals invocation
-                   * @param obj Object acting as argument to equals invocation
-                   * @return True if thisObj and obj are considered equal
-                  """)
-            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code thisObj} is {@code null}")
-            .eol(" */")
-            .str("static boolean " + BINDING_EQUALS_NAME + "(final ").str(fullyQualifiedNonNull(type()))
-                .str(" thisObj, final ").str(importedName(Types.objectType())).str(" obj)").jBlock(bb -> {
-                    bb
-                        .str("if (thisObj == obj)").oB()
-                            .eol("return true;")
-                        .cB()
-                        .str("final var other = ").str(importedName(CODEHELPERS)).str(".checkCast(")
-                            .str(type().canonicalName()).eol(".class, obj);")
-                        .str("return other != null");
+            .at().eol(importedName(OVERRIDE))
+            .str("default boolean bindingEquals(final ").str(fullyQualifiedNonNull(type())).str(" obj)").jBlock(bb -> {
+                bb.str("return obj != null");
 
-                    for (var property : ByTypeMemberComparator.sort(props)) {
-                        final var getterName = property.getGetterName();
-                        bb.nl().ind("&& ").str(importedUtilClass(property)).str(".equals(thisObj.").str(getterName)
-                            .str("(), other.").str(getterName).str("())");
-                    }
-                    if (augmentable) {
-                        bb.nl().ind("&& thisObj.augmentations().equals(other.augmentations())");
-                    }
-                    bb.eS();
-                }).nl();
+                for (var property : ByTypeMemberComparator.sort(props)) {
+                    final var getterName = property.getGetterName();
+                    bb.nl().ind("&& ").str(importedUtilClass(property)).str(".equals(").str(getterName).str("(), obj.")
+                        .str(getterName).str("())");
+                }
+                if (augmentable) {
+                    bb.nl().ind("&& augmentations().equals(augmentations())");
+                }
+
+                bb.eS();
+            }).nl();
     }
 
     @VisibleForTesting
     final BlockBuilder generateBindingToString() {
         return newBlockBuilder()
-            .eol("/**")
-            .str(" * Default implementation of {@link ").str(importedName(OBJECT))
-                .eol("#toString()} contract for this interface.")
-            .txt("""
-                   * Implementations of this interface are encouraged to defer to this method to get consistent string
-                   * representations across all implementations.
-                   *
-                   * @param obj Object for which to generate toString() result.
-                  """)
-            .str(" * @return {@link ").str(importedName(Types.STRING)).eol("} value of data modeled by this interface.")
-            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
-            .eol(" */")
-            .str("static ").str(importedName(Types.STRING)).str(" " + BINDING_TO_STRING_NAME + "(final ")
-                .str(fullyQualifiedNonNull(type())).str(" obj)").jBlock(bb -> {
-                    final var analysis = typeAnalysis();
+            .at().eol(importedName(OVERRIDE))
+            .str("default ").str(importedName(Types.STRING)).str(" bindingToString()").jBlock(bb -> {
+                final var analysis = typeAnalysis();
 
-                    bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                        .jStr(type().simpleName()).eol(");");
-                    for (var property : analysis.properties()) {
-                        bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
-                            .jStr(property.getName()).str(", obj.").str(property.getGetterName()).eol("());");
-                    }
-                    if (analysis.augmentType() != null) {
-                        bb.str(importedName(CODEHELPERS))
-                            .eol(".appendAugmentations(helper, \"" + BuilderTemplate.AUGMENTATION_FIELD + "\", obj);");
-                    }
-                    bb.eol("return helper.toString();");
-                }).nl();
+                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
+                    .jStr(type().simpleName()).eol(");");
+                for (var property : analysis.properties()) {
+                    bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
+                        .jStr(property.getName()).str(", ").str(property.getGetterName()).eol("());");
+                }
+                if (analysis.augmentType() != null) {
+                    bb.str(importedName(CODEHELPERS))
+                        .eol(".appendAugmentations(helper, \"" + BuilderTemplate.AUGMENTATION_FIELD + "\", this);");
+                }
+                bb.eol("return helper.toString();");
+            }).nl();
     }
 
     // FIXME: return a Block

@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal320Test {
@@ -27,6 +28,8 @@ class Mdsal320Test {
 
         final var foo = generateTypes.stream().filter(type -> type.canonicalName()
             .equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo")).findFirst().orElseThrow();
+
+        assertThat(foo.getImplements()).anySatisfy(type -> type.name().equals(BindingTypes.JAVA_DATACONTAINER));
 
         final var fooTypes = foo.getEnclosedTypes();
         assertEquals(1, fooTypes.size());
@@ -47,12 +50,6 @@ class Mdsal320Test {
         assertTrue(getImplIface.isDefault());
         assertTrue(it.hasNext());
 
-        final var bindingHashCode = it.next();
-        assertEquals(Naming.BINDING_HASHCODE_NAME, bindingHashCode.getName());
-        final var bindingEquals = it.next();
-        assertEquals(Naming.BINDING_EQUALS_NAME, bindingEquals.getName());
-        final var bindingToString = it.next();
-        assertEquals(Naming.BINDING_TO_STRING_NAME, bindingToString.getName());
         final var getBar = it.next();
         final var getBarType = assertInstanceOf(UnionTypeObjectArchetype.class, getBar.getReturnType());
         assertEquals(bar, getBarType);

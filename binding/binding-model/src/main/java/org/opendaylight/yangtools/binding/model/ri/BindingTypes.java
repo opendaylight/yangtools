@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -69,6 +70,7 @@ public final class BindingTypes {
     public static final @NonNull ConcreteType BITS_TYPE_OBJECT = typeForBuiltIn(BuiltInType.BITS);
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final @NonNull ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
+    public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
 
     // This is an annotation, we are current just referencing the type
     public static final JavaTypeName ROUTING_CONTEXT = JavaTypeName.create(RoutingContext.class);

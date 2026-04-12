@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.binding.BindingContract;
  *
  * @since 15.1.0
  */
-public sealed interface ImplementedInterface<T extends BindingContract<T>>
-        permits AbstractDataContainer, BindingContract {
+public sealed interface ImplementedInterface<T extends BindingContract<T>> permits BindingContract, JavaContract {
     /**
      * Return the interface implemented by this object. This method differs from {@link Object#getClass()} in that it
      * returns the interface contract, not a concrete implementation class.
