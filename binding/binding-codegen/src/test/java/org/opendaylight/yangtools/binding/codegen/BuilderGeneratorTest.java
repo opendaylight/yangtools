@@ -36,21 +36,9 @@ public class BuilderGeneratorTest {
         final var bb = genHashCode(mockGenType("get" + TEST));
         assertNotNull(bb);
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#hashCode()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent\
-             hashing
-             * results across all implementations.
-             *
-             * @param obj Object for which to generate hashCode() result.
-             * @return Hash code value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static int bindingHashCode(final test.@NonNull test obj) {
-                int result = 1;
-                final int prime = 31;
-                result = prime * result + Objects.hashCode(obj.getTest());
-                return result;
+            @Override
+            default int bindingHashCode() {
+                return 31 + Objects.hashCode(getTest());
             }
             """, bb.toRawString());
     }
@@ -65,21 +53,12 @@ public class BuilderGeneratorTest {
         final var bb = genHashCode(mockGenTypeMoreMeth("get" + TEST));
         assertNotNull(bb);
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#hashCode()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent\
-             hashing
-             * results across all implementations.
-             *
-             * @param obj Object for which to generate hashCode() result.
-             * @return Hash code value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static int bindingHashCode(final test.@NonNull test obj) {
+            @Override
+            default int bindingHashCode() {
                 int result = 1;
                 final int prime = 31;
-                result = prime * result + Objects.hashCode(obj.getTest1());
-                result = prime * result + Objects.hashCode(obj.getTest2());
+                result = prime * result + Objects.hashCode(getTest1());
+                result = prime * result + Objects.hashCode(getTest2());
                 return result;
             }
             """, bb.toRawString());
@@ -90,22 +69,9 @@ public class BuilderGeneratorTest {
         final var bb = genHashCode(mockAugment(mockGenType(TEST)));
         assertNotNull(bb);
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#hashCode()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent\
-             hashing
-             * results across all implementations.
-             *
-             * @param obj Object for which to generate hashCode() result.
-             * @return Hash code value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static int bindingHashCode(final test.@NonNull test obj) {
-                int result = 1;
-                for (var augmentation : obj.augmentations().values()) {
-                    result += augmentation.hashCode();
-                }
-                return result;
+            @Override
+            default int bindingHashCode() {
+                return 1 + CodeHelpers.hashAugmentations(this);
             }
             """, bb.toRawString());
     }
@@ -115,24 +81,9 @@ public class BuilderGeneratorTest {
         final var bb = genHashCode(mockAugment(mockGenType("get" + TEST)));
         assertNotNull(bb);
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#hashCode()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent\
-             hashing
-             * results across all implementations.
-             *
-             * @param obj Object for which to generate hashCode() result.
-             * @return Hash code value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static int bindingHashCode(final test.@NonNull test obj) {
-                int result = 1;
-                final int prime = 31;
-                result = prime * result + Objects.hashCode(obj.getTest());
-                for (var augmentation : obj.augmentations().values()) {
-                    result += augmentation.hashCode();
-                }
-                return result;
+            @Override
+            default int bindingHashCode() {
+                return 31 + Objects.hashCode(getTest()) + CodeHelpers.hashAugmentations(this);
             }
             """, bb.toRawString());
     }
@@ -142,25 +93,13 @@ public class BuilderGeneratorTest {
         final var bb = genHashCode(mockAugment(mockGenTypeMoreMeth("get" + TEST)));
         assertNotNull(bb);
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#hashCode()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent\
-             hashing
-             * results across all implementations.
-             *
-             * @param obj Object for which to generate hashCode() result.
-             * @return Hash code value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static int bindingHashCode(final test.@NonNull test obj) {
+            @Override
+            default int bindingHashCode() {
                 int result = 1;
                 final int prime = 31;
-                result = prime * result + Objects.hashCode(obj.getTest1());
-                result = prime * result + Objects.hashCode(obj.getTest2());
-                for (var augmentation : obj.augmentations().values()) {
-                    result += augmentation.hashCode();
-                }
-                return result;
+                result = prime * result + Objects.hashCode(getTest1());
+                result = prime * result + Objects.hashCode(getTest2());
+                return result + CodeHelpers.hashAugmentations(this);
             }
             """, bb.toRawString());
     }
@@ -170,19 +109,10 @@ public class BuilderGeneratorTest {
         final var genType = mockGenType("get" + TEST);
 
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#toString()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent string\
-
-             * representations across all implementations.
-             *
-             * @param obj Object for which to generate toString() result.
-             * @return {@link String} value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static String bindingToString(final test.@NonNull test obj) {
+            @Override
+            default String bindingToString() {
                 final var helper = MoreObjects.toStringHelper("test");
-                CodeHelpers.appendValue(helper, "test", obj.gettest());
+                CodeHelpers.appendValue(helper, "test", gettest());
                 return helper.toString();
             }
             """, genToString(genType).toRawString());
@@ -191,17 +121,8 @@ public class BuilderGeneratorTest {
     @Test
     void builderTemplateGenerateToStringWithoutAnyPropertyTest() {
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#toString()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent string\
-
-             * representations across all implementations.
-             *
-             * @param obj Object for which to generate toString() result.
-             * @return {@link String} value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static String bindingToString(final test.@NonNull test obj) {
+            @Override
+            default String bindingToString() {
                 final var helper = MoreObjects.toStringHelper("test");
                 return helper.toString();
             }
@@ -211,20 +132,11 @@ public class BuilderGeneratorTest {
     @Test
     void builderTemplateGenerateToStringWithMorePropertiesTest() {
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#toString()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent string\
-
-             * representations across all implementations.
-             *
-             * @param obj Object for which to generate toString() result.
-             * @return {@link String} value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static String bindingToString(final test.@NonNull test obj) {
+            @Override
+            default String bindingToString() {
                 final var helper = MoreObjects.toStringHelper("test");
-                CodeHelpers.appendValue(helper, "test1", obj.gettest1());
-                CodeHelpers.appendValue(helper, "test2", obj.gettest2());
+                CodeHelpers.appendValue(helper, "test1", gettest1());
+                CodeHelpers.appendValue(helper, "test2", gettest2());
                 return helper.toString();
             }
             """, genToString(mockGenTypeMoreMeth("get" + TEST)).toRawString());
@@ -233,19 +145,10 @@ public class BuilderGeneratorTest {
     @Test
     void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() {
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#toString()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent string\
-
-             * representations across all implementations.
-             *
-             * @param obj Object for which to generate toString() result.
-             * @return {@link String} value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static String bindingToString(final test.@NonNull test obj) {
+            @Override
+            default String bindingToString() {
                 final var helper = MoreObjects.toStringHelper("test");
-                CodeHelpers.appendAugmentations(helper, "augmentation", obj);
+                CodeHelpers.appendAugmentations(helper, "augmentation", this);
                 return helper.toString();
             }
             """, genToString(mockAugment(mockGenType(TEST))).toRawString());
@@ -254,20 +157,11 @@ public class BuilderGeneratorTest {
     @Test
     void builderTemplateGenerateToStringWithPropertyWithAugmentTest() {
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#toString()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent string\
-
-             * representations across all implementations.
-             *
-             * @param obj Object for which to generate toString() result.
-             * @return {@link String} value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static String bindingToString(final test.@NonNull test obj) {
+            @Override
+            default String bindingToString() {
                 final var helper = MoreObjects.toStringHelper("test");
-                CodeHelpers.appendValue(helper, "test", obj.gettest());
-                CodeHelpers.appendAugmentations(helper, "augmentation", obj);
+                CodeHelpers.appendValue(helper, "test", gettest());
+                CodeHelpers.appendAugmentations(helper, "augmentation", this);
                 return helper.toString();
             }
             """, genToString(mockAugment(mockGenType("get" + TEST))).toRawString());
@@ -276,21 +170,12 @@ public class BuilderGeneratorTest {
     @Test
     void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() {
         assertEquals("""
-            /**
-             * Default implementation of {@link Object#toString()} contract for this interface.
-             * Implementations of this interface are encouraged to defer to this method to get consistent string\
-
-             * representations across all implementations.
-             *
-             * @param obj Object for which to generate toString() result.
-             * @return {@link String} value of data modeled by this interface.
-             * @throws NullPointerException if {@code obj} is {@code null}
-             */
-            static String bindingToString(final test.@NonNull test obj) {
+            @Override
+            default String bindingToString() {
                 final var helper = MoreObjects.toStringHelper("test");
-                CodeHelpers.appendValue(helper, "test1", obj.gettest1());
-                CodeHelpers.appendValue(helper, "test2", obj.gettest2());
-                CodeHelpers.appendAugmentations(helper, "augmentation", obj);
+                CodeHelpers.appendValue(helper, "test1", gettest1());
+                CodeHelpers.appendValue(helper, "test2", gettest2());
+                CodeHelpers.appendAugmentations(helper, "augmentation", this);
                 return helper.toString();
             }
             """, genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toRawString());
@@ -311,7 +196,7 @@ public class BuilderGeneratorTest {
                 .collect(Collectors.toList());
 
         assertEquals(List.of(
-                // numeric types (boolean, byte, short, int, long, biginteger, bigdecimal), identityrefs, empty
+                // numeric types (boolean, byte, short, int, long, Uint*, Decimal64), identityrefs, Empty
                 "id16", "id16Def", "id32", "id32Def", "id64", "id64Def", "id8", "id8Def", "idBoolean", "idBooleanDef",
                 "idDecimal64", "idDecimal64Def","idEmpty", "idEmptyDef", "idIdentityref", "idIdentityrefDef",
                 "idLeafref", "idLeafrefDef", "idU16", "idU16Def", "idU32", "idU32Def", "idU64", "idU64Def", "idU8",

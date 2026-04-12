@@ -9,10 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import static org.opendaylight.yangtools.binding.model.ri.Types.classType;
-import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveBooleanType;
-import static org.opendaylight.yangtools.binding.model.ri.Types.primitiveIntType;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -29,6 +26,7 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
@@ -261,19 +259,7 @@ public abstract class Generator implements Iterable<Generator> {
      */
     static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder builder) {
         defaultImplementedInterace(builder);
-
-        builder.addMethod(Naming.BINDING_HASHCODE_NAME)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setStatic(true)
-            .setReturnType(primitiveIntType());
-        builder.addMethod(Naming.BINDING_EQUALS_NAME)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setStatic(true)
-            .setReturnType(primitiveBooleanType());
-        builder.addMethod(Naming.BINDING_TO_STRING_NAME)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setStatic(true)
-            .setReturnType(STRING);
+        builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
 
     static final void annotateDeprecatedIfNecessary(final EffectiveStatement<?, ?> stmt,

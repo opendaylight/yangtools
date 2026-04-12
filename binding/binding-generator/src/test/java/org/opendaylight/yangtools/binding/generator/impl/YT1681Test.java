@@ -106,7 +106,7 @@ class YT1681Test {
             .findFirst()
             .orElseThrow()
             .getMethodDefinitions();
-        assertEquals(14, neighborMethods.size());
+        assertEquals(11, neighborMethods.size());
 
         final var getNeighborId = neighborMethods.stream()
             .filter(method -> method.getName().equals("getNeighborId"))
