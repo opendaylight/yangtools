@@ -356,11 +356,13 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         final var analysis = typeAnalysis();
         final boolean augmentable = analysis.augmentType() != null;
         final var props = analysis.properties();
-        if (!augmentable && props.isEmpty()) {
+        final var propCount = props.size();
+
+        if (!augmentable && propCount == 0) {
             return null;
         }
 
-        final var bb = newBlockBuilder()
+        return newBlockBuilder()
             .eol("/**")
             .str(" * Default implementation of {@link ").str(importedName(OBJECT))
                 .eol("#hashCode()} contract for this interface.")
@@ -373,24 +375,38 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                   """)
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code obj} is {@code null}")
             .eol(" */")
-            .str("static int " + BINDING_HASHCODE_NAME + "(final ").str(fullyQualifiedNonNull(type())).str(" obj)").oB()
-                .eol("int result = 1;");
-        if (!props.isEmpty()) {
-            bb.eol("final int prime = 31;");
-            for (var property : props) {
-                bb.str("result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
-                    .str(getterMethodName(property)).eol("());");
-            }
-        }
-        if (augmentable) {
-            bb
-                .str("for (var augmentation : obj.augmentations().values())").oB()
-                    .eol("result += augmentation.hashCode();")
-                .cB();
-        }
-        return bb
-            .eol("return result;")
-            .cB();
+            .str("static int " + BINDING_HASHCODE_NAME + "(").str(fullyQualifiedNonNull(type())).str(" obj)")
+            .jBlock(bb -> {
+                switch (propCount) {
+                    case 0 -> {
+                        bb.str("return 1 + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                    }
+                    case 1 -> {
+                        final var property = props.iterator().next();
+                        bb.str("return 31 + ").str(importedUtilClass(property)).str(".hashCode(obj.")
+                            .str(getterMethodName(property)).str("())");
+                        if (augmentable) {
+                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                        } else {
+                            bb.eS();
+                        }
+                    }
+                    default -> {
+                        bb.eol("int result = 1;");
+                        bb.eol("final int prime = 31;");
+                        for (var property : props) {
+                            bb.str("result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
+                                .str(getterMethodName(property)).eol("());");
+                        }
+                        bb.str("return result");
+                        if (augmentable) {
+                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                        } else {
+                            bb.eS();
+                        }
+                    }
+                }
+            }).nl();
     }
 
     private @Nullable BlockBuilder generateBindingEquals() {
