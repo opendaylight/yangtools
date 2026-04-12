@@ -377,33 +377,33 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .eol(" */")
             .str("static int " + BINDING_HASHCODE_NAME + "(").str(fullyQualifiedNonNull(type())).str(" obj)")
             .jBlock(bb -> {
+                bb.str("return ").str(importedName(CODEHELPERS)).str(".bindingHashCode");
                 switch (propCount) {
-                    case 0 -> {
-                        bb.str("return 1 + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
-                    }
+                    case 0 ->
+                        bb.eol("0(obj);");
                     case 1 -> {
-                        final var property = props.iterator().next();
-                        bb.str("return 31 + ").str(importedUtilClass(property)).str(".hashCode(obj.")
-                            .str(getterMethodName(property)).str("())");
+                        bb.str("1(obj");
                         if (augmentable) {
-                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
-                        } else {
-                            bb.eS();
+                            bb.str(", obj");
                         }
+                        bb.str(".").str(getterMethodName(props.iterator().next())).eol("());");
                     }
+                    // TODO: consider specializing for N=2 (sngle line) for the cost of 8 new methods in CodeHelpers
                     default -> {
-                        bb.eol("int result = 1;");
-                        bb.eol("final int prime = 31;");
-                        for (var property : props) {
-                            bb.str("result = prime * result + ").str(importedUtilClass(property)).str(".hashCode(obj.")
-                                .str(getterMethodName(property)).eol("());");
-                        }
-                        bb.str("return result");
+                        bb.str("N(");
                         if (augmentable) {
-                            bb.str(" + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
-                        } else {
-                            bb.eS();
+                            bb.str("obj,");
                         }
+
+                        final var it = props.iterator();
+                        while (true) {
+                            bb.nl().ind("obj.").str(getterMethodName(it.next())).str("()");
+                            if (!it.hasNext()) {
+                                break;
+                            }
+                            bb.str(",");
+                        }
+                        bb.eol(");");
                     }
                 }
             }).nl();

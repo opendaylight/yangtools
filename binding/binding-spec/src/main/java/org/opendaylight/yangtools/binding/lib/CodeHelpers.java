@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Arrays;
@@ -365,6 +366,54 @@ public final class CodeHelpers {
      */
     public static <K, V> @Nullable Map<K, V> emptyToNull(final @Nullable Map<K, V> input) {
         return input != null && input.isEmpty() ? null : input;
+    }
+
+    @Beta
+    @NonNullByDefault
+    public static int bindingHashCode0(final Augmentable<?> augmentable) {
+        return 1 + hashAugmentations(augmentable);
+    }
+
+    @Beta
+    @NonNullByDefault
+    public static int bindingHashCode1(final Augmentable<?> augmentable, final byte @Nullable [] prop) {
+        return 31 + hashAugmentations(augmentable) + Arrays.hashCode(prop);
+    }
+
+    @Beta
+    @NonNullByDefault
+    public static int bindingHashCode1(final Augmentable<?> augmentable, final @Nullable Object prop) {
+        return 31 + hashAugmentations(augmentable) + Objects.hashCode(prop);
+    }
+
+    @Beta
+    public static int bindingHashCode1(final byte @Nullable [] prop) {
+        return 31 + Arrays.hashCode(prop);
+    }
+
+    @Beta
+    public static int bindingHashCode1(final @Nullable Object prop) {
+        return 31 + Objects.hashCode(prop);
+    }
+
+    @Beta
+    @NonNullByDefault
+    public static int bindingHashCodeN(final Augmentable<?> augmentable, final @Nullable Object... props) {
+        return hashAugmentations(augmentable) + bindingHashCodeN(props);
+    }
+
+    @Beta
+    public static int bindingHashCodeN(final @Nullable Object... props) {
+        int result = 1;
+        final int prime = 31;
+        for (var property : props) {
+            result = prime * result + switch (property) {
+                case null -> 0;
+                case byte[] bytes -> Arrays.hashCode(bytes);
+                default -> Objects.hashCode(property);
+            };
+        }
+        return result;
     }
 
     /**

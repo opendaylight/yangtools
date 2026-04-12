@@ -46,7 +46,7 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(test.@NonNull test obj) {
-                return 31 + Objects.hashCode(obj.getTest());
+                return CodeHelpers.bindingHashCode1(obj.getTest());
             }
             """, bb.toRawString());
     }
@@ -71,11 +71,9 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(test.@NonNull test obj) {
-                int result = 1;
-                final int prime = 31;
-                result = prime * result + Objects.hashCode(obj.getTest1());
-                result = prime * result + Objects.hashCode(obj.getTest2());
-                return result;
+                return CodeHelpers.bindingHashCodeN(
+                    obj.getTest1(),
+                    obj.getTest2());
             }
             """, bb.toRawString());
     }
@@ -95,7 +93,7 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(test.@NonNull test obj) {
-                return 1 + CodeHelpers.hashAugmentations(obj);
+                return CodeHelpers.bindingHashCode0(obj);
             }
             """, bb.toRawString());
     }
@@ -115,7 +113,7 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(test.@NonNull test obj) {
-                return 31 + Objects.hashCode(obj.getTest()) + CodeHelpers.hashAugmentations(obj);
+                return CodeHelpers.bindingHashCode1(obj, obj.getTest());
             }
             """, bb.toRawString());
     }
@@ -135,11 +133,9 @@ public class BuilderGeneratorTest {
              * @throws NullPointerException if {@code obj} is {@code null}
              */
             static int bindingHashCode(test.@NonNull test obj) {
-                int result = 1;
-                final int prime = 31;
-                result = prime * result + Objects.hashCode(obj.getTest1());
-                result = prime * result + Objects.hashCode(obj.getTest2());
-                return result + CodeHelpers.hashAugmentations(obj);
+                return CodeHelpers.bindingHashCodeN(obj,
+                    obj.getTest1(),
+                    obj.getTest2());
             }
             """, bb.toRawString());
     }
