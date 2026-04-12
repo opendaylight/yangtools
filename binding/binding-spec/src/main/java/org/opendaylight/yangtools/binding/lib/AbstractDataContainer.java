@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.lib;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
@@ -17,8 +16,8 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * @param <T> the {@link DataContainer} type
  * @since 15.1.0
  */
-public abstract non-sealed class AbstractDataContainer<T extends DataContainer>
-        implements ImplementedInterface<DataContainer> {
+public abstract class AbstractDataContainer<T extends DataContainer & JavaDataContainer<T>>
+        implements JavaDataContainer<T> {
     // TODO: single field when hashCode() is defined to be != 0
     private int hashCode;
     private volatile boolean hashCodeValid;
@@ -34,11 +33,6 @@ public abstract non-sealed class AbstractDataContainer<T extends DataContainer>
         hashCodeValid = true;
         return result;
     }
-
-    /**
-     * {@return the hash code value}
-     */
-    protected abstract int bindingHashCode();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -59,19 +53,8 @@ public abstract non-sealed class AbstractDataContainer<T extends DataContainer>
         return this == obj || implementedInterface().isInstance(obj) && bindingEquals((T) obj);
     }
 
-    /**
-     * {@return {@code true} if supplier {@code other} compares as equal to this object}.
-     * @param other the other object
-     */
-    protected abstract boolean bindingEquals(@NonNull T other);
-
     @Override
     public final String toString() {
         return bindingToString();
     }
-
-    /**
-     * {@return the {@link #toString()} string}
-     */
-    protected abstract @NonNull String bindingToString();
 }

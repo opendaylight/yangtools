@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.binding.DataContainer;
  *
  * @param <T> Augmentable type
  */
-public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContainer> extends AbstractDataContainer<T>
+public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContainer & JavaDataContainer<T>>
+        extends AbstractDataContainer<T>
         implements Augmentable<T> {
     private final @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations;
 

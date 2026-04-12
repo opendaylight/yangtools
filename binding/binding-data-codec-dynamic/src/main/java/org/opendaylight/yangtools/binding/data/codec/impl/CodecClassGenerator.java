@@ -25,7 +25,8 @@ import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.lib.JavaContract;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
@@ -43,6 +44,18 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
     private static final Generic BB_INT = TypeDefinition.Sort.describe(int.class);
     private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
     private static final StackManipulation FIRST_ARG_REF = MethodVariableAccess.REFERENCE.loadFrom(1);
+    // return this.bindingHashCode();
+    private static final Implementation BINDING_HASH_CODE = new Implementation.Simple(
+        loadThis(), invokeMethod(JavaContract.class, "bindingHashCode"), MethodReturn.INTEGER);
+    // return this.bindingEquals(obj);
+    private static final Implementation BINDING_EQUALS = new Implementation.Simple(
+        loadThis(), FIRST_ARG_REF,
+        invokeMethod(JavaContract.class, "bindingEquals", BindingContract.class),
+        MethodReturn.INTEGER);
+    // return this.bindingToString();
+    private static final Implementation BINDING_TO_STRING = new Implementation.Simple(
+        loadThis(), invokeMethod(JavaContract.class, "bindingToString"), MethodReturn.REFERENCE);
+
     private static final ByteBuddy BB = new ByteBuddy();
 
     private static final int PROT_FINAL = Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
@@ -78,14 +91,11 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
         // Final bits:
         return GeneratorResult.of(new UnloadedLoadableClass<>(builder
             // codecHashCode() ...
-            .defineMethod("codecHashCode", BB_INT, PROT_FINAL)
-            .intercept(codecHashCode(bindingInterface))
+            .defineMethod("codecHashCode", BB_INT, PROT_FINAL).intercept(BINDING_HASH_CODE)
             // ... equals(Object) ...
-            .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_OBJECT)
-            .intercept(codecEquals(bindingInterface))
+            .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_OBJECT).intercept(BINDING_EQUALS)
             // ... toString() ...
-            .defineMethod("toString", BB_STRING, PUB_FINAL)
-            .intercept(toString(bindingInterface))
+            .defineMethod("toString", BB_STRING, PUB_FINAL).intercept(BINDING_TO_STRING)
             // ... and build it
             .make()));
     }
@@ -97,29 +107,4 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
      * @return a possibly updated {@link DynamicType.Builder}
      */
     abstract DynamicType.Builder<T> customizeBuilder(DynamicType.Builder<T> builder);
-
-    private static Implementation codecHashCode(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingHashCode(this);
-            loadThis(),
-            invokeMethod(bindingInterface, Naming.BINDING_HASHCODE_NAME, bindingInterface),
-            MethodReturn.INTEGER);
-    }
-
-    private static Implementation codecEquals(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingEquals(this, obj);
-            loadThis(),
-            FIRST_ARG_REF,
-            invokeMethod(bindingInterface, Naming.BINDING_EQUALS_NAME, bindingInterface, Object.class),
-            MethodReturn.INTEGER);
-    }
-
-    private static Implementation toString(final Class<?> bindingInterface) {
-        return new Implementation.Simple(
-            // return Foo.bindingToString(this);
-            loadThis(),
-            invokeMethod(bindingInterface, Naming.BINDING_TO_STRING_NAME, bindingInterface),
-            MethodReturn.REFERENCE);
-    }
 }

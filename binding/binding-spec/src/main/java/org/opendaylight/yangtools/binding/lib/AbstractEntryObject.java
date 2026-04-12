@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.binding.Key;
  * @param <T> {@link EntryObject} type
  * @param <K> {@link Key} type
  */
-public abstract class AbstractEntryObject<T extends EntryObject<T, K>, K extends Key<T>>
+public abstract class AbstractEntryObject<T extends EntryObject<T, K> & JavaDataContainer<T>, K extends Key<T>>
         extends AbstractAugmentable<T> implements EntryObject<T, K> {
     private final @NonNull K key;
 
