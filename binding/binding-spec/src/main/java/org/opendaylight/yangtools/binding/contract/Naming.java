@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.lib.JavaContract;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -166,21 +167,21 @@ public final class Naming {
     public static final @NonNull String BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
 
     /**
-     * Name of default {@link Object#hashCode()} implementation for instantiated DataObjects. Each such generated
-     * interface contains this static method.
+     * Name of {@link JavaContract#bindingHashCode()}.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static final @NonNull String BINDING_HASHCODE_NAME = "bindingHashCode";
 
     /**
-     * Name of default {@link Object#equals(Object)} implementation for instantiated DataObjects. Each such generated
-     * interface contains this static method.
+     * Name of {@link JavaContract#bindingEquals()}.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static final @NonNull String BINDING_EQUALS_NAME = "bindingEquals";
 
     /**
-     * Name of default {@link Object#toString()} implementation for instantiated DataObjects. Each such generated
-     * interface contains this static method.
+     * Name of {@link JavaContract#bindingToString()}.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static final @NonNull String BINDING_TO_STRING_NAME = "bindingToString";
 
     /**

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.lib;
 
 import com.google.common.annotations.Beta;
 import java.util.Map;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EntryObject;
@@ -25,8 +24,8 @@ import org.opendaylight.yangtools.binding.Key;
  */
 // FIXME: remove when AbstractAugmentable extends AbstractDataContainer
 @Beta
-public abstract non-sealed class BaseEntryObject<T extends EntryObject<T, K>, K extends Key<T>>
-        extends AbstractEntryObject<T, K> implements ImplementedInterface<DataContainer> {
+public abstract class BaseEntryObject<T extends EntryObject<T, K>, K extends Key<T>> extends AbstractEntryObject<T, K>
+        implements JavaContract<DataContainer, T> {
     // TODO: single field when hashCode() is defined to be != 0
     private int hashCode;
     private volatile boolean hashCodeValid;
@@ -47,29 +46,13 @@ public abstract non-sealed class BaseEntryObject<T extends EntryObject<T, K>, K 
         return result;
     }
 
-    /**
-     * {@return the hash code value}
-     */
-    protected abstract int bindingHashCode();
-
     @Override
     public final boolean equals(final Object obj) {
         return this == obj || implementedInterface().isInstance(obj) && bindingEquals((T) obj);
     }
 
-    /**
-     * {@return {@code true} if supplier {@code other} compares as equal to this object}.
-     * @param other the other object
-     */
-    protected abstract boolean bindingEquals(@NonNull T other);
-
     @Override
     public final String toString() {
         return bindingToString();
     }
-
-    /**
-     * {@return the {@link #toString()} string}
-     */
-    protected abstract @NonNull String bindingToString();
 }
