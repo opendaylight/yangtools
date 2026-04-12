@@ -167,6 +167,6 @@ class Uint16Test {
     void supportReturnsSingleton() {
         final var reported = Uint16.ZERO.support();
         assertNotNull(reported);
-        assertSame(reported, Uint16.Support.instance());
+        assertSame(reported, Uint16.Support.INSTANCE);
     }
 }

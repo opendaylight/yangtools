@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
@@ -24,19 +25,13 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @NonNullByDefault
 public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static final class Support extends AbstractCanonicalValueSupport<Uint32> {
-        private static final CanonicalValueSupport<Uint32> INSTANCE = new Support();
+        @VisibleForTesting
+        static final CanonicalValueSupport<Uint32> INSTANCE = new Support();
 
-        @Deprecated(since = "15.1.0", forRemoval = true)
         public Support() {
             super(Uint32.class);
-        }
-
-        /**
-         * {@return the singleton instance}
-         */
-        public static CanonicalValueSupport<Uint32> instance() {
-            return INSTANCE;
         }
 
         @Override
@@ -343,7 +338,7 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
 
     @Override
     public final CanonicalValueSupport<Uint32> support() {
-        return Support.instance();
+        return Support.INSTANCE;
     }
 
     /**

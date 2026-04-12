@@ -436,6 +436,6 @@ class Decimal64Test {
     void supportReturnsSingleton() {
         final var reported = Decimal64.minValueIn(1).support();
         assertNotNull(reported);
-        assertSame(reported, Decimal64.Support.instance());
+        assertSame(reported, Decimal64.Support.INSTANCE);
     }
 }

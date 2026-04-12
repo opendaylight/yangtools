@@ -164,6 +164,6 @@ class Uint8Test {
     void supportReturnsSingleton() {
         final var reported = Uint8.ZERO.support();
         assertNotNull(reported);
-        assertSame(reported, Uint8.Support.instance());
+        assertSame(reported, Uint8.Support.INSTANCE);
     }
 }

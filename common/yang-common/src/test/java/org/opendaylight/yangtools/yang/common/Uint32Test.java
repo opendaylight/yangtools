@@ -174,6 +174,6 @@ class Uint32Test {
     void supportReturnsSingleton() {
         final var reported = Uint32.ZERO.support();
         assertNotNull(reported);
-        assertSame(reported, Uint32.Support.instance());
+        assertSame(reported, Uint32.Support.INSTANCE);
     }
 }

@@ -27,19 +27,13 @@ import org.opendaylight.yangtools.yang.common.CanonicalValueValidator.ValidatedV
  */
 @NonNullByDefault
 public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64> {
+    @Deprecated(since = "15.1.0", forRemoval = true)
     public static final class Support extends AbstractCanonicalValueSupport<Decimal64> {
-        private static final CanonicalValueSupport<Decimal64> INSTANCE = new Support();
+        @VisibleForTesting
+        static final CanonicalValueSupport<Decimal64> INSTANCE = new Support();
 
-        @Deprecated(since = "15.1.0", forRemoval = true)
         public Support() {
             super(Decimal64.class);
-        }
-
-        /**
-         * {@return the singleton instance}
-         */
-        public static CanonicalValueSupport<Decimal64> instance() {
-            return INSTANCE;
         }
 
         @Override
@@ -340,7 +334,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
      * @throws NumberFormatException if the string does not contain a parsable decimal64.
      */
     public static Decimal64 valueOf(final String str) {
-        return switch (Support.instance().fromString(str)) {
+        return switch (Support.INSTANCE.fromString(str)) {
             case ValidatedValue(var value) -> value;
             case CanonicalValueViolation<?> violation -> {
                 final var message = violation.message();
@@ -594,7 +588,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
 
     @Override
     public final CanonicalValueSupport<Decimal64> support() {
-        return Support.instance();
+        return Support.INSTANCE;
     }
 
     @Override
