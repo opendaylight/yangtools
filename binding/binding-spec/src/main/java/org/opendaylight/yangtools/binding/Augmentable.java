@@ -80,9 +80,7 @@ public interface Augmentable<T extends Augmentable<T> & DataContainer> {
     }
 
     /**
-     * Returns map of all augmentations.
-     *
-     * @return map of all augmentations.
+     * {@return map of all augmentations}
      */
-    @NonNull Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations();
+    @NonNull Map<Class<? extends Augmentation<T>>, @NonNull Augmentation<T>> augmentations();
 }
