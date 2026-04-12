@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.lib;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
@@ -18,15 +17,11 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * @param <T> the {@link DataContainer} type
  * @since 15.1.0
  */
-public abstract class AbstractDataContainer<T extends DataContainer> {
+public abstract non-sealed class AbstractDataContainer<T extends DataContainer>
+        implements ImplementedInterface<DataContainer> {
     // TODO: single field when hashCode() is defined to be != 0
     private int hashCode;
     private volatile boolean hashCodeValid;
-
-    /**
-     * {@return the equality class, should always be the same as {@link BindingContract#implementedInterface()}}
-     */
-    protected abstract @NonNull Class<T> equalityClass();
 
     @Override
     public final int hashCode() {
@@ -34,7 +29,7 @@ public abstract class AbstractDataContainer<T extends DataContainer> {
     }
 
     private int loadHashCode() {
-        final var result = computeHashCode();
+        final var result = bindingHashCode();
         hashCode = result;
         hashCodeValid = true;
         return result;
@@ -43,30 +38,40 @@ public abstract class AbstractDataContainer<T extends DataContainer> {
     /**
      * {@return the hash code value}
      */
-    protected abstract int computeHashCode();
+    protected abstract int bindingHashCode();
 
     @Override
+    @SuppressWarnings("unchecked")
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        final var equalityClass = equalityClass();
-        return equalityClass.isInstance(obj) && computeEquals(equalityClass.cast(obj));
+        // The unchecked cast here is safe, but we cannot quite express that. We are seeing implementedInterface()
+        // as Class<? extends DataContainer> and we should be sharpening the return type to Class<T>. If we were to do
+        // that, though, we would override the default method in the generated interface -- effectively forcing
+        // subclasses to restore that wiring by:
+        //
+        //   public Class<Foo> implementedInterface() {
+        //     return Foo.super.implementedInterface();
+        //   }
+        //
+        // Which is exactly the bit wiring we want to side-step through the use of ImplementedInterface.
+        //
+        // So we rely on subclass to not try anything weird: it is bound by the class it returns from
+        // implementedInterface(), so it better be giving us the correct contract :)
+        return this == obj || implementedInterface().isInstance(obj) && bindingEquals((T) obj);
     }
 
     /**
      * {@return {@code true} if supplier {@code other} compares as equal to this object}.
      * @param other the other object
      */
-    protected abstract boolean computeEquals(@NonNull T other);
+    protected abstract boolean bindingEquals(@NonNull T other);
 
     @Override
     public final String toString() {
-        return computeToString();
+        return bindingToString();
     }
 
     /**
      * {@return the {@link #toString()} string}
      */
-    protected abstract @NonNull String computeToString();
+    protected abstract @NonNull String bindingToString();
 }
