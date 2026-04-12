@@ -47,6 +47,9 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      */
     final GeneratedTransferObject keyType;
 
+    // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
+    //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
+    //        implementations of its methods
     final GeneratedType targetType;
 
     AbstractBuilderTemplate(final @NonNull GeneratedClass javaType, final @NonNull GeneratedType type,
