@@ -19,6 +19,8 @@ public non-sealed interface DataRoot<T extends DataRoot<T>> extends DataContaine
 
     /**
      * {@return the {@link RootMeta} for this root}
+     * @deprecated Do not use, this method is an unintended leak.
      */
+    @Deprecated(since = "15.1.1", forRemoval = true)
     @NonNull RootMeta<T> meta();
 }
