@@ -66,6 +66,7 @@ final class DataRootTemplate extends InterfaceTemplate {
             .blk(generateDefaultImplementedInterface())
             .nl()
             .at().eol(override)
+            .at().str(importedName(DEPRECATED)).eol("(forRemoval = true)")
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
             .str("default ").gen(rootMeta, type).str(" " + DATA_ROOT_META_NAME + "()").oB()
                 .eol("return " + META_STATIC_FIELD_NAME + ';')
