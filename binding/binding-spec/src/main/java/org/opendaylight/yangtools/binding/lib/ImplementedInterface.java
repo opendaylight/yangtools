@@ -18,13 +18,12 @@ import org.opendaylight.yangtools.binding.BindingContract;
  * <p>This makes this interface has two views:
  * <ul>
  *   <li>{@link BindingContract} is the user-facing view, which is customized through generated contracts</li>
- *   <li>{@link AbstractDataContainer} is the implementation-facing view</li>
+ *   <li>{@link JavaContract} is the implementation-facing view</li>
  * </ul>
  *
  * @since 15.1.0
  */
-public sealed interface ImplementedInterface<T extends BindingContract<T>>
-        permits AbstractDataContainer, BindingContract {
+public sealed interface ImplementedInterface<T extends BindingContract<T>> permits BindingContract, JavaContract {
     /**
      * Return the interface implemented by this object. This method differs from {@link Object#getClass()} in that it
      * returns the interface contract, not a concrete implementation class.
