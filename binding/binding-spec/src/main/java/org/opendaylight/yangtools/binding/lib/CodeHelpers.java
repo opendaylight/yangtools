@@ -368,6 +368,22 @@ public final class CodeHelpers {
     }
 
     /**
+     * Provide the combined hash code of {@link Augmentable}'s {@link Augmentable#augmentations()}.
+     *
+     * @param augmentable Augmentable object to hash
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 15.1.0
+     */
+    @NonNullByDefault
+    public static int hashAugmentations(final Augmentable<?> augmentable) {
+        int result = 0;
+        for (var augmentation : augmentable.augmentations().values()) {
+            result += augmentation.hashCode();
+        }
+        return result;
+    }
+
+    /**
      * Return hash code of a single-property wrapper class. Since the wrapper is not {@code null}, we really want to
      * discern this object being present, hence {@link Objects#hashCode()} is not really useful we would end up with
      * {@code 0} for both non-present and present-with-null objects.
