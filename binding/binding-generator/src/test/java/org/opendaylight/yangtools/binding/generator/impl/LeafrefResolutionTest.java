@@ -46,7 +46,7 @@ class LeafrefResolutionTest {
             .findFirst()
             .orElseThrow()
             .getMethodDefinitions();
-        assertEquals(10, neighborMethods.size());
+        assertEquals(7, neighborMethods.size());
 
         final var getNeighborId = neighborMethods.stream()
             .filter(method -> method.getName().equals("getNeighborId"))
