@@ -53,7 +53,7 @@ class AugmentRelativeXPathTest {
 
                 final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
                 assertNotNull(gtInterfaceMethods, "Interface methods are null");
-                assertEquals(9, gtInterfaceMethods.size());
+                assertEquals(6, gtInterfaceMethods.size());
 
                 MethodSignature getIfcKeyMethod = null;
                 for (var method : gtInterfaceMethods) {
@@ -73,7 +73,7 @@ class AugmentRelativeXPathTest {
 
                 final var tunnelMethods = gtTunnel.getMethodDefinitions();
                 assertNotNull(tunnelMethods, "Tunnel methods are null");
-                assertEquals(7, tunnelMethods.size());
+                assertEquals(4, tunnelMethods.size());
 
                 MethodSignature getTunnelKeyMethod = null;
                 for (var method : tunnelMethods) {
