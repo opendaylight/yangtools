@@ -12,7 +12,6 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
@@ -24,8 +23,8 @@ import org.opendaylight.yangtools.binding.DataContainer;
  */
 // FIXME: remove when AbstractAugmentable extends AbstractDataContainer
 @Beta
-public abstract class AugmentableDataContainer<T extends DataContainer & Augmentable<T>>
-        extends AbstractAugmentable<T> {
+public abstract non-sealed class AugmentableDataContainer<T extends DataContainer & Augmentable<T>>
+        extends AbstractAugmentable<T> implements ImplementedInterface<DataContainer> {
     // TODO: single field when hashCode() is defined to be != 0
     private int hashCode;
     private volatile boolean hashCodeValid;
@@ -34,18 +33,13 @@ public abstract class AugmentableDataContainer<T extends DataContainer & Augment
         super(augmentations);
     }
 
-    /**
-     * {@return the equality class, should always be the same as {@link BindingContract#implementedInterface()}}
-     */
-    protected abstract @NonNull Class<T> equalityClass();
-
     @Override
     public final int hashCode() {
         return hashCodeValid ? hashCode : loadHashCode();
     }
 
     private int loadHashCode() {
-        final var result = computeHashCode();
+        final var result = bindingHashCode();
         hashCode = result;
         hashCodeValid = true;
         return result;
@@ -54,30 +48,26 @@ public abstract class AugmentableDataContainer<T extends DataContainer & Augment
     /**
      * {@return the hash code value}
      */
-    protected abstract int computeHashCode();
+    protected abstract int bindingHashCode();
 
     @Override
     public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        final var equalityClass = equalityClass();
-        return equalityClass.isInstance(obj) && computeEquals(equalityClass.cast(obj));
+        return this == obj || implementedInterface().isInstance(obj) && bindingEquals((T) obj);
     }
 
     /**
      * {@return {@code true} if supplier {@code other} compares as equal to this object}.
      * @param other the other object
      */
-    protected abstract boolean computeEquals(@NonNull T other);
+    protected abstract boolean bindingEquals(@NonNull T other);
 
     @Override
     public final String toString() {
-        return computeToString();
+        return bindingToString();
     }
 
     /**
      * {@return the {@link #toString()} string}
      */
-    protected abstract @NonNull String computeToString();
+    protected abstract @NonNull String bindingToString();
 }
