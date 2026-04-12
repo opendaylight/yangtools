@@ -22,25 +22,6 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @NonNullByDefault
 public non-sealed class Uint8 extends Number implements YangUint<Uint8> {
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final class Support extends AbstractCanonicalValueSupport<Uint8> {
-        @VisibleForTesting
-        static final CanonicalValueSupport<Uint8> INSTANCE = new Support();
-
-        public Support() {
-            super(Uint8.class);
-        }
-
-        @Override
-        public ValidationResult<Uint8> fromString(final String str) {
-            try {
-                return new ValidatedValue<>(Uint8.valueOf(str));
-            } catch (IllegalArgumentException e) {
-                return CanonicalValueViolation.of(e);
-            }
-        }
-    }
-
     private static final short MAX_VALUE_SHORT = 255;
     private static final String MAX_VALUE_STR = "255";
 
@@ -325,7 +306,7 @@ public non-sealed class Uint8 extends Number implements YangUint<Uint8> {
 
     @Override
     public final CanonicalValueSupport<Uint8> support() {
-        return Support.INSTANCE;
+        return Uint8Support.INSTANCE;
     }
 
     /**

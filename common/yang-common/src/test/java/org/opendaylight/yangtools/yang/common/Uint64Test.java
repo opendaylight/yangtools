@@ -187,6 +187,6 @@ class Uint64Test {
     void supportReturnsSingleton() {
         final var reported = Uint64.ZERO.support();
         assertNotNull(reported);
-        assertSame(reported, Uint64.Support.INSTANCE);
+        assertSame(reported, Uint64Support.INSTANCE);
     }
 }
