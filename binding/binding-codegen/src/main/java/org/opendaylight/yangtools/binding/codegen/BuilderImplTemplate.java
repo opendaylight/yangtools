@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
@@ -29,7 +26,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * A template for the inner implementation class supported by a {@link BuilderTemplate}.
@@ -56,7 +52,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     @NonNullByDefault
     BuilderImplTemplate(final BuilderTemplate builder, final GeneratedType type) {
-        // FIXME: pass builder to super?
+        // FIXME: we should be delegating access to these fields to builder
         super(builder.javaType().getNestedClass(type), type, builder.targetType, builder.properties,
             builder.augmentType, builder.keyType);
         this.builder = builder;
@@ -64,7 +60,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     @Override
     BlockBuilder body() {
-        final var impIface = importedName(targetType);
+        final var implIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
 
         final var bb = newBlockBuilder()
@@ -72,15 +68,15 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             .str("private static final class ").str(type().simpleName()).str(" extends ");
         if (keyType != null) {
             // EntryObject
-            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), impIface, importedName(keyType));
+            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(keyType));
         } else {
             bb.gen(augmentType == null
                 // Augmentation, YangData
                 ? importedName(ABSTRACT_DATA_CONTAINER)
                 // everything else
-                : importedName(ABSTRACT_AUGMENTABLE), impIface);
+                : importedName(ABSTRACT_AUGMENTABLE), implIface);
         }
-        bb.str(" implements ").str(impIface).oB();
+        bb.str(" implements ").str(implIface).oB();
 
         // generate instance fields
         if (!properties.isEmpty()) {
@@ -152,24 +148,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        // generate bindingHashCode()/bindingEquals()/bindingToString() routing
-        return bb
-            .nl()
-            .at().eol(override)
-            .str("protected int bindingHashCode()").oB()
-                .str("return ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
-            .cB()
-            .nl()
-            .at().eol(override)
-            .str("protected boolean bindingEquals(").str(impIface).str(" other)").oB()
-                .str("return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, other);")
-            .cB()
-            .nl()
-            .at().eol(override)
-            .str("protected ").str(importedName(Types.STRING)).str(" bindingToString()").oB()
-                .str("return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
-            .cB()
-            .cB();
+        return bb.cB();
     }
 
     @Override

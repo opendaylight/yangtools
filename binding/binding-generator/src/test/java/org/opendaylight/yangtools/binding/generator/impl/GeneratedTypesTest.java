@@ -45,9 +45,9 @@ class GeneratedTypesTest {
         assertNotNull(simpleContainer);
         assertNotNull(nestedContainer);
         // FIXME: split this into getter/default/static asserts
-        assertEquals(10, simpleContainer.getMethodDefinitions().size());
+        assertEquals(7, simpleContainer.getMethodDefinitions().size());
         // FIXME: split this into getter/default/static asserts
-        assertEquals(8, nestedContainer.getMethodDefinitions().size());
+        assertEquals(5, nestedContainer.getMethodDefinitions().size());
 
         int getFooMethodCounter = 0;
         int getBarMethodCounter = 0;
@@ -127,9 +127,9 @@ class GeneratedTypesTest {
         assertNotNull(simpleContainer);
         assertNotNull(nestedContainer);
         // FIXME: split this into getter/default/static asserts
-        assertEquals(10, simpleContainer.getMethodDefinitions().size());
+        assertEquals(7, simpleContainer.getMethodDefinitions().size());
         // FIXME: split this into getter/default/static asserts
-        assertEquals(8, nestedContainer.getMethodDefinitions().size());
+        assertEquals(5, nestedContainer.getMethodDefinitions().size());
 
         int getFooMethodCounter = 0;
         int getBarMethodCounter = 0;
@@ -275,9 +275,9 @@ class GeneratedTypesTest {
         }
 
         // FIXME: split this into getter/default/static asserts
-        assertEquals(6, listParentContainerMethodsCount);
+        assertEquals(3, listParentContainerMethodsCount);
         // FIXME: split this into getter/default/static asserts
-        assertEquals(6, listChildContainerMethodsCount);
+        assertEquals(3, listChildContainerMethodsCount);
         assertEquals(1, getSimpleListKeyMethodCount);
         assertEquals(1, listKeyClassCount);
 
@@ -292,7 +292,7 @@ class GeneratedTypesTest {
         assertEquals(1, getBarMethodCount);
 
         // FIXME: split this into getter/default/static asserts
-        assertEquals(15, simpleListMethodsCount);
+        assertEquals(12, simpleListMethodsCount);
     }
 
     @Test
