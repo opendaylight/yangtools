@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
@@ -25,25 +24,6 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @NonNullByDefault
 public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final class Support extends AbstractCanonicalValueSupport<Uint32> {
-        @VisibleForTesting
-        static final CanonicalValueSupport<Uint32> INSTANCE = new Support();
-
-        public Support() {
-            super(Uint32.class);
-        }
-
-        @Override
-        public ValidationResult<Uint32> fromString(final String str) {
-            try {
-                return new ValidatedValue<>(Uint32.valueOf(str));
-            } catch (IllegalArgumentException e) {
-                return CanonicalValueViolation.of(e);
-            }
-        }
-    }
-
     @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final long MAX_VALUE_LONG = 4294967295L;
@@ -338,7 +318,7 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
 
     @Override
     public final CanonicalValueSupport<Uint32> support() {
-        return Support.INSTANCE;
+        return Uint32Support.INSTANCE;
     }
 
     /**
