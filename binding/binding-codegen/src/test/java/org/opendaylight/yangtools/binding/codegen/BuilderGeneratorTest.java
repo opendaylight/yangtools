@@ -37,7 +37,7 @@ public class BuilderGeneratorTest {
         assertEquals("""
             @Override
             default int bindingHashCode() {
-                return 31 + Objects.hashCode(getTest());
+                return CodeHelpers.bindingHashCode1(getTest());
             }
             """, bb.toRawString());
     }
@@ -61,11 +61,9 @@ public class BuilderGeneratorTest {
         assertEquals("""
             @Override
             default int bindingHashCode() {
-                int result = 1;
-                final int prime = 31;
-                result = prime * result + Objects.hashCode(getTest1());
-                result = prime * result + Objects.hashCode(getTest2());
-                return result;
+                return CodeHelpers.bindingHashCodeN(
+                    getTest1(),
+                    getTest2());
             }
             """, bb.toRawString());
     }
@@ -77,7 +75,7 @@ public class BuilderGeneratorTest {
         assertEquals("""
             @Override
             default int bindingHashCode() {
-                return 1 + CodeHelpers.hashAugmentations(this);
+                return CodeHelpers.bindingHashCode0(this);
             }
             """, bb.toRawString());
     }
@@ -89,7 +87,7 @@ public class BuilderGeneratorTest {
         assertEquals("""
             @Override
             default int bindingHashCode() {
-                return 31 + Objects.hashCode(getTest()) + CodeHelpers.hashAugmentations(this);
+                return CodeHelpers.bindingHashCode1(this, getTest());
             }
             """, bb.toRawString());
     }
@@ -101,11 +99,9 @@ public class BuilderGeneratorTest {
         assertEquals("""
             @Override
             default int bindingHashCode() {
-                int result = 1;
-                final int prime = 31;
-                result = prime * result + Objects.hashCode(getTest1());
-                result = prime * result + Objects.hashCode(getTest2());
-                return result + CodeHelpers.hashAugmentations(this);
+                return CodeHelpers.bindingHashCodeN(this,
+                    getTest1(),
+                    getTest2());
             }
             """, bb.toRawString());
     }
