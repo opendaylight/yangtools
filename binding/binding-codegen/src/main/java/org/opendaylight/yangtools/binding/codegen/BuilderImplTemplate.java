@@ -153,26 +153,21 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }
         }
 
-        // generate equalityClass()/computehashCode()/computeEquals()/computeToString()
+        // generate bindingHashCode()/bindingEquals()/bindingToString() routing
         return bb
             .nl()
             .at().eol(override)
-            .str("protected ").gen(importedName(CLASS), impIface).str(" equalityClass()").oB()
-                .eol("return implementedInterface();")
-            .cB()
-            .nl()
-            .at().eol(override)
-            .str("protected int computeHashCode()").oB()
+            .str("protected int bindingHashCode()").oB()
                 .str("return ").str(impIface).eol("." + BINDING_HASHCODE_NAME + "(this);")
             .cB()
             .nl()
             .at().eol(override)
-            .str("protected boolean computeEquals(").str(impIface).str(" other)").oB()
+            .str("protected boolean bindingEquals(").str(impIface).str(" other)").oB()
                 .str("return ").str(impIface).eol("." + BINDING_EQUALS_NAME + "(this, other);")
             .cB()
             .nl()
             .at().eol(override)
-            .str("protected ").str(importedName(Types.STRING)).str(" computeToString()").oB()
+            .str("protected ").str(importedName(Types.STRING)).str(" bindingToString()").oB()
                 .str("return ").str(impIface).eol("." + BINDING_TO_STRING_NAME + "(this);")
             .cB()
             .cB();

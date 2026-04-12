@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.lib.ImplementedInterface;
 
 /**
  * Base interface for all interfaces generated to capture a specific contract. There are five basic contracts defined
@@ -22,18 +21,12 @@ import org.eclipse.jdt.annotation.NonNull;
  *   <li>structured data and metadata exchanged between two parties, represented by {@link DataContainer}</li>
  * </ul>
  *
- * <p>As can be seen, this contract is more general than {@link BindingObject}.
+ * <p>As can be seen, this contract is more general than {@link BindingObject}. The exact contract is communicated via
+ * {@link #implementedInterface()}, with subclasses sharpening its return value to their particular needs.
  *
  * @param <T> Type of the captured contract
  */
-@Beta
-public sealed interface BindingContract<T extends BindingContract<T>>
+public sealed interface BindingContract<T extends BindingContract<T>> extends ImplementedInterface<T>
         permits Action, BaseIdentity, DataContainer, OpaqueObject, Rpc, YangFeature {
-    /**
-     * Return the interface implemented by this object. This method differs from {@link Object#getClass()} in that it
-     * returns the interface contract, not a concrete implementation class.
-     *
-     * @return Implemented contract
-     */
-    @NonNull Class<? extends T> implementedInterface();
+    // Nothing else
 }
