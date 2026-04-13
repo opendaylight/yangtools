@@ -500,18 +500,43 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(Types.STRING)).str(" javaTS()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
+                final var props = analysis.properties();
+                final var augmentable = analysis.augmentType() != null;
+                final var type = type();
 
-                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                    .jStr(type().simpleName()).eol(");");
-                for (var property : analysis.properties()) {
-                    bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
-                        .jStr(property.getName()).str(", ").str(property.getGetterName()).eol("());");
+                bb.str("return ").str(importedName(CODEHELPERS));
+                switch (props.size()) {
+                    case 0 -> {
+                        // FIXME: use selfRef()
+                        bb.str(".bindingToString0(").str(type.canonicalName()).str(".class");
+                        if (augmentable) {
+                            bb.str(", this");
+                        }
+                        bb.eol(");");
+                    }
+                    case 1 -> {
+                        // FIXME: use selfRef()
+                        bb.str(".bindingToString1(").str(type.canonicalName()).str(".class, ");
+                        if (augmentable) {
+                            bb.str("this, ");
+                        }
+
+                        final var prop = props.iterator().next();
+                        bb.jStr(prop.getName()).str(", ").str(prop.getGetterName()).eol("());");
+                    }
+                    default -> {
+                        // FIXME: use selfRef()
+                        bb.str(".bindingToString(").str(type.canonicalName()).eol(".class)");
+
+                        for (var prop : props) {
+                            bb.ind(".prop(").jStr(prop.getName()).str(", ").str(prop.getGetterName()).eol("())");
+                        }
+                        if (augmentable) {
+                            bb.ind().eol(".augment(this)");
+                        }
+                        bb.ind().eol(".build();");
+                    }
                 }
-                if (analysis.augmentType() != null) {
-                    bb.str(importedName(CODEHELPERS))
-                        .eol(".appendAugmentations(helper, \"" + BuilderTemplate.AUGMENTATION_FIELD + "\", this);");
-                }
-                bb.eol("return helper.toString();");
             }).nl();
     }
 
