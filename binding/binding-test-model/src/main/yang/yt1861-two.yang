@@ -1,0 +1,12 @@
+module yt1861-two {
+  namespace yt1861-two;
+  prefix two;
+
+  import yt1861-one {
+    prefix one;
+  }
+
+  augment /one:one {
+    description some;
+  }
+}

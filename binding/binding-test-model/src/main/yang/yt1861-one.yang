@@ -1,0 +1,6 @@
+module yt1861-one {
+  namespace yt1861.one;
+  prefix one;
+
+  container one;
+}
