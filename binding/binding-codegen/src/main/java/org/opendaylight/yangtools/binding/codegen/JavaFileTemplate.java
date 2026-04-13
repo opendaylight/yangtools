@@ -27,6 +27,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+import org.opendaylight.yangtools.binding.lib.ToStringBuilder;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -134,6 +135,11 @@ sealed class JavaFileTemplate permits BaseTemplate {
      * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
+
+    /**
+     * {@code org.opendaylight.yangtools.binding.lib.ToStringBuilder} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName TO_STRING_BUILDER = JavaTypeName.create(ToStringBuilder.class);
 
     /**
      * {@code com.google.common.base.MoreObjects} as a JavaTypeName.
