@@ -144,7 +144,6 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .blk(generateConstants())
             .nl()
             .blk(generateMethods())
-            .nl()
             .cB();
     }
 
