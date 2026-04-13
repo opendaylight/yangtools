@@ -41,6 +41,15 @@ public sealed interface JavaContract<B extends BindingContract<B>, T extends B> 
      * Canonical implementation of Java {@link #toString()} contract specified by {@link #implementedInterface()}.
      *
      * @return the string representation
+     * @see JavaTSBuilder
+     * @see CodeHelpers#jcTS0(Class)
+     * @see CodeHelpers#jcTS0(org.opendaylight.yangtools.binding.Augmentable)
+     * @see CodeHelpers#jcTS1(Class, String, Object)
+     * @see CodeHelpers#jcTS1(Class, String, byte[])
+     * @see CodeHelpers#jcTS1(org.opendaylight.yangtools.binding.Augmentable, String, Object)
+     * @see CodeHelpers#jcTS1(org.opendaylight.yangtools.binding.Augmentable, String, byte[])
+     * @see CodeHelpers#jcTSB(Class)
+     * @see CodeHelpers#jcTSB(org.opendaylight.yangtools.binding.Augmentable)
      */
     @NonNull String javaTS();
 

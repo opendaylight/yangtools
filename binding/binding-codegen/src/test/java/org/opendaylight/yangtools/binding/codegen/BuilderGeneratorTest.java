@@ -113,9 +113,7 @@ public class BuilderGeneratorTest {
         assertEquals("""
             @Override
             default String javaTS() {
-                final var helper = MoreObjects.toStringHelper("test");
-                CodeHelpers.appendValue(helper, "test", gettest());
-                return helper.toString();
+                return CodeHelpers.jcTS1(test.test.class, "test", gettest());
             }
             """, genToString(genType).toRawString());
     }
@@ -125,8 +123,7 @@ public class BuilderGeneratorTest {
         assertEquals("""
             @Override
             default String javaTS() {
-                final var helper = MoreObjects.toStringHelper("test");
-                return helper.toString();
+                return CodeHelpers.jcTS0(test.test.class);
             }
             """, genToString(mockGenType(TEST)).toRawString());
     }
