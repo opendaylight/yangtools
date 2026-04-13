@@ -500,18 +500,24 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(Types.STRING)).str(" bindingToString()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
+                final var props = analysis.properties();
+                final var augmentable = analysis.augmentType() != null;
 
-                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                    .jStr(type().simpleName()).eol(");");
-                for (var property : analysis.properties()) {
-                    bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
-                        .jStr(property.getName()).str(", ").str(property.getGetterName()).eol("());");
+                if (props.isEmpty() && !augmentable) {
+                    bb.str("return ").jStr(type().simpleName() + "{}").eS();
+                    return;
                 }
-                if (analysis.augmentType() != null) {
-                    bb.str(importedName(CODEHELPERS))
-                        .eol(".appendAugmentations(helper, \"" + BuilderTemplate.AUGMENTATION_FIELD + "\", this);");
+
+                bb.str("return ").str(importedName(CODEHELPERS)).str(".bindingToString(")
+                    .jStr(type().simpleName()).eol(")");
+
+                for (var property : props) {
+                    bb.ind(".prop(").jStr(property.getName()).str(", ").str(property.getGetterName()).eol("())");
                 }
-                bb.eol("return helper.toString();");
+                if (augmentable) {
+                    bb.ind().eol(".augment(this)");
+                }
+                bb.ind().eol(".build();");
             }).nl();
     }
 

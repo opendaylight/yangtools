@@ -557,6 +557,11 @@ public final class CodeHelpers {
         return hash == 0 ? 31 : hash;
     }
 
+    @NonNullByDefault
+    public static BindingToStringBuilder bindingToString(final String className) {
+        return new BindingToStringBuilder(className);
+    }
+
     /**
      * Check that the specified {@link EnumTypeObject} object is not {@code null}. This method is meant to be used with
      * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
