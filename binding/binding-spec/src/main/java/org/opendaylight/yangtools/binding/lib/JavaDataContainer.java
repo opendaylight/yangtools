@@ -17,5 +17,12 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * @see AbstractDataContainer
  */
 public non-sealed interface JavaDataContainer<T extends DataContainer> extends JavaContract<DataContainer, T> {
-    // Nothing else
+    @Override
+    int javaHC();
+
+    @Override
+    boolean javaEQ(T obj);
+
+    @Override
+    String javaTS();
 }

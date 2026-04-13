@@ -12,21 +12,30 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
+import org.opendaylight.yangtools.binding.test.mock.Node;
+import org.opendaylight.yangtools.binding.test.mock.NodeAugmentation;
 
 @ExtendWith(MockitoExtension.class)
 class CodeHelpersTest {
     @Mock
     private EnumTypeObject enumTypeObject;
+    @Mock(answer = Answers.CALLS_REAL_METHODS)
+    private Node node;
+    @Mock(answer = Answers.CALLS_REAL_METHODS)
+    private NodeAugmentation augmentation;
 
     @Test
     void testCheckedFieldCast() {
@@ -90,5 +99,37 @@ class CodeHelpersTest {
     void verifySecretBasics() {
         assertThrows(NullPointerException.class, () -> CodeHelpers.verifySecret(null));
         CodeHelpers.verifySecret(TheUnsafeSecret.INSTANCE);
+    }
+
+    @Test
+    void jcTS0() {
+        assertEquals("Node{}", CodeHelpers.jcTS0(Node.class));
+        assertEquals("Node{}", CodeHelpers.jcTS0(node));
+
+        doReturn("augmentationToString").when(augmentation).toString();
+        doReturn(Map.of(NodeAugmentation.class, augmentation)).when(node).augmentations();
+        assertEquals("Node{augmentation=[augmentationToString]}", CodeHelpers.jcTS0(node));
+    }
+
+    @Test
+    void jcTS1() {
+        final var fooValue = "fooValue".getBytes();
+
+        assertEquals("Node{foo=fooValue}", CodeHelpers.jcTS1(Node.class, "foo", "fooValue"));
+        assertEquals("Node{foo=666f6f56616c7565}", CodeHelpers.jcTS1(Node.class, "foo", fooValue));
+        assertEquals("Node{}", CodeHelpers.jcTS1(Node.class, "foo", null));
+        assertEquals("Node{foo=fooValue}", CodeHelpers.jcTS1(node, "foo", "fooValue"));
+        assertEquals("Node{foo=666f6f56616c7565}", CodeHelpers.jcTS1(node, "foo", fooValue));
+        assertEquals("Node{}", CodeHelpers.jcTS1(node, "foo", null));
+
+        doReturn("augmentationToString").when(augmentation).toString();
+        doReturn(Map.of(NodeAugmentation.class, augmentation)).when(node).augmentations();
+        assertEquals("Node{foo=fooValue, augmentation=[augmentationToString]}",
+            CodeHelpers.jcTS1(node, "foo", "fooValue"));
+        assertEquals("Node{augmentation=[augmentationToString]}", CodeHelpers.jcTS1(node, "foo", null));
+        assertEquals("Node{foo=fooValue, augmentation=[augmentationToString]}",
+            CodeHelpers.jcTS1(node, "foo", "fooValue"));
+        assertEquals("Node{foo=666f6f56616c7565, augmentation=[augmentationToString]}",
+            CodeHelpers.jcTS1(node, "foo", fooValue));
     }
 }

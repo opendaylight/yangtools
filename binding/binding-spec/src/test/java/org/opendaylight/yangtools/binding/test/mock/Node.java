@@ -16,4 +16,8 @@ public interface Node extends
     ChildOf<Nodes>,
     Augmentable<Node> {
 
+    @Override
+    default Class<Node> implementedInterface() {
+        return Node.class;
+    }
 }

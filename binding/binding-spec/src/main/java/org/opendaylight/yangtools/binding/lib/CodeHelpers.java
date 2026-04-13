@@ -15,6 +15,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -29,6 +31,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
@@ -42,6 +45,12 @@ import org.opendaylight.yangtools.yang.common.Empty;
  * general API stability requirements of the Binding Specification.
  */
 public final class CodeHelpers {
+    /**
+     * Compare {@link Augmentation} by their canonical class name.
+     */
+    private static final Comparator<Augmentation<?>> AUGMENTATION_BY_CANONICAL_NAME =
+        Comparator.comparing(aug -> aug.implementedInterface().getCanonicalName());
+
     private CodeHelpers() {
         // Hidden
     }
@@ -160,23 +169,6 @@ public final class CodeHelpers {
     }
 
     /**
-     * Append augmentation map of an Augmentable to a ToStringHelper. If augmentations are {@code null} or empty, this
-     * method does nothing.
-     *
-     * @param helper Helper to append to
-     * @param name Name of the augmentation value
-     * @param augmentable Augmentable object to
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    public static void appendAugmentations(final ToStringHelper helper, final String name,
-            final Augmentable<?> augmentable) {
-        final var augments = augmentable.augmentations();
-        if (!augments.isEmpty()) {
-            helper.add(name, augments.values());
-        }
-    }
-
-    /**
      * Compile a list of pattern regular expressions and return them as an array. The list must hold at least two
      * expressions.
      *
@@ -188,7 +180,7 @@ public final class CodeHelpers {
     public static Pattern @NonNull[] compilePatterns(final @NonNull List<String> patterns) {
         final int size = patterns.size();
         verify(size > 1, "Patterns has to have at least 2 elements");
-        final Pattern[] result = new Pattern[size];
+        final var result = new Pattern[size];
         for (int i = 0; i < size; ++i) {
             result[i] = Pattern.compile(patterns.get(i));
         }
@@ -207,10 +199,10 @@ public final class CodeHelpers {
      */
     public static void checkPattern(final String value, final Pattern pattern, final String regex) {
         if (!pattern.matcher(value).matches()) {
-            final String match = RegexPatterns.isNegatedPattern(pattern) ? "matches forbidden"
+            final var match = RegexPatterns.isNegatedPattern(pattern) ? "matches forbidden"
                 : "does not match required";
-            throw new IllegalArgumentException("Supplied value \"" + value + "\" " + match + " pattern \""
-                    + regex + "\"");
+            throw new IllegalArgumentException(
+                "Supplied value \"" + value + "\" " + match + " pattern \"" + regex + "\"");
         }
     }
 
@@ -243,8 +235,8 @@ public final class CodeHelpers {
     public static long checkScale(final Decimal64 value, final int expectedScale) {
         final var scale = value.scale();
         if (scale != expectedScale) {
-            throw new IllegalArgumentException("Invalid " + value + " scale: " + scale + ", expected " + expectedScale
-                + ".");
+            throw new IllegalArgumentException(
+                "Invalid " + value + " scale: " + scale + ", expected " + expectedScale + ".");
         }
         return value.unscaledValue();
     }
@@ -314,8 +306,8 @@ public final class CodeHelpers {
      * @throws IllegalArgumentException always
      */
     public static void throwInvalidRangeUnsigned(final String expected, final long actual) {
-        throw new IllegalArgumentException("Invalid range: " + Long.toUnsignedString(actual) + ", expected: " + expected
-            + ".");
+        throw new IllegalArgumentException(
+            "Invalid range: " + Long.toUnsignedString(actual) + ", expected: " + expected + ".");
     }
 
     /**
@@ -587,7 +579,7 @@ public final class CodeHelpers {
 
     //
     ////
-    ////// JavaContract support methods
+    ////// JavaContract.javaHC support methods
     ////
     //
 
@@ -1044,12 +1036,123 @@ public final class CodeHelpers {
         return 31 * (31 * (31 * (31 + hashCode0) + hashCode1) + hashCode2) + hashCode3;
     }
 
-    // Mask hash == 0 for the purposes of bindingHashCode(). The value we report when hash == 0 is completely arbitrary
+    /**
+     * Mask {@code hash == 0} for the purposes of {@link JavaContract#javaHC()}. The value we report when
+     * {@code hash == 0} is completely arbitrary.
+     *
+     * @param hash computed hash value
+     * @return {@code hash} if it is not zero, a non-zero integer otherwise
+     */
     // as long as all implementations are consistent.has
     private static int nonzero(final int hash) {
         // We pick -1 for two reasons:
         // - easily recognizable value and bit pattern (0xFFFFFFFF)
         // - uses iconst_m1 instead of bipush
         return hash == 0 ? -1 : hash;
+    }
+
+    //
+    ////
+    ////// JavaContract.javaTS support methods
+    ////
+    //
+
+    /**
+     * {@return the {@link JavaDataContainer#javaTS()} for container which cannot have any properties}
+     * @param clazz the container class
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static String jcTS0(final Class<?> clazz) {
+        return jcTSB(clazz).build();
+    }
+
+    /**
+     * {@return the {@link JavaDataContainer#javaTS()} for container which cannot have any properties, but is
+     * {@link Augmentable}}
+     * @param augmentable the augmentable instance
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> String jcTS0(final T augmentable) {
+        return jcTSB(augmentable).build();
+    }
+
+    /**
+     * {@return the {@link JavaDataContainer#javaTS()} for container which can have one property}
+     * @param clazz the container class
+     * @param name the property name
+     * @param value property value, or {@code null} if absent
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static String jcTS1(final Class<?> clazz, final String name, final @Nullable Object value) {
+        return jcTSB(clazz).prop(name, value).build();
+    }
+
+    /**
+     * {@return the {@link JavaDataContainer#javaTS()} for container which can have one {@code type binary} property}
+     * @param clazz the container class
+     * @param name the property name
+     * @param value the binary property value, or {@code null} if absent
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static String jcTS1(final Class<?> clazz, final String name, final byte @Nullable [] value) {
+        return jcTSB(clazz).prop(name, value).build();
+    }
+
+    /**
+     * {@return the {@link JavaDataContainer#javaTS()} for container which can have one property
+     * and is {@link Augmentable}}}
+     * @param augmentable the augmentable instance
+     * @param name the property name
+     * @param value the property value, or {@code null} if absent
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable, final String name,
+            final @Nullable Object value) {
+        return jcTSB(augmentable).prop(name, value).build();
+    }
+
+    /**
+     * {@return the {@link JavaDataContainer#javaTS()} for container which can have one {@code type binary} property
+     * and is {@link Augmentable}}}
+     * @param augmentable the augmentable instance
+     * @param name the property name
+     * @param value the binary property value, or {@code null} if absent
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable,  final String name,
+            final byte @Nullable [] value) {
+        return jcTSB(augmentable).prop(name, value).build();
+    }
+
+    /**
+     * {@return a {@link JavaTSBuilder} identifying specified class}
+     * @param clazz the class to identify as
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static JavaTSBuilder jcTSB(final Class<?> clazz) {
+        return new JavaTSBuilder(clazz, List.of());
+    }
+
+    /**
+     * {@return a {@link JavaTSBuilder} identifying specified {@link Augmentable} {@link DataContainer} instance,
+     * appending any augmentations present as {@code at the end}}
+     * @param augmentable the {@link Augmentable} for which the string is being built.
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> JavaTSBuilder jcTSB(final T augmentable) {
+        final var clazz = augmentable.implementedInterface();
+        final var augmentations = augmentable.augmentations();
+        return augmentations.isEmpty() ? jcTSB(clazz)
+            : new JavaTSBuilder(clazz, augmentations.values().stream()
+                .sorted(AUGMENTATION_BY_CANONICAL_NAME)
+                .collect(Collectors.toUnmodifiableList()));
     }
 }
