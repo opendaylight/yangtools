@@ -407,7 +407,9 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("default boolean bindingEquals(final ").str(fullyQualifiedNonNull(type())).str(" obj)").jBlock(bb -> {
+            // FIXME: use selfRef
+            .str("default boolean bindingEquals(final ").str(type().canonicalName()).str(" obj)").jBlock(bb -> {
+                // FIXME: better shape
                 bb.str("return obj != null");
 
                 for (var property : ByTypeMemberComparator.sort(props)) {
@@ -428,19 +430,17 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(Types.STRING)).str(" bindingToString()").jBlock(bb -> {
-                final var analysis = typeAnalysis();
+                bb.str("return new ").str(importedName(TO_STRING_BUILDER)).str("(").jStr(type().simpleName()).eol(")");
 
-                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                    .jStr(type().simpleName()).eol(");");
+                final var analysis = typeAnalysis();
                 for (var property : analysis.properties()) {
-                    bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
-                        .jStr(property.getName()).str(", ").str(property.getGetterName()).eol("());");
+                    bb.ind(".appendProperty(").jStr(property.getName()).str(", ").str(property.getGetterName())
+                        .eol("())");
                 }
                 if (analysis.augmentType() != null) {
-                    bb.str(importedName(CODEHELPERS))
-                        .eol(".appendAugmentations(helper, \"" + BuilderTemplate.AUGMENTATION_FIELD + "\", this);");
+                    bb.ind().eol(".appendAugmentations(this)");
                 }
-                bb.eol("return helper.toString();");
+                bb.ind().eol(".build();");
             }).nl();
     }
 
