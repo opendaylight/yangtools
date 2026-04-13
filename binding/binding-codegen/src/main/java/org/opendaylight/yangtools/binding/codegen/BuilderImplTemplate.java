@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verify;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_EQUALS_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_HASHCODE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_TO_STRING_NAME;
@@ -72,14 +71,14 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
             .str("private static final class ").str(type().simpleName()).str(" extends ");
         if (keyType != null) {
+            // EntryObject
             bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), impIface, importedName(keyType));
-        } else if (augmentType != null) {
-            // covers everything except YangData
-            bb.gen(importedName(ABSTRACT_AUGMENTABLE), impIface);
         } else {
-            // YangData: requires at least one property
-            verify(!properties.isEmpty());
-            bb.gen(importedName(ABSTRACT_DATA_CONTAINER), impIface);
+            bb.gen(augmentType == null
+                // Augmentation, YangData
+                ? importedName(ABSTRACT_DATA_CONTAINER)
+                    // everything else
+                : importedName(ABSTRACT_AUGMENTABLE), impIface);
         }
         bb.str(" implements ").str(impIface).oB();
 
