@@ -557,6 +557,46 @@ public final class CodeHelpers {
         return hash == 0 ? 31 : hash;
     }
 
+    @NonNullByDefault
+    public static BindingToStringBuilder bindingToString(final Class<? extends JavaContract<?, ?>> contract) {
+        return new BindingToStringBuilder(contract);
+    }
+
+    @NonNullByDefault
+    public static String bindingToString0(final Class<? extends JavaContract<?, ?>> contract) {
+        return new BindingToStringBuilder(contract).toString();
+    }
+
+    @NonNullByDefault
+    public static String bindingToString0(final Class<? extends JavaContract<?, ?>> contract,
+            final Augmentable<?> augmentable) {
+        return new BindingToStringBuilder(contract).augment(augmentable).toString();
+    }
+
+    @NonNullByDefault
+    public static String bindingToString1(final Class<? extends JavaContract<?, ?>> contract,
+            final String name, final @Nullable Object value) {
+        return new BindingToStringBuilder(contract).prop(name, value).toString();
+    }
+
+    @NonNullByDefault
+    public static String bindingToString1(final Class<? extends JavaContract<?, ?>> contract,
+            final String name, final byte @Nullable [] value) {
+        return new BindingToStringBuilder(contract).prop(name, value).toString();
+    }
+
+    @NonNullByDefault
+    public static String bindingToString1(final Class<? extends JavaContract<?, ?>> contract,
+            final Augmentable<?> augmentable, final String name, final @Nullable Object value) {
+        return new BindingToStringBuilder(contract).prop(name, value).augment(augmentable).toString();
+    }
+
+    @NonNullByDefault
+    public static String bindingToString1(final Class<? extends JavaContract<?, ?>> contract,
+            final Augmentable<?> augmentable, final String name, final byte @Nullable [] value) {
+        return new BindingToStringBuilder(contract).prop(name, value).augment(augmentable).toString();
+    }
+
     /**
      * Check that the specified {@link EnumTypeObject} object is not {@code null}. This method is meant to be used with
      * {@code ofName(String)} and {@code ofValue(int)} static factory methods.
