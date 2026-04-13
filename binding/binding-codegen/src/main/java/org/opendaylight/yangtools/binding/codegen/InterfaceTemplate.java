@@ -500,19 +500,34 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(Types.STRING)).str(" javaTS()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
+                final var props = analysis.properties();
+                final var augmentable = analysis.augmentType() != null;
 
-                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                    .jStr(type().simpleName()).eol(");");
-                for (var property : analysis.properties()) {
-                    bb.str(importedName(CODEHELPERS)).str(".appendValue(helper, ")
-                        .jStr(property.getName()).str(", ").str(property.getGetterName()).eol("());");
+                bb.str("return ").str(importedName(CODEHELPERS));
+                switch (props.size()) {
+                    case 0 -> firstToStringArg(bb.str(".jcTS0("), augmentable).eol(");");
+                    case 1 -> {
+                        final var prop = props.iterator().next();
+                        firstToStringArg(bb.str(".jcTS1("), augmentable).str(", ").jStr(prop.getName()).str(", ")
+                            .str(prop.getGetterName()).eol("());");
+                    }
+                    default -> {
+                        firstToStringArg(bb.str(".jcTSB("), augmentable).eol(")");
+                        for (var prop : props) {
+                            bb.ind(".prop(").jStr(prop.getName()).str(", ").str(prop.getGetterName()).eol("())");
+                        }
+                        bb.ind().eol(".build();");
+                    }
                 }
-                if (analysis.augmentType() != null) {
-                    bb.str(importedName(CODEHELPERS))
-                        .eol(".appendAugmentations(helper, \"" + BuilderTemplate.AUGMENTATION_FIELD + "\", this);");
-                }
-                bb.eol("return helper.toString();");
             }).nl();
+    }
+
+    private BlockBuilder firstToStringArg(final BlockBuilder bb, final boolean augmentable) {
+        if (augmentable) {
+            return bb.str("this");
+        }
+        // FIXME: use selfRef()
+        return bb.str(type().canonicalName()).str(".class");
     }
 
     // FIXME: return a Block
