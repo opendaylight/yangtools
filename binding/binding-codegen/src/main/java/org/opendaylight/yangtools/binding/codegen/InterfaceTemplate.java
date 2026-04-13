@@ -352,16 +352,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     }
 
     @VisibleForTesting
-    final @Nullable BlockBuilder generateBindingHashCode() {
-        final var analysis = typeAnalysis();
-        final boolean augmentable = analysis.augmentType() != null;
-        final var props = analysis.properties();
-        final var propCount = props.size();
-
-        if (!augmentable && propCount == 0) {
-            return null;
-        }
-
+    final @NonNull BlockBuilder generateBindingHashCode() {
         return newBlockBuilder()
             .eol("/**")
             .str(" * Default implementation of {@link ").str(importedName(OBJECT))
@@ -377,9 +368,18 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .eol(" */")
             .str("static int " + BINDING_HASHCODE_NAME + "(").str(fullyQualifiedNonNull(type())).str(" obj)")
             .jBlock(bb -> {
+                final var analysis = typeAnalysis();
+                final boolean augmentable = analysis.augmentType() != null;
+                final var props = analysis.properties();
+                final var propCount = props.size();
+
                 switch (propCount) {
                     case 0 -> {
-                        bb.str("return 1 + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                        if (augmentable) {
+                            bb.str("return 1 + ").str(importedName(CODEHELPERS)).eol(".hashAugmentations(obj);");
+                        } else {
+                            bb.eol("return 1;");
+                        }
                     }
                     case 1 -> {
                         final var property = props.iterator().next();
@@ -409,14 +409,10 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             }).nl();
     }
 
-    private @Nullable BlockBuilder generateBindingEquals() {
+    private @NonNull BlockBuilder generateBindingEquals() {
         final var analysis = typeAnalysis();
         final var augmentable = analysis.augmentType() != null;
         final var props = analysis.properties();
-        if (!augmentable && props.isEmpty()) {
-            return null;
-        }
-
         final var object = importedName(OBJECT);
 
         return newBlockBuilder()
