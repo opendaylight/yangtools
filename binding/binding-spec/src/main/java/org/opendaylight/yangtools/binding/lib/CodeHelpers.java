@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
@@ -1051,5 +1052,49 @@ public final class CodeHelpers {
         // - easily recognizable value and bit pattern (0xFFFFFFFF)
         // - uses iconst_m1 instead of bipush
         return hash == 0 ? -1 : hash;
+    }
+
+    @NonNullByDefault
+    public static String jcTS0(final Class<? extends JavaContract<?, ?>> contract) {
+        return new JavaTSBuilder(contract).toString();
+    }
+
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> String jcTS0(final T augmentable) {
+        return new JavaTSBuilder(augmentable).toString();
+    }
+
+    @NonNullByDefault
+    public static String jcTS1(final Class<? extends JavaContract<?, ?>> contract, final String name,
+            final @Nullable Object value) {
+        return new JavaTSBuilder(contract).prop(name, value).toString();
+    }
+
+    @NonNullByDefault
+    public static String jcTS1(final Class<? extends JavaContract<?, ?>> contract, final String name,
+            final byte @Nullable [] value) {
+        return new JavaTSBuilder(contract).prop(name, value).toString();
+    }
+
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable, final String name,
+            final @Nullable Object value) {
+        return new JavaTSBuilder(augmentable).prop(name, value).toString();
+    }
+
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable,  final String name,
+            final byte @Nullable [] value) {
+        return new JavaTSBuilder(augmentable).prop(name, value).toString();
+    }
+
+    @NonNullByDefault
+    public static JavaTSBuilder jcTSB(final Class<? extends JavaContract<?, ?>> contract) {
+        return new JavaTSBuilder(contract);
+    }
+
+    @NonNullByDefault
+    public static <T extends Augmentable<T> & DataContainer> JavaTSBuilder jcTSB(final T augmentable) {
+        return new JavaTSBuilder(augmentable);
     }
 }
