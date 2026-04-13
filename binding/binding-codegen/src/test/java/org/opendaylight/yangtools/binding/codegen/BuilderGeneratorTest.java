@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -53,7 +52,22 @@ public class BuilderGeneratorTest {
 
     @Test
     void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() {
-        assertNull(genHashCode(mockGenType(TEST)));
+        final var bb = genHashCode(mockGenType(TEST));
+        assertNotNull(bb);
+        assertEquals("""
+            /**
+             * Default implementation of {@link Object#hashCode()} contract for this interface.
+             * Implementations of this interface are encouraged to defer to this method to get consistent hashing
+             * results across all implementations.
+             *
+             * @param obj Object for which to generate hashCode() result.
+             * @return Hash code value of data modeled by this interface.
+             * @throws NullPointerException if {@code obj} is {@code null}
+             */
+            static int bindingHashCode(test.@NonNull test obj) {
+                return 1;
+            }
+            """, bb.toRawString());
     }
 
     @Test
