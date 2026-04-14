@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8f555a7f_b19b899f",
+        "filename": "binding/binding-spec/src/main/java/org/opendaylight/yangtools/binding/lib/ToStringBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-04-14T11:23:03Z",
+      "side": 1,
+      "message": "BindingToStringBuilder",
+      "range": {
+        "startLine": 26,
+        "startChar": 19,
+        "endLine": 26,
+        "endChar": 34
+      },
+      "revId": "50ada55cb8e2e6196ae5b71e4f4e19d47a7eb0b2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
