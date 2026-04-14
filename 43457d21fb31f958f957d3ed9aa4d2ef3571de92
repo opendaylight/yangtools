@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b9d4b6f5_440f6a25",
+        "filename": "binding/binding-codegen/src/main/java/org/opendaylight/yangtools/binding/codegen/InterfaceTemplate.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-04-14T13:53:53Z",
+      "side": 1,
+      "message": "split into two methods",
+      "range": {
+        "startLine": 425,
+        "startChar": 12,
+        "endLine": 425,
+        "endChar": 19
+      },
+      "revId": "43457d21fb31f958f957d3ed9aa4d2ef3571de92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
