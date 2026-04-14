@@ -460,16 +460,34 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("default boolean bindingEquals(final ").str(fullyQualifiedNonNull(type())).str(" obj)").jBlock(bb -> {
-                bb.str("return obj != null");
+            // FIXME: selfref instead of canonicalName
+            .str("default boolean bindingEquals(").str(type().canonicalName()).str(" obj)").jBlock(bb -> {
+                if (props.isEmpty() && !augmentable) {
+                    bb.str(importedName(JU_OBJECTS)).eol(".requireNonNull(obj);");
+                    bb.eol("return true;");
+                    return;
+                }
 
+                bb.str("return ");
+                boolean notFirst = false;
                 for (var property : ByTypeMemberComparator.sort(props)) {
+                    if (notFirst) {
+                        bb.nl().ind("&& ");
+                    } else {
+                        notFirst = true;
+                    }
+
                     final var getterName = property.getGetterName();
-                    bb.nl().ind("&& ").str(importedUtilClass(property)).str(".equals(").str(getterName).str("(), obj.")
+                    bb.str(importedUtilClass(property)).str(".equals(").str(getterName).str("(), obj.")
                         .str(getterName).str("())");
                 }
                 if (augmentable) {
-                    bb.nl().ind("&& augmentations().equals(obj.augmentations())");
+                    if (notFirst) {
+                        bb.nl().ind("&& ");
+                    } else {
+                        notFirst = true;
+                    }
+                    bb.str("augmentations().equals(obj.augmentations())");
                 }
 
                 bb.eS();
