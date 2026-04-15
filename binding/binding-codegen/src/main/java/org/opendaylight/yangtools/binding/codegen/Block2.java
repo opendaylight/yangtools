@@ -41,7 +41,13 @@ record Block2(String str, int nl) implements Block {
         } else {
             bb.eol(str, 0, nl);
         }
-        bb.eol(str, nl + 1, str.length());
+        final var begin = nl + 1;
+        final var end = str.length();
+        if (begin == end) {
+            bb.newLine();
+        } else {
+            bb.eol(str, begin, end);
+        }
     }
 
     @Override
