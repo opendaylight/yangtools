@@ -471,11 +471,15 @@ final class BlockBuilder extends Block.Builder {
             throw new VerifyException("leftover indentation depth " + currentIndent);
         }
 
-        final var str = buf.substring(0, length - 1);
         if (length == secondLine) {
-            return str.isEmpty() ? Block1.EMPTY : new Block1(str);
+            // "\n" or "foo\n"
+            return length == 1 ? Block1.EMPTY : new Block1(buf.substring(0, length - 1));
         }
-        return new BlockN(str);
+        final var end = length - 1;
+        // "\n\n"
+        return end == secondLine ? Block2.EMPTY
+            // everything else
+            : new BlockN(buf.substring(0, end));
     }
 
     @Override
