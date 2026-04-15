@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.verifyNonEmpty;
 
 import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -171,9 +173,7 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
     }
 
     static Block.OfOne ofLine(final String line) {
-        return line.isEmpty() ? ofEmptyLine()
-            // FIXME: add verification
-            : new Block1(line);
+        return line.isEmpty() ? ofEmptyLine() : new Block1(verifyNonEmpty(line));
     }
 
     static Block ofLines(final String first, final String second) {
@@ -182,16 +182,18 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
             : new Block2(first + '\n' + second, first.length());
     }
 
-    static Block ofLines(final String first, final String second, final String... others) {
+    static Block ofLines(final String first, final String second, final @NonNull String... others) {
         if (others.length == 0) {
             return ofLines(first, second);
         }
 
-        final var bb = builder().eol(first).eol(second);
+        final var sb = new StringBuilder();
+        appendLine(sb, first);
+        appendLine(sb, second);
         for (var other : others) {
-            bb.eol(other);
+            appendLine(sb, other);
         }
-        return bb.build();
+        return buildBlock(sb);
     }
 
     static Block ofLines(final Iterable<String> lines) {
@@ -211,9 +213,13 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
             return ofLines(first, second);
         }
 
-        final var bb = builder().eol(first).eol(second);
-        lines.forEachRemaining(bb::eol);
-        return bb.build();
+        final var sb = new StringBuilder();
+        appendLine(sb, first);
+        appendLine(sb, second);
+        do {
+            appendLine(sb, lines.next());
+        } while (lines.hasNext());
+        return buildBlock(sb);
     }
 
     static Block ofBlocks(final List<Block> blocks) {
@@ -263,4 +269,15 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
     @DoNotCall
     @Deprecated(forRemoval = true)
     String toString();
+
+    private static void appendLine(final StringBuilder sb, final String line) {
+        if (!line.isEmpty()) {
+            sb.append(verifyNonEmpty(line));
+        }
+        sb.append('\n');
+    }
+
+    private static BlockN buildBlock(final StringBuilder sb) {
+        return new BlockN(sb.substring(0, sb.length() - 1));
+    }
 }
