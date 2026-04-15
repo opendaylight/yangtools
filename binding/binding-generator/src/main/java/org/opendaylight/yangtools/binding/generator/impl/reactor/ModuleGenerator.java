@@ -95,6 +95,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
         final var builder = builderFactory.newDataRootBuilder(typeName(), yangModuleInfo);
         builder.setModuleName(statement().argument().getLocalName());
         addUsesInterfaces(builder, builderFactory);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder, builderFactory);
         builderFactory.addCodegenInformation(statement(), builder);
 

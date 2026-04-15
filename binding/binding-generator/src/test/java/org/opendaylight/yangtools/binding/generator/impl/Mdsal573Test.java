@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -59,9 +58,9 @@ class Mdsal573Test {
         assertEquals(7, generateTypes.size());
 
         final var root = assertInstanceOf(DataRootArchetype.class, generateTypes.getFirst());
-        assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal573.norev", "Mdsal573Data"),
-            root.name());
-        assertEquals(List.of(), root.getMethodDefinitions());
+        assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal573.norev", "Mdsal573Data"), root.name());
+        final var methodSignature = root.getMethodDefinitions().getFirst();
+        assertEquals("implementedInterface", methodSignature.getName());
         assertThat(root.getImplements()).hasSize(3);
     }
 }

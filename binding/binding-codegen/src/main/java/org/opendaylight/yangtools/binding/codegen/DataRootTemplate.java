@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.opendaylight.yangtools.binding.contract.Naming.DATA_ROOT_META_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.META_STATIC_FIELD_NAME;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
@@ -50,32 +47,5 @@ final class DataRootTemplate extends InterfaceTemplate {
             .str(rootMetaRaw).str("<").str(type).str("> META = new ").str(rootMetaRaw).str("<>(").str(type)
                 .str(".class, ").str(moduleInfo).str('.' + YangModuleInfoTemplate.INSTANCE_FIELD_NAME + ", ")
                 .str(moduleInfo).eol('.' + YangModuleInfoTemplate.CONST_UNSAFE_ACCESS + ");");
-    }
-
-    @Override
-    BlockBuilder generateMethods() {
-        final var archetype = archetype();
-
-        // pre-compute constants: split out for future isolation
-        final var rootMetaType = BindingTypes.rootMeta(archetype);
-        final var rootMeta = importedName(rootMetaType.getRawType());
-        final var override = importedName(OVERRIDE);
-        final var type = archetype.canonicalName();
-
-        final var bb = newBlockBuilder()
-            .blk(generateDefaultImplementedInterface())
-            .nl()
-            .at().eol(override)
-            .at().str(importedName(DEPRECATED)).eol("(forRemoval = true)")
-            // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
-            .str("default ").gen(rootMeta, type).str(" " + DATA_ROOT_META_NAME + "()").oB()
-                .eol("return " + META_STATIC_FIELD_NAME + ';')
-            .cB();
-
-        final var superMethods = super.generateMethods();
-        if (superMethods != null) {
-            bb.nl().blk(superMethods);
-        }
-        return bb;
     }
 }

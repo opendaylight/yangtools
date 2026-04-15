@@ -37,9 +37,4 @@ public interface FooData extends DataRoot<FooData> {
     default Class<FooData> implementedInterface() {
         return FooData.class;
     }
-
-    @Override
-    default RootMeta<FooData> meta() {
-        return META;
-    }
 }

@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsInterface;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsMethods;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -324,7 +323,7 @@ class UsesTest {
 
         containsInterface("GroupingModulTest", groupingUsesModulData);
 
-        assertEquals(List.of(), groupingUsesModulData.getMethodDefinitions());
+        assertEquals(1, groupingUsesModulData.getMethodDefinitions().size());
         assertEquals(4, groupingModulTest.getMethodDefinitions().size(),
             "Number of method in GroupingModulTest is incorrect");
 
