@@ -127,6 +127,17 @@ abstract sealed class ArgumentVerifier {
         return arg;
     }
 
+    /**
+     * Verify the argument to {@link BlockBuilder#str(String)} that is known to be non-empty.
+     *
+     * @param arg the argument
+     * @return the argument
+     */
+    static String verifyNonEmpty(final String arg) {
+        INSTANCE.fullVerifyStr(arg);
+        return arg;
+    }
+
     abstract void fullVerifyStr(String arg);
 
     /**
