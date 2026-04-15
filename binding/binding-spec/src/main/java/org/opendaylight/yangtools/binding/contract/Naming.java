@@ -183,7 +183,9 @@ public final class Naming {
     /**
      * The name of {@link DataRoot#meta()} method.
      * @since 15.0.0
+     * @deprecated Do not use, this constant is an unintended leak.
      */
+    @Deprecated(since = "15.1.1", forRemoval = true)
     public static final @NonNull String DATA_ROOT_META_NAME = "meta";
 
     /**
