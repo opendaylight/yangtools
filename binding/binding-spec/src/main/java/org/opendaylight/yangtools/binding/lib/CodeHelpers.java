@@ -369,152 +369,6 @@ public final class CodeHelpers {
     }
 
     /**
-     * Reference implementation of {@link JavaDataContainer#bindingHashCode()}.
-     *
-     * @param hashCodes component hash codes
-     * @return the hash code
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static int bindingHashCode(final int... hashCodes) {
-        return nonzero(sumHashes(hashCodes));
-    }
-
-    /**
-     * Reference implementation of {@link JavaDataContainer#bindingHashCode()} which is also {@link Augmentable}.
-     *
-     * @param augmentable the {@link Augmentable} instance
-     * @param hashCodes component hash codes
-     * @return the hash code
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static int bindingHashCode(final Augmentable<?> augmentable, final int... hashCodes) {
-        return nonzero(hashAugmentations(augmentable) + sumHashes(hashCodes));
-    }
-
-    /**
-     * {@return the equivalent of {@code bindingHashCode(augmentable, new int[0])}}
-     * @param augmentable the {@link Augmentable} instance
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static int bindingHashCode0(final Augmentable<?> augmentable) {
-        return nonzero(1 + hashAugmentations(augmentable));
-    }
-
-    /**
-     * {@return the equivalent of {@code bindingHashCode(Objects.hashCode(prop))}}
-     * @param prop single property
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static int bindingHashCode1(final @Nullable Object prop) {
-        return nonzero(31 + Objects.hashCode(prop));
-    }
-
-    /**
-     * {@return the equivalent of {@code bindingHashCode(Arrays.hashCode(prop))}}
-     * @param prop single property
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static int bindingHashCode1(final byte @Nullable [] prop) {
-        return nonzero(31 + Arrays.hashCode(prop));
-    }
-
-    /**
-     * {@return the equivalent of {@code bindingHashCode(augmentable, Objects.hashCode(prop))}}
-     * @param prop single property
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static int bindingHashCode1(final Augmentable<?> augmentable, final @Nullable Object prop) {
-        return nonzero(31 + hashAugmentations(augmentable) + Objects.hashCode(prop));
-    }
-
-    /**
-     * {@return the equivalent of {@code bindingHashCode(augmentable, Arrays.hashCode(prop))}}
-     * @param prop single property
-     * @since 16.0.0
-     */
-    @NonNullByDefault
-    public static int bindingHashCode1(final Augmentable<?> augmentable, final byte @Nullable [] prop) {
-        return nonzero(31 + hashAugmentations(augmentable) + Arrays.hashCode(prop));
-    }
-
-    @NonNullByDefault
-    public static int bindingHashCodeN(final @Nullable Object... props) {
-        return nonzero(hashProperties(props));
-    }
-
-    @NonNullByDefault
-    public static int bindingHashCodeN(final byte[] @Nullable... props) {
-        return nonzero(hashProperties(props));
-    }
-
-    @NonNullByDefault
-    public static int bindingHashCodeN(final Augmentable<?> augmentable, final @Nullable Object... props) {
-        return nonzero(hashAugmentations(augmentable) + hashProperties(props));
-    }
-
-    @NonNullByDefault
-    public static int bindingHashCodeN(final Augmentable<?> augmentable, final byte[] @Nullable... props) {
-        return nonzero(hashAugmentations(augmentable) + hashProperties(props));
-    }
-
-    @NonNullByDefault
-    private static int hashAugmentations(final Augmentable<?> augmentable) {
-        final var augmentations = augmentable.augmentations();
-        return augmentations.isEmpty() ? 0 : hashAugmentations(augmentations.values());
-    }
-
-    @NonNullByDefault
-    private static int hashAugmentations(final Collection<? extends Augmentation<?>> augmentations) {
-        int result = 0;
-        for (var augmentation : augmentations) {
-            result += augmentation.hashCode();
-        }
-        return result;
-    }
-
-    @NonNullByDefault
-    private static int hashProperties(final byte[] @Nullable [] props) {
-        int result = 1;
-        for (var prop : props) {
-            result = 31 * result + Arrays.hashCode(prop);
-        }
-        return result;
-    }
-
-    @NonNullByDefault
-    private static int hashProperties(final @Nullable Object[] props) {
-        int result = 1;
-        for (var prop : props) {
-            result = 31 * result + Objects.hashCode(prop);
-        }
-        return result;
-    }
-
-    @NonNullByDefault
-    private static int sumHashes(final int... hashCodes) {
-        int result = 1;
-        for (var hashCode : hashCodes) {
-            result = 31 * result + hashCode;
-        }
-        return result;
-    }
-
-    // Mask hash == 0 for the purposes of bindingHashCode(). The value we report when hash == 0 is completely arbitrary
-    // as long as all implementations are consistent.has
-    private static int nonzero(final int hash) {
-        // We pick -1 for two reasons:
-        // - easily recognizable value and bit pattern (0xFFFFFFFF)
-        // - uses iconst_m1 instead of bipush
-        return hash == 0 ? -1 : hash;
-    }
-
-    /**
      * Return hash code of a single-property wrapper class. Since the wrapper is not {@code null}, we really want to
      * discern this object being present, hence {@link Objects#hashCode()} is not really useful we would end up with
      * {@code 0} for both non-present and present-with-null objects.
@@ -729,5 +583,157 @@ public final class CodeHelpers {
         if (!secret.equals(TheUnsafeSecret.INSTANCE)) {
             throw new LinkageError("UnsafeSecret mismatch: expecting " + TheUnsafeSecret.INSTANCE + ", got " + secret);
         }
+    }
+
+    //
+    ////
+    ////// JavaContract support methods
+    ////
+    //
+
+    /**
+     * Reference implementation of {@link JavaContract#javaHC()}.
+     *
+     * @param hashCodes component hash codes
+     * @return the hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final int... hashCodes) {
+        return nonzero(sumPropHashCodes(hashCodes));
+    }
+
+    /**
+     * Reference implementation of {@link JavaDataContainer#javaHC()} which is also {@link Augmentable}.
+     *
+     * @param augmentable the {@link Augmentable} instance
+     * @param hashCodes component hash codes
+     * @return the hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int... hashCodes) {
+        return nonzero(hashAugmentations(augmentable) + sumPropHashCodes(hashCodes));
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(augmentable, new int[0])}}
+     * @param augmentable the {@link Augmentable} instance
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC0(final Augmentable<?> augmentable) {
+        return nonzero(1 + hashAugmentations(augmentable));
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(Objects.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC1(final @Nullable Object prop) {
+        return nonzero(31 + Objects.hashCode(prop));
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(Arrays.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC1(final byte @Nullable [] prop) {
+        return nonzero(31 + Arrays.hashCode(prop));
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(augmentable, Objects.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC1(final Augmentable<?> augmentable, final @Nullable Object prop) {
+        return nonzero(31 + hashAugmentations(augmentable) + Objects.hashCode(prop));
+    }
+
+    /**
+     * {@return the equivalent of {@code bindingHashCode(augmentable, Arrays.hashCode(prop))}}
+     * @param prop single property
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC1(final Augmentable<?> augmentable, final byte @Nullable [] prop) {
+        return nonzero(31 + hashAugmentations(augmentable) + Arrays.hashCode(prop));
+    }
+
+    @NonNullByDefault
+    public static int jcHCN(final @Nullable Object... props) {
+        return nonzero(hashProperties(props));
+    }
+
+    @NonNullByDefault
+    public static int jcHCN(final byte[] @Nullable... props) {
+        return nonzero(hashProperties(props));
+    }
+
+    @NonNullByDefault
+    public static int jcHCN(final Augmentable<?> augmentable, final @Nullable Object... props) {
+        return nonzero(hashAugmentations(augmentable) + hashProperties(props));
+    }
+
+    @NonNullByDefault
+    public static int jcHCN(final Augmentable<?> augmentable, final byte[] @Nullable... props) {
+        return nonzero(hashAugmentations(augmentable) + hashProperties(props));
+    }
+
+    @NonNullByDefault
+    private static int hashAugmentations(final Augmentable<?> augmentable) {
+        final var augmentations = augmentable.augmentations();
+        return augmentations.isEmpty() ? 0 : hashAugmentations(augmentations.values());
+    }
+
+    @NonNullByDefault
+    private static int hashAugmentations(final Collection<? extends Augmentation<?>> augmentations) {
+        int result = 0;
+        for (var augmentation : augmentations) {
+            result += augmentation.hashCode();
+        }
+        return result;
+    }
+
+    @NonNullByDefault
+    private static int hashProperties(final byte[] @Nullable [] props) {
+        int result = 1;
+        for (var prop : props) {
+            result = 31 * result + Arrays.hashCode(prop);
+        }
+        return result;
+    }
+
+    @NonNullByDefault
+    private static int hashProperties(final @Nullable Object[] props) {
+        int result = 1;
+        for (var prop : props) {
+            result = 31 * result + Objects.hashCode(prop);
+        }
+        return result;
+    }
+
+    @NonNullByDefault
+    private static int sumPropHashCodes(final int... hashCodes) {
+        int result = 1;
+        for (var hashCode : hashCodes) {
+            result = 31 * result + hashCode;
+        }
+        return result;
+    }
+
+    // Mask hash == 0 for the purposes of bindingHashCode(). The value we report when hash == 0 is completely arbitrary
+    // as long as all implementations are consistent.has
+    private static int nonzero(final int hash) {
+        // We pick -1 for two reasons:
+        // - easily recognizable value and bit pattern (0xFFFFFFFF)
+        // - uses iconst_m1 instead of bipush
+        return hash == 0 ? -1 : hash;
     }
 }

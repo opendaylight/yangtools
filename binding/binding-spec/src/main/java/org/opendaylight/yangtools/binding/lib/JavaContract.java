@@ -24,8 +24,9 @@ public sealed interface JavaContract<B extends BindingContract<B>, T extends B> 
      * Canonical implementation of Java {@link #hashCode()} contract specified by {@link #implementedInterface()}.
      *
      * @return the hash code value for this object, guaranteed to be non-{@code 0}
+     * @see CodeHelpers#jcHC(int...)
      */
-    int bindingHashCode();
+    int javaHC();
 
     /**
      * Canonical implementation of Java {@link #equals(Object)} contract specified by {@link #implementedInterface()}.
@@ -34,19 +35,19 @@ public sealed interface JavaContract<B extends BindingContract<B>, T extends B> 
      * @return {@code true} if this object is equal to the reference object
      * @throws NullPointerException of {@code obj} is {@code null}
      */
-    boolean bindingEquals(@NonNull T obj);
+    boolean javaEQ(@NonNull T obj);
 
     /**
      * Canonical implementation of Java {@link #toString()} contract specified by {@link #implementedInterface()}.
      *
      * @return the string representation
      */
-    @NonNull String bindingToString();
+    @NonNull String javaTS();
 
     /**
      * {@inheritDoc}
      *
-     * <p>Implementations are required to delegate to {@link #bindingHashCode()}.
+     * <p>Implementations are required to delegate to {@link #javaHC()}.
      */
     @Override
     int hashCode();
@@ -54,7 +55,7 @@ public sealed interface JavaContract<B extends BindingContract<B>, T extends B> 
     /**
      * {@inheritDoc}
      *
-     * <p>Implementations are required to delegate to {@link #bindingEquals(BindingContract)}.
+     * <p>Implementations are required to delegate to {@link #javaEQ(BindingContract)}.
      */
     @Override
     boolean equals(Object obj);
@@ -62,7 +63,7 @@ public sealed interface JavaContract<B extends BindingContract<B>, T extends B> 
     /**
      * {@inheritDoc}
      *
-     * <p>Implementations are required to delegate to {@link #bindingHashCode()}.
+     * <p>Implementations are required to delegate to {@link #javaTS()}.
      */
     @Override
     @NonNull String toString();
