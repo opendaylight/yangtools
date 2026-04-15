@@ -64,4 +64,67 @@ class BlockBuilderTest {
         final var ex = assertThrows(VerifyException.class, () -> bb.txt("acd"));
         assertEquals("no newline in 'acd'", ex.getMessage());
     }
+
+    @Test
+    void buildEmpty() {
+        final var ex = assertThrows(VerifyException.class, bb::build);
+        assertEquals("empty block", ex.getMessage());
+    }
+
+    @Test
+    void buildUnterminatedLineFirst() {
+        bb.str("abc");
+
+        final var ex = assertThrows(VerifyException.class, bb::build);
+        assertEquals("unterminated line abc", ex.getMessage());
+    }
+
+    @Test
+    void buildUnterminatedLineSecond() {
+        bb.eol("abc").str("def");
+
+        final var ex = assertThrows(VerifyException.class, bb::build);
+        assertEquals("unterminated line def", ex.getMessage());
+    }
+
+    @Test
+    void buildUnterminatedLineThird() {
+        bb.eol("abc").eol("def").str("ghi");
+
+        final var ex = assertThrows(VerifyException.class, bb::build);
+        assertEquals("unterminated line ghi", ex.getMessage());
+    }
+
+    @Test
+    void buildNewlineOne() {
+        assertEquals(Block.ofLine(""), bb.nl().build());
+    }
+
+    @Test
+    void buildNewlineTwo() {
+        assertEquals(Block.ofLines("", ""), bb.nl().nl().build());
+    }
+
+    @Test
+    void buildNewlineThree() {
+        assertEquals(Block.ofLines("", "", ""), bb.nl().nl().nl().build());
+    }
+
+    @Test
+    void buildOne() {
+        assertEquals(Block.ofLine("abc"), bb.eol("abc").build());
+    }
+
+    @Test
+    void buildTwo() {
+        // FIXME: exact result
+        assertEquals(Block.ofLines("abc", "def").toRawString(), bb.eol("abc").eol("def").build().toRawString());
+    }
+
+    @Test
+    void buildThree() {
+        // FIXME: exact result
+        assertEquals(Block.ofLines("abc", "def", "ghi").toRawString(),
+            bb.eol("abc").eol("def").eol("ghi").build().toRawString());
+    }
 }

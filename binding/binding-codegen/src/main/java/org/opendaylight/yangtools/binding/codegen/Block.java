@@ -187,9 +187,11 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
             return ofLines(first, second);
         }
 
-        final var bb = builder().eol(first).eol(second);
+        final var bb = builder();
+        appendLine(bb, first);
+        appendLine(bb, second);
         for (var other : others) {
-            bb.eol(other);
+            appendLine(bb, other);
         }
         return bb.build();
     }
@@ -211,9 +213,21 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
             return ofLines(first, second);
         }
 
-        final var bb = builder().eol(first).eol(second);
-        lines.forEachRemaining(bb::eol);
+        final var bb = builder();
+        appendLine(bb, first);
+        appendLine(bb, second);
+        while (lines.hasNext()) {
+            appendLine(bb, lines.next());
+        }
         return bb.build();
+    }
+
+    private static void appendLine(final BlockBuilder bb, final String line) {
+        if (line.isEmpty()) {
+            bb.newLine();
+        } else {
+            bb.eol(line);
+        }
     }
 
     static Block ofBlocks(final List<Block> blocks) {
