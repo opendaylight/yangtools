@@ -45,16 +45,16 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
     private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
     private static final StackManipulation FIRST_ARG_REF = MethodVariableAccess.REFERENCE.loadFrom(1);
     // return this.bindingHashCode();
-    private static final Implementation BINDING_HASH_CODE = new Implementation.Simple(
-        loadThis(), invokeMethod(JavaContract.class, "bindingHashCode"), MethodReturn.INTEGER);
+    private static final Implementation JAVA_HC = new Implementation.Simple(
+        loadThis(), invokeMethod(JavaContract.class, "javaHC"), MethodReturn.INTEGER);
     // return this.bindingEquals(obj);
-    private static final Implementation BINDING_EQUALS = new Implementation.Simple(
+    private static final Implementation JAVA_EQ = new Implementation.Simple(
         loadThis(), FIRST_ARG_REF,
-        invokeMethod(JavaContract.class, "bindingEquals", BindingContract.class),
+        invokeMethod(JavaContract.class, "javaEQ", BindingContract.class),
         MethodReturn.INTEGER);
     // return this.bindingToString();
-    private static final Implementation BINDING_TO_STRING = new Implementation.Simple(
-        loadThis(), invokeMethod(JavaContract.class, "bindingToString"), MethodReturn.REFERENCE);
+    private static final Implementation JAVA_TS = new Implementation.Simple(
+        loadThis(), invokeMethod(JavaContract.class, "javaTS"), MethodReturn.REFERENCE);
 
     private static final ByteBuddy BB = new ByteBuddy();
 
@@ -91,11 +91,11 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
         // Final bits:
         return GeneratorResult.of(new UnloadedLoadableClass<>(builder
             // codecHashCode() ...
-            .defineMethod("codecHashCode", BB_INT, PROT_FINAL).intercept(BINDING_HASH_CODE)
+            .defineMethod("codecHashCode", BB_INT, PROT_FINAL).intercept(JAVA_HC)
             // ... equals(Object) ...
-            .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_OBJECT).intercept(BINDING_EQUALS)
+            .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_OBJECT).intercept(JAVA_EQ)
             // ... toString() ...
-            .defineMethod("toString", BB_STRING, PUB_FINAL).intercept(BINDING_TO_STRING)
+            .defineMethod("toString", BB_STRING, PUB_FINAL).intercept(JAVA_TS)
             // ... and build it
             .make()));
     }

@@ -28,7 +28,7 @@ public abstract class AbstractDataContainer<T extends DataContainer & JavaDataCo
     }
 
     private int loadHashCode() {
-        final var result = bindingHashCode();
+        final var result = javaHC();
         hashCode = result;
         hashCodeValid = true;
         return result;
@@ -50,11 +50,11 @@ public abstract class AbstractDataContainer<T extends DataContainer & JavaDataCo
         //
         // So we rely on subclass to not try anything weird: it is bound by the class it returns from
         // implementedInterface(), so it better be giving us the correct contract :)
-        return this == obj || implementedInterface().isInstance(obj) && bindingEquals((T) obj);
+        return this == obj || implementedInterface().isInstance(obj) && javaEQ((T) obj);
     }
 
     @Override
     public final String toString() {
-        return bindingToString();
+        return javaTS();
     }
 }

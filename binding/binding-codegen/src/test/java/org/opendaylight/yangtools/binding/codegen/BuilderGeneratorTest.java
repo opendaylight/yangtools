@@ -36,8 +36,8 @@ public class BuilderGeneratorTest {
         assertNotNull(bb);
         assertEquals("""
             @Override
-            default int bindingHashCode() {
-                return CodeHelpers.bindingHashCode1(getTest());
+            default int javaHC() {
+                return CodeHelpers.jcHC1(getTest());
             }
             """, bb.toRawString());
     }
@@ -48,7 +48,7 @@ public class BuilderGeneratorTest {
         assertNotNull(bb);
         assertEquals("""
             @Override
-            default int bindingHashCode() {
+            default int javaHC() {
                 return 1;
             }
             """, bb.toRawString());
@@ -60,8 +60,8 @@ public class BuilderGeneratorTest {
         assertNotNull(bb);
         assertEquals("""
             @Override
-            default int bindingHashCode() {
-                return CodeHelpers.bindingHashCodeN(
+            default int javaHC() {
+                return CodeHelpers.jcHCN(
                     getTest1(),
                     getTest2());
             }
@@ -74,8 +74,8 @@ public class BuilderGeneratorTest {
         assertNotNull(bb);
         assertEquals("""
             @Override
-            default int bindingHashCode() {
-                return CodeHelpers.bindingHashCode0(this);
+            default int javaHC() {
+                return CodeHelpers.jcHC0(this);
             }
             """, bb.toRawString());
     }
@@ -86,8 +86,8 @@ public class BuilderGeneratorTest {
         assertNotNull(bb);
         assertEquals("""
             @Override
-            default int bindingHashCode() {
-                return CodeHelpers.bindingHashCode1(this, getTest());
+            default int javaHC() {
+                return CodeHelpers.jcHC1(this, getTest());
             }
             """, bb.toRawString());
     }
@@ -98,8 +98,8 @@ public class BuilderGeneratorTest {
         assertNotNull(bb);
         assertEquals("""
             @Override
-            default int bindingHashCode() {
-                return CodeHelpers.bindingHashCodeN(this,
+            default int javaHC() {
+                return CodeHelpers.jcHCN(this,
                     getTest1(),
                     getTest2());
             }
@@ -112,7 +112,7 @@ public class BuilderGeneratorTest {
 
         assertEquals("""
             @Override
-            default String bindingToString() {
+            default String javaTS() {
                 final var helper = MoreObjects.toStringHelper("test");
                 CodeHelpers.appendValue(helper, "test", gettest());
                 return helper.toString();
@@ -124,7 +124,7 @@ public class BuilderGeneratorTest {
     void builderTemplateGenerateToStringWithoutAnyPropertyTest() {
         assertEquals("""
             @Override
-            default String bindingToString() {
+            default String javaTS() {
                 final var helper = MoreObjects.toStringHelper("test");
                 return helper.toString();
             }
@@ -135,7 +135,7 @@ public class BuilderGeneratorTest {
     void builderTemplateGenerateToStringWithMorePropertiesTest() {
         assertEquals("""
             @Override
-            default String bindingToString() {
+            default String javaTS() {
                 final var helper = MoreObjects.toStringHelper("test");
                 CodeHelpers.appendValue(helper, "test1", gettest1());
                 CodeHelpers.appendValue(helper, "test2", gettest2());
@@ -148,7 +148,7 @@ public class BuilderGeneratorTest {
     void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() {
         assertEquals("""
             @Override
-            default String bindingToString() {
+            default String javaTS() {
                 final var helper = MoreObjects.toStringHelper("test");
                 CodeHelpers.appendAugmentations(helper, "augmentation", this);
                 return helper.toString();
@@ -160,7 +160,7 @@ public class BuilderGeneratorTest {
     void builderTemplateGenerateToStringWithPropertyWithAugmentTest() {
         assertEquals("""
             @Override
-            default String bindingToString() {
+            default String javaTS() {
                 final var helper = MoreObjects.toStringHelper("test");
                 CodeHelpers.appendValue(helper, "test", gettest());
                 CodeHelpers.appendAugmentations(helper, "augmentation", this);
@@ -173,7 +173,7 @@ public class BuilderGeneratorTest {
     void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() {
         assertEquals("""
             @Override
-            default String bindingToString() {
+            default String javaTS() {
                 final var helper = MoreObjects.toStringHelper("test");
                 CodeHelpers.appendValue(helper, "test1", gettest1());
                 CodeHelpers.appendValue(helper, "test2", gettest2());

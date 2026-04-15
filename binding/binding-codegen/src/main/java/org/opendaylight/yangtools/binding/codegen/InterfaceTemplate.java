@@ -361,7 +361,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     final @NonNull BlockBuilder generateBindingHashCode() {
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("default int bindingHashCode()").jBlock(bb -> {
+            .str("default int javaHC()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
                 final boolean augmentable = analysis.augmentType() != null;
                 final var props = analysis.properties();
@@ -369,14 +369,14 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
                 switch (props.size()) {
                     case 0 -> {
                         if (augmentable) {
-                            bb.str("return ").str(importedName(CODEHELPERS)).eol(".bindingHashCode0(this);");
+                            bb.str("return ").str(importedName(CODEHELPERS)).eol(".jcHC0(this);");
                         } else {
                             bb.eol("return 1;");
                         }
                     }
                     case 1 -> {
                         final var property = props.iterator().next();
-                        bb.str("return ").str(importedName(CODEHELPERS)).str(".bindingHashCode1(");
+                        bb.str("return ").str(importedName(CODEHELPERS)).str(".jcHC1(");
                         if (augmentable) {
                             bb.str("this, ");
                         }
@@ -405,10 +405,10 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             isBinary[cnt++] = tmp;
         }
 
-        // either all are byte[] or none are: we can use CodeHelpers.bindingHashCodeN()
+        // either all are byte[] or none are: we can use CodeHelpers.jcHCN()
         final boolean useN = binaryCount == 0 || binaryCount == size;
 
-        bb.str("return ").str(importedName(CODEHELPERS)).str(useN ? ".bindingHashCodeN(" : ".bindingHashCode(");
+        bb.str("return ").str(importedName(CODEHELPERS)).str(useN ? ".jcHCN(" : ".jcHC(");
         if (augmentable) {
             bb.eol("this,");
         } else {
@@ -461,7 +461,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             // FIXME: selfref instead of canonicalName
-            .str("default boolean bindingEquals(").str(type().canonicalName()).str(" obj)").jBlock(bb -> {
+            .str("default boolean javaEQ(").str(type().canonicalName()).str(" obj)").jBlock(bb -> {
                 if (props.isEmpty() && !augmentable) {
                     bb.str(importedName(JU_OBJECTS)).eol(".requireNonNull(obj);");
                     bb.eol("return true;");
@@ -498,7 +498,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     final BlockBuilder generateBindingToString() {
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("default ").str(importedName(Types.STRING)).str(" bindingToString()").jBlock(bb -> {
+            .str("default ").str(importedName(Types.STRING)).str(" javaTS()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
 
                 bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
