@@ -322,7 +322,7 @@ public abstract class Generator implements Iterable<Generator> {
      *
      * @param builder Target builder
      */
-    static final void defaultImplementedInterace(final GeneratedTypeBuilder builder) {
+    static final void defaultImplementedInterace(final GeneratedTypeBuilderBase<?> builder) {
         defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
