@@ -164,7 +164,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
                 final var fieldName = fieldName(field);
                 if (field.getReturnType().isArray()) {
-                    bb.str("return ").str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
+                    bb.str("return ").jCall(importedName(CODEHELPERS), "copyArray", fieldName);
                 } else {
                     bb.str("return ").str(fieldName).eS();
                 }
@@ -216,7 +216,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             if (field.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
                 bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
             } else {
-                bb.str("base.").str(field.getGetterName()).eol("();");
+                bb.jCall("base", field.getGetterName());
             }
         }
     }
