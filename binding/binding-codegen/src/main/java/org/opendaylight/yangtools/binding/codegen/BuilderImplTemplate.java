@@ -139,9 +139,10 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                         .at().eol(override)
                         .str("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
                             .str(toFirstUpper(field.getName())).str("()").oB()
-                            .str("return ").str(importedName(JU_OBJECTS)).str(".requireNonNullElse(")
-                                .str(getterMethodName(field)).str("(), ").str(fieldType.canonicalName())
-                                .eol(BUILDER_SUFFIX + ".empty());")
+                            .str("var tmp = ").str(getterMethodName(field)).eol("();")
+                            .str("return tmp != null ? tmp : ")
+                                // FIXME: better reference to FooBuilder.empty()
+                                .str(fieldType.canonicalName()).eol(BUILDER_SUFFIX + ".empty();")
                         .cB();
                 }
 
