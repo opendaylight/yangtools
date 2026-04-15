@@ -306,7 +306,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                 bb.str("return ");
                 // any Java array type needs to be duplicated to prevent modification
                 if (field.getReturnType().isArray()) {
-                    bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
+                    bb.jCall(importedName(CODEHELPERS), "copyArray", fieldName);
                 } else {
                     bb.str(fieldName).eS();
                 }

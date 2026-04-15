@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
+import java.util.Iterator;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -247,6 +248,64 @@ final class BlockBuilder extends Block.Builder {
 
     // FIXME: add jText() which will format a string into a text block as per JLS 3.10.6
 
+    @NonNullByDefault
+    BlockBuilder jCall(final String receiver, final String method) {
+        return str(receiver).chr('.').str(method).eol("();");
+    }
+
+    @NonNullByDefault
+    BlockBuilder jCall(final String receiver, final String method, final String arg0) {
+        return openCall(receiver, method, arg0).eol(");");
+    }
+
+    @NonNullByDefault
+    BlockBuilder jCall(final String receiver, final String method, final @NonNull String ... args) {
+        final var size = args.length;
+        return switch (size) {
+            case 0 -> jCall(receiver, method);
+            case 1 -> jCall(receiver, method, args[0]);
+            default -> {
+                openCall(receiver, method, args[0]);
+                for (int i = 1; i < size; ++i) {
+                    appendCallArg(args[i]);
+                }
+                yield eol(");");
+            }
+        };
+    }
+
+    @NonNullByDefault
+    BlockBuilder jCall(final String receiver, final String method, final Iterator<String> args) {
+        if (!args.hasNext()) {
+            return jCall(receiver, method);
+        }
+        final var arg0 = args.next();
+        if (!args.hasNext()) {
+            return jCall(receiver, method, arg0);
+        }
+
+        openCall(receiver, method, arg0);
+        while (args.hasNext()) {
+            appendCallArg(args.next());
+        }
+        return eol(");");
+    }
+
+    @NonNullByDefault
+    private BlockBuilder openCall(final String receiver, final String method, final String arg0) {
+        return str(receiver).chr('.').str(method).chr('(').str(arg0);
+    }
+
+    private void appendCallArg(final String arg) {
+        str(", ").str(arg);
+    }
+
+    // internal use only to provide safety against char('\n') without paying the cost
+    private @NonNull BlockBuilder chr(final char ch) {
+        buf().append(ch);
+        return this;
+    }
+
     /**
      * Append a {@code '@'}.
      *
@@ -254,8 +313,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @CheckReturnValue
     @NonNull BlockBuilder at() {
-        buf().append('@');
-        return this;
+        return chr('@');
     }
 
     /**
@@ -265,8 +323,7 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder sp() {
-        buf().append(' ');
-        return this;
+        return chr(' ');
     }
 
     /**

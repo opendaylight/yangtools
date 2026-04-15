@@ -833,8 +833,7 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         for (var constant : consts) {
             if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
                 return newBlockBuilder()
-                    .str(importedName(CODEHELPERS)).str(".checkPattern(").str(ref).str(", ")
-                        .eol(MEMBER_PATTERN_LIST + ", " + MEMBER_REGEX_LIST + ");");
+                    .jCall(importedName(CODEHELPERS), "checkPattern", ref, MEMBER_PATTERN_LIST, MEMBER_REGEX_LIST);
             }
         }
         return null;
