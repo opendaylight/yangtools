@@ -72,7 +72,7 @@ public class DefaultBindingGeneratorTest {
     void javaTypeForSchemaDefinitionLeafrefToEnumType() {
         final var bData = assertInstanceOf(DataRootArchetype.class, assertGeneratedType(TEST_TYPE_PROVIDER_B_DATA));
         final var bDataMethods = bData.getMethodDefinitions();
-        assertEquals(8, bDataMethods.size());
+        assertEquals(9, bDataMethods.size());
 
         final var bEnumType = assertInstanceOf(EnumTypeObjectArchetype.class,
             assertGeneratedMethod(bDataMethods, "getEnum").getReturnType());

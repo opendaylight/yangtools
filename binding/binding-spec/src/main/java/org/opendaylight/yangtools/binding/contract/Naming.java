@@ -113,8 +113,8 @@ public final class Naming {
     // Here we carve out some field names.
 
     /**
-     * DataRoot specializations use this field to store their {@link RootMeta} for use with {@link DataRoot#meta()}.
-     * Publicly-available for static injection purposes.
+     * DataRoot specializations use this field to store their {@link RootMeta}. Publicly-available for static injection
+     * purposes.
      *
      * @since 15.0.0
      */
@@ -179,14 +179,6 @@ public final class Naming {
      * Name of {@link ScalarTypeObject#getValue()}.
      */
     public static final @NonNull String SCALAR_TYPE_OBJECT_GET_VALUE_NAME = "getValue";
-
-    /**
-     * The name of {@link DataRoot#meta()} method.
-     * @since 15.0.0
-     * @deprecated Do not use, this constant is an unintended leak.
-     */
-    @Deprecated(since = "15.1.1", forRemoval = true)
-    public static final @NonNull String DATA_ROOT_META_NAME = "meta";
 
     /**
      * Prefix for normal getter methods.
