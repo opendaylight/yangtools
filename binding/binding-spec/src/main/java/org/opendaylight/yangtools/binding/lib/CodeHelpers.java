@@ -604,6 +604,142 @@ public final class CodeHelpers {
     }
 
     /**
+     * {@return the equivalent of {@link #jcHC(int...)} for two hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for three hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for four hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2, final int hashCode3) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for five hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2, final int hashCode3,
+            final int hashCode4) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for six hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2, final int hashCode3,
+            final int hashCode4, final int hashCode5) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for seven hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2, final int hashCode3,
+            final int hashCode4, final int hashCode5, final int hashCode6) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for eight hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @param hashCode7 eighth hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2, final int hashCode3,
+            final int hashCode4, final int hashCode5, final int hashCode6, final int hashCode7) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6,
+            hashCode7));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for nine hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @param hashCode7 eighth hash code
+     * @param hashCode8 ninth hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2, final int hashCode3,
+            final int hashCode4, final int hashCode5, final int hashCode6, final int hashCode7, final int hashCode8) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6,
+            hashCode7, hashCode8));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(int...)} for ten hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @param hashCode7 eighth hash code
+     * @param hashCode8 ninth hash code
+     * @param hashCode9 tenth hash code
+     * @since 16.0.0
+     */
+    public static int jcHC(final int hashCode0, final int hashCode1, final int hashCode2, final int hashCode3,
+            final int hashCode4, final int hashCode5, final int hashCode6, final int hashCode7, final int hashCode8,
+            final int hashCode9) {
+        return nonzero(sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6,
+            hashCode7, hashCode8, hashCode9));
+    }
+
+    /**
      * Reference implementation of {@link JavaDataContainer#javaHC()} which is also {@link Augmentable}.
      *
      * @param augmentable the {@link Augmentable} instance
@@ -614,6 +750,160 @@ public final class CodeHelpers {
     @NonNullByDefault
     public static int jcHC(final Augmentable<?> augmentable, final int... hashCodes) {
         return nonzero(hashAugmentations(augmentable) + sumPropHashCodes(hashCodes));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for two hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1) {
+        return nonzero(hashAugmentations(augmentable) + sumPropHashCodes(hashCode0, hashCode1));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for three hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2) {
+        return nonzero(hashAugmentations(augmentable) + sumPropHashCodes(hashCode0, hashCode1, hashCode2));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for four hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2, final int hashCode3) {
+        return nonzero(hashAugmentations(augmentable) + sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for five hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2, final int hashCode3, final int hashCode4) {
+        return nonzero(hashAugmentations(augmentable)
+            + sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for six hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2, final int hashCode3, final int hashCode4, final int hashCode5) {
+        return nonzero(hashAugmentations(augmentable)
+            + sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for seven hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2, final int hashCode3, final int hashCode4, final int hashCode5, final int hashCode6) {
+        return nonzero(hashAugmentations(augmentable)
+            + sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for eight hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @param hashCode7 eighth hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2, final int hashCode3, final int hashCode4, final int hashCode5, final int hashCode6,
+            final int hashCode7) {
+        return nonzero(hashAugmentations(augmentable)
+            + sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6, hashCode7));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for nine hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @param hashCode7 eighth hash code
+     * @param hashCode8 ninth hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2, final int hashCode3, final int hashCode4, final int hashCode5, final int hashCode6,
+            final int hashCode7, final int hashCode8) {
+        return nonzero(hashAugmentations(augmentable)
+            + sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6,
+                hashCode7, hashCode8));
+    }
+
+    /**
+     * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for ten hash codes}
+     * @param hashCode0 first hash code
+     * @param hashCode1 second hash code
+     * @param hashCode2 third hash code
+     * @param hashCode3 fourth hash code
+     * @param hashCode4 fifth hash code
+     * @param hashCode5 sixth hash code
+     * @param hashCode6 seventh hash code
+     * @param hashCode7 eighth hash code
+     * @param hashCode8 ninth hash code
+     * @param hashCode9 tenth hash code
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static int jcHC(final Augmentable<?> augmentable, final int hashCode0, final int hashCode1,
+            final int hashCode2, final int hashCode3, final int hashCode4, final int hashCode5, final int hashCode6,
+            final int hashCode7, final int hashCode8, final int hashCode9) {
+        return nonzero(hashAugmentations(augmentable)
+            + sumPropHashCodes(hashCode0, hashCode1, hashCode2, hashCode3, hashCode4, hashCode5, hashCode6,
+                hashCode7, hashCode8, hashCode9));
     }
 
     /**
@@ -672,8 +962,18 @@ public final class CodeHelpers {
     }
 
     @NonNullByDefault
+    public static int jcHCN(final @Nullable Object prop0, final @Nullable Object prop1) {
+        return nonzero(sumPropHashCodes(Objects.hashCode(prop0), Objects.hashCode(prop1)));
+    }
+
+    @NonNullByDefault
     public static int jcHCN(final byte[] @Nullable... props) {
         return nonzero(hashProperties(props));
+    }
+
+    @NonNullByDefault
+    public static int jcHCN(final byte @Nullable [] prop0, final byte @Nullable [] prop1) {
+        return nonzero(sumPropHashCodes(Arrays.hashCode(prop0), Arrays.hashCode(prop1)));
     }
 
     @NonNullByDefault
@@ -726,6 +1026,22 @@ public final class CodeHelpers {
             result = 31 * result + hashCode;
         }
         return result;
+    }
+
+    @NonNullByDefault
+    private static int sumPropHashCodes(final int hashCode0, final int hashCode1) {
+        return 31 * (31 + hashCode0) + hashCode1;
+    }
+
+    @NonNullByDefault
+    private static int sumPropHashCodes(final int hashCode0, final int hashCode1, final int hashCode2) {
+        return 31 * (31 * (31 + hashCode0) + hashCode1) + hashCode2;
+    }
+
+    @NonNullByDefault
+    private static int sumPropHashCodes(final int hashCode0, final int hashCode1, final int hashCode2,
+            final int hashCode3) {
+        return 31 * (31 * (31 * (31 + hashCode0) + hashCode1) + hashCode2) + hashCode3;
     }
 
     // Mask hash == 0 for the purposes of bindingHashCode(). The value we report when hash == 0 is completely arbitrary
