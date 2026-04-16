@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.concepts.Mutable;
 
@@ -37,7 +38,7 @@ public final class JavaTSBuilder implements Mutable {
         sb.append(clazz.getSimpleName()).append('{');
     }
 
-    JavaTSBuilder(final Class<? extends JavaContract<?, ?>> clazz) {
+    JavaTSBuilder(final Class<? extends BindingObject> clazz) {
         this(List.of(), clazz);
     }
 
@@ -75,6 +76,7 @@ public final class JavaTSBuilder implements Mutable {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public String toString() {
         return MoreObjects.toStringHelper(this).add("string", sb.toString()).toString();
     }

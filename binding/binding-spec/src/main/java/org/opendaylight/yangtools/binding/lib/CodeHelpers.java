@@ -28,6 +28,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingContract;
+import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
@@ -128,35 +129,6 @@ public final class CodeHelpers {
     public static void appendBit(final ToStringHelper helper, final @NonNull String name, final boolean value) {
         if (value) {
             helper.addValue(name);
-        }
-    }
-
-    /**
-     * Append a named value to a ToStringHelper. If the value is {@code null}, this method does nothing.
-     *
-     * @param helper Helper to append to
-     * @param name Name of the value
-     * @param value Value to append
-     * @throws NullPointerException if the name or helper is {@code null}
-     */
-    public static void appendValue(final ToStringHelper helper, final @NonNull String name,
-            final @Nullable Object value) {
-        if (value != null) {
-            helper.add(name, value);
-        }
-    }
-
-    /**
-     * Append a named value to a ToStringHelper. If the value is {@code null}, this method does nothing.
-     *
-     * @param helper Helper to append to
-     * @param name Name of the value
-     * @param value Value to append
-     * @throws NullPointerException if the name or helper is {@code null}
-     */
-    public static void appendValue(final ToStringHelper helper, final String name, final byte[] value) {
-        if (value != null) {
-            helper.add(name, HexFormat.of().formatHex(value));
         }
     }
 
@@ -1038,42 +1010,42 @@ public final class CodeHelpers {
     }
 
     @NonNullByDefault
-    public static String jcTS0(final Class<? extends JavaContract<?, ?>> contract) {
-        return new JavaTSBuilder(contract).toString();
+    public static String jcTS0(final Class<? extends BindingObject> clazz) {
+        return new JavaTSBuilder(clazz).build();
     }
 
     @NonNullByDefault
     public static <T extends Augmentable<T> & DataContainer> String jcTS0(final T augmentable) {
-        return new JavaTSBuilder(augmentable).toString();
+        return new JavaTSBuilder(augmentable).build();
     }
 
     @NonNullByDefault
-    public static String jcTS1(final Class<? extends JavaContract<?, ?>> contract, final String name,
+    public static String jcTS1(final Class<? extends BindingObject> clazz, final String name,
             final @Nullable Object value) {
-        return new JavaTSBuilder(contract).prop(name, value).toString();
+        return new JavaTSBuilder(clazz).prop(name, value).build();
     }
 
     @NonNullByDefault
-    public static String jcTS1(final Class<? extends JavaContract<?, ?>> contract, final String name,
+    public static String jcTS1(final Class<? extends BindingObject> clazz, final String name,
             final byte @Nullable [] value) {
-        return new JavaTSBuilder(contract).prop(name, value).toString();
+        return new JavaTSBuilder(clazz).prop(name, value).build();
     }
 
     @NonNullByDefault
     public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable, final String name,
             final @Nullable Object value) {
-        return new JavaTSBuilder(augmentable).prop(name, value).toString();
+        return new JavaTSBuilder(augmentable).prop(name, value).build();
     }
 
     @NonNullByDefault
     public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable,  final String name,
             final byte @Nullable [] value) {
-        return new JavaTSBuilder(augmentable).prop(name, value).toString();
+        return new JavaTSBuilder(augmentable).prop(name, value).build();
     }
 
     @NonNullByDefault
-    public static JavaTSBuilder jcTSB(final Class<? extends JavaContract<?, ?>> contract) {
-        return new JavaTSBuilder(contract);
+    public static JavaTSBuilder jcTSB(final Class<? extends BindingObject> clazz) {
+        return new JavaTSBuilder(clazz);
     }
 
     @NonNullByDefault

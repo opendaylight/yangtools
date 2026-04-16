@@ -322,19 +322,18 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("public ").str(importedName(STRING)).str(" toString()").jBlock(bb -> {
-                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                    .str(importedName(type())).eol(".class);");
+                bb.str("return ").str(importedName(CODEHELPERS)).str(".jcTSB(").str(importedName(type()))
+                    .eol(".class)");
                 for (var property : props) {
-                    bb.str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, ")
-                        .jStr(property.getName()).str(", ").str(fieldName(property)).eol(");");
+                    bb.ind(tsbMethod(property)).jStr(property.getName()).str(", ").str(fieldName(property)).eol(")");
                 }
-                bb.eol("return helper.toString();");
+                bb.ind(".build();").newLine();
             }).nl();
     }
 
     // FIXME: this should be specialized in BitsTypeObjectTemplate
-    private static String valueAppender(final GeneratedProperty prop) {
-        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType()) ? "appendBit" : "appendValue";
+    private static String tsbMethod(final GeneratedProperty prop) {
+        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType()) ? ".bit(" : ".prop(";
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
