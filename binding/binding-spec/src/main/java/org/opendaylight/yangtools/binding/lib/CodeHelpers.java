@@ -978,18 +978,18 @@ public final class CodeHelpers {
 
     @NonNullByDefault
     private static int sumPropHashCodes(final int hashCode0, final int hashCode1) {
-        return 31 * (31 + hashCode0) + hashCode1;
+        return 31 * 31 + 31 * hashCode0 + hashCode1;
     }
 
     @NonNullByDefault
     private static int sumPropHashCodes(final int hashCode0, final int hashCode1, final int hashCode2) {
-        return 31 * (31 * (31 + hashCode0) + hashCode1) + hashCode2;
+        return 31 * 31 * 31 + 31 * 31 * hashCode0 + 31 * hashCode1 + hashCode2;
     }
 
     @NonNullByDefault
     private static int sumPropHashCodes(final int hashCode0, final int hashCode1, final int hashCode2,
             final int hashCode3) {
-        return 31 * (31 * (31 * (31 + hashCode0) + hashCode1) + hashCode2) + hashCode3;
+        return 31 * 31 * 31 * 31 + 31 * 31 * 31 * hashCode0 + 31 * 31 * hashCode1 + 31 * hashCode2 + hashCode3;
     }
 
     /**
