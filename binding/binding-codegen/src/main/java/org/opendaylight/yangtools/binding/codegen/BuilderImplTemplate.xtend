@@ -148,7 +148,8 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
         @«OVERRIDE.importedName»
         «val type = field.returnType»
         public «type.importedName» «field.nonnullMethodName»() {
-            return «JU_OBJECTS.importedName».requireNonNullElse(«field.getterMethodName»(), «type.fullyQualifiedName»«BUILDER_SUFFIX».empty());
+            var tmp = «field.getterMethodName»();
+            return tmp != null ? tmp : «type.fullyQualifiedName»«BUILDER_SUFFIX».empty();
         }
     '''
 
