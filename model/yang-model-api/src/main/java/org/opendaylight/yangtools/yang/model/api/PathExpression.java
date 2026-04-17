@@ -79,18 +79,6 @@ public sealed interface PathExpression extends Immutable {
     String originalString();
 
     /**
-     * Returns the path expression formatted string as is defined in model. For example:
-     * {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}
-     *
-     * @return the path expression formatted string as is defined in model
-     * @deprecated Use {@link #originalString()} instead
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    default String getOriginalString() {
-        return originalString();
-    }
-
-    /**
      * {@return {@code true} if the XPath starts in root of YANG model, otherwise {@code false}}
      */
     boolean isAbsolute();
