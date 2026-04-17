@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -79,20 +78,6 @@ public non-sealed interface ModuleEffectiveStatement
 
     @Override
     Module toDataNodeContainer();
-
-    /**
-     * Return this statement's {@code namespace} substatement.
-     *
-     * @implSpec
-     *      Default implementation uses {@link #findFirstEffectiveSubstatement(Class)} and throws a
-     *      {@link VerifyException} if a matching substatement is not found.
-     * @return A {@link NamespaceEffectiveStatement}
-     * @deprecated Use {@link #namespaceStatement()} or {@link #namespaceArgument()} instead.
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    default @NonNull NamespaceEffectiveStatement namespace() {
-        return namespaceStatement();
-    }
 
     /**
      * {@return the equivalent of {@code namespaceStatement().argument()}}
