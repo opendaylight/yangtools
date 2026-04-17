@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Map;
@@ -31,9 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeRoot;
  * it gives access to individual {@link ModuleEffectiveStatement}s that comprise it. It also supports resolution of
  * schema node identifiers via {@link #findSchemaTreeNode(SchemaNodeIdentifier)}.
  */
-@Beta
-// FIXME: 8.0.0: evaluate if we still need to extend SchemaContext here
-public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
+public interface EffectiveModelContext extends SchemaTreeRoot {
 
     @NonNull Map<QNameModule, ModuleEffectiveStatement> getModuleStatements();
 
