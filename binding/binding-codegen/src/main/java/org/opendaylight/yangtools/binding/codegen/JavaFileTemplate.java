@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.MoreObjects;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
@@ -134,11 +133,6 @@ sealed class JavaFileTemplate permits BaseTemplate {
      * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
-
-    /**
-     * {@code com.google.common.base.MoreObjects} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName MOREOBJECTS = JavaTypeName.create(MoreObjects.class);
 
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
