@@ -60,16 +60,6 @@ public interface OrderedByStatement extends DeclaredStatement<Ordering> {
             }
             return orderedBy;
         }
-
-        /**
-         * {@return the {@code OrderedByStatement}}
-         * @throws NoSuchElementException if not present
-         * @deprecated Use {@link #getOrderedByStatement()} instead.
-         */
-        @Deprecated(since = "15.0.1", forRemoval = true)
-        default @NonNull OrderedByStatement getOrderdByStatement() {
-            return getOrderedByStatement();
-        }
     }
 
     /**
