@@ -7,9 +7,16 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * A {@link TypeObject} corresponding to a {@code type union}.
  */
+@NonNullByDefault
 public non-sealed interface UnionTypeObject extends TypeObject {
-
+    /**
+     * {@return the {@link UnionValue} stored in this object}
+     * @since 16.0.0
+     */
+    UnionValue<?> value();
 }
