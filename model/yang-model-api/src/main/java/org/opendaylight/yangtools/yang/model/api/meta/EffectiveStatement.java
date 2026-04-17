@@ -61,21 +61,11 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
     }
 
     /**
-     * {@return the {@link DeclaredStatement} declaring of effective statement or {@code null} if this effective
-     * statement was inferred}
-     * @deprecated Use {@link #declared()} instead or {@link #requireDeclared()} instead.
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    default @Nullable D getDeclared() {
-        return declared();
-    }
-
-    /**
      * {@return the {@link DeclaredStatement} declaring of effective statement}}
      * @throws NoSuchElementException if if this effective statement was inferred
      * @since 15.0.0
      */
-    // FIXME: rename to getDeclared() once that name is available
+    // FIXME: 17.0.0: rename to getDeclared() once that name is available
     default @NonNull D requireDeclared() {
         final var declared = declared();
         if (declared == null) {
