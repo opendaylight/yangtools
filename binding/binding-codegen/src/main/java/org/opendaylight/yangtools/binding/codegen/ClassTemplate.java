@@ -322,19 +322,31 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("public ").str(importedName(STRING)).str(" toString()").jBlock(bb -> {
-                bb.str("final var helper = ").str(importedName(MOREOBJECTS)).str(".toStringHelper(")
-                    .str(importedName(type())).eol(".class);");
-                for (var property : props) {
-                    bb.str(importedName(CODEHELPERS)).str(".").str(valueAppender(property)).str("(helper, ")
-                        .jStr(property.getName()).str(", ").str(fieldName(property)).eol(");");
+                // FIXME: use selfRef
+                final var selfRef = importedName(type());
+
+                bb.str("return ").str(importedName(CODEHELPERS));
+                switch (props.size()) {
+                    case 0 -> bb.str(".jcTS0(").str(selfRef).eol(".class);");
+                    case 1 -> {
+                        final var prop = props.iterator().next();
+                        bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(prop.getName()).str(", ")
+                            .str(fieldName(prop)).eol(");");
+                    }
+                    default -> {
+                        bb.str(".jcTSB(").str(selfRef).eol(".class)");
+                        for (var prop : props) {
+                            bb.ind(valueAppender(prop)).jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
+                        }
+                        bb.ind(".build();").newLine();
+                    }
                 }
-                bb.eol("return helper.toString();");
             }).nl();
     }
 
     // FIXME: this should be specialized in BitsTypeObjectTemplate
     private static String valueAppender(final GeneratedProperty prop) {
-        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType()) ? "appendBit" : "appendValue";
+        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType()) ? ".bit(" : ".prop(";
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
