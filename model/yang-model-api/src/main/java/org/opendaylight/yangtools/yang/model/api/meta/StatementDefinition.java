@@ -98,17 +98,6 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
     @NonNull QName statementName();
 
     /**
-     * Returns name of the statement.
-     *
-     * @return Name of the statement
-     * @deprecated Use {@link #statementName()} instead.
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    default @NonNull QName getStatementName() {
-        return statementName();
-    }
-
-    /**
      * {@return a human-friendly string representation of {link #statementName()}}
      * @since 15.0.0
      */
@@ -160,30 +149,6 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
      * {@return the class representing the effective version of the statement associated with this definition}
      */
     @NonNull Class<? extends E> effectiveRepresentation();
-
-    /**
-     * Returns class which represents declared version of statement associated with this definition. This class should
-     * be an interface which provides convenience access to declared substatements.
-     *
-     * @return class which represents declared version of statement associated with this definition.
-     * @deprecated Use {@link #declaredRepresentation()} instead.
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    default @NonNull Class<? extends D> getDeclaredRepresentationClass() {
-        return declaredRepresentation();
-    }
-
-    /**
-     * Returns class which represents derived behaviour from supplied statement. This class should be an interface which
-     * defines convenience access to statement properties, namespace items and substatements.
-     *
-     * @return class which represents effective version of statement associated with this definition
-     * @deprecated Use {@link #effectiveRepresentation()} instead.
-     */
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    default @NonNull Class<? extends E> getEffectiveRepresentationClass() {
-        return effectiveRepresentation();
-    }
 
     /**
      * {@return {@code true} if this definition represents an {@code extension} statement}
