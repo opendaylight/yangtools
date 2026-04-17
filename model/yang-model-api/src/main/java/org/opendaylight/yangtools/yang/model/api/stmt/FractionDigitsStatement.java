@@ -58,15 +58,6 @@ public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
             }
             return fractionDigits;
         }
-
-        /**
-         * {@return the {@code FractionDigitsStatement}}
-         * @throws NoSuchElementException if not present
-         */
-        @Deprecated(since = "15.0.1", forRemoval = true)
-        default @NonNull FractionDigitsStatement getConfigStatement() {
-            return getFractionDigitsStatement();
-        }
     }
 
     /**
