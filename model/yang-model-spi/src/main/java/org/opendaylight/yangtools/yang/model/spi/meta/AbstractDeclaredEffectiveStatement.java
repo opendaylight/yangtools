@@ -47,12 +47,6 @@ public abstract non-sealed class AbstractDeclaredEffectiveStatement<A, D extends
     public abstract @NonNull D declared();
 
     @Override
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public final D getDeclared() {
-        return declared();
-    }
-
-    @Override
     public final D requireDeclared() {
         return declared();
     }
