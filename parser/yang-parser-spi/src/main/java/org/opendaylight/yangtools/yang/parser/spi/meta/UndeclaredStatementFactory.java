@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Undeclar
 /**
  * An entity capable of creating undeclared {@link EffectiveStatement} instances for a particular type. Unlike
  * {@link StatementFactory}, effective statements created through this interface are expected to return a {@code null}
- * from {@link EffectiveStatement#getDeclared()}.
+ * from {@link EffectiveStatement#declared()}.
  *
  * @param <A> Argument type
  * @param <D> Declared Statement representation

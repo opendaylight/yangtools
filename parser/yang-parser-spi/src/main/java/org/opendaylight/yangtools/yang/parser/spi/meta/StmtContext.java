@@ -301,7 +301,7 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
 
         /**
          * Create a purely-effective substatement. The statement will report a {@code null}
-         * {@link EffectiveStatement#getDeclared()} object. A typical example of statements which require this mechanics
+         * {@link EffectiveStatement#declared()} object. A typical example of statements which require this mechanics
          * are {@code rpc} and {@code action} statements, which always have {@code input} and {@code output}
          * substatements, even if those are not declared in YANG text. The returned context is not added to this
          * context's substatements. That needs to done once the statement is completely defined through

@@ -34,8 +34,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * is notably not true for all {@code case} statements, some of which may actually be implied.
  *
  * <p>Note implementations are not strictly required to make the declared statement available, they are free to throw
- * {@link UnsupportedOperationException} from {@link #getDeclared()}, rendering any services relying on declared
- * statement to be not available.
+ * {@link UnsupportedOperationException} from {@link #declared()}, rendering any services relying on declared statement
+ * to be not available.
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
