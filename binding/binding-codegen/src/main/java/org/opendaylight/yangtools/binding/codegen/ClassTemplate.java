@@ -327,25 +327,45 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
 
                 bb.str("return ").str(importedName(CODEHELPERS));
                 switch (props.size()) {
-                    case 1 -> {
-                        final var prop = props.iterator().next();
-                        bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(prop.getName()).str(", ")
-                            .str(fieldName(prop)).eol(");");
-                    }
-                    default -> {
-                        bb.str(".jcTSB(").str(selfRef).eol(".class)");
-                        for (var prop : props) {
-                            bb.ind(valueAppender(prop)).jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
-                        }
-                        bb.ind(".build();").newLine();
-                    }
+                    case 0 -> bb.str(".jcTS0(").str(selfRef).eol(".class);");
+                    case 1 -> appendTS1(bb, selfRef, props.iterator().next());
+                    default -> appendTSN(bb, selfRef, props);
                 }
             }).nl();
     }
 
-    // FIXME: this should be specialized in BitsTypeObjectTemplate
-    private static String valueAppender(final GeneratedProperty prop) {
-        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType()) ? ".bit(" : ".prop(";
+    @NonNullByDefault
+    private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
+        final var name = prop.getName();
+        // FIXME: this should be specialized in BitsTypeObjectTemplate
+        if (isBit(prop)) {
+            bb.str(".jcTSB(").str(selfRef).eol(".class).bit(").jStr(prop.getName()).str(", ").str(fieldName(prop))
+                .eol(").build();");
+            return;
+        }
+
+        if (name.equals("value")) {
+            // Special case equivalent to ScalarTypeObject.toString()
+            bb.str(".stoTS(").str(selfRef).str(".class, ");
+        } else {
+            bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(prop.getName()).str(", ");
+        }
+        bb.str(fieldName(prop)).eol(");");
+    }
+
+    @NonNullByDefault
+    private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
+        bb.str(".jcTSB(").str(selfRef).eol(".class)");
+        for (var prop : props) {
+            // FIXME: this should be specialized in BitsTypeObjectTemplate
+            bb.ind(isBit(prop) ? ".bit(" : ".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
+        }
+        bb.ind(".build();").newLine();
+    }
+
+    // FIXME: this gates BitsTypeObject specializations
+    private static boolean isBit(final GeneratedProperty prop) {
+        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType());
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
