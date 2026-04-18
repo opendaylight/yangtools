@@ -60,10 +60,7 @@ public final class JavaTSBuilder implements Mutable {
      * @return this builder
      */
     public JavaTSBuilder prop(final String name, final @Nullable Object value) {
-        if (value != null) {
-            startProperty(name).append(value.toString());
-        }
-        return this;
+        return value == null ? this : addProp(name, value);
     }
 
     /**
@@ -74,9 +71,16 @@ public final class JavaTSBuilder implements Mutable {
      * @return this builder
      */
     public JavaTSBuilder prop(final String name, final byte @Nullable [] value) {
-        if (value != null) {
-            HexFormat.of().formatHex(startProperty(name), value);
-        }
+        return value == null ? this : addProp(name, value);
+    }
+
+    JavaTSBuilder addProp(final String name, final Object value) {
+        startProperty(name).append(value.toString());
+        return this;
+    }
+
+    JavaTSBuilder addProp(final String name, final byte[] value) {
+        HexFormat.of().formatHex(startProperty(name), value);
         return this;
     }
 

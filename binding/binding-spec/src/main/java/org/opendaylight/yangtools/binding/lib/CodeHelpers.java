@@ -1020,7 +1020,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static String jcTS0(final Class<?> clazz) {
-        return jcTSB(clazz).build();
+        return clazz.getSimpleName() + "{}";
     }
 
     /**
@@ -1031,7 +1031,9 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static <T extends Augmentable<T> & DataContainer> String jcTS0(final T augmentable) {
-        return jcTSB(augmentable).build();
+        final var clazz = augmentable.implementedInterface();
+        final var augmentations = augmentable.augmentations();
+        return augmentations.isEmpty() ? jcTS0(clazz) : jcTSB(clazz, augmentations).build();
     }
 
     /**
@@ -1043,7 +1045,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static String jcTS1(final Class<?> clazz, final String name, final @Nullable Object value) {
-        return jcTSB(clazz).prop(name, value).build();
+        return value == null ? jcTS0(clazz) : jcTSB(clazz).addProp(name, value).build();
     }
 
     /**
@@ -1055,7 +1057,7 @@ public final class CodeHelpers {
      */
     @NonNullByDefault
     public static String jcTS1(final Class<?> clazz, final String name, final byte @Nullable [] value) {
-        return jcTSB(clazz).prop(name, value).build();
+        return value == null ? jcTS0(clazz) : jcTSB(clazz).addProp(name, value).build();
     }
 
     /**
@@ -1069,7 +1071,7 @@ public final class CodeHelpers {
     @NonNullByDefault
     public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable, final String name,
             final @Nullable Object value) {
-        return jcTSB(augmentable).prop(name, value).build();
+        return value == null ? jcTS0(augmentable) : jcTSB(augmentable).addProp(name, value).build();
     }
 
     /**
@@ -1083,7 +1085,7 @@ public final class CodeHelpers {
     @NonNullByDefault
     public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable,  final String name,
             final byte @Nullable [] value) {
-        return jcTSB(augmentable).prop(name, value).build();
+        return value == null ? jcTS0(augmentable) : jcTSB(augmentable).addProp(name, value).build();
     }
 
     /**
@@ -1106,9 +1108,14 @@ public final class CodeHelpers {
     public static <T extends Augmentable<T> & DataContainer> JavaTSBuilder jcTSB(final T augmentable) {
         final var clazz = augmentable.implementedInterface();
         final var augmentations = augmentable.augmentations();
-        return augmentations.isEmpty() ? jcTSB(clazz)
-            : new JavaTSBuilder(clazz, augmentations.values().stream()
-                .sorted(AUGMENTATION_BY_CANONICAL_NAME)
-                .collect(Collectors.toUnmodifiableList()));
+        return augmentations.isEmpty() ? jcTSB(clazz) : jcTSB(clazz, augmentations);
+    }
+
+    private static <T extends Augmentable<T> & DataContainer> @NonNull JavaTSBuilder jcTSB(
+            final @NonNull Class<?> clazz,
+            final @NonNull Map<Class<? extends Augmentation<T>>, @NonNull Augmentation<T>> augmentations) {
+        return new JavaTSBuilder(clazz, augmentations.values().stream()
+            .sorted(AUGMENTATION_BY_CANONICAL_NAME)
+            .collect(Collectors.toUnmodifiableList()));
     }
 }
