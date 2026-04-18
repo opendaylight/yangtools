@@ -116,11 +116,13 @@ class CodeHelpersTest {
         final var fooValue = "fooValue".getBytes();
 
         assertEquals("Node{foo=fooValue}", CodeHelpers.jcTS1(Node.class, "foo", "fooValue"));
+        assertEquals("Node{}", CodeHelpers.jcTS1(Node.class, "foo", (Object) null));
         assertEquals("Node{foo=666f6f56616c7565}", CodeHelpers.jcTS1(Node.class, "foo", fooValue));
-        assertEquals("Node{}", CodeHelpers.jcTS1(Node.class, "foo", null));
+        assertEquals("Node{}", CodeHelpers.jcTS1(Node.class, "foo", (byte[]) null));
         assertEquals("Node{foo=fooValue}", CodeHelpers.jcTS1(node, "foo", "fooValue"));
+        assertEquals("Node{}", CodeHelpers.jcTS1(node, "foo", (Object) null));
         assertEquals("Node{foo=666f6f56616c7565}", CodeHelpers.jcTS1(node, "foo", fooValue));
-        assertEquals("Node{}", CodeHelpers.jcTS1(node, "foo", null));
+        assertEquals("Node{}", CodeHelpers.jcTS1(node, "foo", (byte[]) null));
 
         doReturn("augmentationToString").when(augmentation).toString();
         doReturn(Map.of(NodeAugmentation.class, augmentation)).when(node).augmentations();
