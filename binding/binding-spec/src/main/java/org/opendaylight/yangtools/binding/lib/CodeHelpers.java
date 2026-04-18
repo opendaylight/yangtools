@@ -28,6 +28,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.DataContainer;
@@ -37,6 +38,7 @@ import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
@@ -1117,5 +1119,21 @@ public final class CodeHelpers {
         return new JavaTSBuilder(clazz, augmentations.values().stream()
             .sorted(AUGMENTATION_BY_CANONICAL_NAME)
             .collect(Collectors.toUnmodifiableList()));
+    }
+
+    //
+    ////
+    ////// BaseIdentity implementation methods
+    ////
+    //
+    /**
+     * {@return the {@link BaseIdentity#toString()} string}
+     * @param clazz the identity class
+     * @param qname identity's assigned QName
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static String biTS(final Class<? extends BaseIdentity> clazz, final QName qname) {
+        return clazz.getSimpleName() + "{qname=" + qname.toString() + "}";
     }
 }
