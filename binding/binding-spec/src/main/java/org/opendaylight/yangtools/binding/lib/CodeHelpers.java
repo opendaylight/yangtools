@@ -1126,6 +1126,23 @@ public final class CodeHelpers {
     ////// BaseIdentity implementation methods
     ////
     //
+
+    /**
+     * Canonical implementation of {@link BaseIdentity#equals(Object)}.
+     *
+     * @param thisObj this object
+     * @param obj the reference object with which to compare
+     * @return {@code true} if this object is equal to the reference object
+     * @since 16.0.0
+     */
+    public static boolean biEQ(final @NonNull BaseIdentity thisObj, final @Nullable Object obj) {
+        return thisObj == obj || biEQ(thisObj.implementedInterface(), obj);
+    }
+
+    private static boolean biEQ(final @NonNull Class<? extends BaseIdentity> iface, final Object obj) {
+        return iface.isInstance(obj) && iface.equals(((BaseIdentity) obj).implementedInterface());
+    }
+
     /**
      * {@return the {@link BaseIdentity#toString()} string}
      * @param clazz the identity class

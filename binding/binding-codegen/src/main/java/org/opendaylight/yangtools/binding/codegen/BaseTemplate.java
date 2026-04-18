@@ -252,6 +252,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     String emitValueConstant(final String name, final Type type) {
         final var typeName = importedName(type);
         final var override = importedName(OVERRIDE);
+        final var codeHelpers = importedName(CODEHELPERS);
 
         return "/**\n"
             +  " * Singleton value representing the {@link " + typeName + "} identity.\n"
@@ -273,14 +274,12 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             +  '\n'
             +  "    @" + override + '\n'
             +  "    public boolean equals(final " + importedName(Types.objectType()) + " obj) {\n"
-            +  "        return obj == this || obj instanceof " + typeName + " other\n"
-            +  "            && " + typeName + ".class.equals(other." + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-                + "());\n"
+            +  "        return " + codeHelpers + ".biEQ(this, obj);\n"
             +  "    }\n"
             +  '\n'
             +  "    @" + override + '\n'
             +  "    public " + importedName(Types.STRING) + " toString() {\n"
-            +  "        return " + importedName(CODEHELPERS) + ".biTS(" + typeName + ".class, QNAME);\n"
+            +  "        return " + codeHelpers + ".biTS(" + typeName + ".class, QNAME);\n"
             +  "    }\n"
             +  '\n'
             +  "    @java.io.Serial\n"

@@ -27,6 +27,7 @@ public non-sealed interface BaseIdentity extends BindingObject, BindingContract<
      * {@inheritDoc}
      *
      * <p>Implementations are required to compare {@link #implementedInterface()} for equality.
+     * @see CodeHelpers#biEQ(BaseIdentity, Object)
      */
     @Override
     boolean equals(Object obj);
