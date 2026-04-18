@@ -99,7 +99,7 @@ final class LeafRefContextTreeBuilder {
                     final var leafRefPathParser = new LeafRefPathParserImpl(leafrefType, typedNode);
                     final var  leafRefPath = leafRefPathParser.parseLeafRefPath(path);
 
-                    currentLeafRefContextBuilder.setLeafRefTargetPathString(path.getOriginalString());
+                    currentLeafRefContextBuilder.setLeafRefTargetPathString(path.originalString());
                     currentLeafRefContextBuilder.setReferencing(true);
                     currentLeafRefContextBuilder.setLeafRefTargetPath(leafRefPath);
 
