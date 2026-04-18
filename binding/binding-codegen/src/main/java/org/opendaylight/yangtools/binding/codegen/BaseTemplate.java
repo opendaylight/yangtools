@@ -280,7 +280,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             +  '\n'
             +  "    @" + override + '\n'
             +  "    public " + importedName(Types.STRING) + " toString() {\n"
-            +  "        return " + importedName(CODEHELPERS) + ".jcTS1(" + typeName + ".class, \"qname\", QNAME);\n"
+            +  "        return " + importedName(CODEHELPERS) + ".biTS(" + typeName + ".class, QNAME);\n"
             +  "    }\n"
             +  '\n'
             +  "    @java.io.Serial\n"
