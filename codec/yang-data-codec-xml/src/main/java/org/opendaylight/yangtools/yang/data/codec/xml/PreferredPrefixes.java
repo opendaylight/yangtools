@@ -85,7 +85,7 @@ abstract sealed class PreferredPrefixes {
          */
         @NonNull PreferredPrefixes toPrecomputed() {
             for (var module : modelContext.getModuleStatements().values()) {
-                prefixForNamespace(module.namespace().argument());
+                prefixForNamespace(module.namespaceStatement().argument());
             }
             return new Precomputed(
                 Maps.transformValues(Maps.filterValues(mappings, Optional::isPresent), Optional::orElseThrow));
@@ -105,7 +105,7 @@ abstract sealed class PreferredPrefixes {
         // Validate that all modules which have the same prefix have also the name namespace
         private boolean isValidMapping(final XMLNamespace namespace, final String prefix) {
             return !startsWithXml(prefix) && modulesForPrefix(prefix)
-                .allMatch(module -> namespace.equals(module.namespace().argument()));
+                .allMatch(module -> namespace.equals(module.namespaceStatement().argument()));
         }
 
         private Stream<ModuleEffectiveStatement> modulesForPrefix(final String prefix) {
