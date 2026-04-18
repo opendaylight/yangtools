@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.impl.TheUnsafeSecret;
@@ -1152,5 +1153,35 @@ public final class CodeHelpers {
     @NonNullByDefault
     public static String biTS(final Class<? extends BaseIdentity> clazz, final QName qname) {
         return clazz.getSimpleName() + "{qname=" + qname.toString() + "}";
+    }
+
+    //
+    ////
+    ////// ScalarTypeObject implementation methods
+    ////
+    //
+
+    /**
+     * {@return the {@link ScalarTypeObject#toString()} string}
+     * @param clazz type object class
+     * @param value the value
+     * @since 16.0.0
+     */
+    // TODO: Class<? extends ScalarTypeObject<?>> and non-null when binding-codegen knows it deals with a STO
+    @NonNullByDefault
+    public static String stoTS(final Class<?> clazz, final @Nullable Object value) {
+        return jcTS1(clazz, "value", value);
+    }
+
+    /**
+     * {@return the {@link ScalarTypeObject#toString()} string}
+     * @param clazz type object class
+     * @param value the value
+     * @since 16.0.0
+     */
+    // TODO: Class<? extends ScalarTypeObject<?>> and non-null when binding-codegen knows it deals with a STO
+    @NonNullByDefault
+    public static String stoTS(final Class<?> clazz, final byte @Nullable [] value) {
+        return jcTS1(clazz, "value", value);
     }
 }
