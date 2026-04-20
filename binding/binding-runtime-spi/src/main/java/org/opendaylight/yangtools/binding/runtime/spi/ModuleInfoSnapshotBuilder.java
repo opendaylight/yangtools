@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -45,20 +44,6 @@ public final class ModuleInfoSnapshotBuilder {
 
     public ModuleInfoSnapshotBuilder(final YangParserFactory parserFactory) {
         this.parserFactory = requireNonNull(parserFactory);
-    }
-
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject> clazz) {
-        return add(BindingRuntimeHelpers.getYangModuleInfo(clazz));
-    }
-
-    @SafeVarargs
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public final @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject>... classes) {
-        for (var clazz : classes) {
-            add(clazz);
-        }
-        return this;
     }
 
     public @NonNull ModuleInfoSnapshotBuilder add(final YangModuleInfo info) {

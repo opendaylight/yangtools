@@ -12,14 +12,11 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
@@ -40,13 +37,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 public final class BindingRuntimeHelpers {
     private BindingRuntimeHelpers() {
         // Hidden on purpose
-    }
-
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static @NonNull EffectiveModelContext createEffectiveModel(final Class<?>... classes) {
-        return createEffectiveModel(Arrays.stream(classes)
-            .map(BindingRuntimeHelpers::getYangModuleInfo)
-            .collect(Collectors.toList()));
     }
 
     public static @NonNull EffectiveModelContext createEffectiveModel(
@@ -74,16 +64,6 @@ public final class BindingRuntimeHelpers {
             infos.modelContext()), infos);
     }
 
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static @NonNull BindingRuntimeContext createRuntimeContext(final Class<?>... classes) {
-        try {
-            return createRuntimeContext(ServiceLoaderState.ParserFactory.INSTANCE,
-                ServiceLoaderState.Generator.INSTANCE, classes);
-        } catch (YangParserException e) {
-            throw new IllegalStateException("Failed to parse models", e);
-        }
-    }
-
     public static @NonNull BindingRuntimeContext createRuntimeContext(
             final Collection<? extends YangModuleInfo> infos) {
         final ModuleInfoSnapshot snapshot;
@@ -98,23 +78,6 @@ public final class BindingRuntimeHelpers {
             ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(snapshot.modelContext()), snapshot);
     }
 
-    // FIXME: 16.0.0: remove this method
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
-            final BindingRuntimeGenerator generator, final Class<?>... classes) throws YangParserException {
-        return createRuntimeContext(parserFactory, generator, Arrays.asList(classes));
-    }
-
-    // FIXME: 16.0.0: remove this method
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
-            final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) throws YangParserException {
-        final var infos = prepareContext(parserFactory, classes.stream()
-            .map(BindingRuntimeHelpers::getYangModuleInfo)
-            .collect(Collectors.toList()));
-        return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.modelContext()), infos);
-    }
-
     public static @NonNull BindingRuntimeContext createRuntimeContext(final @NonNull YangParserFactory parserFactory,
             final @NonNull BindingRuntimeGenerator generator, final @NonNull RootMeta<?> first,
             final @NonNull RootMeta<?>... others) throws YangParserException {
@@ -122,10 +85,9 @@ public final class BindingRuntimeHelpers {
             Stream.concat(Stream.of(first), Stream.of(others)).map(RootMeta::moduleInfo));
     }
 
-    // FIXME: 16.0.0: change List to Collection
     public static @NonNull BindingRuntimeContext createRuntimeContext(final @NonNull YangParserFactory parserFactory,
-            final @NonNull BindingRuntimeGenerator generator, final @NonNull List<? extends RootMeta<?>> rootMetas)
-                throws YangParserException {
+            final @NonNull BindingRuntimeGenerator generator,
+            final @NonNull Collection<? extends RootMeta<?>> rootMetas) throws YangParserException {
         if (rootMetas.isEmpty()) {
             throw new IllegalArgumentException("empty rootMetas");
         }
@@ -137,19 +99,6 @@ public final class BindingRuntimeHelpers {
                 throws YangParserException {
         final var snapshot = prepareContext(parserFactory, infos.collect(Collectors.toList()));
         return new DefaultBindingRuntimeContext(generator.generateTypeMapping(snapshot.modelContext()), snapshot);
-    }
-
-    @Deprecated(since = "15.0.0", forRemoval = true)
-    public static @NonNull YangModuleInfo getYangModuleInfo(final Class<?> clazz) {
-        final var modelPackage = Naming.rootToServicePackageName(clazz.getPackage().getName());
-
-        for (var bindingProvider : ServiceLoader.load(YangModelBindingProvider.class, clazz.getClassLoader())) {
-            var moduleInfo = bindingProvider.getModuleInfo();
-            if (modelPackage.equals(moduleInfo.getClass().getPackage().getName())) {
-                return moduleInfo;
-            }
-        }
-        throw new IllegalStateException("Failed to find YangModuleInfo in package " + modelPackage + " for " + clazz);
     }
 
     public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos() {
