@@ -731,14 +731,23 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                             context.modelContext());
                     }
                     case LeafListSchemaNode leafListSchema -> {
-                        final var genericType = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType())
-                            .orElseThrow(() -> new IllegalStateException("Failed to find return type for " + method));
+                        final var returnType = method.getGenericReturnType();
+                        if (!(returnType instanceof ParameterizedType paramType)) {
+                            throw new LinkageError(
+                                "Non-parameterized return type in " + method + " with schema " + leafListSchema);
+                        }
+                        final var typeArgs = paramType.getActualTypeArguments();
+                        if (typeArgs.length != 1) {
+                            throw new LinkageError("Expecting 1 type parameter in return type of " + method);
+                        }
+                        final var genericType = typeArgs[0];
                         final var valueType = switch (genericType) {
                             case Class<?> clazz -> clazz;
                             case ParameterizedType parameterized -> (Class<?>) parameterized.getRawType();
                             // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type
                             case WildcardType wildCard -> Object.class;
-                            default -> throw new IllegalStateException("Unexpected return type " + genericType);
+                            case null, default ->
+                                throw new IllegalStateException("Unexpected return type " + genericType);
                         };
 
                         final var codec = getCodec(valueType, leafListSchema.typeDefinition());

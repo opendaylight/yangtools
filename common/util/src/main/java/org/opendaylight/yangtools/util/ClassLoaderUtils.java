@@ -159,7 +159,9 @@ public final class ClassLoaderUtils {
      * @param type Type to examine
      * @return First generic type argument, if present
      * @throws NullPointerException if {@code type} is null
+     * @deprecated This method has no users and is scheduled for removal without replacement.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static Optional<Type> getFirstGenericParameter(final Type type) {
         requireNonNull(type);
         return type instanceof ParameterizedType ptype ? Optional.of(ptype.getActualTypeArguments()[0])
