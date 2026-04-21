@@ -13,12 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -117,26 +118,19 @@ class GeneratedTypesLeafrefTest {
         assertEquals("java.lang.String", ifcIdPropType.canonicalName());
 
         // Interface
+        assertEntryObject(gtIfc, JavaTypeName.create(
+            "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"));
         final var gtIfcMethods = gtIfc.getMethodDefinitions();
         assertNotNull(gtIfcMethods);
-        MethodSignature getIfcKey = null;
         MethodSignature getHigherLayerIf = null;
         for (var method : gtIfcMethods) {
             switch (method.getName()) {
-                case Naming.KEY_AWARE_KEY_NAME:
-                    getIfcKey = method;
-                    break;
-                case "getHigherLayerIf":
-                    getHigherLayerIf = method;
-                    break;
-                default:
+                case "getHigherLayerIf" -> getHigherLayerIf = method;
+                default -> {
+                    // no-op
+                }
             }
         }
-        assertNotNull(getIfcKey);
-        final var getIfcKeyType = getIfcKey.getReturnType();
-        assertNotNull(getIfcKeyType);
-        assertNotSame("java.lang.Void", getIfcKeyType);
-        assertEquals("InterfaceKey", getIfcKeyType.simpleName());
 
         assertNotNull(getHigherLayerIf);
         final var getHigherLayerIfType = getHigherLayerIf.getReturnType();
@@ -190,19 +184,10 @@ class GeneratedTypesLeafrefTest {
         assertEquals("Uri", getIdDestType.simpleName());
 
         // Tunnel
-        final var gtTunnelMethods = gtTunnel.getMethodDefinitions();
-        assertNotNull(gtTunnelMethods);
-        MethodSignature getTunnelKey = null;
-        for (var method : gtTunnelMethods) {
-            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
-                getTunnelKey = method;
-            }
-        }
-        assertNotNull(getTunnelKey);
-        final var getTunnelKeyType = getTunnelKey.getReturnType();
-        assertNotNull(getTunnelKeyType);
-        assertNotSame("java.lang.Void", getTunnelKeyType);
-        assertEquals("TunnelKey", getTunnelKeyType.simpleName());
+        assertEntryObject(gtTunnel, JavaTypeName.create("""
+            org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.network.links.network.link.\
+            tunnels""", "TunnelKey"));
+        assertThat(gtTunnel.getMethodDefinitions()).hasSize(3);
 
         // TunnelKey
         final var gtTunnelKeyProps = gtTunnelKey.getProperties();
