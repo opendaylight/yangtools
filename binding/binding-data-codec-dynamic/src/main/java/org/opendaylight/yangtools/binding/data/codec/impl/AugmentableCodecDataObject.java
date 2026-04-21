@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
 /**
@@ -28,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
  *
  * @param <T> DataObject type
  */
-public abstract class AugmentableCodecDataObject<T extends DataObject & Augmentable<T>>
+public abstract class AugmentableCodecDataObject<T extends DataObject & Augmentable<T> & JavaDataContainer<T>>
         extends CodecDataObject<T> implements Augmentable<T> {
     private static final VarHandle CACHED_AUGMENTATIONS;
 
@@ -42,7 +43,6 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     }
 
     // Used via VarHandle
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> cachedAugmentations;
 

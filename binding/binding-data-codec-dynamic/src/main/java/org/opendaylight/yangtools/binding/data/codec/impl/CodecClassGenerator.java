@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
-import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.loadThis;
-import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.invokeMethod;
 
 import java.util.function.Supplier;
 import net.bytebuddy.ByteBuddy;
@@ -18,15 +16,9 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.DynamicType.Builder;
-import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.implementation.bytecode.member.MethodReturn;
-import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.BindingContract;
-import org.opendaylight.yangtools.binding.lib.JavaContract;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
@@ -39,26 +31,8 @@ import org.slf4j.LoggerFactory;
 abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T>
         permits CodecDataObjectGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(CodecClassGenerator.class);
-    private static final Generic BB_BOOLEAN = TypeDefinition.Sort.describe(boolean.class);
-    private static final Generic BB_OBJECT = TypeDefinition.Sort.describe(Object.class);
-    private static final Generic BB_INT = TypeDefinition.Sort.describe(int.class);
-    private static final Generic BB_STRING = TypeDefinition.Sort.describe(String.class);
-    private static final StackManipulation FIRST_ARG_REF = MethodVariableAccess.REFERENCE.loadFrom(1);
-    // return this.bindingHashCode();
-    private static final Implementation JAVA_HC = new Implementation.Simple(
-        loadThis(), invokeMethod(JavaContract.class, "javaHC"), MethodReturn.INTEGER);
-    // return this.bindingEquals(obj);
-    private static final Implementation JAVA_EQ = new Implementation.Simple(
-        loadThis(), FIRST_ARG_REF,
-        invokeMethod(JavaContract.class, "javaEQ", BindingContract.class),
-        MethodReturn.INTEGER);
-    // return this.bindingToString();
-    private static final Implementation JAVA_TS = new Implementation.Simple(
-        loadThis(), invokeMethod(JavaContract.class, "javaTS"), MethodReturn.REFERENCE);
 
     private static final ByteBuddy BB = new ByteBuddy();
-
-    private static final int PROT_FINAL = Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
     static final int PUB_FINAL = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
@@ -88,16 +62,7 @@ abstract sealed class CodecClassGenerator<T extends CodecDataObject<?>> implemen
 
         builder = customizeBuilder(getterGenerator.generateGetters(builder));
 
-        // Final bits:
-        return GeneratorResult.of(new UnloadedLoadableClass<>(builder
-            // codecHashCode() ...
-            .defineMethod("codecHashCode", BB_INT, PROT_FINAL).intercept(JAVA_HC)
-            // ... equals(Object) ...
-            .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_OBJECT).intercept(JAVA_EQ)
-            // ... toString() ...
-            .defineMethod("toString", BB_STRING, PUB_FINAL).intercept(JAVA_TS)
-            // ... and build it
-            .make()));
+        return GeneratorResult.of(new UnloadedLoadableClass<>(builder.make()));
     }
 
     /**

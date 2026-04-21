@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
@@ -26,49 +26,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
  *
  * @param <T> DataObject type
  */
-public abstract class CodecDataObject<T extends DataObject> implements DataObject {
+public abstract class CodecDataObject<T extends DataObject & JavaDataContainer<T>> extends AbstractDataContainer<T>
+        implements DataObject {
     // An object representing a null value in a member field.
     private static final @NonNull Object NULL_VALUE = new Object();
 
-    private static final VarHandle CACHED_HASH_CODE;
-
-    static {
-        try {
-            CACHED_HASH_CODE = MethodHandles.lookup().findVarHandle(CodecDataObject.class, "cachedHashcode",
-                Integer.class);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
-
     private final @NonNull CommonDataObjectCodecContext<T, ?> context;
     private final @NonNull DataContainerNode data;
-
-    // Accessed via a VarHandle
-    // FIXME: consider using a primitive int-based cache (with 0 being uninit)
-    @SuppressWarnings("unused")
-    @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
-    private volatile Integer cachedHashcode;
 
     protected CodecDataObject(final CommonDataObjectCodecContext<T, ?> context, final DataContainerNode data) {
         this.data = requireNonNull(data, "Data must not be null");
         this.context = requireNonNull(context, "Context must not be null");
     }
-
-    @Override
-    public final int hashCode() {
-        final var cached = (Integer) CACHED_HASH_CODE.getAcquire(this);
-        return cached != null ? cached : loadHashCode();
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        // Indirection to keep checkstyle happy
-        return codecEquals(obj);
-    }
-
-    @Override
-    public abstract String toString();
 
     protected final Object codecMember(final VarHandle handle, final String localName) {
         final Object cached = handle.getAcquire(this);
@@ -103,10 +72,6 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return cached != null ? cached : loadKey(handle);
     }
 
-    protected abstract int codecHashCode();
-
-    protected abstract boolean codecEquals(Object obj);
-
     final @NonNull CommonDataObjectCodecContext<T, ?> codecContext() {
         return context;
     }
@@ -139,13 +104,6 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         // key is known to be non-null, no need to mask it
         final Object witness = handle.compareAndExchangeRelease(this, null, obj);
         return witness == null ? obj : witness;
-    }
-
-    // Helper split out of hashCode() to aid its inlining
-    private int loadHashCode() {
-        final int result = codecHashCode();
-        final Object witness = CACHED_HASH_CODE.compareAndExchangeRelease(this, null, result);
-        return witness == null ? result : (Integer) witness;
     }
 
     private static @NonNull Object maskNull(final @Nullable Object unmasked) {
