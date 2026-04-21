@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
@@ -89,7 +90,6 @@ import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -827,18 +827,23 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListRuntimeType type) {
-        @SuppressWarnings("unchecked")
-        final Class<? extends Key<?>> identifier = (Class<? extends Key<?>>)
-            ClassLoaderUtils.findGenericArgument(listClz, EntryObject.class, 1)
-                .orElseThrow(() -> new IllegalStateException("Failed to find identifier for " + listClz))
-                .asSubclass(Key.class);
-
-        final var valueCtx = new HashMap<QName, ValueContext>();
-        for (var leaf : getLeafNodes(identifier, type.statement()).values()) {
-            final var name = leaf.getDomPathArgument().getNodeType();
-            valueCtx.put(name, new ValueContext(identifier, leaf));
+        // CCE is as good an exception as any
+        final var entryClass = listClz.asSubclass(EntryObject.class);
+        final var keyType = type.keyType();
+        if (keyType == null) {
+            throw new VerifyException(type + " is missing key type information required for EntryObject " + entryClass);
         }
-        return IdentifiableItemCodec.of(type.statement(), identifier, listClz, valueCtx);
+
+        final Class<? extends Key<?>> keyClass;
+        try {
+            keyClass = runtimeContext().loadClass(keyType.javaType());
+        } catch (ClassNotFoundException e) {
+            throw new VerifyException("Cannot load key class for " + entryClass, e);
+        }
+
+        return IdentifiableItemCodec.of(type.statement(), keyClass, entryClass,
+            getLeafNodes(keyClass, type.statement()).values().stream().collect(Collectors.toUnmodifiableMap(
+                leaf -> leaf.getDomPathArgument().getNodeType(), leaf -> new ValueContext(keyClass, leaf))));
     }
 
     @Override
