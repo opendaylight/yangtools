@@ -57,23 +57,19 @@ public final class YangModuleInfoTemplate {
     /**
      * The name of the {@link YangModelBindingProvider} implementation class.
      */
-    @SuppressWarnings("removal")
-    static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = Naming.MODEL_BINDING_PROVIDER_CLASS_NAME;
+    static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "YangModelBindingProviderImpl";
     /**
      * The name of the field holding the {@link YangModuleInfo} instance.
      */
-    @SuppressWarnings("removal")
-    static final @NonNull String INSTANCE_FIELD_NAME = Naming.MODULE_INFO_INSTANCE_FIELD_NAME;
+    static final @NonNull String INSTANCE_FIELD_NAME = "INSTANCE";
     /**
      * The name of the {@link QName} factory method.
      */
-    @SuppressWarnings("removal")
-    static final @NonNull String QNAMEOF_METHOD_NAME = Naming.MODULE_INFO_QNAMEOF_METHOD_NAME;
+    static final @NonNull String QNAMEOF_METHOD_NAME = "qnameOf";
     /**
      * The name of the {@link YangDataName} factory method.
      */
-    @SuppressWarnings("removal")
-    static final @NonNull String YANGDATANAMEOF_METHOD_NAME = Naming.MODULE_INFO_YANGDATANAMEOF_METHOD_NAME;
+    static final @NonNull String YANGDATANAMEOF_METHOD_NAME = "yangDataNameOf";
 
     // These are always imported. Note we need to import even java.lang members, as there can be conflicting definitions
     // in our package

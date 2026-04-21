@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -51,8 +50,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * The name of the field holding augmentations.
      */
-    @SuppressWarnings("removal")
-    static final @NonNull String AUGMENTATION_FIELD = Naming.AUGMENTATION_FIELD;
+    static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private final BuilderImplTemplate implTemplate;
 
