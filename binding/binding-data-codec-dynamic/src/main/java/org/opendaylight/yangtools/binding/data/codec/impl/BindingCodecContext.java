@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
@@ -35,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -710,46 +708,43 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         for (var method : parentClass.getMethods()) {
             // Only consider non-bridge methods with no arguments
             if (method.getParameterCount() == 0 && !method.isBridge()) {
-                final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
+                final var schema = getterToLeafSchema.get(method.getName());
 
                 final ValueNodeCodecContext valueNode;
-                if (schema instanceof LeafSchemaNode leafSchema) {
-                    // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type, but this may return
-                    //                   Object.class
-                    final Class<?> valueType = method.getReturnType();
-                    final ValueCodec<Object, Object> codec = getCodec(valueType, leafSchema.typeDefinition());
-                    valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
-                        context.modelContext());
-                } else if (schema instanceof LeafListSchemaNode leafListSchema) {
-                    final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
-                        method.getGenericReturnType());
-                    checkState(optType.isPresent(), "Failed to find return type for %s", method);
-
-                    final Class<?> valueType;
-                    final Type genericType = optType.orElseThrow();
-                    if (genericType instanceof Class<?> clazz) {
-                        valueType = clazz;
-                    } else if (genericType instanceof ParameterizedType parameterized) {
-                        valueType = (Class<?>) parameterized.getRawType();
-                    } else if (genericType instanceof WildcardType) {
-                        // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type
-                        valueType = Object.class;
-                    } else {
-                        throw new IllegalStateException("Unexpected return type " + genericType);
+                switch (schema) {
+                    case null -> {
+                        // We do not have schema for leaf, so we will ignore it (e.g. getClass).
+                        continue;
                     }
+                    case AnyxmlSchemaNode anyxmlSchema ->
+                        valueNode = new AnyxmlCodecContext<>(anyxmlSchema, method.getName(), opaqueReturnType(method),
+                            loader);
+                    case AnydataSchemaNode anydataSchema ->
+                        valueNode = new AnydataCodecContext<>(anydataSchema, method.getName(), opaqueReturnType(method),
+                            loader);
+                    case LeafSchemaNode leafSchema -> {
+                        // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type, but this may
+                        //                        return Object.class
+                        final var valueType = method.getReturnType();
+                        final var codec = getCodec(valueType, leafSchema.typeDefinition());
+                        valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
+                            context.modelContext());
+                    }
+                    case LeafListSchemaNode leafListSchema -> {
+                        final var genericType = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType())
+                            .orElseThrow(() -> new IllegalStateException("Failed to find return type for " + method));
+                        final var valueType = switch (genericType) {
+                            case Class<?> clazz -> clazz;
+                            case ParameterizedType parameterized -> (Class<?>) parameterized.getRawType();
+                            // FIXME: YANGTOOLS-1602: this is not right as we need to find a concrete type
+                            case WildcardType wildCard -> Object.class;
+                            default -> throw new IllegalStateException("Unexpected return type " + genericType);
+                        };
 
-                    final ValueCodec<Object, Object> codec = getCodec(valueType, leafListSchema.typeDefinition());
-                    valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName(), valueType);
-                } else if (schema instanceof AnyxmlSchemaNode anyxmlSchema) {
-                    valueNode = new AnyxmlCodecContext<>(anyxmlSchema, method.getName(), opaqueReturnType(method),
-                        loader);
-                } else if (schema instanceof AnydataSchemaNode anydataSchema) {
-                    valueNode = new AnydataCodecContext<>(anydataSchema, method.getName(), opaqueReturnType(method),
-                        loader);
-                } else {
-                    verify(schema == null, "Unhandled schema %s for method %s", schema, method);
-                    // We do not have schema for leaf, so we will ignore it (e.g. getClass).
-                    continue;
+                        final var codec = getCodec(valueType, leafListSchema.typeDefinition());
+                        valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName(), valueType);
+                    }
+                    default -> throw new VerifyException("Unhandled schema " + schema + " for method " + method);
                 }
 
                 leaves.put(method, valueNode);
