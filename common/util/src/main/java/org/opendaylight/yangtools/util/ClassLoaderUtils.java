@@ -127,6 +127,7 @@ public final class ClassLoaderUtils {
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <S, G, P> Optional<Class<P>> findGenericArgument(final Class<S> scannedClass,
             final Class<G> genericType, final int index) {
         return getWithClassLoader(scannedClass.getClassLoader(), () -> findParameterizedType(scannedClass, genericType)
