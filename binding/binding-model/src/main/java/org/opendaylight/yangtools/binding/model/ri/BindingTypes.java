@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -116,6 +117,7 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Action<Parent, Input, Output>}
      * @throws NullPointerException if any argument is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType action(final Type parent, final Type input, final Type output) {
         return ParameterizedType.of(ACTION, objectIdentifier(parent), input, output);
     }
@@ -130,8 +132,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code KeyedListAction<ParentKey, Parent, Input, Output>}
      * @throws NullPointerException if any argument is {@code null}
      */
-    public static ParameterizedType keyedListAction(final Type parent, final Type keyType, final Type input,
-            final Type output) {
+    @NonNullByDefault
+    public static ParameterizedType keyedListAction(final Type parent, final GeneratedTransferObject keyType,
+            final Type input, final Type output) {
         return ParameterizedType.of(KEYED_LIST_ACTION, keyType, parent, input, output);
     }
 
@@ -142,6 +145,7 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Notification<ConcreteType>}
      * @throws NullPointerException if any argument is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType notification(final Type concreteType) {
         return ParameterizedType.of(NOTIFICATION, concreteType);
     }
@@ -153,6 +157,7 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code NotificationBody<ConcreteType>}
      * @throws NullPointerException if {@code parent} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType notificationBody(final Type concreteType) {
         return ParameterizedType.of(NOTIFICATION_BODY, concreteType);
     }
@@ -165,6 +170,7 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code InstanceNotification<ConcreteType, Parent>}
      * @throws NullPointerException if {@code parent} is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType instanceNotification(final Type concreteType, final Type parent) {
         return ParameterizedType.of(INSTANCE_NOTIFICATION, concreteType, parent);
     }
@@ -178,8 +184,9 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code KeyedInstanceNotification<ConcreteType, ParentKey, Parent>}
      * @throws NullPointerException if any argument is {@code null}
      */
+    @NonNullByDefault
     public static ParameterizedType keyedListNotification(final Type concreteType, final Type parent,
-            final Type keyType) {
+            final GeneratedTransferObject keyType) {
         return ParameterizedType.of(KEYED_LIST_NOTIFICATION, concreteType, parent, keyType);
     }
 
@@ -256,15 +263,14 @@ public final class BindingTypes {
     }
 
     /**
-     * Type specializing {@link EntryObject} for a particular type.
-     *
+     * {@return a parameterized type corresponding to {@code EntryObject<Type, KeyType>}}
      * @param type Type for which to specialize
      * @param keyType the corresponding {@link #key(Type)}
-     * @return A parameterized type corresponding to {@code EntryObject<Type, KeyType>}
      * @throws NullPointerException if any argument is {@code null}
+     * @see #extractEntryObjectKey(GeneratedType)
      */
     @NonNullByDefault
-    public static ParameterizedType entryObject(final Type type, final Type keyType) {
+    public static ParameterizedType entryObject(final Type type, final GeneratedTransferObject keyType) {
         return ParameterizedType.of(ENTRY_OBJECT, type, keyType);
     }
 
@@ -289,7 +295,7 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is is {@code null}
      */
     @NonNullByDefault
-    public static ParameterizedType objectIdentifierWithKey(final Type type, final Type keyType) {
+    public static ParameterizedType objectIdentifierWithKey(final Type type, final GeneratedTransferObject keyType) {
         return ParameterizedType.of(OBJECT_REFERENCE_WITH_KEY, type, keyType);
     }
 
@@ -442,7 +448,7 @@ public final class BindingTypes {
      * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentation(Type)}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static @Nullable Type extractAugmentationTarget(final ParameterizedType type) {
+    public static @Nullable Type extractAugmentationTarget(final @NonNull ParameterizedType type) {
         return AUGMENTATION.equals(type.getRawType()) ? onlyTypeArgument(type) : null;
     }
 
@@ -451,10 +457,10 @@ public final class BindingTypes {
      *
      * @param type Parameterized type
      * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentable(Type)} or
-     *         {@link #entryObject(Type, Type)}
+     *         {@link #entryObject(Type, GeneratedTransferObject)}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static @Nullable Type extractAugmentableTarget(final ParameterizedType type) {
+    public static @Nullable Type extractAugmentableTarget(final @NonNull ParameterizedType type) {
         final var rawType = type.getRawType();
         if (AUGMENTABLE.equals(rawType)) {
             return onlyTypeArgument(type);
@@ -472,17 +478,43 @@ public final class BindingTypes {
     }
 
     /**
+     * Recover the {@code keyType} argument from a potential {@link EntryObject} type. This is inverse operation to
+     * adding {@link #entryObject(Type, GeneratedTransferObject)} as an implemented interface.
+     *
+     * @param genType the generated type
+     * @return the {@link GeneratedTransferObject} defining the key type, or {@code null} if {@code genType} does not
+     *         directly implement {@link EntryObject}
+     * @since 16.0.0
+     */
+    public static @Nullable GeneratedTransferObject extractEntryObjectKey(final @NonNull GeneratedType genType) {
+        for (var iface : genType.getImplements()) {
+            if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
+                final var args = parameterized.getActualTypeArguments();
+                if (args.size() != 2) {
+                    throw new VerifyException("Unexpected arguments " + args);
+                }
+                final var keyType = args.getLast();
+                if (keyType instanceof GeneratedTransferObject gto) {
+                    return gto;
+                }
+                throw new VerifyException("Unexpected key type " + keyType);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Return the {@link KeyAware} type a parameterized {@link Key} type references.
      *
      * @param type Parameterized type
      * @return Identifiable target, or null if {@code type} does not match the result of {@link #key(Type)}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    public static @Nullable Type extractKeyType(final ParameterizedType type) {
+    public static @Nullable Type extractKeyType(final @NonNull ParameterizedType type) {
         return KEY.equals(type.getRawType()) ? onlyTypeArgument(type) : null;
     }
 
-    private static Type onlyTypeArgument(final ParameterizedType type) {
+    private static @Nullable Type onlyTypeArgument(final @NonNull ParameterizedType type) {
         final var args = type.getActualTypeArguments();
         if (args.size() == 1) {
             final var arg = args.getFirst();
@@ -494,7 +526,7 @@ public final class BindingTypes {
     }
 
     @Beta
-    public static @Nullable Type extractYangFeatureDataRoot(final GeneratedTransferObject gto) {
+    public static @Nullable Type extractYangFeatureDataRoot(final @NonNull GeneratedTransferObject gto) {
         if (!gto.isAbstract() && gto.getSuperType() == null) {
             final var impls = gto.getImplements();
             if (impls.size() == 1 && impls.getFirst() instanceof ParameterizedType param

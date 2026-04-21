@@ -49,7 +49,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
         if (parent instanceof ListGenerator list) {
             final var keyGen = list.keyGenerator();
             if (keyGen != null) {
-                final var keyType = keyGen.getGeneratedType(builderFactory);
+                final var keyType = keyGen.getGeneratedTO(builderFactory);
                 builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
                 builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
                     .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")

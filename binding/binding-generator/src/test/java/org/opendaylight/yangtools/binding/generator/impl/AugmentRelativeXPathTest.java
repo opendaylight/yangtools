@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class AugmentRelativeXPathTest {
@@ -53,40 +52,21 @@ class AugmentRelativeXPathTest {
 
                 final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
                 assertNotNull(gtInterfaceMethods, "Interface methods are null");
-                assertEquals(6, gtInterfaceMethods.size());
+                assertEquals(5, gtInterfaceMethods.size());
 
-                MethodSignature getIfcKeyMethod = null;
-                for (var method : gtInterfaceMethods) {
-                    if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
-                        getIfcKeyMethod = method;
-                        break;
-                    }
-                }
-                assertNotNull(getIfcKeyMethod, "getKey method is null");
-                assertNotNull(getIfcKeyMethod.getReturnType(), "getKey method return type is null");
-                assertEquals(JavaTypeName.create(
+                assertEntryObject(type, JavaTypeName.create(
                     "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-                    "InterfaceKey"),
-                    getIfcKeyMethod.getReturnType().name());
+                    "InterfaceKey"));
             } else if (type.simpleName().equals("Tunnel")) {
                 gtTunnel = type;
 
                 final var tunnelMethods = gtTunnel.getMethodDefinitions();
                 assertNotNull(tunnelMethods, "Tunnel methods are null");
-                assertEquals(4, tunnelMethods.size());
+                assertEquals(3, tunnelMethods.size());
 
-                MethodSignature getTunnelKeyMethod = null;
-                for (var method : tunnelMethods) {
-                    if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
-                        getTunnelKeyMethod = method;
-                        break;
-                    }
-                }
-                assertNotNull(getTunnelKeyMethod, "getKey method is null");
-                assertNotNull(getTunnelKeyMethod.getReturnType(), "getKey method return type");
-                assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology"
-                    + ".rev130503.topology.network.links.network.link.tunnels", "TunnelKey"),
-                    getTunnelKeyMethod.getReturnType().name());
+                assertEntryObject(type, JavaTypeName.create("""
+                    org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.\
+                    network.link.tunnels""", "TunnelKey"));
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(GeneratedTransferObject.class, type);
 
