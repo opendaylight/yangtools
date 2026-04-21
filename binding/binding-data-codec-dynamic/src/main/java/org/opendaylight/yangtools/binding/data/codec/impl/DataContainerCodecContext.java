@@ -17,10 +17,8 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BindingObject;
 import org.opendaylight.yangtools.binding.DataContainer;
@@ -36,7 +34,6 @@ import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaForClassEx
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
-import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -262,20 +259,6 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Expected " + expectedType.getSimpleName(), e);
         }
-    }
-
-    /**
-     * Find augmentation target class from concrete Augmentation class. This method uses first generic argument of
-     * implemented {@link Augmentation} interface.
-     *
-     * @param augmentation {@link Augmentation} subclass for which we want to determine augmentation target.
-     * @return Augmentation target - class which augmentation provides additional extensions.
-     */
-    static final Class<? extends Augmentable<?>> findAugmentationTarget(
-            final Class<? extends Augmentation<?>> augmentation) {
-        final Optional<Class<Augmentable<?>>> opt = ClassLoaderUtils.findFirstGenericArgument(augmentation,
-            Augmentation.class);
-        return opt.orElse(null);
     }
 
     private static @NonNull ChildAddressabilitySummary computeChildAddressabilitySummary(final Object nodeSchema) {

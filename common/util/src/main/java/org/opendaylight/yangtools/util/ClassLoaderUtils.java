@@ -120,6 +120,7 @@ public final class ClassLoaderUtils {
         }
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <S, G, P> Optional<Class<P>> findFirstGenericArgument(final Class<S> scannedClass,
             final Class<G> genericType) {
         return findGenericArgument(scannedClass, genericType, 0);
