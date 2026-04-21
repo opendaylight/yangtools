@@ -22,7 +22,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -1015,10 +1014,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    @SuppressFBWarnings("BC_UNCONFIRMED_CAST")
     public ContainerNode toNormalizedNodeNotification(final Notification<?> data) {
-        // FIXME: Should the cast to DataObject be necessary?
-        return serializeDataObject((DataObject) data,
+        return serializeDataContainer(data,
             (ctx, iface, domWriter) -> ctx.newNotificationWriter(
                 (Class<? extends Notification<?>>) iface.asSubclass(Notification.class), domWriter));
     }
@@ -1036,20 +1033,19 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public ContainerNode toNormalizedNodeRpcData(final DataContainer data) {
-        // FIXME: Should the cast to DataObject be necessary?
-        return serializeDataObject((DataObject) data, BindingNormalizedNodeWriterFactory::newRpcWriter);
+        return serializeDataContainer(data, BindingNormalizedNodeWriterFactory::newRpcWriter);
     }
 
     @Override
     public ContainerNode toNormalizedNodeActionInput(final Class<? extends Action<?, ?, ?>> action,
             final RpcInput input) {
-        return serializeDataObject(input,(ctx, iface, domWriter) -> ctx.newActionInputWriter(action, domWriter));
+        return serializeDataContainer(input,(ctx, iface, domWriter) -> ctx.newActionInputWriter(action, domWriter));
     }
 
     @Override
     public ContainerNode toNormalizedNodeActionOutput(final Class<? extends Action<?, ?, ?>> action,
             final RpcOutput output) {
-        return serializeDataObject(output, (ctx, iface, domWriter) -> ctx.newActionOutputWriter(action, domWriter));
+        return serializeDataContainer(output, (ctx, iface, domWriter) -> ctx.newActionOutputWriter(action, domWriter));
     }
 
     @Override
@@ -1062,14 +1058,14 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return verifyNotNull(getActionCodec(action).output().getDomPathArgument());
     }
 
-    private <T extends DataContainer> @NonNull ContainerNode serializeDataObject(final DataObject data,
+    private <T extends DataContainer> @NonNull ContainerNode serializeDataContainer(final DataContainer data,
             final WriterFactoryMethod<T> newWriter) {
         final var result = new NormalizationResultHolder();
         // We create DOM stream writer which produces normalized nodes
         final var domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final Class<? extends DataObject> type = data.implementedInterface();
+        final var type = data.implementedInterface();
         @SuppressWarnings("unchecked")
-        final BindingStreamEventWriter writer = newWriter.createWriter(this, (Class<T>) type, domWriter);
+        final var writer = newWriter.createWriter(this, (Class<T>) type, domWriter);
         try {
             getSerializer(type).serialize(data, writer);
         } catch (final IOException e) {
