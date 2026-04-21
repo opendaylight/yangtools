@@ -279,7 +279,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         final var name = method.getName();
 
         return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", or an empty list if it is not present."))
+            .txt(accessorJavadoc(method, ", or an empty list if it is not present"))
             .blk(generateAnnotations(method.getAnnotations()))
             .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
                 .str("return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
@@ -303,7 +303,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         final var name = method.getName();
 
         return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", guaranteed to be non-null.", NSEE))
+            .txt(accessorJavadoc(method, ", guaranteed to be non-null", NSEE))
             .str("default ").str(importedNonNull(method.getReturnType())).sp().str(name).str("()").oB()
                 .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
                     // FIXME: what exactly is this replace() doing?
@@ -314,7 +314,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     @NonNullByDefault
     private BlockBuilder generateAccessorMethod(final MethodSignature method) {
         return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", or {@code null} if it is not present."))
+            .txt(accessorJavadoc(method, ", or {@code null} if it is not present"))
             .blk(generateAccessorAnnotations(method))
             .str(nullableType(method.getReturnType())).sp().str(method.getName()).eol("();");
     }
@@ -337,7 +337,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     @NonNullByDefault
     private BlockBuilder generateNonnullAccessorMethod(final MethodSignature method) {
         return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", or an empty instance if it is not present."))
+            .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
             .blk(generateAnnotations(method.getAnnotations()))
             .str(importedNonNull(method.getReturnType())).sp().str(method.getName()).eol("();");
     }
@@ -540,18 +540,32 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     @NonNullByDefault
     private String accessorJavadoc(final MethodSignature method, final String orString,
             final @Nullable JavaTypeName exception) {
-        final var propName = propertyNameFromGetter(method);
         final var comment = method.getComment();
+        final var reference = comment == null ? null : comment.referenceDescription();
+        if (reference == null) {
+            return simpleAccessorJavadoc(method, orString, exception);
+        }
+
+        final var propName = propertyNameFromGetter(method);
+        final var bb = newBlockBuilder()
+            .str("Return ").str(propName).str(orString).eol(".")
+            .blk(formatReference(reference))
+            .nl()
+            .str("@return {@code ").str(importedReturnType(method)).str("} ").str(propName).str(orString).eol(".");
+        if (exception != null) {
+            bb.str("@throws ").str(importedName(exception)).str(" if ").str(propName).eol(" is not present");
+        }
+        return bb.toJavadocBlock();
+    }
+
+    // FIXME: return a Block
+    @NonNullByDefault
+    private String simpleAccessorJavadoc(final MethodSignature method, final String orString,
+            final @Nullable JavaTypeName exception) {
+        final var propName = propertyNameFromGetter(method);
 
         final var bb = newBlockBuilder()
-            .str("Return ").str(propName).eol(orString);
-        final var reference = comment == null ? null : comment.referenceDescription();
-        if (reference != null) {
-            bb.blk(formatReference(reference));
-        }
-        bb
-            .nl()
-            .str("@return {@code ").str(importedReturnType(method)).str("} ").str(propName).eol(orString);
+            .str("{@return {@code ").str(importedReturnType(method)).str("} ").str(propName).str(orString).eol("}");
         if (exception != null) {
             bb.str("@throws ").str(importedName(exception)).str(" if ").str(propName).eol(" is not present");
         }
