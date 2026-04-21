@@ -140,7 +140,9 @@ public final class ClassLoaderUtils {
      * @param subclass Implementing class
      * @param genericType Interface to search for
      * @return Parameterized interface as implemented by the class, if present
+     * @deprecated This method has no users and is scheduled for removal without replacement.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static Optional<ParameterizedType> findParameterizedType(final Class<?> subclass,
             final Class<?> genericType) {
         requireNonNull(genericType);

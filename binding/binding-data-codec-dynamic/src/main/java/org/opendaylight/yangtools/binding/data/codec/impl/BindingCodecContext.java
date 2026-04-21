@@ -79,7 +79,6 @@ import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.reflect.BindingReflections;
-import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
@@ -280,17 +279,20 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             private ActionCodecContext prepareActionContext(final int inputOffset, final int outputOffset,
                     final int expectedArgsLength, final Class<? extends Action<?, ?, ?>> action,
                     final Class<?> actionType) {
-                final var args = ClassLoaderUtils.findParameterizedType(action, actionType)
-                    .orElseThrow(() -> new IllegalStateException(action + " does not specialize " + actionType))
-                    .getActualTypeArguments();
-                checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments",
-                    args.length);
-                final ActionRuntimeType schema = context.getActionDefinition(action);
-                return new ActionCodecContext(
-                    new ContainerLikeCodecContext(asClass(args[inputOffset], RpcInput.class), schema.input(),
-                        BindingCodecContext.this),
-                    new ContainerLikeCodecContext(asClass(args[outputOffset], RpcOutput.class), schema.output(),
-                        BindingCodecContext.this));
+                for (var type : action.getGenericInterfaces()) {
+                    if (type instanceof ParameterizedType ptype && actionType.equals(ptype.getRawType())) {
+                        final var args = ptype.getActualTypeArguments();
+                        checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments",
+                            args.length);
+                        final var schema = context.getActionDefinition(action);
+                        return new ActionCodecContext(
+                            new ContainerLikeCodecContext(asClass(args[inputOffset], RpcInput.class), schema.input(),
+                                BindingCodecContext.this),
+                            new ContainerLikeCodecContext(asClass(args[outputOffset], RpcOutput.class), schema.output(),
+                                BindingCodecContext.this));
+                    }
+                }
+                throw new IllegalStateException(action + " does not specialize " + actionType);
             }
 
             private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
