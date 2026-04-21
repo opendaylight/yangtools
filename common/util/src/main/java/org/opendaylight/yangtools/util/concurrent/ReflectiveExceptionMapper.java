@@ -16,7 +16,9 @@ import java.lang.reflect.InvocationTargetException;
  * which takes two arguments: a String and a Throwable.
  *
  * @param <X> Exception type
+ * @deprecated This class deprecated without replacement.
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 public final class ReflectiveExceptionMapper<X extends Exception> extends ExceptionMapper<X> {
     private final Constructor<X> ctor;
 
@@ -25,6 +27,7 @@ public final class ReflectiveExceptionMapper<X extends Exception> extends Except
         this.ctor = ctor;
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Override
     protected X newWithCause(final String message, final Throwable cause) {
         try {
@@ -46,6 +49,7 @@ public final class ReflectiveExceptionMapper<X extends Exception> extends Except
      * @throws IllegalArgumentException when the supplied exception class does not pass sanity checks
      * @throws SecurityException when the required constructor is not accessible
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <X extends Exception> ReflectiveExceptionMapper<X> create(final String opName,
             final Class<X> exceptionType) {
         final Constructor<X> c;

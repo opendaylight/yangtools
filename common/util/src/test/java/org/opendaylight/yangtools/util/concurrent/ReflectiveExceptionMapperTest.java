@@ -13,7 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 
+@Deprecated(since = "16.0.0", forRemoval = true)
 public class ReflectiveExceptionMapperTest {
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static final class NoArgumentCtorException extends Exception {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -23,6 +25,7 @@ public class ReflectiveExceptionMapperTest {
         }
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static final class PrivateCtorException extends Exception {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -32,6 +35,7 @@ public class ReflectiveExceptionMapperTest {
         }
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static final class FailingCtorException extends Exception {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -41,6 +45,7 @@ public class ReflectiveExceptionMapperTest {
         }
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static final class GoodException extends Exception {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -51,24 +56,28 @@ public class ReflectiveExceptionMapperTest {
     }
 
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Test
     void testNoArgumentsContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("no arguments", NoArgumentCtorException.class));
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Test
     void testPrivateContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("private constructor", PrivateCtorException.class));
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Test
     void testFailingContructor() {
         assertThrows(IllegalArgumentException.class,
             () -> ReflectiveExceptionMapper.create("failing constructor", FailingCtorException.class));
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Test
     void testInstantiation() {
         final var mapper = ReflectiveExceptionMapper.create("instantiation", GoodException.class);
