@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -466,6 +467,24 @@ public final class BindingTypes {
                 if (arg != null) {
                     return arg;
                 }
+            }
+        }
+        return null;
+    }
+
+    @Beta
+    public static @Nullable GeneratedTransferObject extractEntryKeyType(final GeneratedType entryObjectType) {
+        for (var iface : entryObjectType.getImplements()) {
+            if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
+                final var args = parameterized.getActualTypeArguments();
+                if (args.size() != 2) {
+                    throw new VerifyException("Unexpected arguments " + args);
+                }
+                final var keyType = args.getLast();
+                if (keyType instanceof GeneratedTransferObject gto) {
+                    return gto;
+                }
+                throw new VerifyException("Unexpected key type " + keyType);
             }
         }
         return null;

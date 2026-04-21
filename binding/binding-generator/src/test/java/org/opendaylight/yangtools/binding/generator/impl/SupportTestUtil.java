@@ -8,15 +8,19 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 final class SupportTestUtil {
     private SupportTestUtil() {
@@ -114,15 +118,17 @@ final class SupportTestUtil {
     }
 
     static void containsInterface(final String interfaceNameSearched, final GeneratedType genType) {
-        final var caseCImplements = genType.getImplements();
-        boolean interfaceFound = false;
-        for (var caseCImplement : caseCImplements) {
+        for (var caseCImplement : genType.getImplements()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
-                interfaceFound = true;
-                break;
+                return;
             }
         }
-        assertTrue(interfaceFound,
-            "Generated type " + genType.simpleName() + " doesn't implement interface " + interfaceNameSearched);
+        fail("Generated type " + genType.simpleName() + " doesn't implement interface " + interfaceNameSearched);
+    }
+
+    static void assertEntryObject(final GeneratedType type, final JavaTypeName expectedKeyType) {
+        final var key = BindingTypes.extractEntryKeyType(type);
+        assertNotNull(key);
+        assertEquals(expectedKeyType, key.name());
     }
 }
