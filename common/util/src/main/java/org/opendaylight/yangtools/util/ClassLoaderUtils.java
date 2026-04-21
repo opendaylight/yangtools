@@ -9,22 +9,15 @@ package org.opendaylight.yangtools.util;
 
 import static java.util.Objects.requireNonNull;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods for working with ClassLoaders and classes.
  */
 public final class ClassLoaderUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(ClassLoaderUtils.class);
-
     private ClassLoaderUtils() {
         // Hidden on purpose
     }
@@ -118,57 +111,5 @@ public final class ClassLoaderUtils {
         } finally {
             currentThread.setContextClassLoader(oldCls);
         }
-    }
-
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    public static <S, G, P> Optional<Class<P>> findFirstGenericArgument(final Class<S> scannedClass,
-            final Class<G> genericType) {
-        return findGenericArgument(scannedClass, genericType, 0);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    public static <S, G, P> Optional<Class<P>> findGenericArgument(final Class<S> scannedClass,
-            final Class<G> genericType, final int index) {
-        return getWithClassLoader(scannedClass.getClassLoader(), () -> findParameterizedType(scannedClass, genericType)
-            .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[index]));
-    }
-
-    /**
-     * Find the parameterized instantiation of a particular interface implemented by a class.
-     *
-     * @param subclass Implementing class
-     * @param genericType Interface to search for
-     * @return Parameterized interface as implemented by the class, if present
-     * @deprecated This method has no users and is scheduled for removal without replacement.
-     */
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    public static Optional<ParameterizedType> findParameterizedType(final Class<?> subclass,
-            final Class<?> genericType) {
-        requireNonNull(genericType);
-
-        for (var type : subclass.getGenericInterfaces()) {
-            if (type instanceof ParameterizedType ptype && genericType.equals(ptype.getRawType())) {
-                return Optional.of(ptype);
-            }
-        }
-
-        LOG.debug("Class {} does not declare interface {}", subclass, genericType);
-        return Optional.empty();
-    }
-
-    /**
-     * Extract the first generic type argument for a Type. If the type is not parameterized, this method returns empty.
-     *
-     * @param type Type to examine
-     * @return First generic type argument, if present
-     * @throws NullPointerException if {@code type} is null
-     * @deprecated This method has no users and is scheduled for removal without replacement.
-     */
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    public static Optional<Type> getFirstGenericParameter(final Type type) {
-        requireNonNull(type);
-        return type instanceof ParameterizedType ptype ? Optional.of(ptype.getActualTypeArguments()[0])
-            : Optional.empty();
     }
 }
