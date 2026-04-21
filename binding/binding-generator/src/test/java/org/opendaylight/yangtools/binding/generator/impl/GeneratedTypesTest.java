@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesTest {
@@ -205,7 +206,6 @@ class GeneratedTypesTest {
         int listChildContainerMethodsCount = 0;
         int listKeyClassCount = 0;
 
-        int getSimpleListKeyMethodCount = 0;
         int getListChildContainerMethodCount = 0;
         int getFooMethodCount = 0;
         int setFooMethodCount = 0;
@@ -213,7 +213,6 @@ class GeneratedTypesTest {
         int setSimpleLeafListMethodCount = 0;
         int getBarMethodCount = 0;
 
-        String getSimpleListKeyMethodReturnTypeName = "";
         String getListChildContainerMethodReturnTypeName = "";
 
         for (var genType : genTypes) {
@@ -221,13 +220,13 @@ class GeneratedTypesTest {
                 if (genType.simpleName().equals("ListParentContainer")) {
                     listParentContainerMethodsCount = genType.getMethodDefinitions().size();
                 } else if (genType.simpleName().equals("SimpleList")) {
+                    assertEntryObject(genType, JavaTypeName.create(
+                        "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
+                        "SimpleListKey"));
+
                     simpleListMethodsCount = genType.getMethodDefinitions().size();
                     for (var method : genType.getMethodDefinitions()) {
                         switch (method.getName()) {
-                            case Naming.KEY_AWARE_KEY_NAME:
-                                getSimpleListKeyMethodCount++;
-                                getSimpleListKeyMethodReturnTypeName = method.getReturnType().simpleName();
-                                break;
                             case "getListChildContainer":
                                 getListChildContainerMethodCount++;
                                 getListChildContainerMethodReturnTypeName = method.getReturnType().simpleName();
@@ -278,10 +277,7 @@ class GeneratedTypesTest {
         assertEquals(3, listParentContainerMethodsCount);
         // FIXME: split this into getter/default/static asserts
         assertEquals(3, listChildContainerMethodsCount);
-        assertEquals(1, getSimpleListKeyMethodCount);
         assertEquals(1, listKeyClassCount);
-
-        assertEquals("SimpleListKey", getSimpleListKeyMethodReturnTypeName);
 
         assertEquals(1, getListChildContainerMethodCount);
         assertEquals("ListChildContainer", getListChildContainerMethodReturnTypeName);
@@ -292,7 +288,7 @@ class GeneratedTypesTest {
         assertEquals(1, getBarMethodCount);
 
         // FIXME: split this into getter/default/static asserts
-        assertEquals(12, simpleListMethodsCount);
+        assertEquals(11, simpleListMethodsCount);
     }
 
     @Test

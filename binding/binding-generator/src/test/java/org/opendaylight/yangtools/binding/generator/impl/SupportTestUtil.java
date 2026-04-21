@@ -9,11 +9,15 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import java.util.List;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -114,15 +118,25 @@ final class SupportTestUtil {
     }
 
     static void containsInterface(final String interfaceNameSearched, final GeneratedType genType) {
-        final var caseCImplements = genType.getImplements();
-        boolean interfaceFound = false;
-        for (var caseCImplement : caseCImplements) {
+        for (var caseCImplement : genType.getImplements()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
-                interfaceFound = true;
-                break;
+                return;
             }
         }
-        assertTrue(interfaceFound,
-            "Generated type " + genType.simpleName() + " doesn't implement interface " + interfaceNameSearched);
+        fail("Generated type " + genType.simpleName() + " doesn't implement interface " + interfaceNameSearched);
+    }
+
+    static void assertEntryObject(final GeneratedType type, final JavaTypeName expectedKeyType) {
+        final var eo = typeForClass(EntryObject.class);
+
+        for (var iface : type.getImplements()) {
+            if (iface instanceof ParameterizedType ptype && eo.equals(ptype.getRawType())) {
+                final var args = ptype.getActualTypeArguments();
+                assertEquals(2, args.size());
+                assertEquals(expectedKeyType, args.getLast().name());
+                return;
+            }
+        }
+        fail(type + " does not implement ");
     }
 }
