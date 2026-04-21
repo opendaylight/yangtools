@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.classType;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -165,7 +167,19 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     @NonNull GeneratedType getGeneratedType(final TypeBuilderFactory builderFactory) {
-        return verifyNotNull(tryGeneratedType(builderFactory), "No type generated for %s", this);
+        final var genType = tryGeneratedType(builderFactory);
+        if (genType != null) {
+            return genType;
+        }
+        throw new VerifyException("No type generated for " + this);
+    }
+
+    final @NonNull GeneratedTransferObject getGeneratedTO(final TypeBuilderFactory builderFactory) {
+        final var genType = getGeneratedType(builderFactory);
+        if (genType instanceof GeneratedTransferObject gto) {
+            return gto;
+        }
+        throw new VerifyException("Unexpected generated type " + genType);
     }
 
     final @Nullable GeneratedType tryGeneratedType(final TypeBuilderFactory builderFactory) {
