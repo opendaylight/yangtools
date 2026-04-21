@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec59ecf0_3cd83d61",
+        "filename": "binding/binding-model/src/main/java/org/opendaylight/yangtools/binding/model/ri/BindingTypes.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 476,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-04-21T22:56:45Z",
+      "side": 1,
+      "message": "javadoc and @NonNull",
+      "range": {
+        "startLine": 476,
+        "startChar": 78,
+        "endLine": 476,
+        "endChar": 91
+      },
+      "revId": "79420a395c407ff071958dbbeb862d1f0373accc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
