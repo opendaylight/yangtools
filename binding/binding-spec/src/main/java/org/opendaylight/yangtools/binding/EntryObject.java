@@ -22,5 +22,6 @@ package org.opendaylight.yangtools.binding;
  */
 public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>>
         extends Augmentable<T>, DataObject, KeyAware<K> {
-    // Nothing else
+    @Override
+    K key();
 }
