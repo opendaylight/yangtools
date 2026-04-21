@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -60,23 +61,12 @@ class AugmentedTypeTest {
 
         // 'Interface
         assertNotNull(gtInterface, "gtInterface is null");
-        final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
-        assertNotNull(gtInterfaceMethods, "gtInterfaceMethods is null");
-        MethodSignature getIfcKeyMethod = null;
-        for (var method : gtInterfaceMethods) {
-            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
-                getIfcKeyMethod = method;
-                break;
-            }
-        }
-        assertNotNull(getIfcKeyMethod, "getIfcKeyMethod is null");
-        var retType = assertInstanceOf(GeneratedTransferObject.class, getIfcKeyMethod.getReturnType());
-        assertEquals(JavaTypeName.create(
+        assertEntryObject(gtInterface, JavaTypeName.create(
             "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-            "InterfaceKey"), retType.name());
+            "InterfaceKey"));
 
         MethodSignature getHigherLayerIfMethod = null;
-        for (var method : gtInterfaceMethods) {
+        for (var method : gtInterface.getMethodDefinitions()) {
             if (method.getName().equals("getHigherLayerIf")) {
                 getHigherLayerIfMethod = method;
                 break;
@@ -101,20 +91,10 @@ class AugmentedTypeTest {
 
         // 'Tunnel'
         assertNotNull(gtTunnel, "Tunnel is null");
-        final var tunnelMethods = gtTunnel.getMethodDefinitions();
-        assertNotNull(tunnelMethods, "Tunnel methods are null");
-        MethodSignature getTunnelKeyMethod = null;
-        for (var method : tunnelMethods) {
-            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
-                getTunnelKeyMethod = method;
-                break;
-            }
-        }
-        assertNotNull(getTunnelKeyMethod, "getKey method of Tunnel is null");
-
-        retType = assertInstanceOf(GeneratedTransferObject.class, getTunnelKeyMethod.getReturnType());
-        assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503"
-            + ".topology.network.links.network.link.tunnels", "TunnelKey"), retType.name());
+        assertEntryObject(gtTunnel, JavaTypeName.create("""
+            org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.network.\
+            link.tunnels""", "TunnelKey"));
+        assertThat(gtTunnel.getMethodDefinitions()).hasSize(5);
 
         // 'TunnelKey'
         assertNotNull(gtTunnelKey, "TunnelKey is null");
