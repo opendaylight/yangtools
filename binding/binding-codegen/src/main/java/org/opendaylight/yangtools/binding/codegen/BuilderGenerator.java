@@ -10,12 +10,10 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 
@@ -53,19 +51,6 @@ record BuilderGenerator(GeneratedType type) implements Generator {
                 builderName.createEnclosed(origName.simpleName() + "Impl"))
                 .addImplementsType(type)
                 .build())
-            .build(), type, getKey(type));
-    }
-
-    private static @Nullable GeneratedTransferObject getKey(final GeneratedType type) {
-        for (var method : type.getMethodDefinitions()) {
-            if (Naming.KEY_AWARE_KEY_NAME.equals(method.getName())) {
-                final var keyType = method.getReturnType();
-                if (keyType instanceof GeneratedTransferObject gto) {
-                    return gto;
-                }
-                throw new VerifyException("Unexpected key type " + keyType);
-            }
-        }
-        return null;
+            .build(), type, BindingTypes.extractEntryKeyType(type));
     }
 }
