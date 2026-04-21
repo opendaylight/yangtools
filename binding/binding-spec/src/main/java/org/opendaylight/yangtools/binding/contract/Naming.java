@@ -141,14 +141,6 @@ public final class Naming {
 
     @Deprecated(since = "15.1.0", forRemoval = true)
     public static final @NonNull String MODULE_INFO_CLASS_NAME = "YangModuleInfoImpl";
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final @NonNull String MODULE_INFO_INSTANCE_FIELD_NAME = "INSTANCE";
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final @NonNull String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final @NonNull String MODULE_INFO_YANGDATANAMEOF_METHOD_NAME = "yangDataNameOf";
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "YangModelBindingProviderImpl";
 
     /**
      * Name of {@link Augmentable#augmentation(Class)}.
