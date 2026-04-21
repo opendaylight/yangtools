@@ -224,7 +224,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 final var childSchema = child.statement();
                 if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
                     return getStreamChild(context.loadClass(child.javaType()));
-                } else if (childSchema instanceof AnydataSchemaNode || childSchema instanceof AnyxmlSchemaNode
+                }
+                if (childSchema instanceof AnydataSchemaNode || childSchema instanceof AnyxmlSchemaNode
                     || childSchema instanceof LeafSchemaNode || childSchema instanceof LeafListSchemaNode) {
                     final var module = type.findModule(qname.getModule()).orElseThrow();
                     final var moduleChildren = getLeafNodes(context.loadClass(module.javaType()), module.statement());
@@ -234,9 +235,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                         }
                     }
                     throw new IllegalArgumentException("Failed to resolve " + child + " in " + module);
-                } else {
-                    throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
                 }
+                throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
             }
         });
 
@@ -271,7 +271,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> action) {
                 if (KeyedListAction.class.isAssignableFrom(action)) {
                     return prepareActionContext(2, 3, 4, action, KeyedListAction.class);
-                } else if (Action.class.isAssignableFrom(action)) {
+                }
+                if (Action.class.isAssignableFrom(action)) {
                     return prepareActionContext(1, 2, 3, action, Action.class);
                 }
                 throw new IllegalArgumentException("The specific action type does not exist for action "
@@ -335,12 +336,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 if (RpcInput.class.isAssignableFrom(key) && runtimeType instanceof InputRuntimeType input) {
                     // FIXME: accurate type
                     return new ContainerLikeCodecContext(key, input, BindingCodecContext.this);
-                } else if (RpcOutput.class.isAssignableFrom(key) && runtimeType instanceof OutputRuntimeType output) {
+                }
+                if (RpcOutput.class.isAssignableFrom(key) && runtimeType instanceof OutputRuntimeType output) {
                     // FIXME: accurate type
                     return new ContainerLikeCodecContext(key, output, BindingCodecContext.this);
-                } else {
-                    throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
                 }
+                throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
             }
         });
     private final LoadingCache<Absolute, ContainerLikeCodecContext<?>> rpcDataByPath =
