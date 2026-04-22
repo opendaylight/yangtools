@@ -18,6 +18,7 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
 // FIXME: MDSAL-443: wire this implementation, which requires that BindingRuntimeTypes provides information about types
 //                   being generated from within a grouping
 final class FixedGetterGenerator extends GetterGenerator implements CodecContextSupplierProvider {
-    private static final class SupplierGetterMethodImplementation extends CachedMethodImplementation {
+    private static final class SupplierGetterMethodImplementation extends GetterMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, CodecContextSupplier.class);
         private static final StackManipulation BRIDGE_RESOLVE =
@@ -106,14 +107,18 @@ final class FixedGetterGenerator extends GetterGenerator implements CodecContext
 
     @Override
     <T> Builder<T> generateGetters(final Builder<T> builder) {
+        final var vhUsers = new ArrayList<GetterMethodImplementation>(properties.size());
+
         var tmp = builder;
         for (var method : properties.keySet()) {
             LOG.trace("Generating for fixed method {}", method);
             final var methodName = method.getName();
             final var retType = ForLoadedType.of(method.getReturnType());
-            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL)
-                .intercept(new SupplierGetterMethodImplementation(methodName, retType));
+            final var impl = new SupplierGetterMethodImplementation(methodName, retType);
+            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL).intercept(impl);
+            vhUsers.add(impl);
         }
-        return tmp;
+
+        return VHFieldInitializer.initializeVarHandles(tmp, vhUsers);
     }
 }
