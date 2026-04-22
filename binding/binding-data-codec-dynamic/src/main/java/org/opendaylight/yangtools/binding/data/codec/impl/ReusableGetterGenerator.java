@@ -17,6 +17,7 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Map;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.type.TypeDefinition;
@@ -84,7 +85,7 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
      * as minimizing footprint. Since that string is not guaranteed to be interned in the String Pool, we cannot rely
      * on the constant pool entry to resolve to the same object.
      */
-    private static final class SimpleGetterMethodImplementation extends CachedMethodImplementation {
+    private static final class SimpleGetterMethodImplementation extends GetterMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, String.class);
         private static final StackManipulation BRIDGE_RESOLVE =
@@ -127,7 +128,7 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
         }
     }
 
-    private static final class StructuredGetterMethodImplementation extends CachedMethodImplementation {
+    private static final class StructuredGetterMethodImplementation extends GetterMethodImplementation {
         private static final StackManipulation CODEC_MEMBER =
             invokeMethod(CodecDataObject.class, "codecMember", VarHandle.class, Class.class);
 
@@ -165,7 +166,7 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
     }
 
     @Override
-    public String resolveLocalName(String methodName) {
+    public String resolveLocalName(final String methodName) {
         for (var entry : simpleProperties.entrySet()) {
             if (methodName.equals(entry.getKey().getName())) {
                 return entry.getValue().getSchema().getQName().getLocalName();
@@ -176,13 +177,16 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
 
     @Override
     <T> Builder<T> generateGetters(final Builder<T> builder) {
+        final var vhUsers = new ArrayList<VHFieldUser>(simpleProperties.size() + daoProperties.size());
+
         var tmp = builder;
         for (var method : simpleProperties.keySet()) {
             LOG.trace("Generating for simple method {}", method);
             final var methodName = method.getName();
             final var retType = ForLoadedType.of(method.getReturnType());
-            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL)
-                .intercept(new SimpleGetterMethodImplementation(methodName, retType));
+            final var impl = new SimpleGetterMethodImplementation(methodName, retType);
+            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL).intercept(impl);
+            vhUsers.add(impl);
         }
         for (var entry : daoProperties.entrySet()) {
             final var info = entry.getValue();
@@ -190,8 +194,9 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
             LOG.trace("Generating for structured method {}", method);
             final var methodName = method.getName();
             final var retType = ForLoadedType.of(method.getReturnType());
-            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL)
-                .intercept(new StructuredGetterMethodImplementation(methodName, retType, entry.getKey()));
+            final var impl = new StructuredGetterMethodImplementation(methodName, retType, entry.getKey());
+            tmp = tmp.defineMethod(methodName, retType, CodecClassGenerator.PUB_FINAL).intercept(impl);
+            vhUsers.add(impl);
 
             if (info instanceof PropertyInfo.GetterAndNonnull orEmpty) {
                 final var nonnullName = orEmpty.nonnullMethod().getName();
@@ -200,6 +205,6 @@ final class ReusableGetterGenerator extends GetterGenerator implements LocalName
             }
         }
 
-        return tmp;
+        return VHFieldInitializer.initializeVarHandles(tmp, vhUsers);
     }
 }
