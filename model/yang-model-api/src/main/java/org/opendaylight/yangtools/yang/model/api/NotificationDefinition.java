@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * notification. Note that this interface is not a {@link DataSchemaNode}, which renders compatibility problematic. Use
  * {@link #toContainerLike()} to get a {@link ContainerLike}, which can serve as a bridge.
  */
-public interface NotificationDefinition extends SchemaNode, CopyableNode,
+public interface NotificationDefinition extends SchemaNode, AddedByUsesAware,
         AugmentationTarget.Mixin<NotificationEffectiveStatement>,
         DataNodeContainer.Mixin<NotificationEffectiveStatement>, DocumentedNode.Mixin<NotificationEffectiveStatement>,
         MustConstraintAware.Mixin<NotificationEffectiveStatement> {

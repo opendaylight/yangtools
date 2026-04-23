@@ -45,12 +45,6 @@ public abstract class ContainerLikeCompat extends ForwardingObject implements Co
         return delegate().getQName();
     }
 
-    @Deprecated
-    @Override
-    public final boolean isAugmenting() {
-        return false;
-    }
-
     @Override
     @Deprecated(forRemoval = true)
     public final boolean isAddedByUses() {
