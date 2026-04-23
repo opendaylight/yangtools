@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -179,6 +180,9 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
     @NonNullByDefault
     abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, JavaTypeName yangModuleInfo);
+
+    @NonNullByDefault
+    abstract BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(JavaTypeName typeName);
 
     @NonNullByDefault
     abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName typeName);

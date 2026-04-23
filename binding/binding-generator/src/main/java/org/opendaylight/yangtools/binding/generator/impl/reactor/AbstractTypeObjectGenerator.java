@@ -658,7 +658,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     private static @NonNull GeneratedTransferObject createBits(final TypeBuilderFactory builderFactory,
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final BitsTypeDefinition typedef, final boolean isTypedef) {
-        final var builder = builderFactory.newGeneratedTOBuilder(typeName);
+        final var builder = builderFactory.newBitsTypeObjectBuilder(typeName);
         builder.setTypedef(isTypedef);
         builder.addImplementsType(BindingTypes.BITS_TYPE_OBJECT);
         builder.setBaseType(typedef);
