@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 /**
  * Contains the methods for getting data and checking properties of the YANG <code>uses</code> substatement.
  */
-public interface UsesNode extends DocumentedNode.WithStatus, CopyableNode, DocumentedNode.Mixin<UsesEffectiveStatement>,
-        WhenConditionAware.Mixin<UsesEffectiveStatement> {
+public interface UsesNode extends DocumentedNode.WithStatus, AddedByUsesAware,
+        DocumentedNode.Mixin<UsesEffectiveStatement>, WhenConditionAware.Mixin<UsesEffectiveStatement> {
     /**
      * Returns the {code grouping} which this node acted upon.
      *

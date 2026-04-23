@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 @Beta
 @NonNullByDefault
 // FIXME: YANGTOOLS-1150: this should live in yang-reactor-api
-public interface CopyHistory extends CopyableNode {
+public interface CopyHistory extends AddedByUsesAware {
     /**
      * Return the last copy operation in this history.
      *

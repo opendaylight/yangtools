@@ -19,12 +19,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.CopyableMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AddedByUsesMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationDefinitionMixin;
 
 public final class ActionEffectiveStatementImpl extends WithTypedefNamespace<QName, @NonNull ActionStatement>
         implements ActionEffectiveStatement, ActionDefinition, OperationDefinitionMixin<@NonNull ActionStatement>,
-                   CopyableMixin<QName, @NonNull ActionStatement> {
+                   AddedByUsesMixin<QName, @NonNull ActionStatement> {
     private final @NonNull QName argument;
     private final int flags;
 
