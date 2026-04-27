@@ -8,7 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.contract.Naming.PACKAGE_PREFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.SVC_PACKAGE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getClassName;
+import static org.opendaylight.yangtools.binding.contract.Naming.getModelRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getServicePackageName;
 
@@ -24,6 +27,8 @@ import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
 import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -123,6 +128,13 @@ public final class YangModuleInfoTemplate {
         modelBindingProviderName = packageName + '.' + MODEL_BINDING_PROVIDER_CLASS_NAME;
         hasYangData = module.asEffectiveStatement().findFirstEffectiveSubstatement(YangDataEffectiveStatement.class)
             .isPresent();
+    }
+
+    @NonNullByDefault
+    static JavaTypeName nameInModuleOf(final GeneratedType genType) {
+        // Yeah: not pretty but works
+        return JavaTypeName.create(
+            getModelRootPackageName(genType.packageName()).replace(PACKAGE_PREFIX, SVC_PACKAGE_PREFIX), CLASS_NAME);
     }
 
     @NonNull String modelBindingProviderName() {

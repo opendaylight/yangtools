@@ -259,20 +259,6 @@ public final class Naming {
         return normalizePackageName(builder.toString());
     }
 
-    /**
-     * Convert the result of {@link #getRootPackageName(QNameModule)} to the corresponding result of
-     * {@link #getServicePackageName(QNameModule)}.
-     *
-     * @param rootPackageName root package name
-     * @return Service root package name
-     */
-    public static @NonNull String rootToServicePackageName(final String rootPackageName) {
-        final var match = ROOT_PACKAGE_PATTERN.matcher(rootPackageName);
-        checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", rootPackageName,
-            ROOT_PACKAGE_PATTERN);
-        return getModelRootPackageName(rootPackageName.replace(Naming.PACKAGE_PREFIX, Naming.SVC_PACKAGE_PREFIX));
-    }
-
     public static @NonNull String normalizePackageName(final String packageName) {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
