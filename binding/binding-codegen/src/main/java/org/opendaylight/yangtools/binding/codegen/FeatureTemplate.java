@@ -41,7 +41,7 @@ final class FeatureTemplate extends BaseTemplate {
 
         return newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(type)))
-            .blk(annotationDeclaration())
+            .blk(deprecatedAnnotation(type.statement().toSchemaNode()))
             .eol(generatedAnnotation())
             .at().eol(importedName(NONNULL_BY_DEFAULT))
             .str("public final class ").str(typeName).str(" extends ")

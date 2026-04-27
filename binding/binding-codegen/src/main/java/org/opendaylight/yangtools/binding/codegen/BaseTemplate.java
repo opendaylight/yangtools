@@ -51,6 +51,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -630,5 +631,13 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             bb.at().eol(annotation.simpleName());
         }
         return bb;
+    }
+
+    final @Nullable BlockBuilder deprecatedAnnotation(final DocumentedNode.@NonNull WithStatus node) {
+        return switch (node.getStatus()) {
+            case DEPRECATED -> newBlockBuilder().at().eol(importedName(DEPRECATED));
+            case OBSOLETE -> newBlockBuilder().at().str(importedName(DEPRECATED)).eol("(forRemoval = true)");
+            case CURRENT -> null;
+        };
     }
 }
