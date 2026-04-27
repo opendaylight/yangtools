@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
  */
 public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTypeBuilder<FeatureArchetype.Builder>
         implements FeatureArchetype.Builder {
-    @NonNullByDefault
     public static final class Codegen extends FeatureArchetypeBuilder {
         private String description;
         private String reference;
         private String moduleName;
 
+        @NonNullByDefault
         public Codegen(final JavaTypeName typeName, final FeatureEffectiveStatement statement,
                 final JavaTypeName dataRoot) {
             super(typeName, statement, dataRoot);
@@ -54,6 +54,7 @@ public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTy
     }
 
     public static final class Runtime extends FeatureArchetypeBuilder {
+        @NonNullByDefault
         public Runtime(final JavaTypeName typeName, final FeatureEffectiveStatement statement,
                 final JavaTypeName dataRoot) {
             super(typeName, statement, dataRoot);
