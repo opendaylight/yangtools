@@ -13,9 +13,7 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.getModelRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
-import static org.opendaylight.yangtools.binding.contract.Naming.rootToServicePackageName;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
@@ -820,11 +818,7 @@ sealed class ClassTemplate extends BaseTemplate permits ListKeyTemplate, UnionTy
             .str("static").jBlock(bb -> {
                 // FIXME: self reference
                 final var selfRef = type().simpleName();
-                // Yeah: not pretty but works
-                final var yangModuleInfo = JavaTypeName.create(
-                    rootToServicePackageName(getModelRootPackageName(type().packageName())),
-                    YangModuleInfoTemplate.CLASS_NAME);
-
+                final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type());
                 bb
                     // not 'importedName' on purpose: it would just stand out in imports
                     .str(yangModuleInfo.canonicalName())
