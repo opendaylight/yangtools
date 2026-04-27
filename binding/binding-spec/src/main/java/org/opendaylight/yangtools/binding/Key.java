@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.concepts.Identifier;
  *
  * @param <T> Class of object for which this object is identifier
  */
-public interface Key<T extends KeyAware<?>> extends Identifier {
-
+public non-sealed interface Key<T extends KeyAware<?>> extends BindingObject, Identifier {
+    // nothing else
 }
