@@ -7,65 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class ClassCodeGeneratorTest {
-    @Test
-    void compositeKeyClassTest() {
-        final var genTypes = new DefaultBindingGenerator().generateTypes(
-            YangParserTestUtils.parseYangResource("/list-composite-key.yang"));
-
-        assertNotNull(genTypes);
-        assertEquals(7, genTypes.size());
-
-        int genTypesCount = 0;
-        int genTOsCount = 0;
-        for (var type : genTypes) {
-            if (type instanceof GeneratedTransferObject genTO) {
-                if (genTO.simpleName().equals("CompositeKeyListKey")) {
-                    final var properties = genTO.getProperties();
-                    int propertyCount = 0;
-                    for (final GeneratedProperty prop : properties) {
-                        if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
-                            propertyCount++;
-                        }
-                    }
-
-                    final String outputStr = new TOGenerator(genTO).generate();
-
-                    assertNotNull(outputStr);
-                    assertThat(outputStr)
-                        .contains("public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2)");
-
-                    assertEquals(2, propertyCount);
-                    genTOsCount++;
-                } else if (genTO.simpleName().equals("InnerListKey")) {
-                    final var properties = genTO.getProperties();
-                    assertEquals(1, properties.size());
-                    genTOsCount++;
-                }
-            } else {
-                genTypesCount++;
-            }
-        }
-
-        assertEquals(5, genTypesCount);
-        assertEquals(2, genTOsCount);
-    }
-
     /**
      * Test for testing of false scenario. Test tests value types. Value types are not allowed to have default
      * constructor.
@@ -73,8 +23,9 @@ class ClassCodeGeneratorTest {
     @Test
     void defaultConstructorNotPresentInValueTypeTest() {
         final var toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
+        toBuilder.setTypedef(true);
 
-        GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
+        var propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
         propBuilder.setReadOnly(false);
 
@@ -93,8 +44,9 @@ class ClassCodeGeneratorTest {
     @Test
     void toStringTest() {
         final var toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
+        toBuilder.setTypedef(true);
 
-        GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
+        var propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
         propBuilder.setReadOnly(false);
         toBuilder.addToStringProperty(propBuilder);

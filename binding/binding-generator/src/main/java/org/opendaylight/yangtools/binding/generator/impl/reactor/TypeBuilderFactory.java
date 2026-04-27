@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -24,12 +25,14 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenKeyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.FeatureArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeKeyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -66,6 +69,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         FeatureArchetype.Builder newFeatureBuilder(final JavaTypeName typeName, final JavaTypeName dataRoot,
                 final FeatureEffectiveStatement statement) {
             return new FeatureArchetypeBuilder.Codegen(typeName, statement, dataRoot);
+        }
+
+        @Override
+        KeyArchetype.Builder newKeyBuilder(final JavaTypeName typeName) {
+            return new CodegenKeyArchetypeBuilder(typeName);
         }
 
         @Override
@@ -146,6 +154,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
+        KeyArchetype.Builder newKeyBuilder(final JavaTypeName typeName) {
+            return new RuntimeKeyArchetypeBuilder(typeName);
+        }
+
+        @Override
         UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
             return new RuntimeUnionTypeObjectArchetypeBuilder(identifier);
         }
@@ -201,6 +214,9 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     @NonNullByDefault
     abstract FeatureArchetype.Builder newFeatureBuilder(JavaTypeName typeName, JavaTypeName dataRoot,
         FeatureEffectiveStatement statement);
+
+    @NonNullByDefault
+    abstract KeyArchetype.Builder newKeyBuilder(JavaTypeName typeName);
 
     @NonNullByDefault
     abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName identifier);
