@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -14,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -47,12 +48,23 @@ final class FeatureTemplate extends BaseTemplate {
                 .gen(importedName(YANG_FEATURE), typeName, rootName).jBlock(bb -> {
                     final var override = importedName(OVERRIDE);
                     final var clazz = importedName(CLASS);
+                    final var nonNull = importedName(NONNULL);
 
-                    for (var constant : type.getConstantDefinitions()) {
-                        bb.txt(emitConstant(constant));
-                    }
+                    final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type);
 
                     bb
+                        .eol("/**")
+                        .eol(" * The name of the {@code feature} represented by this class.")
+                        .eol(" */")
+                        .str("public static final ").str(importedName(BindingTypes.QNAME, nonNull))
+                            .str(" " + QNAME_STATIC_FIELD_NAME + " = ").str(importedName(yangModuleInfo))
+                            .str("." + YangModuleInfoTemplate.QNAMEOF_METHOD_NAME + "(")
+                            .jStr(type.statement().argument().getLocalName()).eol(");")
+                        .eol("/**")
+                        .eol(" * The singleton instance.")
+                        .eol(" */")
+                        .str("public static final @").str(nonNull).sp().str(typeName)
+                            .str(" " + VALUE_STATIC_FIELD_NAME + " = new ").str(typeName).eol("();")
                         .nl()
                         .str("private ").str(typeName).str("()").oB()
                             .eol("// Hidden on purpose")
@@ -73,14 +85,5 @@ final class FeatureTemplate extends BaseTemplate {
                             .str("return ").str(rootName).eol(".class;")
                         .cB();
                 }).nl();
-    }
-
-    @Override
-    String emitValueConstant(final String name, final Type type) {
-        final var typeName = importedName(type());
-        return "/**\n"
-            +  " * {@link " + typeName + "} singleton instance.\n"
-            +  " */\n"
-            +  "public static final " + typeName + ' ' + VALUE_STATIC_FIELD_NAME + " = new " + typeName + "();\n";
     }
 }

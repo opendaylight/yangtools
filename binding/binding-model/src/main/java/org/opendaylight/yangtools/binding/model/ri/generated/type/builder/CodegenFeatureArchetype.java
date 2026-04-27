@@ -14,7 +14,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
-import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -29,7 +28,6 @@ record CodegenFeatureArchetype(
         @NonNull JavaTypeName dataRoot,
         @NonNull FeatureEffectiveStatement statement,
         @NonNull List<AnnotationType> getAnnotations,
-        @NonNull List<Constant> getConstantDefinitions,
         @Nullable YangSourceDefinition yangSourceDefinition,
         @Nullable TypeComment getComment,
         @Nullable String getDescription,
@@ -40,7 +38,6 @@ record CodegenFeatureArchetype(
         requireNonNull(dataRoot);
         requireNonNull(statement);
         getAnnotations = List.copyOf(getAnnotations);
-        getConstantDefinitions = List.copyOf(getConstantDefinitions);
     }
 
     @Override
