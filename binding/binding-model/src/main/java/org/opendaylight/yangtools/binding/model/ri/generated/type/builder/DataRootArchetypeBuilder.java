@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype.Builder;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -92,7 +91,7 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
     }
 
     @Override
-    protected final Builder thisInstance() {
+    protected final DataRootArchetype.Builder thisInstance() {
         return this;
     }
 
