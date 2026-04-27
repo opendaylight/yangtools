@@ -327,7 +327,7 @@ public abstract class Generator implements Iterable<Generator> {
      *
      * @param builder Target builder
      */
-    static final void narrowImplementedInterface(final GeneratedTypeBuilder builder) {
+    static final void narrowImplementedInterface(final GeneratedTypeBuilderBase<?> builder) {
         defineImplementedInterfaceMethod(builder, WildcardType.ofName(builder.typeName()));
     }
 

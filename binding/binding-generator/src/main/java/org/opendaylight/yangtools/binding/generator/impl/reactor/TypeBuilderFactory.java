@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.IdentityArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
@@ -52,6 +54,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         @Override
         DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
             return new DataRootArchetypeBuilder.Codegen(typeName, yangModuleInfo);
+        }
+
+        @Override
+        IdentityArchetype.Builder newIdentityBuilder(final JavaTypeName typeName) {
+            return new IdentityArchetypeBuilder.Codegen(typeName);
         }
 
         @Override
@@ -126,6 +133,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
+        IdentityArchetype.Builder newIdentityBuilder(final JavaTypeName typeName) {
+            return new IdentityArchetypeBuilder.Runtime(typeName);
+        }
+
+        @Override
         EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(final JavaTypeName typeName) {
             return new EnumTypeObjectArchetypeBuilder.Runtime(typeName);
         }
@@ -179,6 +191,9 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
     @NonNullByDefault
     abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, JavaTypeName yangModuleInfo);
+
+    @NonNullByDefault
+    abstract IdentityArchetype.Builder newIdentityBuilder(JavaTypeName typeName);
 
     @NonNullByDefault
     abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName typeName);
