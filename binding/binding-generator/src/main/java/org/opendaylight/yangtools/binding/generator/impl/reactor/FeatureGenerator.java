@@ -37,7 +37,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
     @Override
     FeatureRuntimeType createExternalRuntimeType(final Type type) {
         if (type instanceof FeatureArchetype archetype) {
-            return new DefaultFeatureRuntimeType(archetype, statement());
+            return new DefaultFeatureRuntimeType(archetype);
         }
         throw new VerifyException("Unexpected type " + type);
     }
@@ -52,7 +52,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
     @Override
     FeatureArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var typeName = typeName();
-        final var builder = builderFactory.newFeatureBuilder(typeName, getParent().typeName());
+        final var builder = builderFactory.newFeatureBuilder(typeName, getParent().typeName(), statement());
 
         annotateDeprecatedIfNecessary(statement(), builder);
 

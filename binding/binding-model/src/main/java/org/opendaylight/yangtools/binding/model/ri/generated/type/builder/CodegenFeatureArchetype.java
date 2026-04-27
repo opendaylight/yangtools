@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 /**
  * A codegen implementation of {@link FeatureArchetype}.
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 record CodegenFeatureArchetype(
         @NonNull JavaTypeName name,
         @NonNull JavaTypeName dataRoot,
+        @NonNull FeatureEffectiveStatement statement,
         @NonNull List<AnnotationType> getAnnotations,
         @NonNull List<Constant> getConstantDefinitions,
         @Nullable YangSourceDefinition yangSourceDefinition,
@@ -36,6 +38,7 @@ record CodegenFeatureArchetype(
     CodegenFeatureArchetype {
         requireNonNull(name);
         requireNonNull(dataRoot);
+        requireNonNull(statement);
         getAnnotations = List.copyOf(getAnnotations);
         getConstantDefinitions = List.copyOf(getConstantDefinitions);
     }

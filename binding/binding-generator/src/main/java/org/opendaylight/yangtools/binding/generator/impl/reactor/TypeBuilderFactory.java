@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
 
@@ -62,8 +63,9 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        FeatureArchetype.Builder newFeatureBuilder(final JavaTypeName typeName, final JavaTypeName dataRoot) {
-            return new FeatureArchetypeBuilder.Codegen(typeName, dataRoot);
+        FeatureArchetype.Builder newFeatureBuilder(final JavaTypeName typeName, final JavaTypeName dataRoot,
+                final FeatureEffectiveStatement statement) {
+            return new FeatureArchetypeBuilder.Codegen(typeName, statement, dataRoot);
         }
 
         @Override
@@ -138,8 +140,9 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        FeatureArchetype.Builder newFeatureBuilder(final JavaTypeName typeName, final JavaTypeName dataRoot) {
-            return new FeatureArchetypeBuilder.Runtime(typeName, dataRoot);
+        FeatureArchetype.Builder newFeatureBuilder(final JavaTypeName typeName, final JavaTypeName dataRoot,
+                final FeatureEffectiveStatement statement) {
+            return new FeatureArchetypeBuilder.Runtime(typeName, statement, dataRoot);
         }
 
         @Override
@@ -196,7 +199,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName typeName);
 
     @NonNullByDefault
-    abstract FeatureArchetype.Builder newFeatureBuilder(JavaTypeName typeName, JavaTypeName dataRoot);
+    abstract FeatureArchetype.Builder newFeatureBuilder(JavaTypeName typeName, JavaTypeName dataRoot,
+        FeatureEffectiveStatement statement);
 
     @NonNullByDefault
     abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName identifier);

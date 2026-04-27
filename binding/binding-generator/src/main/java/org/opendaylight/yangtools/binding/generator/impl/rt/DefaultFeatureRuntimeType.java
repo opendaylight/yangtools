@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 public final class DefaultFeatureRuntimeType extends AbstractRuntimeType<FeatureEffectiveStatement, FeatureArchetype>
         implements FeatureRuntimeType {
-    public DefaultFeatureRuntimeType(final FeatureArchetype archetype, final FeatureEffectiveStatement statement) {
-        super(archetype, statement);
+    public DefaultFeatureRuntimeType(final FeatureArchetype archetype) {
+        super(archetype, archetype.statement());
     }
 }

@@ -34,7 +34,7 @@ final class FeatureTemplate extends BaseTemplate {
 
     @Override
     BlockBuilder body() {
-        final var type = type();
+        final var type = (FeatureArchetype) type();
         final var typeName = type.simpleName();
         final var rootName = importedName(dataRoot);
 

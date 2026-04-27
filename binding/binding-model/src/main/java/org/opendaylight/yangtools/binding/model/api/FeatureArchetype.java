@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.FeatureArchetypeBuilder;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 /**
  * An {@link Archetype} for generated {@link YangFeature}s.
@@ -35,6 +36,11 @@ public non-sealed interface FeatureArchetype extends Archetype {
      * {@return the name of the {@link DataRoot} generated for the module containing the {@code feature} statement}
      */
     JavaTypeName dataRoot();
+
+    /**
+     * {@return backing {@link FeatureEffectiveStatement}}
+     */
+    FeatureEffectiveStatement statement();
 
     @Override
     default List<GeneratedType> getEnclosedTypes() {
