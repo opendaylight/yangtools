@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
  * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA class.
@@ -30,14 +29,7 @@ record TOGenerator(GeneratedTransferObject type) implements Generator {
 
     @Override
     public String generate() {
-        final ClassTemplate template;
-        if (type.isTypedef()) {
-            template = new ClassTemplate(type);
-        } else {
-            final var featureDataRoot = BindingTypes.extractYangFeatureDataRoot(type);
-            template = featureDataRoot == null ? new ListKeyTemplate(type) : new FeatureTemplate(type, featureDataRoot);
-        }
-
+        final var template = type.isTypedef() ? new ClassTemplate(type) : new ListKeyTemplate(type);
         return template.generate();
     }
 }
