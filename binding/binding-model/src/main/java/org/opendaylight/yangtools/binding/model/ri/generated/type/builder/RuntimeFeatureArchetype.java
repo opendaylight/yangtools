@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -27,14 +25,12 @@ record RuntimeFeatureArchetype(
         @NonNull JavaTypeName name,
         @NonNull JavaTypeName dataRoot,
         @NonNull FeatureEffectiveStatement statement,
-        @NonNull List<AnnotationType> getAnnotations,
         @Nullable YangSourceDefinition yangSourceDefinition,
         @Nullable TypeComment getComment) implements FeatureArchetype {
     RuntimeFeatureArchetype {
         requireNonNull(name);
         requireNonNull(dataRoot);
         requireNonNull(statement);
-        getAnnotations = List.copyOf(getAnnotations);
     }
 
     @Override

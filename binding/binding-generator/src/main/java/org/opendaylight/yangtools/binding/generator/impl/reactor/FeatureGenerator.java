@@ -52,8 +52,6 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
         final var typeName = typeName();
         final var builder = builderFactory.newFeatureBuilder(typeName, getParent().typeName(), statement());
 
-        annotateDeprecatedIfNecessary(statement(), builder);
-
         final var module = currentModule();
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
