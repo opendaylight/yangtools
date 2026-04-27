@@ -50,7 +50,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
 
     @Override
     GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTOBuilder(typeName());
+        final var builder = builderFactory.newKeyBuilder(typeName());
 
         builder.addImplementsType(BindingTypes.key(TypeRef.of(listGen.typeName())));
 

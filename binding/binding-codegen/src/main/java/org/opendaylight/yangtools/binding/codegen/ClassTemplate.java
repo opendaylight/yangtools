@@ -62,7 +62,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 /**
 - * Template for generating JAVA class.
  */
-sealed class ClassTemplate extends BaseTemplate permits ListKeyTemplate, UnionTypeObjectTemplate {
+sealed class ClassTemplate extends BaseTemplate permits KeyTemplate, UnionTypeObjectTemplate {
     private static final Comparator<GeneratedProperty> PROP_COMPARATOR =
         Comparator.comparing(GeneratedProperty::getName);
 
