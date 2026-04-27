@@ -43,6 +43,11 @@ public non-sealed interface FeatureArchetype extends Archetype {
     FeatureEffectiveStatement statement();
 
     @Override
+    default List<Constant> getConstantDefinitions() {
+        return List.of();
+    }
+
+    @Override
     default List<GeneratedType> getEnclosedTypes() {
         return List.of();
     }

@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
-import org.opendaylight.yangtools.binding.YangFeature;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultFeatureRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
@@ -57,11 +55,6 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
         annotateDeprecatedIfNecessary(statement(), builder);
 
         final var module = currentModule();
-        module.addQNameConstant(builder, localName());
-
-        // Constant implementation
-        builder.addConstant(builder, Naming.VALUE_STATIC_FIELD_NAME, YangFeature.class);
-
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 

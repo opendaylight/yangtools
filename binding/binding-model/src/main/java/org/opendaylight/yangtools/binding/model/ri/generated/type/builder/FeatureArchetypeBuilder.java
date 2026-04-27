@@ -49,7 +49,7 @@ public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTy
         @Override
         public FeatureArchetype build() {
             return new CodegenFeatureArchetype(typeName(), dataRoot, statement,
-                AbstractGeneratedType.toUnmodifiableAnnotations(getAnnotations()), getConstants(),
+                AbstractGeneratedType.toUnmodifiableAnnotations(getAnnotations()),
                 getYangSourceDefinition().orElse(null), getComment(), description, reference, moduleName);
         }
     }
@@ -78,7 +78,7 @@ public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTy
         @Override
         public FeatureArchetype build() {
             return new RuntimeFeatureArchetype(typeName(), dataRoot, statement,
-                AbstractGeneratedType.toUnmodifiableAnnotations(getAnnotations()), getConstants(),
+                AbstractGeneratedType.toUnmodifiableAnnotations(getAnnotations()),
                 getYangSourceDefinition().orElse(null), getComment());
         }
     }
