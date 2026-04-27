@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
@@ -104,9 +105,9 @@ abstract sealed class YangDataGenerator
 
         addGetterMethods(builder, builderFactory);
 
-        final var module = currentModule();
-        module.addNameConstant(builder, statement().argument());
+        builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME, statement().argument());
 
+        final var module = currentModule();
         builder.setModuleName(module.statement().argument().getLocalName());
         builderFactory.addCodegenInformation(module, statement(), builder);
 

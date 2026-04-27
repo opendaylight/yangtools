@@ -63,10 +63,9 @@ abstract class AbstractNotificationGenerator
         addAugmentable(builder);
         addConcreteInterfaceMethods(builder);
 
-        final var module = currentModule();
-        module.addQNameConstant(builder, localName());
+        addQNameConstant(builder, localName());
 
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
         annotateDeprecatedIfNecessary(builder);
 
         return builder.build();

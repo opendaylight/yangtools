@@ -12,23 +12,17 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultModuleRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.YangDataRuntimeType;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -37,8 +31,6 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * particular {@link QNameModule} as mapped into the root package.
  */
 public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffectiveStatement, ModuleRuntimeType> {
-    private final @NonNull JavaTypeName yangModuleInfo;
-
     /**
      * Note that for sake of simplicity of lookup and child mapping, this instance serves as the root for all child
      * generators, but mapping to {@link CollisionDomain}s and their {@link Member}s is rather weird. This generator
@@ -50,8 +42,6 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     ModuleGenerator(final ModuleEffectiveStatement statement) {
         super(statement);
-        yangModuleInfo = JavaTypeName.create(Naming.getServicePackageName(statement.localQNameModule()),
-            Naming.MODULE_INFO_CLASS_NAME);
         prefixMember = domain().addPrefix(this, new ModuleNamingStrategy(statement.argument()));
     }
 
@@ -92,7 +82,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newDataRootBuilder(typeName(), yangModuleInfo);
+        final var builder = builderFactory.newDataRootBuilder(typeName());
         builder.setModuleName(statement().argument().getLocalName());
         addUsesInterfaces(builder, builderFactory);
         defaultImplementedInterace(builder);
@@ -104,16 +94,6 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     @NonNull Member getPrefixMember() {
         return verifyNotNull(prefixMember);
-    }
-
-    void addQNameConstant(final GeneratedTypeBuilderBase<?> builder, final AbstractQName localName) {
-        builder.addConstant(BindingTypes.QNAME, Naming.QNAME_STATIC_FIELD_NAME,
-            Map.entry(yangModuleInfo, localName.getLocalName()));
-    }
-
-    void addNameConstant(final GeneratedTypeBuilderBase<?> builder, final YangDataName templateName) {
-        builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME,
-            Map.entry(yangModuleInfo, templateName));
     }
 
     @Override

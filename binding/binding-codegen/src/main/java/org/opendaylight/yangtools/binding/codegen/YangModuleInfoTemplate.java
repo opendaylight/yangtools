@@ -22,7 +22,6 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
 import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
@@ -57,8 +56,7 @@ public final class YangModuleInfoTemplate {
     /**
      * The name of the {@link YangModuleInfo} implementation class.
      */
-    @SuppressWarnings("removal")
-    static final @NonNull String CLASS_NAME = Naming.MODULE_INFO_CLASS_NAME;
+    static final @NonNull String CLASS_NAME = "YangModuleInfoImpl";
     /**
      * The name of the {@link YangModelBindingProvider} implementation class.
      */

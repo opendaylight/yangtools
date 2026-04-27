@@ -46,11 +46,10 @@ abstract class AbstractInvokableGenerator<S extends SchemaTreeEffectiveStatement
         builder.addAnnotation(FUNCTIONAL_INTERFACE_ANNOTATION);
         defaultImplementedInterace(builder);
 
-        final var module = currentModule();
-        module.addQNameConstant(builder, statement().argument());
+        addQNameConstant(builder, statement().argument());
 
         annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
 
         return builder.build();
     }

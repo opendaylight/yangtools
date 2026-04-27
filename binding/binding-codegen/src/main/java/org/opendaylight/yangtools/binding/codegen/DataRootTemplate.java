@@ -34,7 +34,8 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
         final var rootMetaType = BindingTypes.rootMeta(archetype);
         final var rootMetaRaw = importedName(rootMetaType.getRawType());
-        final var moduleInfo = importedName(archetype.yangModuleInfo());
+        final var moduleInfo = importedName(YangModuleInfoTemplate.nameInModuleOf(archetype));
+
         // FIXME: YANGTOOLS-1808: use importedName()
         final var type = archetype.canonicalName();
 

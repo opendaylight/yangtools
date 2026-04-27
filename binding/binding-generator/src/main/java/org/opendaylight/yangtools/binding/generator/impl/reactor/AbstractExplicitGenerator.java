@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -398,5 +399,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             return ret;
         }
         throw new VerifyException("Unexpected type " + type);
+    }
+
+    static final void addQNameConstant(final GeneratedTypeBuilderBase<?> builder, final AbstractQName localName) {
+        builder.addConstant(BindingTypes.QNAME, Naming.QNAME_STATIC_FIELD_NAME, localName.getLocalName());
     }
 }

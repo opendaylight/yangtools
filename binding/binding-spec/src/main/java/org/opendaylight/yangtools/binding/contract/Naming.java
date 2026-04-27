@@ -135,9 +135,6 @@ public final class Naming {
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final @NonNull String MODULE_INFO_CLASS_NAME = "YangModuleInfoImpl";
-
     /**
      * Name of {@link KeyAware#key()}.
      */
@@ -188,7 +185,7 @@ public final class Naming {
     }
 
     /**
-     * Return the package name for placing generated ServiceLoader entities, like {@link #MODULE_INFO_CLASS_NAME}.
+     * Return the package name for placing generated ServiceLoader entities.
      *
      * @param module module namespace
      * @return the package name for placing generated ServiceLoader entities
