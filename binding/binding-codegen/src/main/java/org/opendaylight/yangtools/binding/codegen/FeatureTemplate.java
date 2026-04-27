@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
@@ -15,21 +14,22 @@ import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FI
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangFeature;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
 
+// FIXME: extend BaseTemplate
 final class FeatureTemplate extends ClassTemplate {
     private static final @NonNull JavaTypeName QNAME = JavaTypeName.create(QName.class);
     private static final @NonNull JavaTypeName YANG_FEATURE = JavaTypeName.create(YangFeature.class);
 
-    private final @NonNull Type dataRoot;
+    private final @NonNull JavaTypeName dataRoot;
 
     @NonNullByDefault
-    FeatureTemplate(final GeneratedTransferObject genType, final Type dataRoot) {
-        super(genType);
-        this.dataRoot = requireNonNull(dataRoot);
+    FeatureTemplate(final FeatureArchetype archetype) {
+        super(archetype);
+        dataRoot = archetype.dataRoot();
     }
 
     @Override

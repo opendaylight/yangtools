@@ -11,7 +11,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FI
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
@@ -101,7 +99,6 @@ public final class BindingTypes {
     private static final @NonNull ConcreteType ROOT_META = typeForClass(RootMeta.class);
     private static final @NonNull ConcreteType RPC = typeForClass(Rpc.class);
     private static final @NonNull ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
-    private static final @NonNull ConcreteType YANG_FEATURE = typeForClass(YangFeature.class);
     private static final @NonNull ConcreteType YANG_DATA = typeForClass(YangData.class);
 
     private BindingTypes() {
@@ -373,19 +370,6 @@ public final class BindingTypes {
     }
 
     /**
-     * Type specializing {@link YangFeature} for a particular type.
-     *
-     * @param concreteType The concrete type of this feature
-     * @param parent Type of parent defining the feature
-     * @return A parameterized type corresponding to {@code YangFeature<Type, DataRootType>}
-     * @throws NullPointerException if any argument is is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType yangFeature(final Type concreteType, final Type parent) {
-        return ParameterizedType.of(YANG_FEATURE, concreteType, parent);
-    }
-
-    /**
      * Check if specified type is generated for a {@code type bits}.
      *
      * @param type Type to examine
@@ -520,21 +504,6 @@ public final class BindingTypes {
             final var arg = args.getFirst();
             if (arg != null) {
                 return arg;
-            }
-        }
-        return null;
-    }
-
-    @Beta
-    public static @Nullable Type extractYangFeatureDataRoot(final @NonNull GeneratedTransferObject gto) {
-        if (!gto.isAbstract() && gto.getSuperType() == null) {
-            final var impls = gto.getImplements();
-            if (impls.size() == 1 && impls.getFirst() instanceof ParameterizedType param
-                && YANG_FEATURE.equals(param.getRawType())) {
-                final var args = param.getActualTypeArguments();
-                if (args.size() == 2) {
-                    return args.getLast();
-                }
             }
         }
         return null;
