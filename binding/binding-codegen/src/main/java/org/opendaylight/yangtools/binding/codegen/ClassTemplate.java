@@ -64,7 +64,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 /**
 - * Template for generating JAVA class.
  */
-sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKeyTemplate, UnionTypeObjectTemplate {
+sealed class ClassTemplate extends BaseTemplate permits ListKeyTemplate, UnionTypeObjectTemplate {
     private static final Comparator<GeneratedProperty> PROP_COMPARATOR =
         Comparator.comparing(GeneratedProperty::getName);
 
@@ -409,19 +409,6 @@ sealed class ClassTemplate extends BaseTemplate permits FeatureTemplate, ListKey
 
     @NonNull String finalClass() {
         return " ";
-    }
-
-    private @Nullable BlockBuilder annotationDeclaration() {
-        final var annotations = genTO.getAnnotations();
-        if (annotations.isEmpty()) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        for (var annotation : annotations) {
-            bb.at().eol(annotation.simpleName());
-        }
-        return bb;
     }
 
     /**

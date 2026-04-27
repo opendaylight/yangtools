@@ -66,7 +66,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
-        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, InterfaceTemplate {
+        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, InterfaceTemplate {
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
         .addIgnoredStatement(ContactStatement.DEF)
         .addIgnoredStatement(DescriptionStatement.DEF)
@@ -615,6 +615,19 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                 break;
             }
             bb.newLine();
+        }
+        return bb;
+    }
+
+    final @Nullable BlockBuilder annotationDeclaration() {
+        final var annotations = type().getAnnotations();
+        if (annotations.isEmpty()) {
+            return null;
+        }
+
+        final var bb = newBlockBuilder();
+        for (var annotation : annotations) {
+            bb.at().eol(annotation.simpleName());
         }
         return bb;
     }
