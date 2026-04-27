@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 /**
  * Builder for {@link FeatureArchetype}.
@@ -25,8 +26,9 @@ public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTy
         private String moduleName;
 
         @NonNullByDefault
-        public Codegen(final JavaTypeName typeName, final JavaTypeName dataRoot) {
-            super(typeName, dataRoot);
+        public Codegen(final JavaTypeName typeName, final FeatureEffectiveStatement statement,
+                final JavaTypeName dataRoot) {
+            super(typeName, statement, dataRoot);
         }
 
         @Override
@@ -46,7 +48,7 @@ public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTy
 
         @Override
         public FeatureArchetype build() {
-            return new CodegenFeatureArchetype(typeName(), dataRoot,
+            return new CodegenFeatureArchetype(typeName(), dataRoot, statement,
                 AbstractGeneratedType.toUnmodifiableAnnotations(getAnnotations()), getConstants(),
                 getYangSourceDefinition().orElse(null), getComment(), description, reference, moduleName);
         }
@@ -54,8 +56,9 @@ public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTy
 
     public static final class Runtime extends FeatureArchetypeBuilder {
         @NonNullByDefault
-        public Runtime(final JavaTypeName typeName, final JavaTypeName dataRoot) {
-            super(typeName, dataRoot);
+        public Runtime(final JavaTypeName typeName, final FeatureEffectiveStatement statement,
+                final JavaTypeName dataRoot) {
+            super(typeName, statement, dataRoot);
         }
 
         @Override
@@ -75,17 +78,20 @@ public abstract sealed class FeatureArchetypeBuilder extends AbstractGeneratedTy
 
         @Override
         public FeatureArchetype build() {
-            return new RuntimeFeatureArchetype(typeName(), dataRoot,
+            return new RuntimeFeatureArchetype(typeName(), dataRoot, statement,
                 AbstractGeneratedType.toUnmodifiableAnnotations(getAnnotations()), getConstants(),
                 getYangSourceDefinition().orElse(null), getComment());
         }
     }
 
+    final @NonNull FeatureEffectiveStatement statement;
     final @NonNull JavaTypeName dataRoot;
 
     @NonNullByDefault
-    FeatureArchetypeBuilder(final JavaTypeName typeName, final JavaTypeName dataRoot) {
+    FeatureArchetypeBuilder(final JavaTypeName typeName, final FeatureEffectiveStatement statement,
+            final JavaTypeName dataRoot) {
         super(typeName);
+        this.statement = requireNonNull(statement);
         this.dataRoot = requireNonNull(dataRoot);
     }
 
