@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verify;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
-import static org.opendaylight.yangtools.binding.contract.Naming.AUGMENTABLE_AUGMENTATION_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -51,8 +49,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * The name of the field holding augmentations.
      */
-    @SuppressWarnings("removal")
-    static final @NonNull String AUGMENTATION_FIELD = Naming.AUGMENTATION_FIELD;
+    static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private final BuilderImplTemplate implTemplate;
 
@@ -737,9 +734,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
             .eol(" */")
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
-            .str("public <E$$ extends ").str(importedName(augmentType))
-                .str("> E$$ " + AUGMENTABLE_AUGMENTATION_NAME + '(').str(importedName(CLASS))
-                .str("<E$$> augmentationType)").oB()
+            .str("public <E$$ extends ").str(importedName(augmentType)).str("> E$$ augmentation(")
+                .gen(importedName(CLASS), "E$$").str(" augmentationType)").oB()
                 .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
                     .eol(".requireNonNull(augmentationType));")
             .cB();

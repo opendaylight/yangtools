@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Action;
-import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataRoot;
@@ -130,9 +129,6 @@ public final class Naming {
     // concrete extensible contracts, for example 'feature', 'identity' and similar
     public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
 
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static final @NonNull String AUGMENTATION_FIELD = "augmentation";
-
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-/").precomputed())
             .omitEmptyStrings().trimResults();
     private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
@@ -149,11 +145,6 @@ public final class Naming {
     public static final @NonNull String MODULE_INFO_YANGDATANAMEOF_METHOD_NAME = "yangDataNameOf";
     @Deprecated(since = "15.1.0", forRemoval = true)
     public static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "YangModelBindingProviderImpl";
-
-    /**
-     * Name of {@link Augmentable#augmentation(Class)}.
-     */
-    public static final @NonNull String AUGMENTABLE_AUGMENTATION_NAME = "augmentation";
 
     /**
      * Name of {@link KeyAware#key()}.
