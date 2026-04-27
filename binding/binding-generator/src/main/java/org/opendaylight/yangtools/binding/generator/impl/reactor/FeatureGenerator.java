@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultFeatureRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.FeatureRuntimeType;
@@ -37,8 +36,10 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
 
     @Override
     FeatureRuntimeType createExternalRuntimeType(final Type type) {
-        verify(type instanceof GeneratedTransferObject, "Unexpected type %s", type);
-        return new DefaultFeatureRuntimeType((GeneratedTransferObject) type, statement());
+        if (type instanceof FeatureArchetype archetype) {
+            return new DefaultFeatureRuntimeType(archetype, statement());
+        }
+        throw new VerifyException("Unexpected type " + type);
     }
 
     @Override
@@ -49,7 +50,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
     }
 
     @Override
-    GeneratedTransferObject createTypeImpl(final TypeBuilderFactory builderFactory) {
+    FeatureArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var typeName = typeName();
         final var builder = builderFactory.newFeatureBuilder(typeName, getParent().typeName());
 

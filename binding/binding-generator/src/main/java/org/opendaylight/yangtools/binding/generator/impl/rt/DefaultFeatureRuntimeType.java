@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.FeatureRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
-public final class DefaultFeatureRuntimeType extends AbstractGeneratedRuntimeType<FeatureEffectiveStatement>
+public final class DefaultFeatureRuntimeType extends AbstractRuntimeType<FeatureEffectiveStatement, FeatureArchetype>
         implements FeatureRuntimeType {
-    public DefaultFeatureRuntimeType(final GeneratedType bindingType, final FeatureEffectiveStatement statement) {
-        super(bindingType, statement);
+    public DefaultFeatureRuntimeType(final FeatureArchetype archetype, final FeatureEffectiveStatement statement) {
+        super(archetype, statement);
     }
 }

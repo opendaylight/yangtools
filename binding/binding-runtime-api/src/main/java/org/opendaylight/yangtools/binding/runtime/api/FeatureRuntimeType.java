@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
+import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with a {@code feature} statement.
  */
 public interface FeatureRuntimeType extends GeneratedRuntimeType {
+    @Override
+    FeatureArchetype javaType();
+
     @Override
     FeatureEffectiveStatement statement();
 }
