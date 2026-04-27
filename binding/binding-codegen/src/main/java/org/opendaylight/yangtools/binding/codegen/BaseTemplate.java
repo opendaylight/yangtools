@@ -28,7 +28,6 @@ import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -211,35 +209,27 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         final var type = constant.getType();
 
         return switch (name) {
-            case NAME_STATIC_FIELD_NAME -> {
-                @SuppressWarnings("unchecked")
-                final var entry = (Entry<JavaTypeName, YangDataName>) constant.getValue();
-                yield emitNameConstant(name, type, entry.getKey(), entry.getValue().name());
-            }
-            case QNAME_STATIC_FIELD_NAME -> {
-                @SuppressWarnings("unchecked")
-                final var entry = (Entry<JavaTypeName, String>) constant.getValue();
-                yield emitQNameConstant(name, type, entry.getKey(), entry.getValue());
-            }
+            case NAME_STATIC_FIELD_NAME -> emitNameConstant(name, type, (YangDataName) constant.getValue());
+            case QNAME_STATIC_FIELD_NAME -> emitQNameConstant(name, type, (String) constant.getValue());
             case VALUE_STATIC_FIELD_NAME -> emitValueConstant(name, type);
             default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.getValue() + ";\n";
         };
     }
 
     @NonNullByDefault
-    final String emitNameConstant(final String name, final Type type, final JavaTypeName yangModuleInfo,
-            final String yangDataName) {
+    private String emitNameConstant(final String name, final Type type, final YangDataName yangDataName) {
+        final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type());
         return """
             /**
              * Yang Data template name of the statement represented by this class.
              */
             public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
-                + '.' + YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName + "\");\n";
+                + '.' + YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName.name() + "\");\n";
     }
 
     @NonNullByDefault
-    final String emitQNameConstant(final String name, final Type type, final JavaTypeName yangModuleInfo,
-            final String localName) {
+    final String emitQNameConstant(final String name, final Type type, final String localName) {
+        final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type());
         return """
             /**
              * YANG identifier of the statement represented by this class.
