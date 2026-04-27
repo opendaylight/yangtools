@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
@@ -28,12 +27,6 @@ public non-sealed interface DataRootArchetype extends Archetype {
         @Override
         DataRootArchetype build();
     }
-
-    /**
-     * {@return the name of the generated {@code YangModuleInfo} implementation corresponding to the same module as this
-     * root}
-     */
-    @NonNull JavaTypeName yangModuleInfo();
 
     @Override
     default List<AnnotationType> getAnnotations() {

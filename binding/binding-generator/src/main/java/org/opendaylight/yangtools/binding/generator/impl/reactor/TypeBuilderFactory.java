@@ -53,8 +53,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
-            return new DataRootArchetypeBuilder.Codegen(typeName, yangModuleInfo);
+        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName) {
+            return new DataRootArchetypeBuilder.Codegen(typeName);
         }
 
         @Override
@@ -130,8 +130,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
-            return new DataRootArchetypeBuilder.Runtime(typeName, yangModuleInfo);
+        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName) {
+            return new DataRootArchetypeBuilder.Runtime(typeName);
         }
 
         @Override
@@ -193,7 +193,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     }
 
     @NonNullByDefault
-    abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, JavaTypeName yangModuleInfo);
+    abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName);
 
     @NonNullByDefault
     abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName typeName);
