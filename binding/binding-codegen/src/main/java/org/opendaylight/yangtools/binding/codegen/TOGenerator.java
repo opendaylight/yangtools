@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -29,7 +30,7 @@ record TOGenerator(GeneratedTransferObject type) implements Generator {
 
     @Override
     public String generate() {
-        final var template = type.isTypedef() ? new ClassTemplate(type) : new ListKeyTemplate(type);
-        return template.generate();
+        verify(type.isTypedef(), "Unexpected non-typedef %s", type);
+        return new ClassTemplate(type).generate();
     }
 }

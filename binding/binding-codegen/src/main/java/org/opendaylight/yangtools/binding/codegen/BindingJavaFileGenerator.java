@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
@@ -57,6 +58,7 @@ final class BindingJavaFileGenerator {
             switch (type) {
                 case EnumTypeObjectArchetype etoa -> generateFile(new EnumTypeObjectGenerator(etoa));
                 case FeatureArchetype fa -> generateFile(new FeatureGenerator(fa));
+                case KeyArchetype ka -> generateFile(new KeyGenerator(ka));
                 case UnionTypeObjectArchetype utoa -> generateFile(new UnionTypeObjectGenerator(utoa));
                 case GeneratedTransferObject gto -> generateFile(new TOGenerator(gto));
                 default -> {

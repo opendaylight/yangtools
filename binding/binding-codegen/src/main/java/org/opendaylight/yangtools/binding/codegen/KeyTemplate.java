@@ -11,8 +11,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -20,15 +20,10 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 /**
  * Template for generating JAVA class.
  */
-final class ListKeyTemplate extends ClassTemplate {
-    /**
-     * Creates instance of this class with concrete <code>genType</code>.
-     *
-     * @param genType generated transfer object which will be transformed to JAVA class source code
-     */
+final class KeyTemplate extends ClassTemplate {
     @NonNullByDefault
-    ListKeyTemplate(final GeneratedTransferObject genType) {
-        super(genType);
+    KeyTemplate(final KeyArchetype archetype) {
+        super(archetype);
     }
 
     @Override
