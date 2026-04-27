@@ -29,8 +29,8 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
         private String moduleName;
 
         @NonNullByDefault
-        public Codegen(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
-            super(typeName, yangModuleInfo);
+        public Codegen(final JavaTypeName typeName) {
+            super(typeName);
         }
 
         @Override
@@ -56,8 +56,8 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
 
     public static final class Runtime extends DataRootArchetypeBuilder {
         @NonNullByDefault
-        public Runtime(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
-            super(typeName, yangModuleInfo);
+        public Runtime(final JavaTypeName typeName) {
+            super(typeName);
         }
 
         @Override
@@ -81,12 +81,9 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
         }
     }
 
-    private final @NonNull JavaTypeName yangModuleInfo;
-
     @NonNullByDefault
-    DataRootArchetypeBuilder(final JavaTypeName typeName, final JavaTypeName yangModuleInfo) {
+    DataRootArchetypeBuilder(final JavaTypeName typeName) {
         super(typeName);
-        this.yangModuleInfo = requireNonNull(yangModuleInfo);
         addImplementsType(BindingTypes.dataRoot(TypeRef.of(typeName)));
     }
 
@@ -97,7 +94,7 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
 
     final @NonNull DataRootArchetype build(final @Nullable String description, final @Nullable String reference,
             final @Nullable String moduleName) {
-        return new DataRootArchetypeImpl(typeName(), yangModuleInfo, getImplementsTypes(),
+        return new DataRootArchetypeImpl(typeName(), getImplementsTypes(),
             AbstractGeneratedType.toUnmodifiableMethods(getMethodDefinitions()),
             List.copyOf(getEnclosedTransferObjects()), getEnumerations(), getYangSourceDefinition().orElse(null),
             getComment(), description, reference, moduleName);

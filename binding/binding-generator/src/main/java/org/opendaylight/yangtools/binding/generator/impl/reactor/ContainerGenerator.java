@@ -48,12 +48,12 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
 
-        final var module = currentModule();
-        module.addQNameConstant(builder, localName());
+        addQNameConstant(builder, localName());
 
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
+        final var module = currentModule();
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 

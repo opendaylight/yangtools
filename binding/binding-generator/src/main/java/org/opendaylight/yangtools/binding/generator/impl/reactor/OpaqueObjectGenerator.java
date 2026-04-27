@@ -89,9 +89,9 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
         defaultImplementedInterace(builder);
         annotateDeprecatedIfNecessary(builder);
 
-        final var module = currentModule();
-        module.addQNameConstant(builder, localName());
+        addQNameConstant(builder, localName());
 
+        final var module = currentModule();
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 //        newType.setSchemaPath(schemaNode.getPath());

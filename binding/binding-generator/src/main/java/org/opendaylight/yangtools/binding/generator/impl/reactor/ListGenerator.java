@@ -60,8 +60,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
 
-        final var module = currentModule();
-        module.addQNameConstant(builder, localName());
+        addQNameConstant(builder, localName());
 
         final var local = keyGen;
         if (local != null) {
@@ -75,6 +74,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
+        final var module = currentModule();
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 

@@ -67,12 +67,12 @@ public final class IdentityGenerator
 
         narrowImplementedInterface(builder);
 
-        final var module = currentModule();
-        module.addQNameConstant(builder, localName());
+        addQNameConstant(builder, localName());
 
         // Constant implementation
         builder.addConstant(builder, Naming.VALUE_STATIC_FIELD_NAME, BaseIdentity.class);
 
+        final var module = currentModule();
         builderFactory.addCodegenInformation(module, statement(), builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 
