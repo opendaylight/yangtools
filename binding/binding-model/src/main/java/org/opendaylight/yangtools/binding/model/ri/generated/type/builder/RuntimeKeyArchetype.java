@@ -23,8 +23,7 @@ record RuntimeKeyArchetype(
         @NonNull JavaTypeName name,
         @NonNull JavaTypeName entryObject,
         @NonNull KeyEffectiveStatement statement,
-        @NonNull List<GeneratedProperty> getProperties,
-        long serialVersionUID) implements KeyArchetype {
+        @NonNull List<GeneratedProperty> getProperties) implements KeyArchetype {
     RuntimeKeyArchetype {
         requireNonNull(name);
         requireNonNull(entryObject);

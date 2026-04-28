@@ -26,9 +26,6 @@ public non-sealed interface KeyArchetype extends Archetype {
      * A builder of {@link KeyArchetype} instances.
      */
     sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits KeyArchetypeBuilder {
-
-        Builder setSerialVersionUID(long serialVersionUID);
-
         @Override
         KeyArchetype build();
     }
@@ -42,11 +39,6 @@ public non-sealed interface KeyArchetype extends Archetype {
      * {@return backing {@link KeyEffectiveStatement}}
      */
     KeyEffectiveStatement statement();
-
-    /**
-     * {@return the {@code serialVersionUID} field value}
-     */
-    long serialVersionUID();
 
     @Override
     default List<AnnotationType> getAnnotations() {

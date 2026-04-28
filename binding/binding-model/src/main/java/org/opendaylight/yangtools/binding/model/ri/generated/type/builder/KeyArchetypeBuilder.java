@@ -11,12 +11,8 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.KeyArchetype.Builder;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
@@ -53,8 +49,7 @@ public abstract sealed class KeyArchetypeBuilder extends AbstractGeneratedTypeBu
         @Override
         public KeyArchetype build() {
             return new CodegenKeyArchetype(typeName(), entryObject, statement,
-                AbstractGeneratedType.toUnmodifiableProperties(getProperties()), serialVersion, description, reference,
-                moduleName);
+                AbstractGeneratedType.toUnmodifiableProperties(getProperties()), description, reference, moduleName);
         }
     }
 
@@ -83,14 +78,12 @@ public abstract sealed class KeyArchetypeBuilder extends AbstractGeneratedTypeBu
         @Override
         public KeyArchetype build() {
             return new RuntimeKeyArchetype(typeName(), entryObject, statement,
-                AbstractGeneratedType.toUnmodifiableProperties(getProperties()), serialVersion);
+                AbstractGeneratedType.toUnmodifiableProperties(getProperties()));
         }
     }
 
     final @NonNull KeyEffectiveStatement statement;
     final @NonNull JavaTypeName entryObject;
-
-    @Nullable Long serialVersion;
 
     @NonNullByDefault
     KeyArchetypeBuilder(final JavaTypeName typeName, final KeyEffectiveStatement statement,
@@ -98,15 +91,6 @@ public abstract sealed class KeyArchetypeBuilder extends AbstractGeneratedTypeBu
         super(typeName);
         this.statement = requireNonNull(statement);
         this.entryObject = requireNonNull(entryObject);
-        // FIXME: remove this bit
-        addImplementsType(BindingTypes.key(TypeRef.of(entryObject)));
-    }
-
-
-    @Override
-    public final Builder setSerialVersionUID(final long serialVersionUID) {
-        serialVersion = serialVersionUID;
-        return this;
     }
 
     @Override
