@@ -17,9 +17,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultKeyRuntimeTyp
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
@@ -51,33 +49,24 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
 
     @Override
     KeyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newKeyBuilder(typeName());
-
-        builder.addImplementsType(BindingTypes.key(TypeRef.of(listGen.typeName())));
+        final var builder = builderFactory.newKeyBuilder(typeName(), listGen.typeName(), statement());
 
         final var leafNames = statement().argument();
         for (var listChild : listGen) {
             if (listChild instanceof LeafGenerator leafGen) {
                 final QName qname = leafGen.statement().argument();
                 if (leafNames.contains(qname)) {
-                    final var prop = builder
+                    builder
                         .addProperty(Naming.getPropertyName(qname.getLocalName()))
                         .setReturnType(leafGen.methodReturnType(builderFactory))
                         .setReadOnly(true);
 
 //                    addComment(propBuilder, leaf);
-
-                    builder.addEqualsIdentity(prop);
-                    builder.addHashIdentity(prop);
-                    builder.addToStringProperty(prop);
                 }
             }
         }
 
-        // serialVersionUID
-        addSerialVersionUID(builder);
-
-        return builder.build();
+        return builder.setSerialVersionUID(SerialVersionHelper.computeDefaultSUID(builder)).build();
     }
 
     @Override
