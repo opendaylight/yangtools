@@ -23,9 +23,11 @@ import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.extractAugmentationTarget;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
+import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
 
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -39,6 +41,7 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -65,13 +68,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
-        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, InterfaceTemplate {
+        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, InterfaceTemplate,
+                KeyTemplate {
+    static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
+
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
         .addIgnoredStatement(ContactStatement.DEF)
         .addIgnoredStatement(DescriptionStatement.DEF)
         .addIgnoredStatement(OrganizationStatement.DEF)
         .addIgnoredStatement(ReferenceStatement.DEF)
         .build();
+
+    /**
+     * {@code java.lang.Boolean} as a JavaTypeName.
+     */
+    private static final @NonNull JavaTypeName BOOLEAN = JavaTypeName.create(Boolean.class);
 
     @NonNullByDefault
     BaseTemplate(final GeneratedType type) {
@@ -629,5 +640,36 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             case OBSOLETE -> newBlockBuilder().at().str(importedName(DEPRECATED)).eol("(forRemoval = true)");
             case CURRENT -> null;
         };
+    }
+
+    final @NonNull BlockBuilder generateHashCode(final List<GeneratedProperty> props) {
+        return newBlockBuilder()
+            .at().eol(importedName(OVERRIDE))
+            .str("public int hashCode()").jBlock(bb -> {
+                if (props.size() == 1) {
+                    bb.str("return ");
+                    final var prop = props.getFirst();
+                    if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
+                        bb.str(importedName(BOOLEAN)).str(".hashCode(");
+                    } else {
+                        bb.str(importedName(CODEHELPERS)).str(".wrapperHashCode(");
+                    }
+                    bb.str(fieldName(prop)).eol(");");
+                } else {
+                    bb
+                        .eol("final int prime = 31;")
+                        .eol("int result = 1;");
+                    for (var property : props) {
+                        final var type = property.getReturnType();
+                        final var receiver = type.equals(PRIMITIVE_BOOLEAN)
+                            // FIXME: unified perhaps?
+                            ? importedName(BOOLEAN) : importedUtilClass(type);
+
+                        bb.str("result = prime * result + ").str(receiver).str(".hashCode(").str(fieldName(property))
+                            .eol(");");
+                    }
+                    bb.eol("return result;");
+                }
+            }).nl();
     }
 }

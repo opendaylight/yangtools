@@ -43,7 +43,9 @@ class KeyGeneratorTest {
                         }
 
                         assertThat(new KeyGenerator(archetype).generate())
-                            .contains("public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2)");
+                            .containsSequence(
+                                "    @NonNullByDefault\n",
+                                "    public CompositeKeyListKey(Byte _key1, String _key2) {\n");
 
                         assertEquals(2, propertyCount);
                     }
