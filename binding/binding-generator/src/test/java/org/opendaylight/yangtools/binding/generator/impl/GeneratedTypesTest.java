@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesTest {
@@ -216,7 +216,7 @@ class GeneratedTypesTest {
         String getListChildContainerMethodReturnTypeName = "";
 
         for (var genType : genTypes) {
-            if (!(genType instanceof GeneratedTransferObject genTO)) {
+            if (!(genType instanceof KeyArchetype key)) {
                 if (genType.simpleName().equals("ListParentContainer")) {
                     listParentContainerMethodsCount = genType.getMethodDefinitions().size();
                 } else if (genType.simpleName().equals("SimpleList")) {
@@ -253,23 +253,13 @@ class GeneratedTypesTest {
                     listChildContainerMethodsCount = genType.getMethodDefinitions().size();
                 }
             } else {
-                final var properties = genTO.getProperties();
-                final var hashProps = genTO.getHashCodeIdentifiers();
-                final var equalProps = genTO.getEqualsIdentifiers();
+                final var properties = key.getProperties();
 
                 assertEquals(0, listKeyClassCount++, "Unexpected key");
                 assertEquals(1, properties.size());
                 assertEquals("listKey", properties.getFirst().getName());
                 assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
                 assertTrue(properties.getFirst().isReadOnly());
-
-                assertEquals(1, hashProps.size());
-                assertEquals("listKey", hashProps.getFirst().getName());
-                assertEquals("Byte", hashProps.getFirst().getReturnType().simpleName());
-
-                assertEquals(1, equalProps.size());
-                assertEquals("listKey", equalProps.getFirst().getName());
-                assertEquals("Byte",  equalProps.getFirst().getReturnType().simpleName());
             }
         }
 
@@ -307,18 +297,18 @@ class GeneratedTypesTest {
         int innerListKeyPropertyCount = 0;
 
         for (var type : genTypes) {
-            if (!(type instanceof GeneratedTransferObject genTO)) {
+            if (!(type instanceof KeyArchetype key)) {
                 genTypesCount++;
-            } else if (genTO.simpleName().equals("CompositeKeyListKey")) {
+            } else if (key.simpleName().equals("CompositeKeyListKey")) {
                 compositeKeyListKeyCount++;
-                for (var prop : genTO.getProperties()) {
+                for (var prop : key.getProperties()) {
                     if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
                         compositeKeyListKeyPropertyCount++;
                     }
                 }
                 genTOsCount++;
-            } else if (genTO.simpleName().equals("InnerListKey")) {
-                innerListKeyPropertyCount =  genTO.getProperties().size();
+            } else if (key.simpleName().equals("InnerListKey")) {
+                innerListKeyPropertyCount =  key.getProperties().size();
                 genTOsCount++;
             }
         }
@@ -340,17 +330,17 @@ class GeneratedTypesTest {
         assertEquals(14, genTypes.size());
 
         int genTypesCount = 0;
-        int genTOsCount = 0;
+        int genKeysCount = 0;
         for (var type : genTypes) {
-            if (type instanceof GeneratedTransferObject) {
-                genTOsCount++;
+            if (type instanceof KeyArchetype) {
+                genKeysCount++;
             } else {
                 genTypesCount++;
             }
         }
 
         assertEquals(11, genTypesCount);
-        assertEquals(3, genTOsCount);
+        assertEquals(3, genKeysCount);
     }
 
     @Test

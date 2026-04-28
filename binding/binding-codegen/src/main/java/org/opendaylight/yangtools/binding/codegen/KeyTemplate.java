@@ -8,13 +8,9 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
@@ -30,16 +26,17 @@ final class KeyTemplate extends BaseTemplate {
     BlockBuilder body() {
         final var type = (KeyArchetype) type();
         final var typeName = type.simpleName();
-        final var impl = type.getImplements().getFirst();
+        final var impl = BindingTypes.key(TypeRef.of(type.entryObject()));
+
 
         return newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
+            .blk(wrapToDocumentation(formatDataForJavaDoc(type)))
             .blk(annotationDeclaration())
             .eol(generatedAnnotation())
             .str("public final class ").str(typeName).str(" implements ").str(importedName(impl)).jBlock(bb -> {
                 bb
                     .eol("@java.io.Serial")
-                    .str("private static final long serialVersionUID = ").str(type.getSUID().getValue()).eol("L;")
+                    .str("private static final long serialVersionUID = ").jLong(type.serialVersionUID()).eS()
                     .newLine();
 
                 final var props = type.getProperties();
@@ -66,8 +63,8 @@ final class KeyTemplate extends BaseTemplate {
                 }
                 bb
                     .eol(" */")
-                    .str("public ").str(type().simpleName()).str("(").str(asNonNullArgumentsDeclaration(sortedProps))
-                        .str(")").oB();
+                    .str("public ").str(typeName).str("(").str(asNonNullArgumentsDeclaration(sortedProps)).str(")")
+                        .oB();
                 for (var prop : sortedProps) {
                     final var fieldName = fieldName(prop);
                     bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
@@ -107,28 +104,11 @@ final class KeyTemplate extends BaseTemplate {
             }).nl();
     }
 
-    @Override
-    String formatDataForJavaDoc(final GeneratedType type) {
-        final var listType = findListType(type);
-        if (listType == null) {
-            return "";
-        }
-
-        final var importedName = importedName(listType);
+    @NonNullByDefault
+    private String formatDataForJavaDoc(final KeyArchetype type) {
+        final var importedName = importedName(type.entryObject());
         return "This class represents the key of {@link " + importedName + "} class.\n"
             +  '\n'
             +  "@see " + importedName + '\n';
-    }
-
-    private static @Nullable Type findListType(final @NonNull GeneratedType type) {
-        for (var impl : type.getImplements()) {
-            if (impl instanceof ParameterizedType paramType) {
-                final var identifiable = BindingTypes.extractKeyType(paramType);
-                if (identifiable != null) {
-                    return identifiable;
-                }
-            }
-        }
-        return null;
     }
 }

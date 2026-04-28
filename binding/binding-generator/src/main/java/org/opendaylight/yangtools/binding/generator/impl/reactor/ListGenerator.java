@@ -66,7 +66,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         if (local != null) {
             // EntryObject implies Augmentable
             builder.addImplementsType(
-                BindingTypes.entryObject(builder.typeRef(), local.getGeneratedTO(builderFactory)));
+                BindingTypes.entryObject(builder.typeRef(), local.getArchetype(builderFactory)));
         } else {
             addAugmentable(builder);
         }
