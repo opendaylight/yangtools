@@ -32,6 +32,7 @@ class InterfaceGeneratorTest {
 
         assertEquals("""
             package test;
+
             import javax.annotation.processing.Generated;
 
             @Generated("mdsal-binding-generator")
@@ -52,6 +53,7 @@ class InterfaceGeneratorTest {
 
         assertEquals("""
             package test;
+
             import java.lang.Deprecated;
             import javax.annotation.processing.Generated;
 
@@ -75,6 +77,7 @@ class InterfaceGeneratorTest {
 
         assertEquals("""
             package test;
+
             import java.lang.Deprecated;
             import javax.annotation.processing.Generated;
 
