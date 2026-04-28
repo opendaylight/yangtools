@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -54,18 +53,19 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     KeyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newKeyBuilder(typeName(), listGen.typeName(), statement());
 
-        final var leafNames = statement().argument();
-        for (var listChild : listGen) {
-            if (listChild instanceof LeafGenerator leafGen) {
-                final QName qname = leafGen.statement().argument();
-                if (leafNames.contains(qname)) {
+        for (var qname : statement().argument()) {
+            final var gen = listGen.findSchemaTreeGenerator(qname);
+            switch (gen) {
+                case null -> throw new VerifyException("Cannot find generator for " + qname);
+                case LeafGenerator leafGen -> {
                     builder
                         .addProperty(Naming.getPropertyName(qname.getLocalName()))
                         .setReturnType(leafGen.methodReturnType(builderFactory))
                         .setReadOnly(true);
 
-//                    addComment(propBuilder, leaf);
+//                  addComment(propBuilder, leaf);
                 }
+                default -> throw new VerifyException("Unexpected generator " + gen);
             }
         }
 
