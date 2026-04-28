@@ -57,14 +57,8 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
             final var gen = listGen.findSchemaTreeGenerator(qname);
             switch (gen) {
                 case null -> throw new VerifyException("Cannot find generator for " + qname);
-                case LeafGenerator leafGen -> {
-                    builder
-                        .addProperty(Naming.getPropertyName(qname.getLocalName()))
-                        .setReturnType(leafGen.methodReturnType(builderFactory))
-                        .setReadOnly(true);
-
-//                  addComment(propBuilder, leaf);
-                }
+                case LeafGenerator leafGen -> builder.addField(leafGen.methodReturnType(builderFactory));
+                // addComment(propBuilder, leaf);
                 default -> throw new VerifyException("Unexpected generator " + gen);
             }
         }
