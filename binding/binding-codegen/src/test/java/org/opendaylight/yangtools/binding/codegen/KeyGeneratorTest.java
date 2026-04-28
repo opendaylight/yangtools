@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -41,15 +40,174 @@ class KeyGeneratorTest {
                                 propertyCount++;
                             }
                         }
-
-                        assertThat(new KeyGenerator(archetype).generate())
-                            .contains("public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2)");
-
                         assertEquals(2, propertyCount);
+
+                        assertEquals("""
+                            package org.opendaylight.yang.gen.v1.urn.composite.key.rev130227.list.parent.container;
+                            import java.lang.Byte;
+                            import java.lang.Object;
+                            import java.lang.Override;
+                            import java.lang.String;
+                            import java.util.Objects;
+                            import javax.annotation.processing.Generated;
+                            import org.eclipse.jdt.annotation.NonNull;
+                            import org.opendaylight.yangtools.binding.Key;
+                            import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+
+                            /**
+                             * This class represents the key of {@link CompositeKeyList} class.
+                             *
+                             * @see CompositeKeyList
+                             */
+                            @Generated("mdsal-binding-generator")
+                            public final class CompositeKeyListKey
+                             implements Key<CompositeKeyList> {
+                                @java.io.Serial
+                                private static final long serialVersionUID = 4635577615717332911L;
+                                private final Byte _key1;
+                                private final String _key2;
+
+                                /**
+                                 * Constructs an instance.
+                                 *
+                                 * @param _key1 the entity key1
+                                 * @param _key2 the entity key2
+                                 * @throws NullPointerException if any of the arguments are null
+                                 */
+                                public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2) {
+                                    this._key1 = CodeHelpers.requireKeyProp(_key1, "key1");
+                                    this._key2 = CodeHelpers.requireKeyProp(_key2, "key2");
+                                }
+
+                                /**
+                                 * Creates a copy from Source Object.
+                                 *
+                                 * @param source Source object
+                                 */
+                                public CompositeKeyListKey(CompositeKeyListKey source) {
+                                    this._key1 = source._key1;
+                                    this._key2 = source._key2;
+                                }
+
+                                /**
+                                 * Return key1, guaranteed to be non-null.
+                                 *
+                                 * @return {@code Byte} key1, guaranteed to be non-null.
+                                 */
+                                public @NonNull Byte getKey1() {
+                                    return _key1;
+                                }
+
+                                /**
+                                 * Return key2, guaranteed to be non-null.
+                                 *
+                                 * @return {@code String} key2, guaranteed to be non-null.
+                                 */
+                                public @NonNull String getKey2() {
+                                    return _key2;
+                                }
+
+                                @Override
+                                public int hashCode() {
+                                    final int prime = 31;
+                                    int result = 1;
+                                    result = prime * result + Objects.hashCode(_key1);
+                                    result = prime * result + Objects.hashCode(_key2);
+                                    return result;
+                                }
+
+                                @Override
+                                public final boolean equals(Object obj) {
+                                    return this == obj || obj instanceof CompositeKeyListKey other
+                                        && Objects.equals(_key1, other._key1)
+                                        && Objects.equals(_key2, other._key2);
+                                }
+
+                                @Override
+                                public String toString() {
+                                    return CodeHelpers.jcTSB(CompositeKeyListKey.class)
+                                        .prop("key1", _key1)
+                                        .prop("key2", _key2)
+                                        .build();
+                                }
+                            }
+
+                            """, new KeyGenerator(archetype).generate());
                     }
                     case "InnerListKey" -> {
                         final var properties = archetype.getProperties();
                         assertEquals(1, properties.size());
+                        assertEquals("""
+                            package org.opendaylight.yang.gen.v1.urn.composite.key.rev130227.list.parent.container.\
+                            composite.key.list;
+                            import java.lang.Object;
+                            import java.lang.Override;
+                            import java.lang.String;
+                            import java.util.Objects;
+                            import javax.annotation.processing.Generated;
+                            import org.eclipse.jdt.annotation.NonNull;
+                            import org.opendaylight.yangtools.binding.Key;
+                            import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+                            import org.opendaylight.yangtools.yang.common.Uint16;
+
+                            /**
+                             * This class represents the key of {@link InnerList} class.
+                             *
+                             * @see InnerList
+                             */
+                            @Generated("mdsal-binding-generator")
+                            public final class InnerListKey
+                             implements Key<InnerList> {
+                                @java.io.Serial
+                                private static final long serialVersionUID = 2256312821779854996L;
+                                private final Uint16 _key1;
+
+                                /**
+                                 * Constructs an instance.
+                                 *
+                                 * @param _key1 the entity key1
+                                 * @throws NullPointerException if any of the arguments are null
+                                 */
+                                public InnerListKey(@NonNull Uint16 _key1) {
+                                    this._key1 = CodeHelpers.requireKeyProp(_key1, "key1");
+                                }
+
+                                /**
+                                 * Creates a copy from Source Object.
+                                 *
+                                 * @param source Source object
+                                 */
+                                public InnerListKey(InnerListKey source) {
+                                    this._key1 = source._key1;
+                                }
+
+                                /**
+                                 * Return key1, guaranteed to be non-null.
+                                 *
+                                 * @return {@code Uint16} key1, guaranteed to be non-null.
+                                 */
+                                public @NonNull Uint16 getKey1() {
+                                    return _key1;
+                                }
+
+                                @Override
+                                public int hashCode() {
+                                    return CodeHelpers.wrapperHashCode(_key1);
+                                }
+
+                                @Override
+                                public final boolean equals(Object obj) {
+                                    return this == obj || obj instanceof InnerListKey other
+                                        && Objects.equals(_key1, other._key1);
+                                }
+
+                                @Override
+                                public String toString() {
+                                    return CodeHelpers.jcTS1(InnerListKey.class, "key1", _key1);
+                                }
+                            }
+
+                            """, new KeyGenerator(archetype).generate());
                     }
                     default -> fail("Unexpected key " + archetype);
                 }
