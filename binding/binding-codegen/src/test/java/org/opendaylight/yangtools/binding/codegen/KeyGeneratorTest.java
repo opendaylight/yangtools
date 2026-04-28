@@ -44,6 +44,7 @@ class KeyGeneratorTest {
 
                         assertEquals("""
                             package org.opendaylight.yang.gen.v1.urn.composite.key.rev130227.list.parent.container;
+
                             import java.lang.Byte;
                             import java.lang.Object;
                             import java.lang.Override;
@@ -140,6 +141,7 @@ class KeyGeneratorTest {
                         assertEquals("""
                             package org.opendaylight.yang.gen.v1.urn.composite.key.rev130227.list.parent.container.\
                             composite.key.list;
+
                             import java.lang.Object;
                             import java.lang.Override;
                             import java.lang.String;
