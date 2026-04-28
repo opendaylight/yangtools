@@ -8,85 +8,33 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.collect.Collections2;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Set;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.SerialVersionBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 public final class SerialVersionHelper {
     private static final Set<ConcreteType> IGNORED_INTERFACES =
         Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
-    private static final Comparator<TypeMemberBuilder<?>> SUID_MEMBER_COMPARATOR =
-        Comparator.comparing(TypeMemberBuilder::getName);
-    private static final Comparator<Type> SUID_NAME_COMPARATOR = Comparator.comparing(Type::canonicalName);
-    private static final ThreadLocal<MessageDigest> SHA1_MD = ThreadLocal.withInitial(() -> {
-        try {
-            return MessageDigest.getInstance("SHA");
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Failed to get a SHA digest provider", e);
-        }
-    });
 
     private SerialVersionHelper() {
         // Hidden on purpose
     }
 
     public static long computeDefaultSUID(final GeneratedTypeBuilderBase<?> to) {
-        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        try (DataOutputStream dout = new DataOutputStream(bout)) {
-            dout.writeUTF(to.typeName().simpleName());
-            dout.writeInt(to.isAbstract() ? 3 : 7);
+        final var svb = new SerialVersionBuilder(to.typeName()).setAbstract(to.isAbstract());
 
-            for (var iface : sortedCollection(SUID_NAME_COMPARATOR, filteredImplementsTypes(to))) {
-                dout.writeUTF(iface.canonicalName());
-            }
-
-            for (var property : sortedCollection(SUID_MEMBER_COMPARATOR, to.getProperties())) {
-                dout.writeUTF(property.getName());
-            }
-
-            for (var method : sortedCollection(SUID_MEMBER_COMPARATOR, to.getMethodDefinitions())) {
-                if (!method.getAccessModifier().equals(AccessModifier.PRIVATE)) {
-                    dout.writeUTF(method.getName());
-                    dout.write(method.getAccessModifier().ordinal());
-                }
-            }
-
-            dout.flush();
-        } catch (final IOException e) {
-            throw new IllegalStateException("Failed to hash object " + to, e);
+        for (var iface : Collections2.filter(to.getImplementsTypes(), item -> !IGNORED_INTERFACES.contains(item))) {
+            svb.addInterface(iface.name());
+        }
+        for (var property : to.getProperties()) {
+            svb.addField(property.getName());
+        }
+        for (var method : to.getMethodDefinitions()) {
+            svb.addMethod(method.getName(), method.getAccessModifier());
         }
 
-        final byte[] hashBytes = SHA1_MD.get().digest(bout.toByteArray());
-        long hash = 0;
-        for (int i = Math.min(hashBytes.length, 8) - 1; i >= 0; i--) {
-            hash = hash << 8 | hashBytes[i] & 0xFF;
-        }
-        return hash;
-    }
-
-    private static Collection<Type> filteredImplementsTypes(final GeneratedTypeBuilderBase<?> to) {
-        return Collections2.filter(to.getImplementsTypes(), item -> !IGNORED_INTERFACES.contains(item));
-    }
-
-    private static <T> Iterable<T> sortedCollection(final Comparator<? super T> comparator, final Collection<T> input) {
-        if (input.size() <= 1) {
-            return input;
-        }
-
-        final var ret = new ArrayList<>(input);
-        ret.sort(comparator);
-        return ret;
+        return svb.build();
     }
 }
