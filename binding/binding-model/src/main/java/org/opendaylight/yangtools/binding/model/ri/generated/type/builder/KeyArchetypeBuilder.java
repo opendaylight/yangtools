@@ -9,10 +9,13 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype.Builder;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
@@ -48,8 +51,8 @@ public abstract sealed class KeyArchetypeBuilder extends AbstractGeneratedTypeBu
 
         @Override
         public KeyArchetype build() {
-            return new CodegenKeyArchetype(typeName(), entryObject, statement,
-                AbstractGeneratedType.toUnmodifiableProperties(getProperties()), description, reference, moduleName);
+            return new CodegenKeyArchetype(typeName(), entryObject, statement, fields, description, reference,
+                moduleName);
         }
     }
 
@@ -77,11 +80,11 @@ public abstract sealed class KeyArchetypeBuilder extends AbstractGeneratedTypeBu
 
         @Override
         public KeyArchetype build() {
-            return new RuntimeKeyArchetype(typeName(), entryObject, statement,
-                AbstractGeneratedType.toUnmodifiableProperties(getProperties()));
+            return new RuntimeKeyArchetype(typeName(), entryObject, statement, fields);
         }
     }
 
+    final @NonNull ArrayList<Type> fields = new ArrayList<>();
     final @NonNull KeyEffectiveStatement statement;
     final @NonNull JavaTypeName entryObject;
 
@@ -91,6 +94,12 @@ public abstract sealed class KeyArchetypeBuilder extends AbstractGeneratedTypeBu
         super(typeName);
         this.statement = requireNonNull(statement);
         this.entryObject = requireNonNull(entryObject);
+    }
+
+    @Override
+    public final Builder addField(final Type type) {
+        fields.add(requireNonNull(type));
+        return this;
     }
 
     @Override

@@ -7,42 +7,46 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
  * A run-time implementation of {@link KeyArchetype}.
  */
+@NonNullByDefault
 record RuntimeKeyArchetype(
-        @NonNull JavaTypeName name,
-        @NonNull JavaTypeName entryObject,
-        @NonNull KeyEffectiveStatement statement,
-        @NonNull List<GeneratedProperty> getProperties) implements KeyArchetype {
+        JavaTypeName name,
+        JavaTypeName entryObject,
+        KeyEffectiveStatement statement,
+        List<Type> fields) implements KeyArchetype {
     RuntimeKeyArchetype {
         requireNonNull(name);
         requireNonNull(entryObject);
         requireNonNull(statement);
-        getProperties = List.copyOf(getProperties);
+        fields = List.copyOf(fields);
+        verify(fields.size() == statement.argument().size());
     }
 
     @Override
-    public String getDescription() {
+    public @Nullable String getDescription() {
         return null;
     }
 
     @Override
-    public String getReference() {
+    public @Nullable String getReference() {
         return null;
     }
 
     @Override
-    public String getModuleName() {
+    public @Nullable String getModuleName() {
         return null;
     }
 }

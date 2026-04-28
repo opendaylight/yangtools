@@ -7,25 +7,33 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import com.google.common.annotations.Beta;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.KeyArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
  * An archetype for a {@link Key} attached to an {@link EntryObject}.
  */
+@Beta
 @NonNullByDefault
 public non-sealed interface KeyArchetype extends Archetype {
     /**
      * A builder of {@link KeyArchetype} instances.
      */
     sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits KeyArchetypeBuilder {
+
+        Builder addField(Type type);
+
         @Override
         KeyArchetype build();
     }
@@ -40,47 +48,77 @@ public non-sealed interface KeyArchetype extends Archetype {
      */
     KeyEffectiveStatement statement();
 
+    /**
+     * {@return field {@link Type}s in the same order as {@code statement().argument()}}
+     */
+    List<Type> fields();
+
     @Override
+    default List<GeneratedProperty> getProperties() {
+        final var arg = statement().argument();
+        final var props = new ArrayList<GeneratedProperty>(arg.size());
+        final var kit = arg.iterator();
+
+        for (var field : fields()) {
+            props.add(new GeneratedPropertyBuilderImpl(Naming.getPropertyName(kit.next().getLocalName()))
+                .setReturnType(field)
+                .setReadOnly(true)
+                .toInstance());
+        }
+
+        return props;
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
     default List<AnnotationType> getAnnotations() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default @Nullable TypeComment getComment() {
         return null;
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default boolean isAbstract() {
         return false;
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<Type> getImplements() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<GeneratedType> getEnclosedTypes() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<EnumTypeObjectArchetype> getEnumerations() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<Constant> getConstantDefinitions() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<MethodSignature> getMethodDefinitions() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default Optional<YangSourceDefinition> getYangSourceDefinition() {
         return Optional.empty();
     }

@@ -7,24 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
  * A codegen implementation of {@link KeyArchetype}.
  */
+@NonNullByDefault
 record CodegenKeyArchetype(
-        @NonNull JavaTypeName name,
-        @NonNull JavaTypeName entryObject,
-        @NonNull KeyEffectiveStatement statement,
-        @NonNull List<GeneratedProperty> getProperties,
+        JavaTypeName name,
+        JavaTypeName entryObject,
+        KeyEffectiveStatement statement,
+        List<Type> fields,
         @Nullable String getDescription,
         @Nullable String getReference,
         @Nullable String getModuleName) implements KeyArchetype {
@@ -32,6 +34,7 @@ record CodegenKeyArchetype(
         requireNonNull(name);
         requireNonNull(entryObject);
         requireNonNull(statement);
-        getProperties = List.copyOf(getProperties);
+        fields = List.copyOf(fields);
+        verify(fields.size() == statement.argument().size());
     }
 }
