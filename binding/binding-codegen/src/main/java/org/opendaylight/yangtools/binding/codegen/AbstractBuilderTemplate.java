@@ -23,8 +23,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -43,9 +43,9 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
     final Set<BuilderGeneratedProperty> properties;
 
     /**
-     * GeneratedTransferObject for key type, {@code null} if this type does not have a key.
+     * KeyArchetype for key type, {@code null} if this type does not have a key.
      */
-    final GeneratedTransferObject keyType;
+    final KeyArchetype keyType;
 
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
@@ -54,7 +54,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
 
     AbstractBuilderTemplate(final @NonNull GeneratedClass javaType, final @NonNull GeneratedType type,
             final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties,
-            final ParameterizedType augmentType, final GeneratedTransferObject keyType) {
+            final ParameterizedType augmentType, final KeyArchetype keyType) {
         super(javaType, type);
         this.targetType = targetType;
         this.properties = properties;
@@ -63,7 +63,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
     }
 
     AbstractBuilderTemplate(final @NonNull GeneratedType type, final @NonNull GeneratedType targetType,
-            final GeneratedTransferObject keyType) {
+            final KeyArchetype keyType) {
         super(type);
         this.targetType = requireNonNull(targetType);
         this.keyType = keyType;
@@ -160,7 +160,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      * @return properties participating in the construction of a key type, in constructor order
      */
     @NonNullByDefault
-    static final List<GeneratedProperty> keyConstructorArgs(final GeneratedTransferObject keyType) {
+    static final List<GeneratedProperty> keyConstructorArgs(final KeyArchetype keyType) {
         return keyType.getProperties().stream()
             .sorted(Comparator.comparing(GeneratedProperty::getName))
             .collect(Collectors.toList());

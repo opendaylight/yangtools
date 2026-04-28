@@ -15,9 +15,9 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -35,10 +35,10 @@ class AugmentedTypeTest {
         final var genTypes = DefaultBindingGenerator.generateFor(context);
         assertEquals(31, genTypes.size());
 
-        GeneratedTransferObject gtInterfaceKey = null;
+        KeyArchetype gtInterfaceKey = null;
         GeneratedType gtInterface = null;
         GeneratedType gtTunnel = null;
-        GeneratedTransferObject gtTunnelKey = null;
+        KeyArchetype gtTunnelKey = null;
         GeneratedType gtNetworkLink2 = null;
 
         for (var type : genTypes) {
@@ -47,13 +47,13 @@ class AugmentedTypeTest {
             }
 
             if (type.simpleName().equals("InterfaceKey")) {
-                gtInterfaceKey = assertInstanceOf(GeneratedTransferObject.class, type);
+                gtInterfaceKey = assertInstanceOf(KeyArchetype.class, type);
             } else if (type.simpleName().equals("Interface")) {
                 gtInterface = type;
             } else if (type.simpleName().equals("Tunnel")) {
                 gtTunnel = type;
             } else if (type.simpleName().equals("TunnelKey")) {
-                gtTunnelKey = assertInstanceOf(GeneratedTransferObject.class, type);
+                gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
             } else if (type.simpleName().equals("NetworkLink2")) {
                 gtNetworkLink2 = type;
             }

@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
-public final class DefaultKeyRuntimeType extends AbstractObjectRuntimeType<KeyEffectiveStatement>
+public final class DefaultKeyRuntimeType extends AbstractRuntimeType<KeyEffectiveStatement, KeyArchetype>
         implements KeyRuntimeType {
-    public DefaultKeyRuntimeType(final GeneratedTransferObject bindingType, final KeyEffectiveStatement statement) {
-        super(bindingType, statement);
+    public DefaultKeyRuntimeType(final KeyArchetype archetype) {
+        super(archetype, archetype.statement());
     }
 }
