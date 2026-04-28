@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class AugmentRelativeXPathTest {
@@ -39,14 +40,14 @@ class AugmentRelativeXPathTest {
             if (type.simpleName().equals("InterfaceKey")) {
                 gtInterfaceKey = assertInstanceOf(KeyArchetype.class, type);
 
-                final var properties = gtInterfaceKey.getProperties();
-                assertNotNull(properties, "InterfaceKey properties are null");
-                assertEquals(1, properties.size());
+                final var keys = gtInterfaceKey.statement().argument().asList();
+                assertEquals(1, keys.size());
+                assertEquals("", keys.getFirst());
 
-                final var property = properties.getFirst();
-                assertEquals("interfaceId", property.getName());
-                assertNotNull(property.getReturnType(), "interfaceId return type is null");
-                assertEquals(JavaTypeName.create(String.class), property.getReturnType().name());
+                final var fields = gtInterfaceKey.fields();
+                assertEquals(1, fields.size());
+
+                assertEquals(Types.STRING, fields.getFirst());
             } else if (type.simpleName().equals("Interface")) {
                 gtInterface = type;
 
