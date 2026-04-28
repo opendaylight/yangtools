@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -130,8 +131,8 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is {@code null}
      */
     @NonNullByDefault
-    public static ParameterizedType keyedListAction(final Type parent, final GeneratedTransferObject keyType,
-            final Type input, final Type output) {
+    public static ParameterizedType keyedListAction(final Type parent, final KeyArchetype keyType, final Type input,
+            final Type output) {
         return ParameterizedType.of(KEYED_LIST_ACTION, keyType, parent, input, output);
     }
 
@@ -267,7 +268,7 @@ public final class BindingTypes {
      * @see #extractEntryObjectKey(GeneratedType)
      */
     @NonNullByDefault
-    public static ParameterizedType entryObject(final Type type, final GeneratedTransferObject keyType) {
+    public static ParameterizedType entryObject(final Type type, final KeyArchetype keyType) {
         return ParameterizedType.of(ENTRY_OBJECT, type, keyType);
     }
 
@@ -292,7 +293,7 @@ public final class BindingTypes {
      * @throws NullPointerException if any argument is is {@code null}
      */
     @NonNullByDefault
-    public static ParameterizedType objectIdentifierWithKey(final Type type, final GeneratedTransferObject keyType) {
+    public static ParameterizedType objectIdentifierWithKey(final Type type, final KeyArchetype keyType) {
         return ParameterizedType.of(OBJECT_REFERENCE_WITH_KEY, type, keyType);
     }
 
@@ -463,14 +464,14 @@ public final class BindingTypes {
 
     /**
      * Recover the {@code keyType} argument from a potential {@link EntryObject} type. This is inverse operation to
-     * adding {@link #entryObject(Type, GeneratedTransferObject)} as an implemented interface.
+     * adding {@link #entryObject(Type, KeyArchetype)} as an implemented interface.
      *
      * @param genType the generated type
-     * @return the {@link GeneratedTransferObject} defining the key type, or {@code null} if {@code genType} does not
+     * @return the {@link KeyArchetype} defining the key type, or {@code null} if {@code genType} does not
      *         directly implement {@link EntryObject}
      * @since 16.0.0
      */
-    public static @Nullable GeneratedTransferObject extractEntryObjectKey(final @NonNull GeneratedType genType) {
+    public static @Nullable KeyArchetype extractEntryObjectKey(final @NonNull GeneratedType genType) {
         for (var iface : genType.getImplements()) {
             if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
                 final var args = parameterized.getActualTypeArguments();
@@ -478,8 +479,8 @@ public final class BindingTypes {
                     throw new VerifyException("Unexpected arguments " + args);
                 }
                 final var keyType = args.getLast();
-                if (keyType instanceof GeneratedTransferObject gto) {
-                    return gto;
+                if (keyType instanceof KeyArchetype archetype) {
+                    return archetype;
                 }
                 throw new VerifyException("Unexpected key type " + keyType);
             }

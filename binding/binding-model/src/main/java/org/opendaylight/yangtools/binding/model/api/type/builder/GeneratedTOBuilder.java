@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder;
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * @see GeneratedTransferObject
  */
 public sealed interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTOBuilder>
-        permits AbstractGeneratedTOBuilder, KeyArchetype.Builder, UnionTypeObjectArchetype.Builder {
+        permits AbstractGeneratedTOBuilder, UnionTypeObjectArchetype.Builder {
     /**
      * Add Generated Transfer Object from which will be extended current Generated Transfer Object.<br>
      * By definition Java does not allow multiple inheritance, hence if there is already a definition

@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal161Test {
@@ -37,7 +37,7 @@ class Mdsal161Test {
 
     private static void assertKeyStructure(final Collection<GeneratedType> types, final String className) {
         final var optType = types.stream().filter(type -> type.canonicalName().equals(className)).findFirst();
-        final var gto = assertInstanceOf(GeneratedTransferObject.class, optType.orElseThrow());
-        assertEquals(2, gto.getEqualsIdentifiers().size());
+        final var archetype = assertInstanceOf(KeyArchetype.class, optType.orElseThrow());
+        assertEquals(2, archetype.getProperties().size());
     }
 }

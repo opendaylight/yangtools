@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultKeyRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
@@ -49,41 +46,38 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
         return domain.addSecondary(this, listGen.getMember(), Naming.KEY_SUFFIX);
     }
 
+    KeyArchetype getArchetype(final TypeBuilderFactory builderFactory) {
+        return (KeyArchetype) getGeneratedType(builderFactory);
+    }
+
     @Override
     KeyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newKeyBuilder(typeName());
-
-        builder.addImplementsType(BindingTypes.key(TypeRef.of(listGen.typeName())));
+        final var builder = builderFactory.newKeyBuilder(typeName(), listGen.typeName(), statement());
 
         final var leafNames = statement().argument();
         for (var listChild : listGen) {
             if (listChild instanceof LeafGenerator leafGen) {
                 final QName qname = leafGen.statement().argument();
                 if (leafNames.contains(qname)) {
-                    final var prop = builder
+                    builder
                         .addProperty(Naming.getPropertyName(qname.getLocalName()))
                         .setReturnType(leafGen.methodReturnType(builderFactory))
                         .setReadOnly(true);
 
 //                    addComment(propBuilder, leaf);
-
-                    builder.addEqualsIdentity(prop);
-                    builder.addHashIdentity(prop);
-                    builder.addToStringProperty(prop);
                 }
             }
         }
 
-        // serialVersionUID
-        addSerialVersionUID(builder);
-
-        return builder.build();
+        return builder.setSerialVersionUID(SerialVersionHelper.computeDefaultSUID(builder)).build();
     }
 
     @Override
     KeyRuntimeType createExternalRuntimeType(final Type type) {
-        verify(type instanceof GeneratedTransferObject, "Unexpected type %s", type);
-        return new DefaultKeyRuntimeType((GeneratedTransferObject) type, statement());
+        if (type instanceof KeyArchetype archetype) {
+            return new DefaultKeyRuntimeType(archetype);
+        }
+        throw new VerifyException("Unexpected type " + type);
     }
 
     @Override
