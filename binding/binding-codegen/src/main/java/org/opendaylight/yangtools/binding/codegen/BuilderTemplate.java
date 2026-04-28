@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -54,7 +55,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private final BuilderImplTemplate implTemplate;
 
     BuilderTemplate(final @NonNull GeneratedType type, final @NonNull GeneratedType targetType,
-            final GeneratedTransferObject keyType) {
+            final KeyArchetype keyType) {
         super(type, targetType, keyType);
         implTemplate = new BuilderImplTemplate(this, type().getEnclosedTypes().getFirst());
     }

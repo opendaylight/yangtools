@@ -17,9 +17,9 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -35,20 +35,20 @@ class GeneratedTypesLeafrefTest {
         final var genTypes = DefaultBindingGenerator.generateFor(context);
         assertEquals(55, genTypes.size());
 
-        GeneratedTransferObject gtIfcKey = null;
+        KeyArchetype gtIfcKey = null;
         GeneratedType gtIfc = null;
         GeneratedType gtNetworkLink = null;
         GeneratedType gtSource = null;
         GeneratedType gtDest = null;
         GeneratedType gtTunnel = null;
-        GeneratedTransferObject gtTunnelKey = null;
+        KeyArchetype gtTunnelKey = null;
         GeneratedType gtTopology = null;
         for (final Type type : genTypes) {
             String name = type.simpleName();
             if ("InterfaceKey".equals(name)
                     && "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces".equals(
                         type.packageName())) {
-                gtIfcKey = (GeneratedTransferObject) type;
+                gtIfcKey = (KeyArchetype) type;
             } else {
                 switch (name) {
                     case "Interface":
@@ -67,7 +67,7 @@ class GeneratedTypesLeafrefTest {
                         gtTunnel = (GeneratedType) type;
                         break;
                     case "TunnelKey":
-                        gtTunnelKey = (GeneratedTransferObject) type;
+                        gtTunnelKey = (KeyArchetype) type;
                         break;
                     case "Topology":
                         gtTopology = (GeneratedType) type;

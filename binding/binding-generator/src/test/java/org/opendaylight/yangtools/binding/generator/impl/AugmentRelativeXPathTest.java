@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class AugmentRelativeXPathTest {
@@ -26,10 +26,10 @@ class AugmentRelativeXPathTest {
         assertNotNull(genTypes);
         assertEquals(27, genTypes.size());
 
-        GeneratedTransferObject gtInterfaceKey = null;
+        KeyArchetype gtInterfaceKey = null;
         GeneratedType gtInterface = null;
         GeneratedType gtTunnel = null;
-        GeneratedTransferObject gtTunnelKey = null;
+        KeyArchetype gtTunnelKey = null;
 
         for (var type : genTypes) {
             if (!type.packageName().contains("augment._abstract.topology")) {
@@ -37,7 +37,7 @@ class AugmentRelativeXPathTest {
             }
 
             if (type.simpleName().equals("InterfaceKey")) {
-                gtInterfaceKey = assertInstanceOf(GeneratedTransferObject.class, type);
+                gtInterfaceKey = assertInstanceOf(KeyArchetype.class, type);
 
                 final var properties = gtInterfaceKey.getProperties();
                 assertNotNull(properties, "InterfaceKey properties are null");
@@ -68,7 +68,7 @@ class AugmentRelativeXPathTest {
                     org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.\
                     network.link.tunnels""", "TunnelKey"));
             } else if (type.simpleName().equals("TunnelKey")) {
-                gtTunnelKey = assertInstanceOf(GeneratedTransferObject.class, type);
+                gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
 
                 final var properties = gtTunnelKey.getProperties();
                 assertNotNull(properties, "TunnelKey properties are null");

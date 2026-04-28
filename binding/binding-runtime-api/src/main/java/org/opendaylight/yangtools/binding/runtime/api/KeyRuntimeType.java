@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
  */
 public interface KeyRuntimeType extends GeneratedRuntimeType {
     @Override
-    KeyEffectiveStatement statement();
+    KeyArchetype javaType();
 
     @Override
-    GeneratedTransferObject javaType();
+    KeyEffectiveStatement statement();
 }
