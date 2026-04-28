@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -55,7 +54,8 @@ abstract class BaseCompilationTest {
             final var template = new YangModuleInfoTemplate(module, context, mod -> List.of("fake", mod.getName()));
 
             final var file = sourcesOutputDir
-                .resolve(Naming.getServicePackageName(module.getQNameModule()).replace('.', File.separatorChar))
+                .resolve(YangModuleInfoTemplate.servicePackageName(module.getQNameModule())
+                    .replace('.', File.separatorChar))
                 .resolve("YangModuleInfoImpl.java");
 
 
