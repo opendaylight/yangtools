@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.SerialVersionBuilder;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
@@ -28,18 +29,24 @@ final class KeyTemplate extends BaseTemplate {
         final var typeName = type.simpleName();
         final var impl = BindingTypes.key(TypeRef.of(type.entryObject()));
 
-
         return newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(type)))
             .blk(annotationDeclaration())
             .eol(generatedAnnotation())
             .str("public final class ").str(typeName).str(" implements ").str(importedName(impl)).jBlock(bb -> {
+                final var props = type.getProperties();
+                final var svb = new SerialVersionBuilder(type.name());
+                for (var prop : props) {
+                    svb.addField(prop.getName());
+                }
+
+
+
                 bb
                     .eol("@java.io.Serial")
                     .str("private static final long serialVersionUID = ").jLong(type.serialVersionUID()).eS()
                     .newLine();
 
-                final var props = type.getProperties();
 
                 // FIXME: generate checker methods for each property
 
