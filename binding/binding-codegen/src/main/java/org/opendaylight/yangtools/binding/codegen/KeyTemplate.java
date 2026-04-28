@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -20,49 +21,71 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 /**
  * Template for generating JAVA class.
  */
-final class KeyTemplate extends ClassTemplate {
+final class KeyTemplate extends BaseTemplate {
     @NonNullByDefault
     KeyTemplate(final KeyArchetype archetype) {
         super(archetype);
     }
 
     @Override
-    String finalClass() {
-        return " final ";
-    }
+    BlockBuilder body() {
+        final var type = (KeyArchetype) type();
+        final var typeName = type.simpleName();
+        final var impl = type.getImplements().getFirst();
 
-    @Override
-    BlockBuilder allValuesConstructor() {
-        final var bb = newBlockBuilder().txt("""
-            /**
-             * Constructs an instance.
-             *
-            """);
-        for (var prop : allProperties) {
-            bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
-        }
+        return newBlockBuilder()
+            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
+            .blk(annotationDeclaration())
+            .eol(generatedAnnotation())
+            .str("public final class ").str(typeName).str(" implements ").str(importedName(impl)).jBlock(bb -> {
+                bb
+                    .eol("@java.io.Serial")
+                    .str("private static final long serialVersionUID = ").str(type.getSUID().getValue()).eol("L;")
+                    .newLine();
 
-        bb.txt("""
-             * @throws NullPointerException if any of the arguments are null
-             */
-            """)
-            .str("public ").str(type().simpleName()).str("(").str(asNonNullArgumentsDeclaration(allProperties)).str(")")
-                .oB();
+                final var props = type.getProperties().stream()
+                    .sorted(PROP_COMPARATOR)
+                    .collect(Collectors.toUnmodifiableList());
 
-        for (var prop : allProperties) {
-            final var fieldName = fieldName(prop);
-            bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
-                .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
-        }
+                // Fields
+                for (var prop : props) {
+                    bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
+                }
 
-        for (var prop : properties) {
-            final var restrictions = generateRestrictions(type(), fieldName(prop), prop.getReturnType());
-            if (restrictions != null) {
-                bb.blk(restrictions);
-            }
-        }
+                // All values constructor
+                bb.txt("""
+                    /**
+                     * Constructs an instance.
+                     *
+                    """);
+                for (var prop : props) {
+                    bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
+                }
 
-        return bb.cB();
+                bb.txt("""
+                     * @throws NullPointerException if any of the arguments are null
+                     */
+                    """)
+                    .str("public ").str(type().simpleName()).str("(").str(asNonNullArgumentsDeclaration(props)).str(")")
+                        .oB();
+
+                for (var prop : props) {
+                    final var fieldName = fieldName(prop);
+                    bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
+                        .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
+                }
+
+                for (var prop : props) {
+                    final var restrictions = generateRestrictions(type, fieldName(prop), prop.getReturnType());
+                    if (restrictions != null) {
+                        bb.blk(restrictions);
+                    }
+                }
+
+                bb.cB();
+
+
+            }).nl();
     }
 
     @Override

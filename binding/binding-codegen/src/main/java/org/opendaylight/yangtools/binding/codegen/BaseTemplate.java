@@ -26,6 +26,7 @@ import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_
 
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -65,7 +66,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
-        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, InterfaceTemplate {
+        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, InterfaceTemplate,
+                KeyTemplate {
+    static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
+
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
         .addIgnoredStatement(ContactStatement.DEF)
         .addIgnoredStatement(DescriptionStatement.DEF)
