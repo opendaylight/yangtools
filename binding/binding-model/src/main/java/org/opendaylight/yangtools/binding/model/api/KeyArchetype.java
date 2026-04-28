@@ -26,6 +26,9 @@ public non-sealed interface KeyArchetype extends Archetype {
      * A builder of {@link KeyArchetype} instances.
      */
     sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits KeyArchetypeBuilder {
+
+        Builder addField(Type type);
+
         @Override
         KeyArchetype build();
     }
@@ -40,47 +43,67 @@ public non-sealed interface KeyArchetype extends Archetype {
      */
     KeyEffectiveStatement statement();
 
+    /**
+     * {@return field {@link Type}s in the same order as {@code statement().argument()}}
+     */
+    List<Type> fields();
+
     @Override
+    @Deprecated(forRemoval = true)
     default List<AnnotationType> getAnnotations() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default @Nullable TypeComment getComment() {
         return null;
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default boolean isAbstract() {
         return false;
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<Type> getImplements() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<GeneratedType> getEnclosedTypes() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<EnumTypeObjectArchetype> getEnumerations() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<Constant> getConstantDefinitions() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<MethodSignature> getMethodDefinitions() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
+    default List<GeneratedProperty> getProperties() {
+        return List.of();
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
     default Optional<YangSourceDefinition> getYangSourceDefinition() {
         return Optional.empty();
     }
