@@ -37,7 +37,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,17 +61,10 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 /**
 - * Template for generating JAVA class.
  */
-sealed class ClassTemplate extends BaseTemplate permits KeyTemplate, UnionTypeObjectTemplate {
-    private static final Comparator<GeneratedProperty> PROP_COMPARATOR =
-        Comparator.comparing(GeneratedProperty::getName);
-
+sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
 
-    /**
-     * {@code java.lang.Boolean} as a JavaTypeName.
-     */
-    private static final @NonNull JavaTypeName BOOLEAN = JavaTypeName.create(Boolean.class);
     /**
      * {@code com.google.common.collect.ImmutableSet} as a JavaTypeName.
      */
@@ -235,7 +227,7 @@ sealed class ClassTemplate extends BaseTemplate permits KeyTemplate, UnionTypeOb
             bb.nl().blk(equals);
         }
 
-        final var toString = generateToString(genTO.getToStringIdentifiers());
+        final var toString = generateToString();
         if (toString != null) {
             bb.nl().blk(toString);
         }
@@ -292,78 +284,12 @@ sealed class ClassTemplate extends BaseTemplate permits KeyTemplate, UnionTypeOb
 
     private @Nullable BlockBuilder generateEquals() {
         final var equalsIdentifiers = genTO.getEqualsIdentifiers();
-        return equalsIdentifiers.isEmpty() ? null : newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").jBlock(bb -> {
-                bb.str("return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
-                for (var property : equalsIdentifiers) {
-                    bb.nl().str("    && ");
-
-                    final var fieldName = fieldName(property);
-                    final var type = property.getReturnType();
-                    if (type.equals(PRIMITIVE_BOOLEAN)) {
-                        bb.str(fieldName).str(" == other.").str(fieldName);
-                    } else {
-                        bb.str(importedUtilClass(type)).str(".equals(").str(fieldName).str(", other.").str(fieldName)
-                            .str(")");
-                    }
-                }
-                bb.eS();
-            }).nl();
+        return equalsIdentifiers.isEmpty() ? null : generateEquals(equalsIdentifiers);
     }
 
-    private @Nullable BlockBuilder generateToString(final List<GeneratedProperty> props) {
-        if (props.isEmpty()) {
-            return null;
-        }
-
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("public ").str(importedName(STRING)).str(" toString()").jBlock(bb -> {
-                // FIXME: use selfRef
-                final var selfRef = importedName(type());
-
-                bb.str("return ").str(importedName(CODEHELPERS));
-                switch (props.size()) {
-                    case 0 -> bb.str(".jcTS0(").str(selfRef).eol(".class);");
-                    case 1 -> appendTS1(bb, selfRef, props.iterator().next());
-                    default -> appendTSN(bb, selfRef, props);
-                }
-            }).nl();
-    }
-
-    @NonNullByDefault
-    private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
-        final var name = prop.getName();
-        // FIXME: this should be specialized in BitsTypeObjectTemplate
-        if (isBit(prop)) {
-            bb.str(".jcTSB(").str(selfRef).eol(".class).bit(").jStr(prop.getName()).str(", ").str(fieldName(prop))
-                .eol(").build();");
-            return;
-        }
-
-        if (name.equals("value")) {
-            // Special case equivalent to ScalarTypeObject.toString()
-            bb.str(".stoTS(").str(selfRef).str(".class, ");
-        } else {
-            bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(prop.getName()).str(", ");
-        }
-        bb.str(fieldName(prop)).eol(");");
-    }
-
-    @NonNullByDefault
-    private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
-        bb.str(".jcTSB(").str(selfRef).eol(".class)");
-        for (var prop : props) {
-            // FIXME: this should be specialized in BitsTypeObjectTemplate
-            bb.ind(isBit(prop) ? ".bit(" : ".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
-        }
-        bb.ind(".build();").newLine();
-    }
-
-    // FIXME: this gates BitsTypeObject specializations
-    private static boolean isBit(final GeneratedProperty prop) {
-        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType());
+    private @Nullable BlockBuilder generateToString() {
+        final var toStringIdentifiers = genTO.getToStringIdentifiers();
+        return toStringIdentifiers.isEmpty() ? null : generateToString(toStringIdentifiers);
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
@@ -620,39 +546,7 @@ sealed class ClassTemplate extends BaseTemplate permits KeyTemplate, UnionTypeOb
 
     private @Nullable BlockBuilder generateHashCode() {
         final var props = genTO.getHashCodeIdentifiers();
-        final int size = props.size();
-        if (size == 0) {
-            return null;
-        }
-
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("public int hashCode()").jBlock(bb -> {
-                if (size == 1) {
-                    bb.str("return ");
-                    final var prop = props.getFirst();
-                    if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
-                        bb.str(importedName(BOOLEAN)).str(".hashCode(");
-                    } else {
-                        bb.str(importedName(CODEHELPERS)).str(".wrapperHashCode(");
-                    }
-                    bb.str(fieldName(prop)).eol(");");
-                } else {
-                    bb
-                        .eol("final int prime = 31;")
-                        .eol("int result = 1;");
-                    for (var property : props) {
-                        final var type = property.getReturnType();
-                        final var receiver = type.equals(PRIMITIVE_BOOLEAN)
-                            // FIXME: unified perhaps?
-                            ? importedName(BOOLEAN) : importedUtilClass(type);
-
-                        bb.str("result = prime * result + ").str(receiver).str(".hashCode(").str(fieldName(property))
-                            .eol(");");
-                    }
-                    bb.eol("return result;");
-                }
-            }).nl();
+        return props.isEmpty() ? null : generateHashCode(props);
     }
 
     final @Nullable BlockBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,

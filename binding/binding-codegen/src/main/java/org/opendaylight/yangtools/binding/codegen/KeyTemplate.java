@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -20,67 +20,91 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 /**
  * Template for generating JAVA class.
  */
-final class KeyTemplate extends ClassTemplate {
+final class KeyTemplate extends BaseTemplate {
     @NonNullByDefault
     KeyTemplate(final KeyArchetype archetype) {
         super(archetype);
     }
 
     @Override
-    String finalClass() {
-        return " final ";
-    }
-
-    @Override
-    BlockBuilder allValuesConstructor() {
-        final var bb = newBlockBuilder().txt("""
-            /**
-             * Constructs an instance.
-             *
-            """);
-        for (var prop : allProperties) {
-            bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
-        }
-
-        bb.txt("""
-             * @throws NullPointerException if any of the arguments are null
-             */
-            """)
-            .str("public ").str(type().simpleName()).str("(").str(asNonNullArgumentsDeclaration(allProperties)).str(")")
-                .oB();
-
-        for (var prop : allProperties) {
-            final var fieldName = fieldName(prop);
-            bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
-                .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
-        }
-
-        for (var prop : properties) {
-            final var restrictions = generateRestrictions(type(), fieldName(prop), prop.getReturnType());
-            if (restrictions != null) {
-                bb.blk(restrictions);
-            }
-        }
-
-        return bb.cB();
-    }
-
-    @Override
-    BlockBuilder asGetterMethod(final GeneratedProperty field) {
-        final var fieldName = field.getName();
-        final var returnType = field.getReturnType();
+    BlockBuilder body() {
+        final var type = (KeyArchetype) type();
+        final var typeName = type.simpleName();
+        final var impl = type.getImplements().getFirst();
 
         return newBlockBuilder()
-            // FIXME: emit a {@return .. } javadoc
-            .eol("/**")
-            .str(" * Return ").str(fieldName).eol(", guaranteed to be non-null.")
-            .eol(" *")
-            .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
-                .eol(", guaranteed to be non-null.")
-            .eol(" */")
-            .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()").oB()
-                .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
-            .cB();
+            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
+            .blk(annotationDeclaration())
+            .eol(generatedAnnotation())
+            .str("public final class ").str(typeName).str(" implements ").str(importedName(impl)).jBlock(bb -> {
+                bb
+                    .eol("@java.io.Serial")
+                    .str("private static final long serialVersionUID = ").str(type.getSUID().getValue()).eol("L;")
+                    .newLine();
+
+                final var props = type.getProperties();
+
+                // FIXME: generate checker methods for each property
+
+                // Fields
+                for (var prop : props) {
+                    bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
+                }
+
+                // All values constructor
+                final var sortedProps = props.stream()
+                    .sorted(PROP_COMPARATOR)
+                    .collect(Collectors.toUnmodifiableList());
+
+                bb
+                    .nl()
+                    .eol("/**")
+                    .eol(" * Constructs an instance.")
+                    .eol(" *");
+                for (var prop : sortedProps) {
+                    bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
+                }
+                bb
+                    .eol(" */")
+                    .str("public ").str(type().simpleName()).str("(").str(asNonNullArgumentsDeclaration(sortedProps))
+                        .str(")").oB();
+                for (var prop : sortedProps) {
+                    final var fieldName = fieldName(prop);
+                    bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
+                        .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
+                    // FIXME: generate checker method invocation
+                }
+                bb.cB();
+
+                final var it = props.iterator();
+                do {
+                    final var field = it.next();
+                    final var fieldName = field.getName();
+                    final var returnType = field.getReturnType();
+
+                    bb
+                        .nl()
+                        // FIXME: emit a {@return .. } javadoc
+                        .eol("/**")
+                        .str(" * Return ").str(fieldName).eol(", guaranteed to be non-null.")
+                        .eol(" *")
+                        .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
+                            .eol(", guaranteed to be non-null.")
+                        .eol(" */")
+                        .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()")
+                            .oB()
+                            .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
+                        .cB();
+                } while (it.hasNext());
+
+                bb
+                    .nl()
+                    .blk(generateHashCode(props))
+                    .nl()
+                    .blk(generateEquals(props))
+                    .nl()
+                    .blk(generateToString(props));
+            }).nl();
     }
 
     @Override
