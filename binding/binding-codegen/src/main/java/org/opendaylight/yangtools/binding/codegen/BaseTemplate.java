@@ -100,7 +100,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
         final var importBlock = topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
         if (!importBlock.isEmpty()) {
-            sb.append(importBlock).append('\n');
+            sb.append('\n').append(importBlock).append('\n');
         }
         return sb.append(body).toString();
     }
