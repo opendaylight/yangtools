@@ -60,33 +60,22 @@ class KeyGeneratorTest {
                              * @see CompositeKeyList
                              */
                             @Generated("mdsal-binding-generator")
-                            public final class CompositeKeyListKey
-                             implements Key<CompositeKeyList> {
+                            public final class CompositeKeyListKey implements Key<CompositeKeyList> {
                                 @java.io.Serial
                                 private static final long serialVersionUID = 4635577615717332911L;
-                                private final Byte _key1;
-                                private final String _key2;
+
+                                private final @NonNull Byte _key1;
+                                private final @NonNull String _key2;
 
                                 /**
                                  * Constructs an instance.
                                  *
                                  * @param _key1 the entity key1
                                  * @param _key2 the entity key2
-                                 * @throws NullPointerException if any of the arguments are null
                                  */
                                 public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2) {
                                     this._key1 = CodeHelpers.requireKeyProp(_key1, "key1");
                                     this._key2 = CodeHelpers.requireKeyProp(_key2, "key2");
-                                }
-
-                                /**
-                                 * Creates a copy from Source Object.
-                                 *
-                                 * @param source Source object
-                                 */
-                                public CompositeKeyListKey(CompositeKeyListKey source) {
-                                    this._key1 = source._key1;
-                                    this._key2 = source._key2;
                                 }
 
                                 /**
@@ -131,7 +120,6 @@ class KeyGeneratorTest {
                                         .build();
                                 }
                             }
-
                             """, new KeyGenerator(archetype).generate());
                     }
                     case "InnerListKey" -> {
@@ -156,29 +144,19 @@ class KeyGeneratorTest {
                              * @see InnerList
                              */
                             @Generated("mdsal-binding-generator")
-                            public final class InnerListKey
-                             implements Key<InnerList> {
+                            public final class InnerListKey implements Key<InnerList> {
                                 @java.io.Serial
                                 private static final long serialVersionUID = 2256312821779854996L;
-                                private final Uint16 _key1;
+
+                                private final @NonNull Uint16 _key1;
 
                                 /**
                                  * Constructs an instance.
                                  *
                                  * @param _key1 the entity key1
-                                 * @throws NullPointerException if any of the arguments are null
                                  */
                                 public InnerListKey(@NonNull Uint16 _key1) {
                                     this._key1 = CodeHelpers.requireKeyProp(_key1, "key1");
-                                }
-
-                                /**
-                                 * Creates a copy from Source Object.
-                                 *
-                                 * @param source Source object
-                                 */
-                                public InnerListKey(InnerListKey source) {
-                                    this._key1 = source._key1;
                                 }
 
                                 /**
@@ -206,7 +184,6 @@ class KeyGeneratorTest {
                                     return CodeHelpers.jcTS1(InnerListKey.class, "key1", _key1);
                                 }
                             }
-
                             """, new KeyGenerator(archetype).generate());
                     }
                     default -> fail("Unexpected key " + archetype);
