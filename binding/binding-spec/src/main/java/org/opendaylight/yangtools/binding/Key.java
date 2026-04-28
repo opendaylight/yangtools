@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifier;
 
 /**
@@ -15,5 +16,12 @@ import org.opendaylight.yangtools.concepts.Identifier;
  * @param <T> Class of object for which this object is identifier
  */
 public non-sealed interface Key<T extends KeyAware<?>> extends BindingObject, Identifier {
-    // nothing else
+    @Override
+    int hashCode();
+
+    @Override
+    boolean equals(Object obj);
+
+    @Override
+    @NonNull String toString();
 }
