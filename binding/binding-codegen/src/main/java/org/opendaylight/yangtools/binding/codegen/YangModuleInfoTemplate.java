@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.PACKAGE_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.SVC_PACKAGE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getClassName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getModelRootPackageName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getRootPackageName;
-import static org.opendaylight.yangtools.binding.contract.Naming.getServicePackageName;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -74,6 +72,13 @@ public final class YangModuleInfoTemplate {
      */
     static final @NonNull String YANGDATANAMEOF_METHOD_NAME = "yangDataNameOf";
 
+    /**
+     * The root package hierarchy of all classes generated for the purposes of discovering and loading YANG modules
+     * along with their semantics. Each module is assigned a its own sub-hierarchy based on its {@code namespace} and
+     * {@code revision}.
+     */
+    private static final @NonNull String SVC_PACKAGE_PREFIX = "org.opendaylight.yang.svc.v1";
+
     // These are always imported. Note we need to import even java.lang members, as there can be conflicting definitions
     // in our package
     private static final String CORE_IMPORT_STR = """
@@ -118,7 +123,7 @@ public final class YangModuleInfoTemplate {
         this.module = requireNonNull(module);
         this.modelContext = requireNonNull(modelContext);
         this.moduleFilePathResolver = requireNonNull(moduleFilePathResolver);
-        packageName = getServicePackageName(module.getQNameModule());
+        packageName = servicePackageName(module.getQNameModule());
         modelBindingProviderName = packageName + '.' + MODEL_BINDING_PROVIDER_CLASS_NAME;
         hasYangData = module.asEffectiveStatement().findFirstEffectiveSubstatement(YangDataEffectiveStatement.class)
             .isPresent();
@@ -127,8 +132,23 @@ public final class YangModuleInfoTemplate {
     @NonNullByDefault
     static JavaTypeName nameInModuleOf(final GeneratedType genType) {
         // Yeah: not pretty but works
-        return JavaTypeName.create(
-            getModelRootPackageName(genType.packageName()).replace(PACKAGE_PREFIX, SVC_PACKAGE_PREFIX), CLASS_NAME);
+        return JavaTypeName.create(rootToService(genType.packageName()), CLASS_NAME);
+    }
+
+    /**
+     * Return the package name for placing generated ServiceLoader entities.
+     *
+     * @param module module namespace
+     * @return the package name for placing generated ServiceLoader entities
+     */
+    @NonNullByDefault
+    static String servicePackageName(final QNameModule module) {
+        return rootToService(getRootPackageName(module));
+    }
+
+    @NonNullByDefault
+    private static String rootToService(final String packageName) {
+        return getModelRootPackageName(packageName).replace(PACKAGE_PREFIX, SVC_PACKAGE_PREFIX);
     }
 
     @NonNull String modelBindingProviderName() {
@@ -309,7 +329,7 @@ public final class YangModuleInfoTemplate {
                 qnameModule = modelContext.findModule(name, optRrev).orElseThrow().getQNameModule();
             }
 
-            bb.str("set.add(").str(getServicePackageName(qnameModule))
+            bb.str("set.add(").str(servicePackageName(qnameModule))
                 .eol('.' + CLASS_NAME + '.' + INSTANCE_FIELD_NAME + ");");
         }
 
