@@ -28,7 +28,6 @@ import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -86,23 +86,27 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     // FIXME: this code should live in GeneratedClass.of()
     @Deprecated
     final @NonNull String generate() {
-
-        final var sb = new StringBuilder()
-            .append("package ").append(type().packageName()).append(";\n");
-
-        // Has side-effects
-        final var body = body();
-
         final var javaType = javaType();
         if (!(javaType instanceof GeneratedClass.TopLevel topLevel)) {
             throw new VerifyException("Unexpected type " + javaType);
         }
 
-        final var importBlock = topLevel.imports().map(name -> "import " + name + ";\n").collect(Collectors.joining());
-        if (!importBlock.isEmpty()) {
-            sb.append(importBlock).append('\n');
+        // Has side-effects that cause the import table to be populated
+        final var body = body();
+
+        // import block
+        final var bb = newBlockBuilder()
+            .str("package ").str(type().packageName()).eS()
+            .nl();
+        final var importedNames = topLevel.imports().toArray(JavaTypeName[]::new);
+        for (var importedName : importedNames) {
+            bb.str("import ").str(importedName.canonicalName()).eS();
         }
-        return sb.append(body).toString();
+        if (importedNames.length != 0) {
+            bb.newLine();
+        }
+
+        return bb.blk(body).toRawString();
     }
 
     /**
