@@ -25,7 +25,6 @@ record CodegenKeyArchetype(
         @NonNull JavaTypeName entryObject,
         @NonNull KeyEffectiveStatement statement,
         @NonNull List<GeneratedProperty> getProperties,
-        long serialVersionUID,
         @Nullable String getDescription,
         @Nullable String getReference,
         @Nullable String getModuleName) implements KeyArchetype {

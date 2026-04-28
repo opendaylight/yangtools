@@ -69,7 +69,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
             }
         }
 
-        return builder.setSerialVersionUID(SerialVersionHelper.computeDefaultSUID(builder)).build();
+        return builder.build();
     }
 
     @Override
