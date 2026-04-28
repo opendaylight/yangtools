@@ -72,13 +72,6 @@ public final class Naming {
      */
     public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
 
-    /**
-     * The root package hierarchy of all classes generated for the purposes of discovering and loading YANG modules
-     * along with their semantics. Each module is assigned a its own sub-hierarchy based on its {@code namespace} and
-     * {@code revision}.
-     */
-    public static final @NonNull String SVC_PACKAGE_PREFIX = "org.opendaylight.yang.svc.v1";
-
     // Here we carve up Java Identifiers' namespace based on simple suffixes to different constructs. See
     // https://docs.oracle.com/javase/specs/jls/se17/html/jls-3.html#jls-3.8 but note we use the allocated identifier
     // in multiple contexts. like method names.
@@ -177,22 +170,11 @@ public final class Naming {
     public static final @NonNull String REQUIRE_PREFIX = "require";
 
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
-    private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(
-            "(org.opendaylight.yang.(gen|svc).v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))");
+    private static final Pattern ROOT_PACKAGE_PATTERN =
+        Pattern.compile("(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))");
 
     private Naming() {
         // Hidden on purpose
-    }
-
-    /**
-     * Return the package name for placing generated ServiceLoader entities.
-     *
-     * @param module module namespace
-     * @return the package name for placing generated ServiceLoader entities
-     */
-    public static @NonNull String getServicePackageName(final QNameModule module) {
-        final StringBuilder packageNameBuilder = new StringBuilder().append(SVC_PACKAGE_PREFIX).append('.');
-        return getRootPackageName(packageNameBuilder, module);
     }
 
     public static @NonNull String getRootPackageName(final QName module) {
@@ -395,7 +377,7 @@ public final class Naming {
      *                                  not match package name formatting rules
      */
     public static @NonNull String getModelRootPackageName(final String packageName) {
-        checkArgument(packageName.startsWith(PACKAGE_PREFIX) || packageName.startsWith(SVC_PACKAGE_PREFIX),
+        checkArgument(packageName.startsWith(PACKAGE_PREFIX),
             "Package name not starting with %s, is: %s", PACKAGE_PREFIX, packageName);
         final var match = ROOT_PACKAGE_PATTERN.matcher(packageName);
         checkArgument(match.find(), "Package name '%s' does not match required pattern '%s'", packageName,
