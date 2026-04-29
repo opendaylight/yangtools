@@ -22,13 +22,8 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Runtim
 @NonNullByDefault
 public non-sealed interface UnionTypeObjectArchetype extends Archetype, GeneratedTransferObject {
     /**
-     * List of property names corresponding to individual {@code type} statements within this union. The ordering of
-     * the returned list matches the ordering of the type statements.
-     *
-     * @return A list of property names
+     * A builder of {@link UnionTypeObjectArchetype} instances.
      */
-    List<String> typePropertyNames();
-
     sealed interface Builder extends GeneratedTOBuilder
             permits CodegenUnionTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
 
@@ -37,4 +32,12 @@ public non-sealed interface UnionTypeObjectArchetype extends Archetype, Generate
         @Override
         UnionTypeObjectArchetype build();
     }
+
+    /**
+     * List of property names corresponding to individual {@code type} statements within this union. The ordering of
+     * the returned list matches the ordering of the type statements.
+     *
+     * @return A list of property names
+     */
+    List<String> typePropertyNames();
 }

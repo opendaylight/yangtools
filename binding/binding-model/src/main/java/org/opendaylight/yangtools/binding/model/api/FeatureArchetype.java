@@ -43,41 +43,49 @@ public non-sealed interface FeatureArchetype extends Archetype {
     FeatureEffectiveStatement statement();
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<AnnotationType> getAnnotations() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<Constant> getConstantDefinitions() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<GeneratedType> getEnclosedTypes() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<EnumTypeObjectArchetype> getEnumerations() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<Type> getImplements() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<MethodSignature> getMethodDefinitions() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<GeneratedProperty> getProperties() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default boolean isAbstract() {
         return false;
     }

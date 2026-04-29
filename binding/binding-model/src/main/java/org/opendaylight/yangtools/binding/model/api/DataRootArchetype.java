@@ -29,21 +29,25 @@ public non-sealed interface DataRootArchetype extends Archetype {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<AnnotationType> getAnnotations() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<Constant> getConstantDefinitions() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default List<GeneratedProperty> getProperties() {
         return List.of();
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     default boolean isAbstract() {
         return true;
     }

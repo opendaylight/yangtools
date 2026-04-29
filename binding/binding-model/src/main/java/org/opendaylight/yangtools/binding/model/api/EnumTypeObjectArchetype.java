@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
@@ -21,52 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  * @since 15.0.0
  */
 @Beta
+@NonNullByDefault
 public non-sealed interface EnumTypeObjectArchetype extends Archetype {
-    /**
-     * {@return the {@link EnumTypeValue}s}
-     */
-    @NonNull List<EnumTypeValue> values();
-
-    @Override
-    default boolean isAbstract() {
-        return false;
-    }
-
-    @Override
-    default TypeComment getComment() {
-        return null;
-    }
-
-    @Override
-    default List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    default List<GeneratedType> getEnclosedTypes() {
-        return List.of();
-    }
-
-    @Override
-    default List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    default List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    default List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    default List<GeneratedProperty> getProperties() {
-        return List.of();
-    }
-
     /**
      * A {@link TypeBuilder} producing {@link EnumTypeObjectArchetype}.
      */
@@ -88,6 +45,59 @@ public non-sealed interface EnumTypeObjectArchetype extends Archetype {
          */
         void updateEnumPairsFromEnumTypeDef(EnumTypeDefinition enumTypeDef);
 
-        @NonNull EnumTypeObjectArchetype build();
+        EnumTypeObjectArchetype build();
+    }
+
+    /**
+     * {@return the {@link EnumTypeValue}s}
+     */
+    List<EnumTypeValue> values();
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default boolean isAbstract() {
+        return false;
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default @Nullable TypeComment getComment() {
+        return null;
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default List<Type> getImplements() {
+        return List.of();
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default List<GeneratedType> getEnclosedTypes() {
+        return List.of();
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default List<EnumTypeObjectArchetype> getEnumerations() {
+        return List.of();
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default List<Constant> getConstantDefinitions() {
+        return List.of();
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default List<MethodSignature> getMethodDefinitions() {
+        return List.of();
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default List<GeneratedProperty> getProperties() {
+        return List.of();
     }
 }
