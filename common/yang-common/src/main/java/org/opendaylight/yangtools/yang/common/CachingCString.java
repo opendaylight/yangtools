@@ -22,14 +22,14 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 @NonNullByDefault
-public abstract class CachingDerivedString<T extends CachingDerivedString<T>> extends DerivedString<T> {
+public abstract class CachingCString<T extends CachingCString<T>> implements CString {
     @java.io.Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private static final VarHandle STR;
 
     static {
         try {
-            STR = MethodHandles.lookup().findVarHandle(CachingDerivedString.class, "str", String.class);
+            STR = MethodHandles.lookup().findVarHandle(CachingCString.class, "str", String.class);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -39,11 +39,11 @@ public abstract class CachingDerivedString<T extends CachingDerivedString<T>> ex
     private transient volatile @Nullable String str;
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    protected CachingDerivedString() {
+    protected CachingCString() {
         str = null;
     }
 
-    protected CachingDerivedString(final String str) {
+    protected CachingCString(final String str) {
         this.str = requireNonNull(str);
     }
 

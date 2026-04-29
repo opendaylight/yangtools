@@ -21,7 +21,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @Beta
 @NonNullByDefault
-public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>, V extends T>
+public abstract class AbstractCanonicalValueValidator<T extends CString, V extends T>
         implements CanonicalValueValidator<T, V> {
     private static final ClassValue<Boolean> IMPLEMENTATIONS = new AbstractCanonicalValueImplementationValidator() {
         @Override
