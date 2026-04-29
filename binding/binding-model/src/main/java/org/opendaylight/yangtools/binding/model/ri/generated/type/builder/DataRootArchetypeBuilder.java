@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
  * Builder for {@link DataRootArchetype}.
@@ -26,21 +27,15 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
     public static final class Codegen extends DataRootArchetypeBuilder {
         private String description;
         private String reference;
-        private String moduleName;
 
         @NonNullByDefault
-        public Codegen(final JavaTypeName typeName) {
-            super(typeName);
+        public Codegen(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
+            super(typeName, statement);
         }
 
         @Override
         public void setDescription(final String description) {
             this.description = requireNonNull(description);
-        }
-
-        @Override
-        public void setModuleName(final String moduleName) {
-            this.moduleName = requireNonNull(moduleName);
         }
 
         @Override
@@ -50,23 +45,18 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
 
         @Override
         public DataRootArchetype build() {
-            return build(description, reference, moduleName);
+            return build(description, reference);
         }
     }
 
     public static final class Runtime extends DataRootArchetypeBuilder {
         @NonNullByDefault
-        public Runtime(final JavaTypeName typeName) {
-            super(typeName);
+        public Runtime(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
+            super(typeName, statement);
         }
 
         @Override
         public void setDescription(final String description) {
-            // No-op
-        }
-
-        @Override
-        public void setModuleName(final String moduleName) {
             // No-op
         }
 
@@ -77,14 +67,23 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
 
         @Override
         public DataRootArchetype build() {
-            return build(null, null, null);
+            return build(null, null);
         }
     }
 
+    private final @NonNull ModuleEffectiveStatement statement;
+
     @NonNullByDefault
-    DataRootArchetypeBuilder(final JavaTypeName typeName) {
+    DataRootArchetypeBuilder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
         super(typeName);
+        this.statement = requireNonNull(statement);
         addImplementsType(BindingTypes.dataRoot(TypeRef.of(typeName)));
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    public final void setModuleName(final String moduleName) {
+        // no-op
     }
 
     @Override
@@ -92,11 +91,10 @@ public abstract sealed class DataRootArchetypeBuilder extends AbstractGeneratedT
         return this;
     }
 
-    final @NonNull DataRootArchetype build(final @Nullable String description, final @Nullable String reference,
-            final @Nullable String moduleName) {
-        return new DataRootArchetypeImpl(typeName(), getImplementsTypes(),
+    final @NonNull DataRootArchetype build(final @Nullable String description, final @Nullable String reference) {
+        return new DataRootArchetypeImpl(typeName(), statement, getImplementsTypes(),
             AbstractGeneratedType.toUnmodifiableMethods(getMethodDefinitions()),
             List.copyOf(getEnclosedTransferObjects()), getEnumerations(), getYangSourceDefinition().orElse(null),
-            getComment(), description, reference, moduleName);
+            getComment(), description, reference);
     }
 }
