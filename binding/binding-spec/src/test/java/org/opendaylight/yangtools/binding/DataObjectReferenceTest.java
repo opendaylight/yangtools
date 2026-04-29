@@ -23,7 +23,7 @@ class DataObjectReferenceTest {
     @Test
     void keyedToLegacy() {
         final var nodes = DataObjectReference.builder(Nodes.class).child(Node.class, new NodeKey(10)).build();
-        assertEquals(10, nodes.toLegacy().key().getId());
+        assertEquals(10, nodes.key().getId());
     }
 
     @Test

@@ -349,11 +349,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         return toReference().toIdentifier();
     }
 
-    @Override
-    public InstanceIdentifier<T> toLegacy() {
-        return this;
-    }
-
     /**
      * Convert this {@link InstanceIdentifier} into its corresponding {@link DataObjectReference}.
      *
