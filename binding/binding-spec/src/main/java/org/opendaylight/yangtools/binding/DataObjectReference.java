@@ -322,18 +322,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
     }
 
     /**
-     * Return the steps of this reference. Returned {@link Iterable} does not support removals and contains one or more
-     * non-null ite,s.
-     *
-     * @return the steps of this reference
-     * @deprecated Use {@link #steps()} instead.
-     */
-    @Deprecated(since = "14.0.0")
-    default @NonNull Iterable<? extends @NonNull DataObjectStep<?>> getPathArguments() {
-        return steps();
-    }
-
-    /**
      * Returns {@code true} if this reference contains an {@link InexactDataObjectStep}s.
      *
      * @implSpec
