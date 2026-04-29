@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,21 +10,21 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 
 @NonNullByDefault
-record InterfaceGenerator(GeneratedType type) implements Generator {
-    InterfaceGenerator(final GeneratedType type) {
+record DataRootGenerator(DataRootArchetype type) implements Generator {
+    DataRootGenerator(final DataRootArchetype type) {
         this.type = requireNonNull(type);
     }
 
     @Override
-    public GeneratedType type() {
+    public DataRootArchetype type() {
         return type;
     }
 
     @Override
     public String generate() {
-        return new InterfaceTemplate(type).generate();
+        return new DataRootTemplate(type).generate();
     }
 }

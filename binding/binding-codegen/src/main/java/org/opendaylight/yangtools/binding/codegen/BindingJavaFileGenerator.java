@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.collect.HashBasedTable;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -35,10 +37,13 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 final class BindingJavaFileGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(BindingJavaFileGenerator.class);
-    private static final JavaTypeName AUGMENTABLE = JavaTypeName.create(Augmentable.class);
-    private static final JavaTypeName AUGMENTATION = JavaTypeName.create(Augmentation.class);
-    private static final JavaTypeName ENTRY_OBJECT = JavaTypeName.create(EntryObject.class);
-    private static final JavaTypeName YANG_DATA = JavaTypeName.create(YangData.class);
+
+    // "rpc" and "grouping" elements do not implement Augmentable
+    private static final Set<JavaTypeName> BUILDER_INTERFACES = Set.of(
+        JavaTypeName.create(Augmentable.class),
+        JavaTypeName.create(Augmentation.class),
+        JavaTypeName.create(EntryObject.class),
+        JavaTypeName.create(YangData.class));
 
     private final HashBasedTable<GeneratedFileType, GeneratedFilePath, GeneratedFile> result = HashBasedTable.create();
     private final boolean ignoreDuplicateFiles;
@@ -57,6 +62,10 @@ final class BindingJavaFileGenerator {
     private void generateFiles(final List<GeneratedType> types) {
         for (var type : types) {
             switch (type) {
+                case DataRootArchetype archetype -> {
+                    generateFile(new DataRootGenerator(archetype));
+                    generateBuilder(archetype);
+                }
                 case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectGenerator(archetype));
                 case FeatureArchetype archetype -> generateFile(new FeatureGenerator(archetype));
                 case KeyArchetype archetype -> generateFile(new KeyGenerator(archetype));
@@ -65,18 +74,18 @@ final class BindingJavaFileGenerator {
                 case GeneratedTransferObject gto -> generateFile(new TOGenerator(gto));
                 default -> {
                     generateFile(new InterfaceGenerator(type));
-
-                    // FIXME: express this in GeneratedType hierarchy as a marker interface
-                    for (var impl : type.getImplements()) {
-                        // "rpc" and "grouping" elements do not implement Augmentable
-                        final var name = impl.name();
-                        if (name.equals(AUGMENTABLE) || name.equals(AUGMENTATION) || name.equals(ENTRY_OBJECT)
-                            || name.equals(YANG_DATA)) {
-                            generateFile(new BuilderGenerator(type));
-                            break;
-                        }
-                    }
+                    generateBuilder(type);
                 }
+            }
+        }
+    }
+
+    private void generateBuilder(final GeneratedType type) {
+        // FIXME: express this in GeneratedType hierarchy as a marker interface
+        for (var iface : type.getImplements()) {
+            if (BUILDER_INTERFACES.contains(iface.name())) {
+                generateFile(new BuilderGenerator(type));
+                return;
             }
         }
     }
