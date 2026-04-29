@@ -11,7 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-public class LazyDerivedString extends CachingDerivedString<LazyDerivedString> {
+public class LazyDerivedString extends CachingCString<LazyDerivedString> {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 

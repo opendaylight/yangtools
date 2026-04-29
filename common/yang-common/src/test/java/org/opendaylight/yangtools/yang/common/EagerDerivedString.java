@@ -11,7 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-public class EagerDerivedString extends CachingDerivedString<EagerDerivedString> {
+public class EagerDerivedString extends CachingCString<EagerDerivedString> {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
