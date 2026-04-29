@@ -23,8 +23,9 @@ public final class RuntimeUnionTypeObjectArchetypeBuilder extends RuntimeGenerat
     }
 
     @Override
-    public void setTypePropertyNames(final List<String> propertyNames) {
+    public RuntimeUnionTypeObjectArchetypeBuilder setTypePropertyNames(final List<String> propertyNames) {
         typePropertyNames = List.copyOf(propertyNames);
+        return this;
     }
 
     @Override

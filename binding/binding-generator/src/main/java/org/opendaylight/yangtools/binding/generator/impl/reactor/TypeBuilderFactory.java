@@ -16,8 +16,10 @@ import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -25,6 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
@@ -32,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Featur
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.KeyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -76,6 +80,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         KeyArchetype.Builder newKeyBuilder(final JavaTypeName typeName, final JavaTypeName entryObject,
                 final KeyEffectiveStatement statement) {
             return new KeyArchetypeBuilder.Codegen(typeName, statement, entryObject);
+        }
+
+        @Override
+        ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(final JavaTypeName identifier) {
+            return new CodegenScalarTypeObjectArchetypeBuilder(identifier);
         }
 
         @Override
@@ -163,6 +172,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
+        ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(final JavaTypeName identifier) {
+            return new RuntimeScalarTypeObjectArchetypeBuilder(identifier);
+        }
+
+        @Override
         UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
             return new RuntimeUnionTypeObjectArchetypeBuilder(identifier);
         }
@@ -224,6 +238,9 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         KeyEffectiveStatement statement);
 
     @NonNullByDefault
+    abstract ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(JavaTypeName identifier);
+
+    @NonNullByDefault
     abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
@@ -231,6 +248,16 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
     @NonNullByDefault
     abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
+
+    @NonNullByDefault
+    final GeneratedTOBuilder newTOBuilder(final JavaTypeName typeName, final GeneratedTransferObject gto) {
+        return switch (gto) {
+            case ScalarTypeObjectArchetype scalar -> newScalarTypeObjectBuilder(typeName);
+            case UnionTypeObjectArchetype union ->
+                newUnionTypeObjectBuilder(typeName).setTypePropertyNames(union.typePropertyNames());
+            default -> newGeneratedTOBuilder(typeName);
+        };
+    }
 
     abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
 

@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -84,14 +83,9 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     @Override
     GeneratedTransferObject createDerivedType(final TypeBuilderFactory builderFactory,
             final GeneratedTransferObject baseType) {
-        final GeneratedTOBuilder builder;
-        if (baseType instanceof UnionTypeObjectArchetype baseUnion) {
-            final var unionBuilder = builderFactory.newUnionTypeObjectBuilder(typeName());
-            unionBuilder.setTypePropertyNames(baseUnion.typePropertyNames());
-            builder = unionBuilder;
-        } else {
-            builder = builderFactory.newGeneratedTOBuilder(typeName());
-        }
+        final var typeName = typeName();
+
+        final var builder = builderFactory.newTOBuilder(typeName, baseType);
         builder.setTypedef(true);
         builder.setExtendsType(baseType);
         final var restrictions = computeRestrictions();
