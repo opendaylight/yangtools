@@ -44,8 +44,7 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
  * An explicit conversion to {@link DataObjectIdentifier} can be attempted via {@link #toIdentifier()} method.
  *
  * <p>The legacy {@link InstanceIdentifier} is implements the second kind via its class hierarchy, but indicates its
- * compliance via {@link #isExact()} method. Any {@link DataObjectReference} can be converted into an
- * {@link InstanceIdentifier} via the {@link #toLegacy()} method.
+ * compliance via {@link #isExact()} method.
  *
  * @param <T> type of {@link DataObject} held in the last step.
  */
@@ -162,17 +161,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
 
         @Override
         DataObjectIdentifier.WithKey<T, K> toIdentifier();
-
-        /**
-         * Return a legacy {@link KeyedInstanceIdentifier} for this reference.
-         *
-         * @return A {@link KeyedInstanceIdentifier}.
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        default @NonNull KeyedInstanceIdentifier<T, K> toLegacy() {
-            return (KeyedInstanceIdentifier<T, K>) InstanceIdentifier.<T>unsafeOf(ImmutableList.copyOf(steps()));
-        }
 
         @Override
         default K key() {
@@ -309,16 +297,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      */
     default boolean isExact() {
         return false;
-    }
-
-    /**
-     * Return a legacy {@link InstanceIdentifier} for this reference.
-     *
-     * @return An {@link InstanceIdentifier}.
-     */
-    @Deprecated(since = "14.0.23", forRemoval = true)
-    default @NonNull InstanceIdentifier<T> toLegacy() {
-        return InstanceIdentifier.unsafeOf(ImmutableList.copyOf(steps()));
     }
 
     /**

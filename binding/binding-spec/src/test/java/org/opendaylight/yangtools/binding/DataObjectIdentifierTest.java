@@ -25,7 +25,7 @@ class DataObjectIdentifierTest {
     @Test
     void keyedToLegacy() {
         final var nodes = DataObjectIdentifier.builder(Nodes.class).child(Node.class, new NodeKey(10)).build();
-        assertEquals(10, nodes.toLegacy().key().getId());
+        assertEquals(10, nodes.key().getId());
     }
 
     @Test
