@@ -97,7 +97,7 @@ abstract sealed class YangDataGenerator
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var typeName = typeName();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName)
+        final var builder = builderFactory.newYangDataBuilder(typeName, statement())
             .addImplementsType(BindingTypes.yangData(TypeRef.of(typeName)));
 
         addUsesInterfaces(builder, builderFactory);

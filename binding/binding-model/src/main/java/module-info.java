@@ -13,6 +13,7 @@ module org.opendaylight.yangtools.binding.model {
 
     requires transitive org.opendaylight.yangtools.binding.spec;
     requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.rfc8040.model.api;
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.util;

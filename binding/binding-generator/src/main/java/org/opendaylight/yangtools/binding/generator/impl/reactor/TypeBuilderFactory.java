@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -34,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Runtim
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -78,8 +80,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
-            return new CodegenUnionTypeObjectArchetypeBuilder(identifier);
+        UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName typeName) {
+            return new CodegenUnionTypeObjectArchetypeBuilder(typeName);
         }
 
         @Override
@@ -161,8 +163,15 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
-            return new RuntimeUnionTypeObjectArchetypeBuilder(identifier);
+        UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName typeName) {
+            return new RuntimeUnionTypeObjectArchetypeBuilder(typeName);
+        }
+
+        @Override
+        @NonNullByDefault
+        YangDataArchetype.Builder newYangDataBuilder(final JavaTypeName typeName,
+                final YangDataEffectiveStatement statement) {
+
         }
 
         @Override
@@ -222,7 +231,10 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         KeyEffectiveStatement statement);
 
     @NonNullByDefault
-    abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName identifier);
+    abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName typeName);
+
+    @NonNullByDefault
+    abstract YangDataArchetype.Builder newYangDataBuilder(JavaTypeName typeName, YangDataEffectiveStatement statement);
 
     @NonNullByDefault
     abstract GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);
