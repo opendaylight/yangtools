@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-public non-sealed interface FeatureArchetype extends Archetype {
+public non-sealed interface FeatureArchetype extends Archetype.WithStatement<FeatureEffectiveStatement> {
     /**
      * A builder of {@link FeatureArchetype} instances.
      */
@@ -35,11 +35,6 @@ public non-sealed interface FeatureArchetype extends Archetype {
      * {@return the name of the {@link DataRoot} generated for the module containing the {@code feature} statement}
      */
     @NonNull JavaTypeName dataRoot();
-
-    /**
-     * {@return backing {@link FeatureEffectiveStatement}}
-     */
-    @NonNull FeatureEffectiveStatement statement();
 
     @Override
     @Deprecated(forRemoval = true)

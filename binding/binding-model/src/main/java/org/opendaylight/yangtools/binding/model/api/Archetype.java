@@ -8,16 +8,29 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A {@link GeneratedType} whose parameters are derived from a set of invariants.
  * @since 15.0.0
  */
 @Beta
-@NonNullByDefault
 public sealed interface Archetype extends GeneratedType, Immutable
-    permits DataRootArchetype, EnumTypeObjectArchetype, FeatureArchetype, KeyArchetype, UnionTypeObjectArchetype {
-    // nothing else
+        permits Archetype.WithStatement, EnumTypeObjectArchetype, UnionTypeObjectArchetype {
+    /**
+     * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
+     *
+     * @param <S> EffectiveStatement type
+     * @since 16.0.0
+     */
+    @Beta
+    sealed interface WithStatement<S extends EffectiveStatement<?, ?>> extends Archetype
+            permits DataRootArchetype, FeatureArchetype, KeyArchetype {
+        /**
+         * {@return the {@link EffectiveStatement}}
+         */
+        @NonNull S statement();
+    }
 }

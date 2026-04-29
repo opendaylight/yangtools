@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
  * An archetype for a {@link Key} attached to an {@link EntryObject}.
  */
 @Beta
-public non-sealed interface KeyArchetype extends Archetype {
+public non-sealed interface KeyArchetype extends Archetype.WithStatement<KeyEffectiveStatement> {
     /**
      * A builder of {@link KeyArchetype} instances.
      */
@@ -41,11 +41,6 @@ public non-sealed interface KeyArchetype extends Archetype {
      * {@return the {@link JavaTypeName} of the associated {@link EntryObject} type}
      */
     @NonNull JavaTypeName entryObject();
-
-    /**
-     * {@return backing {@link KeyEffectiveStatement}}
-     */
-    @NonNull KeyEffectiveStatement statement();
 
     /**
      * {@return field {@link Type}s in the same order as {@code statement().argument()}}

@@ -12,13 +12,15 @@ import java.util.List;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
  * The {@link Archetype} for {@link DataRoot} specializations.
+ *
  * @since 15.0.0
  */
 @Beta
-public non-sealed interface DataRootArchetype extends Archetype {
+public non-sealed interface DataRootArchetype extends Archetype.WithStatement<ModuleEffectiveStatement> {
     /**
      * A builder of {@link DataRootArchetype} instances.
      */
@@ -26,6 +28,11 @@ public non-sealed interface DataRootArchetype extends Archetype {
     sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits DataRootArchetypeBuilder {
         @Override
         DataRootArchetype build();
+    }
+
+    @Override
+    default String getModuleName() {
+        return statement().argument().getLocalName();
     }
 
     @Override
