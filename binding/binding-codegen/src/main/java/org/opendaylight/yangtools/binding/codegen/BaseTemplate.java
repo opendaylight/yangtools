@@ -53,6 +53,7 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -367,62 +368,70 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     private void appendSnippet(final StringBuilder sb, final GeneratedType genType) {
-        genType.getYangSourceDefinition().ifPresent(def -> {
-            sb.append('\n');
+        final var def = genType.yangSourceDefinition();
+        if (def == null) {
+            return;
+        }
 
-            if (def instanceof Single single) {
-                final var node = single.getNode();
+        sb.append('\n');
 
-                sb.append("<p>\n")
-                    .append("This class represents the following YANG schema fragment defined in module <b>")
-                    .append(def.getModule().argument().getLocalName()).append("</b>\n")
-                    .append("<pre>\n");
-                appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
-                sb.append("</pre>");
+        if (def instanceof Single single) {
+            final var node = single.getNode();
 
-                if (node instanceof SchemaNode schema) {
-//                    sb.append("The schema path to identify an instance is\n");
-//                    appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
-//                    sb.append("</i>\n");
+            sb.append("<p>\n")
+                .append("This class represents the following YANG schema fragment defined in module <b>")
+                .append(def.getModule().argument().getLocalName()).append("</b>\n")
+                .append("<pre>\n");
+            appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
+            sb.append("</pre>");
 
-                    if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
-                        || schema instanceof NotificationDefinition && !isNotificationBody(genType)) {
-                        final var builderName = genType.simpleName() + BUILDER_SUFFIX;
+            if (node instanceof SchemaNode schema) {
+                // sb.append("The schema path to identify an instance is\n");
+                // appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
+                // sb.append("</i>\n");
 
-                        sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
-                        .append("}.\n")
-                        .append("@see ").append(builderName).append('\n');
-                        if (node instanceof ListSchemaNode list) {
-                            final var keyDef = list.getKeyDefinition();
-                            if (!keyDef.isEmpty()) {
-                                sb.append("@see ").append(genType.simpleName()).append(KEY_SUFFIX);
-                            }
-                            sb.append('\n');
+                if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
+                    || schema instanceof NotificationDefinition && !isNotificationBody(genType)) {
+                    final var builderName = genType.simpleName() + BUILDER_SUFFIX;
+
+                    sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
+                    .append("}.\n")
+                    .append("@see ").append(builderName).append('\n');
+                    if (node instanceof ListSchemaNode list) {
+                        final var keyDef = list.getKeyDefinition();
+                        if (!keyDef.isEmpty()) {
+                            sb.append("@see ").append(genType.simpleName()).append(KEY_SUFFIX);
                         }
-                    }
-                } else if (node instanceof AugmentEffectiveStatement) {
-                    // Find target Augmentation<Foo> and reference Foo
-                    final var augType = findAugmentationArgument(genType);
-                    if (augType != null) {
-                        sb.append("\n\n")
-                        .append("@see ").append(importedName(augType));
+                        sb.append('\n');
                     }
                 }
-                if (node instanceof TypedefEffectiveStatement && genType instanceof GeneratedTransferObject genTO) {
-                    final var augType = genTO.getSuperType();
-                    if (augType != null) {
-                        sb.append("\n\n")
-                        .append("@see ").append(augType.simpleName());
-                    }
+            } else if (node instanceof AugmentEffectiveStatement) {
+                // Find target Augmentation<Foo> and reference Foo
+                final var augType = findAugmentationArgument(genType);
+                if (augType != null) {
+                    sb.append("\n\n")
+                    .append("@see ").append(importedName(augType));
                 }
-            } else if (def instanceof Multiple multiple) {
-                sb.append("<pre>\n");
-                for (var node : multiple.getNodes()) {
-                    appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
-                }
-                sb.append("</pre>\n");
             }
-        });
+            if (node instanceof TypedefEffectiveStatement && genType instanceof GeneratedTransferObject genTO) {
+                final var augType = genTO.getSuperType();
+                if (augType != null) {
+                    sb.append("\n\n")
+                    .append("@see ").append(augType.simpleName());
+                }
+            }
+        } else if (def instanceof Multiple multiple) {
+            sb.append("<pre>\n");
+            for (var node : multiple.getNodes()) {
+                final var stmt = switch (node) {
+                    case EffectiveStatementEquivalent<?> equivalent -> equivalent.asEffectiveStatement();
+                    case EffectiveStatement<?, ?> statement -> statement;
+                    default -> throw new VerifyException("Unexpected node " + node);
+                };
+                appendYangSnippet(sb, def.getModule(), stmt.declared());
+            }
+            sb.append("</pre>\n");
+        }
     }
 
     private static void appendYangSnippet(final StringBuilder sb, final ModuleEffectiveStatement module,

@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A generated type. Every Java interface has to be specified with:
@@ -31,11 +31,9 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public non-sealed interface GeneratedType extends Type, DocumentedType {
     /**
-     * Returns comment string associated with Generated Type.
-     *
-     * @return comment string associated with Generated Type.
+     * {@return comment string associated with Generated Type}
      */
-    TypeComment getComment();
+    @Nullable TypeComment getComment();
 
     /**
      * {@return List of annotation definitions associated with generated type}
@@ -81,7 +79,7 @@ public non-sealed interface GeneratedType extends Type, DocumentedType {
     @NonNull List<GeneratedProperty> getProperties();
 
     /**
-     * {@return YANG source definition, or empty when unavailable}
+     * {@return YANG source definition, or {@code null} when unavailable}
      */
-    @NonNull Optional<YangSourceDefinition> getYangSourceDefinition();
+    @Nullable YangSourceDefinition yangSourceDefinition();
 }

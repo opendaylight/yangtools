@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
@@ -50,7 +49,7 @@ final class CodegenEnumTypeObjectArchetype extends AbstractEnumTypeObjectArchety
     }
 
     @Override
-    public Optional<YangSourceDefinition> getYangSourceDefinition() {
-        return Optional.ofNullable(definition);
+    public YangSourceDefinition yangSourceDefinition() {
+        return definition;
     }
 }
