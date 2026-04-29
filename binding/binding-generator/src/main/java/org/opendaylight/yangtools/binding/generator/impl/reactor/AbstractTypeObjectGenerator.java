@@ -702,7 +702,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     private static @NonNull GeneratedType createSimple(final TypeBuilderFactory builderFactory,
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final Type javaType, final TypeDefinition<?> typedef) {
-        final var builder = builderFactory.newGeneratedTOBuilder(typeName);
+        final var builder = builderFactory.newScalarTypeObjectBuilder(typeName);
         builder.setTypedef(true);
         builder.addImplementsType(BindingTypes.scalarTypeObject(javaType));
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);

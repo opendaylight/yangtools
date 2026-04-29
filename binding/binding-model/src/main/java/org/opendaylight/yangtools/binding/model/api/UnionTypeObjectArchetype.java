@@ -27,7 +27,7 @@ public non-sealed interface UnionTypeObjectArchetype extends Archetype, Generate
     sealed interface Builder extends GeneratedTOBuilder
             permits CodegenUnionTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
 
-        void setTypePropertyNames(List<String> propertyNames);
+        Builder setTypePropertyNames(List<String> propertyNames);
 
         @Override
         UnionTypeObjectArchetype build();

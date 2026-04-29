@@ -23,8 +23,9 @@ public final class CodegenUnionTypeObjectArchetypeBuilder extends CodegenGenerat
     }
 
     @Override
-    public void setTypePropertyNames(final List<String> propertyNames) {
+    public CodegenUnionTypeObjectArchetypeBuilder setTypePropertyNames(final List<String> propertyNames) {
         typePropertyNames = List.copyOf(propertyNames);
+        return this;
     }
 
     @Override
