@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -211,8 +210,8 @@ abstract class AbstractGeneratedType implements GeneratedType {
     }
 
     @Override
-    public final Optional<YangSourceDefinition> getYangSourceDefinition() {
-        return Optional.ofNullable(definition);
+    public final YangSourceDefinition yangSourceDefinition() {
+        return definition;
     }
 
     @Override

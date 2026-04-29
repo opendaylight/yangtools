@@ -224,9 +224,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      */
     @NonNullByDefault
     static final boolean isNonPresenceContainer(final GeneratedType type) {
-        final var sourceDefinition = type.getYangSourceDefinition();
-        return sourceDefinition.isPresent()
-            && sourceDefinition.orElseThrow() instanceof YangSourceDefinition.Single singleDefinition
+        return type.yangSourceDefinition() instanceof YangSourceDefinition.Single singleDefinition
             && singleDefinition.getNode() instanceof ContainerSchemaNode container
             && !container.isPresenceContainer();
     }

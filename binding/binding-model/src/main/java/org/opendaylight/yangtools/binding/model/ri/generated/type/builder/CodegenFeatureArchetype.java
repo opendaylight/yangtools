@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
@@ -34,10 +33,5 @@ record CodegenFeatureArchetype(
         requireNonNull(name);
         requireNonNull(dataRoot);
         requireNonNull(statement);
-    }
-
-    @Override
-    public Optional<YangSourceDefinition> getYangSourceDefinition() {
-        return Optional.ofNullable(yangSourceDefinition);
     }
 }

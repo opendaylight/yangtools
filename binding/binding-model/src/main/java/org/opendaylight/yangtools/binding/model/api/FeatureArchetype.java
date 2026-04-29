@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-@NonNullByDefault
 public non-sealed interface FeatureArchetype extends Archetype {
     /**
      * A builder of {@link FeatureArchetype} instances.
@@ -35,12 +34,12 @@ public non-sealed interface FeatureArchetype extends Archetype {
     /**
      * {@return the name of the {@link DataRoot} generated for the module containing the {@code feature} statement}
      */
-    JavaTypeName dataRoot();
+    @NonNull JavaTypeName dataRoot();
 
     /**
      * {@return backing {@link FeatureEffectiveStatement}}
      */
-    FeatureEffectiveStatement statement();
+    @NonNull FeatureEffectiveStatement statement();
 
     @Override
     @Deprecated(forRemoval = true)

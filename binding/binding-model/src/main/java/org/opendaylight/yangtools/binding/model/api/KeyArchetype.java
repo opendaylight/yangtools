@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EntryObject;
@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
  * An archetype for a {@link Key} attached to an {@link EntryObject}.
  */
 @Beta
-@NonNullByDefault
 public non-sealed interface KeyArchetype extends Archetype {
     /**
      * A builder of {@link KeyArchetype} instances.
@@ -41,16 +40,17 @@ public non-sealed interface KeyArchetype extends Archetype {
     /**
      * {@return the {@link JavaTypeName} of the associated {@link EntryObject} type}
      */
-    JavaTypeName entryObject();
+    @NonNull JavaTypeName entryObject();
 
     /**
      * {@return backing {@link KeyEffectiveStatement}}
      */
-    KeyEffectiveStatement statement();
+    @NonNull KeyEffectiveStatement statement();
 
     /**
      * {@return field {@link Type}s in the same order as {@code statement().argument()}}
      */
+    @NonNullByDefault
     List<Type> fields();
 
     @Override
@@ -119,7 +119,7 @@ public non-sealed interface KeyArchetype extends Archetype {
 
     @Override
     @Deprecated(forRemoval = true)
-    default Optional<YangSourceDefinition> getYangSourceDefinition() {
-        return Optional.empty();
+    default @Nullable YangSourceDefinition yangSourceDefinition() {
+        return null;
     }
 }
