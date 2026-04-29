@@ -163,17 +163,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         @Override
         DataObjectIdentifier.WithKey<T, K> toIdentifier();
 
-        /**
-         * Return a legacy {@link KeyedInstanceIdentifier} for this reference.
-         *
-         * @return A {@link KeyedInstanceIdentifier}.
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        default @NonNull KeyedInstanceIdentifier<T, K> toLegacy() {
-            return (KeyedInstanceIdentifier<T, K>) InstanceIdentifier.<T>unsafeOf(ImmutableList.copyOf(steps()));
-        }
-
         @Override
         default K key() {
             return lastStep().key();
@@ -309,16 +298,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      */
     default boolean isExact() {
         return false;
-    }
-
-    /**
-     * Return a legacy {@link InstanceIdentifier} for this reference.
-     *
-     * @return An {@link InstanceIdentifier}.
-     */
-    @Deprecated(since = "14.0.23", forRemoval = true)
-    default @NonNull InstanceIdentifier<T> toLegacy() {
-        return InstanceIdentifier.unsafeOf(ImmutableList.copyOf(steps()));
     }
 
     /**
