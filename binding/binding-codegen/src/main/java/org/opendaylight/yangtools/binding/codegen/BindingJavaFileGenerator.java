@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
@@ -56,14 +57,16 @@ final class BindingJavaFileGenerator {
     private void generateFiles(final List<GeneratedType> types) {
         for (var type : types) {
             switch (type) {
-                case EnumTypeObjectArchetype etoa -> generateFile(new EnumTypeObjectGenerator(etoa));
-                case FeatureArchetype fa -> generateFile(new FeatureGenerator(fa));
-                case KeyArchetype ka -> generateFile(new KeyGenerator(ka));
-                case UnionTypeObjectArchetype utoa -> generateFile(new UnionTypeObjectGenerator(utoa));
+                case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectGenerator(archetype));
+                case FeatureArchetype archetype -> generateFile(new FeatureGenerator(archetype));
+                case KeyArchetype archetype -> generateFile(new KeyGenerator(archetype));
+                case ScalarTypeObjectArchetype archetype -> generateFile(new ScalarTypeObjectGenerator(archetype));
+                case UnionTypeObjectArchetype archetype -> generateFile(new UnionTypeObjectGenerator(archetype));
                 case GeneratedTransferObject gto -> generateFile(new TOGenerator(gto));
                 default -> {
                     generateFile(new InterfaceGenerator(type));
 
+                    // FIXME: express this in GeneratedType hierarchy as a marker interface
                     for (var impl : type.getImplements()) {
                         // "rpc" and "grouping" elements do not implement Augmentable
                         final var name = impl.name();

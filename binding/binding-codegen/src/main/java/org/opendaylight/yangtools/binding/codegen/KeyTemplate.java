@@ -9,13 +9,14 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.SerialVersionBuilder;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
- * Template for generating JAVA class.
+ * A template for {@link Key} specializations.
  */
 final class KeyTemplate extends BaseTemplate {
     @NonNullByDefault

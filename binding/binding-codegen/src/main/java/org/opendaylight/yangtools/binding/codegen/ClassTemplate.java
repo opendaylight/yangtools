@@ -7,12 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
-import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
@@ -30,12 +27,10 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TY
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALID_NAMES_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PROP;
 import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +40,6 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
@@ -55,13 +49,15 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
 - * Template for generating JAVA class.
  */
-sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate {
+sealed class ClassTemplate extends BaseTemplate permits ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
 
@@ -69,10 +65,6 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
      * {@code com.google.common.collect.ImmutableSet} as a JavaTypeName.
      */
     private static final @NonNull JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
-    /**
-     * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a JavaTypeName.
-     */
-    private static final @NonNull JavaTypeName UNSAFE_SECRET = JavaTypeName.create(UnsafeSecret.class);
 
     final @NonNull List<GeneratedProperty> allProperties;
     final @NonNull List<GeneratedProperty> finalProperties;
@@ -90,7 +82,6 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
     private final @NonNull List<Constant> consts;
     private final @NonNull GeneratedTransferObject genTO;
     private final AbstractRangeGenerator<?> rangeGenerator;
-    private final @NonNull ScalarTypeKind scalarType;
 
     @NonNullByDefault
     ClassTemplate(final GeneratedTransferObject genType) {
@@ -116,7 +107,22 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
         consts = genTO.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
             ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genTO))) : null;
-        scalarType = ScalarTypeKind.of(genTO);
+    }
+
+    @NonNullByDefault
+    static final BlockBuilder generateAsInner(final GeneratedClass.Nested javaType, final GeneratedTransferObject gto) {
+        return switch (gto) {
+            case ScalarTypeObjectArchetype archetype -> ScalarTypeObjectTemplate.generateAsInner(javaType, archetype);
+            case UnionTypeObjectArchetype archetype -> UnionTypeObjectTemplate.generateAsInner(javaType, archetype);
+            default -> new ClassTemplate(javaType, gto).generateAsInnerClass();
+        };
+    }
+
+    /**
+     * {@return string with JAVA class body source code}
+     */
+    final @NonNull BlockBuilder generateAsInnerClass() {
+        return generateBody(true);
     }
 
     /**
@@ -142,13 +148,6 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
     @Override
     final BlockBuilder body() {
         return generateBody(false);
-    }
-
-    /**
-     * {@return string with JAVA class body source code}
-     */
-    final @NonNull BlockBuilder generateAsInnerClass() {
-        return generateBody(true);
     }
 
     /**
@@ -499,13 +498,8 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
 
     @Nullable BlockBuilder constructors() {
         final var bb = newBlockBuilder()
-            .nl();
-        // FIXME: this part should be specialized in ScalarTypeObjectArchetype
-        if (genTO.isTypedef() && allProperties.size() == 1 && VALUE_PROP.equals(allProperties.getFirst().getName())) {
-            bb.blk(scalarTypeObjectConstructors());
-        } else {
-            bb.blk(allValuesConstructor());
-        }
+            .nl()
+            .blk(defaultConstructor());
         if (!allProperties.isEmpty()) {
             bb.nl().blk(copyConstructor());
         }
@@ -519,17 +513,6 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
     @Nullable BlockBuilder propertyMethods() {
         if (properties.isEmpty()) {
             return null;
-        }
-        // FIXME: this should be specialized in ScalarTypeObjectTemplate
-        if (scalarType.isRoot()) {
-            final var field = properties.getFirst();
-            return newBlockBuilder()
-                .nl()
-                .at().eol(importedName(OVERRIDE))
-                .str("public final ").str(importedReturnType(field)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()")
-                    .oB()
-                    .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
-                .cB();
         }
 
         final var bb = newBlockBuilder();
@@ -581,7 +564,7 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
             .cB();
     }
 
-    @NonNull BlockBuilder allValuesConstructor() {
+    @NonNull BlockBuilder defaultConstructor() {
         return newBlockBuilder()
             .str("public ").str(type().simpleName()).str("(").str(asArgumentsDeclaration(allProperties)).str(")")
             .jBlock(bb -> {
@@ -643,99 +626,7 @@ sealed class ClassTemplate extends BaseTemplate permits UnionTypeObjectTemplate 
             .cB();
     }
 
-    // FIXME: this should be specialized in ScalarTypeObjectTemplate
-    private BlockBuilder scalarTypeObjectConstructors() {
-        verify(scalarType != ScalarTypeKind.NONE);
-        final var value = valueProperty(allProperties);
-        if (value == null) {
-            throw new VerifyException("missing value property");
-        }
-        final var fieldName = fieldName(value);
-
-        // common body for complete field initialization
-        final var fieldInit = newBlockBuilder();
-        if (valueProperty(properties) != null) {
-            fieldInit.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireValue(")
-                .str(fieldName);
-            if (value.getReturnType() instanceof Decimal64Type decimal64) {
-                fieldInit.str(", ").jInt(decimal64.fractionDigits());
-            }
-            fieldInit.str(")").frg(cloneOrNull(value)).eS();
-        }
-
-        // FIXME: this should be just a single value, right?
-        final var argsDeclaration = asArgumentsDeclaration(allProperties);
-        // FIXME: base this check on ScalarTypeKind.isRoot(), asserting shape instead
-        final var superArgs = parentProperties.isEmpty() ? null : asArguments(parentProperties);
-
-        final var ret = newBlockBuilder()
-            // public constructor taking an encapsulated Java value and validating it
-            .at().eol(importedName(NONNULL_BY_DEFAULT))
-            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).str("(").jStr(VALUE_PROP).eol(")")
-            .str("public ").str(type().simpleName()).str("(").str(argsDeclaration).str(")")
-                .jBlock(bb -> {
-                    if (superArgs != null) {
-                        bb.str("super(").str(superArgs).eol(");");
-                    }
-                    bb
-                        .blk(fieldInit)
-                        .blk(generateRestrictions(type(), fieldName, value.getReturnType()))
-                        // If we have patterns, we need to apply them to the value field. This is a sad consequence
-                        // of how this code is structured.
-                        .blk(genPatternEnforcer(fieldName));
-                }).nl();
-
-        return !scalarType.hasRestrictions() ? ret : ret
-            .nl()
-            // protected constructor taking an encapsulated Java value and an UnsafeSecret and performs initialization
-            .at().eol(importedName(NONNULL_BY_DEFAULT))
-            .str("protected ").str(type().simpleName()).str("(final ").str(importedName(UNSAFE_SECRET)).str(" secret, ")
-                .str(argsDeclaration).str(")").jBlock(bb -> {
-                    switch (scalarType) {
-                        case ROOT_RESTRICTING -> {
-                            verify(superArgs == null);
-                            bb.str(importedName(CODEHELPERS)).eol(".verifySecret(secret);");
-                        }
-                        case SUBCLASS_INHERITING ->
-                            bb.str("super(secret, ").str(verifyNotNull(superArgs)).eol(");");
-                        case SUBCLASS_RESTRICTING ->
-                            bb
-                                .str("super(").str(verifyNotNull(superArgs)).eol(");")
-                                .str(importedName(CODEHELPERS)).eol(".verifySecret(secret);");
-                        default -> verify(scalarType == ScalarTypeKind.SUBCLASS);
-                    }
-
-                    bb.blk(fieldInit);
-                }).nl()
-            .nl()
-            // static initialization block with registration call to this module's UnsafeAccess
-            .str("static").jBlock(bb -> {
-                // FIXME: self reference
-                final var selfRef = type().simpleName();
-                final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type());
-                bb
-                    // not 'importedName' on purpose: it would just stand out in imports
-                    .str(yangModuleInfo.canonicalName())
-                        .eol("." + YangModuleInfoTemplate.CONST_STO_REGISTRAR + ".registerUnsafeSTO(")
-                        .ind(selfRef).str(".class, ").str(selfRef).str("::new, ").str(selfRef).eol("::new);");
-            }).nl();
-    }
-
-    private static @Nullable GeneratedProperty valueProperty(final List<GeneratedProperty> props) {
-        return switch (props.size()) {
-            case 0 -> null;
-            case 1 -> {
-                final var prop = props.getFirst();
-                if (!VALUE_PROP.equals(prop.getName())) {
-                    throw new VerifyException("Unexpected property " + prop);
-                }
-                yield prop;
-            }
-            default -> throw new VerifyException("Unexpected properties " + props);
-        };
-    }
-
-    private @Nullable BlockBuilder genPatternEnforcer(final @NonNull String ref) {
+    final @Nullable BlockBuilder genPatternEnforcer(final @NonNull String ref) {
         for (var constant : consts) {
             if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
                 return newBlockBuilder()

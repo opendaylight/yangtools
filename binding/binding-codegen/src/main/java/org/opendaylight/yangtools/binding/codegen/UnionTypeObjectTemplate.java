@@ -20,11 +20,15 @@ import com.google.common.collect.Iterables;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
+/**
+ * A template for {@link UnionTypeObject} specializations.
+ */
 final class UnionTypeObjectTemplate extends ClassTemplate {
     @NonNullByDefault
     private UnionTypeObjectTemplate(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype) {

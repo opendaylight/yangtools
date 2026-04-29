@@ -9,21 +9,20 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT;
 
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 
 /**
  * The code generation shape of a {@link GeneratedTransferObject} for the purposes of generation of a
  * {@link ClassTemplate}'s {@link ScalarTypeObject} output class.
  */
+// FIXME: this enum should be absorbed into a class hierarchy in ScalarTypeObjectArchetype
 @NonNullByDefault
 enum ScalarTypeKind {
-    /**
-     * This template is not generating a class in a {@link ScalarTypeObject} hierarchy.
-     */
-    // FIXME: remove this member when we have a specialized ScalarTypeObjectTemplate
-    NONE(false, false),
     /**
      * This template generates the root class in a {@link ScalarTypeObject} hierarchy.
      */
@@ -75,16 +74,24 @@ enum ScalarTypeKind {
         return restrictions != null && !restrictions.isEmpty();
     }
 
-    static ScalarTypeKind of(final GeneratedTransferObject gto) {
+    static ScalarTypeKind of(final ScalarTypeObjectArchetype archetype) {
+        final var ret = ofGTO(archetype);
+        if (ret != null) {
+            return ret;
+        }
+        throw new VerifyException("Unexpected archetype " + archetype);
+    }
+
+    private static @Nullable ScalarTypeKind ofGTO(final GeneratedTransferObject gto) {
         final var superType = gto.getSuperType();
         if (superType != null) {
-            final var superClass = of(superType);
-            return superClass == NONE ? NONE : ofSubclass(gto, superClass.hasRestrictions);
+            final var superClass = ofGTO(superType);
+            return superClass == null ? null : ofSubclass(gto, superClass.hasRestrictions);
         }
 
         // FIXME: a better check, for example 'gto instanceof ScalarTypeObjectArchetype'
         if (gto.getImplements().stream().noneMatch(ifc -> SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
-            return NONE;
+            return null;
         }
         return hasRestrictions(gto) ? ROOT_RESTRICTING : ROOT;
     }
