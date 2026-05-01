@@ -192,36 +192,36 @@ public final class RegularExpressionParser {
             case PosCharGroupContext posCharGroup -> {
                 final var firstGroup = parsePosCharGroup(posCharGroup);
                 yield switch (size) {
-                        case 3 -> firstGroup;
-                        case 4 -> {
-                            childToken(ctx, 2, DASH);
-                            yield union(firstGroup, SimpleCharacterGroup.DASH);
-                        }
-                        case 5 -> {
-                            childToken(ctx, 2, DASH);
-                            yield new DifferenceCharacterGroup(firstGroup,
-                                parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
-                        }
-                        case 6 -> {
-                            childToken(ctx, 2, DASH);
-                            childToken(ctx, 3, DASH);
-                            yield new DifferenceCharacterGroup(union(firstGroup, SimpleCharacterGroup.DASH),
-                                parseCharClassExpr(child(ctx, 4, CharClassExprContext.class)));
-                        }
-                        default -> throw unexpectedShape(ctx);
-                    };
+                    case 3 -> firstGroup;
+                    case 4 -> {
+                        childToken(ctx, 2, DASH);
+                        yield union(firstGroup, SimpleCharacterGroup.DASH);
+                    }
+                    case 5 -> {
+                        childToken(ctx, 2, DASH);
+                        yield new DifferenceCharacterGroup(firstGroup,
+                            parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
+                    }
+                    case 6 -> {
+                        childToken(ctx, 2, DASH);
+                        childToken(ctx, 3, DASH);
+                        yield new DifferenceCharacterGroup(union(firstGroup, SimpleCharacterGroup.DASH),
+                            parseCharClassExpr(child(ctx, 4, CharClassExprContext.class)));
+                    }
+                    default -> throw unexpectedShape(ctx);
+                };
             }
             case TerminalNode terminal -> {
                 verifyToken(terminal, DASH);
                 yield switch(size) {
-                        case 3 -> SimpleCharacterGroup.DASH;
-                        case 5 -> {
-                            childToken(ctx, 2, DASH);
-                            yield new DifferenceCharacterGroup(SimpleCharacterGroup.DASH,
-                                parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
-                        }
-                        default -> throw unexpectedShape(ctx);
-                    };
+                    case 3 -> SimpleCharacterGroup.DASH;
+                    case 5 -> {
+                        childToken(ctx, 2, DASH);
+                        yield new DifferenceCharacterGroup(SimpleCharacterGroup.DASH,
+                            parseCharClassExpr(child(ctx, 3, CharClassExprContext.class)));
+                    }
+                    default -> throw unexpectedShape(ctx);
+                };
             }
             default -> throw unexpectedChild(first);
         };

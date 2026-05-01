@@ -243,10 +243,10 @@ public final class DataTreeCandidates {
             case UNMODIFIED -> {
                 if (hasNoDataBefore) {
                     yield switch (second) {
-                            case UNMODIFIED, WRITE, APPEARED -> second;
-                            case DELETE, DISAPPEARED, SUBTREE_MODIFIED ->
-                                throw illegalModification(second, ModificationType.DELETE);
-                        };
+                        case UNMODIFIED, WRITE, APPEARED -> second;
+                        case DELETE, DISAPPEARED, SUBTREE_MODIFIED ->
+                            throw illegalModification(second, ModificationType.DELETE);
+                    };
                 }
                 if (second == ModificationType.APPEARED) {
                     throw illegalModification(ModificationType.APPEARED, ModificationType.WRITE);

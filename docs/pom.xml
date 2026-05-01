@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>14.3.2</version>
+        <version>14.3.3</version>
         <relativePath/>
     </parent>
 
@@ -492,12 +492,12 @@
                 <!-- FIXME: remove this section once we can activate javadoc-links profile -->
                 <configuration combine.children="append">
                     <links>
-                        <link>https://docs.junit.org/5.14.2/api/</link>
+                        <link>https://docs.junit.org/5.14.4/api/</link>
                         <link>https://hamcrest.org/JavaHamcrest/javadoc/3.0/</link>
                         <link>https://www.slf4j.org/apidocs/</link>
-                        <link>https://guava.dev/releases/33.5.0-jre/api/docs/</link>
+                        <link>https://guava.dev/releases/33.6.0-jre/api/docs/</link>
 
-                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.3.2/</link>
+                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.3.3/</link>
                     </links>
                     <groups>
                         <group>
