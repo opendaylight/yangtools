@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 @Beta
 public sealed interface Archetype extends GeneratedType, Immutable
-        permits Archetype.WithStatement, EnumTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
+        permits Archetype.WithStatement, BitsTypeObjectArchetype, EnumTypeObjectArchetype, ScalarTypeObjectArchetype,
+                UnionTypeObjectArchetype {
     /**
      * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
      *
