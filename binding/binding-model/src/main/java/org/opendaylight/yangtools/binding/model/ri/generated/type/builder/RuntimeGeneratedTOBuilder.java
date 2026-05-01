@@ -7,16 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
-// FIXME: final
-public non-sealed class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
-    public RuntimeGeneratedTOBuilder(final JavaTypeName identifier) {
-        super(identifier);
+abstract sealed class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBuilder
+        permits RuntimeBitsTypeObjectArchetypeBuilder, RuntimeScalarTypeObjectArchetypeBuilder,
+                RuntimeUnionTypeObjectArchetypeBuilder {
+    @NonNullByDefault
+    RuntimeGeneratedTOBuilder(final JavaTypeName typeName) {
+        super(typeName);
     }
 
     @Override
@@ -44,14 +46,8 @@ public non-sealed class RuntimeGeneratedTOBuilder extends AbstractGeneratedTOBui
         // No-op
     }
 
-    @Override
-    public GeneratedTransferObject build() {
-        return new GTO(this);
-    }
-
-    // Note: non-final for UnionGTO
-    protected static class GTO extends AbstractGeneratedTransferObject {
-        protected GTO(final RuntimeGeneratedTOBuilder builder) {
+    abstract static class GTO extends AbstractGeneratedTransferObject {
+        GTO(final RuntimeGeneratedTOBuilder builder) {
             super(builder);
         }
 

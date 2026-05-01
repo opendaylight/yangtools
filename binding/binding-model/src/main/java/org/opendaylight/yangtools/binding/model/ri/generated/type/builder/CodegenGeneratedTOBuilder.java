@@ -9,20 +9,25 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
-// FIXME: final
-public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
+// FIXME: package-private and abstract
+public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
+        permits CodegenBitsTypeObjectArchetypeBuilder, CodegenScalarTypeObjectArchetypeBuilder,
+                CodegenUnionTypeObjectArchetypeBuilder {
     private Restrictions restrictions;
     private GeneratedPropertyBuilder suid;
     private String reference;
     private String description;
     private String moduleName;
 
+    // FIXME: package-private
+    @NonNullByDefault
     public CodegenGeneratedTOBuilder(final JavaTypeName typeName) {
         super(typeName);
     }
@@ -57,14 +62,14 @@ public non-sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBui
         return new GTO(this);
     }
 
-    protected static class GTO extends AbstractGeneratedTransferObject {
+    static class GTO extends AbstractGeneratedTransferObject {
         private final Restrictions restrictions;
         private final GeneratedProperty suid;
         private final String reference;
         private final String description;
         private final String moduleName;
 
-        protected GTO(final CodegenGeneratedTOBuilder builder) {
+        GTO(final CodegenGeneratedTOBuilder builder) {
             super(builder);
             restrictions = builder.restrictions;
             reference = builder.reference;

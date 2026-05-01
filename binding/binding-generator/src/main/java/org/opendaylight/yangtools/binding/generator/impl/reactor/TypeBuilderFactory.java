@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
@@ -25,7 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenBitsTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
@@ -33,7 +35,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRo
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.FeatureArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.KeyArchetypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeBitsTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
@@ -57,6 +59,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
         private Codegen() {
             // Hidden on purpose
+        }
+
+        @Override
+        BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(final JavaTypeName typeName) {
+            return new CodegenBitsTypeObjectArchetypeBuilder(typeName);
         }
 
         @Override
@@ -90,11 +97,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         @Override
         UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
             return new CodegenUnionTypeObjectArchetypeBuilder(identifier);
-        }
-
-        @Override
-        GeneratedTOBuilder newGeneratedTOBuilder(final JavaTypeName identifier) {
-            return new CodegenGeneratedTOBuilder(identifier);
         }
 
         @Override
@@ -149,6 +151,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
+        BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(final JavaTypeName typeName) {
+            return new RuntimeBitsTypeObjectArchetypeBuilder(typeName);
+        }
+
+        @Override
         DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName,
                 final ModuleEffectiveStatement statement) {
             return new DataRootArchetypeBuilder.Runtime(typeName, statement);
@@ -179,11 +186,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         @Override
         UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
             return new RuntimeUnionTypeObjectArchetypeBuilder(identifier);
-        }
-
-        @Override
-        GeneratedTOBuilder newGeneratedTOBuilder(final JavaTypeName identifier) {
-            return new RuntimeGeneratedTOBuilder(identifier);
         }
 
         @Override
@@ -224,6 +226,9 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     }
 
     @NonNullByDefault
+    abstract BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(JavaTypeName typeName);
+
+    @NonNullByDefault
     abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, ModuleEffectiveStatement statement);
 
     @NonNullByDefault
@@ -244,18 +249,17 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
-    abstract GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);
-
-    @NonNullByDefault
     abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
     final GeneratedTOBuilder newTOBuilder(final JavaTypeName typeName, final GeneratedTransferObject gto) {
         return switch (gto) {
+            case BitsTypeObjectArchetype bits -> newBitsTypeObjectBuilder(typeName);
             case ScalarTypeObjectArchetype scalar -> newScalarTypeObjectBuilder(typeName);
             case UnionTypeObjectArchetype union ->
                 newUnionTypeObjectBuilder(typeName).setTypePropertyNames(union.typePropertyNames());
-            default -> newGeneratedTOBuilder(typeName);
+            // FIXME: seal GeneratedTransferObject to eliminate this possibility
+            default -> throw new VerifyException("Impossible GTO " + typeName);
         };
     }
 
