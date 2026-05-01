@@ -146,14 +146,14 @@ final class IRSupport {
             case TerminalNode terminal -> {
                 final var token = terminal.getSymbol();
                 yield switch (token.getType()) {
-                        // This is as simple as it gets: we are dealing with an identifier here.
-                        case YangStatementParser.IDENTIFIER ->
-                            idenArguments.computeIfAbsent(strOf(token), IRArgument::identifier);
-                        // This is an empty string, the difference between double and single quotes does not exist.
-                        // Single quotes have more stringent semantics, hence use those.
-                        case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> IRArgument.empty();
-                        default -> throw unexpectedToken(token);
-                    };
+                    // This is as simple as it gets: we are dealing with an identifier here.
+                    case YangStatementParser.IDENTIFIER ->
+                        idenArguments.computeIfAbsent(strOf(token), IRArgument::identifier);
+                    // This is an empty string, the difference between double and single quotes does not exist.
+                    // Single quotes have more stringent semantics, hence use those.
+                    case YangStatementParser.DQUOT_END, YangStatementParser.SQUOT_END -> IRArgument.empty();
+                    default -> throw unexpectedToken(token);
+                };
             }
             case UnquotedStringContext unquoted -> {
                 // TODO: check non-presence of quotes and create a different subclass, so that ends up treated as if it
