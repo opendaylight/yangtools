@@ -20,6 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * through {@link #getEqualsIdentifiers ()}, {@link #getHashCodeIdentifiers()} and
  * {@link #getToStringIdentifiers()}.
  */
+// FIXME: sealed
+// FIXME: rename to TOArchetype and extends TypeObjectArchetype
+// FIXME: update documentation
 public interface GeneratedTransferObject extends GeneratedType {
 
     default GeneratedProperty getSUID() {

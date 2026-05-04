@@ -16,10 +16,13 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Runtim
 
 /**
  * An archetype for a {@link BitsTypeObject}.
+ *
+ * @since 16.0.0
  */
 @Beta
 @NonNullByDefault
-public non-sealed interface BitsTypeObjectArchetype extends Archetype, GeneratedTransferObject {
+public non-sealed interface BitsTypeObjectArchetype
+        extends TypeObjectArchetype<BitsTypeObject>, GeneratedTransferObject {
     /**
      * A builder of {@link BitsTypeObjectArchetype} instances.
      */

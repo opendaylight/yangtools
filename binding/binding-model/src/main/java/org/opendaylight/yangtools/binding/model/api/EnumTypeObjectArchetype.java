@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  */
 @Beta
 @NonNullByDefault
-public non-sealed interface EnumTypeObjectArchetype extends Archetype {
+public non-sealed interface EnumTypeObjectArchetype extends TypeObjectArchetype {
     /**
      * A {@link TypeBuilder} producing {@link EnumTypeObjectArchetype}.
      */

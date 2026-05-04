@@ -20,7 +20,8 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Runtim
  */
 @Beta
 @NonNullByDefault
-public non-sealed interface UnionTypeObjectArchetype extends Archetype, GeneratedTransferObject {
+public non-sealed interface UnionTypeObjectArchetype
+        extends TypeObjectArchetype<UnionTypeObject>, GeneratedTransferObject {
     /**
      * A builder of {@link UnionTypeObjectArchetype} instances.
      */

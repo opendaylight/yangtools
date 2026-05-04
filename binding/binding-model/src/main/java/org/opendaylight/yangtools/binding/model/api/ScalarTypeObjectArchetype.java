@@ -16,10 +16,13 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Runtim
 
 /**
  * An archetype for a {@link ScalarTypeObject}.
+ *
+ * @since 16.0.0
  */
 @Beta
 @NonNullByDefault
-public non-sealed interface ScalarTypeObjectArchetype extends Archetype, GeneratedTransferObject {
+public non-sealed interface ScalarTypeObjectArchetype
+        extends TypeObjectArchetype<ScalarTypeObject<?>>, GeneratedTransferObject {
     /**
      * A builder of {@link ScalarTypeObjectArchetype} instances.
      */
