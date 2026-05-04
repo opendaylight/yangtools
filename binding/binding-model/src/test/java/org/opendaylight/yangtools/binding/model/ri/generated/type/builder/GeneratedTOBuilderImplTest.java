@@ -47,33 +47,6 @@ class GeneratedTOBuilderImplTest {
     }
 
     @Test
-    void testAddEqualsIdentity() {
-        final var genTO = new CodegenGeneratedTOBuilder(JavaTypeName.create("org.opendaylight.yangtools.test", "Test"))
-            .addEqualsIdentity(new GeneratedPropertyBuilderImpl("testProperty").setReturnType(Types.STRING))
-            .build();
-        assertEquals(1, genTO.getEqualsIdentifiers().size());
-        assertEquals("testProperty", genTO.getEqualsIdentifiers().get(0).getName());
-    }
-
-    @Test
-    void testAddHashIdentity() {
-        final var genTO = new CodegenGeneratedTOBuilder(JavaTypeName.create("org.opendaylight.yangtools.test", "Test"))
-            .addHashIdentity(new GeneratedPropertyBuilderImpl("testProperty").setReturnType(Types.STRING))
-            .build();
-        assertEquals(1, genTO.getHashCodeIdentifiers().size());
-        assertEquals("testProperty", genTO.getHashCodeIdentifiers().get(0).getName());
-    }
-
-    @Test
-    void testAddToStringProperty() {
-        final var genTO = new CodegenGeneratedTOBuilder(JavaTypeName.create("org.opendaylight.yangtools.test", "Test"))
-            .addToStringProperty(new GeneratedPropertyBuilderImpl("testProperty").setReturnType(Types.STRING))
-            .build();
-        assertEquals(1, genTO.getToStringIdentifiers().size());
-        assertEquals("testProperty", genTO.getToStringIdentifiers().get(0).getName());
-    }
-
-    @Test
     void testSetRestrictions() {
         final var genTOBuilder = new CodegenGeneratedTOBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));

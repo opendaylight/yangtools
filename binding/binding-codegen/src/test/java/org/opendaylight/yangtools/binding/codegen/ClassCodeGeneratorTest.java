@@ -93,12 +93,10 @@ class ClassCodeGeneratorTest {
         var propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
         propBuilder.setReadOnly(false);
-        toBuilder.addToStringProperty(propBuilder);
 
         propBuilder = toBuilder.addProperty("bar");
         propBuilder.setReturnType(Types.typeForClass(Integer.class));
         propBuilder.setReadOnly(false);
-        toBuilder.addToStringProperty(propBuilder);
 
         assertEquals("""
             package simple.pack;

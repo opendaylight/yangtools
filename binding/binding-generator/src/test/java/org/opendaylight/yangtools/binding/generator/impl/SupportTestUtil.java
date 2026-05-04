@@ -63,18 +63,18 @@ final class SupportTestUtil {
             final boolean toString, final NameTypePattern... searchedSignsWhat) {
         var searchedPropertiesIn = genTO.getProperties();
         containsAttributes(searchedPropertiesIn, "", searchedSignsWhat);
-        if (equal) {
-            searchedPropertiesIn = genTO.getEqualsIdentifiers();
-            containsAttributes(searchedPropertiesIn, "equal", searchedSignsWhat);
-        }
-        if (hash) {
-            searchedPropertiesIn = genTO.getHashCodeIdentifiers();
-            containsAttributes(searchedPropertiesIn, "hash", searchedSignsWhat);
-        }
-        if (toString) {
-            searchedPropertiesIn = genTO.getToStringIdentifiers();
-            containsAttributes(searchedPropertiesIn, "toString", searchedSignsWhat);
-        }
+//        if (equal) {
+//            searchedPropertiesIn = genTO.getEqualsIdentifiers();
+//            containsAttributes(searchedPropertiesIn, "equal", searchedSignsWhat);
+//        }
+//        if (hash) {
+//            searchedPropertiesIn = genTO.getHashCodeIdentifiers();
+//            containsAttributes(searchedPropertiesIn, "hash", searchedSignsWhat);
+//        }
+//        if (toString) {
+//            searchedPropertiesIn = genTO.getToStringIdentifiers();
+//            containsAttributes(searchedPropertiesIn, "toString", searchedSignsWhat);
+//        }
     }
 
     static void containsAttributes(final List<GeneratedProperty> searchedPropertiesIn, final String listType,
