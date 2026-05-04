@@ -105,8 +105,8 @@ public final class Naming {
     // Here we carve out some field names.
 
     /**
-     * DataRoot specializations use this field to store their {@link RootMeta}. Publicly-available for static injection
-     * purposes.
+     * {@link DataRoot} specializations use this field to store their {@link RootMeta}. Publicly-available for static
+     * injection purposes.
      *
      * @since 15.0.0
      */
@@ -121,6 +121,12 @@ public final class Naming {
     public static final @NonNull String QNAME_STATIC_FIELD_NAME = "QNAME";
     // concrete extensible contracts, for example 'feature', 'identity' and similar
     public static final @NonNull String VALUE_STATIC_FIELD_NAME = "VALUE";
+    /**
+     * {@link ScalarTypeObject} specializations use this field to expose their {@code units} value, if present.
+     *
+     * @since 16.0.0
+     */
+    public static final @NonNull String UNITS_STATIC_FIELD_NAME = "UNITS";
 
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-/").precomputed())
             .omitEmptyStrings().trimResults();

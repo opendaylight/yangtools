@@ -35,9 +35,11 @@ class GeneratorTest {
 
         Generator.addUnits(builder, typedef);
         final var genTO = builder.build();
-        assertEquals(1, genTO.getConstantDefinitions().size());
-        assertEquals("_UNITS", genTO.getConstantDefinitions().get(0).getName());
-        assertEquals(genTO.getConstantDefinitions().get(0).getValue(), "\"125\"");
+        final var constants = genTO.getConstantDefinitions();
+        assertEquals(1, constants.size());
+        final var constant = constants.getFirst();
+        assertEquals("UNITS", constant.getName());
+        assertEquals("\"125\"", constant.getValue());
     }
 
     @Test

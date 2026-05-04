@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.common.Empty;
 class TypedefCompilationTest extends BaseCompilationTest {
     private static final String VAL = "_value";
     private static final String GET_VAL = "getValue";
-    private static final String UNITS = "_UNITS";
 
     @Test
     void test() throws Exception {
@@ -125,7 +124,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef int32-ext2
         assertFalse(int32Ext2Class.isInterface());
-        CompilationTestUtils.assertContainsFieldWithValue(int32Ext2Class, UNITS, String.class, "mile", Integer.class);
+        CompilationTestUtils.assertContainsFieldWithValue(int32Ext2Class, "UNITS", String.class, "mile", Integer.class);
         CompilationTestUtils.assertContainsFieldWithValue(int32Ext2Class, "serialVersionUID", Long.TYPE,
             317831889060130988L, Integer.class);
         assertEquals(2, int32Ext2Class.getDeclaredFields().length);
@@ -133,10 +132,9 @@ class TypedefCompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsConstructor(int32Ext2Class, int32Ext2Class);
         CompilationTestUtils.assertContainsConstructor(int32Ext2Class, int32Ext1Class);
         assertEquals(4, int32Ext2Class.getDeclaredConstructors().length);
-        CompilationTestUtils.assertContainsMethod(int32Ext2Class, String.class, "toString");
         defInst = CompilationTestUtils.assertContainsMethod(int32Ext2Class, int32Ext2Class, "getDefaultInstance",
             String.class);
-        assertEquals(3, int32Ext2Class.getDeclaredMethods().length);
+        assertEquals(2, int32Ext2Class.getDeclaredMethods().length);
 
         rangeConstraints.clear();
         rangeConstraints.add(Range.closed(3, 9));
@@ -292,7 +290,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         assertFalse(unionExt3Class.isInterface());
         CompilationTestUtils.assertContainsField(unionExt3Class, "_string", String.class);
         CompilationTestUtils.assertContainsField(unionExt3Class, "_unionExt2", unionExt2Class);
-        CompilationTestUtils.assertContainsFieldWithValue(unionExt3Class, UNITS, String.class, "object id",
+        CompilationTestUtils.assertContainsFieldWithValue(unionExt3Class, "UNITS", String.class, "object id",
             new Class<?>[] { String.class }, "");
         CompilationTestUtils.assertContainsFieldWithValue(unionExt3Class, "serialVersionUID", Long.TYPE,
             -1558836942803815106L, new Class<?>[] { String.class }, "");
