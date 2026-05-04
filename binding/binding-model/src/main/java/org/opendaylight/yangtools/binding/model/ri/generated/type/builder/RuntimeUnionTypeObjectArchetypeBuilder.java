@@ -11,13 +11,15 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
-public final class RuntimeUnionTypeObjectArchetypeBuilder extends RuntimeGeneratedTOBuilder
+public final class RuntimeUnionTypeObjectArchetypeBuilder extends AbstractGeneratedTOBuilder
         implements UnionTypeObjectArchetype.Builder {
     private List<String> typePropertyNames = List.of();
 
+    @NonNullByDefault
     public RuntimeUnionTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
         super(typeName);
     }
@@ -33,10 +35,10 @@ public final class RuntimeUnionTypeObjectArchetypeBuilder extends RuntimeGenerat
         return new UnionGTO(this, typePropertyNames);
     }
 
-    private static final class UnionGTO extends GTO implements UnionTypeObjectArchetype {
+    private static final class UnionGTO extends AbstractGeneratedTransferObject implements UnionTypeObjectArchetype {
         private final @NonNull List<String> typePropertyNames;
 
-        UnionGTO(final RuntimeGeneratedTOBuilder builder, final List<String> typePropertyNames) {
+        UnionGTO(final RuntimeUnionTypeObjectArchetypeBuilder builder, final List<String> typePropertyNames) {
             super(builder);
             this.typePropertyNames = requireNonNull(typePropertyNames);
         }

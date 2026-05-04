@@ -22,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public interface GeneratedTransferObject extends GeneratedType {
 
-    GeneratedProperty getSUID();
+    default GeneratedProperty getSUID() {
+        throw uoe();
+    }
 
     /**
      * Returns the Generated Transfer Object from which this GTO is derived, or null if this GTO is not derived
@@ -62,7 +64,28 @@ public interface GeneratedTransferObject extends GeneratedType {
      */
     TypeDefinition<?> getBaseType();
 
-    Restrictions getRestrictions();
+    default Restrictions getRestrictions() {
+        throw uoe();
+    }
+
+    @Override
+    default String getDescription() {
+        throw uoe();
+    }
+
+    @Override
+    default String getReference() {
+        throw uoe();
+    }
+
+    @Override
+    default String getModuleName() {
+        throw uoe();
+    }
+
+    private static UnsupportedOperationException uoe() {
+        return new UnsupportedOperationException("Not available at runtime");
+    }
 
     default Optional<? extends GeneratedProperty> findProperty(final String name) {
         final Optional<GeneratedProperty> optProp = getProperties().stream()

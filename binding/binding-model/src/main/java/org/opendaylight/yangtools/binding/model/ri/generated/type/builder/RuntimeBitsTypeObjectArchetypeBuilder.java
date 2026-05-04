@@ -11,7 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
-public final class RuntimeBitsTypeObjectArchetypeBuilder extends RuntimeGeneratedTOBuilder
+public final class RuntimeBitsTypeObjectArchetypeBuilder extends AbstractGeneratedTOBuilder
         implements BitsTypeObjectArchetype.Builder {
     @NonNullByDefault
     public RuntimeBitsTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
@@ -23,8 +23,8 @@ public final class RuntimeBitsTypeObjectArchetypeBuilder extends RuntimeGenerate
         return new BitsGTO(this);
     }
 
-    private static final class BitsGTO extends GTO implements BitsTypeObjectArchetype {
-        BitsGTO(final RuntimeGeneratedTOBuilder builder) {
+    private static final class BitsGTO extends AbstractGeneratedTransferObject implements BitsTypeObjectArchetype {
+        BitsGTO(final RuntimeBitsTypeObjectArchetypeBuilder builder) {
             super(builder);
         }
     }

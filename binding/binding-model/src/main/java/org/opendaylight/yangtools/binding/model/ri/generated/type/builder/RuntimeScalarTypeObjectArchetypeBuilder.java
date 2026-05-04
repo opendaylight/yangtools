@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 
-public final class RuntimeScalarTypeObjectArchetypeBuilder extends RuntimeGeneratedTOBuilder
+public final class RuntimeScalarTypeObjectArchetypeBuilder extends AbstractGeneratedTOBuilder
         implements ScalarTypeObjectArchetype.Builder {
+    @NonNullByDefault
     public RuntimeScalarTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
         super(typeName);
     }
@@ -21,8 +23,8 @@ public final class RuntimeScalarTypeObjectArchetypeBuilder extends RuntimeGenera
         return new ScalarGTO(this);
     }
 
-    private static final class ScalarGTO extends GTO implements ScalarTypeObjectArchetype {
-        ScalarGTO(final RuntimeGeneratedTOBuilder builder) {
+    private static final class ScalarGTO extends AbstractGeneratedTransferObject implements ScalarTypeObjectArchetype {
+        ScalarGTO(final RuntimeScalarTypeObjectArchetypeBuilder builder) {
             super(builder);
         }
     }

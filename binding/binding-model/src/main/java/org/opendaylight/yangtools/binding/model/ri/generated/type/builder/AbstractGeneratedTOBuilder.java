@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -23,7 +24,8 @@ import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
-        implements GeneratedTOBuilder permits CodegenGeneratedTOBuilder, RuntimeGeneratedTOBuilder {
+        implements GeneratedTOBuilder permits CodegenGeneratedTOBuilder, RuntimeBitsTypeObjectArchetypeBuilder,
+                   RuntimeScalarTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
     // FIXME are these three referenced anywhere at runtime?
     private List<GeneratedPropertyBuilder> equalsProperties = List.of();
     private List<GeneratedPropertyBuilder> hashProperties = List.of();
@@ -108,6 +110,31 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     @Override
     public final void setBaseType(final TypeDefinition<?> typeDef) {
         baseType = typeDef;
+    }
+
+    @Override
+    public void setRestrictions(final Restrictions restrictions) {
+        // No-op
+    }
+
+    @Override
+    public void setSUID(final GeneratedPropertyBuilder suid) {
+        // No-op
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        // No-op
+    }
+
+    @Override
+    public void setModuleName(final String moduleName) {
+        // No-op
+    }
+
+    @Override
+    public void setReference(final String reference) {
+        // No-op
     }
 
     abstract static class AbstractGeneratedTransferObject extends AbstractGeneratedType
