@@ -299,8 +299,7 @@ public abstract class Generator implements Iterable<Generator> {
     static final void addUnits(final GeneratedTOBuilder builder, final TypeDefinition<?> typedef) {
         typedef.getUnits().ifPresent(units -> {
             if (!units.isEmpty()) {
-                builder.addConstant(Types.STRING, "_UNITS", "\"" + units + "\"");
-                builder.addToStringProperty(new GeneratedPropertyBuilderImpl("UNITS").setReturnType(Types.STRING));
+                builder.addConstant(Types.STRING, Naming.UNITS_STATIC_FIELD_NAME, "\"" + units + "\"");
             }
         });
     }
