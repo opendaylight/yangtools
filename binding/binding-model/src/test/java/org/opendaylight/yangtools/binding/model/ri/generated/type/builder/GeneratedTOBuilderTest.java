@@ -8,8 +8,11 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -21,21 +24,20 @@ class GeneratedTOBuilderTest {
         final var genTypeBuilder = new CodegenGeneratedTOBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
-        genTypeBuilder.setSUID(genTypeBuilder.addProperty("SUID").setReturnType(BindingTypes.SCALAR_TYPE_OBJECT));
+        final var suid = genTypeBuilder.addProperty("SUID").setReturnType(BindingTypes.SCALAR_TYPE_OBJECT);
+        genTypeBuilder.setSUID(suid);
         genTypeBuilder.addMethod("addCount").setReturnType(Types.VOID);
 
-        var genTO = genTypeBuilder.build();
+        final var genTO = genTypeBuilder.build();
+        assertEquals(List.of(suid.toInstance()), genTO.getProperties());
+
         genTypeBuilder.setExtendsType(genTO);
 
-        var property = genTypeBuilder.addProperty("customProperty");
-        genTypeBuilder.addHashIdentity(property);
-
-        genTypeBuilder.addEqualsIdentity(property);
-
-        genTypeBuilder.addToStringProperty(property);
-
-        assertNotNull(genTO);
-        assertNotNull(genTO.getProperties());
+        final var propBuilder = genTypeBuilder.addProperty("customProperty").setReturnType(Types.STRING);
+        final var genType = genTypeBuilder.build();
+        assertNotNull(genType);
+        assertSame(genTO, genType.getSuperType());
+        assertEquals(List.of(suid.toInstance(), propBuilder.toInstance()), genType.getProperties());
     }
 
     @Test

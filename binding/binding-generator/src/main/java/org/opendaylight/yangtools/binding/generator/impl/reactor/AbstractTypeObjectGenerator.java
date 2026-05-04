@@ -669,10 +669,6 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             var genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
             genPropertyBuilder.setReadOnly(true);
             genPropertyBuilder.setReturnType(Types.primitiveBooleanType());
-
-            builder.addEqualsIdentity(genPropertyBuilder);
-            builder.addHashIdentity(genPropertyBuilder);
-            builder.addToStringProperty(genPropertyBuilder);
         }
         builder.addConstant(Types.immutableSetTypeFor(Types.STRING), TypeConstants.VALID_NAMES_NAME, typedef);
 
@@ -709,9 +705,6 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
 
         final var genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
         genPropBuilder.setReturnType(javaType);
-        builder.addEqualsIdentity(genPropBuilder);
-        builder.addHashIdentity(genPropBuilder);
-        builder.addToStringProperty(genPropBuilder);
         builder.setRestrictions(getRestrictions(typedef));
         builder.setModuleName(module.statement().argument().getLocalName());
         builderFactory.addCodegenInformation(typedef, builder);
@@ -858,13 +851,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                     continue;
                 }
 
-                final GeneratedPropertyBuilder propBuilder = builder
-                    .addProperty(propName)
-                    .setReturnType(generatedType);
-
-                builder.addEqualsIdentity(propBuilder);
-                builder.addHashIdentity(propBuilder);
-                builder.addToStringProperty(propBuilder);
+                builder.addProperty(propName).setReturnType(generatedType);
             }
         }
 

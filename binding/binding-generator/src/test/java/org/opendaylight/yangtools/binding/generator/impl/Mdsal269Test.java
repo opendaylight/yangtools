@@ -26,7 +26,7 @@ class Mdsal269Test {
             .equals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabel")).findFirst().orElseThrow();
 
         final var gto = assertInstanceOf(GeneratedTransferObject.class, mplsLabelType);
-        final var it = gto.getEqualsIdentifiers().iterator();
+        final var it = gto.getProperties().iterator();
         final var special = it.next();
         final var general = it.next();
         assertFalse(it.hasNext());
