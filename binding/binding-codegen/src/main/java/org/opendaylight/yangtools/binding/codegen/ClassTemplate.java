@@ -31,6 +31,7 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEA
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
@@ -57,7 +59,9 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 /**
 - * Template for generating JAVA class.
  */
-sealed class ClassTemplate extends BaseTemplate permits ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
+// FIXME: abstract
+sealed class ClassTemplate extends BaseTemplate
+        permits BitsTypeObjectTemplate, ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
 
@@ -112,9 +116,10 @@ sealed class ClassTemplate extends BaseTemplate permits ScalarTypeObjectTemplate
     @NonNullByDefault
     static final BlockBuilder generateAsInner(final GeneratedClass.Nested javaType, final GeneratedTransferObject gto) {
         return switch (gto) {
+            case BitsTypeObjectArchetype archetype -> BitsTypeObjectTemplate.generateAsInner(javaType, archetype);
             case ScalarTypeObjectArchetype archetype -> ScalarTypeObjectTemplate.generateAsInner(javaType, archetype);
             case UnionTypeObjectArchetype archetype -> UnionTypeObjectTemplate.generateAsInner(javaType, archetype);
-            default -> new ClassTemplate(javaType, gto).generateAsInnerClass();
+            default -> throw new VerifyException("Unhandled inner class " + gto);
         };
     }
 

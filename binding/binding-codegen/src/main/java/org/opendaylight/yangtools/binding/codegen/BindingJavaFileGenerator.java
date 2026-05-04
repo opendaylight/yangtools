@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
@@ -62,6 +63,7 @@ final class BindingJavaFileGenerator {
     private void generateFiles(final List<GeneratedType> types) {
         for (var type : types) {
             switch (type) {
+                case BitsTypeObjectArchetype archetype -> generateFile(new BitsTypeObjectGenerator(archetype));
                 case DataRootArchetype archetype -> {
                     generateFile(new DataRootGenerator(archetype));
                     generateBuilder(archetype);
