@@ -37,36 +37,6 @@ public sealed interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<Gene
      */
     GeneratedTOBuilder setExtendsType(GeneratedTransferObject genTransObj);
 
-    /**
-     * Add Property that will be part of <code>equals</code> definition. <br>
-     * If Generated Property Builder is <code>null</code> the method SHOULD
-     * throw {@link IllegalArgumentException}
-     *
-     * @param property Generated Property Builder
-     * @return This instance of builder
-     */
-    GeneratedTOBuilder addEqualsIdentity(GeneratedPropertyBuilder property);
-
-    /**
-     * Add Property that will be part of <code>hashCode</code> definition. <br>
-     * If Generated Property Builder is <code>null</code> the method SHOULD
-     * throw {@link IllegalArgumentException}
-     *
-     * @param property Generated Property Builder
-     * @return This instance of builder
-     */
-    GeneratedTOBuilder addHashIdentity(GeneratedPropertyBuilder property);
-
-    /**
-     * Add Property that will be part of <code>toString</code> definition. <br>
-     * If Generated Property Builder is <code>null</code> the method SHOULD
-     * throw {@link IllegalArgumentException}
-     *
-     * @param property Generated Property Builder
-     * @return This instance of builder
-     */
-    GeneratedTOBuilder addToStringProperty(GeneratedPropertyBuilder property);
-
     @NonNullByDefault
     void setRestrictions(Restrictions restrictions);
 

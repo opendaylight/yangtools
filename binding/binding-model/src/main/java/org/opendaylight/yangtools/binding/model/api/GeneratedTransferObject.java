@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import java.util.List;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -36,27 +35,6 @@ public interface GeneratedTransferObject extends GeneratedType {
      * @return Generated Transfer Object or <code>null</code> if this GTO is not derived from another GTO.
      */
     GeneratedTransferObject getSuperType();
-
-    /**
-     * Returns List of Properties that are designated to define equality for Generated Transfer Object.
-     *
-     * @return List of Properties that are designated to define equality for Generated Transfer Object.
-     */
-    List<GeneratedProperty> getEqualsIdentifiers();
-
-    /**
-     * Returns List of Properties that are designated to define identity for Generated Transfer Object.
-     *
-     * @return List of Properties that are designated to define identity for Generated Transfer Object.
-     */
-    List<GeneratedProperty> getHashCodeIdentifiers();
-
-    /**
-     * Returns List of Properties that will be members of toString definition for Generated Transfer Object.
-     *
-     * @return List of Properties that will be members of toString definition for Generated Transfer Object.
-     */
-    List<GeneratedProperty> getToStringIdentifiers();
 
     boolean isTypedef();
 

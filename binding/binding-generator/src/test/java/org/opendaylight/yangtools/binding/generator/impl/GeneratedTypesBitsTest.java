@@ -32,9 +32,6 @@ class GeneratedTypesBitsTest {
 
         boolean byteTypeFound = false;
         int classPropertiesNumb = 0;
-        int toStringPropertiesNum = 0;
-        int equalPropertiesNum = 0;
-        int hashPropertiesNum = 0;
 
         String nameReturnParamType = "";
         boolean getByteLeafMethodFound = false;
@@ -47,16 +44,6 @@ class GeneratedTypesBitsTest {
                     byteTypeFound = true;
                     var genProperties = genTO.getProperties();
                     classPropertiesNumb = genProperties.size();
-
-                    genProperties = genTO.getToStringIdentifiers();
-                    toStringPropertiesNum = genProperties.size();
-
-                    genProperties = genTO.getEqualsIdentifiers();
-                    equalPropertiesNum = genProperties.size();
-
-                    genProperties = genTO.getHashCodeIdentifiers();
-                    hashPropertiesNum = genProperties.size();
-
                 }
             } else if (genType.simpleName().equals("LeafParentContainer")) {
                 leafParentFound = true;
@@ -84,9 +71,6 @@ class GeneratedTypesBitsTest {
 
         assertEquals(8, classPropertiesNumb);
 
-        assertEquals(8, toStringPropertiesNum);
-        assertEquals(8, equalPropertiesNum);
-        assertEquals(8, hashPropertiesNum);
         assertTrue(leafParentFound);
 
         assertNotNull(methodSignaturesList);
