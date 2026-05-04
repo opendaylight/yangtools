@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -17,8 +18,9 @@ public final class CodegenGeneratedTypeBuilder extends AbstractGeneratedTypeBuil
     private String reference;
     private String moduleName;
 
-    public CodegenGeneratedTypeBuilder(final JavaTypeName identifier) {
-        super(identifier);
+    @NonNullByDefault
+    public CodegenGeneratedTypeBuilder(final JavaTypeName typeName) {
+        super(typeName);
         setAbstract(true);
     }
 

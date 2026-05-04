@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
@@ -18,6 +19,7 @@ public final class CodegenUnionTypeObjectArchetypeBuilder extends CodegenGenerat
         implements UnionTypeObjectArchetype.Builder {
     private List<String> typePropertyNames = List.of();
 
+    @NonNullByDefault
     public CodegenUnionTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
         super(typeName);
     }

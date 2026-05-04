@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -27,6 +28,7 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
     private String moduleName;
 
     // FIXME: package-private
+    @VisibleForTesting
     @NonNullByDefault
     public CodegenGeneratedTOBuilder(final JavaTypeName typeName) {
         super(typeName);
