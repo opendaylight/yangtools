@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -20,16 +18,12 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
-import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
         implements GeneratedTOBuilder permits CodegenGeneratedTOBuilder, RuntimeBitsTypeObjectArchetypeBuilder,
                    RuntimeScalarTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
     // FIXME are these three referenced anywhere at runtime?
-    private List<GeneratedPropertyBuilder> equalsProperties = List.of();
-    private List<GeneratedPropertyBuilder> hashProperties = List.of();
-    private List<GeneratedPropertyBuilder> toStringProperties = List.of();
     private GeneratedTransferObject extendsType;
     private boolean isTypedef = false;
     private TypeDefinition<?> baseType = null;
@@ -69,37 +63,8 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     }
 
     @Override
-    public final GeneratedTOBuilder addEqualsIdentity(final GeneratedPropertyBuilder property) {
-        equalsProperties = LazyCollections.lazyAdd(equalsProperties, property);
-        return this;
-    }
-
-    @Override
-    public final GeneratedTOBuilder addHashIdentity(final GeneratedPropertyBuilder property) {
-        hashProperties = LazyCollections.lazyAdd(hashProperties, property);
-        return this;
-    }
-
-    @Override
-    public final GeneratedTOBuilder addToStringProperty(final GeneratedPropertyBuilder property) {
-        toStringProperties = LazyCollections.lazyAdd(toStringProperties, property);
-        return this;
-    }
-
-    @Override
     protected final GeneratedTOBuilder thisInstance() {
         return this;
-    }
-
-    @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        super.addToStringAttributes(helper);
-
-        addToStringAttribute(helper, "equalsProperties", equalsProperties);
-        addToStringAttribute(helper, "hashCodeProperties", hashProperties);
-        addToStringAttribute(helper, "stringProperties", toStringProperties);
-
-        return helper;
     }
 
     @Override
@@ -139,9 +104,6 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
 
     abstract static class AbstractGeneratedTransferObject extends AbstractGeneratedType
             implements GeneratedTransferObject {
-        private final List<GeneratedProperty> equalsProperties;
-        private final List<GeneratedProperty> hashCodeProperties;
-        private final List<GeneratedProperty> stringProperties;
         private final GeneratedTransferObject extendsType;
         private final boolean isTypedef;
         private final TypeDefinition<?> baseType;
@@ -149,13 +111,6 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
         AbstractGeneratedTransferObject(final AbstractGeneratedTOBuilder builder) {
             super(builder);
             extendsType = builder.extendsType;
-
-            // FIXME: if these fields were guaranteed to be constant, we could perhaps
-            //        cache and reuse them between instances...
-            equalsProperties = toUnmodifiableProperties(builder.equalsProperties);
-            hashCodeProperties = toUnmodifiableProperties(builder.hashProperties);
-            stringProperties = toUnmodifiableProperties(builder.toStringProperties);
-
             isTypedef = builder.isTypedef;
             baseType = builder.baseType;
         }
@@ -176,29 +131,8 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
         }
 
         @Override
-        public final List<GeneratedProperty> getEqualsIdentifiers() {
-            return equalsProperties;
-        }
-
-        @Override
-        public final List<GeneratedProperty> getHashCodeIdentifiers() {
-            return hashCodeProperties;
-        }
-
-        @Override
-        public final List<GeneratedProperty> getToStringIdentifiers() {
-            return stringProperties;
-        }
-
-        @Override
         protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            super.addToStringAttributes(helper).add("extends", getSuperType());
-
-            addToStringAttribute(helper, "equalsProperties", equalsProperties);
-            addToStringAttribute(helper, "hashCodeProperties", hashCodeProperties);
-            addToStringAttribute(helper, "stringProperties", stringProperties);
-
-            return helper;
+            return super.addToStringAttributes(helper).add("extends", getSuperType());
         }
 
         public static final String serializeTypedef(final Type type) {

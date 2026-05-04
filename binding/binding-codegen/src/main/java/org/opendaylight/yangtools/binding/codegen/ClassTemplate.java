@@ -287,13 +287,11 @@ sealed class ClassTemplate extends BaseTemplate
     }
 
     private @Nullable BlockBuilder generateEquals() {
-        final var equalsIdentifiers = genTO.getEqualsIdentifiers();
-        return equalsIdentifiers.isEmpty() ? null : generateEquals(equalsIdentifiers);
+        return properties.isEmpty() ? null : generateEquals(properties);
     }
 
     private @Nullable BlockBuilder generateToString() {
-        final var toStringIdentifiers = genTO.getToStringIdentifiers();
-        return toStringIdentifiers.isEmpty() ? null : generateToString(toStringIdentifiers);
+        return properties.isEmpty() ? null : generateToString(properties);
     }
 
     // FIXME: this method should live in (the now non-existent) BitsTypeObjectTemplate
@@ -533,8 +531,7 @@ sealed class ClassTemplate extends BaseTemplate
     }
 
     private @Nullable BlockBuilder generateHashCode() {
-        final var props = genTO.getHashCodeIdentifiers();
-        return props.isEmpty() ? null : generateHashCode(props);
+        return properties.isEmpty() ? null : generateHashCode(properties);
     }
 
     final @Nullable BlockBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
