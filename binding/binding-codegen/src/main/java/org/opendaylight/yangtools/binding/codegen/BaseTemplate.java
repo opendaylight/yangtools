@@ -46,7 +46,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -616,9 +615,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         for (var innerType : innerTypes) {
             if (innerType instanceof GeneratedTransferObject gto) {
                 final var innerJavaType = javaType().getNestedClass(gto);
-                innerClasses.add(gto instanceof UnionTypeObjectArchetype union
-                    ? UnionTypeObjectTemplate.generateAsInner(innerJavaType, union)
-                    : new ClassTemplate(innerJavaType, gto).generateAsInnerClass());
+                innerClasses.add(ClassTemplate.generateAsInner(innerJavaType, gto));
             }
         }
         if (innerClasses.isEmpty()) {
