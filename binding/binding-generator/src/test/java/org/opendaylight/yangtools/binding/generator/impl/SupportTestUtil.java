@@ -59,7 +59,7 @@ final class SupportTestUtil {
         }
     }
 
-    static void containsAttributes(final GeneratedTransferObject genTO, final boolean equal, final boolean hash,
+    static void containsAttributes(final GeneratedTransferObject<?> genTO, final boolean equal, final boolean hash,
             final boolean toString, final NameTypePattern... searchedSignsWhat) {
         var searchedPropertiesIn = genTO.getProperties();
         containsAttributes(searchedPropertiesIn, "", searchedSignsWhat);

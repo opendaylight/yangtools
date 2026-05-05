@@ -93,7 +93,7 @@ class BitAndUnionTOEnclosingTest {
 
     @Test
     void testNestedTypesInTypedef() {
-        GeneratedTransferObject typeUnionTypedef = null;
+        GeneratedTransferObject<?> typeUnionTypedef = null;
         int typeUnionTypedefCounter = 0;
 
         for (var genType : genTypes) {
@@ -153,8 +153,8 @@ class BitAndUnionTOEnclosingTest {
         assertNotNull(parentContainer, "Parent container object wasn't found.");
         containsMethods(parentContainer, new NameTypePattern("getLf", "Lf"));
 
-        GeneratedTransferObject bitLeaf = null;
-        GeneratedTransferObject unionLeaf = null;
+        GeneratedTransferObject<?> bitLeaf = null;
+        GeneratedTransferObject<?> unionLeaf = null;
         for (var genType : parentContainer.getEnclosedTypes()) {
             if (genType instanceof GeneratedTransferObject gto) {
                 if (gto.simpleName().equals("BitLeaf")) {

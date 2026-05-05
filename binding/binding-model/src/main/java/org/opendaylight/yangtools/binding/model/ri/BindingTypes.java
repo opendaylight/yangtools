@@ -183,7 +183,7 @@ public final class BindingTypes {
      */
     @NonNullByDefault
     public static ParameterizedType keyedListNotification(final Type concreteType, final Type parent,
-            final GeneratedTransferObject keyType) {
+            final KeyArchetype keyType) {
         return ParameterizedType.of(KEYED_LIST_NOTIFICATION, concreteType, parent, keyType);
     }
 
@@ -375,6 +375,7 @@ public final class BindingTypes {
      * @param type Type to examine
      * @return {@code true} if the type is generated for a {@code type bits}
      */
+    // FIXME: remove this method
     public static boolean isBitsType(final Type type) {
         return type instanceof GeneratedTransferObject gto && isBitsType(gto);
     }
@@ -385,7 +386,8 @@ public final class BindingTypes {
      * @param gto Type to examine
      * @return {@code true} if the type is generated for a {@code type bits}
      */
-    public static boolean isBitsType(final GeneratedTransferObject gto) {
+    // FIXME: remove this method
+    public static boolean isBitsType(final GeneratedTransferObject<?> gto) {
         return gto.isTypedef() && gto.getBaseType() instanceof BitsTypeDefinition;
     }
 

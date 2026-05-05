@@ -23,12 +23,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -37,6 +39,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
@@ -557,7 +560,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         return switch (baseType) {
             // This is a simple Java type, just wrap it with new restrictions
             case ConcreteType concrete -> concrete.withRestrictions(restrictions);
-            case GeneratedTransferObject gto -> {
+            case GeneratedTransferObject<?> gto -> {
                 // Base type is a GTO, we need to re-adjust it with new restrictions
                 final var builder = builderFactory.newTOBuilder(gto.name(), gto);
                 final var parent = gto.getSuperType();
@@ -655,7 +658,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
             verifyNotNull(SIMPLE_TYPES.get(arg), "Unhandled type %s", arg), extractTypeDefinition());
     }
 
-    private static @NonNull GeneratedTransferObject createBits(final TypeBuilderFactory builderFactory,
+    private static @NonNull BitsTypeObjectArchetype createBits(final TypeBuilderFactory builderFactory,
             final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final BitsTypeDefinition typedef, final boolean isTypedef) {
         final var builder = builderFactory.newBitsTypeObjectBuilder(typeName);
@@ -722,7 +725,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
         return builder.build();
     }
 
-    private static @NonNull GeneratedTransferObject createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
+    private static @NonNull UnionTypeObjectArchetype createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
             final TypeBuilderFactory builderFactory, final EffectiveStatement<?, ?> definingStatement,
             final UnionDependencies dependencies, final JavaTypeName typeName, final ModuleGenerator module,
             final TypeEffectiveStatement type, final boolean isTypedef, final TypeDefinition<?> typedef) {
@@ -753,9 +756,8 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
                 if (BuiltInType.UNION.typeName().equals(subName)) {
                     final var subUnionName = typeName.createEnclosed(
                         provideAvailableNameForGenTOBuilder(typeName.simpleName()));
-                    final GeneratedTransferObject subUnion = createUnion(auxiliaryGeneratedTypes, builderFactory,
-                        definingStatement, dependencies, subUnionName, module, subType, isTypedef,
-                        subType.typeDefinition());
+                    final var subUnion = createUnion(auxiliaryGeneratedTypes, builderFactory, definingStatement,
+                        dependencies, subUnionName, module, subType, isTypedef, subType.typeDefinition());
                     builder.addEnclosingTransferObject(subUnion);
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
@@ -875,8 +877,8 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     // FIXME: we should not rely on TypeDefinition
     abstract @NonNull TypeDefinition<?> extractTypeDefinition();
 
-    abstract @NonNull GeneratedTransferObject createDerivedType(@NonNull TypeBuilderFactory builderFactory,
-        @NonNull GeneratedTransferObject baseType);
+    abstract @NonNull GeneratedTransferObject<?> createDerivedType(@NonNull TypeBuilderFactory builderFactory,
+        @NonNull GeneratedTransferObject<?> baseType);
 
     /**
      * Adds to the {@code genTOBuilder} the constant which contains regular expressions from the {@code expressions}.
@@ -941,6 +943,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
      * @param name string with name of augmented node
      * @return string with the number suffix incremented by one (or 1 is added)
      */
+    @NonNullByDefault
     private static String provideAvailableNameForGenTOBuilder(final String name) {
         final int dollar = name.indexOf('$');
         if (dollar == -1) {

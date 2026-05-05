@@ -120,11 +120,16 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         return switch (type) {
             case ConcreteType concrete -> concrete;
             case ParameterizedType generated -> generated.getRawType();
-            case GeneratedTransferObject gto -> {
+            case GeneratedTransferObject<?> gto -> {
                 var rootGto = gto;
-                while (rootGto.getSuperType() != null) {
-                    rootGto = rootGto.getSuperType();
+                while (true) {
+                    final var superType = rootGto.getSuperType();
+                    if (superType == null) {
+                        break;
+                    }
+                    rootGto = superType;
                 }
+
                 for (var s : rootGto.getProperties()) {
                     if (TypeConstants.VALUE_PROP.equals(s.getName())) {
                         yield s.getReturnType();
@@ -154,9 +159,9 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         return RANK_COMPOSITE;
     }
 
-    private static GeneratedTransferObject topParentTransportObject(final GeneratedTransferObject type) {
-        GeneratedTransferObject ret = type;
-        GeneratedTransferObject parent = ret.getSuperType();
+    private static GeneratedTransferObject<?> topParentTransportObject(final GeneratedTransferObject<?> type) {
+        var ret = type;
+        var parent = ret.getSuperType();
         while (parent != null) {
             ret = parent;
             parent = ret.getSuperType();
