@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -311,15 +309,9 @@ public abstract class Generator implements Iterable<Generator> {
      *
      * @param builder transfer object which needs to be made serializable
      */
+    // FIXME: remove this method: this is implied by the resulting archetype
     static final void makeSerializable(final GeneratedTOBuilder builder) {
         builder.addImplementsType(Types.serializableType());
-        addSerialVersionUID(builder);
-    }
-
-    static final void addSerialVersionUID(final GeneratedTOBuilder gto) {
-        gto.setSUID(new GeneratedPropertyBuilderImpl("serialVersionUID")
-            .setReturnType(Types.primitiveLongType())
-            .setValue(Long.toString(SerialVersionHelper.computeSerialVersion(gto))));
     }
 
     /**

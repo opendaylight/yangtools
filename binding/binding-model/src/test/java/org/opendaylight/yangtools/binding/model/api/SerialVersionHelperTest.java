@@ -21,9 +21,9 @@ class SerialVersionHelperTest {
     @Test
     void computeDefaultSUIDTest() {
         final var generatedTypeBuilder = newBuilder("my.package", "MyName");
-        final var method = generatedTypeBuilder.addMethod("myMethodName");
-        method.setAccessModifier(AccessModifier.PUBLIC);
-        generatedTypeBuilder.addProperty("myProperty");
+        generatedTypeBuilder.addMethod("myMethodName").setAccessModifier(AccessModifier.PUBLIC)
+            .setReturnType(Types.PRIMITIVE_INT);
+        generatedTypeBuilder.addProperty("myProperty").setReadOnly(true).setReturnType(Types.PRIMITIVE_LONG);
         generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class));
 
         assertSerialVersion(6788238694991761868L, generatedTypeBuilder);
@@ -35,11 +35,11 @@ class SerialVersionHelperTest {
         final var genTypeBuilder = newBuilder("org.opendaylight.yangtools.test", "TestType");
         assertSerialVersion(3315273139240025558L, genTypeBuilder);
 
-        genTypeBuilder.addMethod("testMethod");
+        genTypeBuilder.addMethod("testMethod").setReturnType(Types.STRING);
         genTypeBuilder.addAnnotation("org.opendaylight.yangtools.test.annotation", "AnnotationTest");
         genTypeBuilder.addEnclosingTransferObject(
             new CodegenGeneratedTOBuilder(genTypeBuilder.typeName().createEnclosed("testObject")).build());
-        genTypeBuilder.addProperty("newProp");
+        genTypeBuilder.addProperty("newProp").setReturnType(Types.BOOLEAN);
         genTypeBuilder.addImplementsType(newBuilder("org.opendaylight.yangtools.test", "Type2"));
         assertSerialVersion(2532542948215379779L, genTypeBuilder);
 
@@ -53,6 +53,6 @@ class SerialVersionHelperTest {
 
     @NonNullByDefault
     private static void assertSerialVersion(final long expected, final GeneratedTypeBuilderBase<?> to) {
-        assertEquals(expected, SerialVersionHelper.computeSerialVersion(to));
+        assertEquals(expected, SerialVersionHelper.computeSerialVersion(to.build()));
     }
 }

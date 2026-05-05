@@ -48,6 +48,20 @@ public non-sealed interface KeyArchetype extends Archetype.WithStatement<KeyEffe
     @NonNullByDefault
     List<Type> fields();
 
+    /**
+     * {@return the value of the {@code serialVersionUID} of this {@link Key} class};
+     */
+    default long serialVersionUID() {
+        final var props = getProperties();
+        final var svh = new SerialVersionHelper(name())
+            .setAbstract(false)
+            .addInterface(JavaTypeName.create(Key.class));
+        for (var prop : props) {
+            svh.addField(prop.getName());
+        }
+        return svh.computeSerialVersion();
+    }
+
     @Override
     default List<GeneratedProperty> getProperties() {
         final var arg = statement().argument();

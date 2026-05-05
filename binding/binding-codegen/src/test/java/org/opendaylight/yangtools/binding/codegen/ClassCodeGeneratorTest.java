@@ -45,6 +45,8 @@ class ClassCodeGeneratorTest {
 
             @Generated("mdsal-binding-generator")
             public class DefCtor {
+                @java.io.Serial
+                private static final long serialVersionUID = 2996767336646738983L;
                 private String _foo;
                 private Integer _bar;
 
@@ -139,6 +141,8 @@ class ClassCodeGeneratorTest {
 
             @Generated("mdsal-binding-generator")
             public class DefCtor {
+                @java.io.Serial
+                private static final long serialVersionUID = 2996767336646738983L;
                 private String _foo;
                 private Integer _bar;
 

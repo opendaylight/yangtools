@@ -49,8 +49,6 @@ public sealed interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<Gene
      */
     void setBaseType(TypeDefinition<?> typeDef);
 
-    void setSUID(GeneratedPropertyBuilder suid);
-
     /**
      * Returns instance of <code>GeneratedTransferObject</code> which data are build from the data of this builder.
      *

@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -20,9 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 // FIXME: rename to TOArchetype and extends TypeObjectArchetype
 // FIXME: update documentation
 public interface GeneratedTransferObject extends GeneratedType {
-
-    default GeneratedProperty getSUID() {
-        throw uoe();
+    /**
+     * {@return the value of the {@code serialVersionUID} of this {@link TypeObject} class};
+     */
+    default long serialVersionUID() {
+        return SerialVersionHelper.computeSerialVersion(this);
     }
 
     /**
@@ -31,7 +35,7 @@ public interface GeneratedTransferObject extends GeneratedType {
      *
      * @return Generated Transfer Object or <code>null</code> if this GTO is not derived from another GTO.
      */
-    GeneratedTransferObject getSuperType();
+    @Nullable GeneratedTransferObject getSuperType();
 
     boolean isTypedef();
 

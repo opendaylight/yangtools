@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +80,8 @@ public final class SerialVersionHelper {
         }
     }
 
+    // Backward compatibility: these interfaces were retro-fitted into generated code and would affect the computation
+    // FIXME: these should just not be carried in GeneratedType
     private static final Set<ConcreteType> IGNORED_INTERFACES =
         Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
@@ -181,10 +182,10 @@ public final class SerialVersionHelper {
         return hash;
     }
 
-    public static long computeSerialVersion(final GeneratedTypeBuilderBase<?> to) {
-        final var svb = new SerialVersionHelper(to.typeName()).setAbstract(to.isAbstract());
+    public static long computeSerialVersion(final GeneratedType to) {
+        final var svb = new SerialVersionHelper(to.name()).setAbstract(to.isAbstract());
 
-        for (var iface : Collections2.filter(to.getImplementsTypes(), item -> !IGNORED_INTERFACES.contains(item))) {
+        for (var iface : Collections2.filter(to.getImplements(), item -> !IGNORED_INTERFACES.contains(item))) {
             svb.addInterface(iface.name());
         }
         for (var property : to.getProperties()) {

@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class GeneratedTOBuilderImplTest {
     @Test
@@ -54,15 +53,6 @@ class GeneratedTOBuilderImplTest {
         final var genTO = genTOBuilder.build();
 
         assertNotNull(genTO.getRestrictions());
-    }
-
-    @Test
-    void testSetSUID() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
-        genTOBuilder.setSUID(new GeneratedPropertyBuilderImpl("testProperty").setReturnType(Types.STRING));
-        final var genTO = genTOBuilder.build();
-        assertEquals("testProperty", genTO.getSUID().getName());
     }
 
     @Test

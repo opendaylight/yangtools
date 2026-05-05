@@ -8,17 +8,18 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
  * A template for {@link Key} specializations.
  */
 final class KeyTemplate extends BaseTemplate {
+    private static final @NonNull JavaTypeName KEY = JavaTypeName.create(Key.class);
+
     @NonNullByDefault
     KeyTemplate(final KeyArchetype archetype) {
         super(archetype);
@@ -28,94 +29,86 @@ final class KeyTemplate extends BaseTemplate {
     BlockBuilder body() {
         final var type = (KeyArchetype) type();
         final var typeName = type.simpleName();
-        final var impl = BindingTypes.key(TypeRef.of(type.entryObject()));
+        final var entryObject = importedName(type.entryObject());
 
         return newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(type)))
+            .eol("/**")
+            .str(" * This class represents the key of {@link ").str(entryObject).eol("} class.")
+            .eol(" *")
+            .str(" * @see ").eol(entryObject)
+            .eol(" */")
             .blk(annotationDeclaration())
             .eol(generatedAnnotation())
-            .str("public final class ").str(typeName).str(" implements ").str(importedName(impl)).jBlock(bb -> {
-                final var props = type.getProperties();
-                final var svh = new SerialVersionHelper(type.name())
-                    .setAbstract(false)
-                    .addInterface(impl.getRawType().name());
-                for (var prop : props) {
-                    svh.addField(prop.getName());
-                }
-
-                bb
-                    .eol("@java.io.Serial")
-                    .str("private static final long serialVersionUID = ").jLong(svh.computeSerialVersion()).eS()
-                    .newLine();
-
-                // FIXME: generate checker methods for each property
-
-                // Fields
-                for (var prop : props) {
-                    bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
-                }
-
-                // All values constructor
-                final var sortedProps = props.stream()
-                    .sorted(PROP_COMPARATOR)
-                    .collect(Collectors.toUnmodifiableList());
-
-                bb
-                    .nl()
-                    .eol("/**")
-                    .eol(" * Constructs an instance.")
-                    .eol(" *");
-                for (var prop : sortedProps) {
-                    bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
-                }
-                bb
-                    .eol(" */")
-                    .str("public ").str(typeName).str("(").str(asNonNullArgumentsDeclaration(sortedProps)).str(")")
-                        .oB();
-                for (var prop : sortedProps) {
-                    final var fieldName = fieldName(prop);
-                    bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
-                        .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
-                    // FIXME: generate checker method invocation
-                }
-                bb.cB();
-
-                final var it = props.iterator();
-                do {
-                    final var field = it.next();
-                    final var fieldName = field.getName();
-                    final var returnType = field.getReturnType();
-
-                    bb
-                        .nl()
-                        // FIXME: emit a {@return .. } javadoc
-                        .eol("/**")
-                        .str(" * Return ").str(fieldName).eol(", guaranteed to be non-null.")
-                        .eol(" *")
-                        .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
-                            .eol(", guaranteed to be non-null.")
-                        .eol(" */")
-                        .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()")
-                            .oB()
-                            .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
-                        .cB();
-                } while (it.hasNext());
-
-                bb
-                    .nl()
-                    .blk(generateHashCode(props))
-                    .nl()
-                    .blk(generateEquals(props))
-                    .nl()
-                    .blk(generateToString(props));
-            }).nl();
+            .str("public final class ").str(typeName).str(" implements ").gen(importedName(KEY), entryObject)
+                .jBlock(this::classBody).nl();
     }
 
+    // Split out to keep indentation in check
     @NonNullByDefault
-    private String formatDataForJavaDoc(final KeyArchetype type) {
-        final var importedName = importedName(type.entryObject());
-        return "This class represents the key of {@link " + importedName + "} class.\n"
-            +  '\n'
-            +  "@see " + importedName + '\n';
+    private void classBody(final BlockBuilder bb) {
+        final var type = (KeyArchetype) type();
+
+        bb
+            .eol("@java.io.Serial")
+            .str("private static final long serialVersionUID = ").jLong(type.serialVersionUID()).eS()
+            .newLine();
+
+        // Fields
+        // FIXME: generate checker methods for each property
+        final var props = type.getProperties();
+        for (var prop : props) {
+            bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
+        }
+
+        // All values constructor
+        final var sortedProps = props.stream().sorted(PROP_COMPARATOR).collect(Collectors.toUnmodifiableList());
+        bb
+            .nl()
+            .eol("/**")
+            .eol(" * Constructs an instance.")
+            .eol(" *");
+        for (var prop : sortedProps) {
+            bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
+        }
+        bb
+            .eol(" */")
+            .str("public ").str(type.simpleName()).str("(").str(asNonNullArgumentsDeclaration(sortedProps)).str(")")
+                .oB();
+        for (var prop : sortedProps) {
+            final var fieldName = fieldName(prop);
+            bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
+                .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
+            // FIXME: generate checker method invocation
+        }
+        bb.cB();
+
+        final var it = props.iterator();
+        do {
+            final var field = it.next();
+            final var fieldName = field.getName();
+            final var returnType = field.getReturnType();
+
+            bb
+                .nl()
+                // FIXME: emit a {@return .. } javadoc
+                .eol("/**")
+                .str(" * Return ").str(fieldName).eol(", guaranteed to be non-null.")
+                .eol(" *")
+                .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
+                .eol(", guaranteed to be non-null.")
+                .eol(" */")
+                .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()")
+                .oB()
+                .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
+                .cB();
+        } while (it.hasNext());
+
+        bb
+            .nl()
+            .blk(generateHashCode(props))
+            .nl()
+            .blk(generateEquals(props))
+            .nl()
+            .blk(generateToString(props));
     }
 }

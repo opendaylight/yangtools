@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -167,23 +168,17 @@ sealed class ClassTemplate extends BaseTemplate
         if (!isInnerClass) {
             bb.eol(generatedAnnotation());
         }
-        bb.frg(generateClassDeclaration(isInnerClass)).oB();
-
-        // serialVersionUID
-        final var suid = genTO.getSUID();
-        if (suid != null) {
-            bb
-                .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").str(suid.getValue()).eol("L;");
-        }
-
         bb
-            // inner classes
-            .blk(generateInnerClasses(type().getEnclosedTypes()))
-            // inner EnumTypeObjects
-            .blk(generateInnerEnumTypeObjects(enums))
-            // constants
-            .blk(constantsDeclarations());
+            .frg(generateClassDeclaration(isInnerClass)).oB()
+                .eol("@java.io.Serial")
+                .str("private static final long serialVersionUID = ")
+                    .jLong(SerialVersionHelper.computeSerialVersion(genTO)).eS()
+                 // inner classes
+                .blk(generateInnerClasses(type().getEnclosedTypes()))
+                // inner EnumTypeObjects
+                .blk(generateInnerEnumTypeObjects(enums))
+                // constants
+                .blk(constantsDeclarations());
 
         // fields
         if (!properties.isEmpty()) {
@@ -341,7 +336,7 @@ sealed class ClassTemplate extends BaseTemplate
      * {@return string with class declaration in JAVA format}
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
      */
-    @Nullable BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
+    private @NonNull BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
         final var type = type();
 
         final var bb = newBlockBuilder()

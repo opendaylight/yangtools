@@ -11,18 +11,15 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 
 // FIXME: package-private and abstract
 public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
         permits CodegenBitsTypeObjectArchetypeBuilder, CodegenScalarTypeObjectArchetypeBuilder,
                 CodegenUnionTypeObjectArchetypeBuilder {
     private Restrictions restrictions;
-    private GeneratedPropertyBuilder suid;
     private String reference;
     private String description;
     private String moduleName;
@@ -37,11 +34,6 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
     @Override
     public final void setRestrictions(final Restrictions restrictions) {
         this.restrictions = requireNonNull(restrictions);
-    }
-
-    @Override
-    public final void setSUID(final GeneratedPropertyBuilder newSuid) {
-        suid = requireNonNull(newSuid);
     }
 
     @Override
@@ -66,7 +58,6 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
 
     static class GTO extends AbstractGeneratedTransferObject {
         private final Restrictions restrictions;
-        private final GeneratedProperty suid;
         private final String reference;
         private final String description;
         private final String moduleName;
@@ -77,22 +68,11 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
             reference = builder.reference;
             description = builder.description;
             moduleName = builder.moduleName;
-
-            if (builder.suid == null) {
-                suid = null;
-            } else {
-                suid = builder.suid.toInstance();
-            }
         }
 
         @Override
         public final Restrictions getRestrictions() {
             return restrictions;
-        }
-
-        @Override
-        public final GeneratedProperty getSUID() {
-            return suid;
         }
 
         @Override

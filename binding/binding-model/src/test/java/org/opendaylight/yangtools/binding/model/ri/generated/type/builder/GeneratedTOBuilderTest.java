@@ -25,7 +25,6 @@ class GeneratedTOBuilderTest {
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
         final var suid = genTypeBuilder.addProperty("SUID").setReturnType(BindingTypes.SCALAR_TYPE_OBJECT);
-        genTypeBuilder.setSUID(suid);
         genTypeBuilder.addMethod("addCount").setReturnType(Types.VOID);
 
         final var genTO = genTypeBuilder.build();
