@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -63,22 +65,29 @@ final class BindingJavaFileGenerator {
     private void generateFiles(final List<GeneratedType> types) {
         for (var type : types) {
             switch (type) {
-                case BitsTypeObjectArchetype archetype -> generateFile(new BitsTypeObjectGenerator(archetype));
-                case DataRootArchetype archetype -> {
-                    generateFile(new DataRootGenerator(archetype));
-                    generateBuilder(archetype);
-                }
-                case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectGenerator(archetype));
-                case FeatureArchetype archetype -> generateFile(new FeatureGenerator(archetype));
-                case KeyArchetype archetype -> generateFile(new KeyGenerator(archetype));
-                case ScalarTypeObjectArchetype archetype -> generateFile(new ScalarTypeObjectGenerator(archetype));
-                case UnionTypeObjectArchetype archetype -> generateFile(new UnionTypeObjectGenerator(archetype));
-                case GeneratedTransferObject gto -> generateFile(new TOGenerator(gto));
+                case Archetype archetype -> generateArchetype(archetype);
+                // FIXME: this should never happen and should become guaranteed by the type system
+                case GeneratedTransferObject gto -> throw new VerifyException("Unsupported " + gto);
                 default -> {
                     generateFile(new InterfaceGenerator(type));
                     generateBuilder(type);
                 }
             }
+        }
+    }
+
+    private void generateArchetype(final Archetype type) {
+        switch (type) {
+            case BitsTypeObjectArchetype archetype -> generateFile(new BitsTypeObjectGenerator(archetype));
+            case DataRootArchetype archetype -> {
+                generateFile(new DataRootGenerator(archetype));
+                generateBuilder(archetype);
+            }
+            case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectGenerator(archetype));
+            case FeatureArchetype archetype -> generateFile(new FeatureGenerator(archetype));
+            case KeyArchetype archetype -> generateFile(new KeyGenerator(archetype));
+            case ScalarTypeObjectArchetype archetype -> generateFile(new ScalarTypeObjectGenerator(archetype));
+            case UnionTypeObjectArchetype archetype -> generateFile(new UnionTypeObjectGenerator(archetype));
         }
     }
 
