@@ -29,7 +29,38 @@ import org.eclipse.jdt.annotation.Nullable;
  * <p>By the definition of the interface constant, enum, enclosed types and method definitions MUST be public, so there
  * is no need to specify the scope of visibility.
  */
-public non-sealed interface GeneratedType extends Type, DocumentedType {
+public non-sealed interface GeneratedType extends Type {
+    /**
+     * Returns a string that contains a human-readable textual description of
+     * type definition.
+     *
+     * @return a human-readable textual description of type definition.
+     */
+    default String getDescription() {
+        throw uoe();
+    }
+
+    /**
+     * Returns a string that is used to specify a textual cross-reference to an
+     * external document, either another module that defines related management
+     * information, or a document that provides additional information relevant
+     * to this definition.
+     *
+     * @return a textual cross-reference to an external document.
+     */
+    default String getReference() {
+        throw uoe();
+    }
+
+    /**
+     * Returns the name of the module, in which generated type was specified.
+     *
+     * @return the name of the module, in which generated type was specified.
+     */
+    default String getModuleName() {
+        throw uoe();
+    }
+
     /**
      * {@return comment string associated with Generated Type}
      */
@@ -84,5 +115,11 @@ public non-sealed interface GeneratedType extends Type, DocumentedType {
     /**
      * {@return YANG source definition, or {@code null} when unavailable}
      */
-    @Nullable YangSourceDefinition yangSourceDefinition();
+    default @Nullable YangSourceDefinition yangSourceDefinition() {
+        throw uoe();
+    }
+
+    private static UnsupportedOperationException uoe() {
+        return new UnsupportedOperationException("Not available at runtime");
+    }
 }
