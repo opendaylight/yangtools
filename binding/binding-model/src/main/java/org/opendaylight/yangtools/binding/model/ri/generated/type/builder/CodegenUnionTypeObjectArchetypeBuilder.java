@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -32,20 +29,6 @@ public final class CodegenUnionTypeObjectArchetypeBuilder extends CodegenGenerat
 
     @Override
     public UnionTypeObjectArchetype build() {
-        return new UnionGTO(this, typePropertyNames);
-    }
-
-    private static final class UnionGTO extends GTO implements UnionTypeObjectArchetype {
-        private final @NonNull List<String> typePropertyNames;
-
-        UnionGTO(final CodegenGeneratedTOBuilder builder, final List<String> typePropertyNames) {
-            super(builder);
-            this.typePropertyNames = requireNonNull(typePropertyNames);
-        }
-
-        @Override
-        public List<String> typePropertyNames() {
-            return typePropertyNames;
-        }
+        return new CodegenUnionTO(this, typePropertyNames);
     }
 }

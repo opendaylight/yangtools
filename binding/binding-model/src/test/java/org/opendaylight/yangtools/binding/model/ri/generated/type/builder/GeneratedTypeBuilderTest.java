@@ -228,7 +228,7 @@ class GeneratedTypeBuilderTest {
     void addEnclosingTransferObjectIllegalArgumentTest2() {
         final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
         assertThrows(IllegalArgumentException.class,
-            () -> builder.addEnclosingTransferObject((GeneratedTransferObject) null));
+            () -> builder.addEnclosingTransferObject((GeneratedTransferObject<?>) null));
     }
 
     @Test

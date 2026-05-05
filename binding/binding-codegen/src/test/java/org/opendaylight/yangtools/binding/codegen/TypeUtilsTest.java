@@ -19,14 +19,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 
 @ExtendWith(MockitoExtension.class)
 class TypeUtilsTest {
     @Mock
-    private GeneratedTransferObject rootType;
+    private ScalarTypeObjectArchetype rootType;
     @Mock
-    private GeneratedTransferObject innerType;
+    private ScalarTypeObjectArchetype innerType;
     @Mock
     private GeneratedProperty property;
 

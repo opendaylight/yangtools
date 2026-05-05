@@ -40,7 +40,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      *
      * @param genTO Name of Enclosing Type
      */
-    T addEnclosingTransferObject(GeneratedTransferObject genTO);
+    T addEnclosingTransferObject(GeneratedTransferObject<?> genTO);
 
     /**
      * Adds String definition of comment into Method Signature definition.<br>

@@ -85,16 +85,16 @@ sealed class ClassTemplate extends BaseTemplate
      * List of constant instances which are generated as JAVA public static final attributes.
      */
     private final @NonNull List<Constant> consts;
-    private final @NonNull GeneratedTransferObject genTO;
+    private final @NonNull GeneratedTransferObject<?> genTO;
     private final AbstractRangeGenerator<?> rangeGenerator;
 
     @NonNullByDefault
-    ClassTemplate(final GeneratedTransferObject genType) {
+    ClassTemplate(final GeneratedTransferObject<?> genType) {
         this(GeneratedClass.of(genType), genType);
     }
 
     @NonNullByDefault
-    ClassTemplate(final GeneratedClass javaType, final GeneratedTransferObject genType) {
+    ClassTemplate(final GeneratedClass javaType, final GeneratedTransferObject<?> genType) {
         super(javaType, genType);
         genTO = requireNonNull(genType);
         properties = genTO.getProperties();
@@ -115,7 +115,8 @@ sealed class ClassTemplate extends BaseTemplate
     }
 
     @NonNullByDefault
-    static final BlockBuilder generateAsInner(final GeneratedClass.Nested javaType, final GeneratedTransferObject gto) {
+    static final BlockBuilder generateAsInner(final GeneratedClass.Nested javaType,
+            final GeneratedTransferObject<?> gto) {
         return switch (gto) {
             case BitsTypeObjectArchetype archetype -> BitsTypeObjectTemplate.generateAsInner(javaType, archetype);
             case ScalarTypeObjectArchetype archetype -> ScalarTypeObjectTemplate.generateAsInner(javaType, archetype);
@@ -140,12 +141,14 @@ sealed class ClassTemplate extends BaseTemplate
      *         extension exists the method is recursive called.
      */
     @VisibleForTesting
-    static final @NonNull List<GeneratedProperty> propertiesOfAllParents(final @NonNull GeneratedTransferObject gto) {
+    @NonNullByDefault
+    static final List<GeneratedProperty> propertiesOfAllParents(final GeneratedTransferObject<?> gto) {
         final var superType = gto.getSuperType();
         return superType == null ? List.of() : streamAllProperties(superType).collect(Collectors.toUnmodifiableList());
     }
 
-    private static Stream<GeneratedProperty> streamAllProperties(final @NonNull GeneratedTransferObject gto) {
+    @NonNullByDefault
+    private static Stream<GeneratedProperty> streamAllProperties(final GeneratedTransferObject<?> gto) {
         final var stream = gto.getProperties().stream().filter(GeneratedProperty::isReadOnly);
         final var superType = gto.getSuperType();
         return superType == null ? stream : Stream.concat(stream, streamAllProperties(superType));
@@ -234,7 +237,7 @@ sealed class ClassTemplate extends BaseTemplate
     }
 
     private boolean isBitsTypeObject() {
-        GeneratedTransferObject wlk = genTO;
+        var wlk = genTO;
         do {
             for (var impl : wlk.getImplements()) {
                 if (BITS_TYPE_OBJECT.name().equals(impl.name())) {
@@ -532,7 +535,7 @@ sealed class ClassTemplate extends BaseTemplate
     final @Nullable BlockBuilder generateRestrictions(final @NonNull Type type, final @NonNull String paramName,
             final @NonNull Type returnType) {
         final var typeRestrictions = switch (type) {
-            case GeneratedTransferObject gto -> gto.getRestrictions();
+            case GeneratedTransferObject<?> gto -> gto.getRestrictions();
             case RestrictedType restricted -> restricted.restrictions();
             case null, default -> null;
         };

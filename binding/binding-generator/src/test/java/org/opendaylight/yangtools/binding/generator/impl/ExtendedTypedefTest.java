@@ -24,10 +24,10 @@ class ExtendedTypedefTest {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             ExtendedTypedefTest.class, "/typedef_of_typedef.yang", "/ietf-models/ietf-inet-types.yang"));
 
-        GeneratedTransferObject simpleTypedef4 = null;
-        GeneratedTransferObject extendedTypedefUnion = null;
-        GeneratedTransferObject unionTypedef = null;
-        GeneratedTransferObject typedefFromImport = null;
+        GeneratedTransferObject<?> simpleTypedef4 = null;
+        GeneratedTransferObject<?> extendedTypedefUnion = null;
+        GeneratedTransferObject<?> unionTypedef = null;
+        GeneratedTransferObject<?> typedefFromImport = null;
         for (var type : genTypes) {
             if (type instanceof GeneratedTransferObject gto) {
                 if (type.simpleName().equals("SimpleTypedef4")) {

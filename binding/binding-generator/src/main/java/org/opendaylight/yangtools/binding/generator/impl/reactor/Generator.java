@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -171,14 +170,6 @@ public abstract class Generator implements Iterable<Generator> {
             return genType;
         }
         throw new VerifyException("No type generated for " + this);
-    }
-
-    final @NonNull GeneratedTransferObject getGeneratedTO(final TypeBuilderFactory builderFactory) {
-        final var genType = getGeneratedType(builderFactory);
-        if (genType instanceof GeneratedTransferObject gto) {
-            return gto;
-        }
-        throw new VerifyException("Unexpected generated type " + genType);
     }
 
     final @Nullable GeneratedType tryGeneratedType(final TypeBuilderFactory builderFactory) {

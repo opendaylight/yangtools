@@ -11,6 +11,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -52,16 +54,19 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
     }
 
     @Override
-    public GeneratedTransferObject build() {
-        return new GTO(this);
+    public GeneratedTransferObject<?> build() {
+        return new GTO<>(this);
     }
 
-    static class GTO extends AbstractGeneratedTransferObject {
-        private final Restrictions restrictions;
-        private final String reference;
-        private final String description;
-        private final String moduleName;
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    static sealed class GTO<T extends TypeObject> extends AbstractGeneratedTransferObject<T>
+            permits CodegenBitsTO, CodegenScalarTO, CodegenUnionTO {
+        private final @Nullable Restrictions restrictions;
+        private final @Nullable String reference;
+        private final @Nullable String description;
+        private final @Nullable String moduleName;
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         GTO(final CodegenGeneratedTOBuilder builder) {
             super(builder);
             restrictions = builder.restrictions;
@@ -70,21 +75,25 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
             moduleName = builder.moduleName;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         public final Restrictions getRestrictions() {
             return restrictions;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         public final String getDescription() {
             return description;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         public final String getReference() {
             return reference;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         public final String getModuleName() {
             return moduleName;

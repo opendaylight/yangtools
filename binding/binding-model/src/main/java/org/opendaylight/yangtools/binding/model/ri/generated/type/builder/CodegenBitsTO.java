@@ -8,18 +8,13 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder.GTO;
 
-public final class CodegenBitsTypeObjectArchetypeBuilder extends CodegenGeneratedTOBuilder
-        implements BitsTypeObjectArchetype.Builder {
-    @NonNullByDefault
-    public CodegenBitsTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
-        super(typeName);
-    }
-
-    @Override
-    public BitsTypeObjectArchetype build() {
-        return new CodegenBitsTO(this);
+@NonNullByDefault
+final class CodegenBitsTO extends GTO<BitsTypeObject> implements BitsTypeObjectArchetype {
+    CodegenBitsTO(final CodegenGeneratedTOBuilder builder) {
+        super(builder);
     }
 }

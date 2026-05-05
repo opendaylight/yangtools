@@ -303,7 +303,7 @@ public class DefaultBindingGeneratorTest {
         return assertInstanceOf(EnumTypeObjectArchetype.class, assertGeneratedType(name));
     }
 
-    private static GeneratedTransferObject assertGTO(final JavaTypeName name) {
+    private static GeneratedTransferObject<?> assertGTO(final JavaTypeName name) {
         return assertInstanceOf(GeneratedTransferObject.class, assertGeneratedType(name));
     }
 }

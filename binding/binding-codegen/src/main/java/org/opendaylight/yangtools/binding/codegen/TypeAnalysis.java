@@ -76,7 +76,7 @@ record TypeAnalysis(
                         augmentType = BindingTypes.augmentation(augmentableType);
                     }
                 }
-                case GeneratedTransferObject gto -> {
+                case GeneratedTransferObject<?> gto -> {
                     // no-op
                 }
                 case GeneratedType ifc -> {

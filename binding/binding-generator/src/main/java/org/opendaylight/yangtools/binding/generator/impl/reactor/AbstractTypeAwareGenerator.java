@@ -71,8 +71,8 @@ abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?
     }
 
     @Override
-    final GeneratedTransferObject createDerivedType(final TypeBuilderFactory builderFactory,
-            final GeneratedTransferObject baseType) {
+    final GeneratedTransferObject<?> createDerivedType(final TypeBuilderFactory builderFactory,
+            final GeneratedTransferObject<?> baseType) {
         throw new UnsupportedOperationException();
     }
 

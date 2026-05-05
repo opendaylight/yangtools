@@ -55,7 +55,7 @@ final class TypeUtils {
             type, rootGto, rootGto.getProperties(), TypeConstants.VALUE_PROP));
     }
 
-    static Type encapsulatedValueType(final GeneratedTransferObject gto) {
+    static Type encapsulatedValueType(final GeneratedTransferObject<?> gto) {
         return gto.findProperty(TypeConstants.VALUE_PROP).orElseThrow().getReturnType();
     }
 }
