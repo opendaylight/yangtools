@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,6 +11,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Collections2;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -19,7 +21,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -32,7 +37,7 @@ import org.slf4j.LoggerFactory;
 // FIXME: this should live in binding-codegen
 @Beta
 @NonNullByDefault
-public final class SerialVersionBuilder {
+public final class SerialVersionHelper {
     private record MethodDesc(String name, AccessModifier accessModifier) {
         MethodDesc {
             requireNonNull(name);
@@ -76,6 +81,8 @@ public final class SerialVersionBuilder {
         }
     }
 
+    private static final Set<ConcreteType> IGNORED_INTERFACES =
+        Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
     private static final Comparator<MethodDesc> METHOD_COMPARATOR = Comparator.comparing(MethodDesc::name);
     private static final DigestFactory DIGEST_FACTORY;
@@ -95,7 +102,7 @@ public final class SerialVersionBuilder {
             md.clone();
         } catch (CloneNotSupportedException e) {
             final var provider = md.getProvider();
-            final var log = LoggerFactory.getLogger(SerialVersionBuilder.class);
+            final var log = LoggerFactory.getLogger(SerialVersionHelper.class);
             if (log.isDebugEnabled()) {
                 log.warn("SHA-1 provided by {} does not support clone()", provider.getName(), e);
             } else {
@@ -114,33 +121,33 @@ public final class SerialVersionBuilder {
 
     private boolean isAbstract = true;
 
-    public SerialVersionBuilder(final JavaTypeName clazz) {
+    public SerialVersionHelper(final JavaTypeName clazz) {
         this.clazz = requireNonNull(clazz);
     }
 
-    public SerialVersionBuilder setAbstract(final boolean newAbstract) {
+    public SerialVersionHelper setAbstract(final boolean newAbstract) {
         isAbstract = newAbstract;
         return this;
     }
 
-    public SerialVersionBuilder addField(final String name) {
+    public SerialVersionHelper addField(final String name) {
         fields.add(requireNonNull(name));
         return this;
     }
 
-    public SerialVersionBuilder addInterface(final JavaTypeName name) {
+    public SerialVersionHelper addInterface(final JavaTypeName name) {
         interfaces.add(requireNonNull(name));
         return this;
     }
 
-    public SerialVersionBuilder addMethod(final String name, final AccessModifier accessModifier) {
+    public SerialVersionHelper addMethod(final String name, final AccessModifier accessModifier) {
         if (accessModifier != AccessModifier.PRIVATE) {
             methods.add(new MethodDesc(name, accessModifier));
         }
         return this;
     }
 
-    public long build() {
+    public long computeSerialVersion() {
         final var baos = new ByteArrayOutputStream();
         try (var dos = new DataOutputStream(baos)) {
             dos.writeUTF(clazz.simpleName());
@@ -172,5 +179,21 @@ public final class SerialVersionBuilder {
             hash = hash << 8 | hashBytes[i] & 0xFF;
         }
         return hash;
+    }
+
+    public static long computeSerialVersion(final GeneratedTypeBuilderBase<?> to) {
+        final var svb = new SerialVersionHelper(to.typeName()).setAbstract(to.isAbstract());
+
+        for (var iface : Collections2.filter(to.getImplementsTypes(), item -> !IGNORED_INTERFACES.contains(item))) {
+            svb.addInterface(iface.name());
+        }
+        for (var property : to.getProperties()) {
+            svb.addField(property.getName());
+        }
+        for (var method : to.getMethodDefinitions()) {
+            svb.addMethod(method.getName(), method.getAccessModifier());
+        }
+
+        return svb.computeSerialVersion();
     }
 }

@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -93,9 +95,8 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<? extends DataSchemaNode> getChildNodes() {
-        return (Collection) Collections2.filter(substatements, DataSchemaNode.class::isInstance);
+        return filterSubstatements(DataSchemaNode.class::isInstance);
     }
 
     @Override
@@ -114,15 +115,13 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<? extends NotificationDefinition> getNotifications() {
-        return (Collection) Collections2.filter(substatements, NotificationDefinition.class::isInstance);
+        return filterSubstatements(NotificationDefinition.class::isInstance);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<? extends ActionDefinition> getActions() {
-        return (Collection) Collections2.filter(substatements, ActionDefinition.class::isInstance);
+        return filterSubstatements(ActionDefinition.class::isInstance);
     }
 
     @Override
@@ -161,5 +160,11 @@ final class TargetAugmentEffectiveStatement implements AugmentEffectiveStatement
             .add("delegate", delegate)
             .add("substatements", substatements.size())
             .toString();
+    }
+
+    @NonNullByDefault
+    @SuppressWarnings("unchecked")
+    private <T> Collection<? extends T> filterSubstatements(final Predicate<EffectiveStatement<?, ?>> isInstance) {
+        return (Collection<? extends T>) Collections2.filter(substatements, isInstance);
     }
 }

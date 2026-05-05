@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
@@ -318,7 +319,7 @@ public abstract class Generator implements Iterable<Generator> {
     static final void addSerialVersionUID(final GeneratedTOBuilder gto) {
         gto.setSUID(new GeneratedPropertyBuilderImpl("serialVersionUID")
             .setReturnType(Types.primitiveLongType())
-            .setValue(Long.toString(SerialVersionHelper.computeDefaultSUID(gto))));
+            .setValue(Long.toString(SerialVersionHelper.computeSerialVersion(gto))));
     }
 
     /**
