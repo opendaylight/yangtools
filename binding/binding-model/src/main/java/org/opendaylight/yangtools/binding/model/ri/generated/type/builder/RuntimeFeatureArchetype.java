@@ -31,19 +31,4 @@ record RuntimeFeatureArchetype(
         requireNonNull(dataRoot);
         requireNonNull(statement);
     }
-
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getReference() {
-        return null;
-    }
-
-    @Override
-    public String getModuleName() {
-        return null;
-    }
 }

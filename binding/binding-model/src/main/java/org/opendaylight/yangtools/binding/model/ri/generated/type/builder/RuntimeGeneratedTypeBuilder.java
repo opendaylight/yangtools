@@ -48,24 +48,5 @@ public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuil
         GeneratedTypeImpl(final RuntimeGeneratedTypeBuilder builder) {
             super(builder);
         }
-
-        @Override
-        public String getDescription() {
-            throw unsupported();
-        }
-
-        @Override
-        public String getReference() {
-            throw unsupported();
-        }
-
-        @Override
-        public String getModuleName() {
-            throw unsupported();
-        }
-
-        private static UnsupportedOperationException unsupported() {
-            return new UnsupportedOperationException("Not available at runtime");
-        }
     }
 }
