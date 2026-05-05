@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -33,20 +32,5 @@ record RuntimeKeyArchetype(
         requireNonNull(statement);
         fields = List.copyOf(fields);
         verify(fields.size() == statement.argument().size());
-    }
-
-    @Override
-    public @Nullable String getDescription() {
-        return null;
-    }
-
-    @Override
-    public @Nullable String getReference() {
-        return null;
-    }
-
-    @Override
-    public @Nullable String getModuleName() {
-        return null;
     }
 }
