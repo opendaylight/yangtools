@@ -21,12 +21,12 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
@@ -66,8 +66,6 @@ final class BindingJavaFileGenerator {
         for (var type : types) {
             switch (type) {
                 case Archetype archetype -> generateArchetype(archetype);
-                // FIXME: this should never happen and should become guaranteed by the type system
-                case GeneratedTransferObject gto -> throw new VerifyException("Unsupported " + gto);
                 default -> {
                     generateFile(new InterfaceGenerator(type));
                     generateBuilder(type);
@@ -88,6 +86,7 @@ final class BindingJavaFileGenerator {
             case KeyArchetype archetype -> generateFile(new KeyGenerator(archetype));
             case ScalarTypeObjectArchetype archetype -> generateFile(new ScalarTypeObjectGenerator(archetype));
             case UnionTypeObjectArchetype archetype -> generateFile(new UnionTypeObjectGenerator(archetype));
+            case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
         }
     }
 

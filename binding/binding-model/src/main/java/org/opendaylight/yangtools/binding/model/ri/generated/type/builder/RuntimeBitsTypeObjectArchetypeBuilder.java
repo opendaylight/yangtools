@@ -20,12 +20,6 @@ public final class RuntimeBitsTypeObjectArchetypeBuilder extends AbstractGenerat
 
     @Override
     public BitsTypeObjectArchetype build() {
-        return new BitsGTO(this);
-    }
-
-    private static final class BitsGTO extends AbstractGeneratedTransferObject implements BitsTypeObjectArchetype {
-        BitsGTO(final RuntimeBitsTypeObjectArchetypeBuilder builder) {
-            super(builder);
-        }
+        return new RuntimeBitsTO(this);
     }
 }

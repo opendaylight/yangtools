@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.TypeObject;
 
 /**
@@ -18,9 +17,8 @@ import org.opendaylight.yangtools.binding.TypeObject;
  * @since 16.0.0
  */
 @Beta
-@NonNullByDefault
 public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archetype
-        permits BitsTypeObjectArchetype, EnumTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
+        permits EnumTypeObjectArchetype, GeneratedTransferObject {
     @Override
     @Deprecated(forRemoval = true)
     default boolean isAbstract() {

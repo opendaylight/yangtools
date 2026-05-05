@@ -81,8 +81,8 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     }
 
     @Override
-    GeneratedTransferObject createDerivedType(final TypeBuilderFactory builderFactory,
-            final GeneratedTransferObject baseType) {
+    GeneratedTransferObject<?> createDerivedType(final TypeBuilderFactory builderFactory,
+            final GeneratedTransferObject<?> baseType) {
         final var typeName = typeName();
 
         final var builder = builderFactory.newTOBuilder(typeName, baseType);
@@ -108,7 +108,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     }
 
     private static void addValidBits(final GeneratedTOBuilder builder, final BitsTypeDefinition typedef,
-            final GeneratedTransferObject baseType) {
+            final GeneratedTransferObject<?> baseType) {
         final var baseDef = verifyNotNull(baseBitsDefinition(baseType), "Could not find definition in %s", baseType);
         final var myBits = typedef.getBits();
         if (myBits.size() != baseDef.getBits().size()) {
@@ -116,7 +116,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         }
     }
 
-    private static BitsTypeDefinition baseBitsDefinition(final GeneratedTransferObject gto) {
+    private static BitsTypeDefinition baseBitsDefinition(final GeneratedTransferObject<?> gto) {
         var wlk = gto;
         while (wlk != null) {
             for (var constant : wlk.getConstantDefinitions()) {

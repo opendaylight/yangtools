@@ -35,7 +35,7 @@ public sealed interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<Gene
      * @param genTransObj Generated Transfer Object
      * @return This instance of builder
      */
-    GeneratedTOBuilder setExtendsType(GeneratedTransferObject genTransObj);
+    GeneratedTOBuilder setExtendsType(GeneratedTransferObject<?> genTransObj);
 
     @NonNullByDefault
     void setRestrictions(Restrictions restrictions);
@@ -55,5 +55,5 @@ public sealed interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<Gene
      * @return generated transfer object instance
      */
     @Override
-    GeneratedTransferObject build();
+    GeneratedTransferObject<?> build();
 }

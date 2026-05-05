@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -23,7 +24,7 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
         implements GeneratedTOBuilder permits CodegenGeneratedTOBuilder, RuntimeBitsTypeObjectArchetypeBuilder,
                    RuntimeScalarTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
     // FIXME are these three referenced anywhere at runtime?
-    private GeneratedTransferObject extendsType;
+    private GeneratedTransferObject<?> extendsType;
     private boolean isTypedef = false;
     private TypeDefinition<?> baseType = null;
 
@@ -33,7 +34,7 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     }
 
     @Override
-    public final GeneratedTOBuilder setExtendsType(final GeneratedTransferObject genTransObj) {
+    public final GeneratedTOBuilder setExtendsType(final GeneratedTransferObject<?> genTransObj) {
         Preconditions.checkArgument(genTransObj != null, "Generated Transfer Object cannot be null!");
         extendsType = genTransObj;
         return this;
@@ -95,12 +96,15 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
         // No-op
     }
 
-    abstract static class AbstractGeneratedTransferObject extends AbstractGeneratedType
-            implements GeneratedTransferObject {
-        private final GeneratedTransferObject extendsType;
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    public abstract static sealed class AbstractGeneratedTransferObject<T extends TypeObject>
+            extends AbstractGeneratedType implements GeneratedTransferObject<T>
+            permits RuntimeBitsTO, RuntimeScalarTO, RuntimeUnionTO, CodegenGeneratedTOBuilder.GTO {
+        private final GeneratedTransferObject<?> extendsType;
         private final boolean isTypedef;
         private final TypeDefinition<?> baseType;
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         AbstractGeneratedTransferObject(final AbstractGeneratedTOBuilder builder) {
             super(builder);
             extendsType = builder.extendsType;
@@ -108,26 +112,31 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
             baseType = builder.baseType;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         public final boolean isTypedef() {
             return isTypedef;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         public final TypeDefinition<?> getBaseType() {
             return baseType;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
-        public final GeneratedTransferObject getSuperType() {
+        public final GeneratedTransferObject<?> getSuperType() {
             return extendsType;
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
             return super.addToStringAttributes(helper).add("extends", getSuperType());
         }
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         public static final String serializeTypedef(final Type type) {
             if (!(type instanceof ParameterizedType parameterizedType)) {
                 return type.canonicalName();

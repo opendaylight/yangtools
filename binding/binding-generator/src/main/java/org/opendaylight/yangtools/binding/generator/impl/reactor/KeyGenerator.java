@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
@@ -45,7 +46,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
         return domain.addSecondary(this, listGen.getMember(), Naming.KEY_SUFFIX);
     }
 
-    KeyArchetype getArchetype(final TypeBuilderFactory builderFactory) {
+    @NonNull KeyArchetype getArchetype(final TypeBuilderFactory builderFactory) {
         return (KeyArchetype) getGeneratedType(builderFactory);
     }
 

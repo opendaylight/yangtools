@@ -69,7 +69,7 @@ enum ScalarTypeKind {
         return hasRestrictions;
     }
 
-    private static boolean hasRestrictions(final GeneratedTransferObject gto) {
+    private static boolean hasRestrictions(final GeneratedTransferObject<?> gto) {
         final var restrictions = gto.getRestrictions();
         return restrictions != null && !restrictions.isEmpty();
     }
@@ -82,7 +82,7 @@ enum ScalarTypeKind {
         throw new VerifyException("Unexpected archetype " + archetype);
     }
 
-    private static @Nullable ScalarTypeKind ofGTO(final GeneratedTransferObject gto) {
+    private static @Nullable ScalarTypeKind ofGTO(final GeneratedTransferObject<?> gto) {
         final var superType = gto.getSuperType();
         if (superType != null) {
             final var superClass = ofGTO(superType);
@@ -96,7 +96,7 @@ enum ScalarTypeKind {
         return hasRestrictions(gto) ? ROOT_RESTRICTING : ROOT;
     }
 
-    private static ScalarTypeKind ofSubclass(final GeneratedTransferObject gto, final boolean superRestricted) {
+    private static ScalarTypeKind ofSubclass(final GeneratedTransferObject<?> gto, final boolean superRestricted) {
         if (superRestricted) {
             return SUBCLASS_INHERITING;
         }

@@ -16,14 +16,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 
 @ExtendWith(MockitoExtension.class)
 class ClassTemplateTest {
     @Mock
-    private GeneratedTransferObject enclosedType;
+    private ScalarTypeObjectArchetype enclosedType;
     @Mock
-    private GeneratedTransferObject superType;
+    private ScalarTypeObjectArchetype superType;
     @Mock
     private GeneratedProperty property;
 

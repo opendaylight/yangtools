@@ -38,7 +38,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     private List<EnumTypeObjectArchetype> enumDefinitions = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
-    private List<GeneratedTransferObject> enclosedTransferObjects = List.of();
+    private List<GeneratedTransferObject<?>> enclosedTransferObjects = List.of();
     private List<GeneratedPropertyBuilder> properties = List.of();
     private @Nullable TypeComment comment;
     private YangSourceDefinition yangSourceDefinition;
@@ -74,14 +74,14 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
         return methodDefinitions;
     }
 
-    protected List<GeneratedTransferObject> getEnclosedTransferObjects() {
+    protected List<GeneratedTransferObject<?>> getEnclosedTransferObjects() {
         return enclosedTransferObjects;
     }
 
     protected abstract T thisInstance();
 
     @Override
-    public T addEnclosingTransferObject(final GeneratedTransferObject genTO) {
+    public T addEnclosingTransferObject(final GeneratedTransferObject<?> genTO) {
         checkArgument(genTO != null, "Parameter genTO cannot be null!");
         checkArgument(!enclosedTransferObjects.contains(genTO),
             "This generated type already contains equal enclosing transfer object.");

@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenBitsTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
@@ -252,14 +253,13 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
-    final GeneratedTOBuilder newTOBuilder(final JavaTypeName typeName, final GeneratedTransferObject gto) {
-        return switch (gto) {
+    final GeneratedTOBuilder newTOBuilder(final JavaTypeName typeName, final GeneratedTransferObject<?> to) {
+        return switch (to) {
             case BitsTypeObjectArchetype bits -> newBitsTypeObjectBuilder(typeName);
             case ScalarTypeObjectArchetype scalar -> newScalarTypeObjectBuilder(typeName);
             case UnionTypeObjectArchetype union ->
                 newUnionTypeObjectBuilder(typeName).setTypePropertyNames(union.typePropertyNames());
-            // FIXME: seal GeneratedTransferObject to eliminate this possibility
-            default -> throw new VerifyException("Impossible GTO " + typeName);
+            case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
         };
     }
 
