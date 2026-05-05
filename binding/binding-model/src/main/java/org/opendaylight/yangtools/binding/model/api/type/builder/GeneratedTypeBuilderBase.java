@@ -51,15 +51,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      */
     T addComment(TypeComment comment);
 
-    boolean isAbstract();
-
-    /**
-     * Sets the <code>abstract</code> flag to define Generated Type as <i>abstract</i> type.
-     *
-     * @param isAbstract abstract flag
-     */
-    T setAbstract(boolean isAbstract);
-
     List<Type> getImplementsTypes();
 
     /**

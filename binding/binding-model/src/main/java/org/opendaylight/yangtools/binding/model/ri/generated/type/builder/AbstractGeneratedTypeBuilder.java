@@ -41,7 +41,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     private List<GeneratedTransferObject> enclosedTransferObjects = List.of();
     private List<GeneratedPropertyBuilder> properties = List.of();
     private @Nullable TypeComment comment;
-    private boolean isAbstract;
     private YangSourceDefinition yangSourceDefinition;
 
     @NonNullByDefault
@@ -55,11 +54,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
 
     protected List<AnnotationTypeBuilder> getAnnotations() {
         return annotationBuilders;
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return isAbstract;
     }
 
     @Override
@@ -108,12 +102,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
         checkArgument(!annotationBuilders.contains(builder), "This generated type already contains equal annotation.");
         annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
         return builder;
-    }
-
-    @Override
-    public T setAbstract(final boolean newIsAbstract) {
-        isAbstract = newIsAbstract;
-        return thisInstance();
     }
 
     @Override

@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 
-public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder> implements
-        GeneratedTypeBuilder {
-
-    public RuntimeGeneratedTypeBuilder(final JavaTypeName identifier) {
-        super(identifier);
-        setAbstract(true);
+public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder>
+        implements GeneratedTypeBuilder {
+    @NonNullByDefault
+    public RuntimeGeneratedTypeBuilder(final JavaTypeName typeName) {
+        super(typeName);
     }
 
     @Override

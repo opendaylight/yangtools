@@ -21,7 +21,6 @@ public final class CodegenGeneratedTypeBuilder extends AbstractGeneratedTypeBuil
     @NonNullByDefault
     public CodegenGeneratedTypeBuilder(final JavaTypeName typeName) {
         super(typeName);
-        setAbstract(true);
     }
 
     @Override

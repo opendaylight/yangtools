@@ -21,5 +21,9 @@ import org.opendaylight.yangtools.binding.TypeObject;
 @NonNullByDefault
 public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archetype
         permits BitsTypeObjectArchetype, EnumTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
-    // nothing else
+    @Override
+    @Deprecated(forRemoval = true)
+    default boolean isAbstract() {
+        return false;
+    }
 }

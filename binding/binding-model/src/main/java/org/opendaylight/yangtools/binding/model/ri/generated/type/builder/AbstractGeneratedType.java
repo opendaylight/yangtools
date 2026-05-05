@@ -48,7 +48,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
     private final @NonNull List<GeneratedProperty> properties;
     private final @Nullable YangSourceDefinition definition;
     private final @Nullable TypeComment comment;
-    private final boolean isAbstract;
 
     AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?> builder) {
         name = builder.typeName();
@@ -60,7 +59,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
         methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
         enclosedTypes = List.copyOf(builder.getEnclosedTransferObjects());
         properties = toUnmodifiableProperties(builder.getProperties());
-        isAbstract = builder.isAbstract();
         definition = builder.getYangSourceDefinition().orElse(null);
     }
 
@@ -79,7 +77,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
         methodSignatures = toUnmodifiableMethods(methodBuilders);
         enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders, enclosedGenTOBuilders);
         properties = toUnmodifiableProperties(propertyBuilders);
-        this.isAbstract = isAbstract;
         definition = null;
     }
 
@@ -172,11 +169,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
     @Override
     public final List<AnnotationType> getAnnotations() {
         return annotations;
-    }
-
-    @Override
-    public final boolean isAbstract() {
-        return isAbstract;
     }
 
     @Override

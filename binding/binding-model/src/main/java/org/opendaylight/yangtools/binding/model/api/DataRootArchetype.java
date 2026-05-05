@@ -52,10 +52,4 @@ public non-sealed interface DataRootArchetype extends Archetype.WithStatement<Mo
     default List<GeneratedProperty> getProperties() {
         return List.of();
     }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default boolean isAbstract() {
-        return true;
-    }
 }

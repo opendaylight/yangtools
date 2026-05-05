@@ -30,7 +30,6 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     @NonNullByDefault
     AbstractGeneratedTOBuilder(final JavaTypeName typeName) {
         super(typeName);
-        setAbstract(false);
     }
 
     @Override

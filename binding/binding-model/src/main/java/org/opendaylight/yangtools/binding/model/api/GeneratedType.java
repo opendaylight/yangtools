@@ -43,7 +43,10 @@ public non-sealed interface GeneratedType extends Type, DocumentedType {
     /**
      * {@return {@code true} if The Generated Type is defined as abstract}
      */
-    boolean isAbstract();
+    @Deprecated(forRemoval = true)
+    default boolean isAbstract() {
+        return true;
+    }
 
     /**
      * {@return List of Types that Generated Type will implement}

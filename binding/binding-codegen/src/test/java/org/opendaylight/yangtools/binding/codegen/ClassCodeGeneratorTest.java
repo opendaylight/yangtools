@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 
+// FIXME: 'value types' are a broad term and this really tests whether ClassTemplate.defaultConstructor() is invoked
+//        for a random GeneratedTransferObject -- but it does not match the shape of anything.
 class ClassCodeGeneratorTest {
     /**
      * Test for testing of false scenario. Test tests value types. Value types are not allowed to have default
@@ -44,9 +46,9 @@ class ClassCodeGeneratorTest {
             import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 
             @Generated("mdsal-binding-generator")
-            public class DefCtor {
+            public abstract class DefCtor {
                 @java.io.Serial
-                private static final long serialVersionUID = 2996767336646738983L;
+                private static final long serialVersionUID = -7401592863225699611L;
                 private String _foo;
                 private Integer _bar;
 
@@ -140,9 +142,9 @@ class ClassCodeGeneratorTest {
             import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 
             @Generated("mdsal-binding-generator")
-            public class DefCtor {
+            public abstract class DefCtor {
                 @java.io.Serial
-                private static final long serialVersionUID = 2996767336646738983L;
+                private static final long serialVersionUID = -7401592863225699611L;
                 private String _foo;
                 private Integer _bar;
 

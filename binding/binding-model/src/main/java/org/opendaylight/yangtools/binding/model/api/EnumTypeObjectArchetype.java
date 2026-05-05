@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  */
 @Beta
 @NonNullByDefault
-public non-sealed interface EnumTypeObjectArchetype extends TypeObjectArchetype {
+public non-sealed interface EnumTypeObjectArchetype extends TypeObjectArchetype<EnumTypeObject> {
     /**
      * A {@link TypeBuilder} producing {@link EnumTypeObjectArchetype}.
      */
@@ -52,12 +52,6 @@ public non-sealed interface EnumTypeObjectArchetype extends TypeObjectArchetype 
      * {@return the {@link EnumTypeValue}s}
      */
     List<EnumTypeValue> values();
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default boolean isAbstract() {
-        return false;
-    }
 
     @Override
     @Deprecated(forRemoval = true)
