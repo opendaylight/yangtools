@@ -13,9 +13,6 @@ import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 
 /**
  * Transformator of the data from the virtual form to JAVA programming language. The result source code represent java
@@ -43,14 +40,6 @@ record BuilderGenerator(GeneratedType type) implements Generator {
 
     @VisibleForTesting
     static BuilderTemplate templateForType(final GeneratedType type) {
-        final var origName = type.name();
-        final var builderName = origName.createSibling(origName.simpleName() + Naming.BUILDER_SUFFIX);
-
-        return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
-            .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(
-                builderName.createEnclosed(origName.simpleName() + "Impl"))
-                .addImplementsType(type)
-                .build())
-            .build(), type, BindingTypes.extractEntryObjectKey(type));
+        return BuilderTemplate.forTarget(type);
     }
 }
