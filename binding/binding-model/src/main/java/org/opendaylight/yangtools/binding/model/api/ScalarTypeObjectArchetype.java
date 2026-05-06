@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeScalarTypeObjectArchetypeBuilder;
 
@@ -25,7 +24,7 @@ public non-sealed interface ScalarTypeObjectArchetype extends GeneratedTransferO
     /**
      * A builder of {@link ScalarTypeObjectArchetype} instances.
      */
-    sealed interface Builder extends GeneratedTOBuilder
+    sealed interface Builder extends GeneratedTransferObject.Builder
             permits CodegenScalarTypeObjectArchetypeBuilder, RuntimeScalarTypeObjectArchetypeBuilder {
         @Override
         ScalarTypeObjectArchetype build();

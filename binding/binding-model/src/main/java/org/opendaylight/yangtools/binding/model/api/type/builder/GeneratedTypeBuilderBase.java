@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Abstra
 public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
         extends TypeBuilder, AnnotableTypeBuilder
         permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, FeatureArchetype.Builder, KeyArchetype.Builder,
-                GeneratedTOBuilder, GeneratedTypeBuilder {
+                GeneratedTransferObject.Builder, GeneratedTypeBuilder {
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into definition of Generated Type.
      *
