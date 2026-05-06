@@ -81,7 +81,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
     @NonNullByDefault
     InterfaceTemplate(final GeneratedType type) {
-        super(type);
+        super(GeneratedClass.of(type), type);
         consts = type.getConstantDefinitions();
         methods = type.getMethodDefinitions();
         enums = type.getEnumerations();

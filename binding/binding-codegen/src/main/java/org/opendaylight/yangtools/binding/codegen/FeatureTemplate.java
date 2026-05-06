@@ -42,7 +42,7 @@ final class FeatureTemplate extends BaseTemplate {
 
     @NonNullByDefault
     private FeatureTemplate(final FeatureArchetype archetype) {
-        super(archetype);
+        super(GeneratedClass.of(archetype), archetype);
         dataRoot = archetype.dataRoot();
     }
 

@@ -85,11 +85,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     private static final @NonNull JavaTypeName BOOLEAN = JavaTypeName.create(Boolean.class);
 
     @NonNullByDefault
-    BaseTemplate(final GeneratedType type) {
-        super(type);
-    }
-
-    @NonNullByDefault
     BaseTemplate(final GeneratedClass javaType, final GeneratedType type) {
         super(javaType, type);
     }

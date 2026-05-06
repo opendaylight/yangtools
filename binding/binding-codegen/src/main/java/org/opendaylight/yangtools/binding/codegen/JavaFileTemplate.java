@@ -138,11 +138,8 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
 
     private final @NonNull GeneratedClass javaType;
+    // FIXME: do not store here
     private final @NonNull GeneratedType type;
-
-    JavaFileTemplate(final @NonNull GeneratedType type) {
-        this(GeneratedClass.of(type), type);
-    }
 
     @NonNullByDefault
     JavaFileTemplate(final GeneratedClass javaType, final GeneratedType type) {

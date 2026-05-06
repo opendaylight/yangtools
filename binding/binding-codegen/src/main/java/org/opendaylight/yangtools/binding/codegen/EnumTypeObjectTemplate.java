@@ -28,7 +28,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
 
         @Override
         public EnumTypeObjectTemplate build() {
-            return new EnumTypeObjectTemplate(type);
+            return new EnumTypeObjectTemplate(GeneratedClass.of(type), type);
         }
     }
 
@@ -38,11 +38,6 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
 
     private EnumTypeObjectTemplate(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype) {
         super(javaType, archetype);
-        this.archetype = requireNonNull(archetype);
-    }
-
-    private EnumTypeObjectTemplate(final EnumTypeObjectArchetype archetype) {
-        super(archetype);
         this.archetype = requireNonNull(archetype);
     }
 
