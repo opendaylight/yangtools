@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
@@ -27,7 +28,16 @@ public non-sealed interface DataRootArchetype extends Archetype.WithStatement<Mo
     @Beta
     sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits DataRootArchetypeBuilder {
         @Override
+        @Deprecated(forRemoval = true)
+        Builder addComment(TypeComment comment);
+
+        @Override
         DataRootArchetype build();
+    }
+
+    @Override
+    default TypeComment getComment() {
+        return DocUtils.typeCommentOf(statement().toDataNodeContainer());
     }
 
     @Override

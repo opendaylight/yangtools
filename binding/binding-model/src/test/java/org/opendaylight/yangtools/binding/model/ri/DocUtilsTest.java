@@ -5,18 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.generator;
+package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-class BindingGeneratorUtilTest {
+class DocUtilsTest {
     @Test
     void unicodeCharReplaceTest() {
         final var inputString = "abcu\\uuuuu\\uuua\\u\\\\uabc\\\\uuuu\\\\\\uuuu\\\\\\\\uuuu///uu/u/u/u/u/u/u";
 
         assertEquals("abcu\\\\uuuuu\\\\uuua\\\\u\\\\uabc\\\\uuuu\\\\uuuu\\\\uuuu///uu/u/u/u/u/u/u",
-            BindingGeneratorUtil.replaceAllIllegalChars(inputString));
+            DocUtils.replaceAllIllegalChars(inputString));
     }
 }

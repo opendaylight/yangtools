@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
-import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
@@ -77,7 +77,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
                 final var value = it.next();
 
                 value.getDescription().ifPresent(desc -> {
-                    final var doc = encodeJavadocSymbols(BindingGeneratorUtil.encodeAngleBrackets(desc.trim()));
+                    final var doc = encodeJavadocSymbols(DocUtils.encodeAngleBrackets(desc.trim()));
                     if (!doc.isEmpty()) {
                         appendAsJavadoc(bb, doc);
                         bb.newLine();

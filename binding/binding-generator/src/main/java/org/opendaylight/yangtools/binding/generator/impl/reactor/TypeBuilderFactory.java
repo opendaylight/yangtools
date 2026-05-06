@@ -11,9 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -24,6 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenBitsTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
 
 /**
@@ -103,13 +101,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        void addCodegenInformation(final ModuleEffectiveStatement stmt, final DataRootArchetype.Builder builder) {
-            TypeComments.description(stmt.toDataNodeContainer()).ifPresent(builder::addComment);
-        }
-
-        @Override
         void addCodegenInformation(final DocumentedNode node, final GeneratedTypeBuilderBase<?> builder) {
-            node.getDescription().map(BindingGeneratorUtil::encodeAngleBrackets).ifPresent(builder::setDescription);
+            node.getDescription().map(DocUtils::encodeAngleBrackets).ifPresent(builder::setDescription);
             node.getReference().ifPresent(builder::setReference);
         }
 
@@ -117,7 +110,10 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
                 final GeneratedTypeBuilderBase<?> builder) {
             if (stmt instanceof DocumentedNode documented) {
-                TypeComments.description(documented).ifPresent(builder::addComment);
+                final var comment = DocUtils.typeCommentOf(documented);
+                if (comment != null) {
+                    builder.addComment(comment);
+                }
                 documented.getDescription().ifPresent(builder::setDescription);
                 documented.getReference().ifPresent(builder::setReference);
             }
@@ -173,11 +169,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
         @Override
         void addCodegenInformation(final EffectiveStatement<?, ?> stmt, final GeneratedTypeBuilderBase<?> builder) {
-            // No-op
-        }
-
-        @Override
-        void addCodegenInformation(final ModuleEffectiveStatement stmt, final DataRootArchetype.Builder builder) {
             // No-op
         }
 
@@ -239,8 +230,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     }
 
     abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
-
-    abstract void addCodegenInformation(ModuleEffectiveStatement stmt, DataRootArchetype.Builder builder);
 
     abstract void addCodegenInformation(DocumentedNode node, GeneratedTypeBuilderBase<?> builder);
 
