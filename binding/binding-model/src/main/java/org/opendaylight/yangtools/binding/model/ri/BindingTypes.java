@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -54,7 +53,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.YangDataName;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 public final class BindingTypes {
 
@@ -367,28 +365,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType yangData(final Type concreteType) {
         return ParameterizedType.of(YANG_DATA, concreteType);
-    }
-
-    /**
-     * Check if specified type is generated for a {@code type bits}.
-     *
-     * @param type Type to examine
-     * @return {@code true} if the type is generated for a {@code type bits}
-     */
-    // FIXME: remove this method
-    public static boolean isBitsType(final Type type) {
-        return type instanceof GeneratedTransferObject gto && isBitsType(gto);
-    }
-
-    /**
-     * Check if specified type is generated for a {@code type bits}.
-     *
-     * @param gto Type to examine
-     * @return {@code true} if the type is generated for a {@code type bits}
-     */
-    // FIXME: remove this method
-    public static boolean isBitsType(final GeneratedTransferObject<?> gto) {
-        return gto.isTypedef() && gto.getBaseType() instanceof BitsTypeDefinition;
     }
 
     /**
