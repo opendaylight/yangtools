@@ -11,14 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -31,8 +29,7 @@ record DataRootArchetypeImpl(
         @NonNull List<Type> getImplements,
         @NonNull List<MethodSignature> getMethodDefinitions,
         @NonNull List<GeneratedType> getEnclosedTypes,
-        @NonNull List<EnumTypeObjectArchetype> getEnumerations,
-        @Nullable TypeComment getComment) implements DataRootArchetype {
+        @NonNull List<EnumTypeObjectArchetype> getEnumerations) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);

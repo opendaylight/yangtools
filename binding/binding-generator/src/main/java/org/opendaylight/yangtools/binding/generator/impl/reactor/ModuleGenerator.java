@@ -86,8 +86,6 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
         addUsesInterfaces(builder, builderFactory);
         defaultImplementedInterace(builder);
         addGetterMethods(builder, builderFactory);
-        builderFactory.addCodegenInformation(statement(), builder);
-
         return builder.build();
     }
 

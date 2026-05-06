@@ -18,8 +18,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIE
 import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
-import static org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.extractAugmentationTarget;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
@@ -48,6 +46,7 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
+import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -436,7 +435,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     private static void appendYangSnippet(final StringBuilder sb, final ModuleEffectiveStatement module,
             final DeclaredStatement<?> stmt) {
         for (String str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
-            sb.append(replaceAllIllegalChars(encodeAngleBrackets(encodeJavadocSymbols(str))));
+            sb.append(DocUtils.replaceAllIllegalChars(DocUtils.encodeAngleBrackets(encodeJavadocSymbols(str))));
         }
     }
 

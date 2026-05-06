@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -37,6 +36,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -596,7 +596,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
         // FIXME: use a {@code} block which will render some of this encoding superfluous, but it requires paying
         //        attention to '}' pairing in input
-        var formattedText = BindingGeneratorUtil.encodeAngleBrackets(reference);
+        var formattedText = DocUtils.encodeAngleBrackets(reference);
         formattedText = WS_MATCHER.replaceFrom(JavaFileTemplate.encodeJavadocSymbols(formattedText), ' ');
         formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ");
 
