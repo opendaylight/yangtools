@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -26,7 +25,7 @@ class GeneratorTest {
     @Mock
     private TypeDefinition<?> typedef;
 
-    private final GeneratedTOBuilder builder =
+    private final CodegenGeneratedTOBuilder builder =
         new CodegenGeneratedTOBuilder(JavaTypeName.create("test.package", "TestBuilder"));
 
     @Test

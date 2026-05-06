@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntim
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -107,7 +106,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         return builder.build();
     }
 
-    private static void addValidBits(final GeneratedTOBuilder builder, final BitsTypeDefinition typedef,
+    private static void addValidBits(final GeneratedTransferObject.Builder builder, final BitsTypeDefinition typedef,
             final GeneratedTransferObject<?> baseType) {
         final var baseDef = verifyNotNull(baseBitsDefinition(baseType), "Could not find definition in %s", baseType);
         final var myBits = typedef.getBits();

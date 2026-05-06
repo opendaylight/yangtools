@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -32,7 +33,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
@@ -286,7 +286,7 @@ public abstract class Generator implements Iterable<Generator> {
         }
     }
 
-    static final void addUnits(final GeneratedTOBuilder builder, final TypeDefinition<?> typedef) {
+    static final void addUnits(final GeneratedTransferObject.Builder builder, final TypeDefinition<?> typedef) {
         typedef.getUnits().ifPresent(units -> {
             if (!units.isEmpty()) {
                 builder.addConstant(Types.STRING, Naming.UNITS_STATIC_FIELD_NAME, "\"" + units + "\"");
@@ -301,7 +301,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder transfer object which needs to be made serializable
      */
     // FIXME: remove this method: this is implied by the resulting archetype
-    static final void makeSerializable(final GeneratedTOBuilder builder) {
+    static final void makeSerializable(final GeneratedTransferObject.Builder builder) {
         builder.addImplementsType(Types.serializableType());
     }
 

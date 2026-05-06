@@ -16,13 +16,13 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder>
-        implements GeneratedTOBuilder permits CodegenGeneratedTOBuilder, RuntimeBitsTypeObjectArchetypeBuilder,
-                   RuntimeScalarTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
+public abstract sealed class AbstractGeneratedTOBuilder
+        extends AbstractGeneratedTypeBuilder<GeneratedTransferObject.Builder> implements GeneratedTransferObject.Builder
+        permits CodegenGeneratedTOBuilder, RuntimeBitsTypeObjectArchetypeBuilder,
+                RuntimeScalarTypeObjectArchetypeBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
     // FIXME are these three referenced anywhere at runtime?
     private GeneratedTransferObject<?> extendsType;
     private boolean isTypedef = false;
@@ -34,7 +34,7 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     }
 
     @Override
-    public final GeneratedTOBuilder setExtendsType(final GeneratedTransferObject<?> genTransObj) {
+    public final AbstractGeneratedTOBuilder setExtendsType(final GeneratedTransferObject<?> genTransObj) {
         Preconditions.checkArgument(genTransObj != null, "Generated Transfer Object cannot be null!");
         extendsType = genTransObj;
         return this;
@@ -62,7 +62,7 @@ public abstract sealed class AbstractGeneratedTOBuilder extends AbstractGenerate
     }
 
     @Override
-    protected final GeneratedTOBuilder thisInstance() {
+    protected final AbstractGeneratedTOBuilder thisInstance() {
         return this;
     }
 

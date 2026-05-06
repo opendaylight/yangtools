@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenBitsTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeBitsTypeObjectArchetypeBuilder;
 
@@ -25,7 +24,7 @@ public non-sealed interface BitsTypeObjectArchetype extends GeneratedTransferObj
     /**
      * A builder of {@link BitsTypeObjectArchetype} instances.
      */
-    sealed interface Builder extends GeneratedTOBuilder
+    sealed interface Builder extends GeneratedTransferObject.Builder
             permits CodegenBitsTypeObjectArchetypeBuilder, RuntimeBitsTypeObjectArchetypeBuilder {
         @Override
         BitsTypeObjectArchetype build();

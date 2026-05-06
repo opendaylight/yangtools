@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 
@@ -65,7 +65,7 @@ abstract class AbstractGeneratedType implements GeneratedType {
     AbstractGeneratedType(final @NonNull JavaTypeName typeName, final TypeComment comment,
             final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
             final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-            final List<GeneratedTOBuilder> enclosedGenTOBuilders,
+            final List<GeneratedTransferObject.Builder> enclosedGenTOBuilders,
             final List<EnumTypeObjectArchetype.Builder> enumBuilders, final List<Constant> constants,
             final List<MethodSignatureBuilder> methodBuilders, final List<GeneratedPropertyBuilder> propertyBuilders) {
         name = requireNonNull(typeName);
@@ -100,7 +100,7 @@ abstract class AbstractGeneratedType implements GeneratedType {
 
     private static List<GeneratedType> toUnmodifiableEnclosedTypes(
             final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-            final List<GeneratedTOBuilder> enclosedGenTOBuilders) {
+            final List<GeneratedTransferObject.Builder> enclosedGenTOBuilders) {
         final var enclosedTypesList = new ArrayList<GeneratedType>(
             enclosedGenTypeBuilders.size() + enclosedGenTOBuilders.size());
         for (var builder : enclosedGenTypeBuilders) {

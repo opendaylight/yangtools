@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.TypeObject;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -29,6 +33,46 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public sealed interface GeneratedTransferObject<T extends TypeObject> extends TypeObjectArchetype<T>
         permits BitsTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype,
                 AbstractGeneratedTransferObject {
+    /**
+     * A builder of {@link GeneratedTransferObject} instances.
+     */
+    @Beta
+    sealed interface Builder extends GeneratedTypeBuilderBase<Builder>
+            permits AbstractGeneratedTOBuilder, BitsTypeObjectArchetype.Builder, ScalarTypeObjectArchetype.Builder,
+                    UnionTypeObjectArchetype.Builder {
+        /**
+         * Add Generated Transfer Object from which will be extended current Generated Transfer Object.<br>
+         * By definition Java does not allow multiple inheritance, hence if there is already a definition
+         * of an Generated Transfer Object the extending object will be overwritten by lastly added Generated Transfer
+         * Object.<br>
+         * If Generated Transfer Object is <code>null</code> the method SHOULD throw {@link IllegalArgumentException}
+         *
+         * @param genTransObj Generated Transfer Object
+         * @return This instance of builder
+         */
+        Builder setExtendsType(GeneratedTransferObject<?> genTransObj);
+
+        @NonNullByDefault
+        void setRestrictions(Restrictions restrictions);
+
+        void setTypedef(boolean isTypedef);
+
+        /**
+         * Sets the base type for Java representation of YANG typedef.
+         *
+         * @param typeDef Type Definition
+         */
+        void setBaseType(TypeDefinition<?> typeDef);
+
+        /**
+         * Returns instance of <code>GeneratedTransferObject</code> which data are build from the data of this builder.
+         *
+         * @return generated transfer object instance
+         */
+        @Override
+        GeneratedTransferObject<?> build();
+    }
+
     /**
      * {@return the value of the {@code serialVersionUID} of this {@link TypeObject} class};
      */

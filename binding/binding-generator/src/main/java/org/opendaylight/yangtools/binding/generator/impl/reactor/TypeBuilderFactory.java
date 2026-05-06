@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
@@ -253,7 +252,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
-    final GeneratedTOBuilder newTOBuilder(final JavaTypeName typeName, final GeneratedTransferObject<?> to) {
+    final GeneratedTransferObject.Builder newTOBuilder(final JavaTypeName typeName,
+            final GeneratedTransferObject<?> to) {
         return switch (to) {
             case BitsTypeObjectArchetype bits -> newBitsTypeObjectBuilder(typeName);
             case ScalarTypeObjectArchetype scalar -> newScalarTypeObjectBuilder(typeName);
