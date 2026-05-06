@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
-import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
@@ -24,7 +23,6 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT16_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BITS_TYPE_OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALID_NAMES_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
@@ -69,7 +67,7 @@ sealed class ClassTemplate extends BaseTemplate
     /**
      * {@code com.google.common.collect.ImmutableSet} as a JavaTypeName.
      */
-    private static final @NonNull JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
+    static final @NonNull JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
 
     final @NonNull List<GeneratedProperty> allProperties;
     final @NonNull List<GeneratedProperty> finalProperties;
@@ -212,13 +210,8 @@ sealed class ClassTemplate extends BaseTemplate
             .blk(defaultInstance())
             .blk(propertyMethods());
 
-        if (isBitsTypeObject()) {
-            for (var c : consts) {
-                if (VALID_NAMES_NAME.equals(c.getName())) {
-                    bb.nl().blk(validNamesAndValues((BitsTypeDefinition) c.getValue()));
-                }
-            }
-        }
+        // call out to BitsTypeObjectTemplate
+        appendValidNames(bb);
 
         final var hashCode = generateHashCode();
         if (hashCode != null) {
@@ -234,54 +227,6 @@ sealed class ClassTemplate extends BaseTemplate
             bb.nl().blk(toString);
         }
         return bb.cB().nl();
-    }
-
-    private boolean isBitsTypeObject() {
-        var wlk = genTO;
-        do {
-            for (var impl : wlk.getImplements()) {
-                if (BITS_TYPE_OBJECT.name().equals(impl.name())) {
-                    return true;
-                }
-            }
-            wlk = wlk.getSuperType();
-        } while (wlk != null);
-        return false;
-    }
-
-    @NonNullByDefault
-    private BlockBuilder validNamesAndValues(final BitsTypeDefinition typedef) {
-        final var override = importedName(OVERRIDE);
-
-        return newBlockBuilder()
-            .nl()
-            .at().eol(override)
-            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING)).str(" validNames()").oB()
-                .eol("return " + VALID_NAMES_NAME + ";")
-            .cB()
-            .nl()
-            .at().eol(override)
-            .str("public boolean[] values()").oB()
-                .str("return new boolean[]").jBlock(bb -> {
-                    final var bits = typedef.getBits();
-                    if (bits.isEmpty()) {
-                        bb.eol("// empty");
-                        return;
-                    }
-
-                    final var it = bits.iterator();
-                    while (true) {
-                        final var bit = it.next();
-                        bb.str(getterMethodName(getPropertyName(bit.getName()))).str("()");
-                        if (!it.hasNext()) {
-                            bb.nl();
-                            break;
-                        }
-                        bb.eol(",");
-                    }
-                }).eS()
-            .cB()
-            .nl();
     }
 
     private @Nullable BlockBuilder generateEquals() {
@@ -434,6 +379,12 @@ sealed class ClassTemplate extends BaseTemplate
             }
         }
         bb.eol(" };");
+    }
+
+    // exposed for BitsTypeObjectTemplate
+    @NonNullByDefault
+    void appendValidNames(final BlockBuilder bb) {
+        // no-op
     }
 
     private void appendValidNames(final BlockBuilder bb, final BitsTypeDefinition bitsType) {
