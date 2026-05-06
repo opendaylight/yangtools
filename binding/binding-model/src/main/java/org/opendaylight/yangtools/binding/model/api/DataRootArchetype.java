@@ -31,8 +31,25 @@ public non-sealed interface DataRootArchetype extends Archetype.WithStatement<Mo
     }
 
     @Override
+    default String getDescription() {
+        final var stmt = statement().descriptionStatement();
+        return stmt == null ? null : stmt.argument();
+    }
+
+    @Override
+    default String getReference() {
+        final var stmt = statement().referenceStatement();
+        return stmt == null ? null : stmt.argument();
+    }
+
+    @Override
     default String getModuleName() {
         return statement().argument().getLocalName();
+    }
+
+    @Override
+    default YangSourceDefinition yangSourceDefinition() {
+        return YangSourceDefinition.of(statement());
     }
 
     @Override

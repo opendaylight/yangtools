@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,7 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultModuleRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -38,7 +38,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
      * Counter-intuitively the other secondary members live as children of this generator. To support this we also have
      * this field, which is actually the <em>primary</em> derived from the module's name.
      */
-    private final Member prefixMember;
+    private final @NonNull Member prefixMember;
 
     ModuleGenerator(final ModuleEffectiveStatement statement) {
         super(statement);
@@ -82,7 +82,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
 
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newDataRootBuilder(typeName(), statement());
+        final var builder = new DataRootArchetypeBuilder(typeName(), statement());
         addUsesInterfaces(builder, builderFactory);
         defaultImplementedInterace(builder);
         addGetterMethods(builder, builderFactory);
@@ -92,7 +92,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     }
 
     @NonNull Member getPrefixMember() {
-        return verifyNotNull(prefixMember);
+        return prefixMember;
     }
 
     @Override

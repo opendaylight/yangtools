@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -75,9 +76,8 @@ public abstract sealed class YangSourceDefinition {
         this.module = requireNonNull(module);
     }
 
-    public static Optional<YangSourceDefinition> of(final Module module) {
-        final var effective = module.asEffectiveStatement();
-        return effective.declared() != null ? Optional.of(new Single(effective, module)) : Optional.empty();
+    public static @Nullable YangSourceDefinition of(final ModuleEffectiveStatement module) {
+        return module.declared() == null ? null : new Single(module, module.toDataNodeContainer());
     }
 
     public static Optional<YangSourceDefinition> of(final Module module, final SchemaNode node) {

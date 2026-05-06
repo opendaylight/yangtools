@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -33,10 +32,7 @@ record DataRootArchetypeImpl(
         @NonNull List<MethodSignature> getMethodDefinitions,
         @NonNull List<GeneratedType> getEnclosedTypes,
         @NonNull List<EnumTypeObjectArchetype> getEnumerations,
-        @Nullable YangSourceDefinition yangSourceDefinition,
-        @Nullable TypeComment getComment,
-        @Nullable String getDescription,
-        @Nullable String getReference) implements DataRootArchetype {
+        @Nullable TypeComment getComment) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);

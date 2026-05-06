@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -31,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.FeatureArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.KeyArchetypeBuilder;
@@ -41,7 +38,6 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Runtim
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
@@ -64,12 +60,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         @Override
         BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(final JavaTypeName typeName) {
             return new CodegenBitsTypeObjectArchetypeBuilder(typeName);
-        }
-
-        @Override
-        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName,
-                final ModuleEffectiveStatement statement) {
-            return new DataRootArchetypeBuilder.Codegen(typeName, statement);
         }
 
         @Override
@@ -113,14 +103,8 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        void addCodegenInformation(final ModuleEffectiveStatement stmt, final GeneratedTypeBuilderBase<?> builder) {
-            verify(stmt instanceof Module, "Unexpected module %s", stmt);
-            final Module module = (Module) stmt;
-
-            YangSourceDefinition.of(module).ifPresent(builder::setYangSourceDefinition);
-            TypeComments.description(module).ifPresent(builder::addComment);
-            module.getDescription().ifPresent(builder::setDescription);
-            module.getReference().ifPresent(builder::setReference);
+        void addCodegenInformation(final ModuleEffectiveStatement stmt, final DataRootArchetype.Builder builder) {
+            TypeComments.description(stmt.toDataNodeContainer()).ifPresent(builder::addComment);
         }
 
         @Override
@@ -153,12 +137,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         @Override
         BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(final JavaTypeName typeName) {
             return new RuntimeBitsTypeObjectArchetypeBuilder(typeName);
-        }
-
-        @Override
-        DataRootArchetype.Builder newDataRootBuilder(final JavaTypeName typeName,
-                final ModuleEffectiveStatement statement) {
-            return new DataRootArchetypeBuilder.Runtime(typeName, statement);
         }
 
         @Override
@@ -199,7 +177,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        void addCodegenInformation(final ModuleEffectiveStatement stmt, final GeneratedTypeBuilderBase<?> builder) {
+        void addCodegenInformation(final ModuleEffectiveStatement stmt, final DataRootArchetype.Builder builder) {
             // No-op
         }
 
@@ -227,9 +205,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
     @NonNullByDefault
     abstract BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(JavaTypeName typeName);
-
-    @NonNullByDefault
-    abstract DataRootArchetype.Builder newDataRootBuilder(JavaTypeName typeName, ModuleEffectiveStatement statement);
 
     @NonNullByDefault
     abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName typeName);
@@ -265,7 +240,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
     abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
 
-    abstract void addCodegenInformation(ModuleEffectiveStatement stmt, GeneratedTypeBuilderBase<?> builder);
+    abstract void addCodegenInformation(ModuleEffectiveStatement stmt, DataRootArchetype.Builder builder);
 
     abstract void addCodegenInformation(DocumentedNode node, GeneratedTypeBuilderBase<?> builder);
 
