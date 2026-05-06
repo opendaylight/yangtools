@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PROP;
 
@@ -28,6 +29,18 @@ import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
  * A template for {@link ScalarTypeObject} specializations.
  */
 final class ScalarTypeObjectTemplate extends ClassTemplate {
+    @NonNullByDefault
+    record Builder(ScalarTypeObjectArchetype type) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+        }
+
+        @Override
+        public ScalarTypeObjectTemplate build() {
+            return new ScalarTypeObjectTemplate(type);
+        }
+    }
+
     /**
      * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a JavaTypeName.
      */
@@ -46,11 +59,6 @@ final class ScalarTypeObjectTemplate extends ClassTemplate {
     private ScalarTypeObjectTemplate(final ScalarTypeObjectArchetype archetype) {
         super(archetype);
         scalarType = ScalarTypeKind.of(archetype);
-    }
-
-    @NonNullByDefault
-    static ScalarTypeObjectTemplate of(final ScalarTypeObjectArchetype archetype) {
-        return new ScalarTypeObjectTemplate(archetype);
     }
 
     @NonNullByDefault

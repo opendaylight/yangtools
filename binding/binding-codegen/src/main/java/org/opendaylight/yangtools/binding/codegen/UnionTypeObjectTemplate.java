@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
@@ -30,6 +31,18 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
  * A template for {@link UnionTypeObject} specializations.
  */
 final class UnionTypeObjectTemplate extends ClassTemplate {
+    @NonNullByDefault
+    record Builder(UnionTypeObjectArchetype type) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+        }
+
+        @Override
+        public UnionTypeObjectTemplate build() {
+            return new UnionTypeObjectTemplate(type);
+        }
+    }
+
     @NonNullByDefault
     private UnionTypeObjectTemplate(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype) {
         super(javaType, archetype);

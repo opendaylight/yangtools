@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeMember;
 /**
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
  */
-sealed class JavaFileTemplate permits BaseTemplate {
+abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     /**
      * {@code java.lang.Class} as a JavaTypeName.
      */
@@ -154,6 +154,17 @@ sealed class JavaFileTemplate permits BaseTemplate {
         return javaType;
     }
 
+    /**
+     * {@return the name of the type this generator is bound to}
+     */
+    @Override
+    final JavaTypeName typeName() {
+        return type.name();
+    }
+
+    /**
+     * {@return the type this generator is bound to}
+     */
     final @NonNull GeneratedType type() {
         return type;
     }

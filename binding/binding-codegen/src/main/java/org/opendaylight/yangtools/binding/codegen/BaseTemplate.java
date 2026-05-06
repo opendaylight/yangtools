@@ -25,6 +25,7 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEA
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.base.VerifyException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -93,33 +94,31 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         super(javaType, type);
     }
 
-    // FIXME: this code should live in GeneratedClass.of()
-    @Deprecated
-    final @NonNull String generate() {
+    @Override
+    final void generateTo(final Appendable out) throws IOException {
+        // FIXME: of this code should live in GeneratedClass.of() or thereabout
         final var javaType = javaType();
         if (!(javaType instanceof GeneratedClass.TopLevel topLevel)) {
             throw new VerifyException("Unexpected type " + javaType);
         }
 
         // note: this has a side-effect of populating imports
-        final var body = body();
+        final var body = body().build();
 
-        final var bb = newBlockBuilder()
-            // package declaration
-            .str("package ").str(type().packageName()).eS()
-            .nl();
+        // package declaration
+        out.append("package ").append(type().packageName()).append(";\n\n");
 
         // import block
         final var importedNames = topLevel.imports().toArray(JavaTypeName[]::new);
         for (var importedName : importedNames) {
-            bb.str("import ").str(importedName.canonicalName()).eS();
+            out.append("import ").append(importedName.canonicalName()).append(";\n");
         }
         if (importedNames.length != 0) {
-            bb.newLine();
+            out.append('\n');
         }
 
-        /// body
-        return bb.blk(body).toRawString();
+        // body
+        body.appendTo(out);
     }
 
     /**

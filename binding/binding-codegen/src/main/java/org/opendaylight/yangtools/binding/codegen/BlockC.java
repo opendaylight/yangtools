@@ -20,9 +20,9 @@ record BlockC(List<Block> blocks) implements Block {
     }
 
     @Override
-    public void appendTo(final Appendable appendable) throws IOException {
+    public void appendTo(final Appendable out) throws IOException {
         for (var block : blocks) {
-            block.appendTo(appendable);
+            block.appendTo(out);
         }
     }
 

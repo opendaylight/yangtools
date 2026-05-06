@@ -180,8 +180,8 @@ public class BuilderGeneratorTest {
         final var types = new DefaultBindingGenerator().generateTypes(context);
         assertEquals(27, types.size());
 
-        final var bt = BuilderGenerator.templateForType(
-            types.stream().filter(t -> t.simpleName().equals("Nodes")).findFirst().orElseThrow());
+        final var bt = new BuilderTemplate.Builder(types.stream()
+            .filter(t -> t.simpleName().equals("Nodes")).findFirst().orElseThrow()).build();
 
         final var sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
@@ -50,6 +51,28 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
  * Template for generating JAVA builder classes.
  */
 final class BuilderTemplate extends AbstractBuilderTemplate {
+    @NonNullByDefault
+    record Builder(GeneratedType type) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+        }
+
+        @Override
+        public BuilderTemplate build() {
+            final var targetName = type.name();
+            final var simpleName = targetName.simpleName();
+            final var builderName = targetName.createSibling(simpleName + Naming.BUILDER_SUFFIX);
+            final var implName = builderName.createEnclosed(simpleName + "Impl");
+
+            // FIXME: the entire TypeBuilder dance here is to provide input to GeneratedClass.of(type), taking
+            //        the extremely long route: we really would like to instantiate a GeneratedClass here and not pass
+            //        not have a GeneratedType for the Builder nor its implementation at all
+            return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
+                .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(implName).addImplementsType(type).build())
+                .build(), type);
+        }
+    }
+
     /**
      * The name of the field holding augmentations.
      */
@@ -61,18 +84,6 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private BuilderTemplate(final GeneratedType builderType, final GeneratedType targetType) {
         super(builderType, targetType, BindingTypes.extractEntryObjectKey(targetType));
         implTemplate = new BuilderImplTemplate(this, type().getEnclosedTypes().getFirst());
-    }
-
-    @NonNullByDefault
-    static BuilderTemplate forTarget(final GeneratedType targetType) {
-        final var targetName = targetType.name();
-        final var simpleName = targetName.simpleName();
-        final var builderName = targetName.createSibling(simpleName + Naming.BUILDER_SUFFIX);
-        final var implName = builderName.createEnclosed(simpleName + "Impl");
-
-        return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
-            .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(implName).addImplementsType(targetType).build())
-            .build(), targetType);
     }
 
     @Override
