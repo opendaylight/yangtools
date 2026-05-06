@@ -21,6 +21,17 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
  */
 @NonNullByDefault
 final class EnumTypeObjectTemplate extends BaseTemplate {
+    record Builder(EnumTypeObjectArchetype type) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+        }
+
+        @Override
+        public EnumTypeObjectTemplate build() {
+            return new EnumTypeObjectTemplate(type);
+        }
+    }
+
     private static final JavaTypeName ENUM_TYPE_OBJECT = JavaTypeName.create(EnumTypeObject.class);
 
     private final EnumTypeObjectArchetype archetype;
@@ -30,7 +41,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
         this.archetype = requireNonNull(archetype);
     }
 
-    EnumTypeObjectTemplate(final EnumTypeObjectArchetype archetype) {
+    private EnumTypeObjectTemplate(final EnumTypeObjectArchetype archetype) {
         super(archetype);
         this.archetype = requireNonNull(archetype);
     }

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -19,6 +21,23 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
  * A template for {@link BitsTypeObject} specializations.
  */
 final class BitsTypeObjectTemplate extends ClassTemplate {
+    @NonNullByDefault
+    record Builder(BitsTypeObjectArchetype type) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+        }
+
+        @Override
+        public BitsTypeObjectArchetype type() {
+            return type;
+        }
+
+        @Override
+        public BitsTypeObjectTemplate build() {
+            return new BitsTypeObjectTemplate(type);
+        }
+    }
+
     @NonNullByDefault
     private BitsTypeObjectTemplate(final GeneratedClass.Nested javaType, final BitsTypeObjectArchetype archetype) {
         super(javaType, archetype);

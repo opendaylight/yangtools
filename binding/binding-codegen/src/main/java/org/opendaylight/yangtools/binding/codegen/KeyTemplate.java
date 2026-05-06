@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -18,10 +20,22 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
  * A template for {@link Key} specializations.
  */
 final class KeyTemplate extends BaseTemplate {
+    @NonNullByDefault
+    record Builder(KeyArchetype type) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+        }
+
+        @Override
+        public KeyTemplate build() {
+            return new KeyTemplate(type);
+        }
+    }
+
     private static final @NonNull JavaTypeName KEY = JavaTypeName.create(Key.class);
 
     @NonNullByDefault
-    KeyTemplate(final KeyArchetype archetype) {
+    private KeyTemplate(final KeyArchetype archetype) {
         super(archetype);
     }
 

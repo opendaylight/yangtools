@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
@@ -44,6 +45,18 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
  * Template for generating JAVA interfaces.
  */
 sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
+    @NonNullByDefault
+    record Builder(GeneratedType type) implements Template.Builder {
+        Builder(final GeneratedType type) {
+            this.type = requireNonNull(type);
+        }
+
+        @Override
+        public InterfaceTemplate build() {
+            return new InterfaceTemplate(type);
+        }
+    }
+
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 

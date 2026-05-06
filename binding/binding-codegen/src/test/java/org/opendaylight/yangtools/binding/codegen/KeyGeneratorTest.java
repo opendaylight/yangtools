@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -42,7 +43,7 @@ class KeyGeneratorTest {
                         }
                         assertEquals(2, propertyCount);
 
-                        assertEquals("""
+                        assertKeyClass("""
                             package org.opendaylight.yang.gen.v1.urn.composite.key.rev130227.list.parent.container;
 
                             import java.lang.Byte;
@@ -121,12 +122,12 @@ class KeyGeneratorTest {
                                         .build();
                                 }
                             }
-                            """, new KeyGenerator(archetype).generate());
+                            """, archetype);
                     }
                     case "InnerListKey" -> {
                         final var properties = archetype.getProperties();
                         assertEquals(1, properties.size());
-                        assertEquals("""
+                        assertKeyClass("""
                             package org.opendaylight.yang.gen.v1.urn.composite.key.rev130227.list.parent.container.\
                             composite.key.list;
 
@@ -186,7 +187,7 @@ class KeyGeneratorTest {
                                     return CodeHelpers.jcTS1(InnerListKey.class, "key1", _key1);
                                 }
                             }
-                            """, new KeyGenerator(archetype).generate());
+                            """, archetype);
                     }
                     default -> fail("Unexpected key " + archetype);
                 }
@@ -197,5 +198,12 @@ class KeyGeneratorTest {
 
         assertEquals(5, genTypesCount);
         assertEquals(2, keyArchetypeCount);
+    }
+
+    @NonNullByDefault
+    private static void assertKeyClass(final String expected, final KeyArchetype archetype) {
+        final var sb = new StringBuilder();
+        new KeyTemplate.Builder(archetype).build().generateTo(sb);
+        assertEquals(expected, sb.toString());
     }
 }

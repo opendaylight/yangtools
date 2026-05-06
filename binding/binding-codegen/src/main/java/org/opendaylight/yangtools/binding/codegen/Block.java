@@ -234,10 +234,10 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
     /**
      * Append this block to an {@link Appendable}.
      *
-     * @param appendable the {@link Appendable}
+     * @param out the {@link Appendable}
      * @throws IOException if an I/O error occurs
      */
-    void appendTo(Appendable appendable) throws IOException;
+    void appendTo(Appendable out) throws IOException;
 
     @Override
     void appendTo(BlockBuilder bb);

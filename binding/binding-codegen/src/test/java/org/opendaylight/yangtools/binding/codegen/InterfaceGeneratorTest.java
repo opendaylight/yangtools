@@ -14,6 +14,7 @@ import static org.mockito.Mockito.spy;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -30,7 +31,7 @@ class InterfaceGeneratorTest {
         final var methSign = mockMethSign("on" + TEST);
         final var genType = mockGenType(methSign);
 
-        assertEquals("""
+        assertInterface("""
             package test;
 
             import javax.annotation.processing.Generated;
@@ -42,7 +43,7 @@ class InterfaceGeneratorTest {
 
                 void ontest();
             }
-            """, new InterfaceGenerator(genType).generate());
+            """, genType);
     }
 
     @Test
@@ -51,7 +52,7 @@ class InterfaceGeneratorTest {
         addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
         final var genType = mockGenType(methSign);
 
-        assertEquals("""
+        assertInterface("""
             package test;
 
             import java.lang.Deprecated;
@@ -65,7 +66,7 @@ class InterfaceGeneratorTest {
                 @Deprecated
                 void ontest();
             }
-            """, new InterfaceGenerator(genType).generate());
+            """, genType);
     }
 
     @Test
@@ -75,7 +76,7 @@ class InterfaceGeneratorTest {
         doReturn(true).when(methSign).isDefault();
         final var genType = mockGenType(methSign);
 
-        assertEquals("""
+        assertInterface("""
             package test;
 
             import java.lang.Deprecated;
@@ -91,7 +92,7 @@ class InterfaceGeneratorTest {
                     // No-op
                 }
             }
-            """, new InterfaceGenerator(genType).generate());
+            """, genType);
     }
 
     private static @NonNull GeneratedType mockGenType(final MethodSignature methSign) {
@@ -118,5 +119,12 @@ class InterfaceGeneratorTest {
         final var annotationType = mock(AnnotationType.class);
         doReturn(annotationJavaType).when(annotationType).name();
         doReturn(List.of(annotationType)).when(methSign).getAnnotations();
+    }
+
+    @NonNullByDefault
+    private static void assertInterface(final String expected, final GeneratedType genType) {
+        final var sb = new StringBuilder();
+        new InterfaceTemplate.Builder(genType).build().generateTo(sb);
+        assertEquals(expected, sb.toString());
     }
 }

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
@@ -18,7 +20,24 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
  */
 final class DataRootTemplate extends InterfaceTemplate {
     @NonNullByDefault
-    DataRootTemplate(final DataRootArchetype archetype) {
+    record Builder(DataRootArchetype type) implements Template.Builder {
+        Builder(final DataRootArchetype type) {
+            this.type = requireNonNull(type);
+        }
+
+        @Override
+        public DataRootArchetype type() {
+            return type;
+        }
+
+        @Override
+        public DataRootTemplate build() {
+            return new DataRootTemplate(type);
+        }
+    }
+
+    @NonNullByDefault
+    private DataRootTemplate(final DataRootArchetype archetype) {
         super(archetype);
     }
 

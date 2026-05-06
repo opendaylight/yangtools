@@ -23,8 +23,8 @@ record Block1(String line) implements Block.OfOne {
     }
 
     @Override
-    public void appendTo(final Appendable appendable) throws IOException {
-        appendable.append(line).append('\n');
+    public void appendTo(final Appendable out) throws IOException {
+        out.append(line).append('\n');
     }
 
     @Override

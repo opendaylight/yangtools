@@ -30,8 +30,8 @@ record Block2(String str, int nl) implements Block {
     }
 
     @Override
-    public void appendTo(final Appendable appendable) throws IOException {
-        appendable.append(str).append('\n');
+    public void appendTo(final Appendable out) throws IOException {
+        out.append(str).append('\n');
     }
 
     @Override

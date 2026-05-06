@@ -18,20 +18,20 @@ import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
 
 @NonNullByDefault
 final class CodeGeneratorGeneratedFile extends AbstractGeneratedTextFile {
-    private final Generator generator;
+    private final Template template;
 
-    CodeGeneratorGeneratedFile(final GeneratedFileLifecycle lifecycle, final Generator generator) {
+    CodeGeneratorGeneratedFile(final GeneratedFileLifecycle lifecycle, final Template template) {
         super(lifecycle);
-        this.generator = requireNonNull(generator);
+        this.template = requireNonNull(template);
     }
 
     @Override
     protected void writeBody(final Writer output) throws IOException {
-        output.write(generator.generate());
+        template.generateTo(output);
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper).add("generator", generator);
+        return super.addToStringAttributes(helper).add("template", template);
     }
 }

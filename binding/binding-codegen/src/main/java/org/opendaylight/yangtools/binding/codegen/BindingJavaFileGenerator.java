@@ -67,7 +67,7 @@ final class BindingJavaFileGenerator {
             switch (type) {
                 case Archetype archetype -> generateArchetype(archetype);
                 default -> {
-                    generateFile(new InterfaceGenerator(type));
+                    generateFile(new InterfaceTemplate.Builder(type));
                     generateBuilder(type);
                 }
             }
@@ -76,16 +76,16 @@ final class BindingJavaFileGenerator {
 
     private void generateArchetype(final Archetype type) {
         switch (type) {
-            case BitsTypeObjectArchetype archetype -> generateFile(new BitsTypeObjectGenerator(archetype));
+            case BitsTypeObjectArchetype archetype -> generateFile(new BitsTypeObjectTemplate.Builder(archetype));
             case DataRootArchetype archetype -> {
-                generateFile(new DataRootGenerator(archetype));
+                generateFile(new DataRootTemplate.Builder(archetype));
                 generateBuilder(archetype);
             }
-            case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectGenerator(archetype));
-            case FeatureArchetype archetype -> generateFile(new FeatureGenerator(archetype));
-            case KeyArchetype archetype -> generateFile(new KeyGenerator(archetype));
-            case ScalarTypeObjectArchetype archetype -> generateFile(new ScalarTypeObjectGenerator(archetype));
-            case UnionTypeObjectArchetype archetype -> generateFile(new UnionTypeObjectGenerator(archetype));
+            case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectTemplate.Builder(archetype));
+            case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype));
+            case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype));
+            case ScalarTypeObjectArchetype archetype -> generateFile(new ScalarTypeObjectTemplate.Builder(archetype));
+            case UnionTypeObjectArchetype archetype -> generateFile(new UnionTypeObjectTemplate.Builder(archetype));
             case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
         }
     }
@@ -94,17 +94,18 @@ final class BindingJavaFileGenerator {
         // FIXME: express this in GeneratedType hierarchy as a marker interface
         for (var iface : type.getImplements()) {
             if (BUILDER_INTERFACES.contains(iface.name())) {
-                generateFile(new BuilderGenerator(type));
+                generateFile(new BuilderTemplate.Builder(type));
                 return;
             }
         }
     }
 
-    private void generateFile(final Generator generator) {
-        final var typeName = generator.type().name();
-        final var file =  GeneratedFilePath.ofDirectoryFile(
+    private void generateFile(final Template.Builder builder) {
+        final var template = builder.build();
+        final var typeName = template.typeName();
+        final var file = GeneratedFilePath.ofDirectoryFile(
             typeName.packageName().replace('.', GeneratedFilePath.SEPARATOR),
-            generator.getUnitName() + ".java");
+            typeName.simpleName() + ".java");
 
         if (result.contains(GeneratedFileType.SOURCE, file)) {
             if (ignoreDuplicateFiles) {
@@ -116,6 +117,6 @@ final class BindingJavaFileGenerator {
         }
 
         result.put(GeneratedFileType.SOURCE, file,
-            new CodeGeneratorGeneratedFile(GeneratedFileLifecycle.TRANSIENT, generator));
+            new CodeGeneratorGeneratedFile(GeneratedFileLifecycle.TRANSIENT, template));
     }
 }
