@@ -64,7 +64,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
 
     AbstractBuilderTemplate(final @NonNull GeneratedType type, final @NonNull GeneratedType targetType,
             final KeyArchetype keyType) {
-        super(type);
+        super(GeneratedClass.of(type), type);
         this.targetType = requireNonNull(targetType);
         this.keyType = keyType;
         final var analysis = TypeAnalysis.of(targetType);

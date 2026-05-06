@@ -36,7 +36,7 @@ final class KeyTemplate extends BaseTemplate {
 
     @NonNullByDefault
     private KeyTemplate(final KeyArchetype archetype) {
-        super(archetype);
+        super(GeneratedClass.of(archetype), archetype);
     }
 
     @Override
