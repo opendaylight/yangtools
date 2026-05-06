@@ -18,7 +18,7 @@ public final class CodegenUnionTypeObjectArchetypeBuilder extends CodegenGenerat
 
     @NonNullByDefault
     public CodegenUnionTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
-        super(typeName);
+        super(typeName, null);
     }
 
     @Override

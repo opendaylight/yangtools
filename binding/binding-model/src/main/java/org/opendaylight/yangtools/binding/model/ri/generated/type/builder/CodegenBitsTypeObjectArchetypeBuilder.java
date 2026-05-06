@@ -15,7 +15,7 @@ public final class CodegenBitsTypeObjectArchetypeBuilder extends CodegenGenerate
         implements BitsTypeObjectArchetype.Builder {
     @NonNullByDefault
     public CodegenBitsTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
-        super(typeName);
+        super(typeName, null);
     }
 
     @Override

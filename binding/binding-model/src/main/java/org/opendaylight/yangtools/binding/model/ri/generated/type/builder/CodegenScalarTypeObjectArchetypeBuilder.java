@@ -15,7 +15,7 @@ public final class CodegenScalarTypeObjectArchetypeBuilder extends CodegenGenera
         implements ScalarTypeObjectArchetype.Builder {
     @NonNullByDefault
     public CodegenScalarTypeObjectArchetypeBuilder(final JavaTypeName typeName) {
-        super(typeName);
+        super(typeName, null);
     }
 
     @Override

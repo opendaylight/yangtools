@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.TypeObject;
@@ -26,8 +25,12 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
     private String description;
     private String moduleName;
 
-    // FIXME: package-private
-    @VisibleForTesting
+    @NonNullByDefault
+    CodegenGeneratedTOBuilder(final JavaTypeName typeName, final @Nullable Void unused) {
+        super(typeName);
+    }
+
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
     public CodegenGeneratedTOBuilder(final JavaTypeName typeName) {
         super(typeName);
