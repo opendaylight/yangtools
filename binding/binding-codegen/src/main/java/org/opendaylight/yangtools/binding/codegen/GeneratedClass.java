@@ -29,6 +29,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.JavaPackageName;
 import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
@@ -184,6 +185,8 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         }
     }
 
+    private static final JavaPackageName EMPTY_PKG = JavaPackageName.of("");
+
     private final HashMap<TypeName, @Nullable String> nameCache = new HashMap<>();
     private final Map<String, Nested> nestedClasses;
     private final Set<String> conflictingNames;
@@ -325,7 +328,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     final String getReferenceString(final TypeName type) {
-        if (type.packageName().isEmpty()) {
+        if (EMPTY_PKG.equals(type.packageName())) {
             // This is a packageless primitive type, refer to it directly
             return type.simpleName();
         }

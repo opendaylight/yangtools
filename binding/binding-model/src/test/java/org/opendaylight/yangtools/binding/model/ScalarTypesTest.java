@@ -19,7 +19,7 @@ class ScalarTypesTest {
     @Test
     void test() {
         final var stringType = assertInstanceOf(ConcreteType.class, ScalarTypes.STRING);
-        assertEquals("java.lang", stringType.packageName());
+        assertEquals(JavaPackageName.of("java.lang"), stringType.packageName());
         assertEquals("String", stringType.simpleName());
 
         assertEquals(new ConcreteTypeImpl(BindingInstanceIdentifier.class), ScalarTypes.INSTANCE_IDENTIFIER);

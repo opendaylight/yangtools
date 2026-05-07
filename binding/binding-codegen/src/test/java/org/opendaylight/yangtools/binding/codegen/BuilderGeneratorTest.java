@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.TypeName;
 
 public class BuilderGeneratorTest extends BaseCompilationTest {
     private static Path SOURCES;
@@ -223,9 +222,9 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
     @Test
     void builderTemplateGenerateToEqualsComparingOrderTest() {
         final var nodesName =
-            TypeName.of("org.opendaylight.yang.gen.v1.urn.opendaylight.test.types.rev200513", "Nodes");
+            "org.opendaylight.yang.gen.v1.urn.opendaylight.test.types.rev200513.Nodes";
         final var nodes = assertInstanceOf(ContainerObjectArchetype.class, TYPES.stream()
-            .filter(type -> nodesName.equals(type.name()))
+            .filter(type -> nodesName.equals(type.name().toString()))
             .findFirst()
             .orElseThrow());
 

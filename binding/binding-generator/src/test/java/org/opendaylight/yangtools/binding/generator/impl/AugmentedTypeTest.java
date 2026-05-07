@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
-import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -42,7 +41,7 @@ class AugmentedTypeTest {
         AugmentationArchetype gtNetworkLink2 = null;
 
         for (var type : genTypes) {
-            if (!type.packageName().contains("augment._abstract.topology")) {
+            if (!type.packageName().toString().contains("augment._abstract.topology")) {
                 continue;
             }
 
@@ -61,9 +60,9 @@ class AugmentedTypeTest {
 
         // 'Interface
         assertNotNull(gtInterface, "gtInterface is null");
-        assertEquals(TypeName.of(
-            "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-            "InterfaceKey"), gtInterface.keyName());
+        assertEquals("""
+            org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces.\
+            InterfaceKey""", gtInterface.keyName().topLevelClass().toString());
 
         GetterMethod getHigherLayerIfMethod = null;
         for (var method : gtInterface.getters()) {
@@ -85,9 +84,9 @@ class AugmentedTypeTest {
 
         // 'Tunnel'
         assertNotNull(gtTunnel, "Tunnel is null");
-        assertEquals(TypeName.of("""
+        assertEquals("""
             org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.network.\
-            link.tunnels""", "TunnelKey"), gtTunnel.keyName());
+            link.tunnels.TunnelKey""", gtTunnel.keyName().toString());
         assertThat(gtTunnel.getters()).hasSize(2);
 
         // 'TunnelKey'

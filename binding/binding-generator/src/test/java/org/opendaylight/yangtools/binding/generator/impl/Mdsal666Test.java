@@ -10,16 +10,20 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.ModulePackageName;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
+@NonNullByDefault
 class Mdsal666Test {
-    private static final TypeName FOO = TypeName.of("org.opendaylight.yang.gen.v1.foo.norev", "Foo");
-    private static final TypeName FOO_GRP = TypeName.of("org.opendaylight.yang.gen.v1.foo.norev", "Foo$G");
-    private static final TypeName BAZ_GRP = TypeName.of("org.opendaylight.yang.gen.v1.foo.norev.bar",
-        "Baz$G");
+    private static final ModulePackageName FOO_PKG = ModulePackageName.of(QNameModule.of("foo"));
+    private static final TypeName FOO = TypeName.of(FOO_PKG, "Foo");
+    private static final TypeName FOO_GRP = TypeName.of(FOO_PKG, "Foo$G");
+    private static final TypeName BAZ_GRP = TypeName.of(FOO_PKG.subPackage("bar"), "Baz$G");
 
     @Test
     void rpcPushesGrouping() {

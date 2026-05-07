@@ -13,10 +13,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.ModulePackageName;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal458Test {
+    private static final ModulePackageName MDSAL458 = ModulePackageName.of(QNameModule.of("mdsal458"));
+
     @Test
     void testNestedClassFallback() {
         final var types = DefaultBindingGenerator.generateFor(
@@ -24,8 +28,6 @@ class Mdsal458Test {
         assertEquals(2, types.size());
 
         final var typeNames = types.stream().map(Archetype::name).collect(Collectors.toSet());
-        assertEquals(Set.of(
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal458.norev", "ExportedTo"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal458.norev", "Mdsal458Data")), typeNames);
+        assertEquals(Set.of(TypeName.of(MDSAL458, "ExportedTo"), TypeName.of(MDSAL458, "Mdsal458Data")), typeNames);
     }
 }

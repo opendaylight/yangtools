@@ -92,7 +92,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         final var body = body().build();
 
         // package declaration
-        out.append("package ").append(javaType.name().packageName()).append(";\n\n");
+        out.append("package ").append(javaType.name().packageName().toString()).append(";\n\n");
 
         // import block
         final var importedNames = topLevel.imports().toArray(TypeName[]::new);

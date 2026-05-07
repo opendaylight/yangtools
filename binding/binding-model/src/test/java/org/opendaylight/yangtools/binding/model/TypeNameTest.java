@@ -19,10 +19,12 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class TypeNameTest {
+    private static final PackageName JAVA_LANG = JavaPackageName.of("java.lang");
+
     @Test
     void testOperations() {
         final var byteName = TypeName.ofClass(byte.class);
-        assertEquals("", byteName.packageName());
+        assertSame(JPN.EMPTY, byteName.packageName());
         assertEquals("byte", byteName.simpleName());
         assertEquals("byte", byteName.toString());
         assertNull(byteName.immediatelyEnclosingClass());
@@ -31,7 +33,7 @@ class TypeNameTest {
         assertEquals("byte", byteName.localName());
 
         final var charName = byteName.createSibling("char");
-        assertEquals("", charName.packageName());
+        assertEquals(JPN.EMPTY, charName.packageName());
         assertEquals("char", charName.simpleName());
         assertEquals("char", charName.toString());
         assertNull(charName.immediatelyEnclosingClass());
@@ -40,7 +42,7 @@ class TypeNameTest {
         assertEquals("char", charName.localName());
 
         final var threadName = TypeName.ofClass(Thread.class);
-        assertEquals("java.lang", threadName.packageName());
+        assertEquals(JAVA_LANG, threadName.packageName());
         assertEquals("Thread", threadName.simpleName());
         assertEquals("java.lang.Thread", threadName.toString());
         assertNull(threadName.immediatelyEnclosingClass());
@@ -52,14 +54,14 @@ class TypeNameTest {
         assertEquals("Thread", threadName.localName());
 
         final var stringName = threadName.createSibling("String");
-        assertEquals("java.lang", stringName.packageName());
+        assertEquals(JAVA_LANG, stringName.packageName());
         assertEquals("String", stringName.simpleName());
         assertEquals("java.lang.String", stringName.toString());
         assertNull(stringName.immediatelyEnclosingClass());
         assertEquals(stringName, TypeName.of("java.lang", "String"));
 
         final var enclosedName = threadName.createEnclosed("Foo");
-        assertEquals("java.lang", enclosedName.packageName());
+        assertEquals(JAVA_LANG, enclosedName.packageName());
         assertEquals("Foo", enclosedName.simpleName());
         assertEquals("java.lang.Thread.Foo", enclosedName.toString());
         assertEquals(threadName, enclosedName.immediatelyEnclosingClass());
@@ -68,7 +70,7 @@ class TypeNameTest {
         assertEquals("Thread.Foo", enclosedName.localName());
 
         final var uehName = TypeName.ofClass(Thread.UncaughtExceptionHandler.class);
-        assertEquals("java.lang", uehName.packageName());
+        assertEquals(JAVA_LANG, uehName.packageName());
         assertEquals("UncaughtExceptionHandler", uehName.simpleName());
         assertEquals("java.lang.Thread.UncaughtExceptionHandler", uehName.toString());
         assertEquals(threadName, uehName.immediatelyEnclosingClass());
@@ -77,7 +79,7 @@ class TypeNameTest {
         assertFalse(uehName.canCreateEnclosed("UncaughtExceptionHandler"));
 
         final var siblingName = uehName.createSibling("Foo");
-        assertEquals("java.lang", siblingName.packageName());
+        assertEquals(JAVA_LANG, siblingName.packageName());
         assertEquals("Foo", siblingName.simpleName());
         assertEquals("java.lang.Thread.Foo", siblingName.toString());
         assertEquals(threadName, siblingName.immediatelyEnclosingClass());
