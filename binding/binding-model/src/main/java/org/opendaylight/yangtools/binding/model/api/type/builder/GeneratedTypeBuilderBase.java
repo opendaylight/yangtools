@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -25,7 +24,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Abstra
 
 public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
         extends TypeBuilder, AnnotableTypeBuilder
-        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, FeatureArchetype.Builder, KeyArchetype.Builder,
+        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, KeyArchetype.Builder,
                 GeneratedTransferObject.Builder, GeneratedTypeBuilder {
     /**
      * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into definition of Generated Type.

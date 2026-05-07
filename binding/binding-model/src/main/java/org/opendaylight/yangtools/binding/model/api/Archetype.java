@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A {@link GeneratedType} whose parameters are derived from a set of invariants.
+ *
  * @since 15.0.0
  */
 @Beta
