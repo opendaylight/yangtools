@@ -51,8 +51,8 @@ public record KeyArchetype(
         final var svh = new SerialVersionHelper(name())
             .setAbstract(false)
             .addInterface(JavaTypeName.create(Key.class));
-        for (var prop : getProperties()) {
-            svh.addField(prop.getName());
+        for (var qname : statement().argument()) {
+            svh.addField(Naming.getPropertyName(qname.getLocalName()));
         }
         return svh.computeSerialVersion();
     }
