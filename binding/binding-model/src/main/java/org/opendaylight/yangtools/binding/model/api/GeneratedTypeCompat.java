@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Compatibility {@link GeneratedType} method implementations for {@link Archetype}s which do not provide them.
  */
-public sealed interface GeneratedTypeCompat extends GeneratedType permits FeatureArchetype {
+public sealed interface GeneratedTypeCompat extends GeneratedType permits FeatureArchetype, KeyArchetype {
     /**
      * Returns a string that contains a human-readable textual description of
      * type definition.

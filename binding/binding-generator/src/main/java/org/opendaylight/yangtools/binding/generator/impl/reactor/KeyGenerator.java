@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
@@ -52,19 +53,16 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
 
     @Override
     KeyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newKeyBuilder(typeName(), listGen.typeName(), statement());
-
-        for (var qname : statement().argument()) {
-            final var gen = listGen.findSchemaTreeGenerator(qname);
-            switch (gen) {
-                case null -> throw new VerifyException("Cannot find generator for " + qname);
-                case LeafGenerator leafGen -> builder.addField(leafGen.methodReturnType(builderFactory));
-                // addComment(propBuilder, leaf);
-                default -> throw new VerifyException("Unexpected generator " + gen);
-            }
-        }
-
-        return builder.build();
+        final var statement = statement();
+        return new KeyArchetype(typeName(), listGen.typeName(), statement, statement().argument().stream()
+            .map(qname -> {
+                final var gen = listGen.findSchemaTreeGenerator(qname);
+                if (!(gen instanceof LeafGenerator leafGen)) {
+                    throw new VerifyException("Unexpected generator " + gen);
+                }
+                return leafGen.methodReturnType(builderFactory);
+            })
+            .collect(Collectors.toUnmodifiableList()));
     }
 
     @Override

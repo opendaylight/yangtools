@@ -46,6 +46,7 @@ final class KeyTemplate extends BaseTemplate {
         final var entryObject = importedName(type.entryObject());
 
         return newBlockBuilder()
+            // FIXME: take advantage of javadocBlock() to add a module reference and a snippet
             .eol("/**")
             .str(" * This class represents the key of {@link ").str(entryObject).eol("} class.")
             .eol(" *")
@@ -111,6 +112,8 @@ final class KeyTemplate extends BaseTemplate {
                 .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
                 .eol(", guaranteed to be non-null.")
                 .eol(" */")
+                // TODO: addComment(propBuilder, leaf) or as we should be able to look up the EbtryObjectArchetype and
+                //       get the leaf from there: and then we do not need to store the types at all
                 .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()")
                 .oB()
                 .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()

@@ -7,63 +7,58 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.KeyArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
  * An archetype for a {@link Key} attached to an {@link EntryObject}.
+ *
+ * @param name this type's {@link JavaTypeName}}
+ * @param entryObject the {@link JavaTypeName}} of the corresponding {@link EntryObject}
+ * @param statement the {@link KeyEffectiveStatement}
+ * @param fields {@link Type}s in the same order as {@code statement().argument()}
+ * @since 16.0.0
  */
 @Beta
-public non-sealed interface KeyArchetype extends Archetype.WithStatement<KeyEffectiveStatement> {
-    /**
-     * A builder of {@link KeyArchetype} instances.
-     */
-    sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits KeyArchetypeBuilder {
-
-        Builder addField(Type type);
-
-        @Override
-        KeyArchetype build();
+@NonNullByDefault
+public record KeyArchetype(
+        JavaTypeName name,
+        JavaTypeName entryObject,
+        KeyEffectiveStatement statement,
+        List<Type> fields) implements Archetype.WithStatement<KeyEffectiveStatement>, GeneratedTypeCompat {
+    public KeyArchetype {
+        requireNonNull(name);
+        requireNonNull(entryObject);
+        requireNonNull(statement);
+        fields = List.copyOf(fields);
+        verify(fields.size() == statement.argument().size());
     }
-
-    /**
-     * {@return the {@link JavaTypeName} of the associated {@link EntryObject} type}
-     */
-    @NonNull JavaTypeName entryObject();
-
-    /**
-     * {@return field {@link Type}s in the same order as {@code statement().argument()}}
-     */
-    @NonNullByDefault
-    List<Type> fields();
 
     /**
      * {@return the value of the {@code serialVersionUID} of this {@link Key} class};
      */
-    default long serialVersionUID() {
-        final var props = getProperties();
+    public long serialVersionUID() {
         final var svh = new SerialVersionHelper(name())
             .setAbstract(false)
             .addInterface(JavaTypeName.create(Key.class));
-        for (var prop : props) {
+        for (var prop : getProperties()) {
             svh.addField(prop.getName());
         }
         return svh.computeSerialVersion();
     }
 
     @Override
-    default List<GeneratedProperty> getProperties() {
+    public List<GeneratedProperty> getProperties() {
         final var arg = statement().argument();
         final var props = new ArrayList<GeneratedProperty>(arg.size());
         final var kit = arg.iterator();
@@ -80,55 +75,43 @@ public non-sealed interface KeyArchetype extends Archetype.WithStatement<KeyEffe
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<AnnotationType> getAnnotations() {
+    public List<AnnotationType> getAnnotations() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default @Nullable TypeComment getComment() {
-        return null;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default boolean isAbstract() {
+    public boolean isAbstract() {
         return false;
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<Type> getImplements() {
+    public List<Type> getImplements() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<GeneratedType> getEnclosedTypes() {
+    public List<GeneratedType> getEnclosedTypes() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<EnumTypeObjectArchetype> getEnumerations() {
+    public List<EnumTypeObjectArchetype> getEnumerations() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<Constant> getConstantDefinitions() {
+    public List<Constant> getConstantDefinitions() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<MethodSignature> getMethodDefinitions() {
+    public List<MethodSignature> getMethodDefinitions() {
         return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default @Nullable YangSourceDefinition yangSourceDefinition() {
-        return null;
     }
 }
