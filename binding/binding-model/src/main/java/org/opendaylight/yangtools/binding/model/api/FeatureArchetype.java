@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
@@ -23,9 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public record FeatureArchetype(
-        JavaTypeName name,
-        FeatureEffectiveStatement statement) implements Archetype.WithStatement<FeatureEffectiveStatement> {
+public record FeatureArchetype(JavaTypeName name, FeatureEffectiveStatement statement)
+        implements Archetype.WithStatement<FeatureEffectiveStatement>, GeneratedTypeCompat {
     public FeatureArchetype {
         requireNonNull(name);
         requireNonNull(statement);
@@ -35,12 +33,6 @@ public record FeatureArchetype(
     @Deprecated(forRemoval = true)
     public List<AnnotationType> getAnnotations() {
         return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public @Nullable TypeComment getComment() {
-        return null;
     }
 
     @Override
