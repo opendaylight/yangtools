@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
-        extends AbstractRuntimeType<S, GeneratedType> implements CompositeRuntimeType {
+        extends StmtRuntimeType<S, GeneratedType> implements CompositeRuntimeType {
     private static final RuntimeType[] EMPTY = new RuntimeType[0];
 
     private final ImmutableMap<JavaTypeName, GeneratedRuntimeType> byClass;

@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.LeafRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 
-public final class DefaultLeafRuntimeType extends AbstractRuntimeType<LeafEffectiveStatement, Type>
+public final class DefaultLeafRuntimeType extends StmtRuntimeType<LeafEffectiveStatement, Type>
         implements LeafRuntimeType {
     public DefaultLeafRuntimeType(final Type bindingType, final LeafEffectiveStatement statement) {
         super(bindingType, statement);

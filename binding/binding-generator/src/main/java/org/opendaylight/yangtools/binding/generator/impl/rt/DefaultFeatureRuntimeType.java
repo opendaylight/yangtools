@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.FeatureRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
+@NonNullByDefault
 public final class DefaultFeatureRuntimeType extends AbstractRuntimeType<FeatureEffectiveStatement, FeatureArchetype>
         implements FeatureRuntimeType {
     public DefaultFeatureRuntimeType(final FeatureArchetype archetype) {
-        super(archetype, archetype.statement());
+        super(archetype);
     }
 }
