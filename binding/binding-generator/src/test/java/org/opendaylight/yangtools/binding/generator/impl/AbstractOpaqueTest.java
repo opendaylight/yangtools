@@ -13,14 +13,13 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype;
-import org.opendaylight.yangtools.binding.model.TypeName;
 
 abstract class AbstractOpaqueTest {
     @NonNullByDefault
     static final void assertOpaqueNode(final List<Archetype> types, final String ns, final String pkg,
             final String name) {
-        final var typeName = TypeName.of("org.opendaylight.yang.gen.v1." + ns + ".norev" + pkg, name);
+        final var typeName = "org.opendaylight.yang.gen.v1." + ns + ".norev" + pkg + "." + name;
         assertInstanceOf(OpaqueObjectArchetype.class,
-            types.stream().filter(t -> typeName.equals(t.name())).findFirst().orElseThrow());
+            types.stream().filter(t -> typeName.equals(t.name().toString())).findFirst().orElseThrow());
     }
 }

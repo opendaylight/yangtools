@@ -47,7 +47,7 @@ class GeneratedTypesLeafrefTest {
             String name = type.simpleName();
             if ("InterfaceKey".equals(name)
                     && "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces".equals(
-                        type.packageName())) {
+                        type.packageName().toString())) {
                 gtIfcKey = assertInstanceOf(KeyArchetype.class, type);
             } else {
                 switch (name) {
@@ -106,9 +106,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("java.lang.String", ifcIdPropType.canonicalName());
 
         // Interface
-        assertEquals(TypeName.of(
-            "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"),
-            gtIfc.keyName());
+        assertEquals(
+            "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces.InterfaceKey",
+            gtIfc.keyName().toString());
         final var gtIfcMethods = gtIfc.getters();
         assertNotNull(gtIfcMethods);
         GetterMethod getHigherLayerIf = null;

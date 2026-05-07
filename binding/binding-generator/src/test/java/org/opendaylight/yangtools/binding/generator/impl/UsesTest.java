@@ -513,20 +513,20 @@ class UsesTest {
         assertNotNull(notificationTest, "Generated type for notification-test wasn't generated.");
         assertEquals(1, notificationTestCounter, "NotificationTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718",
-            notificationTest.packageName(), "NotificationTest is in wrong package.");
+            notificationTest.packageName().toString(), "NotificationTest is in wrong package.");
 
         assertNotNull(groupingNotificationTest, "Generated type for grouping-notification-test wasn't generated.");
         assertEquals(1, groupingNotificationTestCounter,
             "GroupingNotificationTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718",
-            groupingNotificationTest.packageName(), "groupingNotificationTest is in wrong package.");
+            groupingNotificationTest.packageName().toString(), "groupingNotificationTest is in wrong package.");
 
         assertNotNull(containerGroupingNotificationTest,
             "Generated type for container-grouping-notification-test wasn't generated.");
         assertEquals(1, containerGroupingNotificationTestCounter,
             "ContainerGroupingNotificationTest interface generated more than one time.");
         assertEquals("org.opendaylight.yang.gen.v1.urn.grouping.uses.notification.rev130718.grouping.notification.test",
-            containerGroupingNotificationTest.packageName(),
+            containerGroupingNotificationTest.packageName().toString(),
             "ContainerGroupingNotificationTest is in wrong package.");
 
         containsInterface("GroupingNotificationTest", notificationTest);
