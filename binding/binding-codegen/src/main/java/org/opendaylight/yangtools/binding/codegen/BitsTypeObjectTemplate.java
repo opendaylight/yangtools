@@ -28,11 +28,6 @@ final class BitsTypeObjectTemplate extends ClassTemplate {
         }
 
         @Override
-        public BitsTypeObjectArchetype type() {
-            return type;
-        }
-
-        @Override
         public BitsTypeObjectTemplate build() {
             return new BitsTypeObjectTemplate(type);
         }
