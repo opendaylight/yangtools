@@ -630,9 +630,9 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     final @Nullable BlockBuilder deprecatedAnnotation(final DocumentedNode.@NonNull WithStatus node) {
         return switch (node.getStatus()) {
+            case CURRENT -> null;
             case DEPRECATED -> newBlockBuilder().at().eol(importedName(DEPRECATED));
             case OBSOLETE -> newBlockBuilder().at().str(importedName(DEPRECATED)).eol("(forRemoval = true)");
-            case CURRENT -> null;
         };
     }
 
