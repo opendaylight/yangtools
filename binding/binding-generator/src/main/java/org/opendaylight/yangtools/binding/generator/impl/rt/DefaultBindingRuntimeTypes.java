@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
+import org.opendaylight.yangtools.binding.model.PackageName;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
@@ -45,7 +46,7 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     private final @NonNull EffectiveModelContext modelContext;
     private final ImmutableSetMultimap<TypeName, CaseRuntimeType> choiceToCases;
     private final ImmutableMap<QNameModule, ModuleRuntimeType> modulesByNamespace;
-    private final ImmutableSortedMap<String, ModuleRuntimeType> modulesByPackage;
+    private final ImmutableSortedMap<PackageName, ModuleRuntimeType> modulesByPackage;
     private final ImmutableMap<QName, IdentityRuntimeType> identities;
     private final ImmutableMap<TypeName, RuntimeType> types;
     private final ImmutableListMultimap<CaseObjectArchetype, CaseRuntimeType> caseToSubstitutionCases;

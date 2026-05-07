@@ -35,8 +35,8 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
         }
 
         @Override
-        public String packageName() {
-            return "";
+        public PackageName packageName() {
+            return JPN.EMPTY;
         }
 
         @Override
@@ -112,18 +112,18 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
     }
 
     private static final class TopLevel extends Reference {
-        private final String packageName;
+        private final PackageName packageName;
 
-        TopLevel(final String packageName, final String simpleName) {
+        TopLevel(final PackageName packageName, final String simpleName) {
             super(simpleName);
-            if (packageName.isEmpty()) {
+            if (packageName.equals(JPN.EMPTY)) {
                 throw new IllegalArgumentException("empty package name");
             }
             this.packageName = packageName;
         }
 
         @Override
-        public String packageName() {
+        public PackageName packageName() {
             return packageName;
         }
 
@@ -169,7 +169,7 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
         }
 
         @Override
-        public String packageName() {
+        public PackageName packageName() {
             return immediatelyEnclosingClass.packageName();
         }
 
@@ -231,8 +231,22 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
      * @throws NullPointerException if any of the arguments is null
      * @throws IllegalArgumentException if any of the arguments is empty
      */
-    public static TypeName of(final String packageName, final String simpleName) {
+    public static TypeName of(final PackageName packageName, final String simpleName) {
         return new TopLevel(packageName, simpleName);
+    }
+
+    /**
+     * Create a TypeName for a top-level class.
+     *
+     * @param packageName Class package name
+     * @param simpleName Class simple name
+     * @return A new TypeName.
+     * @throws NullPointerException if any of the arguments is null
+     * @throws IllegalArgumentException if any of the arguments is empty or the package corresponds to a generated type
+     */
+    @Deprecated(since = "16.0.0")
+    public static TypeName of(final String packageName, final String simpleName) {
+        return new TopLevel(JavaPackageName.of(packageName), simpleName);
     }
 
     /**
@@ -240,7 +254,8 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
      *
      * @param clazz Class instance
      * @return A new TypeName
-     * @throws NullPointerException if clazz is null
+     * @throws NullPointerException if clazz is {@code null}
+     * @throws IllegalArgumentException if the class correspond to a generated class
      */
     public static TypeName ofClass(final Class<?> clazz) {
         final var enclosingClass = clazz.getEnclosingClass();
@@ -248,7 +263,8 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
             return ofClass(enclosingClass).createEnclosed(clazz.getSimpleName());
         }
         final var pkg = clazz.getPackage();
-        return pkg == null ? new Primitive(clazz.getSimpleName()) : new TopLevel(pkg.getName(), clazz.getSimpleName());
+        return pkg == null ? new Primitive(clazz.getSimpleName())
+            : new TopLevel(JavaPackageName.of(pkg.getName()), clazz.getSimpleName());
     }
 
     /**
@@ -326,7 +342,7 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
      *
      * @return Package name of the class.
      */
-    public abstract String packageName();
+    public abstract PackageName packageName();
 
     /**
      * {@return enclosing class TypeName, or {@code null} if not present}
@@ -360,7 +376,7 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
     @Override
     public final int compareTo(final TypeName other) {
         final var cmp = packageName().compareTo(other.packageName());
-        return cmp != 0 ? cmp : localName().compareTo(localName());
+        return cmp != 0 ? cmp : localName().compareTo(other.localName());
     }
 
     @Override

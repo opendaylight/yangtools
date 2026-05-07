@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.BindingPackageName;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -41,7 +42,7 @@ public abstract class Generator implements Iterable<Generator> {
     private Optional<Member> member;
     private GeneratorResult result;
     private TypeName typeName;
-    private String javaPackage;
+    private BindingPackageName javaPackage;
 
     Generator() {
         parent = null;
@@ -176,18 +177,17 @@ public abstract class Generator implements Iterable<Generator> {
         return getMember().currentClass();
     }
 
-    final @NonNull String javaPackage() {
-        String local = javaPackage;
+    final @NonNull BindingPackageName javaPackage() {
+        var local = javaPackage;
         if (local == null) {
             javaPackage = local = createJavaPackage();
         }
         return local;
     }
 
-    @NonNull String createJavaPackage() {
-        final String parentPackage = getPackageParent().javaPackage();
-        final String myPackage = getMember().currentPackage();
-        return Naming.normalizePackageName(parentPackage + '.' + myPackage);
+    @NonNull BindingPackageName createJavaPackage() {
+        final var myPackage = getMember().currentPackage();
+        return getPackageParent().javaPackage().subPackage(Naming.normalizePackageName(myPackage));
     }
 
     final @NonNull TypeName typeName() {
