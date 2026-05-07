@@ -337,41 +337,42 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         if (comment != null) {
             sb.append(comment.getJavadoc());
         }
-        appendSnippet(sb, type);
+        final var def = type.yangSourceDefinition();
+        if (def != null) {
+            appendSnippet(sb, type, def.getModule(), def.getNode());
+        }
 
         final var str = sb.toString();
         return str.isBlank() ? "" : str.stripTrailing() + '\n';
     }
 
-    @NonNullByDefault
-    final String formatDataForJavaDoc(final GeneratedType type, final String additionalComment) {
-        final var comment = type.getComment();
-        if (comment == null) {
-            return additionalComment.isBlank() ? "" : additionalComment.stripTrailing() + '\n';
+    final @Nullable BlockBuilder javadocBlock(final ModuleEffectiveStatement module, final DocumentedNode node) {
+        final var sb = new StringBuilder();
+        final var comment = DocUtils.typeCommentOf(node);
+        if (comment != null) {
+            sb.append(comment.getJavadoc());
+        }
+        appendSnippet(sb, type(), module, node);
+
+        final var str = sb.toString();
+        if (str.isBlank()) {
+            return null;
         }
 
-        final var sb = new StringBuilder().append(comment.getJavadoc());
-        appendSnippet(sb, type);
-        return additionalComment.isBlank() ? sb.toString()
-            : sb.append(additionalComment.stripTrailing()).append("\n\n\n").toString();
+        final var bb = Block.builder();
+        appendAsJavadoc(bb, str.stripTrailing() + '\n');
+        return bb;
     }
 
-    private void appendSnippet(final StringBuilder sb, final GeneratedType genType) {
-        final var def = genType.yangSourceDefinition();
-        if (def == null) {
-            return;
-        }
-
-        sb.append('\n');
-
-        final var node = def.getNode();
-
+    private void appendSnippet(final StringBuilder sb, final GeneratedType type, final ModuleEffectiveStatement module,
+            final DocumentedNode node) {
         sb
+            .append('\n')
             .append("<p>\n")
             .append("This class represents the following YANG schema fragment defined in module <b>")
-            .append(def.getModule().argument().getLocalName()).append("</b>\n")
+            .append(module.argument().getLocalName()).append("</b>\n")
             .append("<pre>\n");
-        appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).declared());
+        appendYangSnippet(sb, module, ((EffectiveStatement<?, ?>) node).declared());
         sb.append("</pre>");
 
         if (node instanceof SchemaNode schema) {
@@ -380,8 +381,9 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             // sb.append("</i>\n");
 
             if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
-                || schema instanceof NotificationDefinition && !isNotificationBody(genType)) {
-                final var builderName = genType.simpleName() + BUILDER_SUFFIX;
+                || schema instanceof NotificationDefinition && !isNotificationBody(type)) {
+                final var simpleName = type.simpleName();
+                final var builderName = simpleName + BUILDER_SUFFIX;
 
                 sb
                     .append("\n<p>To create instances of this class use {@link ").append(builderName)
@@ -390,21 +392,21 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                 if (node instanceof ListSchemaNode list) {
                     final var keyDef = list.getKeyDefinition();
                     if (!keyDef.isEmpty()) {
-                        sb.append("@see ").append(genType.simpleName()).append(KEY_SUFFIX);
+                        sb.append("@see ").append(simpleName).append(KEY_SUFFIX);
                     }
                     sb.append('\n');
                 }
             }
         } else if (node instanceof AugmentEffectiveStatement) {
             // Find target Augmentation<Foo> and reference Foo
-            final var augType = findAugmentationArgument(genType);
+            final var augType = findAugmentationArgument(type);
             if (augType != null) {
                 sb
                     .append("\n\n")
                     .append("@see ").append(importedName(augType));
             }
         }
-        if (node instanceof TypedefEffectiveStatement && genType instanceof GeneratedTransferObject genTO) {
+        if (node instanceof TypedefEffectiveStatement && type instanceof GeneratedTransferObject genTO) {
             final var augType = genTO.getSuperType();
             if (augType != null) {
                 sb

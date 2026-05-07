@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangFeature;
+import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -22,36 +21,40 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * Template for a {@link YangFeature} class generated for a {@code feature} statement.
  */
+@NonNullByDefault
 final class FeatureTemplate extends BaseTemplate {
-    @NonNullByDefault
-    record Builder(FeatureArchetype type) implements Template.Builder {
+    record Builder(FeatureArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
+            requireNonNull(root);
         }
 
         @Override
         public FeatureTemplate build() {
-            return new FeatureTemplate(type);
+            return new FeatureTemplate(type, root);
         }
     }
 
-    private static final @NonNull JavaTypeName QNAME = JavaTypeName.create(QName.class);
-    private static final @NonNull JavaTypeName YANG_FEATURE = JavaTypeName.create(YangFeature.class);
+    private static final JavaTypeName QNAME = JavaTypeName.create(QName.class);
+    private static final JavaTypeName YANG_FEATURE = JavaTypeName.create(YangFeature.class);
 
-    @NonNullByDefault
-    private FeatureTemplate(final FeatureArchetype archetype) {
+    private final DataRootArchetype root;
+
+    private FeatureTemplate(final FeatureArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype);
+        this.root = requireNonNull(root);
     }
 
     @Override
     BlockBuilder body() {
         final var type = (FeatureArchetype) type();
         final var typeName = type.simpleName();
-        final var rootName = importedName(type.dataRoot());
+        final var rootName = importedName(root.name());
+        final var schemaNode = type.statement().toSchemaNode();
 
         return newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(type)))
-            .blk(deprecatedAnnotation(type.statement().toSchemaNode()))
+            .blk(javadocBlock(root.statement(), schemaNode))
+            .blk(deprecatedAnnotation(schemaNode))
             .eol(generatedAnnotation())
             .at().eol(importedName(NONNULL_BY_DEFAULT))
             .str("public final class ").str(typeName).str(" extends ")
@@ -67,14 +70,14 @@ final class FeatureTemplate extends BaseTemplate {
                         .eol(" * The name of the {@code feature} represented by this class.")
                         .eol(" */")
                         .str("public static final ").str(importedName(BindingTypes.QNAME, nonNull))
-                            .str(" " + QNAME_STATIC_FIELD_NAME + " = ").str(importedName(yangModuleInfo))
+                            .str(" " + Naming.QNAME_STATIC_FIELD_NAME + " = ").str(importedName(yangModuleInfo))
                             .str("." + YangModuleInfoTemplate.QNAMEOF_METHOD_NAME + "(")
                             .jStr(type.statement().argument().getLocalName()).eol(");")
                         .eol("/**")
                         .eol(" * The singleton instance.")
                         .eol(" */")
                         .str("public static final @").str(nonNull).sp().str(typeName)
-                            .str(" " + VALUE_STATIC_FIELD_NAME + " = new ").str(typeName).eol("();")
+                            .str(" " + Naming.VALUE_STATIC_FIELD_NAME + " = new ").str(typeName).eol("();")
                         .nl()
                         .str("private ").str(typeName).str("()").oB()
                             .eol("// Hidden on purpose")
