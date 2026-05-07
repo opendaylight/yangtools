@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * sections 4 and 8. It deals with primitive, array and reference types.
  */
 @NonNullByDefault
-public abstract sealed class JavaTypeName implements Identifier, Immutable {
+public abstract sealed class JavaTypeName implements Identifier {
     private static final class Primitive extends JavaTypeName {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
