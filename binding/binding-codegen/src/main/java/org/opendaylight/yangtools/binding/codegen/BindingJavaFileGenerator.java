@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -63,26 +65,52 @@ final class BindingJavaFileGenerator {
     }
 
     private void generateFiles(final List<GeneratedType> types) {
+        // First pass: catch all DataRootArchetypes, as they provide ModuleEffectiveStatement for other templates to use
+        final var modules = new HashMap<String, DataRootTemplate.Builder>();
         for (var type : types) {
-            switch (type) {
-                case Archetype archetype -> generateArchetype(archetype);
-                default -> {
-                    generateFile(new InterfaceTemplate.Builder(type));
-                    generateBuilder(type);
+            if (type instanceof DataRootArchetype archetype) {
+                final var builder = new DataRootTemplate.Builder(archetype);
+                final var rootPackage = archetype.name().packageName();
+                final var prev = modules.putIfAbsent(rootPackage, builder);
+                if (prev != null) {
+                    throw new VerifyException(
+                        "Duplicate package " + rootPackage + " between " + archetype + " and " + prev.type());
                 }
             }
         }
+
+        // second pass: process all other types
+        for (var type : types) {
+            final var rootPackage = Naming.getModelRootPackageName(type.packageName());
+            final var rootBuilder = modules.get(rootPackage);
+            if (rootBuilder == null) {
+                throw new VerifyException("No DataRootTemplate for " + rootPackage);
+            }
+
+            switch (type) {
+                case Archetype archetype -> generateArchetype(rootBuilder.type(), archetype);
+                default -> {
+                    generateBuilder(type);
+                    generateFile(new InterfaceTemplate.Builder(type));
+                }
+            }
+        }
+
+        // third pass: process DataRootTemplates last
+        for (var module : modules.values()) {
+            generateBuilder(module.type());
+            generateFile(module);
+        }
     }
 
-    private void generateArchetype(final Archetype type) {
+    private void generateArchetype(final DataRootArchetype root, final Archetype type) {
         switch (type) {
             case BitsTypeObjectArchetype archetype -> generateFile(new BitsTypeObjectTemplate.Builder(archetype));
             case DataRootArchetype archetype -> {
-                generateFile(new DataRootTemplate.Builder(archetype));
-                generateBuilder(archetype);
+                // processed separately
             }
             case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectTemplate.Builder(archetype));
-            case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype));
+            case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
             case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype));
             case ScalarTypeObjectArchetype archetype -> generateFile(new ScalarTypeObjectTemplate.Builder(archetype));
             case UnionTypeObjectArchetype archetype -> generateFile(new UnionTypeObjectTemplate.Builder(archetype));

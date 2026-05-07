@@ -49,14 +49,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
 
     @Override
     FeatureArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var typeName = typeName();
-        final var builder = builderFactory.newFeatureBuilder(typeName, getParent().typeName(), statement());
-
-        final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement(), builder);
-        builder.setModuleName(module.statement().argument().getLocalName());
-
-        return builder.build();
+        return new FeatureArchetype(typeName(), statement());
     }
 
     @Override

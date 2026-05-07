@@ -7,80 +7,81 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import com.google.common.annotations.Beta;
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.DataRoot;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.YangFeature;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.FeatureArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 /**
- * An {@link Archetype} for generated {@link YangFeature}s.
+ * An {@link Archetype} for a {@link YangFeature} generated for a {@link FeatureEffectiveStatement}.
  *
+ * @param name this type's {@link JavaTypeName}}
+ * @param statement the {@link FeatureEffectiveStatement}
  * @since 16.0.0
  */
-@Beta
-public non-sealed interface FeatureArchetype extends Archetype.WithStatement<FeatureEffectiveStatement> {
-    /**
-     * A builder of {@link FeatureArchetype} instances.
-     */
-    sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits FeatureArchetypeBuilder {
-        @Override
-        FeatureArchetype build();
+@NonNullByDefault
+public record FeatureArchetype(
+        JavaTypeName name,
+        FeatureEffectiveStatement statement) implements Archetype.WithStatement<FeatureEffectiveStatement> {
+    public FeatureArchetype {
+        requireNonNull(name);
+        requireNonNull(statement);
     }
-
-    /**
-     * {@return the name of the {@link DataRoot} generated for the module containing the {@code feature} statement}
-     */
-    @NonNull JavaTypeName dataRoot();
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<AnnotationType> getAnnotations() {
+    public List<AnnotationType> getAnnotations() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<Constant> getConstantDefinitions() {
+    public @Nullable TypeComment getComment() {
+        return null;
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    public List<Constant> getConstantDefinitions() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<GeneratedType> getEnclosedTypes() {
+    public List<GeneratedType> getEnclosedTypes() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<EnumTypeObjectArchetype> getEnumerations() {
+    public List<EnumTypeObjectArchetype> getEnumerations() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<Type> getImplements() {
+    public List<Type> getImplements() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<MethodSignature> getMethodDefinitions() {
+    public List<MethodSignature> getMethodDefinitions() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<GeneratedProperty> getProperties() {
+    public List<GeneratedProperty> getProperties() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default boolean isAbstract() {
+    public boolean isAbstract() {
         return false;
     }
 }
