@@ -78,7 +78,7 @@ final class BindingJavaFileGenerator {
         for (var type : types) {
             switch (type) {
                 case DataRootArchetype archetype -> {
-                    final var rootPackage = archetype.name().packageName();
+                    final var rootPackage = archetype.name().packageName().toString();
                     final var prev = modules.putIfAbsent(rootPackage, archetype);
                     if (prev != null) {
                         throw new VerifyException(
@@ -101,7 +101,7 @@ final class BindingJavaFileGenerator {
 
         // second pass: process all other types
         for (var type : types) {
-            final var rootPackage = Naming.getModelRootPackageName(type.packageName());
+            final var rootPackage = Naming.getModelRootPackageName(type.packageName().toString());
             final var root = modules.get(rootPackage);
             if (root == null) {
                 throw new VerifyException("No DataRootArchetype for " + rootPackage);
@@ -149,7 +149,7 @@ final class BindingJavaFileGenerator {
     private void generateFile(final Template template) {
         final var typeName = template.typeName();
         final var file = GeneratedFilePath.ofDirectoryFile(
-            typeName.packageName().replace('.', GeneratedFilePath.SEPARATOR),
+            typeName.packageName().toString().replace('.', GeneratedFilePath.SEPARATOR),
             typeName.simpleName() + ".java");
 
         if (result.contains(GeneratedFileType.SOURCE, file)) {

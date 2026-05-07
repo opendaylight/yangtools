@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesLeafrefTest {
@@ -47,7 +46,7 @@ class GeneratedTypesLeafrefTest {
             String name = type.simpleName();
             if ("InterfaceKey".equals(name)
                     && "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces".equals(
-                        type.packageName())) {
+                        type.packageName().toString())) {
                 gtIfcKey = assertInstanceOf(KeyArchetype.class, type);
             } else {
                 switch (name) {
@@ -106,9 +105,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("java.lang.String", ifcIdPropType.canonicalName());
 
         // Interface
-        assertEquals(TypeName.of(
-            "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"),
-            gtIfc.keyName());
+        assertEquals(
+            "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces.InterfaceKey",
+            gtIfc.keyName().toString());
         final var gtIfcMethods = gtIfc.getters();
         assertNotNull(gtIfcMethods);
         GetterMethod getHigherLayerIf = null;
@@ -173,9 +172,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("Uri", getIdDestType.simpleName());
 
         // Tunnel
-        assertEquals(TypeName.of("""
+        assertEquals("""
             org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.network.links.network.link.\
-            tunnels""", "TunnelKey"), gtTunnel.keyName());
+            tunnels.TunnelKey""", gtTunnel.keyName().toString());
         assertThat(gtTunnel.getters()).hasSize(1);
 
         // TunnelKey

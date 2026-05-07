@@ -10,17 +10,21 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ModulePackageName;
 import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
+@NonNullByDefault
 class Mdsal552Test {
-    private static final TypeName BAR_INPUT = TypeName.of("org.opendaylight.yang.gen.v1.mdsal552.norev", "BarInput");
-    private static final TypeName BAZ = TypeName.of("org.opendaylight.yang.gen.v1.mdsal552.norev", "Baz");
-    private static final TypeName ENUMERATION =
-        TypeName.of("org.opendaylight.yang.gen.v1.mdsal552.norev", "Mdsal552Data").createEnclosed("Foo");
+    private static final ModulePackageName MDSAL552 = ModulePackageName.of(QNameModule.of("mdsal552"));
+    private static final TypeName BAR_INPUT = TypeName.of(MDSAL552, "BarInput");
+    private static final TypeName BAZ = TypeName.of(MDSAL552, "Baz");
+    private static final TypeName ENUMERATION = TypeName.of(MDSAL552, "Mdsal552Data").createEnclosed("Foo");
 
     @Test
     void enumLeafrefTest() {

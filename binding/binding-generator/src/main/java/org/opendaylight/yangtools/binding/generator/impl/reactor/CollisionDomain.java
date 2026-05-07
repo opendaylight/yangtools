@@ -40,17 +40,19 @@ final class CollisionDomain {
         }
 
         final @NonNull String currentClass() {
-            if (currentClass == null) {
-                currentClass = computeCurrentClass();
+            var local = currentClass;
+            if (local == null) {
+                currentClass = local = computeCurrentClass();
             }
-            return currentClass;
+            return local;
         }
 
         final @NonNull String currentPackage() {
-            if (currentPackage == null) {
-                currentPackage = computeCurrentPackage();
+            var local = currentPackage;
+            if (local == null) {
+                currentPackage = local = computeCurrentPackage();
             }
-            return currentPackage;
+            return local;
         }
 
         abstract boolean equalRoot(@NonNull Member other);
