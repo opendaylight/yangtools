@@ -30,11 +30,13 @@ import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.ModulePackageName;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -45,12 +47,12 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
  * @author Lukas Sedlak
  */
 public class DefaultBindingGeneratorTest {
-    public static final String BASE_YANG_TYPES =
-        "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.base.yang.types.rev140914";
-    public static final String TEST_TYPE_PROVIDER =
-        "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.model.rev140912";
-    public static final String TEST_TYPE_PROVIDER_B =
-        "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.b.model.rev140915";
+    public static final ModulePackageName BASE_YANG_TYPES =
+        ModulePackageName.of(QNameModule.of("urn.opendaylight.org.test.base.yang.types", "2014-09-14"));
+    public static final ModulePackageName TEST_TYPE_PROVIDER =
+        ModulePackageName.of(QNameModule.of("urn.opendaylight.org.test.type.provider.model", "2014-09-12"));
+    public static final ModulePackageName TEST_TYPE_PROVIDER_B =
+        ModulePackageName.of(QNameModule.of("urn.opendaylight.org.test.type.provider.b.model", "2014-09-15"));
     public static final TypeName CONSTRUCTION_TYPE_TEST = TypeName.of(TEST_TYPE_PROVIDER, "ConstructionTypeTest");
     public static final TypeName TEST_TYPE_PROVIDER_B_DATA = TypeName.of(TEST_TYPE_PROVIDER_B, "TestTypeProviderBData");
     public static final TypeName TEST_TYPE_PROVIDER_FOO = TypeName.of(TEST_TYPE_PROVIDER, "Foo");

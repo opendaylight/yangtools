@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultModuleRuntime
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.ModulePackageName;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleRuntimeType;
@@ -63,12 +64,12 @@ public final class ModuleGenerator extends DataContainerGenerator<ModuleEffectiv
     }
 
     @Override
-    String createJavaPackage() {
-        return Naming.getRootPackageName(statement().localQNameModule());
+    ModulePackageName createJavaPackage() {
+        return ModulePackageName.of(statement().localQNameModule());
     }
 
     @Override
-    DataContainerGenerator<?, ?> getPackageParent() {
+    ModuleGenerator getPackageParent() {
         return this;
     }
 

@@ -14,85 +14,94 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.ModulePackageName;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal669Test {
-    private static final BindingRuntimeTypes RUNTIME_TYPES = new DefaultBindingRuntimeGenerator()
+    private static final @NonNull BindingRuntimeTypes RUNTIME_TYPES = new DefaultBindingRuntimeGenerator()
         .generateTypeMapping(YangParserTestUtils.parseYangResource("/mdsal669.yang"));
+    private static final @NonNull ModulePackageName MDSAL669_PKG = ModulePackageName.of(QNameModule.of("mdsal669"));
+
+    @Test
+    void ensureRightPackage() {
+        assertEquals("org.opendaylight.yang.gen.v1.mdsal669.norev", MDSAL669_PKG.toString());
+    }
 
     @Test
     void barIsUsed() {
         assertInstances(
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Bar"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Foo"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Target1"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev.used.augmented", "ToBeAugmented1"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev.used.augmented.indirect", "ToBeAugmented1"));
+            TypeName.of(MDSAL669_PKG, "Bar"),
+            TypeName.of(MDSAL669_PKG, "Foo"),
+            TypeName.of(MDSAL669_PKG, "Target1"),
+            TypeName.of(MDSAL669_PKG.subPackage("used.augmented"), "ToBeAugmented1"),
+            TypeName.of(MDSAL669_PKG.subPackage("used.augmented.indirect"), "ToBeAugmented1"));
     }
 
     @Test
     void bazIsUsedByOneAndTwo() {
         assertInstances(
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Baz"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "One"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Two"));
+            TypeName.of(MDSAL669_PKG, "Baz"),
+            TypeName.of(MDSAL669_PKG, "One"),
+            TypeName.of(MDSAL669_PKG, "Two"));
     }
 
     @Test
     void unusedIsNotUsed() {
-        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Unused"));
+        assertInstances(TypeName.of(MDSAL669_PKG, "Unused"));
     }
 
     @Test
     void fooAsStringIsNotUsed() {
-        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "FooAsString"));
+        assertInstances(TypeName.of(MDSAL669_PKG, "FooAsString"));
     }
 
     @Test
     void unusedBarIsNotUsed() {
-        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedBar"));
+        assertInstances(TypeName.of(MDSAL669_PKG, "UnusedBar"));
     }
 
     @Test
     void unusedAugmendIsNotUsed() {
-        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedAugmented"));
+        assertInstances(TypeName.of(MDSAL669_PKG, "UnusedAugmented"));
     }
 
     @Test
     void unusedIntermediateAugmentedIsNotUsed() {
-        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedIntermediateAugmentedUser"));
-        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedIntermediateAugmented"));
+        assertInstances(TypeName.of(MDSAL669_PKG, "UnusedIntermediateAugmentedUser"));
+        assertInstances(TypeName.of(MDSAL669_PKG, "UnusedIntermediateAugmented"));
     }
 
     @Test
     void usedAugmentedIndirectIsUsed() {
         assertInstances(
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectGrp"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"));
+            TypeName.of(MDSAL669_PKG, "UsedAugmentedIndirectGrp"),
+            TypeName.of(MDSAL669_PKG, "UsedAugmentedIndirectUser"));
         assertInstances(
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirect"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"));
+            TypeName.of(MDSAL669_PKG, "UsedAugmentedIndirect"),
+            TypeName.of(MDSAL669_PKG, "UsedAugmentedIndirectUser"));
     }
 
     @Test
     void usedAugmentedIsUsed() {
         assertInstances(
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmented"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedUser"));
+            TypeName.of(MDSAL669_PKG, "UsedAugmented"),
+            TypeName.of(MDSAL669_PKG, "UsedAugmentedUser"));
     }
 
     @Test
     void toBeAugmentedIsUsed() {
         assertInstances(
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "ToBeAugmented"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"),
-            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedUser"));
+            TypeName.of(MDSAL669_PKG, "ToBeAugmented"),
+            TypeName.of(MDSAL669_PKG, "UsedAugmentedIndirectUser"),
+            TypeName.of(MDSAL669_PKG, "UsedAugmentedUser"));
     }
 
     @NonNullByDefault

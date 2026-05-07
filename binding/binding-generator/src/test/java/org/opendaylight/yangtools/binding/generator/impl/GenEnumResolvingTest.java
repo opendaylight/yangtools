@@ -93,7 +93,7 @@ class GenEnumResolvingTest {
 
         EntryObjectArchetype genInterface = null;
         for (var type : genTypes) {
-            if (type.simpleName().equals("Interface") && type.packageName().equals(
+            if (type.simpleName().equals("Interface") && type.packageName().toString().equals(
                 "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces")) {
                 genInterface = assertInstanceOf(EntryObjectArchetype.class, type);
             }

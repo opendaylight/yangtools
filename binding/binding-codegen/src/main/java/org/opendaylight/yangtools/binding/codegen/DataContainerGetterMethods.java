@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
+import org.opendaylight.yangtools.binding.model.JavaPackageName;
 import org.opendaylight.yangtools.binding.model.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.Type;
@@ -40,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 final class DataContainerGetterMethods implements BlockFragment {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
+    private static final JavaPackageName EMPTY_PKG = JavaPackageName.of("");
 
     private final InterfaceTemplate<?> template;
 
@@ -247,7 +249,7 @@ final class DataContainerGetterMethods implements BlockFragment {
 
     // The return type has a package, so it's not a primitive type
     private static boolean isObject(final Type type) {
-        return !type.packageName().isEmpty();
+        return !EMPTY_PKG.equals(type.packageName());
     }
 
     private @Nullable BlockFragment generateAnnotations(final GetterMethod getter) {

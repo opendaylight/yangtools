@@ -32,7 +32,7 @@ public sealed interface Type extends Immutable permits Archetype, ReturnType, Pa
     /**
      * {@return name of the package that interface belongs to}
      */
-    default String packageName() {
+    default PackageName packageName() {
         return name().packageName();
     }
 

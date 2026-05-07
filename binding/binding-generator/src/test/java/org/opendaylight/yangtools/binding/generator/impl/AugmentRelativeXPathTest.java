@@ -31,7 +31,7 @@ class AugmentRelativeXPathTest {
         KeyArchetype gtTunnelKey = null;
 
         for (var type : genTypes) {
-            if (!type.packageName().contains("augment._abstract.topology")) {
+            if (!type.packageName().toString().contains("augment._abstract.topology")) {
                 continue;
             }
 
@@ -54,9 +54,9 @@ class AugmentRelativeXPathTest {
                 assertNotNull(gtInterfaceGetters, "Interface methods are null");
                 assertEquals(2, gtInterfaceGetters.size());
 
-                assertEquals(TypeName.of(
-                    "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-                    "InterfaceKey"), gtInterface.keyName());
+                assertEquals("""
+                    org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces.\
+                    InterfaceKey""", gtInterface.keyName().toString());
             } else if (type.simpleName().equals("Tunnel")) {
                 gtTunnel = assertInstanceOf(EntryObjectArchetype.class, type);
 
@@ -64,9 +64,9 @@ class AugmentRelativeXPathTest {
                 assertNotNull(tunnelGetters, "Tunnel methods are null");
                 assertEquals(1, tunnelGetters.size());
 
-                assertEquals(TypeName.of("""
+                assertEquals("""
                     org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.\
-                    network.link.tunnels""", "TunnelKey"), gtTunnel.keyName());
+                    network.link.tunnels.TunnelKey""", gtTunnel.keyName().toString());
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
 
@@ -78,9 +78,8 @@ class AugmentRelativeXPathTest {
                 assertEquals("tunnel-id", property.getKey());
                 final var returnType = property.getValue().returnType();
                 assertNotNull(returnType, "tunnelId return type is null");
-                assertEquals(
-                    TypeName.of("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208", "Uri"),
-                    returnType.name());
+                assertEquals("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.Uri",
+                    returnType.name().toString());
             }
         }
 

@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.Archetype;
-import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal459Test {
@@ -25,14 +23,14 @@ class Mdsal459Test {
         assertNotNull(types);
         assertEquals(7, types.size());
 
-        final var typeNames = types.stream().map(Archetype::name).collect(Collectors.toSet());
+        final var typeNames = types.stream().map(type -> type.name().toString()).collect(Collectors.toSet());
         assertEquals(Set.of(
-            TypeName.of("org.opendaylight.yang.gen.v1.base.norev", "Foo"),
-            TypeName.of("org.opendaylight.yang.gen.v1.base.norev", "BaseData"),
-            TypeName.of("org.opendaylight.yang.gen.v1.aug.norev", "AugData"),
-            TypeName.of("org.opendaylight.yang.gen.v1.aug.norev", "Foo1"),
-            TypeName.of("org.opendaylight.yang.gen.v1.aug.norev.foo", "Bar"),
-            TypeName.of("org.opendaylight.yang.gen.v1.aug.norev.foo", "BarOutput"),
-            TypeName.of("org.opendaylight.yang.gen.v1.aug.norev.foo", "BarInput")), typeNames);
+            "org.opendaylight.yang.gen.v1.base.norev.Foo",
+            "org.opendaylight.yang.gen.v1.base.norev.BaseData",
+            "org.opendaylight.yang.gen.v1.aug.norev.AugData",
+            "org.opendaylight.yang.gen.v1.aug.norev.Foo1",
+            "org.opendaylight.yang.gen.v1.aug.norev.foo.Bar",
+            "org.opendaylight.yang.gen.v1.aug.norev.foo.BarOutput",
+            "org.opendaylight.yang.gen.v1.aug.norev.foo.BarInput"), typeNames);
     }
 }

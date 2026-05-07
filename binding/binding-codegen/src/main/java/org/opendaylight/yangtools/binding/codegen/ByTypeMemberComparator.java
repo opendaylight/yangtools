@@ -84,7 +84,7 @@ final class ByTypeMemberComparator implements Comparator<GetterShape>, Serializa
             case IdentityArchetype identity -> RANK_FIXED_SIZE;
             default -> {
                 final var typeName = type.name();
-                yield switch (typeName.packageName()) {
+                yield switch (typeName.packageName().toString()) {
                     case "" -> switch (typeName.simpleName()) {
                         case "byte[]" -> RANK_VARIABLE_ARRAY;
                         default -> throw unhandled(typeName);
