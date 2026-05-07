@@ -7,15 +7,22 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.codegen.DataRootTemplate.Builder;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -39,6 +46,22 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 final class BindingJavaFileGenerator {
+    private record Index(Map<String, ? extends DataRootTemplate.@Nullable Builder> map) implements ModuleIndex {
+        Index {
+            requireNonNull(map);
+        }
+
+        @Override
+        public Builder moduleFor(final JavaTypeName typeName) {
+            var rootPackage = Naming.getModelRootPackageName(typeName.packageName());
+            var builder = map.get(rootPackage);
+            if (builder == null) {
+                throw new VerifyException("No DataRootTemplate for " + rootPackage);
+            }
+            return builder;
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(BindingJavaFileGenerator.class);
 
     // "rpc" and "grouping" elements do not implement Augmentable
@@ -63,23 +86,43 @@ final class BindingJavaFileGenerator {
     }
 
     private void generateFiles(final List<GeneratedType> types) {
+        // first pass: catch all DataRootTemplates, as they provide ModuleEffectiveStatement for other templates to use
+        final var modules = new HashMap<String, DataRootTemplate.Builder>();
+        final var moduleIndex = new Index(modules);
         for (var type : types) {
-            switch (type) {
-                case Archetype archetype -> generateArchetype(archetype);
-                default -> {
-                    generateFile(new InterfaceTemplate.Builder(type));
-                    generateBuilder(type);
+            if (type instanceof DataRootArchetype archetype) {
+                final var builder = new DataRootTemplate.Builder(archetype);
+                final var rootPackage = archetype.name().packageName();
+                final var prev = modules.putIfAbsent(rootPackage, builder);
+                if (prev != null) {
+                    throw new VerifyException(
+                        "Duplicate package " + rootPackage + " between " + archetype + " and " + prev.type());
                 }
             }
         }
+
+        // second pass: process all other types
+        for (var type : types) {
+            switch (type) {
+                case Archetype archetype -> generateArchetype(moduleIndex, archetype);
+                default -> {
+                    generateBuilder(type);
+                    generateFile(new InterfaceTemplate.Builder(type));
+                }
+            }
+        }
+
+        for (var module : modules.values()) {
+            generateBuilder(module.type());
+            generateFile(module);
+        }
     }
 
-    private void generateArchetype(final Archetype type) {
+    private void generateArchetype(final ModuleIndex moduleIndex, final Archetype type) {
         switch (type) {
             case BitsTypeObjectArchetype archetype -> generateFile(new BitsTypeObjectTemplate.Builder(archetype));
             case DataRootArchetype archetype -> {
-                generateFile(new DataRootTemplate.Builder(archetype));
-                generateBuilder(archetype);
+                // processed separately
             }
             case EnumTypeObjectArchetype archetype -> generateFile(new EnumTypeObjectTemplate.Builder(archetype));
             case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype));
