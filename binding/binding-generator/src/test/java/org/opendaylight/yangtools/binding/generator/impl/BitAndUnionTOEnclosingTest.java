@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
-import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -54,8 +53,8 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(1, lfLeafs.size(), "Lf TO has incorrect number of occurences.");
         final var lfLeaf = lfLeafs.getFirst();
         assertEquals(
-            TypeName.of("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
-            lfLeaf.name().immediatelyEnclosingClass());
+            "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer",
+            lfLeaf.name().immediatelyEnclosingClass().toString());
 
         // nested types in Lf
         final var lfTypes = lfLeaf.enclosedTypes();
@@ -103,15 +102,15 @@ class BitAndUnionTOEnclosingTest {
 
         assertNotNull(typeUnionTypedef, "TypeUnion TO wasn't found.");
         assertEquals(1, typeUnionTypedefCounter, "TypeUnion TO has incorrect number of occurences.");
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnionTypedef.packageName(),
-            "TypeUnion has incorrect package name.");
+        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626",
+            typeUnionTypedef.packageName().toString());
 
         final var nestedUnions = typeUnionTypedef.enclosedTypes();
         assertEquals(1, nestedUnions.size(), "Incorrect number of nested unions");
         final var typeUnion1 = assertInstanceOf(UnionTypeObjectArchetype.class, nestedUnions.getFirst());
         assertEquals("TypeUnion$1", typeUnion1.simpleName());
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion1.packageName(),
-            "TypeUnion$1 has incorrect package name.");
+        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626",
+            typeUnion1.packageName().toString());
 
         assertEquals(List.of("string", "typeUnion$1"), typeUnionTypedef.typePropertyNames());
         assertEquals(List.of(ScalarTypes.STRING, typeUnion1), typeUnionTypedef.typePropertyTypes());
@@ -120,8 +119,8 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(1, nestedUnions1.size());
         final var typeUnion2 = assertInstanceOf(UnionTypeObjectArchetype.class, nestedUnions1.getFirst());
         assertEquals("TypeUnion$2", typeUnion2.simpleName());
-        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnion2.packageName(),
-            "TypeUnion$2 has incorrect package name.");
+        assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626",
+            typeUnion2.packageName().toString());
 
         assertEquals(List.of("uint32", "int8", "string", "typeUnion$2"), typeUnion1.typePropertyNames());
         assertEquals(List.of(ScalarTypes.UINT32, ScalarTypes.INT8, ScalarTypes.STRING, typeUnion2),
@@ -150,11 +149,11 @@ class BitAndUnionTOEnclosingTest {
         assertNotNull(unionLeaf, "UnionLeaf TO wasn't found.");
 
         assertEquals(
-            TypeName.of("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
-            bitLeaf.name().immediatelyEnclosingClass());
+            "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
+            bitLeaf.name().immediatelyEnclosingClass().toString());
         assertEquals(
-            TypeName.of("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
-            unionLeaf.name().immediatelyEnclosingClass());
+            "org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer",
+            unionLeaf.name().immediatelyEnclosingClass().topLevelClass().toString());
 
         assertNull(bitLeaf.superType());
         final var bitsDef = bitLeaf.typeDefinition();

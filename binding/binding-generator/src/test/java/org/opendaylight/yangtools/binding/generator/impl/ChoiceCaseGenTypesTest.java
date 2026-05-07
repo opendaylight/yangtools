@@ -163,7 +163,8 @@ class ChoiceCaseGenTypesTest {
         final var choices = genTypes.stream()
             .filter(ChoiceInArchetype.class::isInstance)
             .map(ChoiceInArchetype.class::cast)
-            .filter(archetype -> simpleName.equals(archetype.simpleName()) && pkgName.equals(archetype.packageName()))
+            .filter(archetype -> simpleName.equals(archetype.simpleName())
+                && pkgName.equals(archetype.packageName().toString()))
             .toList();
         assertEquals(1, choices.size());
     }
@@ -183,7 +184,7 @@ class ChoiceCaseGenTypesTest {
         @Nullable A found = null;
         int count = 0;
         for (var type : types) {
-            if (type.simpleName().equals(simpleName) && type.packageName().equals(pkgName)) {
+            if (type.simpleName().equals(simpleName) && pkgName.equals(type.packageName().toString())) {
                 found = assertInstanceOf(clazz, type);
                 count++;
             }

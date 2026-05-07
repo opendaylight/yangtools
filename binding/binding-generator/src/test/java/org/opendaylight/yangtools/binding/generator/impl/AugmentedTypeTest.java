@@ -42,7 +42,7 @@ class AugmentedTypeTest {
         AugmentationArchetype gtNetworkLink2 = null;
 
         for (var type : genTypes) {
-            if (!type.packageName().contains("augment._abstract.topology")) {
+            if (!type.packageName().toString().contains("augment._abstract.topology")) {
                 continue;
             }
 
@@ -61,9 +61,9 @@ class AugmentedTypeTest {
 
         // 'Interface
         assertNotNull(gtInterface, "gtInterface is null");
-        assertEquals(TypeName.of(
-            "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-            "InterfaceKey"), gtInterface.keyName());
+        assertEquals("""
+            org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces.
+            InterfaceKey""", gtInterface.keyName().topLevelClass());
 
         GetterMethod getHigherLayerIfMethod = null;
         for (var method : gtInterface.getters()) {

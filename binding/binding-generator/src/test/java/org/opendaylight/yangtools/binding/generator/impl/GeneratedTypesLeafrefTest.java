@@ -47,7 +47,7 @@ class GeneratedTypesLeafrefTest {
             String name = type.simpleName();
             if ("InterfaceKey".equals(name)
                     && "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces".equals(
-                        type.packageName())) {
+                        type.packageName().toString())) {
                 gtIfcKey = assertInstanceOf(KeyArchetype.class, type);
             } else {
                 switch (name) {
