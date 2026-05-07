@@ -26,11 +26,6 @@ final class DataRootTemplate extends InterfaceTemplate {
         }
 
         @Override
-        public DataRootArchetype type() {
-            return type;
-        }
-
-        @Override
         public DataRootTemplate build() {
             return new DataRootTemplate(type);
         }
