@@ -45,14 +45,12 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Multiple;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -412,17 +410,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                     .append("@see ").append(augType.simpleName());
                 }
             }
-        } else if (def instanceof Multiple multiple) {
-            sb.append("<pre>\n");
-            for (var node : multiple.getNodes()) {
-                final var stmt = switch (node) {
-                    case EffectiveStatementEquivalent<?> equivalent -> equivalent.asEffectiveStatement();
-                    case EffectiveStatement<?, ?> statement -> statement;
-                    default -> throw new VerifyException("Unexpected node " + node);
-                };
-                appendYangSnippet(sb, def.getModule(), stmt.declared());
-            }
-            sb.append("</pre>\n");
         }
     }
 
