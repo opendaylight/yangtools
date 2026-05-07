@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits BuilderTemplate, BuilderImplTemplate {
@@ -224,8 +223,8 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      */
     @NonNullByDefault
     static final boolean isNonPresenceContainer(final GeneratedType type) {
-        return type.yangSourceDefinition() instanceof YangSourceDefinition.Single singleDefinition
-            && singleDefinition.getNode() instanceof ContainerSchemaNode container
+        final var sourceDef = type.yangSourceDefinition();
+        return sourceDef != null && sourceDef.getNode() instanceof ContainerSchemaNode container
             && !container.isPresenceContainer();
     }
 }
