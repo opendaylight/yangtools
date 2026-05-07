@@ -38,19 +38,16 @@ final class FeatureTemplate extends BaseTemplate {
     private static final @NonNull JavaTypeName QNAME = JavaTypeName.create(QName.class);
     private static final @NonNull JavaTypeName YANG_FEATURE = JavaTypeName.create(YangFeature.class);
 
-    private final @NonNull JavaTypeName dataRoot;
-
     @NonNullByDefault
     private FeatureTemplate(final FeatureArchetype archetype) {
         super(GeneratedClass.of(archetype), archetype);
-        dataRoot = archetype.dataRoot();
     }
 
     @Override
     BlockBuilder body() {
         final var type = (FeatureArchetype) type();
         final var typeName = type.simpleName();
-        final var rootName = importedName(dataRoot);
+        final var rootName = importedName(type.dataRoot());
 
         return newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(type)))
