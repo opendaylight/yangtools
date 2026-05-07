@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.util.LazyCollections;
 public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>>
         extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
         permits AbstractGeneratedTOBuilder, CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder,
-                DataRootArchetypeBuilder, FeatureArchetypeBuilder, KeyArchetypeBuilder {
+                DataRootArchetypeBuilder, KeyArchetypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
     private List<Type> implementsTypes = List.of();
     private List<EnumTypeObjectArchetype> enumDefinitions = List.of();
