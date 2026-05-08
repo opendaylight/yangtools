@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
  * A template backed by an {@link Archetype} defined in some module manifested as a {@link DataRootArchetype}.
  */
 @NonNullByDefault
-abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplate permits FeatureTemplate, KeyTemplate {
+abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplate
+        permits FeatureTemplate, IdentityTemplate, KeyTemplate {
     private static final String GENERATED_ANNOTATION =
         "@javax.annotation.processing.Generated(\"mdsal-binding-generator\")";
 
