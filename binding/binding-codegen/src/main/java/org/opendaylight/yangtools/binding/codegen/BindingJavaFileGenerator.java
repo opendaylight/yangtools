@@ -109,7 +109,7 @@ final class BindingJavaFileGenerator {
                 // processed separately
             }
             case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
-            case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype));
+            case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
 
             // TypeObject specializations
             case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao));

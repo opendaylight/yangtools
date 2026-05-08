@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verify;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
 import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
@@ -65,8 +69,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
-        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, InterfaceTemplate,
-                KeyTemplate {
+        permits AbstractBuilderTemplate, ArchetypeTemplate, ClassTemplate, EnumTypeObjectTemplate, InterfaceTemplate {
     static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
 
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
@@ -226,24 +229,24 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     @NonNullByDefault
     private String emitNameConstant(final String name, final Type type, final YangDataName yangDataName) {
-        final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type());
+        final var yangModuleInfo = yangModuleInfoOf(yangDataName.module());
         return """
             /**
              * Yang Data template name of the statement represented by this class.
              */
             public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
-                + '.' + YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName.name() + "\");\n";
+                + '.' + YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName.name() + "\");\n";
     }
 
     @NonNullByDefault
     final String emitQNameConstant(final String name, final Type type, final String localName) {
-        final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type());
+        final var yangModuleInfo = nameInModuleOf(type());
         return """
             /**
              * YANG identifier of the statement represented by this class.
              */
             public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
-                + '.' + YangModuleInfoTemplate.QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
+                + '.' + QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
     }
 
     // FIXME: return a Block
