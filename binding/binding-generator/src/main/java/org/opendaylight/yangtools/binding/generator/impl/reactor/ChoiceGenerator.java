@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntimeType;
+import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
@@ -53,9 +52,14 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
         @Override
         ChoiceRuntimeType build(final GeneratedType type, final ChoiceEffectiveStatement statement,
                 final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-            verify(augments.isEmpty(), "Unexpected augments %s", augments);
+            if (!(type instanceof ChoiceInArchetype archetype)) {
+                throw new VerifyException("Unexpected type " + type);
+            }
+            if (!augments.isEmpty()) {
+                throw new VerifyException("Unexpected augments " + augments);
+            }
             children.addAll(augmentedCases);
-            return new DefaultChoiceRuntimeType(type, statement, children);
+            return new DefaultChoiceRuntimeType(archetype, children);
         }
     }
 
@@ -73,21 +77,13 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
         // No-op
     }
 
+    @NonNull ChoiceInArchetype getArchetype(final TypeBuilderFactory builderFactory) {
+        return (ChoiceInArchetype) getGeneratedType(builderFactory);
+    }
+
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
-        builder.addImplementsType(BindingTypes.choiceIn(TypeRef.of(getParent().typeName())));
-
-        addQNameConstant(builder, localName());
-
-        annotateDeprecatedIfNecessary(builder);
-
-        final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement(), builder);
-//      newType.setSchemaPath(schemaNode.getPath());
-        builder.setModuleName(module.statement().argument().getLocalName());
-
-        return builder.build();
+    ChoiceInArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+        return new ChoiceInArchetype(typeName(), getParent().typeName(), statement());
     }
 
     @Override

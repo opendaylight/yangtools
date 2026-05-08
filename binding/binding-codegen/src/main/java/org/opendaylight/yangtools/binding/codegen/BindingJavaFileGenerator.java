@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
@@ -109,6 +110,7 @@ final class BindingJavaFileGenerator {
             case DataRootArchetype archetype -> {
                 // processed separately
             }
+            case ChoiceInArchetype archetype -> generateFile(new ChoiceInTemplate.Builder(archetype, root));
             case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
             case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
             case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
