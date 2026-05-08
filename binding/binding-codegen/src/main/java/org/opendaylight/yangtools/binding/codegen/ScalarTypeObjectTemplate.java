@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_STO_REGISTRAR;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PROP;
 
@@ -135,11 +137,10 @@ final class ScalarTypeObjectTemplate extends ClassTemplate {
             .str("static").jBlock(bb -> {
                 // FIXME: self reference
                 final var selfRef = type().simpleName();
-                final var yangModuleInfo = YangModuleInfoTemplate.nameInModuleOf(type());
+                final var yangModuleInfo = nameInModuleOf(type());
                 bb
                     // not 'importedName' on purpose: it would just stand out in imports
-                    .str(yangModuleInfo.canonicalName())
-                        .eol("." + YangModuleInfoTemplate.CONST_STO_REGISTRAR + ".registerUnsafeSTO(")
+                    .str(yangModuleInfo.canonicalName()).eol("." + CONST_STO_REGISTRAR + ".registerUnsafeSTO(")
                         .ind(selfRef).str(".class, ").str(selfRef).str("::new, ").str(selfRef).eol("::new);");
             }).nl();
     }
