@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -221,8 +222,12 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      * @return {@code true} if specified {@code type} is a container without presence statement,
      *     {@code false} otherwise.
      */
+    // FIXME: YANGTOOLS-1876: remove this method
     @NonNullByDefault
     static final boolean isNonPresenceContainer(final GeneratedType type) {
+        if (type instanceof Archetype) {
+            return false;
+        }
         final var sourceDef = type.yangSourceDefinition();
         return sourceDef != null && sourceDef.getNode() instanceof ContainerSchemaNode container
             && !container.isPresenceContainer();

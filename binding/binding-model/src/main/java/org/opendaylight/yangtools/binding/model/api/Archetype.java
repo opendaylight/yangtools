@@ -44,7 +44,7 @@ public sealed interface Archetype extends GeneratedType, Immutable
      */
     @Beta
     sealed interface Compat<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
-            permits FeatureArchetype, KeyArchetype {
+            permits FeatureArchetype, IdentityArchetype, KeyArchetype {
         /**
          * Returns a string that contains a human-readable textual description of
          * type definition.

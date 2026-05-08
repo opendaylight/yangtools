@@ -19,11 +19,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMember;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -142,7 +142,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
     }
 
     private static int rankOf(final Type type) {
-        if (FIXED_TYPES.contains(type) || BindingTypes.isIdentityType(type) || type instanceof Decimal64Type) {
+        if (FIXED_TYPES.contains(type) || type instanceof Decimal64Type || type instanceof IdentityArchetype) {
             return RANK_FIXED_SIZE;
         }
         if (type.equals(BaseYangTypes.STRING_TYPE) || type.equals(Types.BYTE_ARRAY)) {
