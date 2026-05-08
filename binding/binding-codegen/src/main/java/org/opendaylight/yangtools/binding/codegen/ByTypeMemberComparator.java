@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
  * By type member {@link Comparator} which provides sorting by type for members (variables)
@@ -151,21 +151,6 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         if (type.equals(BaseYangTypes.INSTANCE_IDENTIFIER)) {
             return RANK_INSTANCE_IDENTIFIER;
         }
-        if (type instanceof GeneratedTransferObject gto) {
-            if (topParentTransportObject(gto).getBaseType() instanceof BitsTypeDefinition) {
-                return RANK_VARIABLE_ARRAY;
-            }
-        }
-        return RANK_COMPOSITE;
-    }
-
-    private static GeneratedTransferObject<?> topParentTransportObject(final GeneratedTransferObject<?> type) {
-        var ret = type;
-        var parent = ret.getSuperType();
-        while (parent != null) {
-            ret = parent;
-            parent = ret.getSuperType();
-        }
-        return ret;
+        return type instanceof BitsTypeObjectArchetype ? RANK_VARIABLE_ARRAY : RANK_COMPOSITE;
     }
 }
