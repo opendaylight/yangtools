@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -109,6 +110,7 @@ final class BindingJavaFileGenerator {
                 // processed separately
             }
             case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
+            case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
             case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype));
 
             // TypeObject specializations
