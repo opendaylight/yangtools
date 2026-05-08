@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.NotificationBody;
-import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
@@ -89,7 +88,6 @@ public final class BindingTypes {
     private static final @NonNull ConcreteType OBJECT_REFERENCE = typeForClass(DataObjectIdentifier.class);
     private static final @NonNull ConcreteType OBJECT_REFERENCE_WITH_KEY =
         typeForClass(DataObjectIdentifier.WithKey.class);
-    private static final @NonNull ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
     private static final @NonNull ConcreteType ROOT_META = typeForClass(RootMeta.class);
     private static final @NonNull ConcreteType RPC = typeForClass(Rpc.class);
     private static final @NonNull ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
@@ -276,18 +274,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType objectIdentifierWithKey(final Type type, final KeyArchetype keyType) {
         return ParameterizedType.of(OBJECT_REFERENCE_WITH_KEY, type, keyType);
-    }
-
-    /**
-     * Type specializing {@link OpaqueObject} for a particular type.
-     *
-     * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code OpaqueObject<Type>}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType opaqueObject(final Type type) {
-        return ParameterizedType.of(OPAQUE_OBJECT, type);
     }
 
     /**
