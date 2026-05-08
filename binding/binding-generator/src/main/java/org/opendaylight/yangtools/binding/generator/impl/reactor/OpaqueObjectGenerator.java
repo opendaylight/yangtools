@@ -7,17 +7,22 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AnydataRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.AnyxmlRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OpaqueRuntimeType;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
@@ -26,8 +31,10 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Common generator for {@code anydata} and {@code anyxml}.
  */
-abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R extends OpaqueRuntimeType>
-        extends AbstractExplicitGenerator<S, R> {
+abstract class OpaqueObjectGenerator<
+        S extends DataTreeEffectiveStatement<?> & DataSchemaCompat<QName, ?>,
+        R extends OpaqueRuntimeType> extends AbstractExplicitGenerator<S, R> {
+    @NonNullByDefault
     static final class Anydata extends OpaqueObjectGenerator<AnydataEffectiveStatement, AnydataRuntimeType> {
         Anydata(final AnydataEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
             super(statement, parent);
@@ -39,17 +46,26 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
         }
 
         @Override
-        AnydataRuntimeType createExternalRuntimeType(final GeneratedType type) {
-            return new DefaultAnydataRuntimeType(type, statement());
+        OpaqueObjectArchetype.Anydata getArchetype(final @Nullable TypeBuilderFactory builderFactory) {
+            return (OpaqueObjectArchetype.Anydata) getGeneratedType(builderFactory);
         }
 
         @Override
-        AnydataRuntimeType createInternalRuntimeType(final AnydataEffectiveStatement statement,
-                final GeneratedType type) {
-            return new DefaultAnydataRuntimeType(type, statement);
+        OpaqueObjectArchetype.Anydata createTypeImpl(final JavaTypeName name,
+                final AnydataEffectiveStatement statement) {
+            return new OpaqueObjectArchetype.Anydata(name, statement);
+        }
+
+        @Override
+        AnydataRuntimeType createExternalRuntimeType(final Type type) {
+            if (!(type instanceof OpaqueObjectArchetype.Anydata archetype)) {
+                throw new VerifyException("Unexpected type " + type);
+            }
+            return new DefaultAnydataRuntimeType(archetype);
         }
     }
 
+    @NonNullByDefault
     static final class Anyxml extends OpaqueObjectGenerator<AnyxmlEffectiveStatement, AnyxmlRuntimeType> {
         Anyxml(final AnyxmlEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
             super(statement, parent);
@@ -61,14 +77,21 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
         }
 
         @Override
-        AnyxmlRuntimeType createExternalRuntimeType(final GeneratedType type) {
-            return new DefaultAnyxmlRuntimeType(type, statement());
+        OpaqueObjectArchetype.Anyxml getArchetype(final @Nullable TypeBuilderFactory builderFactory) {
+            return (OpaqueObjectArchetype.Anyxml) getGeneratedType(builderFactory);
         }
 
         @Override
-        AnyxmlRuntimeType createInternalRuntimeType(final AnyxmlEffectiveStatement statement,
-                final GeneratedType type) {
-            return new DefaultAnyxmlRuntimeType(type, statement);
+        OpaqueObjectArchetype.Anyxml createTypeImpl(final JavaTypeName name, final AnyxmlEffectiveStatement statement) {
+            return new OpaqueObjectArchetype.Anyxml(name, statement);
+        }
+
+        @Override
+        AnyxmlRuntimeType createExternalRuntimeType(final Type type) {
+            if (!(type instanceof OpaqueObjectArchetype.Anyxml archetype)) {
+                throw new VerifyException("Unexpected type " + type);
+            }
+            return new DefaultAnyxmlRuntimeType(archetype);
         }
     }
 
@@ -81,23 +104,15 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
         dataTree.enterDataTree(statement().argument());
     }
 
+    abstract @NonNull OpaqueObjectArchetype<S> getArchetype(TypeBuilderFactory builderFactory);
+
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var typeName = typeName();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName);
-        builder.addImplementsType(BindingTypes.opaqueObject(builder.typeRef()));
-        defaultImplementedInterace(builder);
-        annotateDeprecatedIfNecessary(builder);
-
-        addQNameConstant(builder, localName());
-
-        final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement(), builder);
-        builder.setModuleName(module.statement().argument().getLocalName());
-//        newType.setSchemaPath(schemaNode.getPath());
-
-        return builder.build();
+    final OpaqueObjectArchetype<S> createTypeImpl(final TypeBuilderFactory builderFactory) {
+        return createTypeImpl(typeName(), statement());
     }
+
+    @NonNullByDefault
+    abstract OpaqueObjectArchetype<S> createTypeImpl(JavaTypeName name, S statement);
 
     @Override
     void constructRequire(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
@@ -105,16 +120,7 @@ abstract class OpaqueObjectGenerator<S extends DataTreeEffectiveStatement<?>, R 
     }
 
     @Override
-    final R createExternalRuntimeType(final Type type) {
-        return createExternalRuntimeType(verifyGeneratedType(type));
-    }
-
-    abstract @NonNull R createExternalRuntimeType(@NonNull GeneratedType type);
-
-    @Override
     final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {
-        return createInternalRuntimeType(statement, verifyGeneratedType(type));
+        return createExternalRuntimeType(type);
     }
-
-    abstract @NonNull R createInternalRuntimeType(@NonNull S statement, @NonNull GeneratedType type);
 }

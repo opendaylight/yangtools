@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with an opaque construct, like {@code anydata} and {@code anyxml}.
  */
-public interface OpaqueRuntimeType extends GeneratedRuntimeType, DataRuntimeType {
+public sealed interface OpaqueRuntimeType extends GeneratedRuntimeType, DataRuntimeType
+        permits AnydataRuntimeType, AnyxmlRuntimeType {
     @Override
-    DataTreeEffectiveStatement<?> statement();
+    OpaqueObjectArchetype<?> javaType();
 
     @Override
-    GeneratedType javaType();
+    DataTreeEffectiveStatement<?> statement();
 }

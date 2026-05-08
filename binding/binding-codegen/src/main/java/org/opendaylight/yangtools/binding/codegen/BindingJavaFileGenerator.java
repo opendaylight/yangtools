@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
@@ -114,6 +115,7 @@ final class BindingJavaFileGenerator {
             case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
             case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
             case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
+            case OpaqueObjectArchetype<?> archetype -> generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
 
             // TypeObject specializations
             case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao));

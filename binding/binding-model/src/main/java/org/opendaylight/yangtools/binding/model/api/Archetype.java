@@ -90,7 +90,7 @@ public sealed interface Archetype extends GeneratedType, Immutable
      */
     @Beta
     sealed interface WithQName<S extends EffectiveStatement<QName, ?>> extends Compat<S>
-            permits ChoiceInArchetype, FeatureArchetype, IdentityArchetype {
+            permits ChoiceInArchetype, FeatureArchetype, IdentityArchetype, OpaqueObjectArchetype {
         /**
          * {@return the value of {@value Naming#QNAME_STATIC_FIELD_NAME}}
          */

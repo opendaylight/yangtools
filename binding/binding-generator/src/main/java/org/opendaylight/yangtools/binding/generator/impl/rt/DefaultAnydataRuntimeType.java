@@ -7,13 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AnydataRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 
-public final class DefaultAnydataRuntimeType extends AbstractGeneratedRuntimeType<AnydataEffectiveStatement>
+@NonNullByDefault
+public final class DefaultAnydataRuntimeType
+        extends AbstractRuntimeType<AnydataEffectiveStatement, OpaqueObjectArchetype.Anydata>
         implements AnydataRuntimeType {
-    public DefaultAnydataRuntimeType(final GeneratedType bindingType, final AnydataEffectiveStatement statement) {
-        super(bindingType, statement);
+    public DefaultAnydataRuntimeType(final OpaqueObjectArchetype.Anydata bindingType) {
+        super(bindingType);
     }
 }
