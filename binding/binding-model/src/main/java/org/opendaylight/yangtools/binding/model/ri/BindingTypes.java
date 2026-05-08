@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
@@ -81,7 +80,6 @@ public final class BindingTypes {
 
     private static final @NonNull ConcreteType ACTION = typeForClass(Action.class);
     private static final @NonNull ConcreteType CHILD_OF = typeForClass(ChildOf.class);
-    private static final @NonNull ConcreteType CHOICE_IN = typeForClass(ChoiceIn.class);
     private static final @NonNull ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
     private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final @NonNull ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
@@ -229,18 +227,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType dataRoot(final Type type) {
         return ParameterizedType.of(DATA_ROOT, type);
-    }
-
-    /**
-     * Type specializing {@link ChoiceIn} for a particular type.
-     *
-     * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code ChoiceIn<Type>}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType choiceIn(final Type type) {
-        return ParameterizedType.of(CHOICE_IN, type);
     }
 
     /**
