@@ -35,7 +35,7 @@ public record KeyArchetype(
         JavaTypeName name,
         JavaTypeName entryObject,
         KeyEffectiveStatement statement,
-        List<Type> fields) implements Archetype.WithStatement<KeyEffectiveStatement>, GeneratedTypeCompat {
+        List<Type> fields) implements Archetype.Compat<KeyEffectiveStatement> {
     public KeyArchetype {
         requireNonNull(name);
         requireNonNull(entryObject);

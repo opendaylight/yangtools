@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -28,10 +29,73 @@ public sealed interface Archetype extends GeneratedType, Immutable
      */
     @Beta
     sealed interface WithStatement<S extends EffectiveStatement<?, ?>> extends Archetype
-            permits DataRootArchetype, FeatureArchetype, KeyArchetype {
+            permits Compat, DataRootArchetype {
         /**
          * {@return the {@link EffectiveStatement}}
          */
         @NonNull S statement();
+    }
+
+    /**
+     * Compatibility {@link GeneratedType} method implementations for archetypes which do not provide them anymore.
+     *
+     * @param <S> EffectiveStatement type
+     * @since 16.0.0
+     */
+    @Beta
+    sealed interface Compat<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
+            permits FeatureArchetype, KeyArchetype {
+        /**
+         * Returns a string that contains a human-readable textual description of
+         * type definition.
+         *
+         * @return a human-readable textual description of type definition.
+         */
+        @Override
+        @Deprecated(forRemoval = true)
+        default String getDescription() {
+            throw uoe();
+        }
+
+        /**
+         * Returns a string that is used to specify a textual cross-reference to an
+         * external document, either another module that defines related management
+         * information, or a document that provides additional information relevant
+         * to this definition.
+         *
+         * @return a textual cross-reference to an external document.
+         */
+        @Override
+        @Deprecated(forRemoval = true)
+        default String getReference() {
+            throw uoe();
+        }
+
+        /**
+         * Returns the name of the module, in which generated type was specified.
+         *
+         * @return the name of the module, in which generated type was specified.
+         */
+        @Override
+        @Deprecated(forRemoval = true)
+        default String getModuleName() {
+            throw uoe();
+        }
+
+        @Override
+        @Deprecated(forRemoval = true)
+        default @Nullable TypeComment getComment() {
+            throw uoe();
+        }
+
+        @Override
+        @Deprecated(forRemoval = true)
+        default @Nullable YangSourceDefinition yangSourceDefinition() {
+            throw uoe();
+        }
+
+        private static UnsupportedOperationException uoe() {
+            throw new UnsupportedOperationException("should never be called");
+        }
     }
 }
