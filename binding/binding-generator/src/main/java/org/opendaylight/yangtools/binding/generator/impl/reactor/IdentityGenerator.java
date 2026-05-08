@@ -9,13 +9,16 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.BASE_IDENTITY;
 
+import com.google.common.base.VerifyException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultIdentityRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.IdentityRuntimeType;
@@ -52,12 +55,16 @@ public final class IdentityGenerator
             .collect(Collectors.toUnmodifiableList());
     }
 
+    @NonNull IdentityArchetype getArchetype(final TypeBuilderFactory builderFactory) {
+        return (IdentityArchetype) getGeneratedType(builderFactory);
+    }
+
     @Override
     GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         if (!baseIdentities.isEmpty()) {
             for (var baseIdentity : baseIdentities) {
-                builder.addImplementsType(baseIdentity.getGeneratedType(builderFactory));
+                builder.addImplementsType(baseIdentity.getArchetype(builderFactory));
             }
         } else {
             builder.addImplementsType(BASE_IDENTITY);
@@ -81,7 +88,10 @@ public final class IdentityGenerator
 
     @Override
     IdentityRuntimeType createExternalRuntimeType(final Type type) {
-        return new DefaultIdentityRuntimeType(verifyGeneratedType(type), statement());
+        if (type instanceof IdentityArchetype archetype) {
+            return new DefaultIdentityRuntimeType(archetype);
+        }
+        throw new VerifyException("Unexpected type " + type);
     }
 
     @Override

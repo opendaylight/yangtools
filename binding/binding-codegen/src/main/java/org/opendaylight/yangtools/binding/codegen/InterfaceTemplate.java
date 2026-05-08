@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
 /**
  * Template for generating JAVA interfaces.
  */
-sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
+sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate, IdentityTemplate {
     @NonNullByDefault
     record Builder(GeneratedType type) implements Template.Builder {
         Builder(final GeneratedType type) {
