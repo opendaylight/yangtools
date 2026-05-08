@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isIdentityType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.Iterables;
@@ -24,6 +23,7 @@ import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
@@ -200,7 +200,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
             } else if (type instanceof BitsTypeObjectArchetype) {
                 // generated bits typedef
                 bb.str(importedName(JU_ARRAYS)).str(".toString(").str(field).eol(".values());");
-            } else if (isIdentityType(type)) {
+            } else if (type instanceof IdentityArchetype) {
                 // generated identity
                 bb.str(field).eol("." + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "().toString();");
             } else {
