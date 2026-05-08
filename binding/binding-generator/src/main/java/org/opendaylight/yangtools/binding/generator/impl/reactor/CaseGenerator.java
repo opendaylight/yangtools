@@ -62,7 +62,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         // Note: this needs to be the first type we mention as we are relying on that fact for global runtime type
         //       choice/case indexing.
-        builder.addImplementsType(choice.getGeneratedType(builderFactory));
+        builder.addImplementsType(choice.getArchetype(builderFactory));
 
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         addAugmentable(builder);
