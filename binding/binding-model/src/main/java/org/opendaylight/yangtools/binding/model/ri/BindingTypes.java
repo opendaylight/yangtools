@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
@@ -19,7 +18,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
@@ -365,24 +363,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType yangData(final Type concreteType) {
         return ParameterizedType.of(YANG_DATA, concreteType);
-    }
-
-    /**
-     * Check if specified type is generated for an identity.
-     *
-     * @param type Type to examine
-     * @return {@code true} if the type is generated for an identity
-     */
-    public static boolean isIdentityType(final Type type) {
-        if (type instanceof GeneratedType generated) {
-            for (var constant : generated.getConstantDefinitions()) {
-                if (VALUE_STATIC_FIELD_NAME.equals(constant.getName())
-                    && BaseIdentity.class.equals(constant.getValue())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**

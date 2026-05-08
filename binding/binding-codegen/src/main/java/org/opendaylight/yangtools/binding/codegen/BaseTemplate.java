@@ -14,13 +14,11 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.extractAugmentationTarget;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
@@ -50,7 +48,6 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -222,7 +219,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return switch (name) {
             case NAME_STATIC_FIELD_NAME -> emitNameConstant(name, type, (YangDataName) constant.getValue());
             case QNAME_STATIC_FIELD_NAME -> emitQNameConstant(name, type, (String) constant.getValue());
-            case VALUE_STATIC_FIELD_NAME -> emitValueConstant(name, type);
             default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.getValue() + ";\n";
         };
     }
@@ -247,48 +243,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
              */
             public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
                 + '.' + QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
-    }
-
-    // FIXME: return a Block
-    @NonNullByDefault
-    String emitValueConstant(final String name, final Type type) {
-        final var typeName = importedName(type);
-        final var override = importedName(OVERRIDE);
-        final var codeHelpers = importedName(CODEHELPERS);
-
-        return "/**\n"
-            +  " * Singleton value representing the {@link " + typeName + "} identity.\n"
-            +  " */\n"
-            +  "public static final " + importedNonNull(type) + ' ' + name + " = new " + typeName + "() {\n"
-            +  "    @java.io.Serial\n"
-            +  "    private static final long serialVersionUID = 1L;\n"
-            +  '\n'
-            +  "    @" + override + '\n'
-            +  "    public " + importedName(CLASS) + '<' + typeName + "> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME
-                + "() {\n"
-            +  "        return " + typeName + ".class;\n"
-            +  "    }\n"
-            +  '\n'
-            +  "    @" + override + '\n'
-            +  "    public int hashCode() {\n"
-            +  "        return " + typeName + ".class.hashCode();\n"
-            +  "    }\n"
-            +  '\n'
-            +  "    @" + override + '\n'
-            +  "    public boolean equals(final " + importedName(Types.objectType()) + " obj) {\n"
-            +  "        return " + codeHelpers + ".biEQ(this, obj);\n"
-            +  "    }\n"
-            +  '\n'
-            +  "    @" + override + '\n'
-            +  "    public " + importedName(Types.STRING) + " toString() {\n"
-            +  "        return " + codeHelpers + ".biTS(" + typeName + ".class, QNAME);\n"
-            +  "    }\n"
-            +  '\n'
-            +  "    @java.io.Serial\n"
-            +  "    private Object readResolve() throws java.io.ObjectStreamException {\n"
-            +  "        return " + name + ";\n"
-            +  "    }\n"
-            +  "};\n";
     }
 
     /**
