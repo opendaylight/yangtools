@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
  * A {@link RuntimeType} associated with a {@code choice} statement. Note that unlike YANG semantics, in Binding Spec
  * semantics a type generated for a 'choice' statement is <b>does not</b> implement {@link Augmentable}.
  */
+// FIXME override javaType() and provide default statement() implementation:
 public interface ChoiceRuntimeType extends CompositeRuntimeType, DataRuntimeType {
     @Override
     ChoiceEffectiveStatement statement();
