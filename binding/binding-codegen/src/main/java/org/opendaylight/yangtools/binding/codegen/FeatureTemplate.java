@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -45,16 +46,15 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
     @Override
     BlockBuilder body() {
         final var type = archetype();
-        final var typeName = type.simpleName();
+        final var simpleName = type.simpleName();
         final var rootName = importedName(root.name());
 
         return newBodyBuilder(type.statement().toSchemaNode())
             .at().eol(importedName(NONNULL_BY_DEFAULT))
-            .str("public final class ").str(typeName).str(" extends ")
-                .gen(importedName(YANG_FEATURE), typeName, rootName).jBlock(bb -> {
+            .str("public final class ").str(simpleName).str(" extends ")
+                .gen(importedName(YANG_FEATURE), simpleName, rootName).jBlock(bb -> {
                     final var override = importedName(OVERRIDE);
                     final var clazz = importedName(CLASS);
-                    final var nonNull = importedName(NONNULL);
                     final var qname = type.statement().argument();
 
                     bb
@@ -65,21 +65,21 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
                         .eol("/**")
                         .eol(" * The singleton instance.")
                         .eol(" */")
-                        .str("public static final @").str(nonNull).sp().str(typeName)
-                            .str(" " + VALUE_STATIC_FIELD_NAME + " = new ").str(typeName).eol("();")
+                        .str("public static final ").str(importedNonNull(type))
+                            .str(" " + VALUE_STATIC_FIELD_NAME + " = new ").str(simpleName).eol("();")
                         .nl()
-                        .str("private ").str(typeName).str("()").oB()
+                        .str("private ").str(simpleName).str("()").oB()
                             .eol("// Hidden on purpose")
                         .cB()
                         .nl()
                         .at().eol(override)
-                        .str("public ").gen(clazz, typeName).str(" implementedInterface()").oB()
-                            .str("return ").str(typeName).eol(".class;")
+                        .str("public ").gen(clazz, simpleName).str(" implementedInterface()").oB()
+                            .str("return ").str(simpleName).eol(".class;")
                         .cB()
                         .nl()
                         .at().eol(override)
                         .str("public ").str(importedName(QNAME)).str(" qname()").oB()
-                            .eol("return QNAME;")
+                            .eol("return " + QNAME_STATIC_FIELD_NAME + ";")
                         .cB()
                         .nl()
                         .at().eol(override)
