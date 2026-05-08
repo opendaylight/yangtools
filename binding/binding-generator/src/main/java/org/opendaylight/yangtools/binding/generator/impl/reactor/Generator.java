@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -39,7 +38,6 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -286,14 +284,6 @@ public abstract class Generator implements Iterable<Generator> {
         }
     }
 
-    static final void addUnits(final GeneratedTransferObject.Builder builder, final TypeDefinition<?> typedef) {
-        typedef.getUnits().ifPresent(units -> {
-            if (!units.isEmpty()) {
-                builder.addConstant(Types.STRING, Naming.UNITS_STATIC_FIELD_NAME, "\"" + units + "\"");
-            }
-        });
-    }
-
     /**
      * Add {@link java.io.Serializable} to implemented interfaces of this TO. Also compute and add serialVersionUID
      * property.
@@ -306,15 +296,6 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     /**
-     * Add a {@link DataContainer#implementedInterface()} declaration with a narrower return type to specified builder.
-     *
-     * @param builder Target builder
-     */
-    static final void narrowImplementedInterface(final GeneratedTypeBuilder builder) {
-        defineImplementedInterfaceMethod(builder, WildcardType.ofName(builder.typeName()));
-    }
-
-    /**
      * Add a default implementation of {@link DataContainer#implementedInterface()} to specified builder.
      *
      * @param builder Target builder
@@ -323,21 +304,7 @@ public abstract class Generator implements Iterable<Generator> {
         defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
-    static final <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Generator parent,
-            final Class<T> type) {
-        for (var child : parent) {
-            if (child instanceof AbstractExplicitGenerator) {
-                @SuppressWarnings("unchecked")
-                final var explicit = (AbstractExplicitGenerator<T, ?>)child;
-                if (type.isInstance(explicit.statement())) {
-                    return explicit;
-                }
-            }
-        }
-        throw new IllegalStateException("Cannot find " + type + " in " + parent);
-    }
-
-    private static MethodSignatureBuilder defineImplementedInterfaceMethod(
+    static final MethodSignatureBuilder defineImplementedInterfaceMethod(
             final GeneratedTypeBuilderBase<?> typeBuilder, final Type classType) {
         final var ret = typeBuilder
                 .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
