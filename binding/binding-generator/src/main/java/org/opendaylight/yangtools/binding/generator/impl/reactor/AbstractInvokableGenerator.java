@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -38,10 +39,8 @@ abstract class AbstractInvokableGenerator<S extends SchemaTreeEffectiveStatement
     @Override
     final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
-        final var inputType = getChild(this, InputEffectiveStatement.class).getOriginal()
-            .getGeneratedType(builderFactory);
-        final var outputType = getChild(this, OutputEffectiveStatement.class).getOriginal()
-            .getGeneratedType(builderFactory);
+        final var inputType = getChild(InputEffectiveStatement.class).getOriginal().getGeneratedType(builderFactory);
+        final var outputType = getChild(OutputEffectiveStatement.class).getOriginal().getGeneratedType(builderFactory);
         addImplementedType(builderFactory, builder, inputType, outputType);
         builder.addAnnotation(FUNCTIONAL_INTERFACE_ANNOTATION);
         defaultImplementedInterace(builder);
@@ -56,4 +55,17 @@ abstract class AbstractInvokableGenerator<S extends SchemaTreeEffectiveStatement
 
     abstract void addImplementedType(TypeBuilderFactory builderFactory, GeneratedTypeBuilder builder,
         GeneratedType input, GeneratedType output);
+
+    private <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Class<T> type) {
+        for (var child : this) {
+            if (child instanceof AbstractExplicitGenerator) {
+                @SuppressWarnings("unchecked")
+                final var explicit = (AbstractExplicitGenerator<T, ?>)child;
+                if (type.isInstance(explicit.statement())) {
+                    return explicit;
+                }
+            }
+        }
+        throw new IllegalStateException("Cannot find " + type + " in " + this);
+    }
 }
