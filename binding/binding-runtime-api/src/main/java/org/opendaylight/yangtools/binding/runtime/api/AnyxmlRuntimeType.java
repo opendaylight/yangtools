@@ -7,12 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
+import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with an {@code anyxml} statement.
  */
-public interface AnyxmlRuntimeType extends OpaqueRuntimeType {
+public non-sealed interface AnyxmlRuntimeType extends OpaqueRuntimeType {
     @Override
-    AnyxmlEffectiveStatement statement();
+    OpaqueObjectArchetype.Anyxml javaType();
+
+    @Override
+    default AnyxmlEffectiveStatement statement() {
+        return javaType().statement();
+    }
 }
