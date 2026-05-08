@@ -880,6 +880,14 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     abstract @NonNull GeneratedTransferObject<?> createDerivedType(@NonNull TypeBuilderFactory builderFactory,
         @NonNull GeneratedTransferObject<?> baseType);
 
+    static final void addUnits(final GeneratedTransferObject.Builder builder, final TypeDefinition<?> typedef) {
+        typedef.getUnits().ifPresent(units -> {
+            if (!units.isEmpty()) {
+                builder.addConstant(Types.STRING, Naming.UNITS_STATIC_FIELD_NAME, "\"" + units + "\"");
+            }
+        });
+    }
+
     /**
      * Adds to the {@code genTOBuilder} the constant which contains regular expressions from the {@code expressions}.
      *
