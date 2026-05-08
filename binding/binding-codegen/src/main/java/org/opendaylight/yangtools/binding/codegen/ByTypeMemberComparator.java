@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.binding.model.api.TypeMember;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
  * By type member {@link Comparator} which provides sorting by type for members (variables)
@@ -142,30 +142,19 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
     }
 
     private static int rankOf(final Type type) {
-        if (FIXED_TYPES.contains(type) || type instanceof Decimal64Type || type instanceof IdentityArchetype) {
-            return RANK_FIXED_SIZE;
-        }
-        if (type.equals(BaseYangTypes.STRING_TYPE) || type.equals(Types.BYTE_ARRAY)) {
-            return RANK_VARIABLE_ARRAY;
-        }
-        if (type.equals(BaseYangTypes.INSTANCE_IDENTIFIER)) {
-            return RANK_INSTANCE_IDENTIFIER;
-        }
-        if (type instanceof GeneratedTransferObject gto) {
-            if (topParentTransportObject(gto).getBaseType() instanceof BitsTypeDefinition) {
-                return RANK_VARIABLE_ARRAY;
+        return switch (type) {
+            case BitsTypeObjectArchetype bits -> RANK_VARIABLE_ARRAY;
+            case Decimal64Type decimal64 -> RANK_FIXED_SIZE;
+            case IdentityArchetype identity -> RANK_FIXED_SIZE;
+            default -> {
+                if (FIXED_TYPES.contains(type)) {
+                    yield RANK_FIXED_SIZE;
+                }
+                if (type.equals(BaseYangTypes.STRING_TYPE) || type.equals(Types.BYTE_ARRAY)) {
+                    yield RANK_VARIABLE_ARRAY;
+                }
+                yield type.equals(BaseYangTypes.INSTANCE_IDENTIFIER) ? RANK_INSTANCE_IDENTIFIER : RANK_COMPOSITE;
             }
-        }
-        return RANK_COMPOSITE;
-    }
-
-    private static GeneratedTransferObject<?> topParentTransportObject(final GeneratedTransferObject<?> type) {
-        var ret = type;
-        var parent = ret.getSuperType();
-        while (parent != null) {
-            ret = parent;
-            parent = ret.getSuperType();
-        }
-        return ret;
+        };
     }
 }
