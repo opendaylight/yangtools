@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 @ExtendWith(MockitoExtension.class)
-class GeneratorTest {
+class AbstractTypeObjectGeneratorTest {
     @Mock
     private TypeDefinition<?> typedef;
 
@@ -32,7 +32,7 @@ class GeneratorTest {
     void testAddUnits() {
         doReturn(Optional.of("125")).when(typedef).getUnits();
 
-        Generator.addUnits(builder, typedef);
+        AbstractTypeObjectGenerator.addUnits(builder, typedef);
         final var genTO = builder.build();
         final var constants = genTO.getConstantDefinitions();
         assertEquals(1, constants.size());
@@ -45,7 +45,7 @@ class GeneratorTest {
     void testAddUnitsNonExistent() {
         doReturn(Optional.empty()).when(typedef).getUnits();
 
-        Generator.addUnits(builder, typedef);
+        AbstractTypeObjectGenerator.addUnits(builder, typedef);
         var genTO = builder.build();
         assertEquals(List.of(), genTO.getConstantDefinitions());
 
@@ -55,7 +55,7 @@ class GeneratorTest {
     void testAddUnitsEmpty() {
         doReturn(Optional.of("")).when(typedef).getUnits();
 
-        Generator.addUnits(builder, typedef);
+        AbstractTypeObjectGenerator.addUnits(builder, typedef);
         var genTO = builder.build();
         assertEquals(List.of(), genTO.getConstantDefinitions());
     }
