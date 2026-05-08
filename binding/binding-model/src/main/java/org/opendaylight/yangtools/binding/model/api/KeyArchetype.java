@@ -33,13 +33,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 @NonNullByDefault
 public record KeyArchetype(
         JavaTypeName name,
-        JavaTypeName entryObject,
         KeyEffectiveStatement statement,
+        JavaTypeName entryObject,
         List<Type> fields) implements Archetype.Compat<KeyEffectiveStatement> {
     public KeyArchetype {
         requireNonNull(name);
-        requireNonNull(entryObject);
         requireNonNull(statement);
+        requireNonNull(entryObject);
         fields = List.copyOf(fields);
         verify(fields.size() == statement.argument().size());
     }

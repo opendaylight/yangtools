@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_UNSAFE_ACCESS;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.INSTANCE_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -48,7 +51,7 @@ final class DataRootTemplate extends InterfaceTemplate {
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
         final var rootMetaType = BindingTypes.rootMeta(archetype);
         final var rootMetaRaw = importedName(rootMetaType.getRawType());
-        final var moduleInfo = importedName(YangModuleInfoTemplate.nameInModuleOf(archetype));
+        final var moduleInfo = importedName(yangModuleInfoOf(archetype.statement().localQNameModule()));
 
         // FIXME: YANGTOOLS-1808: use importedName()
         final var type = archetype.canonicalName();
@@ -60,7 +63,7 @@ final class DataRootTemplate extends InterfaceTemplate {
             .at().eol(nonNullByDefault)
             // FIXME: YANGTOOLS-1808: use importedName() on rootMetaType
             .str(rootMetaRaw).str("<").str(type).str("> META = new ").str(rootMetaRaw).str("<>(").str(type)
-                .str(".class, ").str(moduleInfo).str('.' + YangModuleInfoTemplate.INSTANCE_FIELD_NAME + ", ")
-                .str(moduleInfo).eol('.' + YangModuleInfoTemplate.CONST_UNSAFE_ACCESS + ");");
+                .str(".class, ").str(moduleInfo).str('.' + INSTANCE_FIELD_NAME + ", ")
+                .str(moduleInfo).eol('.' + CONST_UNSAFE_ACCESS + ");");
     }
 }

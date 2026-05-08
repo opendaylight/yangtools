@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -37,45 +39,27 @@ public sealed interface Archetype extends GeneratedType, Immutable
     }
 
     /**
-     * Compatibility {@link GeneratedType} method implementations for archetypes which do not provide them anymore.
+     * Compatibility {@link GeneratedType} implementing specified methods for archetypes which do not provide them
+     * anymore.
      *
      * @param <S> EffectiveStatement type
      * @since 16.0.0
      */
     @Beta
     sealed interface Compat<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
-            permits FeatureArchetype, KeyArchetype {
-        /**
-         * Returns a string that contains a human-readable textual description of
-         * type definition.
-         *
-         * @return a human-readable textual description of type definition.
-         */
+            permits WithQName, KeyArchetype {
         @Override
         @Deprecated(forRemoval = true)
         default String getDescription() {
             throw uoe();
         }
 
-        /**
-         * Returns a string that is used to specify a textual cross-reference to an
-         * external document, either another module that defines related management
-         * information, or a document that provides additional information relevant
-         * to this definition.
-         *
-         * @return a textual cross-reference to an external document.
-         */
         @Override
         @Deprecated(forRemoval = true)
         default String getReference() {
             throw uoe();
         }
 
-        /**
-         * Returns the name of the module, in which generated type was specified.
-         *
-         * @return the name of the module, in which generated type was specified.
-         */
         @Override
         @Deprecated(forRemoval = true)
         default String getModuleName() {
@@ -96,6 +80,23 @@ public sealed interface Archetype extends GeneratedType, Immutable
 
         private static UnsupportedOperationException uoe() {
             throw new UnsupportedOperationException("should never be called");
+        }
+    }
+
+    /**
+     * Compatibility {@link GeneratedType} method implementations for archetypes which do not provide them anymore.
+     *
+     * @param <S> EffectiveStatement type
+     * @since 16.0.0
+     */
+    @Beta
+    sealed interface WithQName<S extends EffectiveStatement<QName, ?>> extends Compat<S>
+            permits FeatureArchetype {
+        /**
+         * {@return the value of {@value Naming#QNAME_STATIC_FIELD_NAME} field}
+         */
+        default QName qnameConstant() {
+            return statement().argument();
         }
     }
 }
