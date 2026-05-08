@@ -8,25 +8,25 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMember;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * By type member {@link Comparator} which provides sorting by type for members (variables)
@@ -55,18 +55,6 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
      * Composite structure. DataObject, OpaqueObject and similar.
      */
     private static final int RANK_COMPOSITE           = 3;
-
-    private static final Set<Type> FIXED_TYPES = Set.of(
-        BaseYangTypes.INT8_TYPE,
-        BaseYangTypes.INT16_TYPE,
-        BaseYangTypes.INT32_TYPE,
-        BaseYangTypes.INT64_TYPE,
-        BaseYangTypes.UINT8_TYPE,
-        BaseYangTypes.UINT16_TYPE,
-        BaseYangTypes.UINT32_TYPE,
-        BaseYangTypes.UINT64_TYPE,
-        BaseYangTypes.BOOLEAN_TYPE,
-        BaseYangTypes.EMPTY_TYPE);
 
     /**
      * Singleton instance.
@@ -141,16 +129,40 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         };
     }
 
+    @NonNullByDefault
     private static int rankOf(final Type type) {
-        if (FIXED_TYPES.contains(type) || type instanceof Decimal64Type || type instanceof IdentityArchetype) {
-            return RANK_FIXED_SIZE;
-        }
-        if (type.equals(BaseYangTypes.STRING_TYPE) || type.equals(Types.BYTE_ARRAY)) {
-            return RANK_VARIABLE_ARRAY;
-        }
-        if (type.equals(BaseYangTypes.INSTANCE_IDENTIFIER)) {
-            return RANK_INSTANCE_IDENTIFIER;
-        }
-        return type instanceof BitsTypeObjectArchetype ? RANK_VARIABLE_ARRAY : RANK_COMPOSITE;
+        return switch (type) {
+            case BitsTypeObjectArchetype bits -> RANK_VARIABLE_ARRAY;
+            case Decimal64Type decimal64 -> RANK_FIXED_SIZE;
+            case IdentityArchetype identity -> RANK_FIXED_SIZE;
+            default -> {
+                final var typeName = type.name();
+                yield switch (typeName.packageName()) {
+                    case "" -> switch (typeName.simpleName()) {
+                        case "byte[]" -> RANK_VARIABLE_ARRAY;
+                        default -> unhandled(typeName);
+                    };
+                    case "java.lang" -> switch (typeName.simpleName()) {
+                        case "Boolean", "Byte", "Short", "Integer", "Long" -> RANK_FIXED_SIZE;
+                        case "String" -> RANK_VARIABLE_ARRAY;
+                        default -> unhandled(typeName);
+                    };
+                    case "org.opendaylight.yangtools.binding" -> switch (typeName.simpleName()) {
+                        case "BindingInstanceIdentifier" -> RANK_INSTANCE_IDENTIFIER;
+                        default -> unhandled(typeName);
+                    };
+                    case "org.opendaylight.yangtools.yang.common" -> switch (typeName.simpleName()) {
+                        case "Empty", "Uint8", "Uint16", "Uint32", "Uint64" -> RANK_FIXED_SIZE;
+                        default -> unhandled(typeName);
+                    };
+                    default -> RANK_COMPOSITE;
+                };
+            }
+        };
+    }
+
+    @NonNullByDefault
+    private static int unhandled(final JavaTypeName typeName) {
+        throw new VerifyException("Unhandled " + typeName);
     }
 }
