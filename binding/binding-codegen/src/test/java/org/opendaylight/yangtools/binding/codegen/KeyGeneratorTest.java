@@ -13,11 +13,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
+@ExtendWith(MockitoExtension.class)
 class KeyGeneratorTest {
+    @Mock
+    private DataRootArchetype root;
+
     @Test
     void compositeKeyClassTest() {
         final var genTypes = new DefaultBindingGenerator().generateTypes(
@@ -201,9 +209,9 @@ class KeyGeneratorTest {
     }
 
     @NonNullByDefault
-    private static void assertKeyClass(final String expected, final KeyArchetype archetype) {
+    private void assertKeyClass(final String expected, final KeyArchetype archetype) {
         final var sb = new StringBuilder();
-        new KeyTemplate.Builder(archetype).build().generateTo(sb);
+        new KeyTemplate.Builder(archetype, root).build().generateTo(sb);
         assertEquals(expected, sb.toString());
     }
 }

@@ -10,33 +10,33 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 
 /**
  * A template for {@link Key} specializations.
  */
-final class KeyTemplate extends BaseTemplate {
-    @NonNullByDefault
-    record Builder(KeyArchetype type) implements Template.Builder {
+@NonNullByDefault
+final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
+    record Builder(KeyArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
+            requireNonNull(root);
         }
 
         @Override
         public KeyTemplate build() {
-            return new KeyTemplate(type);
+            return new KeyTemplate(type, root);
         }
     }
 
-    private static final @NonNull JavaTypeName KEY = JavaTypeName.create(Key.class);
+    private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
 
-    @NonNullByDefault
-    private KeyTemplate(final KeyArchetype archetype) {
-        super(GeneratedClass.of(archetype), archetype);
+    private KeyTemplate(final KeyArchetype archetype, final DataRootArchetype root) {
+        super(GeneratedClass.of(archetype), archetype, root);
     }
 
     @Override
@@ -59,7 +59,6 @@ final class KeyTemplate extends BaseTemplate {
     }
 
     // Split out to keep indentation in check
-    @NonNullByDefault
     private void classBody(final BlockBuilder bb) {
         final var type = (KeyArchetype) type();
 

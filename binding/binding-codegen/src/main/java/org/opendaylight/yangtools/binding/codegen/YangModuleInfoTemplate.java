@@ -129,10 +129,16 @@ public final class YangModuleInfoTemplate {
             .isPresent();
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
     static JavaTypeName nameInModuleOf(final GeneratedType genType) {
         // Yeah: not pretty but works
         return JavaTypeName.create(rootToService(genType.packageName()), CLASS_NAME);
+    }
+
+    @NonNullByDefault
+    static JavaTypeName yangModuleInfoOf(final QNameModule module) {
+        return JavaTypeName.create(servicePackageName(module), CLASS_NAME);
     }
 
     /**

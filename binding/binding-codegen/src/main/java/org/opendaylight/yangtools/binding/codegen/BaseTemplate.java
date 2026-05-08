@@ -65,8 +65,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
-        permits AbstractBuilderTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, InterfaceTemplate,
-                KeyTemplate {
+        permits AbstractBuilderTemplate, ArchetypeTemplate, ClassTemplate, EnumTypeObjectTemplate, InterfaceTemplate {
     static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
 
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
