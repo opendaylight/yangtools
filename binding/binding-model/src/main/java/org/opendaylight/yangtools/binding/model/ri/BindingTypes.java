@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.NotificationBody;
-import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
@@ -89,7 +88,6 @@ public final class BindingTypes {
     private static final @NonNull ConcreteType OBJECT_REFERENCE_WITH_KEY =
         typeForClass(DataObjectIdentifier.WithKey.class);
     private static final @NonNull ConcreteType ROOT_META = typeForClass(RootMeta.class);
-    private static final @NonNull ConcreteType RPC = typeForClass(Rpc.class);
     private static final @NonNull ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
     private static final @NonNull ConcreteType YANG_DATA = typeForClass(YangData.class);
 
@@ -286,19 +284,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType rootMeta(final Type root) {
         return ParameterizedType.of(ROOT_META, root);
-    }
-
-    /**
-     * Type specializing {@link Rpc} for a particular type.
-     *
-     * @param input Type input type
-     * @param output Type output type
-     * @return A parameterized type corresponding to {@code Rpc<Input, Output>}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType rpc(final Type input, final Type output) {
-        return ParameterizedType.of(RPC, input, output);
     }
 
     /**
