@@ -51,10 +51,10 @@ abstract class BaseCompilationTest {
 
         // Also generate YangModuleInfo
         for (var module : context.getModules()) {
-            final var template = new YangModuleInfoTemplate(module, context, mod -> List.of("fake", mod.getName()));
+            final var template = new ModuleSupportTemplate(module, context, mod -> List.of("fake", mod.getName()));
 
             final var file = sourcesOutputDir
-                .resolve(YangModuleInfoTemplate.servicePackageName(module.getQNameModule())
+                .resolve(ModuleSupportTemplate.servicePackageName(module.getQNameModule())
                     .replace('.', File.separatorChar))
                 .resolve("YangModuleInfoImpl.java");
 

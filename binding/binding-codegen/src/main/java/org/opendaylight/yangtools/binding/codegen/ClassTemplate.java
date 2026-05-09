@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
-import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;

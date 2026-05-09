@@ -22,12 +22,12 @@ public interface FooData extends DataRoot<FooData> {
         // Note: this usually supplied via YangModuleInfoProvider reference
         new YangModuleInfo() {
             @Override
-            public InputStream openYangTextStream() {
+            public QName name() {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public QName getName() {
+            public InputStream openYangTextStream() {
                 throw new UnsupportedOperationException();
             }
         },

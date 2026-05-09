@@ -30,9 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 final class JavaFileGenerator implements FileGenerator {
     public static final String CONFIG_IGNORE_DUPLICATE_FILES = "ignoreDuplicateFiles";
 
-    private static final String MODULE_INFO = YangModuleInfoTemplate.CLASS_NAME + ".java";
+    private static final String MODULE_INFO = ModuleSupportTemplate.CLASS_NAME + ".java";
     private static final String MODEL_BINDING_PROVIDER =
-        YangModuleInfoTemplate.MODEL_BINDING_PROVIDER_CLASS_NAME + ".java";
+        ModuleSupportTemplate.MODEL_BINDING_PROVIDER_CLASS_NAME + ".java";
     private static final GeneratedFilePath MODEL_BINDING_PROVIDER_SERVICE =
         GeneratedFilePath.ofDirectoryFile("META-INF/services", YangModelBindingProvider.class.getName());
 
@@ -60,16 +60,21 @@ final class JavaFileGenerator implements FileGenerator {
         // YangModuleInfo files
         final var bindingProviders = ImmutableSet.<String>builder();
         for (final var module : localModules) {
-            final var template = new YangModuleInfoTemplate(module, context,
+            final var servicePackage = ModuleSupportTemplate.servicePackageName(module.getQNameModule());
+            final var serviceDir = servicePackage.replace('.', GeneratedFilePath.SEPARATOR);
+
+            final var constants = new ModuleSupportTemplate(module, context,
                 mod -> moduleResourcePathResolver.findModuleResourcePath(mod, YangTextSource.class));
-            final var directory = template.packageName().replace('.', GeneratedFilePath.SEPARATOR);
+            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(serviceDir,
+                constants.typeName().localName()),
+                new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, constants::generate));
 
-            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(directory, MODULE_INFO),
-                new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, template::generate));
-            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(directory, MODEL_BINDING_PROVIDER),
-                new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, template::generateModelProvider));
+            final var modelBindingProvider = new ModelBindingProviderTemplate(module.asEffectiveStatement());
+            result.put(GeneratedFileType.SOURCE, GeneratedFilePath.ofDirectoryFile(serviceDir,
+                modelBindingProvider.typeName().localName()),
+                new SupplierGeneratedFile(GeneratedFileLifecycle.TRANSIENT, modelBindingProvider::generate));
 
-            bindingProviders.add(template.modelBindingProviderName());
+            bindingProviders.add(constants.typeName().createSibling(MODEL_BINDING_PROVIDER_CLASS_NAME));
         }
 
         // META-INF/services entries, sorted to make the build predictable

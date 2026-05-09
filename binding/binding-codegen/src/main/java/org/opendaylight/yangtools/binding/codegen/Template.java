@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  */
 // FIXME: extends Immutable once we have separated out GeneratedClass lifecycle
 @NonNullByDefault
-abstract sealed class Template permits JavaFileTemplate {
+abstract sealed class Template permits JavaFileTemplate, ModuleSupportTemplate, ModelBindingProviderTemplate {
     /**
      * {@return the name of the type this generator is bound to}
      */

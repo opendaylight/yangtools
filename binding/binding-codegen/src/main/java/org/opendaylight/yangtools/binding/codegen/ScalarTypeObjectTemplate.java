@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_STO_REGISTRAR;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.CONST_STO_REGISTRAR;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.nameInModuleOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PROP;
 
