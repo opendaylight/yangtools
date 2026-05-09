@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.contract.Naming;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultRpcRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.RpcRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
@@ -23,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
  * Generator corresponding to a {@code rpc} statement.
  */
 final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatement, RpcRuntimeType> {
+    @NonNullByDefault
     RpcGenerator(final RpcEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);
     }
@@ -38,13 +37,9 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
     }
 
     @Override
-    void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
-            final GeneratedType input, final GeneratedType output) {
-        builder.addImplementsType(BindingTypes.rpc(input, output));
-        builder.addMethod(Naming.RPC_INVOKE_NAME).setAbstract(true)
-            .addParameter(input, "input")
-            .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
-            .addAnnotation(OVERRIDE_ANNOTATION);
+    RpcArchetype createTypeImpl(final TypeBuilderFactory builderFactory, final GeneratedType input,
+            final GeneratedType output) {
+        return new RpcArchetype(typeName(), statement(), input.name(), output.name());
     }
 
     @Override

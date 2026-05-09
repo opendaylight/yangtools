@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 /**
  * A {@link RuntimeType} associated with an {@code rpc} statement.
  */
+// FIXME override javaType() and provide default statement() implementation
 public interface RpcRuntimeType extends InvokableRuntimeType {
     @Override
     RpcEffectiveStatement statement();

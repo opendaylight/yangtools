@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
  */
 @NonNullByDefault
 abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplate
-        permits ChoiceInTemplate, FeatureTemplate, IdentityTemplate, KeyTemplate, OpaqueObjectTemplate {
+        permits ChoiceInTemplate, FeatureTemplate, IdentityTemplate, KeyTemplate, OpaqueObjectTemplate, RpcTemplate {
     private static final String GENERATED_ANNOTATION =
         "@javax.annotation.processing.Generated(\"mdsal-binding-generator\")";
 
