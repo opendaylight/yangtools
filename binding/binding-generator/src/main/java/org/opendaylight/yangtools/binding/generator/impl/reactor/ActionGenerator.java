@@ -8,10 +8,13 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -24,6 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  * Generator corresponding to a {@code action} statement.
  */
 final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveStatement, ActionRuntimeType> {
+    private static final @NonNull JavaTypeName FUNCTIONAL_INTERFACE = JavaTypeName.create(FunctionalInterface.class);
+
+    @NonNullByDefault
     ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
@@ -42,7 +48,22 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @Override
-    void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
+    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory, final GeneratedType input,
+            final GeneratedType output) {
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        addImplementedType(builderFactory, builder, input, output);
+        builder.addAnnotation(FUNCTIONAL_INTERFACE);
+        defaultImplementedInterace(builder);
+
+        addQNameConstant(builder, statement().argument());
+
+        annotateDeprecatedIfNecessary(builder);
+        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
+
+        return builder.build();
+    }
+
+    private void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
             final GeneratedType input, final GeneratedType output) {
         final var parent = getParent();
         final var parentType = TypeRef.of(parent.typeName());

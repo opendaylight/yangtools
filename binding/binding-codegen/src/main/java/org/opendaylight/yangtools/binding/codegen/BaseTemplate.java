@@ -49,8 +49,10 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.yang.common.YangDataName;
+import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -303,7 +305,8 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return str.isBlank() ? "" : str.stripTrailing() + '\n';
     }
 
-    final @Nullable BlockBuilder javadocBlock(final ModuleEffectiveStatement module, final DocumentedNode node) {
+    final @Nullable BlockBuilder javadocBlock(final @NonNull ModuleEffectiveStatement module,
+            final @NonNull DocumentedNode node) {
         final var sb = new StringBuilder();
         final var comment = DocUtils.typeCommentOf(node);
         if (comment != null) {
@@ -321,16 +324,17 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return bb;
     }
 
+    @NonNullByDefault
     private void appendSnippet(final StringBuilder sb, final GeneratedType type, final ModuleEffectiveStatement module,
             final DocumentedNode node) {
-        sb
+        appendYangSnippet(sb
             .append('\n')
             .append("<p>\n")
             .append("This class represents the following YANG schema fragment defined in module <b>")
             .append(module.argument().getLocalName()).append("</b>\n")
-            .append("<pre>\n");
-        appendYangSnippet(sb, module, ((EffectiveStatement<?, ?>) node).declared());
-        sb.append("</pre>");
+            .append("<pre>\n"),
+            module, requireEffective(node).requireDeclared())
+            .append("</pre>");
 
         if (node instanceof SchemaNode schema) {
             // sb.append("The schema path to identify an instance is\n");
@@ -373,11 +377,25 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         }
     }
 
-    private static void appendYangSnippet(final StringBuilder sb, final ModuleEffectiveStatement module,
+    // TODO: can we ditch this method?
+    @NonNullByDefault
+    private static EffectiveStatement<?, ?> requireEffective(final DocumentedNode node) {
+        return switch (node) {
+            case EffectiveStatementEquivalent<?> equivalent -> equivalent.asEffectiveStatement();
+            case EffectiveStatement<?, ?> effective -> effective;
+            case ContainerLikeCompat compat -> requireEffective(compat.delegate());
+            default -> throw new VerifyException("Unsupported node " + node);
+        };
+    }
+
+    // FIXME: return BlockFragment
+    @NonNullByDefault
+    private static StringBuilder appendYangSnippet(final StringBuilder sb, final ModuleEffectiveStatement module,
             final DeclaredStatement<?> stmt) {
-        for (String str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
+        for (var str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
             sb.append(DocUtils.replaceAllIllegalChars(DocUtils.encodeAngleBrackets(encodeJavadocSymbols(str))));
         }
+        return sb;
     }
 
     private static @Nullable Type findAugmentationArgument(final GeneratedType genType) {
