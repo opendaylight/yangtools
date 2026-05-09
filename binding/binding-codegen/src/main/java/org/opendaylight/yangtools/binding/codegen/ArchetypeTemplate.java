@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.QNAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;

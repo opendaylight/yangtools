@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
-import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_PATTERN_LIST;
-import static org.opendaylight.yangtools.binding.codegen.Constants.MEMBER_REGEX_LIST;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.QNAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.YANGDATANAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.nameInModuleOf;
+import static org.opendaylight.yangtools.binding.codegen.ModuleSupportTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
@@ -71,6 +69,20 @@ import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 abstract sealed class BaseTemplate extends JavaFileTemplate
         permits AbstractBuilderTemplate, ArchetypeTemplate, InterfaceTemplate {
     static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
+
+    /**
+     * Name or prefix (multiple patterns in builder class as composed with '_' and upper case of the field name)
+     * of the class constant which contains list of <code>Pattern</code> instances. The type of this constant is
+     * Pattern[] for more than one pattern, or Pattern if there is only a single one.
+     */
+    static final @NonNull String MEMBER_PATTERN_LIST = "patterns";
+    /**
+     * Name or prefix (multiple patterns in builder class as composed with '_' and upper case of the field name)
+     * of the class constant which contains a list of XSD regular expression strings. The type of this constant is
+     * String[] (or String for single strings) and it corresponds to {@link #MEMBER_PATTERN_LIST} in both size
+     * and ordering.
+     */
+    static final @NonNull String MEMBER_REGEX_LIST = "regexes";
 
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
         .addIgnoredStatement(ContactStatement.DEF)
