@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
@@ -33,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStatement, ListRuntimeType> {
     private final @Nullable KeyGenerator keyGen;
 
+    @NonNullByDefault
     ListGenerator(final ListEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         final var key = statement.keyStatement();

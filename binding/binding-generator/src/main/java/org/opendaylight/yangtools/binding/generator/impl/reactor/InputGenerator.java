@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultInputRuntimeType;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  * a conflict.
  */
 final class InputGenerator extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType> {
+    @NonNullByDefault
     InputGenerator(final InputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent, BindingTypes.RPC_INPUT);
     }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultLeafListRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement
  */
 final class LeafListGenerator
         extends AbstractTypeAwareGenerator<LeafListEffectiveStatement, LeafListRuntimeType, LeafListGenerator> {
+    @NonNullByDefault
     LeafListGenerator(final LeafListEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }

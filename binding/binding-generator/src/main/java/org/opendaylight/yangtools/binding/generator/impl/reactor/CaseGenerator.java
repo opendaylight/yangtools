@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Generator corresponding to a {@code case} statement.
  */
 final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStatement, CaseRuntimeType> {
+    @NonNullByDefault
     CaseGenerator(final CaseEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }

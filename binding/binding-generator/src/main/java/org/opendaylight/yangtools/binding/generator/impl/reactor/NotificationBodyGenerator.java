@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 final class NotificationBodyGenerator
         extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationBodyRuntimeType> {
+    @NonNullByDefault
     NotificationBodyGenerator(final NotificationEffectiveStatement statement, final GroupingGenerator parent) {
         super(statement, parent);
     }

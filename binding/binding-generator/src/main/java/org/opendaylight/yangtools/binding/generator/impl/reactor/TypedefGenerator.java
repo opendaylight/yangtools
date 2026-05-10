@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -35,6 +36,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
      */
     private List<AbstractTypeObjectGenerator<?, ?>> derivedGenerators = null;
 
+    @NonNullByDefault
     TypedefGenerator(final TypedefEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
