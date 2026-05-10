@@ -57,6 +57,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat.WithQNameArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
@@ -231,8 +232,9 @@ import org.slf4j.LoggerFactory;
  * type indirection in YANG constructs is therefore explicitly excluded from the generated Java code, but the Binding
  * Specification still takes them into account when determining types as outlined above.
  */
-abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R extends RuntimeType>
-        extends AbstractDependentGenerator<S, R> {
+abstract class AbstractTypeObjectGenerator<
+        S extends TypeEffectiveStatement.MandatoryIn<QName, ?> & TypeDefinitionCompat.WithQNameArgument<?>,
+        R extends RuntimeType> extends AbstractDependentGenerator<S, R> {
     private static final class UnionDependencies implements Immutable {
         private final Map<EffectiveStatement<?, ?>, TypeReference> identityTypes = new HashMap<>();
         private final Map<EffectiveStatement<?, ?>, TypeReference> leafTypes = new HashMap<>();
@@ -316,7 +318,7 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
     @NonNullByDefault
     AbstractTypeObjectGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-        type = statement().findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();
+        type = statement().typeStatement();
     }
 
     @Override

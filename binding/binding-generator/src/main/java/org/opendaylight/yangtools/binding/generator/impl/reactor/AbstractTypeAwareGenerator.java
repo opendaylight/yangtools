@@ -16,15 +16,17 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat.WithQNameArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Common base class for {@link LeafGenerator} and {@link LeafListGenerator}.
  */
 abstract class AbstractTypeAwareGenerator<
-        S extends DataTreeEffectiveStatement<?> & WithQNameArgument<?>,
+        S extends TypeEffectiveStatement.MandatoryIn<QName, ?> & WithQNameArgument<?> & DataTreeEffectiveStatement<?>,
         R extends RuntimeType,
         G extends AbstractTypeAwareGenerator<S, R, G>> extends AbstractTypeObjectGenerator<S, R> {
     private IdentityGenerator contextType;

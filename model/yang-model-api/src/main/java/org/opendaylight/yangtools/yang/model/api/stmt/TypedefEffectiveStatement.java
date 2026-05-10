@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 public interface TypedefEffectiveStatement
         extends DescriptionEffectiveStatement.OptionalIn<QName, @NonNull TypedefStatement>,
                 ReferenceEffectiveStatement.OptionalIn<QName, @NonNull TypedefStatement>,
+                TypeEffectiveStatement.MandatoryIn<QName, @NonNull TypedefStatement>,
                 UnitsEffectiveStatement.OptionalIn<QName, @NonNull TypedefStatement>,
                 TypeDefinitionCompat.WithQNameArgument<@NonNull TypedefStatement> {
     /**
