@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -54,6 +53,7 @@ import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -68,7 +68,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
@@ -273,7 +272,9 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeObjectGenerator.class);
-    static final ImmutableMap<QName, Type> SIMPLE_TYPES = ImmutableMap.<QName, Type>builder()
+
+    // FIXME: remove this map
+    private static final ImmutableMap<QName, ConcreteType> SIMPLE_TYPES = ImmutableMap.<QName, ConcreteType>builder()
         .put(BuiltInType.BINARY.typeName(), BaseYangTypes.BINARY_TYPE)
         .put(BuiltInType.BOOLEAN.typeName(), BaseYangTypes.BOOLEAN_TYPE)
         .put(BuiltInType.EMPTY.typeName(), BaseYangTypes.EMPTY_TYPE)
@@ -289,7 +290,7 @@ abstract class AbstractTypeObjectGenerator<
         .put(BuiltInType.UINT64.typeName(), BaseYangTypes.UINT64_TYPE)
         .build();
 
-    private final TypeEffectiveStatement type;
+    private final @NonNull TypeObjectSupport support;
 
     // FIXME: these fields should be better-controlled with explicit sequencing guards. It it currently stands, we are
     //        expending two (or more) additional fields to express downstream linking. If we had the concept of
@@ -318,7 +319,7 @@ abstract class AbstractTypeObjectGenerator<
     @NonNullByDefault
     AbstractTypeObjectGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-        type = statement().typeStatement();
+        support = TypeObjectSupport.of(statement().typeStatement());
     }
 
     @Override
@@ -330,7 +331,7 @@ abstract class AbstractTypeObjectGenerator<
     final void linkDependencies(final GeneratorContext context) {
         verify(inferred != null, "Duplicate linking of %s", this);
 
-        final QName typeName = type.argument();
+        final QName typeName = support.type.argument();
         if (isBuiltinName(typeName)) {
             verify(inferred.isEmpty(), "Unexpected non-empty downstreams in %s", this);
             inferred = null;
@@ -370,39 +371,43 @@ abstract class AbstractTypeObjectGenerator<
         }
     }
 
+    @NonNullByDefault
     void bindTypeDefinition(final GeneratorContext context) {
         if (baseGen != null) {
             // We have registered with baseGen, it will push the type to us
             return;
         }
 
-        final QName arg = type.argument();
-        if (BuiltInType.IDENTITYREF.typeName().equals(arg)) {
-            refType = TypeReference.identityRef(type.streamEffectiveSubstatements(BaseEffectiveStatement.class)
-                .map(BaseEffectiveStatement::argument)
-                .map(context::resolveIdentity)
-                .collect(Collectors.toUnmodifiableList()));
-        } else if (BuiltInType.LEAFREF.typeName().equals(arg)) {
-            refType = resolveLeafref(context);
-        } else if (BuiltInType.UNION.typeName().equals(arg)) {
-            unionDependencies = new UnionDependencies(type, context);
-            LOG.trace("Resolved union {} to dependencies {}", type, unionDependencies);
+        switch (support) {
+            case TypeObjectSupport.Identityref identity ->
+                refType = TypeReference.identityRef(identity.baseIdentities()
+                    .map(context::resolveIdentity)
+                    .collect(Collectors.toUnmodifiableList()));
+            case TypeObjectSupport.Leafref leafref ->
+                refType = resolveLeafref(context, leafref.path());
+            case TypeObjectSupport.Union union -> {
+                unionDependencies = new UnionDependencies(union.type, context);
+                LOG.trace("Resolved union {} to dependencies {}", union.type, unionDependencies);
+            }
+            default -> {
+                // no-op
+            }
         }
 
-        LOG.trace("Resolved base {} to generator {}", type, refType);
+        LOG.trace("Resolved base {} to generator {}", support.type, refType);
         bindDerivedGenerators(refType);
     }
 
     final void bindTypeDefinition(final @Nullable TypeReference reference) {
         refType = reference;
-        LOG.trace("Resolved derived {} to generator {}", type, refType);
+        LOG.trace("Resolved derived {} to generator {}", support.type, refType);
     }
 
-    private @NonNull TypeReference resolveLeafref(final GeneratorContext context) {
+    @NonNullByDefault
+    private TypeReference resolveLeafref(final GeneratorContext context, final PathExpression path) {
         final AbstractTypeObjectGenerator<?, ?> targetGenerator;
         try {
-            targetGenerator = context.resolveLeafref(
-                type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow());
+            targetGenerator = context.resolveLeafref(path);
         } catch (IllegalArgumentException e) {
             return TypeReference.leafRef(e);
         }
@@ -473,9 +478,8 @@ abstract class AbstractTypeObjectGenerator<
         if (baseGen != null) {
             return ClassPlacement.NONE;
         }
-        final var arg = type.argument();
-        return SIMPLE_TYPES.containsKey(arg) || arg.equals(BuiltInType.DECIMAL64.typeName()) || isAddedByUses()
-            || isAugmenting() ? ClassPlacement.NONE : ClassPlacement.MEMBER;
+        return support instanceof TypeObjectSupport.BuiltIn || isAddedByUses() || isAugmenting() ? ClassPlacement.NONE
+            : ClassPlacement.MEMBER;
     }
 
     @Override
@@ -486,7 +490,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     final boolean isEnumeration() {
-        return baseGen != null ? baseGen.isEnumeration() : BuiltInType.ENUMERATION.typeName().equals(type.argument());
+        return baseGen != null ? baseGen.isEnumeration() : support instanceof TypeObjectSupport.Enumeration;
     }
 
     final boolean isDerivedEnumeration() {
@@ -537,18 +541,10 @@ abstract class AbstractTypeObjectGenerator<
 
         final Type baseType;
         if (baseGen == null) {
-            final var qname = type.argument();
-            final var simple = SIMPLE_TYPES.get(qname);
-            if (simple == null) {
-                verify(qname.equals(BuiltInType.DECIMAL64.typeName()), "Cannot resolve type %s in %s", qname, this);
-                final var typedef = type.typeDefinition();
-                if (!(typedef instanceof DecimalTypeDefinition dtd)) {
-                    throw new VerifyException("Unexpected definition " + typedef + " in" + this);
-                }
-                baseType = Decimal64Type.ofFractionDigits(dtd.getFractionDigits());
-            } else {
-                baseType = simple;
+            if (!(support instanceof TypeObjectSupport.BuiltIn builtIn)) {
+                throw new VerifyException("Cannot resolve type " + support.type.argument() + " in " + this);
             }
+            baseType = builtIn.javaType;
         } else {
             // We are derived from a base generator. Defer to its type for return.
             baseType = baseGen.getGeneratedType(builderFactory);
@@ -613,13 +609,13 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     final @Nullable Restrictions computeRestrictions() {
-        final var length = type.findFirstEffectiveSubstatementArgument(LengthEffectiveStatement.class)
+        final var length = support.type.findFirstEffectiveSubstatementArgument(LengthEffectiveStatement.class)
             .map(ValueRanges::asList)
             .orElse(List.of());
-        final var range = type.findFirstEffectiveSubstatementArgument(RangeEffectiveStatement.class)
+        final var range = support.type.findFirstEffectiveSubstatementArgument(RangeEffectiveStatement.class)
             .map(ValueRanges::asList)
             .orElse(List.of());
-        final var patterns = type.streamEffectiveSubstatements(PatternEffectiveStatement.class)
+        final var patterns = support.type.streamEffectiveSubstatements(PatternEffectiveStatement.class)
             .map(PatternEffectiveStatement::argument)
             .collect(Collectors.toUnmodifiableList());
 
@@ -639,30 +635,25 @@ abstract class AbstractTypeObjectGenerator<
 
         // FIXME: why do we need this boolean?
         final boolean isTypedef = this instanceof TypedefGenerator;
-        final QName arg = type.argument();
-        if (BuiltInType.BITS.typeName().equals(arg)) {
-            return createBits(builderFactory, statement(), typeName(), currentModule(),
-                (BitsTypeDefinition) extractTypeDefinition(), isTypedef);
-        }
-        if (BuiltInType.DECIMAL64.typeName().equals(arg)) {
-            final var typedef = (DecimalTypeDefinition) extractTypeDefinition();
-            return createScalar(builderFactory, statement(), typeName(), currentModule(),
-                Decimal64Type.ofFractionDigits(typedef.getFractionDigits()), typedef);
-        }
-        if (BuiltInType.ENUMERATION.typeName().equals(arg)) {
-            return createEnumeration(builderFactory, statement(), typeName(), currentModule(),
-                (EnumTypeDefinition) extractTypeDefinition());
-        }
-        if (BuiltInType.UNION.typeName().equals(arg)) {
-            final var tmp = new ArrayList<GeneratedType>(1);
-            final var ret = createUnion(tmp, builderFactory, statement(), unionDependencies, typeName(),
-                currentModule(), type, isTypedef, extractTypeDefinition());
-            auxiliaryGeneratedTypes = List.copyOf(tmp);
-            return ret;
-        }
-
-        return createScalar(builderFactory, statement(), typeName(), currentModule(),
-            verifyNotNull(SIMPLE_TYPES.get(arg), "Unhandled type %s", arg), extractTypeDefinition());
+        return switch (support) {
+            case TypeObjectSupport.Bits bits ->
+                createBits(builderFactory, statement(), typeName(), currentModule(),
+                    (BitsTypeDefinition) extractTypeDefinition(), isTypedef);
+            case TypeObjectSupport.Enumeration enumeration ->
+                createEnumeration(builderFactory, statement(), typeName(), currentModule(),
+                    (EnumTypeDefinition) extractTypeDefinition());
+            case TypeObjectSupport.Union union -> {
+                final var tmp = new ArrayList<GeneratedType>(1);
+                final var ret = createUnion(tmp, builderFactory, statement(), unionDependencies, typeName(),
+                    currentModule(), union.type, isTypedef, extractTypeDefinition());
+                auxiliaryGeneratedTypes = List.copyOf(tmp);
+                yield ret;
+            }
+            case TypeObjectSupport.BuiltIn builtIn ->
+                createScalar(builderFactory, statement(), typeName(), currentModule(), builtIn.javaType,
+                    extractTypeDefinition());
+            default -> throw new VerifyException("Unhandled type " + support.type.argument());
+        };
     }
 
     @NonNullByDefault
@@ -675,7 +666,7 @@ abstract class AbstractTypeObjectGenerator<
         builder.setBaseType(typedef);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
 
-        for (Bit bit : typedef.getBits()) {
+        for (var bit : typedef.getBits()) {
             final String name = bit.getName();
             var genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
             genPropertyBuilder.setReadOnly(true);
@@ -758,84 +749,89 @@ abstract class AbstractTypeObjectGenerator<
 
         for (var stmt : type.effectiveSubstatements()) {
             if (stmt instanceof TypeEffectiveStatement subType) {
-                final QName subName = subType.argument();
-                final String localName = subName.getLocalName();
-
-                String propSource = localName;
                 final Type generatedType;
-                if (BuiltInType.UNION.typeName().equals(subName)) {
-                    final var subUnionName = typeName.createEnclosed(
-                        provideAvailableNameForGenTOBuilder(typeName.simpleName()));
-                    final var subUnion = createUnion(auxiliaryGeneratedTypes, builderFactory, definingStatement,
-                        dependencies, subUnionName, module, subType, isTypedef, subType.typeDefinition());
-                    builder.addEnclosingTransferObject(subUnion);
-                    propSource = subUnionName.simpleName();
-                    generatedType = subUnion;
-                } else if (BuiltInType.ENUMERATION.typeName().equals(subName)) {
-                    final var subEnumeration = createEnumeration(builderFactory, definingStatement,
-                        typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
-                        (EnumTypeDefinition) subType.typeDefinition());
-                    builder.addEnumeration(subEnumeration);
-                    generatedType = subEnumeration;
-                } else if (BuiltInType.BITS.typeName().equals(subName)) {
-                    final var subBits = createBits(builderFactory, definingStatement,
-                        typeName.createEnclosed(Naming.getClassName(localName), "$"), module,
-                        (BitsTypeDefinition) subType.typeDefinition(), isTypedef);
-                    builder.addEnclosingTransferObject(subBits);
-                    generatedType = subBits;
-                } else if (BuiltInType.IDENTITYREF.typeName().equals(subName)) {
-                    propSource = stmt.findFirstEffectiveSubstatement(BaseEffectiveStatement.class)
-                        .orElseThrow(() -> new VerifyException(String.format("Invalid identityref "
-                            + "definition %s in %s, missing BASE statement", stmt, definingStatement)))
-                        .argument().getLocalName();
-                    generatedType = verifyNotNull(dependencies.identityTypes.get(stmt),
-                        "Cannot resolve identityref %s in %s", stmt, definingStatement)
-                        .methodReturnType(builderFactory);
-                } else if (BuiltInType.LEAFREF.typeName().equals(subName)) {
-                    generatedType = verifyNotNull(dependencies.leafTypes.get(stmt),
-                        "Cannot resolve leafref %s in %s", stmt, definingStatement)
-                        .methodReturnType(builderFactory);
-                } else {
-                    final var subDef = subType.typeDefinition();
-
-                    Type baseType = SIMPLE_TYPES.get(subName);
-                    if (baseType == null) {
-                        if (!BuiltInType.DECIMAL64.typeName().equals(subName)) {
-                            // This has to be a reference to a typedef, let's lookup it up and pick up its type
-                            final AbstractTypeObjectGenerator<?, ?> baseGen = verifyNotNull(
-                                dependencies.baseTypes.get(subName), "Cannot resolve base type %s in %s", subName,
-                                definingStatement);
-                            baseType = baseGen.methodReturnType(builderFactory);
-
-                            // FIXME: This is legacy behaviour for leafrefs:
-                            if (baseGen.refType instanceof TypeReference.Leafref) {
-                                // if there already is a compatible property, do not generate a new one
-                                final Type search = baseType;
-
-                                final String matching = builder.getProperties().stream()
-                                    .filter(prop -> search == ((GeneratedPropertyBuilderImpl) prop).getReturnType())
-                                    .findFirst()
-                                    .map(GeneratedPropertyBuilder::getName)
-                                    .orElse(null);
-                                if (matching != null) {
-                                    typeProperties.add(matching);
-                                    continue;
-                                }
-
-                                // ... otherwise generate this weird property name
-                                propSource = getUnionLeafrefMemberName(builder.typeName().simpleName(),
-                                    baseType.simpleName());
-                            }
-                        } else {
-                            baseType = Decimal64Type.ofFractionDigits(
-                                ((DecimalTypeDefinition) subDef).getFractionDigits());
-                        }
+                final String propSource;
+                switch (TypeObjectSupport.of(subType)) {
+                    case TypeObjectSupport.Bits support -> {
+                        final var bitsName = typeName.createEnclosed(
+                            Naming.getClassName(support.type.argument().getLocalName()), "$");
+                        final var subBits = createBits(builderFactory, definingStatement, bitsName, module,
+                            (BitsTypeDefinition) subType.typeDefinition(), isTypedef);
+                        builder.addEnclosingTransferObject(subBits);
+                        generatedType = subBits;
+                        propSource = bitsName.simpleName();
                     }
+                    case TypeObjectSupport.Enumeration support -> {
+                        final var enumerationName = typeName.createEnclosed(
+                            Naming.getClassName(support.type.argument().getLocalName()), "$");
+                        final var subEnumeration = createEnumeration(builderFactory, definingStatement,
+                            enumerationName, module, (EnumTypeDefinition) subType.typeDefinition());
+                        builder.addEnumeration(subEnumeration);
+                        generatedType = subEnumeration;
+                        propSource = enumerationName.simpleName();
+                    }
+                    case TypeObjectSupport.Identityref support -> {
+                        propSource = stmt.findFirstEffectiveSubstatement(BaseEffectiveStatement.class)
+                            .orElseThrow(() -> new VerifyException(String.format("Invalid identityref "
+                                + "definition %s in %s, missing BASE statement", stmt, definingStatement)))
+                            .argument().getLocalName();
+                        generatedType = verifyNotNull(dependencies.identityTypes.get(stmt),
+                            "Cannot resolve identityref %s in %s", stmt, definingStatement)
+                            .methodReturnType(builderFactory);
+                    }
+                    case TypeObjectSupport.Leafref support -> {
+                        generatedType = verifyNotNull(dependencies.leafTypes.get(stmt),
+                            "Cannot resolve leafref %s in %s", stmt, definingStatement)
+                            .methodReturnType(builderFactory);
+                    }
+                    case TypeObjectSupport.Union support -> {
+                        final var unionName = typeName.createEnclosed(
+                            provideAvailableNameForGenTOBuilder(typeName.simpleName()));
+                        final var subUnion = createUnion(auxiliaryGeneratedTypes, builderFactory, definingStatement,
+                            dependencies, unionName, module, subType, isTypedef, subType.typeDefinition());
+                        builder.addEnclosingTransferObject(subUnion);
+                        generatedType = subUnion;
+                        propSource = unionName.simpleName();
+                    }
+                    case TypeObjectSupport.BuiltIn support -> {
+                        expressions.putAll(resolveRegExpressions(subType.typeDefinition()));
+                        generatedType = restrictType(support.javaType, getRestrictions(type.typeDefinition()),
+                            builderFactory);
+                        propSource = support.type.argument().getLocalName();
+                    }
+                    case TypeObjectSupport.Derived support -> {
+                        // This has to be a reference to a typedef, let's lookup it up and pick up its type
+                        final var subName = subType.argument();
+                        final var baseGen = verifyNotNull(dependencies.baseTypes.get(subName),
+                            "Cannot resolve base type %s in %s", subName, definingStatement);
+                        final var baseType = baseGen.methodReturnType(builderFactory);
 
-                    expressions.putAll(resolveRegExpressions(subDef));
+                        // FIXME: This is legacy behaviour for leafrefs:
+                        if (baseGen.refType instanceof TypeReference.Leafref) {
+                            // if there already is a compatible property, do not generate a new one
+                            final Type search = baseType;
 
-                    generatedType = restrictType(baseType, getRestrictions(type.typeDefinition()), builderFactory);
+                            final String matching = builder.getProperties().stream()
+                                .filter(prop -> search == ((GeneratedPropertyBuilderImpl) prop).getReturnType())
+                                .findFirst()
+                                .map(GeneratedPropertyBuilder::getName)
+                                .orElse(null);
+                            if (matching != null) {
+                                typeProperties.add(matching);
+                                continue;
+                            }
+
+                            // ... otherwise generate this weird property name
+                            propSource = getUnionLeafrefMemberName(builder.typeName().simpleName(),
+                                baseType.simpleName());
+                        }
+                        expressions.putAll(resolveRegExpressions(subType.typeDefinition()));
+                        generatedType = restrictType(baseType, getRestrictions(type.typeDefinition()), builderFactory);
+                    }
                 }
+
+
+
 
                 final String propName = Naming.getPropertyName(propSource);
                 typeProperties.add(propName);
