@@ -28,7 +28,7 @@ public interface TypedefEffectiveStatement
         extends DescriptionEffectiveStatement.OptionalIn<QName, @NonNull TypedefStatement>,
                 ReferenceEffectiveStatement.OptionalIn<QName, @NonNull TypedefStatement>,
                 UnitsEffectiveStatement.OptionalIn<QName, @NonNull TypedefStatement>,
-                TypeDefinitionCompat<QName, @NonNull TypedefStatement> {
+                TypeDefinitionCompat.WithQNameArgument<@NonNull TypedefStatement> {
     /**
      * An {@link EffectiveStatement} that is a parent of multiple {@link TypedefEffectiveStatement}s.
      *

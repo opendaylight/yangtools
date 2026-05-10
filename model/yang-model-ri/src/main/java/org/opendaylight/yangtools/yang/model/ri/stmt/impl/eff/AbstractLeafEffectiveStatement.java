@@ -13,7 +13,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 public abstract class AbstractLeafEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, @NonNull LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<@NonNull LeafStatement>,
-            MandatoryMixin<QName, @NonNull LeafStatement> {
+                   MandatoryMixin<QName, @NonNull LeafStatement> {
     private static final VarHandle TYPE;
 
     static {
@@ -76,11 +75,6 @@ public abstract class AbstractLeafEffectiveStatement
     @Override
     public final LeafSchemaNode toDataSchemaNode() {
         return this;
-    }
-
-    @Override
-    public final QNameModule currentModule() {
-        return argument().getModule();
     }
 
     @Override

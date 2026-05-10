@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
  * Effective view of a {@code type} statement. Its {@link #argument()} points to a {@code typedef} statement in this
  * statement's ancestor hierarchy.
  */
-public interface TypeEffectiveStatement extends EffectiveStatement<QName, @NonNull TypeStatement>,
-        TypeDefinitionCompat<QName, @NonNull TypeStatement> {
+public interface TypeEffectiveStatement extends TypeDefinitionCompat.WithQNameArgument<@NonNull TypeStatement> {
     /**
      * An {@link EffectiveStatement} that is a parent of a single {@link TypeEffectiveStatement}.
      *

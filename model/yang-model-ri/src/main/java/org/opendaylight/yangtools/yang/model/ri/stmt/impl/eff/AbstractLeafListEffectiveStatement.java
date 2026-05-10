@@ -13,7 +13,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -77,11 +76,6 @@ abstract class AbstractLeafListEffectiveStatement
     @Override
     public final LeafListSchemaNode toDataSchemaNode() {
         return this;
-    }
-
-    @Override
-    public final QNameModule currentModule() {
-        return argument().getModule();
     }
 
     @Override

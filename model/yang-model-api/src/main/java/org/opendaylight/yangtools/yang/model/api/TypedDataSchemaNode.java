@@ -7,19 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import org.opendaylight.yangtools.yang.common.QNameModule;
-
 /**
  * A {@link DataSchemaNode} which holds values of the same type. This can be either a single value, like
  * in a {@link LeafSchemaNode} or multiple values, like a {@link LeafListSchemaNode}.
  */
 public sealed interface TypedDataSchemaNode extends DataSchemaNode, TypeDefinitionAware
         permits LeafSchemaNode, LeafListSchemaNode {
-    @Override
-    default QNameModule currentModule() {
-        return getQName().getModule();
-    }
-
     /**
      * Returns type of the instance which implements <code>DataSchemaNode</code>.
      *
