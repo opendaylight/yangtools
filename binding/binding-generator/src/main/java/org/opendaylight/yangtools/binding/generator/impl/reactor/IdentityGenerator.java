@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import com.google.common.base.VerifyException;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultIdentityRuntimeType;
@@ -52,7 +51,8 @@ public final class IdentityGenerator
             .collect(Collectors.toUnmodifiableList());
     }
 
-    @NonNull IdentityArchetype getArchetype(final TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    IdentityArchetype getArchetype(final TypeBuilderFactory builderFactory) {
         return (IdentityArchetype) getGeneratedType(builderFactory);
     }
 

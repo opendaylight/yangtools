@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
@@ -46,7 +44,7 @@ abstract class OpaqueObjectGenerator<
         }
 
         @Override
-        OpaqueObjectArchetype.Anydata getArchetype(final @Nullable TypeBuilderFactory builderFactory) {
+        OpaqueObjectArchetype.Anydata getArchetype(final TypeBuilderFactory builderFactory) {
             return (OpaqueObjectArchetype.Anydata) getGeneratedType(builderFactory);
         }
 
@@ -77,7 +75,7 @@ abstract class OpaqueObjectGenerator<
         }
 
         @Override
-        OpaqueObjectArchetype.Anyxml getArchetype(final @Nullable TypeBuilderFactory builderFactory) {
+        OpaqueObjectArchetype.Anyxml getArchetype(final TypeBuilderFactory builderFactory) {
             return (OpaqueObjectArchetype.Anyxml) getGeneratedType(builderFactory);
         }
 
@@ -105,7 +103,8 @@ abstract class OpaqueObjectGenerator<
         dataTree.enterDataTree(statement().argument());
     }
 
-    abstract @NonNull OpaqueObjectArchetype<S> getArchetype(TypeBuilderFactory builderFactory);
+    @NonNullByDefault
+    abstract OpaqueObjectArchetype<S> getArchetype(TypeBuilderFactory builderFactory);
 
     @Override
     final OpaqueObjectArchetype<S> createTypeImpl(final TypeBuilderFactory builderFactory) {

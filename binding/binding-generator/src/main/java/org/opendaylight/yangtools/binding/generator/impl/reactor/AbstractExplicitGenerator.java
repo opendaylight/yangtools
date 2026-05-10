@@ -261,7 +261,11 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
      * @return Original incarnation of this generator
      */
     @NonNull AbstractExplicitGenerator<S, R> getOriginal() {
-        return verifyNotNull(orig, "Generator %s does not have linkage to original instance resolved", this);
+        final var ret = orig;
+        if (ret != null) {
+            return ret;
+        }
+        throw new VerifyException("Generator " + this + " does not have linkage to original instance resolved");
     }
 
     @Nullable AbstractExplicitGenerator<S, R> tryOriginal() {
@@ -344,10 +348,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         constructRequire(builder, returnType);
     }
 
+    @NonNullByDefault
     MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
+    @NonNullByDefault
     final MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder,
             final Type returnType, final String methodName) {
         final var getMethod = builder.addMethod(methodName).setReturnType(returnType);
@@ -360,10 +366,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return getMethod;
     }
 
+    @NonNullByDefault
     void constructRequire(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         // No-op in most cases
     }
 
+    @NonNullByDefault
     final void constructRequireImpl(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         constructGetter(builder, returnType, Naming.getRequireMethodName(localName().getLocalName()))
             .setDefault(true)
@@ -375,10 +383,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         // No-op for most cases
     }
 
-    @NonNull Type methodReturnType(final @NonNull TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    Type methodReturnType(final TypeBuilderFactory builderFactory) {
         return getGeneratedType(builderFactory);
     }
 
+    @NonNullByDefault
     final void annotateDeprecatedIfNecessary(final AnnotableTypeBuilder builder) {
         annotateDeprecatedIfNecessary(statement, builder);
     }

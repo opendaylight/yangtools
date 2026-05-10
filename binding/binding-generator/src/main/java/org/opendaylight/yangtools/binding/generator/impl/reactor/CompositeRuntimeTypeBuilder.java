@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -31,10 +32,12 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
     private final List<RuntimeType> childTypes = new ArrayList<>();
     private final @NonNull S statement;
 
+    @NonNullByDefault
     CompositeRuntimeTypeBuilder(final S statement) {
         this.statement = requireNonNull(statement);
     }
 
+    @NonNullByDefault
     final CompositeRuntimeTypeBuilder<S, R> populate(final AugmentResolver resolver,
             final AbstractCompositeGenerator<S, R> generator) {
         resolver.enter(generator);
@@ -79,10 +82,12 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
         return false;
     }
 
+    @NonNullByDefault
     void processAugment(final AugmentResolver resolver, final AbstractAugmentGenerator augment) {
         augmentTypes.add(augment.runtimeTypeIn(resolver, statement));
     }
 
+    @NonNullByDefault
     private void processGenerator(final AugmentResolver resolver, final AbstractCompositeGenerator<S, R> generator) {
         // Figure out which augments are valid in target statement and record their RuntimeTypes.
         // We will pass the latter to create method. We will use the former to perform replacement lookups instead

@@ -49,7 +49,8 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
         return domain.addSecondary(this, listGen.getMember(), Naming.KEY_SUFFIX);
     }
 
-    @NonNull KeyArchetype getArchetype(final TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    KeyArchetype getArchetype(final TypeBuilderFactory builderFactory) {
         return (KeyArchetype) getGeneratedType(builderFactory);
     }
 
