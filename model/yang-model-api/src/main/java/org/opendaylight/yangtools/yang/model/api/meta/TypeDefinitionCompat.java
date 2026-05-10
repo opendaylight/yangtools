@@ -7,15 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 
 /**
- * Interface indicating an entity which acts as a holder of a {@link TypeDefinition}.
+ * Interface indicating an {@link EffectiveStatement} which acts as a holder of a {@link TypeDefinition}.
+ *
+ * @param <A> argument type
+ * @param <D> declared representation type
  */
-@NonNullByDefault
 public non-sealed interface TypeDefinitionCompat<A, D extends DeclaredStatement<A>>
-    extends EffectiveStatement<A, D>, TypeDefinitionAware {
-    // Nothing else
+        extends EffectiveStatement<A, D>, TypeDefinitionAware {
+    /**
+     * A {@link TypeDefinitionCompat} with {@link QName} as its statement.
+     *
+     * @param <D> declared representation type
+     */
+    interface WithQNameArgument<D extends DeclaredStatement<QName>> extends TypeDefinitionCompat<QName, D> {
+        @Override
+        default QNameModule currentModule() {
+            return argument().getModule();
+        }
+    }
 }

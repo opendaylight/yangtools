@@ -57,6 +57,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat.WithQNameArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
@@ -230,7 +231,7 @@ import org.slf4j.LoggerFactory;
  * type indirection in YANG constructs is therefore explicitly excluded from the generated Java code, but the Binding
  * Specification still takes them into account when determining types as outlined above.
  */
-abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
+abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R extends RuntimeType>
         extends AbstractDependentGenerator<S, R> {
     private static final class UnionDependencies implements Immutable {
         private final Map<EffectiveStatement<?, ?>, TypeReference> identityTypes = new HashMap<>();
@@ -660,7 +661,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private static @NonNull BitsTypeObjectArchetype createBits(final TypeBuilderFactory builderFactory,
-            final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
+            final WithQNameArgument<?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final BitsTypeDefinition typedef, final boolean isTypedef) {
         final var builder = builderFactory.newBitsTypeObjectBuilder(typeName);
         builder.setTypedef(isTypedef);
@@ -684,7 +685,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private static @NonNull EnumTypeObjectArchetype createEnumeration(final TypeBuilderFactory builderFactory,
-            final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName,
+            final WithQNameArgument<?> definingStatement, final JavaTypeName typeName,
             final ModuleGenerator module, final EnumTypeDefinition typedef) {
         // TODO units for typedef enum
         final var builder = builderFactory.newEnumTypeObjectBuilder(typeName);
@@ -699,7 +700,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private static @NonNull ScalarTypeObjectArchetype createScalar(final TypeBuilderFactory builderFactory,
-            final EffectiveStatement<?, ?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
+            final WithQNameArgument<?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final Type javaType, final TypeDefinition<?> typedef) {
         final var builder = builderFactory.newScalarTypeObjectBuilder(typeName);
         builder.setTypedef(true);
@@ -726,7 +727,7 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     private static @NonNull UnionTypeObjectArchetype createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
-            final TypeBuilderFactory builderFactory, final EffectiveStatement<?, ?> definingStatement,
+            final TypeBuilderFactory builderFactory, final WithQNameArgument<?> definingStatement,
             final UnionDependencies dependencies, final JavaTypeName typeName, final ModuleGenerator module,
             final TypeEffectiveStatement type, final boolean isTypedef, final TypeDefinition<?> typedef) {
         final var builder = builderFactory.newUnionTypeObjectBuilder(typeName);
@@ -875,7 +876,9 @@ abstract class AbstractTypeObjectGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     // FIXME: we should not rely on TypeDefinition
-    abstract @NonNull TypeDefinition<?> extractTypeDefinition();
+    private @NonNull TypeDefinition<?> extractTypeDefinition() {
+        return statement().typeDefinition();
+    }
 
     abstract @NonNull GeneratedTransferObject<?> createDerivedType(@NonNull TypeBuilderFactory builderFactory,
         @NonNull GeneratedTransferObject<?> baseType);

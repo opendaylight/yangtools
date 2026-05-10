@@ -79,11 +79,6 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
     }
 
     @Override
-    public QNameModule currentModule() {
-        return argument().getModule();
-    }
-
-    @Override
     public TypeDefinition<?> typeDefinition() {
         final var existing = (TypeDefinition<?>) TYPE_DEFINITION.getAcquire(this);
         return existing != null ? existing : loadTypeDefinition();

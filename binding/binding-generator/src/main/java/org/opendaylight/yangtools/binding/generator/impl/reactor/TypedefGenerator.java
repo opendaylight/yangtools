@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.TypedefRuntimeType;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -72,11 +71,6 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     @Override
     ClassPlacement classPlacementImpl() {
         return ClassPlacement.TOP_LEVEL;
-    }
-
-    @Override
-    TypeDefinition<?> extractTypeDefinition() {
-        return statement().typeDefinition();
     }
 
     @Override

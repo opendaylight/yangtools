@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
 
 /**
  * Effective representation of a {@code leaf} statement.
@@ -21,7 +22,8 @@ public non-sealed interface LeafEffectiveStatement extends DataTreeEffectiveStat
         ReferenceEffectiveStatement.OptionalIn<QName, @NonNull LeafStatement>,
         TypeEffectiveStatement.MandatoryIn<QName, @NonNull LeafStatement>,
         UnitsEffectiveStatement.OptionalIn<QName, @NonNull LeafStatement>,
-        DataSchemaCompat<QName, @NonNull LeafStatement> {
+        DataSchemaCompat<QName, @NonNull LeafStatement>,
+        TypeDefinitionCompat.WithQNameArgument<@NonNull LeafStatement> {
     @Override
     default StatementDefinition<QName, @NonNull LeafStatement, ?> statementDefinition() {
         return LeafStatement.DEF;

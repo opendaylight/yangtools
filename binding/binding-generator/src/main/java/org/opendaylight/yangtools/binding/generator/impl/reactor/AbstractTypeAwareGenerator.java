@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
-
-import com.google.common.base.VerifyException;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -18,23 +15,21 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat.WithQNameArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Common base class for {@link LeafGenerator} and {@link LeafListGenerator}.
  */
-abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?>, R extends RuntimeType,
-        G extends AbstractTypeAwareGenerator<T, R, G>>
-        extends AbstractTypeObjectGenerator<T, R> {
+abstract class AbstractTypeAwareGenerator<
+        S extends DataTreeEffectiveStatement<?> & WithQNameArgument<?>,
+        R extends RuntimeType,
+        G extends AbstractTypeAwareGenerator<S, R, G>> extends AbstractTypeObjectGenerator<S, R> {
     private IdentityGenerator contextType;
 
-    AbstractTypeAwareGenerator(final T statement, final AbstractCompositeGenerator<?, ?> parent) {
+    AbstractTypeAwareGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-        verify(statement instanceof TypeDefinitionAware, "Unexpected statement %s", statement);
     }
 
     @Override
@@ -53,15 +48,6 @@ abstract class AbstractTypeAwareGenerator<T extends DataTreeEffectiveStatement<?
         contextType = statement().findFirstEffectiveSubstatementArgument(ContextReferenceEffectiveStatement.class)
             .map(context::resolveIdentity)
             .orElse(null);
-    }
-
-    @Override
-    final TypeDefinition<?> extractTypeDefinition() {
-        final var stmt = statement();
-        if (!(stmt instanceof TypedDataSchemaNode typed)) {
-            throw new VerifyException("Unexpected statement " + stmt);
-        }
-        return typed.typeDefinition();
     }
 
     @Override
