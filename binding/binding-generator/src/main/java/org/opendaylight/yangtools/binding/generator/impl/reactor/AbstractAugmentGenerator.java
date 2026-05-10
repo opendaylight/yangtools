@@ -166,23 +166,25 @@ abstract class AbstractAugmentGenerator
         return statement().equals(statement);
     }
 
-    final void fillRuntimeCasesIn(final AugmentResolver resolver, final ChoiceEffectiveStatement stmt,
+    final void fillRuntimeCasesIn(final @NonNull AugmentResolver resolver, final @NonNull ChoiceEffectiveStatement stmt,
             final List<CaseRuntimeType> toList) {
         toList.addAll(createBuilder(effectiveIn(stmt)).populate(resolver, this).getCaseChilden());
     }
 
-    final @NonNull AugmentRuntimeType runtimeTypeIn(final AugmentResolver resolver,
-            final EffectiveStatement<?, ?> stmt) {
+    @NonNullByDefault
+    final AugmentRuntimeType runtimeTypeIn(final AugmentResolver resolver, final EffectiveStatement<?, ?> stmt) {
         if (!(stmt instanceof SchemaTreeAwareEffectiveStatement aware)) {
             throw new VerifyException("Unexpected target statement " + stmt);
         }
         return verifyNotNull(createInternalRuntimeType(resolver, effectiveIn(aware)));
     }
 
-    abstract @NonNull TargetAugmentEffectiveStatement effectiveIn(SchemaTreeAwareEffectiveStatement<?, ?> target);
+    @NonNullByDefault
+    abstract TargetAugmentEffectiveStatement effectiveIn(SchemaTreeAwareEffectiveStatement<?, ?> target);
 
-    final @NonNull TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target,
-            final Function<QName, QName> transform) {
+    final @NonNull TargetAugmentEffectiveStatement effectiveIn(
+            final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> target,
+            final Function<@NonNull QName, @NonNull QName> transform) {
         final var augment = statement();
         final var stmts = augment.effectiveSubstatements();
         final var builder = ImmutableList.<EffectiveStatement<?, ?>>builderWithExpectedSize(stmts.size());
@@ -223,6 +225,10 @@ abstract class AbstractAugmentGenerator
     }
 
     final @NonNull AbstractCompositeGenerator<?, ?> targetGenerator() {
-        return verifyNotNull(targetGen, "No target for %s", this);
+        final var ret = targetGen;
+        if (ret != null) {
+            return ret;
+        }
+        throw new VerifyException("No target for " + this);
     }
 }

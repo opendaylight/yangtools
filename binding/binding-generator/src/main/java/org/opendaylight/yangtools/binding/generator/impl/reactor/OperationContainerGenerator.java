@@ -45,7 +45,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
 
     @Override
     final Member createMember(final CollisionDomain domain) {
-        return createMember(domain, getParent().ensureMember());
+        return createMember(domain, getParent().getMember());
     }
 
     abstract @NonNull Member createMember(@NonNull CollisionDomain domain, Member parent);

@@ -104,7 +104,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
      * @throws IllegalStateException if the reactor has failed execution
      * @throws NullPointerException if {@code builderFactory} is {@code null}
      */
-    public @NonNull Map<QNameModule, ModuleGenerator> execute(final TypeBuilderFactory builderFactory) {
+    public @NonNull Map<QNameModule, ModuleGenerator> execute(final @NonNull TypeBuilderFactory builderFactory) {
         switch (state) {
             case null -> throw new NullPointerException();
             case INITIALIZED -> {
@@ -243,7 +243,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     }
 
     private void collectCollisionDomains(final List<CollisionDomain> result,
-            final Iterable<? extends Generator> parent) {
+            final Iterable<? extends @NonNull Generator> parent) {
         for (var gen : parent) {
             gen.ensureMember();
             collectCollisionDomains(result, gen);

@@ -505,7 +505,8 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
         return genType != null ? genType : getPrevious().runtimeJavaType();
     }
 
-    final @NonNull Type methodReturnElementType(final @NonNull TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    final Type methodReturnElementType(final TypeBuilderFactory builderFactory) {
         var local = methodReturnTypeElement;
         if (local == null) {
             methodReturnTypeElement = local = createMethodReturnElementType(builderFactory);
@@ -513,7 +514,8 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
         return local;
     }
 
-    private @NonNull Type createMethodReturnElementType(final @NonNull TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    private Type createMethodReturnElementType(final TypeBuilderFactory builderFactory) {
         final var generatedType = tryGeneratedType(builderFactory);
         if (generatedType != null) {
             // We have generated a type here, so return it. This covers 'bits', 'enumeration' and 'union'.
@@ -661,7 +663,8 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
             verifyNotNull(SIMPLE_TYPES.get(arg), "Unhandled type %s", arg), extractTypeDefinition());
     }
 
-    private static @NonNull BitsTypeObjectArchetype createBits(final TypeBuilderFactory builderFactory,
+    @NonNullByDefault
+    private static BitsTypeObjectArchetype createBits(final TypeBuilderFactory builderFactory,
             final WithQNameArgument<?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final BitsTypeDefinition typedef, final boolean isTypedef) {
         final var builder = builderFactory.newBitsTypeObjectBuilder(typeName);
@@ -685,9 +688,10 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
         return builder.build();
     }
 
-    private static @NonNull EnumTypeObjectArchetype createEnumeration(final TypeBuilderFactory builderFactory,
-            final WithQNameArgument<?> definingStatement, final JavaTypeName typeName,
-            final ModuleGenerator module, final EnumTypeDefinition typedef) {
+    @NonNullByDefault
+    private static EnumTypeObjectArchetype createEnumeration(final TypeBuilderFactory builderFactory,
+            final WithQNameArgument<?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
+            final EnumTypeDefinition typedef) {
         // TODO units for typedef enum
         final var builder = builderFactory.newEnumTypeObjectBuilder(typeName);
         YangSourceDefinition.of(module.statement(), definingStatement).ifPresent(builder::setYangSourceDefinition);
@@ -700,7 +704,8 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
         return builder.build();
     }
 
-    private static @NonNull ScalarTypeObjectArchetype createScalar(final TypeBuilderFactory builderFactory,
+    @NonNullByDefault
+    private static ScalarTypeObjectArchetype createScalar(final TypeBuilderFactory builderFactory,
             final WithQNameArgument<?> definingStatement, final JavaTypeName typeName, final ModuleGenerator module,
             final Type javaType, final TypeDefinition<?> typedef) {
         final var builder = builderFactory.newScalarTypeObjectBuilder(typeName);
@@ -727,7 +732,8 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
         return builder.build();
     }
 
-    private static @NonNull UnionTypeObjectArchetype createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
+    @NonNullByDefault
+    private static UnionTypeObjectArchetype createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
             final TypeBuilderFactory builderFactory, final WithQNameArgument<?> definingStatement,
             final UnionDependencies dependencies, final JavaTypeName typeName, final ModuleGenerator module,
             final TypeEffectiveStatement type, final boolean isTypedef, final TypeDefinition<?> typedef) {

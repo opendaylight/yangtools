@@ -63,6 +63,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
         return builder.build();
     }
 
+    @NonNullByDefault
     private void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
             final GeneratedType input, final GeneratedType output) {
         final var parent = getParent();

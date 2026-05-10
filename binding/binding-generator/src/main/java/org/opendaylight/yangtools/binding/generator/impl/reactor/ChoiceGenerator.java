@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntimeType;
@@ -79,7 +78,8 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
         // No-op
     }
 
-    @NonNull ChoiceInArchetype getArchetype(final TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    ChoiceInArchetype getArchetype(final TypeBuilderFactory builderFactory) {
         return (ChoiceInArchetype) getGeneratedType(builderFactory);
     }
 

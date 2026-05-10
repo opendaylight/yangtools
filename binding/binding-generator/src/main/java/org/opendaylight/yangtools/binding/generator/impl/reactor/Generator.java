@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.model.ri.Types.classType;
 
@@ -93,7 +92,11 @@ public abstract class Generator implements Iterable<Generator> {
      * @return Parent generator
      */
     final @NonNull AbstractCompositeGenerator<?, ?> getParent() {
-        return verifyNotNull(parent, "No parent for %s", this);
+        final var ret = parent;
+        if (ret != null) {
+            return ret;
+        }
+        throw new VerifyException("No parent for " + this);
     }
 
     boolean isEmpty() {
@@ -123,10 +126,14 @@ public abstract class Generator implements Iterable<Generator> {
     abstract @NonNull ClassPlacement classPlacement();
 
     final @NonNull Member getMember() {
-        return verifyNotNull(ensureMember(), "No member for %s", this);
+        final var ret = ensureMember();
+        if (ret != null) {
+            return ret;
+        }
+        throw new VerifyException("No member for " + this);
     }
 
-    final Member ensureMember() {
+    final @Nullable Member ensureMember() {
         if (member == null) {
             member = switch (classPlacement()) {
                 case NONE -> Optional.empty();
@@ -140,14 +147,15 @@ public abstract class Generator implements Iterable<Generator> {
         return getParent().domain();
     }
 
-    abstract @NonNull Member createMember(@NonNull CollisionDomain domain);
+    @NonNullByDefault
+    abstract Member createMember(CollisionDomain domain);
 
     /**
      * Create the type associated with this builder. This method idempotent.
      *
      * @param builderFactory Factory for {@link TypeBuilder}s
-     * @throws NullPointerException if {@code builderFactory} is {@code null}
      */
+    @NonNullByDefault
     final void ensureType(final TypeBuilderFactory builderFactory) {
         if (result != null) {
             return;
@@ -159,12 +167,13 @@ public abstract class Generator implements Iterable<Generator> {
             case TOP_LEVEL -> GeneratorResult.toplevel(createTypeImpl(requireNonNull(builderFactory)));
         };
 
-        for (Generator child : this) {
+        for (var child : this) {
             child.ensureType(builderFactory);
         }
     }
 
-    @NonNull GeneratedType getGeneratedType(final TypeBuilderFactory builderFactory) {
+    @NonNullByDefault
+    GeneratedType getGeneratedType(final TypeBuilderFactory builderFactory) {
         final var genType = tryGeneratedType(builderFactory);
         if (genType != null) {
             return genType;
@@ -172,12 +181,12 @@ public abstract class Generator implements Iterable<Generator> {
         throw new VerifyException("No type generated for " + this);
     }
 
-    final @Nullable GeneratedType tryGeneratedType(final TypeBuilderFactory builderFactory) {
+    final @Nullable GeneratedType tryGeneratedType(final @NonNull TypeBuilderFactory builderFactory) {
         ensureType(builderFactory);
         return result.generatedType();
     }
 
-    final @Nullable GeneratedType enclosedType(final TypeBuilderFactory builderFactory) {
+    final @Nullable GeneratedType enclosedType(final @NonNull TypeBuilderFactory builderFactory) {
         ensureType(builderFactory);
         return result.enclosedType();
     }
@@ -188,7 +197,8 @@ public abstract class Generator implements Iterable<Generator> {
      *
      * @param builderFactory Factory for {@link TypeBuilder}s
      */
-    abstract @NonNull GeneratedType createTypeImpl(@NonNull TypeBuilderFactory builderFactory);
+    @NonNullByDefault
+    abstract GeneratedType createTypeImpl(TypeBuilderFactory builderFactory);
 
     final @NonNull String assignedName() {
         return getMember().currentClass();
@@ -261,11 +271,13 @@ public abstract class Generator implements Iterable<Generator> {
      *
      * @param builder Target builder
      */
+    @NonNullByDefault
     static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
 
+    @NonNullByDefault
     static final void annotateDeprecatedIfNecessary(final EffectiveStatement<?, ?> stmt,
             final AnnotableTypeBuilder builder) {
         if (stmt instanceof WithStatus withStatus) {
@@ -273,6 +285,7 @@ public abstract class Generator implements Iterable<Generator> {
         }
     }
 
+    @NonNullByDefault
     static final void annotateDeprecatedIfNecessary(final WithStatus node, final AnnotableTypeBuilder builder) {
         switch (node.getStatus()) {
             case DEPRECATED ->
@@ -293,6 +306,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder transfer object which needs to be made serializable
      */
     // FIXME: remove this method: this is implied by the resulting archetype
+    @NonNullByDefault
     static final void makeSerializable(final GeneratedTransferObject.Builder builder) {
         builder.addImplementsType(Types.serializableType());
     }
@@ -302,10 +316,12 @@ public abstract class Generator implements Iterable<Generator> {
      *
      * @param builder Target builder
      */
+    @NonNullByDefault
     static final void defaultImplementedInterace(final GeneratedTypeBuilderBase<?> builder) {
         defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
+    @NonNullByDefault
     static final MethodSignatureBuilder defineImplementedInterfaceMethod(
             final GeneratedTypeBuilderBase<?> typeBuilder, final Type classType) {
         final var ret = typeBuilder

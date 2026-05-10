@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
@@ -166,7 +165,11 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     final @NonNull List<GroupingGenerator> groupings() {
-        return verifyNotNull(groupings, "Groupings not initialized in %s", this);
+        final var ret = groupings;
+        if (ret != null) {
+            return ret;
+        }
+        throw new VerifyException("Groupings not initialized in " + this);
     }
 
     @Override
@@ -458,12 +461,14 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * @param builder Target builder
      * @param builderFactory factory for creating {@link TypeBuilder}s
      */
+    @NonNullByDefault
     final void addUsesInterfaces(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
         for (var grp : groupings) {
             builder.addImplementsType(grp.getGeneratedType(builderFactory));
         }
     }
 
+    @NonNullByDefault
     static final void addAugmentable(final GeneratedTypeBuilder builder) {
         builder.addImplementsType(BindingTypes.augmentable(builder.typeRef()));
     }
