@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -67,6 +68,7 @@ public abstract class Generator implements Iterable<Generator> {
         parent = null;
     }
 
+    @NonNullByDefault
     Generator(final AbstractCompositeGenerator<?, ?> parent) {
         this.parent = requireNonNull(parent);
     }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * a {@link Notification}.
  */
 final class NotificationGenerator extends AbstractNotificationGenerator {
+    @NonNullByDefault
     NotificationGenerator(final NotificationEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);
     }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * A {@link NotificationGenerator} producing {@link InstanceNotification}s.
  */
 final class InstanceNotificationGenerator extends AbstractNotificationGenerator {
+    @NonNullByDefault
     InstanceNotificationGenerator(final NotificationEffectiveStatement statement,
             final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);

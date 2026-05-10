@@ -67,10 +67,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     private @Nullable R runtimeType;
     private boolean runtimeTypeInitialized;
 
+    @NonNullByDefault
     AbstractExplicitGenerator(final S statement) {
         this.statement = requireNonNull(statement);
     }
 
+    @NonNullByDefault
     AbstractExplicitGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(parent);
         this.statement = requireNonNull(statement);

@@ -313,6 +313,7 @@ abstract class AbstractTypeObjectGenerator<S extends WithQNameArgument<?>, R ext
      */
     private Type methodReturnTypeElement;
 
+    @NonNullByDefault
     AbstractTypeObjectGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         type = statement().findFirstEffectiveSubstatement(TypeEffectiveStatement.class).orElseThrow();

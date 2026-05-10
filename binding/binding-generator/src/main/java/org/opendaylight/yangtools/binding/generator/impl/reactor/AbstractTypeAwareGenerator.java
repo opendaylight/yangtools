@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -28,6 +29,7 @@ abstract class AbstractTypeAwareGenerator<
         G extends AbstractTypeAwareGenerator<S, R, G>> extends AbstractTypeObjectGenerator<S, R> {
     private IdentityGenerator contextType;
 
+    @NonNullByDefault
     AbstractTypeAwareGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }

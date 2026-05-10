@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 final class KeyedListNotificationGenerator extends AbstractNotificationGenerator {
     private final KeyGenerator keyGen;
 
+    @NonNullByDefault
     KeyedListNotificationGenerator(final NotificationEffectiveStatement statement,
             final ListGenerator parent, final KeyGenerator keyGen) {
         super(statement, parent);

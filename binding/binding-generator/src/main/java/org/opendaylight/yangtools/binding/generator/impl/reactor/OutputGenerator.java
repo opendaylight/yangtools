@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultOutputRuntimeType;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
  * Generator corresponding to an {@code output} statement.
  */
 final class OutputGenerator extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType> {
+    @NonNullByDefault
     OutputGenerator(final OutputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent, BindingTypes.RPC_OUTPUT);
     }

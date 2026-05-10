@@ -95,6 +95,7 @@ abstract class OpaqueObjectGenerator<
         }
     }
 
+    @NonNullByDefault
     OpaqueObjectGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }

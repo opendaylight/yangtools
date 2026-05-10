@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 abstract class AbstractNotificationGenerator
         extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationRuntimeType> {
+    @NonNullByDefault
     AbstractNotificationGenerator(final NotificationEffectiveStatement statement,
             final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);

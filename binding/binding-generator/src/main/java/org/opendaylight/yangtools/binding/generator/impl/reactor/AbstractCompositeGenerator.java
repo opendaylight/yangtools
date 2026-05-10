@@ -144,11 +144,13 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      */
     private List<Generator> unlinkedChildren;
 
+    @NonNullByDefault
     AbstractCompositeGenerator(final S statement) {
         super(statement);
         childGenerators = createChildren(statement);
     }
 
+    @NonNullByDefault
     AbstractCompositeGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         childGenerators = createChildren(statement);

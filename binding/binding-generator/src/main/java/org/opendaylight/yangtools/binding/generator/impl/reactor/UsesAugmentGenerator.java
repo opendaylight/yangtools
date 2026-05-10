@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
@@ -22,10 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
  * Generator corresponding to a {@code augment} statement used as a child of a {@code uses} statement.
  */
 final class UsesAugmentGenerator extends AbstractAugmentGenerator {
-    private final UsesEffectiveStatement uses;
+    private final @NonNull UsesEffectiveStatement uses;
 
     private GroupingGenerator grouping;
 
+    @NonNullByDefault
     UsesAugmentGenerator(final AugmentEffectiveStatement statement, final UsesEffectiveStatement uses,
             final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);

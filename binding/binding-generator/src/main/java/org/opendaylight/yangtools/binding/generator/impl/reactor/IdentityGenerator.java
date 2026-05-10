@@ -11,6 +11,7 @@ import com.google.common.base.VerifyException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultIdentityRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
@@ -28,6 +29,7 @@ public final class IdentityGenerator
         extends AbstractDependentGenerator<IdentityEffectiveStatement, IdentityRuntimeType> {
     private List<IdentityGenerator> baseIdentities = null;
 
+    @NonNullByDefault
     IdentityGenerator(final IdentityEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }

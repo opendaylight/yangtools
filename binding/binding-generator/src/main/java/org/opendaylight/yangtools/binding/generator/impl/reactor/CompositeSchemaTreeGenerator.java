@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
  */
 abstract class CompositeSchemaTreeGenerator<S extends SchemaTreeEffectiveStatement<?>, R extends CompositeRuntimeType>
         extends AbstractCompositeGenerator<S, R> {
+    @NonNullByDefault
     CompositeSchemaTreeGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }

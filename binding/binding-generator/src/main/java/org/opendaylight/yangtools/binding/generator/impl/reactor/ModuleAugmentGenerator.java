@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveSt
  * Generator corresponding to a {@code augment} statement used as a child of a {@code module} statement.
  */
 final class ModuleAugmentGenerator extends AbstractAugmentGenerator {
+    @NonNullByDefault
     ModuleAugmentGenerator(final AugmentEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);
     }

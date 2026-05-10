@@ -11,6 +11,7 @@ import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultGroupingRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -32,6 +33,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     // - other composite generators, which are the actual instantiations
     private List<AbstractCompositeGenerator<?, ?>> users;
 
+    @NonNullByDefault
     GroupingGenerator(final GroupingEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }

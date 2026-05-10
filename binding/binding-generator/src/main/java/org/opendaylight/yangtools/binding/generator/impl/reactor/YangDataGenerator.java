@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
@@ -35,6 +36,7 @@ abstract sealed class YangDataGenerator
     private static final class WithIdentifier extends YangDataGenerator {
         private final @NonNull Unqualified identifier;
 
+        @NonNullByDefault
         WithIdentifier(final YangDataEffectiveStatement statement, final ModuleGenerator parent,
                 final Unqualified identifier) {
             super(statement, parent);
@@ -48,6 +50,7 @@ abstract sealed class YangDataGenerator
     }
 
     private static final class WithString extends YangDataGenerator {
+        @NonNullByDefault
         WithString(final YangDataEffectiveStatement statement, final ModuleGenerator parent) {
             super(statement, parent);
         }
@@ -58,11 +61,13 @@ abstract sealed class YangDataGenerator
         }
     }
 
+    @NonNullByDefault
     private YangDataGenerator(final YangDataEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);
     }
 
-    static @NonNull YangDataGenerator of(final YangDataEffectiveStatement statement, final ModuleGenerator parent) {
+    @NonNullByDefault
+    static YangDataGenerator of(final YangDataEffectiveStatement statement, final ModuleGenerator parent) {
         // yang-data's argument is not guaranteed to comply with YANG 'identifier', but it usually does. If it does, we
         // use the usual mechanics, but if it does not, we have to deal with any old string, similar to what we do for
         // bit names. Here we decide which path to take.
