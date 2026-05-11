@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -221,11 +222,11 @@ public class BuilderGeneratorTest {
     }
 
     private static BlockBuilder genToString(final GeneratedType genType) {
-        return new InterfaceTemplate(genType).generateBindingToString();
+        return new InterfaceTemplate(genType, mock(DataRootArchetype.class)).generateBindingToString();
     }
 
     private static @Nullable BlockBuilder genHashCode(final GeneratedType genType) {
-        return new InterfaceTemplate(genType).generateBindingHashCode();
+        return new InterfaceTemplate(genType, mock(DataRootArchetype.class)).generateBindingHashCode();
     }
 
     private static GeneratedType mockGenType(final String methodeName) {

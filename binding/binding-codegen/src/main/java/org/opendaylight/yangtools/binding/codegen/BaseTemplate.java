@@ -38,6 +38,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -68,7 +69,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
-        permits AbstractBuilderTemplate, ArchetypeTemplate, ClassTemplate, EnumTypeObjectTemplate, InterfaceTemplate {
+        permits AbstractBuilderTemplate, ArchetypeTemplate, InterfaceTemplate {
     static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
 
     private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
@@ -548,9 +549,10 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     /**
      * {@return a string containing generated code for specified archetypes}
+     * @param root the root in which the type is being generated
      * @param archetypes the {@link EnumTypeObjectArchetype}s to generate
      */
-    final @Nullable BlockBuilder generateInnerEnumTypeObjects(
+    final @Nullable BlockBuilder generateInnerEnumTypeObjects(final @NonNull DataRootArchetype root,
             final @NonNull List<EnumTypeObjectArchetype> archetypes) {
         if (archetypes.isEmpty()) {
             return null;
@@ -560,7 +562,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         final var bb = newBlockBuilder();
         while (true) {
             final var archetype = it.next();
-            EnumTypeObjectTemplate.generateAsInner(javaType().getNestedClass(archetype), archetype, bb);
+            EnumTypeObjectTemplate.generateAsInner(javaType().getNestedClass(archetype), archetype, root, bb);
             if (!it.hasNext()) {
                 return bb;
             }
@@ -568,12 +570,13 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         }
     }
 
-    final @Nullable BlockBuilder generateInnerClasses(final List<GeneratedType> innerTypes) {
+    final @Nullable BlockBuilder generateInnerClasses(final @NonNull DataRootArchetype root,
+            final List<GeneratedType> innerTypes) {
         final var innerClasses = new ArrayList<BlockBuilder>();
         for (var innerType : innerTypes) {
             if (innerType instanceof GeneratedTransferObject gto) {
                 final var innerJavaType = javaType().getNestedClass(gto);
-                innerClasses.add(ClassTemplate.generateAsInner(innerJavaType, gto));
+                innerClasses.add(ClassTemplate.generateAsInner(innerJavaType, gto, root));
             }
         }
         if (innerClasses.isEmpty()) {

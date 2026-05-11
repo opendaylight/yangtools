@@ -29,6 +29,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -46,14 +47,15 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
  */
 sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     @NonNullByDefault
-    record Builder(GeneratedType type) implements Template.Builder {
-        Builder(final GeneratedType type) {
-            this.type = requireNonNull(type);
+    record Builder(GeneratedType type, DataRootArchetype root) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+            requireNonNull(root);
         }
 
         @Override
         public InterfaceTemplate build() {
-            return new InterfaceTemplate(type);
+            return new InterfaceTemplate(type, root);
         }
     }
 
@@ -76,12 +78,15 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
      * List of generated types which are enclosed inside the generated type.
      */
     private final List<GeneratedType> enclosedGeneratedTypes;
+    private final @NonNull DataRootArchetype root;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final GeneratedType type) {
+    InterfaceTemplate(final GeneratedType type, final DataRootArchetype root) {
         super(GeneratedClass.of(type), type);
+        this.root = requireNonNull(root);
+
         consts = type.getConstantDefinitions();
         methods = type.getMethodDefinitions();
         enums = type.getEnumerations();
@@ -150,9 +155,9 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
         return bb
             .oB()
-            .blk(generateInnerClasses(enclosedGeneratedTypes))
+            .blk(generateInnerClasses(root, enclosedGeneratedTypes))
             .nl()
-            .blk(generateInnerEnumTypeObjects(enums))
+            .blk(generateInnerEnumTypeObjects(root, enums))
             .nl()
             .blk(generateConstants())
             .nl()

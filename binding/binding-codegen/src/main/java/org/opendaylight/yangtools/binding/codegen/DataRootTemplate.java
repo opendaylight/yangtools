@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 final class DataRootTemplate extends InterfaceTemplate {
     @NonNullByDefault
     record Builder(DataRootArchetype type) implements Template.Builder {
-        Builder(final DataRootArchetype type) {
-            this.type = requireNonNull(type);
+        Builder {
+            requireNonNull(type);
         }
 
         @Override
@@ -36,7 +36,7 @@ final class DataRootTemplate extends InterfaceTemplate {
 
     @NonNullByDefault
     private DataRootTemplate(final DataRootArchetype archetype) {
-        super(archetype);
+        super(archetype, archetype);
     }
 
     private @NonNull DataRootArchetype archetype() {

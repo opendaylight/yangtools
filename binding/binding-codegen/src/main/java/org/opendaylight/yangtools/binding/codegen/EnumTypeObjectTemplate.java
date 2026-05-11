@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
@@ -20,30 +21,29 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
  * Template for {@link EnumTypeObject}s.
  */
 @NonNullByDefault
-final class EnumTypeObjectTemplate extends BaseTemplate {
-    record Builder(EnumTypeObjectArchetype type) implements Template.Builder {
+final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArchetype> {
+    record Builder(EnumTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
+            requireNonNull(root);
         }
 
         @Override
         public EnumTypeObjectTemplate build() {
-            return new EnumTypeObjectTemplate(GeneratedClass.of(type), type);
+            return new EnumTypeObjectTemplate(GeneratedClass.of(type), type, root);
         }
     }
 
     private static final JavaTypeName ENUM_TYPE_OBJECT = JavaTypeName.create(EnumTypeObject.class);
 
-    private final EnumTypeObjectArchetype archetype;
-
-    private EnumTypeObjectTemplate(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype) {
-        super(javaType, archetype);
-        this.archetype = requireNonNull(archetype);
+    private EnumTypeObjectTemplate(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        super(javaType, archetype, root);
     }
 
     static void generateAsInner(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
-            final BlockBuilder bb) {
-        new EnumTypeObjectTemplate(javaType, archetype).appendBody(bb);
+            final DataRootArchetype root, final BlockBuilder bb) {
+        new EnumTypeObjectTemplate(javaType, archetype, root).appendBody(bb);
     }
 
     @Override
@@ -55,6 +55,7 @@ final class EnumTypeObjectTemplate extends BaseTemplate {
 
     private void appendBody(final BlockBuilder bb) {
         // calculate imports up front
+        final var archetype = archetype();
         final var codeHelpers = importedName(CODEHELPERS);
         final var enumTypeObject = importedName(ENUM_TYPE_OBJECT);
         final var iae = importedName(IAE);

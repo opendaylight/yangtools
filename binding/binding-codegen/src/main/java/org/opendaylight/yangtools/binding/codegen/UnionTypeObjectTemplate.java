@@ -17,10 +17,12 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.Iterables;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
@@ -30,37 +32,35 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 /**
  * A template for {@link UnionTypeObject} specializations.
  */
-final class UnionTypeObjectTemplate extends ClassTemplate {
-    @NonNullByDefault
-    record Builder(UnionTypeObjectArchetype type) implements Template.Builder {
+@NonNullByDefault
+final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchetype> {
+    record Builder(UnionTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
         }
 
         @Override
         public UnionTypeObjectTemplate build() {
-            return new UnionTypeObjectTemplate(type);
+            return new UnionTypeObjectTemplate(type, root);
         }
     }
 
-    @NonNullByDefault
-    private UnionTypeObjectTemplate(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype) {
-        super(javaType, archetype);
+    private UnionTypeObjectTemplate(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        super(javaType, archetype, root);
     }
 
-    @NonNullByDefault
-    private UnionTypeObjectTemplate(final UnionTypeObjectArchetype archetype) {
-        super(GeneratedClass.of(archetype), archetype);
+    private UnionTypeObjectTemplate(final UnionTypeObjectArchetype archetype, final DataRootArchetype root) {
+        super(GeneratedClass.of(archetype), archetype, root);
     }
 
-    @NonNullByDefault
-    static BlockBuilder generateAsInner(final GeneratedClass.Nested javaType,
-            final UnionTypeObjectArchetype archetype) {
-        return new UnionTypeObjectTemplate(javaType, archetype).generateAsInnerClass();
+    static BlockBuilder generateInner(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        return new UnionTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
     }
 
     @Override
-    BlockBuilder constructors() {
+    @NonNull BlockBuilder constructors() {
         final var bb = newBlockBuilder()
             .blk(unionConstructorsParentProperties())
             .blk(unionConstructors());
@@ -260,7 +260,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    BlockBuilder defaultInstance() {
+    @Nullable BlockBuilder defaultInstance() {
         return null;
     }
 }

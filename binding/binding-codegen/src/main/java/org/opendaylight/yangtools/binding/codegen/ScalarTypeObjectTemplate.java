@@ -17,11 +17,11 @@ import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PR
 
 import com.google.common.base.VerifyException;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -30,43 +30,42 @@ import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 /**
  * A template for {@link ScalarTypeObject} specializations.
  */
-final class ScalarTypeObjectTemplate extends ClassTemplate {
-    @NonNullByDefault
-    record Builder(ScalarTypeObjectArchetype type) implements Template.Builder {
+@NonNullByDefault
+final class ScalarTypeObjectTemplate extends ClassTemplate<ScalarTypeObjectArchetype> {
+    record Builder(ScalarTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
+            requireNonNull(root);
         }
 
         @Override
         public ScalarTypeObjectTemplate build() {
-            return new ScalarTypeObjectTemplate(type);
+            return new ScalarTypeObjectTemplate(type, root);
         }
     }
 
     /**
      * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a JavaTypeName.
      */
-    private static final @NonNull JavaTypeName UNSAFE_SECRET = JavaTypeName.create(UnsafeSecret.class);
+    private static final JavaTypeName UNSAFE_SECRET = JavaTypeName.create(UnsafeSecret.class);
 
     // FIXME: this enum should be absorbed into a class hierarchy in ScalarTypeObjectArchetype
-    private final @NonNull ScalarTypeKind scalarType;
+    private final ScalarTypeKind scalarType;
 
-    @NonNullByDefault
-    private ScalarTypeObjectTemplate(final GeneratedClass javaType, final ScalarTypeObjectArchetype archetype) {
-        super(javaType, archetype);
+    private ScalarTypeObjectTemplate(final GeneratedClass javaType, final ScalarTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        super(javaType, archetype, root);
         scalarType = ScalarTypeKind.of(archetype);
     }
 
-    @NonNullByDefault
-    private ScalarTypeObjectTemplate(final ScalarTypeObjectArchetype archetype) {
-        super(GeneratedClass.of(archetype), archetype);
+    private ScalarTypeObjectTemplate(final ScalarTypeObjectArchetype archetype, final DataRootArchetype root) {
+        super(GeneratedClass.of(archetype), archetype, root);
         scalarType = ScalarTypeKind.of(archetype);
     }
 
-    @NonNullByDefault
-    static BlockBuilder generateAsInner(final GeneratedClass.Nested javaType,
-            final ScalarTypeObjectArchetype archetype) {
-        return new ScalarTypeObjectTemplate(javaType, archetype).generateAsInnerClass();
+    static BlockBuilder generateInner(final GeneratedClass.Nested javaType,
+            final ScalarTypeObjectArchetype archetype, final DataRootArchetype root) {
+        return new ScalarTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
     }
 
     @Override
@@ -160,7 +159,7 @@ final class ScalarTypeObjectTemplate extends ClassTemplate {
     }
 
     @Override
-    BlockBuilder propertyMethods() {
+    @Nullable BlockBuilder propertyMethods() {
         if (!scalarType.isRoot()) {
             return null;
         }

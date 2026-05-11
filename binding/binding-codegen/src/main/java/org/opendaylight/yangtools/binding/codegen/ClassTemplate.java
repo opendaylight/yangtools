@@ -42,6 +42,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -50,7 +51,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -58,8 +58,8 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 /**
 - * Template for generating JAVA class.
  */
-// FIXME: abstract
-sealed class ClassTemplate extends BaseTemplate
+// FIXME: rename to TOArchetype os similar?
+abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?>> extends ArchetypeTemplate<T>
         permits BitsTypeObjectTemplate, ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
@@ -83,37 +83,41 @@ sealed class ClassTemplate extends BaseTemplate
      * List of constant instances which are generated as JAVA public static final attributes.
      */
     private final @NonNull List<Constant> consts;
-    private final @NonNull GeneratedTransferObject<?> genTO;
     private final AbstractRangeGenerator<?> rangeGenerator;
+    private final @NonNull DataRootArchetype root;
 
     @NonNullByDefault
-    ClassTemplate(final GeneratedClass javaType, final GeneratedTransferObject<?> genType) {
-        super(javaType, genType);
-        genTO = requireNonNull(genType);
-        properties = genTO.getProperties();
+    ClassTemplate(final GeneratedClass javaType, final T archetype, final DataRootArchetype root) {
+        super(javaType, archetype, root);
+        this.root = requireNonNull(root);
+
+        properties = archetype.getProperties();
         finalProperties = properties.stream()
             .filter(GeneratedProperty::isReadOnly)
             .collect(Collectors.toUnmodifiableList());
-        parentProperties = propertiesOfAllParents(genTO);
-        restrictions = genTO.getRestrictions();
+        parentProperties = propertiesOfAllParents(archetype);
+        restrictions = archetype.getRestrictions();
 
         allProperties = Stream.concat(properties.stream(), parentProperties.stream())
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
 
-        enums = genTO.getEnumerations();
-        consts = genTO.getConstantDefinitions();
+        enums = archetype.getEnumerations();
+        consts = archetype.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
-            ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(genTO))) : null;
+            ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
     }
 
     @NonNullByDefault
     static final BlockBuilder generateAsInner(final GeneratedClass.Nested javaType,
-            final GeneratedTransferObject<?> gto) {
+            final GeneratedTransferObject<?> gto, final DataRootArchetype root) {
         return switch (gto) {
-            case BitsTypeObjectArchetype archetype -> BitsTypeObjectTemplate.generateAsInner(javaType, archetype);
-            case ScalarTypeObjectArchetype archetype -> ScalarTypeObjectTemplate.generateAsInner(javaType, archetype);
-            case UnionTypeObjectArchetype archetype -> UnionTypeObjectTemplate.generateAsInner(javaType, archetype);
+            case BitsTypeObjectArchetype archetype ->
+                BitsTypeObjectTemplate.generateInner(javaType, archetype, root);
+            case ScalarTypeObjectArchetype archetype ->
+                ScalarTypeObjectTemplate.generateInner(javaType, archetype, root);
+            case UnionTypeObjectArchetype archetype ->
+                UnionTypeObjectTemplate.generateInner(javaType, archetype, root);
             default -> throw new VerifyException("Unhandled inner class " + gto);
         };
     }
@@ -167,12 +171,11 @@ sealed class ClassTemplate extends BaseTemplate
         bb
             .frg(generateClassDeclaration(isInnerClass)).oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ")
-                    .jLong(SerialVersionHelper.computeSerialVersion(genTO)).eS()
+                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
                  // inner classes
-                .blk(generateInnerClasses(type().getEnclosedTypes()))
+                .blk(generateInnerClasses(root, type().getEnclosedTypes()))
                 // inner EnumTypeObjects
-                .blk(generateInnerEnumTypeObjects(enums))
+                .blk(generateInnerEnumTypeObjects(root, enums))
                 // constants
                 .blk(constantsDeclarations());
 
@@ -191,8 +194,8 @@ sealed class ClassTemplate extends BaseTemplate
         if (restrictions != null) {
             final var length = restrictions.getLengthConstraint();
             if (length.isPresent()) {
-                bb.nl().blk(LengthGenerator.generateLengthChecker("_value", TypeUtils.encapsulatedValueType(genTO),
-                    length.orElseThrow(), javaType()));
+                bb.nl().blk(LengthGenerator.generateLengthChecker("_value",
+                    TypeUtils.encapsulatedValueType(archetype()), length.orElseThrow(), javaType()));
             }
             final var range = restrictions.getRangeConstraint();
             if (range.isPresent()) {
@@ -251,7 +254,7 @@ sealed class ClassTemplate extends BaseTemplate
 
         bb
             .eol(");")
-            .str("return new ").str(genTO.simpleName()).str("(");
+            .str("return new ").str(archetype().simpleName()).str("(");
         if (size != 0) {
             bb.newLine();
 
@@ -280,23 +283,23 @@ sealed class ClassTemplate extends BaseTemplate
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
      */
     private @NonNull BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
-        final var type = type();
+        final var archetype = archetype();
 
         final var bb = newBlockBuilder()
             .str("public");
         if (isInnerClass) {
             bb.str(" static final ");
         } else {
-            bb.str(type.isAbstract() ? " abstract " : finalClass());
+            bb.str(archetype.isAbstract() ? " abstract " : finalClass());
         }
-        bb.str("class ").str(type.simpleName());
+        bb.str("class ").str(archetype.simpleName());
 
-        final var superType = genTO.getSuperType();
+        final var superType = archetype.getSuperType();
         if (superType != null) {
             bb.str(" extends ").str(importedName(superType));
         }
 
-        final var ifaces = type.getImplements();
+        final var ifaces = archetype.getImplements();
         if (!ifaces.isEmpty()) {
             bb.nl().str(" implements ");
 
@@ -404,7 +407,8 @@ sealed class ClassTemplate extends BaseTemplate
     // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
     //        different from ScalarTypeObjects the rest of this method handles.
     @Nullable BlockBuilder defaultInstance() {
-        if (!genTO.isTypedef() || allProperties.isEmpty()) {
+        final var archetype = archetype();
+        if (!archetype.isTypedef() || allProperties.isEmpty()) {
             return null;
         }
 
@@ -414,7 +418,7 @@ sealed class ClassTemplate extends BaseTemplate
             return null;
         }
 
-        final var simpleName = genTO.simpleName();
+        final var simpleName = archetype.simpleName();
         return newBlockBuilder()
             .nl()
             .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").jBlock(bb -> {
@@ -558,7 +562,7 @@ sealed class ClassTemplate extends BaseTemplate
 
     @NonNullByDefault
     final BlockBuilder parentConstructor() {
-        final var importedSuper = importedName(genTO.getSuperType());
+        final var importedSuper = importedName(archetype().getSuperType());
 
         return newBlockBuilder()
             .eol("/**")

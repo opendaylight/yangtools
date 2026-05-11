@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -20,32 +21,32 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 /**
  * A template for {@link BitsTypeObject} specializations.
  */
-final class BitsTypeObjectTemplate extends ClassTemplate {
-    @NonNullByDefault
-    record Builder(BitsTypeObjectArchetype type) implements Template.Builder {
+@NonNullByDefault
+final class BitsTypeObjectTemplate extends ClassTemplate<BitsTypeObjectArchetype> {
+    record Builder(BitsTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
+            requireNonNull(root);
         }
 
         @Override
         public BitsTypeObjectTemplate build() {
-            return new BitsTypeObjectTemplate(type);
+            return new BitsTypeObjectTemplate(type, root);
         }
     }
 
-    @NonNullByDefault
-    private BitsTypeObjectTemplate(final GeneratedClass.Nested javaType, final BitsTypeObjectArchetype archetype) {
-        super(javaType, archetype);
+    private BitsTypeObjectTemplate(final GeneratedClass.Nested javaType, final BitsTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        super(javaType, archetype, root);
     }
 
-    @NonNullByDefault
-    private BitsTypeObjectTemplate(final BitsTypeObjectArchetype archetype) {
-        super(GeneratedClass.of(archetype), archetype);
+    private BitsTypeObjectTemplate(final BitsTypeObjectArchetype archetype, final DataRootArchetype root) {
+        super(GeneratedClass.of(archetype), archetype, root);
     }
 
-    @NonNullByDefault
-    static BlockBuilder generateAsInner(final GeneratedClass.Nested javaType, final BitsTypeObjectArchetype archetype) {
-        return new BitsTypeObjectTemplate(javaType, archetype).generateAsInnerClass();
+    static BlockBuilder generateInner(final GeneratedClass.Nested javaType, final BitsTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        return new BitsTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
     }
 
     @Override
@@ -57,7 +58,6 @@ final class BitsTypeObjectTemplate extends ClassTemplate {
         }
     }
 
-    @NonNullByDefault
     private BlockBuilder validNamesAndValues(final BitsTypeDefinition typedef) {
         final var override = importedName(OVERRIDE);
 

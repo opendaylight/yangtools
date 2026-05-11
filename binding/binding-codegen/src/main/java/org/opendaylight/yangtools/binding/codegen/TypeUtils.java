@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -55,6 +56,7 @@ final class TypeUtils {
             type, rootGto, rootGto.getProperties(), TypeConstants.VALUE_PROP));
     }
 
+    @NonNullByDefault
     static Type encapsulatedValueType(final GeneratedTransferObject<?> gto) {
         return gto.findProperty(TypeConstants.VALUE_PROP).orElseThrow().getReturnType();
     }

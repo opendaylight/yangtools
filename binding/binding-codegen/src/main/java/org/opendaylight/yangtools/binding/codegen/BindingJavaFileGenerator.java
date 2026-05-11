@@ -90,12 +90,13 @@ final class BindingJavaFileGenerator {
             if (rootBuilder == null) {
                 throw new VerifyException("No DataRootTemplate for " + rootPackage);
             }
+            final var root = rootBuilder.type();
 
             switch (type) {
-                case Archetype archetype -> generateArchetype(rootBuilder.type(), archetype);
+                case Archetype archetype -> generateArchetype(root, archetype);
                 default -> {
                     generateBuilder(type);
-                    generateFile(new InterfaceTemplate.Builder(type));
+                    generateFile(new InterfaceTemplate.Builder(type, root));
                 }
             }
         }
@@ -120,10 +121,10 @@ final class BindingJavaFileGenerator {
             case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
 
             // TypeObject specializations
-            case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao));
-            case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao));
-            case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao));
-            case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao));
+            case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao, root));
+            case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
+            case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
+            case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
             case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
         }
     }
