@@ -49,8 +49,8 @@ final class UnionTypeObjectTemplate extends ClassTemplate {
     }
 
     @NonNullByDefault
-    UnionTypeObjectTemplate(final UnionTypeObjectArchetype archetype) {
-        super(archetype);
+    private UnionTypeObjectTemplate(final UnionTypeObjectArchetype archetype) {
+        super(GeneratedClass.of(archetype), archetype);
     }
 
     @NonNullByDefault

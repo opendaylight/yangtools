@@ -87,11 +87,6 @@ sealed class ClassTemplate extends BaseTemplate
     private final AbstractRangeGenerator<?> rangeGenerator;
 
     @NonNullByDefault
-    ClassTemplate(final GeneratedTransferObject<?> genType) {
-        this(GeneratedClass.of(genType), genType);
-    }
-
-    @NonNullByDefault
     ClassTemplate(final GeneratedClass javaType, final GeneratedTransferObject<?> genType) {
         super(javaType, genType);
         genTO = requireNonNull(genType);

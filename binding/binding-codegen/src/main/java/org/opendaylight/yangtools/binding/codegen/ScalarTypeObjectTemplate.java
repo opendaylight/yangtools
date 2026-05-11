@@ -59,7 +59,7 @@ final class ScalarTypeObjectTemplate extends ClassTemplate {
 
     @NonNullByDefault
     private ScalarTypeObjectTemplate(final ScalarTypeObjectArchetype archetype) {
-        super(archetype);
+        super(GeneratedClass.of(archetype), archetype);
         scalarType = ScalarTypeKind.of(archetype);
     }
 

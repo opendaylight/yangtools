@@ -39,8 +39,8 @@ final class BitsTypeObjectTemplate extends ClassTemplate {
     }
 
     @NonNullByDefault
-    BitsTypeObjectTemplate(final BitsTypeObjectArchetype archetype) {
-        super(archetype);
+    private BitsTypeObjectTemplate(final BitsTypeObjectArchetype archetype) {
+        super(GeneratedClass.of(archetype), archetype);
     }
 
     @NonNullByDefault
