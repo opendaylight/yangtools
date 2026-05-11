@@ -7,91 +7,142 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import com.google.common.annotations.Beta;
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import java.util.List;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
-import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
+import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 /**
  * The {@link Archetype} for {@link EnumTypeObject} specializations.
  * @since 15.0.0
  */
-@Beta
 @NonNullByDefault
-public non-sealed interface EnumTypeObjectArchetype extends TypeObjectArchetype<EnumTypeObject> {
+public record EnumTypeObjectArchetype(
+        JavaTypeName name,
+        TypeEffectiveStatement.MandatoryIn<?, ?> statement,
+        EnumTypeDefinition typeDefinition)
+        implements TypeObjectArchetype<EnumTypeObject>, Archetype.Compat<EffectiveStatement<?,?>> {
+
     /**
-     * A {@link TypeBuilder} producing {@link EnumTypeObjectArchetype}.
+     * {@return the injective mapping from YANG {@code enum} assigned name to its assigned Java {@code enum} constant,
+     * with iteration order matching {@code typeDefinition().getValues()}}
      */
-    sealed interface Builder extends TypeBuilder, AnnotableTypeBuilder permits EnumTypeObjectArchetypeBuilder {
+    public ImmutableBiMap<EnumPair, String> valueToConstant() {
+        return mapNames(typeDefinition.getValues());
+    }
 
-        void setDescription(String description);
-
-        void setReference(String reference);
-
-        void setModuleName(String moduleName);
-
-        void setYangSourceDefinition(YangSourceDefinition yangSourceDefinition);
-
-        /**
-         * Updates this builder with data from <code>enumTypeDef</code>. Specifically this data represents list
-         * of value-name pairs.
+    /**
+     * Returns Java identifiers, conforming to JLS9 Section 3.8 to use for specified YANG assigned names
+     * (RFC7950 Section 9.6.4). This method considers two distinct encodings: one the pre-Fluorine mapping, which is
+     * okay and convenient for sane strings, and an escaping-based bijective mapping which works for all possible
+     * Unicode strings.
+     *
+     * @param assignedNames Collection of assigned names
+     * @return A BiMap keyed by assigned name, with Java identifiers as values
+     * @throws IllegalArgumentException if any of the names is empty
+     */
+    private static ImmutableBiMap<EnumPair, String> mapNames(final List<EnumPair> values) {
+        /*
+         * Original mapping assumed strings encountered are identifiers, hence it used getClassName to map the names
+         * and that function is not an injection -- this is evidenced in MDSAL-208 and results in a failure to compile
+         * generated code. If we encounter such a conflict or if the result is not a valid identifier (like '*'), we
+         * abort and switch the mapping schema to mapEnumAssignedName(), which is a bijection.
          *
-         * @param enumTypeDef enum type definition as source of enum data for <code>enumBuilder</code>
+         * Note that assignedNames can contain duplicates, which must not trigger a duplication fallback.
          */
-        void updateEnumPairsFromEnumTypeDef(EnumTypeDefinition enumTypeDef);
+        final var javaToYang = HashBiMap.<String, String>create(values.size());
+        for (var pair : values) {
+            final var name = pair.getName();
+            checkArgument(!name.isEmpty());
+            if (!javaToYang.containsValue(name)) {
+                final var mappedName = Naming.getClassName(name);
+                if (!Naming.isValidJavaIdentifier(mappedName) || javaToYang.forcePut(mappedName, name) != null) {
+                    // Fall back to bijective mapping
+                    return bijectiveMapNames(values);
+                }
+            }
+        }
 
-        EnumTypeObjectArchetype build();
+        final var yangToJava = javaToYang.inverse();
+        return values.stream().collect(ImmutableBiMap.toImmutableBiMap(Function.identity(),
+            value -> yangToJava.get(value.getName())));
     }
 
-    /**
-     * {@return the {@link EnumTypeValue}s}
-     */
-    List<EnumTypeValue> values();
+    private static ImmutableBiMap<EnumPair, String> bijectiveMapNames(final List<EnumPair> values) {
+        return values.stream().collect(ImmutableBiMap.toImmutableBiMap(Function.identity(),
+            value -> Naming.mapEnumAssignedName(value.getName())));
+    }
+
+    @Override
+    public final int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public final boolean equals(final @Nullable Object obj) {
+        return this == obj || obj instanceof Type other && name.equals(other.name());
+    }
+
+    @Override
+    public final String toString() {
+        final var helper = MoreObjects.toStringHelper(this).add("name", name);
+        final var values = typeDefinition.getValues();
+        if (!values.isEmpty()) {
+            helper.add("values", values);
+        }
+        return helper.toString();
+    }
 
     @Override
     @Deprecated(forRemoval = true)
-    default @Nullable TypeComment getComment() {
-        return null;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<Type> getImplements() {
+    public List<AnnotationType> getAnnotations() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<GeneratedType> getEnclosedTypes() {
+    public List<Type> getImplements() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<EnumTypeObjectArchetype> getEnumerations() {
+    public List<GeneratedType> getEnclosedTypes() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<Constant> getConstantDefinitions() {
+    public List<EnumTypeObjectArchetype> getEnumerations() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<MethodSignature> getMethodDefinitions() {
+    public List<Constant> getConstantDefinitions() {
         return List.of();
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<GeneratedProperty> getProperties() {
+    public List<MethodSignature> getMethodDefinitions() {
+        return List.of();
+    }
+
+    @Override
+    @Deprecated(forRemoval = true)
+    public List<GeneratedProperty> getProperties() {
         return List.of();
     }
 }

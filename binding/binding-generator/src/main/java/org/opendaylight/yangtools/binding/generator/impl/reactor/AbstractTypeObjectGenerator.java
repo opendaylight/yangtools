@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -51,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
@@ -566,7 +568,10 @@ abstract class AbstractTypeObjectGenerator<
 
         return switch (support) {
             case TypeObjectSupport.Bits bits -> bits.toArchetype(this, builderFactory);
-            case TypeObjectSupport.Enumeration enumeration -> enumeration.toArchetype(this, builderFactory);
+            case TypeObjectSupport.Enumeration enumeration -> {
+                final var stmt = statement();
+                yield new EnumTypeObjectArchetype(typeName(), stmt, (EnumTypeDefinition) stmt.typeDefinition());
+            }
             case TypeObjectSupport.Union union -> {
                 final var entry = union.toArchetype(this, unionDependencies, builderFactory);
                 auxiliaryGeneratedTypes = List.copyOf(entry.getValue());

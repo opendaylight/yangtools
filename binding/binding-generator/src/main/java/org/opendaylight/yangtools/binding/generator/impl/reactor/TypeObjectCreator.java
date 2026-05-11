@@ -33,14 +33,12 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
-import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat.WithQNameArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -48,6 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 /**
  * Utility class for creating {@link TypeObjectArchetype}s.
@@ -72,12 +71,12 @@ final class TypeObjectCreator {
             .put(BuiltInType.UINT64.typeName(), BaseYangTypes.UINT64_TYPE)
             .build();
 
-    private final WithQNameArgument<?> definingStatement;
+    private final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement;
     private final TypeBuilderFactory builderFactory;
     private final ModuleEffectiveStatement module;
 
-    private TypeObjectCreator(final WithQNameArgument<?> definingStatement, final TypeBuilderFactory builderFactory,
-            final ModuleEffectiveStatement module) {
+    private TypeObjectCreator(final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement,
+            final TypeBuilderFactory builderFactory, final ModuleEffectiveStatement module) {
         this.definingStatement = requireNonNull(definingStatement);
         this.builderFactory = requireNonNull(builderFactory);
         this.module = requireNonNull(module);
@@ -89,33 +88,27 @@ final class TypeObjectCreator {
     }
 
     static BitsTypeObjectArchetype createBitsTypeObjectArchetype(final JavaTypeName typeName,
-            final WithQNameArgument<?> statement, final TypeBuilderFactory builderFactory,
-            final ModuleEffectiveStatement module) {
-        return new TypeObjectCreator(statement, builderFactory, module)
-            .createBits(typeName, (BitsTypeDefinition) statement.typeDefinition());
-    }
-
-    static EnumTypeObjectArchetype createEnumTypeObjectArchetype(final JavaTypeName typeName,
-            final WithQNameArgument<?> statement, final TypeBuilderFactory builderFactory,
-            final ModuleEffectiveStatement module) {
-        return new TypeObjectCreator(statement, builderFactory, module)
-            .createEnumeration(typeName, (EnumTypeDefinition) statement.typeDefinition());
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final BitsTypeDefinition typeDefinition,
+            final TypeBuilderFactory builderFactory, final ModuleEffectiveStatement module) {
+        return new TypeObjectCreator(statement, builderFactory, module).createBits(typeName, typeDefinition);
     }
 
     static ScalarTypeObjectArchetype createScalarTypeObjectArchetype(final JavaTypeName typeName,
-            final WithQNameArgument<?> statement, final ConcreteType javaType, final TypeBuilderFactory builderFactory,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final TypeDefinition<?> typeDefinition,
+            final ConcreteType javaType, final TypeBuilderFactory builderFactory,
             final ModuleEffectiveStatement module) {
         return new TypeObjectCreator(statement, builderFactory, module)
-            .createScalar(typeName, javaType, statement.typeDefinition());
+            .createScalar(typeName, javaType, typeDefinition);
     }
 
     static Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> createUnionTypeObjectArchetype(
-            final JavaTypeName typeName, final WithQNameArgument<?> statement, final TypeEffectiveStatement type,
+            final JavaTypeName typeName, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
+            final UnionTypeDefinition typeDefinition, final TypeEffectiveStatement type,
             final Dependencies dependencies, final TypeBuilderFactory builderFactory,
             final ModuleEffectiveStatement module) {
         final var tmp = new ArrayList<GeneratedType>(1);
         final var archetype = new TypeObjectCreator(statement, builderFactory, module)
-            .createUnion(tmp, dependencies, typeName, type, statement.typeDefinition());
+            .createUnion(tmp, dependencies, typeName, type, typeDefinition);
         return Map.entry(archetype, tmp);
     }
 
@@ -138,19 +131,6 @@ final class TypeObjectCreator {
         builderFactory.addCodegenInformation(typedef, builder);
         AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(typedef, builder);
         AbstractTypeObjectGenerator.makeSerializable(builder);
-        return builder.build();
-    }
-
-    private EnumTypeObjectArchetype createEnumeration(final JavaTypeName typeName, final EnumTypeDefinition typedef) {
-        // TODO units for typedef enum
-        final var builder = builderFactory.newEnumTypeObjectBuilder(typeName);
-        YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
-
-        typedef.getDescription().map(DocUtils::encodeAngleBrackets).ifPresent(builder::setDescription);
-        typedef.getReference().ifPresent(builder::setReference);
-
-        builder.setModuleName(module.argument().getLocalName());
-        builder.updateEnumPairsFromEnumTypeDef(typedef);
         return builder.build();
     }
 
@@ -217,8 +197,8 @@ final class TypeObjectCreator {
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
                 } else if (BuiltInType.ENUMERATION.typeName().equals(subName)) {
-                    final var subEnumeration = createEnumeration(
-                        typeName.createEnclosed(Naming.getClassName(localName), "$"),
+                    final var subEnumeration = new EnumTypeObjectArchetype(
+                        typeName.createEnclosed(Naming.getClassName(localName), "$"), definingStatement,
                         (EnumTypeDefinition) subType.typeDefinition());
                     builder.addEnumeration(subEnumeration);
                     generatedType = subEnumeration;
