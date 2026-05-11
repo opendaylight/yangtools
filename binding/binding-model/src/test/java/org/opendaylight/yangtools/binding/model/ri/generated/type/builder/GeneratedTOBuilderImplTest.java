@@ -17,28 +17,20 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 
 class GeneratedTOBuilderImplTest {
     @Test
-    void testCreateNewInstance() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
-        assertNotNull(genTOBuilder);
-    }
-
-    @Test
     void testSetExtendsType() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
+        final var genTOBuilder = new CodegenScalarTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
-        final var extendedTypeBuilder = new CodegenGeneratedTOBuilder(
+        final var extendedTypeBuilder = new CodegenScalarTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "ExtendedType"));
         final var extendedType = extendedTypeBuilder.build();
         genTOBuilder.setExtendsType(extendedType);
         final var genTO = genTOBuilder.build();
-
-        assertEquals("ExtendedType", genTO.getSuperType().simpleName());
+        assertEquals(extendedType, genTO.getSuperType());
     }
 
     @Test
     void testAddMethod() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
+        final var genTOBuilder = new CodegenScalarTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
         final var methodSignatureBuilder = genTOBuilder.addMethod("testMethod");
         assertEquals(methodSignatureBuilder, genTOBuilder.getMethodDefinitions().get(0));
@@ -47,19 +39,12 @@ class GeneratedTOBuilderImplTest {
 
     @Test
     void testSetRestrictions() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
+        final var genTOBuilder = new CodegenScalarTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
         genTOBuilder.setRestrictions(Restrictions.empty());
         final var genTO = genTOBuilder.build();
 
         assertNotNull(genTO.getRestrictions());
-    }
-
-    @Test
-    void testToStringMethod() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
-        assertNotNull(genTOBuilder.toString());
     }
 
     @Test
@@ -77,14 +62,5 @@ class GeneratedTOBuilderImplTest {
         assertEquals("test description", archetype.getDescription());
         assertEquals("test-module", archetype.getModuleName());
         assertEquals("http://tools.ietf.org/html/rfc6020", archetype.getReference());
-    }
-
-    @Test
-    void testMethodsOfGeneratedTransferObjectImpl() {
-        final var genTOBuilder = new CodegenGeneratedTOBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Test"));
-        final var genTO = genTOBuilder.build();
-
-        assertNotNull(genTO.toString());
     }
 }

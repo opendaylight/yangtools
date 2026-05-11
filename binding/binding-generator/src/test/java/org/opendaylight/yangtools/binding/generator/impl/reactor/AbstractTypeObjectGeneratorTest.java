@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,7 +27,7 @@ class AbstractTypeObjectGeneratorTest {
     private TypeDefinition<?> typedef;
 
     private final CodegenGeneratedTOBuilder builder =
-        new CodegenGeneratedTOBuilder(JavaTypeName.create("test.package", "TestBuilder"));
+        new CodegenScalarTypeObjectArchetypeBuilder(JavaTypeName.create("test.package", "TestBuilder"));
 
     @Test
     void testAddUnits() {

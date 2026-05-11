@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
 class GeneratedTOBuilderTest {
     @Test
     void testBuilder() {
-        final var genTypeBuilder = new CodegenGeneratedTOBuilder(
+        final var genTypeBuilder = new CodegenScalarTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
         final var suid = genTypeBuilder.addProperty("SUID").setReturnType(BindingTypes.SCALAR_TYPE_OBJECT);
@@ -41,18 +40,19 @@ class GeneratedTOBuilderTest {
 
     @Test
     void testToString() {
-        final var genTypeBuilder = new CodegenGeneratedTOBuilder(
+        final var genTypeBuilder = new CodegenScalarTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
-        assertThat(genTypeBuilder.toString())
-            .startsWith("CodegenGeneratedTOBuilder{typeName=org.opendaylight.controller.AnnotClassCache");
+        assertEquals("CodegenScalarTypeObjectArchetypeBuilder{typeName=org.opendaylight.controller.AnnotClassCache}",
+            genTypeBuilder.toString());
     }
 
     @Test
     void testTransferBuilderToString() {
-        final var genTypeBuilder1 = new CodegenGeneratedTOBuilder(
+        final var genTypeBuilder1 = new CodegenScalarTypeObjectArchetypeBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
         var genTO = genTypeBuilder1.build();
-        assertThat(genTO.toString()).startsWith("GTO{name=org.opendaylight.controller.AnnotClassCache");
+        assertEquals("CodegenScalarTO{name=org.opendaylight.controller.AnnotClassCache, extends=null}",
+            genTO.toString());
     }
 }

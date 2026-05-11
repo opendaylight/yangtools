@@ -235,11 +235,11 @@ class GeneratedTypeBuilderTest {
     void addEnclosingTransferObjectTest() {
         var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
 
-        var enclosingTransferObject = new CodegenGeneratedTOBuilder(generatedTypeBuilder.typeName()
+        var enclosingTransferObject = new CodegenScalarTypeObjectArchetypeBuilder(generatedTypeBuilder.typeName()
             .createEnclosed("myTOName"));
-        var enclosingTransferObject2 = new CodegenGeneratedTOBuilder(generatedTypeBuilder.typeName()
+        var enclosingTransferObject2 = new CodegenScalarTypeObjectArchetypeBuilder(generatedTypeBuilder.typeName()
             .createEnclosed("myTOName2"));
-        var enclosingTransferObject3 = new CodegenGeneratedTOBuilder(generatedTypeBuilder.typeName()
+        var enclosingTransferObject3 = new CodegenScalarTypeObjectArchetypeBuilder(generatedTypeBuilder.typeName()
             .createEnclosed("myTOName3"));
 
         generatedTypeBuilder.addEnclosingTransferObject(enclosingTransferObject.build());
@@ -253,7 +253,7 @@ class GeneratedTypeBuilderTest {
         assertTrue(enclosedTypes.contains(enclosingTransferObject.build()));
         assertTrue(enclosedTypes.contains(enclosingTransferObject2.build()));
         assertTrue(enclosedTypes.contains(enclosingTransferObject3.build()));
-        assertFalse(enclosedTypes.contains(new CodegenGeneratedTOBuilder(
+        assertFalse(enclosedTypes.contains(new CodegenScalarTypeObjectArchetypeBuilder(
             generatedTypeBuilder.typeName().createEnclosed("myTOName4")).build()));
     }
 
