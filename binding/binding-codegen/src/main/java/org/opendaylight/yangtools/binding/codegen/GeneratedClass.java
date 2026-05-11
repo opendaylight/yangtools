@@ -185,9 +185,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
 
         final var cb = new HashSet<String>();
         if (genType instanceof EnumTypeObjectArchetype enumeration) {
-            for (var value : enumeration.values()) {
-                cb.add(value.constantName());
-            }
+            cb.addAll(enumeration.valueToConstant().values());
         }
         // TODO: perhaps we can do something smarter to actually access the types
         collectAccessibleTypes(cb, genType);

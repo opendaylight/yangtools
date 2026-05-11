@@ -66,14 +66,14 @@ abstract class AbstractGeneratedType implements GeneratedType {
             final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
             final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
             final List<GeneratedTransferObject.Builder> enclosedGenTOBuilders,
-            final List<EnumTypeObjectArchetype.Builder> enumBuilders, final List<Constant> constants,
+            final List<EnumTypeObjectArchetype> enums, final List<Constant> constants,
             final List<MethodSignatureBuilder> methodBuilders, final List<GeneratedPropertyBuilder> propertyBuilders) {
         name = requireNonNull(typeName);
         this.comment = comment;
         annotations = toUnmodifiableAnnotations(annotationBuilders);
         this.implementsTypes = makeUnmodifiable(implementsTypes);
         this.constants = makeUnmodifiable(constants);
-        enumerations = toUnmodifiableEnumerations(enumBuilders);
+        enumerations = makeUnmodifiable(enums);
         methodSignatures = toUnmodifiableMethods(methodBuilders);
         enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders, enclosedGenTOBuilders);
         properties = toUnmodifiableProperties(propertyBuilders);
@@ -140,13 +140,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
             methods.add(methodBuilder.build());
         }
         return makeUnmodifiable(methods);
-    }
-
-    protected static final @NonNull List<EnumTypeObjectArchetype> toUnmodifiableEnumerations(
-            final List<EnumTypeObjectArchetype.Builder> enumBuilders) {
-        return makeUnmodifiable(enumBuilders.stream()
-            .map(EnumTypeObjectArchetype.Builder::build)
-            .collect(Collectors.toUnmodifiableList()));
     }
 
     protected static final @NonNull List<GeneratedProperty> toUnmodifiableProperties(

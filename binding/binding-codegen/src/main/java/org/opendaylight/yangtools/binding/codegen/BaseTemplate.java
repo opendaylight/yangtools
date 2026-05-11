@@ -299,21 +299,32 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         }
         final var def = type.yangSourceDefinition();
         if (def != null) {
-            appendSnippet(sb, type, def.getModule(), def.getNode());
+            final var node = def.getNode();
+            appendSnippet(sb, type, def.getModule(), requireEffective(node), node);
         }
 
         final var str = sb.toString();
         return str.isBlank() ? "" : str.stripTrailing() + '\n';
     }
 
+    @NonNullByDefault
+    private static EffectiveStatement<?, ?> requireEffective(final DocumentedNode node) {
+        return switch (node) {
+            case EffectiveStatementEquivalent<?> equivalent -> equivalent.asEffectiveStatement();
+            case EffectiveStatement<?, ?> effective -> effective;
+            case ContainerLikeCompat compat -> requireEffective(compat.delegate());
+            default -> throw new VerifyException("Unsupported node " + node);
+        };
+    }
+
     final @Nullable BlockBuilder javadocBlock(final @NonNull ModuleEffectiveStatement module,
-            final @NonNull DocumentedNode node) {
+            final @NonNull EffectiveStatement<?, ?> stmt, final @NonNull DocumentedNode node) {
         final var sb = new StringBuilder();
         final var comment = DocUtils.typeCommentOf(node);
         if (comment != null) {
             sb.append(comment.getJavadoc());
         }
-        appendSnippet(sb, type(), module, node);
+        appendSnippet(sb, type(), module, stmt, node);
 
         final var str = sb.toString();
         if (str.isBlank()) {
@@ -327,14 +338,14 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     @NonNullByDefault
     private void appendSnippet(final StringBuilder sb, final GeneratedType type, final ModuleEffectiveStatement module,
-            final DocumentedNode node) {
+            final EffectiveStatement<?, ?> stmt, final DocumentedNode node) {
         appendYangSnippet(sb
             .append('\n')
             .append("<p>\n")
             .append("This class represents the following YANG schema fragment defined in module <b>")
             .append(module.argument().getLocalName()).append("</b>\n")
             .append("<pre>\n"),
-            module, requireEffective(node).requireDeclared())
+            module, stmt.requireDeclared())
             .append("</pre>");
 
         if (node instanceof SchemaNode schema) {
@@ -359,7 +370,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                     sb.append('\n');
                 }
             }
-        } else if (node instanceof AugmentEffectiveStatement) {
+        } else if (stmt instanceof AugmentEffectiveStatement) {
             // Find target Augmentation<Foo> and reference Foo
             final var augType = findAugmentationArgument(type);
             if (augType != null) {
@@ -368,7 +379,10 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                     .append("@see ").append(importedName(augType));
             }
         }
-        if (node instanceof TypedefEffectiveStatement && type instanceof GeneratedTransferObject genTO) {
+        // FIXME: this is equivalent to genTo.isTypedef() so we should be able to unify the two concepts -- but really
+        //        that soulds like it should be handled in those templates ... perhaps we should receive these from
+        //        the caller as 'List<JavaTypeName> seeAlso'?
+        if (stmt instanceof TypedefEffectiveStatement && type instanceof GeneratedTransferObject<?> genTO) {
             final var augType = genTO.getSuperType();
             if (augType != null) {
                 sb
@@ -376,17 +390,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                     .append("@see ").append(augType.simpleName());
             }
         }
-    }
-
-    // TODO: can we ditch this method?
-    @NonNullByDefault
-    private static EffectiveStatement<?, ?> requireEffective(final DocumentedNode node) {
-        return switch (node) {
-            case EffectiveStatementEquivalent<?> equivalent -> equivalent.asEffectiveStatement();
-            case EffectiveStatement<?, ?> effective -> effective;
-            case ContainerLikeCompat compat -> requireEffective(compat.delegate());
-            default -> throw new VerifyException("Unsupported node " + node);
-        };
     }
 
     // FIXME: return BlockFragment

@@ -34,7 +34,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 /**
  * Support for {@link TypeObject} specializations.
@@ -61,8 +64,9 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
 
         BitsTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
                 final TypeBuilderFactory builderFactory) {
-            return TypeObjectCreator.createBitsTypeObjectArchetype(gen.typeName(), gen.statement(), builderFactory,
-                gen.currentModule().statement());
+            final var stmt = gen.statement();
+            return TypeObjectCreator.createBitsTypeObjectArchetype(gen.typeName(), stmt,
+                (BitsTypeDefinition) stmt.typeDefinition(), builderFactory, gen.currentModule().statement());
         }
     }
 
@@ -73,8 +77,9 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
 
         EnumTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
                 final TypeBuilderFactory builderFactory) {
-            return TypeObjectCreator.createEnumTypeObjectArchetype(gen.typeName(), gen.statement(), builderFactory,
-                gen.currentModule().statement());
+            final var stmt = gen.statement();
+            return TypeObjectCreator.createEnumTypeObjectArchetype(gen.typeName(), stmt,
+                (EnumTypeDefinition) stmt.typeDefinition(), builderFactory, gen.currentModule().statement());
         }
     }
 
@@ -114,8 +119,9 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
 
         ScalarTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
                 final TypeBuilderFactory builderFactory) {
-            return TypeObjectCreator.createScalarTypeObjectArchetype(gen.typeName(), gen.statement(), javaType,
-                builderFactory, gen.currentModule().statement());
+            final var stmt = gen.statement();
+            return TypeObjectCreator.createScalarTypeObjectArchetype(gen.typeName(), stmt, stmt.typeDefinition(),
+                javaType, builderFactory, gen.currentModule().statement());
         }
     }
 
@@ -177,8 +183,10 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
         Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> toArchetype(
                 final AbstractTypeObjectGenerator<?, ?> gen, final Dependencies dependencies,
                 final TypeBuilderFactory builderFactory) {
-            return TypeObjectCreator.createUnionTypeObjectArchetype(gen.typeName(), gen.statement(), type, dependencies,
-                builderFactory, gen.currentModule().statement());
+            final var stmt = gen.statement();
+            return TypeObjectCreator.createUnionTypeObjectArchetype(gen.typeName(), stmt,
+                (UnionTypeDefinition) stmt.typeDefinition(), type, dependencies, builderFactory,
+                gen.currentModule().statement());
         }
     }
 

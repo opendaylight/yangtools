@@ -12,7 +12,6 @@ import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.EnumTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeBitsTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeScalarTypeObjectArchetypeBuilder;
@@ -52,11 +50,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         @Override
         BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(final JavaTypeName typeName) {
             return new CodegenBitsTypeObjectArchetypeBuilder(typeName);
-        }
-
-        @Override
-        EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(final JavaTypeName typeName) {
-            return new EnumTypeObjectArchetypeBuilder.Codegen(typeName);
         }
 
         @Override
@@ -118,11 +111,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(final JavaTypeName typeName) {
-            return new EnumTypeObjectArchetypeBuilder.Runtime(typeName);
-        }
-
-        @Override
         ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(final JavaTypeName identifier) {
             return new RuntimeScalarTypeObjectArchetypeBuilder(identifier);
         }
@@ -166,9 +154,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
     @NonNullByDefault
     abstract BitsTypeObjectArchetype.Builder newBitsTypeObjectBuilder(JavaTypeName typeName);
-
-    @NonNullByDefault
-    abstract EnumTypeObjectArchetype.Builder newEnumTypeObjectBuilder(JavaTypeName typeName);
 
     @NonNullByDefault
     abstract ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(JavaTypeName identifier);

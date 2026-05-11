@@ -47,7 +47,7 @@ final class OpaqueObjectTemplate extends ArchetypeTemplate<OpaqueObjectArchetype
             case OpaqueObjectArchetype.Anyxml anyxml -> "anyxml";
         };
 
-        return newBodyBuilder(type.statement().toDataSchemaNode())
+        return newBodyBuilder(type.statement())
             .str("public interface ").str(simpleName).str(" extends ").gen(importedName(OPAQUE_OBJECT), simpleName).oB()
                 .eol("/**")
                 .str(" * The YANG identifier of the {@code ").str(stmt).eol("} represented by this class.")

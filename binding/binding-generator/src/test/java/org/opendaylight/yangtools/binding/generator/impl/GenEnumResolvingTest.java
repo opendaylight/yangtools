@@ -50,8 +50,9 @@ class GenEnumResolvingTest {
         assertNotNull(linkUpDownTrapEnable, "Expected Enum LinkUpDownTrapEnable, but was NULL!");
         assertNotNull(operStatus, "Expected Enum OperStatus, but was NULL!");
 
-        assertEquals(2, linkUpDownTrapEnable.values().size(), "Enum LinkUpDownTrapEnable MUST contain 2 values!");
-        assertEquals(7, operStatus.values().size(), "Enum OperStatus MUST contain 7 values!");
+        assertEquals(2, linkUpDownTrapEnable.valueToConstant().size(),
+            "Enum LinkUpDownTrapEnable MUST contain 2 values!");
+        assertEquals(7, operStatus.valueToConstant().size(), "Enum OperStatus MUST contain 7 values!");
 
         final var methods = genInterface.getMethodDefinitions();
 
@@ -69,7 +70,7 @@ class GenEnumResolvingTest {
         }
 
         assertNotNull(ianaIfType, "Method getType MUST return Enumeration Type not NULL reference!");
-        assertEquals(272, ianaIfType.values().size(), "Enumeration getType MUST contain 272 values!");
+        assertEquals(272, ianaIfType.valueToConstant().size(), "Enumeration getType MUST contain 272 values!");
     }
 
     @Test
@@ -80,7 +81,7 @@ class GenEnumResolvingTest {
         assertEquals(2, genTypes.size());
 
         final var type = assertInstanceOf(EnumTypeObjectArchetype.class, genTypes.get(1));
-        assertEquals(272, type.values().size(), "Enumeration type MUST contain 272 values!");
+        assertEquals(272, type.valueToConstant().size(), "Enumeration type MUST contain 272 values!");
     }
 
     @Test
@@ -137,59 +138,67 @@ class GenEnumResolvingTest {
         // ------------------- container test-enums -----------------------
         final var testEnums = genTypes.get(1).getEnumerations();
         assertEquals(4, testEnums.size());
-        final var dollarContaining = testEnums.get(0).values();
+        final var dollarContaining = testEnums.getFirst().valueToConstant();
         assertEquals(5, dollarContaining.size());
-        assertEquals("$", dollarContaining.get(0).constantName());
-        assertEquals("$abc", dollarContaining.get(1).constantName());
-        assertEquals("A$bc", dollarContaining.get(2).constantName());
-        assertEquals("Ab$c", dollarContaining.get(3).constantName());
-        assertEquals("Abc$", dollarContaining.get(4).constantName());
-        final var prefixRequired = testEnums.get(1).values();
+        final var dcIt = dollarContaining.values().iterator();
+        assertEquals("$", dcIt.next());
+        assertEquals("$abc", dcIt.next());
+        assertEquals("A$bc", dcIt.next());
+        assertEquals("Ab$c", dcIt.next());
+        assertEquals("Abc$", dcIt.next());
+        final var prefixRequired = testEnums.get(1).valueToConstant();
         assertEquals(2, prefixRequired.size());
-        assertEquals("_09", prefixRequired.get(0).constantName());
-        assertEquals("_1337LeetPro", prefixRequired.get(1).constantName());
-        final var invalidIdentifier = testEnums.get(2).values();
+        final var prIt = prefixRequired.values().iterator();
+        assertEquals("_09", prIt.next());
+        assertEquals("_1337LeetPro", prIt.next());
+        final var invalidIdentifier = testEnums.get(2).valueToConstant();
         assertEquals(1, invalidIdentifier.size());
-        assertEquals("$_", invalidIdentifier.get(0).constantName());
-        final var invalidChars = testEnums.get(3).values();
+        assertEquals("$_", invalidIdentifier.values().iterator().next());
+        final var invalidChars = testEnums.get(3).valueToConstant();
         assertEquals(5, invalidChars.size());
-        assertEquals("$$2A$", invalidChars.get(0).constantName());
-        assertEquals("$$2E$", invalidChars.get(1).constantName());
-        assertEquals("$$2F$", invalidChars.get(2).constantName());
-        assertEquals("$$3F$", invalidChars.get(3).constantName());
-        assertEquals("$a$2A$a", invalidChars.get(4).constantName());
+        final var icIt = invalidChars.values().iterator();
+        assertEquals("$$2A$", icIt.next());
+        assertEquals("$$2E$", icIt.next());
+        assertEquals("$$2F$", icIt.next());
+        assertEquals("$$3F$", icIt.next());
+        assertEquals("$a$2A$a", icIt.next());
 
         // ------------------- container okay-identifier -----------------------
         final var okayIdentifier = genTypes.get(2).getEnumerations();
         assertEquals(2, okayIdentifier.size());
-        final var underscores = okayIdentifier.get(0).values();
+        final var underscores = okayIdentifier.getFirst().valueToConstant();
         assertEquals(1, underscores.size());
-        assertEquals("__", underscores.get(0).constantName());
-        final var wordsCapitalCamelCase = okayIdentifier.get(1).values();
+        assertEquals("__", underscores.values().iterator().next());
+        final var wordsCapitalCamelCase = okayIdentifier.getLast().valueToConstant();
         assertEquals(2, wordsCapitalCamelCase.size());
-        assertEquals("True", wordsCapitalCamelCase.get(0).constantName());
-        assertEquals("ĽaľahoPapľuhu", wordsCapitalCamelCase.get(1).constantName());
+        final var wcccIt = wordsCapitalCamelCase.values().iterator();
+        assertEquals("True", wcccIt.next());
+        assertEquals("ĽaľahoPapľuhu", wcccIt.next());
 
         // ------------------- container conflicting-names -----------------------
         final var conflictingNames = genTypes.get(3).getEnumerations();
         assertEquals(4, conflictingNames.size());
-        final var conflict1 = conflictingNames.get(0).values();
+        final var conflict1 = conflictingNames.get(0).valueToConstant();
         assertEquals(3, conflict1.size());
-        assertEquals("_09", conflict1.get(0).constantName());
-        assertEquals("$09", conflict1.get(1).constantName());
-        assertEquals("$0$2D$9", conflict1.get(2).constantName());
-        final var conflict2 = conflictingNames.get(1).values();
+        final var c1it = conflict1.values().iterator();
+        assertEquals("_09", c1it.next());
+        assertEquals("$09", c1it.next());
+        assertEquals("$0$2D$9", c1it.next());
+        final var conflict2 = conflictingNames.get(1).valueToConstant();
         assertEquals(2, conflict2.size());
-        assertEquals("aZ", conflict2.get(0).constantName());
-        assertEquals("$a$2D$z", conflict2.get(1).constantName());
-        final var conflict3 = conflictingNames.get(2).values();
+        final var c2it = conflict2.values().iterator();
+        assertEquals("aZ", c2it.next());
+        assertEquals("$a$2D$z", c2it.next());
+        final var conflict3 = conflictingNames.get(2).valueToConstant();
         assertEquals(3, conflict3.size());
-        assertEquals("$a2$2E$5", conflict3.get(0).constantName());
-        assertEquals("a25", conflict3.get(1).constantName());
-        assertEquals("$a2$2D$5", conflict3.get(2).constantName());
-        final var conflict4 = conflictingNames.get(3).values();
+        final var c3it = conflict3.values().iterator();
+        assertEquals("$a2$2E$5", c3it.next());
+        assertEquals("a25", c3it.next());
+        assertEquals("$a2$2D$5", c3it.next());
+        final var conflict4 = conflictingNames.get(3).valueToConstant();
         assertEquals(2, conflict4.size());
-        assertEquals("$ľaľaho$20$papľuhu", conflict4.get(0).constantName());
-        assertEquals("$ľaľaho$20$$20$papľuhu", conflict4.get(1).constantName());
+        final var c4it = conflict4.values().iterator();
+        assertEquals("$ľaľaho$20$papľuhu", c4it.next());
+        assertEquals("$ľaľaho$20$$20$papľuhu", c4it.next());
     }
 }

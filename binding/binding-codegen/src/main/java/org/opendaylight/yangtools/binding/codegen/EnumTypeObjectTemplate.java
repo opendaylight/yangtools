@@ -43,54 +43,31 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
 
     static void generateAsInner(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
             final DataRootArchetype root, final BlockBuilder bb) {
-        new EnumTypeObjectTemplate(javaType, archetype, root).appendBody(bb);
+        bb.blk(new EnumTypeObjectTemplate(javaType, archetype, root).body());
     }
 
     @Override
     BlockBuilder body() {
-        final var bb = newBlockBuilder();
-        appendBody(bb);
-        return bb;
-    }
-
-    private void appendBody(final BlockBuilder bb) {
-        // calculate imports up front
         final var archetype = archetype();
-        final var codeHelpers = importedName(CODEHELPERS);
-        final var enumTypeObject = importedName(ENUM_TYPE_OBJECT);
-        final var iae = importedName(IAE);
-        final var nonnullSelf = importedNonNull(archetype);
-        final var nonnullString = importedNonNull(Types.STRING);
-        final var npe = importedName(NPE);
-        final var nullableSelf = importedNullable(archetype);
-        final var override = importedName(OVERRIDE);
-        final var string = importedName(Types.STRING);
-        final var typeName = archetype.simpleName();
+        final var simpleName = archetype.simpleName();
 
-        // now build the body
-        final var javadoc = formatDataForJavaDoc(archetype);
-        if (!javadoc.isBlank()) {
-            appendAsJavadoc(bb, javadoc);
-            bb.newLine();
-        }
+        final var bb = newBodyBuilder(archetype.statement(), archetype.typeDefinition())
+            .str("public enum ").str(simpleName).str(" implements ").str(importedName(ENUM_TYPE_OBJECT)).oB();
 
-        bb
-            .eol(generatedAnnotation())
-            .str("public enum ").str(typeName).str(" implements ").str(enumTypeObject).oB();
-
-        final var it = archetype.values().iterator();
+        final var valueToConstant = archetype.valueToConstant();
+        final var it = valueToConstant.entrySet().iterator();
         if (it.hasNext()) {
             while (true) {
-                final var value = it.next();
-
-                value.getDescription().ifPresent(desc -> {
+                final var entry = it.next();
+                final var pair = entry.getKey();
+                pair.getDescription().ifPresent(desc -> {
                     final var doc = encodeJavadocSymbols(DocUtils.encodeAngleBrackets(desc.trim()));
                     if (!doc.isEmpty()) {
                         appendAsJavadoc(bb, doc);
                         bb.newLine();
                     }
                 });
-                bb.str(value.constantName()).str("(").jInt(value.value()).str(", ").jStr(value.name()).str(")");
+                bb.str(entry.getValue()).str("(").jInt(pair.getValue()).str(", ").jStr(pair.getName()).str(")");
 
                 if (!it.hasNext()) {
                     break;
@@ -102,11 +79,20 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
             bb.eS();
         }
 
+        final var codeHelpers = importedName(CODEHELPERS);
+        final var iae = importedName(IAE);
+        final var nonnullSelf = importedNonNull(archetype);
+        final var nonnullString = importedNonNull(Types.STRING);
+        final var npe = importedName(NPE);
+        final var nullableSelf = importedNullable(archetype);
+        final var override = importedName(OVERRIDE);
+        final var string = importedName(Types.STRING);
+
         bb
             .str("private final ").str(nonnullString).eol(" name;")
             .eol("private final int value;")
             .nl()
-            .str("private ").str(typeName).str("(int value, ").str(nonnullString).str(" name)").oB()
+            .str("private ").str(simpleName).str("(int value, ").str(nonnullString).str(" name)").oB()
                 .eol("this.value = value;")
                 .eol("this.name = name;")
             .cB()
@@ -125,13 +111,13 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
             .eol(" * Return the enumeration member whose {@link #getName()} matches specified assigned name.")
             .eol(" *")
             .eol(" * @param name YANG assigned name")
-            .str(" * @return corresponding ").str(typeName).eol(" item, or {@code null} if no such item exists")
+            .str(" * @return corresponding ").str(simpleName).eol(" item, or {@code null} if no such item exists")
             .str(" * @throws ").str(npe).eol(" if {@code name} is null")
             .eol(" */")
             .str("public static ").str(nullableSelf).str(" forName(").str(string).str(" name)").oB()
                 .str("return switch (name)").oB();
-        for (var value : archetype.values()) {
-            bb.str("case ").jStr(value.name()).str(" -> ").str(value.constantName()).eS();
+        for (var entry : valueToConstant.entrySet()) {
+            bb.str("case ").jStr(entry.getKey().getName()).str(" -> ").str(entry.getValue()).eS();
         }
         bb
             .eol("default -> null;")
@@ -142,14 +128,14 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
             .eol(" * Return the enumeration member whose {@link #getIntValue()} matches specified value.")
             .eol(" *")
             .eol(" * @param intValue integer value")
-            .str(" * @return corresponding ").str(typeName).eol(" item, or {@code null} if no such item exists")
+            .str(" * @return corresponding ").str(simpleName).eol(" item, or {@code null} if no such item exists")
             .eol(" */")
             .str("public static ").str(nullableSelf).str(" forValue(int intValue)").oB()
                 .str("return switch (intValue)").oB();
-        for (var value : archetype.values()) {
-            bb.str("case ").jInt(value.value()).str(" -> ").str(value.constantName()).eS();
+        for (var entry : valueToConstant.entrySet()) {
+            bb.str("case ").jInt(entry.getKey().getValue()).str(" -> ").str(entry.getValue()).eS();
         }
-        bb
+        return bb
             .eol("default -> null;")
             .cb().eS()
             .cB()
@@ -159,7 +145,7 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
             .str(" * Return the enumeration member whose {@link #getName()} matches specified assigned name.").nl()
             .str(" *").nl()
             .str(" * @param name YANG assigned name").nl()
-            .str(" * @return corresponding ").str(typeName).str(" item").nl()
+            .str(" * @return corresponding ").str(simpleName).str(" item").nl()
             .str(" * @throws ").str(npe).str(" if {@code name} is null").nl()
             .str(" * @throws ").str(iae).str(" if {@code name} does not match any item").nl()
             .str(" */").nl()
@@ -172,7 +158,7 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
             .str(" * Return the enumeration member whose {@link #getIntValue()} matches specified value.").nl()
             .str(" *").nl()
             .str(" * @param intValue integer value").nl()
-            .str(" * @return corresponding ").str(typeName).str(" item").nl()
+            .str(" * @return corresponding ").str(simpleName).str(" item").nl()
             .str(" * @throws ").str(iae).str(" if {@code intValue} does not match any item").nl()
             .str(" */").nl()
             .str("public static ").str(nonnullSelf).str(" ofValue(int intValue)").oB()

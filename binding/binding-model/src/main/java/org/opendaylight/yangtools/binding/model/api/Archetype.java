@@ -47,7 +47,7 @@ public sealed interface Archetype extends GeneratedType, Immutable
      */
     @Beta
     sealed interface Compat<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
-            permits WithQName, KeyArchetype {
+            permits WithQName, EnumTypeObjectArchetype, KeyArchetype {
         @Override
         @Deprecated(forRemoval = true)
         default String getDescription() {

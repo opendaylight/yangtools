@@ -48,8 +48,9 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
         final var type = archetype();
         final var simpleName = type.simpleName();
         final var rootName = importedName(root.name());
+        final var stmt = type.statement();
 
-        return newBodyBuilder(type.statement().toSchemaNode())
+        return newBodyBuilder(stmt, stmt.toSchemaNode())
             .at().eol(importedName(NONNULL_BY_DEFAULT))
             .str("public final class ").str(simpleName).str(" extends ")
                 .gen(importedName(YANG_FEATURE), simpleName, rootName).jBlock(bb -> {

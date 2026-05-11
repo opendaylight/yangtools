@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A template backed by an {@link Archetype} defined in some module manifested as a {@link DataRootArchetype}.
@@ -43,25 +45,24 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
 
     /**
      * {@return a new BlockBuilder initialized with javadoc block derived from the specified {@link DocumentedNode}
-     * followed by a {@code Generated} annotation}
-     * @param schemaNode the {@link DocumentedNode}
+     * followed by an optional {@code Deprecated} annotation, followed by a {@code Generated} annotation}
+     * @param stmt a {@link DataSchemaCompat} statement
      */
-    final BlockBuilder newBodyBuilder(final DocumentedNode schemaNode) {
-        return schemaNode instanceof DocumentedNode.WithStatus withStatus ? newBodyBuilder(withStatus)
-            : newBlockBuilder()
-                .blk(javadocBlock(root.statement(), schemaNode))
-                .eol(GENERATED_ANNOTATION);
+    final BlockBuilder newBodyBuilder(final DataSchemaCompat<?, ?> stmt) {
+        return newBodyBuilder(stmt, stmt.toDataSchemaNode());
     }
 
     /**
      * {@return a new BlockBuilder initialized with javadoc block derived from the specified {@link DocumentedNode}
-     * followed by an optional {@code Deprecated} annotation, followed by a {@code Generated} annotation}
-     * @param schemaNode the {@link DocumentedNode}
+     * view of an {@link EffectiveStatement} followed by an optional {@code Deprecated} annotation, followed by
+     * a {@code Generated} annotation}
+     * @param stmt the {@link EffectiveStatement}
+     * @param node the {@link DocumentedNode}
      */
-    final BlockBuilder newBodyBuilder(final DocumentedNode.WithStatus schemaNode) {
+    final BlockBuilder newBodyBuilder(final EffectiveStatement<?, ?> stmt, final DocumentedNode.WithStatus node) {
         return newBlockBuilder()
-            .blk(javadocBlock(root.statement(), schemaNode))
-            .blk(deprecatedAnnotation(schemaNode))
+            .blk(javadocBlock(root.statement(), stmt, node))
+            .blk(deprecatedAnnotation(node))
             .eol(GENERATED_ANNOTATION);
     }
 

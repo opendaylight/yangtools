@@ -51,7 +51,7 @@ final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
         final var input = importedName(type.input());
         final var output = importedName(type.output());
 
-        return newBodyBuilder(type.statement().toDataSchemaNode())
+        return newBodyBuilder(type.statement())
             .eol("@java.lang.FunctionalInterface")
             .str("public interface ").str(simpleName).str(" extends ").gen(importedName(RPC), input, output).oB()
                 .eol("/**")

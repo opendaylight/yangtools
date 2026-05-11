@@ -45,8 +45,9 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
         final var object = importedName(Types.objectType());
         final var override = importedName(OVERRIDE);
         final var codeHelpers = importedName(CODEHELPERS);
+        final var stmt = type.statement();
 
-        return newBodyBuilder(type.statement().toSchemaNode())
+        return newBodyBuilder(stmt, stmt.toSchemaNode())
             .str("public interface ").str(typeName).str(" extends ").frg(this::appendInterfaces).oB()
                 .eol("/**")
                 .eol(" * The name of the {@code identity} represented by this class.")

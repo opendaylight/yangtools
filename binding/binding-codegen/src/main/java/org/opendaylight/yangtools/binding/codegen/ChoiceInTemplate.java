@@ -42,7 +42,7 @@ final class ChoiceInTemplate extends ArchetypeTemplate<ChoiceInArchetype> {
     BlockBuilder body() {
         final var type = archetype();
 
-        return newBodyBuilder(type.statement().toDataSchemaNode())
+        return newBodyBuilder(type.statement())
             .str("public interface ").str(type.simpleName()).str(" extends ")
                 .gen(importedName(CHOICE_IN), importedName(type.choiceIn())).oB()
                 .eol("/**")

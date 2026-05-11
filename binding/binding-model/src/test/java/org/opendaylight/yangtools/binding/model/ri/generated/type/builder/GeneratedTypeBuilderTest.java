@@ -178,29 +178,6 @@ class GeneratedTypeBuilderTest {
     }
 
     @Test
-    void addEnumerationTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
-
-        var enumBuilder = new EnumTypeObjectArchetypeBuilder.Codegen(
-            generatedTypeBuilder.typeName().createEnclosed("myEnumName"));
-        var enumBuilder2 = new EnumTypeObjectArchetypeBuilder.Codegen(
-            generatedTypeBuilder.typeName().createEnclosed("myEnumName2"));
-
-        generatedTypeBuilder.addEnumeration(enumBuilder.build());
-        generatedTypeBuilder.addEnumeration(enumBuilder2.build());
-
-        var instance = generatedTypeBuilder.build();
-        var enumerations = instance.getEnumerations();
-
-        assertEquals(2, enumerations.size());
-
-        assertTrue(enumerations.contains(enumBuilder.build()));
-        assertTrue(enumerations.contains(enumBuilder2.build()));
-        assertFalse(enumerations.contains(
-            new EnumTypeObjectArchetypeBuilder.Codegen(JavaTypeName.create("my.package", "myEnumName3")).build()));
-    }
-
-    @Test
     void addImplementsTypeIllegalArgumentTest() {
         final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
         assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));
