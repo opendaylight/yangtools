@@ -1,0 +1,44 @@
+module yt1885 {
+  yang-version 1.1;
+  namespace yt1885;
+  prefix yt1885;
+
+  typedef four {
+    type bits {
+      bit one;
+      bit two;
+      bit three;
+      bit four;
+    }
+  }
+
+  typedef two {
+    type four {
+      bit one;
+      bit two;
+    }
+  }
+
+  typedef one {
+    type two {
+      bit one;
+    }
+  }
+
+  typedef nested {
+    type union {
+      type two;
+      type four {
+        bit three;
+      }
+    }
+  }
+
+  container cont {
+    leaf two {
+      type two {
+        bit two;
+      }
+    }
+  }
+}
