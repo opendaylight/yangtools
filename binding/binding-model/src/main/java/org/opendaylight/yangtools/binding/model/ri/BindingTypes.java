@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
-import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -87,7 +86,6 @@ public final class BindingTypes {
     private static final @NonNull ConcreteType OBJECT_REFERENCE = typeForClass(DataObjectIdentifier.class);
     private static final @NonNull ConcreteType OBJECT_REFERENCE_WITH_KEY =
         typeForClass(DataObjectIdentifier.WithKey.class);
-    private static final @NonNull ConcreteType ROOT_META = typeForClass(RootMeta.class);
     private static final @NonNull ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
     private static final @NonNull ConcreteType YANG_DATA = typeForClass(YangData.class);
 
@@ -272,18 +270,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType objectIdentifierWithKey(final Type type, final KeyArchetype keyType) {
         return ParameterizedType.of(OBJECT_REFERENCE_WITH_KEY, type, keyType);
-    }
-
-    /**
-     * Type specializing {@link RootMeta} for a particular type.
-     *
-     * @param root the {@link DataRoot} type
-     * @return A parameterized type corresponding to {@code RootMeta<Root>}
-     * @throws NullPointerException if {@code root} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType rootMeta(final Type root) {
-        return ParameterizedType.of(ROOT_META, root);
     }
 
     /**
