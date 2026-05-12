@@ -9,13 +9,15 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GenerateInnerClassForBitsAndUnionInLeavesTest {
@@ -39,28 +41,10 @@ class GenerateInnerClassForBitsAndUnionInLeavesTest {
                             if (genType.simpleName().equals("BitLeaf")) {
                                 assertFalse(bitLeafTOFound, "Unexpected duplicate BitLeaf");
                                 bitLeafTOFound = true;
-
-                                final var bitLeafProperties = gto.getProperties();
-                                assertEquals(3, bitLeafProperties.size());
-
-                                boolean firstBitPropertyFound = false;
-                                boolean secondBitPropertyFound = false;
-                                boolean thirdBitPropertyFound = false;
-                                for (var bitLeafProperty : bitLeafProperties) {
-                                    if (bitLeafProperty.getName().equals("firstBit")) {
-                                        firstBitPropertyFound = true;
-                                        assertEquals(Types.primitiveBooleanType(), bitLeafProperty.getReturnType());
-                                    } else if (bitLeafProperty.getName().equals("secondBit")) {
-                                        secondBitPropertyFound = true;
-                                        assertEquals(Types.primitiveBooleanType(), bitLeafProperty.getReturnType());
-                                    } else if (bitLeafProperty.getName().equals("thirdBit")) {
-                                        thirdBitPropertyFound = true;
-                                        assertEquals(Types.primitiveBooleanType(), bitLeafProperty.getReturnType());
-                                    }
-                                }
-                                assertTrue(firstBitPropertyFound);
-                                assertTrue(secondBitPropertyFound);
-                                assertTrue(thirdBitPropertyFound);
+                                final var def = assertInstanceOf(BitsTypeObjectArchetype.class, gto).typeDefinition();
+                                assertEquals(QName.create("urn:bit:union:in:leaf", "2013-06-26", "bits"),
+                                    def.getQName());
+                                assertEquals(3, def.getBits().size());
                             } else if (genType.simpleName().equals("UnionLeaf")) {
                                 assertFalse(unionLeafTOFound, "Unexpected duplicate UnionLeaf");
                                 unionLeafTOFound = true;

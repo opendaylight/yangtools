@@ -83,7 +83,7 @@ public final class SerialVersionHelper {
     // Backward compatibility: these interfaces were retro-fitted into generated code and would affect the computation
     // FIXME: these should just not be carried in GeneratedType
     private static final Set<ConcreteType> IGNORED_INTERFACES =
-        Set.of(BindingTypes.BITS_TYPE_OBJECT, BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
+        Set.of(BindingTypes.SCALAR_TYPE_OBJECT, BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
     private static final Comparator<MethodDesc> METHOD_COMPARATOR = Comparator.comparing(MethodDesc::name);
     private static final DigestFactory DIGEST_FACTORY;
