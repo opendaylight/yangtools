@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
  * A template for {@link BitsTypeObject} specializations.
  */
 @NonNullByDefault
-final class BitsTypeObjectTemplate extends ClassTemplate<BitsTypeObjectArchetype> {
+final class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeObjectArchetype> {
     record Builder(BitsTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
@@ -48,6 +48,36 @@ final class BitsTypeObjectTemplate extends ClassTemplate<BitsTypeObjectArchetype
             final DataRootArchetype root) {
         return new BitsTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
     }
+
+    @Override
+    BlockBuilder body() {
+        final var archetype = archetype();
+        final var simpleName = archetype.simpleName();
+
+        return null;
+    }
+
+
+
+//  final var builder = builderFactory.newBitsTypeObjectBuilder(typeName);
+//  builder.setTypedef(isTypedef());
+//  builder.addImplementsType(BindingTypes.BITS_TYPE_OBJECT);
+//  builder.setBaseType(typedef);
+//  YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
+//
+//  for (var bit : typedef.getBits()) {
+//      final String name = bit.getName();
+//      var genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
+//      genPropertyBuilder.setReadOnly(true);
+//      genPropertyBuilder.setReturnType(Types.primitiveBooleanType());
+//  }
+//  builder.addConstant(Types.immutableSetTypeFor(Types.STRING), TypeConstants.VALID_NAMES_NAME, typedef);
+//
+//  builder.setModuleName(module.argument().getLocalName());
+//  builderFactory.addCodegenInformation(typedef, builder);
+//  AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(typedef, builder);
+//  AbstractTypeObjectGenerator.makeSerializable(builder);
+//  return builder.build();
 
     @Override
     void appendValidNames(final BlockBuilder bb) {

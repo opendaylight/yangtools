@@ -60,7 +60,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
  */
 // FIXME: rename to TOArchetype os similar?
 abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?>> extends ArchetypeTemplate<T>
-        permits BitsTypeObjectTemplate, ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
+        permits ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
 
@@ -274,10 +274,6 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
         bb.ind("values[").jInt(index).str("]");
     }
 
-    @NonNull String finalClass() {
-        return " ";
-    }
-
     /**
      * {@return string with class declaration in JAVA format}
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
@@ -286,11 +282,9 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
         final var archetype = archetype();
 
         final var bb = newBlockBuilder()
-            .str("public");
+            .str("public ");
         if (isInnerClass) {
-            bb.str(" static final ");
-        } else {
-            bb.str(archetype.isAbstract() ? " abstract " : finalClass());
+            bb.str("static ");
         }
         bb.str("class ").str(archetype.simpleName());
 

@@ -29,4 +29,9 @@ public non-sealed interface ScalarTypeObjectArchetype extends GeneratedTransferO
         @Override
         ScalarTypeObjectArchetype build();
     }
+
+    @Override
+    default long serialVersionUID() {
+        return SerialVersionHelper.computeSerialVersion(this);
+    }
 }
