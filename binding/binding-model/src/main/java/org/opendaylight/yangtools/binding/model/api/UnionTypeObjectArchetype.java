@@ -39,4 +39,9 @@ public non-sealed interface UnionTypeObjectArchetype extends GeneratedTransferOb
      * @return A list of property names
      */
     List<String> typePropertyNames();
+
+    @Override
+    default long serialVersionUID() {
+        return SerialVersionHelper.computeSerialVersion(this);
+    }
 }

@@ -15,11 +15,11 @@ import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
 
 // FIXME: package-private and abstract
 public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
-        permits CodegenBitsTypeObjectArchetypeBuilder, CodegenScalarTypeObjectArchetypeBuilder,
-                CodegenUnionTypeObjectArchetypeBuilder {
+        permits CodegenScalarTypeObjectArchetypeBuilder, CodegenUnionTypeObjectArchetypeBuilder {
     private Restrictions restrictions;
     private String reference;
     private String description;
@@ -63,7 +63,7 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
 
     @Deprecated(since = "16.0.0", forRemoval = true)
     static sealed class GTO<T extends TypeObject> extends AbstractGeneratedTransferObject<T>
-            permits CodegenBitsTO, CodegenScalarTO, CodegenUnionTO {
+            permits CodegenScalarTO, CodegenUnionTO {
         private final @Nullable Restrictions restrictions;
         private final @Nullable String reference;
         private final @Nullable String description;
@@ -100,6 +100,12 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
         @Override
         public final String getModuleName() {
             return moduleName;
+        }
+
+        @Deprecated(since = "16.0.0", forRemoval = true)
+        @Override
+        public final long serialVersionUID() {
+            return SerialVersionHelper.computeSerialVersion(this);
         }
     }
 }
