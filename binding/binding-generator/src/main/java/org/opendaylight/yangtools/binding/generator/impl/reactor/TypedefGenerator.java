@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -15,12 +14,11 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntimeType;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.TypedefRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -79,6 +77,11 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     GeneratedTransferObject<?> createDerivedType(final TypeBuilderFactory builderFactory,
             final GeneratedTransferObject<?> baseType) {
         final var typeName = typeName();
+        final var statement = statement();
+        final var typedef = statement.typeDefinition();
+        if (baseType instanceof BitsTypeObjectArchetype bits) {
+            return new BitsTypeObjectArchetype(typeName, statement, (BitsTypeDefinition) typedef, bits);
+        }
 
         final var builder = builderFactory.newTOBuilder(typeName, baseType);
         builder.setTypedef(true);
@@ -87,42 +90,14 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         if (restrictions != null) {
             builder.setRestrictions(restrictions);
         }
-        YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
+        YangSourceDefinition.of(currentModule().statement(), statement).ifPresent(builder::setYangSourceDefinition);
 
-        final var typedef = statement().typeDefinition();
         annotateDeprecatedIfNecessary(typedef, builder);
         addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
         addUnits(builder, typedef);
 
-        if (typedef instanceof BitsTypeDefinition bits) {
-            addValidBits(builder, bits, baseType);
-        }
-
         makeSerializable(builder);
         return builder.build();
-    }
-
-    private static void addValidBits(final GeneratedTransferObject.Builder builder, final BitsTypeDefinition typedef,
-            final GeneratedTransferObject<?> baseType) {
-        final var baseDef = verifyNotNull(baseBitsDefinition(baseType), "Could not find definition in %s", baseType);
-        final var myBits = typedef.getBits();
-        if (myBits.size() != baseDef.getBits().size()) {
-            builder.addConstant(Types.immutableSetTypeFor(Types.STRING), TypeConstants.VALID_NAMES_NAME, typedef);
-        }
-    }
-
-    private static BitsTypeDefinition baseBitsDefinition(final GeneratedTransferObject<?> gto) {
-        var wlk = gto;
-        while (wlk != null) {
-            for (var constant : wlk.getConstantDefinitions()) {
-                if (TypeConstants.VALID_NAMES_NAME.equals(constant.getName())) {
-                    return (BitsTypeDefinition) constant.getValue();
-                }
-            }
-
-            wlk = wlk.getSuperType();
-        }
-        return null;
     }
 
     @Override
