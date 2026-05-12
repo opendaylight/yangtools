@@ -58,7 +58,6 @@ public final class BindingTypes {
     public static final @NonNull ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final @NonNull ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
     public static final @NonNull ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
-    public static final @NonNull ConcreteType BITS_TYPE_OBJECT = typeForBuiltIn(BuiltInType.BITS);
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final @NonNull ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
     public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
