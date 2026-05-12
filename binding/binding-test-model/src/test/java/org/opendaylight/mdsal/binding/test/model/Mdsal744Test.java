@@ -25,8 +25,8 @@ class Mdsal744Test {
     private static List<Arguments> testBitsToString() {
         return List.of(
             Arguments.of("MyBits{}", false, false),
-            Arguments.of("MyBits{bitOne}", false, true),
-            Arguments.of("MyBits{bitZero}", true, false),
-            Arguments.of("MyBits{bitZero, bitOne}", true, true));
+            Arguments.of("MyBits{bit-one}", false, true),
+            Arguments.of("MyBits{bit-zero}", true, false),
+            Arguments.of("MyBits{bit-zero, bit-one}", true, true));
     }
 }
