@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.HashBiMap;
@@ -33,6 +33,11 @@ public record EnumTypeObjectArchetype(
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         EnumTypeDefinition typeDefinition)
         implements TypeObjectArchetype<EnumTypeObject>, Archetype.Compat<EffectiveStatement<?,?>> {
+    public EnumTypeObjectArchetype {
+        requireNonNull(name);
+        requireNonNull(statement);
+        requireNonNull(typeDefinition);
+    }
 
     /**
      * {@return the injective mapping from YANG {@code enum} assigned name to its assigned Java {@code enum} constant,
@@ -50,7 +55,6 @@ public record EnumTypeObjectArchetype(
      *
      * @param assignedNames Collection of assigned names
      * @return A BiMap keyed by assigned name, with Java identifiers as values
-     * @throws IllegalArgumentException if any of the names is empty
      */
     private static ImmutableBiMap<EnumPair, String> mapNames(final List<EnumPair> values) {
         /*
@@ -64,7 +68,6 @@ public record EnumTypeObjectArchetype(
         final var javaToYang = HashBiMap.<String, String>create(values.size());
         for (var pair : values) {
             final var name = pair.getName();
-            checkArgument(!name.isEmpty());
             if (!javaToYang.containsValue(name)) {
                 final var mappedName = Naming.getClassName(name);
                 if (!Naming.isValidJavaIdentifier(mappedName) || javaToYang.forcePut(mappedName, name) != null) {
@@ -96,12 +99,7 @@ public record EnumTypeObjectArchetype(
 
     @Override
     public final String toString() {
-        final var helper = MoreObjects.toStringHelper(this).add("name", name);
-        final var values = typeDefinition.getValues();
-        if (!values.isEmpty()) {
-            helper.add("values", values);
-        }
-        return helper.toString();
+        return MoreObjects.toStringHelper(this).add("name", name).add("type", typeDefinition).toString();
     }
 
     @Override
