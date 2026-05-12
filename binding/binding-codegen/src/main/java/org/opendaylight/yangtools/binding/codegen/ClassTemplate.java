@@ -24,13 +24,10 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALID_NAMES_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,27 +44,20 @@ import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
 - * Template for generating JAVA class.
  */
 // FIXME: rename to TOArchetype os similar?
 abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?>> extends ArchetypeTemplate<T>
-        permits BitsTypeObjectTemplate, ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
+        permits ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
-
-    /**
-     * {@code com.google.common.collect.ImmutableSet} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
 
     final @NonNull List<GeneratedProperty> allProperties;
     final @NonNull List<GeneratedProperty> finalProperties;
@@ -274,10 +264,6 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
         bb.ind("values[").jInt(index).str("]");
     }
 
-    @NonNull String finalClass() {
-        return " ";
-    }
-
     /**
      * {@return string with class declaration in JAVA format}
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
@@ -286,11 +272,9 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
         final var archetype = archetype();
 
         final var bb = newBlockBuilder()
-            .str("public");
+            .str("public ");
         if (isInnerClass) {
-            bb.str(" static final ");
-        } else {
-            bb.str(archetype.isAbstract() ? " abstract " : finalClass());
+            bb.str("static ");
         }
         bb.str("class ").str(archetype.simpleName());
 
@@ -324,7 +308,6 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
         for (var c : consts) {
             switch (c.getName()) {
                 case PATTERN_CONSTANT_NAME -> appendPatternConstant(bb, (Map<String, String>) c.getValue());
-                case VALID_NAMES_NAME -> appendValidNames(bb, (BitsTypeDefinition) c.getValue());
                 default -> bb.txt(emitConstant(c));
             }
         }
@@ -383,25 +366,6 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
     @NonNullByDefault
     void appendValidNames(final BlockBuilder bb) {
         // no-op
-    }
-
-    private void appendValidNames(final BlockBuilder bb, final BitsTypeDefinition bitsType) {
-        final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").gen(immutableSet, importedName(STRING)).str(" " + VALID_NAMES_NAME + " = ")
-            .str(immutableSet).str(".of(");
-        // FIXME: refactor this block
-        {
-            boolean first = true;
-            for (var bit : bitsType.getBits()) {
-                if (first) {
-                    first = false;
-                } else {
-                    bb.str(", ");
-                }
-                bb.jStr(bit.getName());
-            }
-        }
-        bb.eol(");");
     }
 
     // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
