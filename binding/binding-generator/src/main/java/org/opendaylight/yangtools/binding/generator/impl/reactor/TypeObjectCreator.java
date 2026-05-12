@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedProper
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -82,17 +80,6 @@ final class TypeObjectCreator {
         this.module = requireNonNull(module);
     }
 
-    // FIXME: why do we need this boolean?
-    private boolean isTypedef() {
-        return definingStatement instanceof TypedefEffectiveStatement;
-    }
-
-    static BitsTypeObjectArchetype createBitsTypeObjectArchetype(final JavaTypeName typeName,
-            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final BitsTypeDefinition typeDefinition,
-            final TypeBuilderFactory builderFactory, final ModuleEffectiveStatement module) {
-        return new TypeObjectCreator(statement, builderFactory, module).createBits(typeName, typeDefinition);
-    }
-
     static ScalarTypeObjectArchetype createScalarTypeObjectArchetype(final JavaTypeName typeName,
             final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final TypeDefinition<?> typeDefinition,
             final ConcreteType javaType, final TypeBuilderFactory builderFactory,
@@ -110,28 +97,6 @@ final class TypeObjectCreator {
         final var archetype = new TypeObjectCreator(statement, builderFactory, module)
             .createUnion(tmp, dependencies, typeName, type, typeDefinition);
         return Map.entry(archetype, tmp);
-    }
-
-    private BitsTypeObjectArchetype createBits(final JavaTypeName typeName, final BitsTypeDefinition typedef) {
-        final var builder = builderFactory.newBitsTypeObjectBuilder(typeName);
-        builder.setTypedef(isTypedef());
-        builder.addImplementsType(BindingTypes.BITS_TYPE_OBJECT);
-        builder.setBaseType(typedef);
-        YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
-
-        for (var bit : typedef.getBits()) {
-            final String name = bit.getName();
-            var genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
-            genPropertyBuilder.setReadOnly(true);
-            genPropertyBuilder.setReturnType(Types.primitiveBooleanType());
-        }
-        builder.addConstant(Types.immutableSetTypeFor(Types.STRING), TypeConstants.VALID_NAMES_NAME, typedef);
-
-        builder.setModuleName(module.argument().getLocalName());
-        builderFactory.addCodegenInformation(typedef, builder);
-        AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(typedef, builder);
-        AbstractTypeObjectGenerator.makeSerializable(builder);
-        return builder.build();
     }
 
     private ScalarTypeObjectArchetype createScalar(final JavaTypeName typeName, final Type javaType,
@@ -203,7 +168,8 @@ final class TypeObjectCreator {
                     builder.addEnumeration(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (BuiltInType.BITS.typeName().equals(subName)) {
-                    final var subBits = createBits(typeName.createEnclosed(Naming.getClassName(localName), "$"),
+                    final var subBits = new BitsTypeObjectArchetype(
+                        typeName.createEnclosed(Naming.getClassName(localName), "$"), definingStatement,
                         (BitsTypeDefinition) subType.typeDefinition());
                     builder.addEnclosingTransferObject(subBits);
                     generatedType = subBits;
