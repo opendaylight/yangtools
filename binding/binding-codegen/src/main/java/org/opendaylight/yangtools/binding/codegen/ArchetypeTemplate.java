@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 @NonNullByDefault
 abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplate
-        permits ChoiceInTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate, IdentityTemplate, KeyTemplate,
-                OpaqueObjectTemplate, RpcTemplate {
+        permits BitsTypeObjectTemplate, ChoiceInTemplate, ClassTemplate, EnumTypeObjectTemplate, FeatureTemplate,
+                IdentityTemplate, KeyTemplate, OpaqueObjectTemplate, RpcTemplate {
     private static final String GENERATED_ANNOTATION =
         "@javax.annotation.processing.Generated(\"mdsal-binding-generator\")";
 
@@ -60,10 +60,23 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
      * @param node the {@link DocumentedNode}
      */
     final BlockBuilder newBodyBuilder(final EffectiveStatement<?, ?> stmt, final DocumentedNode.WithStatus node) {
-        return newBlockBuilder()
+        return newBodyBuilder(stmt, node, true);
+    }
+
+    /**
+     * {@return a new BlockBuilder initialized with javadoc block derived from the specified {@link DocumentedNode}
+     * view of an {@link EffectiveStatement} followed by an optional {@code Deprecated} annotation, followed by
+     * a {@code Generated} annotation} if instructed opted into.
+     * @param stmt the {@link EffectiveStatement}
+     * @param node the {@link DocumentedNode}
+     * @param generatedAnnotation {@code true} if we should also add {@code Generated} annotation
+     */
+    final BlockBuilder newBodyBuilder(final EffectiveStatement<?, ?> stmt, final DocumentedNode.WithStatus node,
+            final boolean generatedAnnotation) {
+        final var bb = newBlockBuilder()
             .blk(javadocBlock(root.statement(), stmt, node))
-            .blk(deprecatedAnnotation(node))
-            .eol(GENERATED_ANNOTATION);
+            .blk(deprecatedAnnotation(node));
+        return generatedAnnotation ? bb.eol(GENERATED_ANNOTATION) : bb;
     }
 
     /**

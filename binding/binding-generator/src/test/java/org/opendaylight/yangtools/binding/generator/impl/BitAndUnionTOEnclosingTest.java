@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsAttributes;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsMethods;
 
@@ -17,10 +18,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BitAndUnionTOEnclosingTest {
@@ -153,14 +157,14 @@ class BitAndUnionTOEnclosingTest {
         assertNotNull(parentContainer, "Parent container object wasn't found.");
         containsMethods(parentContainer, new NameTypePattern("getLf", "Lf"));
 
-        GeneratedTransferObject<?> bitLeaf = null;
-        GeneratedTransferObject<?> unionLeaf = null;
+        BitsTypeObjectArchetype bitLeaf = null;
+        UnionTypeObjectArchetype unionLeaf = null;
         for (var genType : parentContainer.getEnclosedTypes()) {
             if (genType instanceof GeneratedTransferObject gto) {
                 if (gto.simpleName().equals("BitLeaf")) {
-                    bitLeaf = gto;
+                    bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, gto);
                 } else if (gto.simpleName().equals("UnionLeaf")) {
-                    unionLeaf = gto;
+                    unionLeaf = assertInstanceOf(UnionTypeObjectArchetype.class, gto);
                 }
             }
         }
@@ -175,25 +179,10 @@ class BitAndUnionTOEnclosingTest {
             JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
             unionLeaf.name().immediatelyEnclosingClass());
 
-        GeneratedProperty firstBitProperty = null;
-        GeneratedProperty secondBitProperty = null;
-        GeneratedProperty thirdBitProperty = null;
-        for (var genProperty : bitLeaf.getProperties()) {
-            if (genProperty.getName().equals("firstBit")) {
-                firstBitProperty = genProperty;
-            } else if (genProperty.getName().equals("secondBit")) {
-                secondBitProperty = genProperty;
-            } else if (genProperty.getName().equals("thirdBit")) {
-                thirdBitProperty = genProperty;
-            }
-        }
-
-        assertNotNull(firstBitProperty, "firstBit property wasn't found");
-        assertEquals("boolean", firstBitProperty.getReturnType().simpleName());
-        assertNotNull(secondBitProperty, "secondBit property wasn't found");
-        assertEquals("boolean", secondBitProperty.getReturnType().simpleName());
-        assertNotNull(thirdBitProperty, "thirdBit property wasn't found");
-        assertEquals("boolean", thirdBitProperty.getReturnType().simpleName());
+        assertNull(bitLeaf.superType());
+        final var bitsDef = bitLeaf.typeDefinition();
+        assertEquals(QName.create("urn:bit:union:in:leaf", "2013-06-26", "bits"), bitsDef.getQName());
+        assertEquals(3, bitsDef.getBits().size());
 
         GeneratedProperty uint32Property = null;
         GeneratedProperty stringProperty = null;
