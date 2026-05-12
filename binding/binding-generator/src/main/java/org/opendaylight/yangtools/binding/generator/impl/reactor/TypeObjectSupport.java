@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.TypeObject;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
@@ -58,13 +56,6 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
     static final class Bits extends Base {
         private Bits(final TypeEffectiveStatement type) {
             super(type);
-        }
-
-        BitsTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
-                final TypeBuilderFactory builderFactory) {
-            final var stmt = gen.statement();
-            return TypeObjectCreator.createBitsTypeObjectArchetype(gen.typeName(), stmt,
-                (BitsTypeDefinition) stmt.typeDefinition(), builderFactory, gen.currentModule().statement());
         }
     }
 

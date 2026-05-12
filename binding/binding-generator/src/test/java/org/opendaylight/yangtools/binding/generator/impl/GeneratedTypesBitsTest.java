@@ -9,14 +9,18 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesBitsTest {
@@ -42,8 +46,14 @@ class GeneratedTypesBitsTest {
             if (genType instanceof GeneratedTransferObject genTO) {
                 if (genTO.simpleName().equals("ByteType")) {
                     byteTypeFound = true;
-                    var genProperties = genTO.getProperties();
-                    classPropertiesNumb = genProperties.size();
+                    final var bits = assertInstanceOf(BitsTypeObjectArchetype.class, genTO);
+                    assertNull(bits.superType());
+                    final var def = bits.typeDefinition();
+                    assertEquals(QName.create("urn:simple:bits:demo", "2013-06-11", "byte-type"), def.getQName());
+                    final var base = def.getBaseType();
+                    assertNotNull(base);
+                    assertEquals(QName.create("urn:simple:bits:demo", "2013-06-11", "bits"), base.getQName());
+                    classPropertiesNumb = def.getBits().size();
                 }
             } else if (genType.simpleName().equals("LeafParentContainer")) {
                 leafParentFound = true;
