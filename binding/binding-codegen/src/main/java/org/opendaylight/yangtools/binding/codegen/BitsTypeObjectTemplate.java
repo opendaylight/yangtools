@@ -49,6 +49,26 @@ final class BitsTypeObjectTemplate extends ClassTemplate<BitsTypeObjectArchetype
         return new BitsTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
     }
 
+//  final var builder = builderFactory.newBitsTypeObjectBuilder(typeName);
+//  builder.setTypedef(isTypedef());
+//  builder.addImplementsType(BindingTypes.BITS_TYPE_OBJECT);
+//  builder.setBaseType(typedef);
+//  YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
+//
+//  for (var bit : typedef.getBits()) {
+//      final String name = bit.getName();
+//      var genPropertyBuilder = builder.addProperty(Naming.getPropertyName(name));
+//      genPropertyBuilder.setReadOnly(true);
+//      genPropertyBuilder.setReturnType(Types.primitiveBooleanType());
+//  }
+//  builder.addConstant(Types.immutableSetTypeFor(Types.STRING), TypeConstants.VALID_NAMES_NAME, typedef);
+//
+//  builder.setModuleName(module.argument().getLocalName());
+//  builderFactory.addCodegenInformation(typedef, builder);
+//  AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(typedef, builder);
+//  AbstractTypeObjectGenerator.makeSerializable(builder);
+//  return builder.build();
+
     @Override
     void appendValidNames(final BlockBuilder bb) {
         for (var c : type().getConstantDefinitions()) {

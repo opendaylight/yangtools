@@ -38,8 +38,7 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
      */
     @Beta
     sealed interface Builder extends GeneratedTypeBuilderBase<Builder>
-            permits AbstractGeneratedTOBuilder, BitsTypeObjectArchetype.Builder, ScalarTypeObjectArchetype.Builder,
-                    UnionTypeObjectArchetype.Builder {
+            permits AbstractGeneratedTOBuilder, ScalarTypeObjectArchetype.Builder, UnionTypeObjectArchetype.Builder {
         /**
          * Add Generated Transfer Object from which will be extended current Generated Transfer Object.<br>
          * By definition Java does not allow multiple inheritance, hence if there is already a definition
@@ -88,6 +87,7 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
      */
     @Nullable GeneratedTransferObject<?> getSuperType();
 
+    // FIXME: why do we need this boolean?
     boolean isTypedef();
 
     /**
