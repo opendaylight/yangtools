@@ -98,26 +98,7 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
     @Nullable TypeDefinition<?> getBaseType();
 
     default Restrictions getRestrictions() {
-        throw uoe();
-    }
-
-    @Override
-    default String getDescription() {
-        throw uoe();
-    }
-
-    @Override
-    default String getReference() {
-        throw uoe();
-    }
-
-    @Override
-    default String getModuleName() {
-        throw uoe();
-    }
-
-    private static UnsupportedOperationException uoe() {
-        return new UnsupportedOperationException("Not available at runtime");
+        throw new UnsupportedOperationException("Not available at runtime");
     }
 
     default Optional<? extends GeneratedProperty> findProperty(final String name) {
