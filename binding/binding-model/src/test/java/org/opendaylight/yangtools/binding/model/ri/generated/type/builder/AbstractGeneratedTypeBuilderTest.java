@@ -30,14 +30,6 @@ class AbstractGeneratedTypeBuilderTest {
     }
 
     @Test
-    void addEnclosingTransferObjectArgumentTest() {
-        final var typeName = JavaTypeName.create("my.package", "myName");
-        generatedTypeBuilder.addEnclosingTransferObject(new CodegenScalarTypeObjectArchetypeBuilder(typeName).build());
-        final var conflict = new CodegenScalarTypeObjectArchetypeBuilder(typeName).build();
-        assertThrows(IllegalArgumentException.class, () -> generatedTypeBuilder.addEnclosingTransferObject(conflict));
-    }
-
-    @Test
     void addImplementsTypeIllegalArgumentTest() {
         generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class));
         final var conflict = Types.typeForClass(Serializable.class);

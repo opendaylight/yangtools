@@ -31,8 +31,10 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
@@ -486,15 +488,21 @@ abstract class AbstractTypeObjectGenerator<
         return switch (baseType) {
             // This is a simple Java type, just wrap it with new restrictions
             case ConcreteType concrete -> concrete.withRestrictions(restrictions);
-            case GeneratedTransferObject<?> gto -> {
+            case ScalarTypeObjectArchetype scalar -> {
+                // FIXME: this is definitely not quite right: statement/typeDefinition/valueType should be different
+                yield new ScalarTypeObjectArchetype(scalar.name(), scalar.statement(), scalar.typeDefinition(),
+                    scalar.valueType(), restrictions, scalar.getSuperType());
+            }
+            case UnionTypeObjectArchetype union -> {
                 // Base type is a GTO, we need to re-adjust it with new restrictions
-                final var builder = builderFactory.newTOBuilder(gto.name(), gto);
-                final var parent = gto.getSuperType();
+                final var builder = builderFactory.newUnionTypeObjectBuilder(union.name())
+                    .setTypePropertyNames(union.typePropertyNames());
+                final var parent = union.getSuperType();
                 if (parent != null) {
                     builder.setExtendsType(parent);
                 }
                 builder.setRestrictions(restrictions);
-                for (var gp : gto.getProperties()) {
+                for (var gp : union.getProperties()) {
                     builder.addProperty(gp.getName())
                         .setValue(gp.getValue())
                         .setReadOnly(gp.isReadOnly())

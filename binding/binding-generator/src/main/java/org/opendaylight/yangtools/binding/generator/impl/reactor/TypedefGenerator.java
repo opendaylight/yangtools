@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -17,9 +18,12 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntim
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.binding.runtime.api.TypedefRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -80,26 +84,41 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         final var typeName = typeName();
         final var statement = statement();
         final var typedef = statement.typeDefinition();
-        if (baseType instanceof BitsTypeObjectArchetype bits) {
-            return new BitsTypeObjectArchetype(typeName, statement, (BitsTypeDefinition) typedef, bits);
-        }
 
-        final var builder = builderFactory.newTOBuilder(typeName, baseType);
-        builder.setTypedef(true);
-        builder.setExtendsType(baseType);
+        return switch (baseType) {
+            case BitsTypeObjectArchetype bits ->
+                new BitsTypeObjectArchetype(typeName, statement, (BitsTypeDefinition) typedef, bits);
+            case ScalarTypeObjectArchetype scalar -> {
+                var restrictions = Restrictions.compute(statement, statement.typeStatement());
+                if (restrictions == null) {
+                    restrictions = Restrictions.empty();
+                }
+                yield new ScalarTypeObjectArchetype(typeName, statement, typedef, scalar.valueType(),
+                    restrictions, scalar);
+            }
+            case UnionTypeObjectArchetype union -> {
+                final var builder = builderFactory.newUnionTypeObjectBuilder(typeName)
+                    .setTypePropertyNames(union.typePropertyNames());
 
-        final var restrictions = Restrictions.compute(statement, statement.typeStatement());
-        if (restrictions != null) {
-            builder.setRestrictions(restrictions);
-        }
-        YangSourceDefinition.of(currentModule().statement(), statement).ifPresent(builder::setYangSourceDefinition);
+                builder.setTypedef(true);
+                builder.setExtendsType(baseType);
 
-        annotateDeprecatedIfNecessary(typedef, builder);
-        addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
-        addUnits(builder, typedef);
+                final var restrictions = Restrictions.compute(statement, statement.typeStatement());
+                if (restrictions != null) {
+                    builder.setRestrictions(restrictions);
+                }
+                YangSourceDefinition.of(currentModule().statement(), statement)
+                    .ifPresent(builder::setYangSourceDefinition);
 
-        makeSerializable(builder);
-        return builder.build();
+                annotateDeprecatedIfNecessary(typedef, builder);
+                addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
+                addUnits(builder, typedef);
+
+                makeSerializable(builder);
+                yield builder.build();
+            }
+            case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
+        };
     }
 
     @Override
