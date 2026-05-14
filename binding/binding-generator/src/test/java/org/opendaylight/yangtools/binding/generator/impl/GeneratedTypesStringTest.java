@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import java.util.Map;
+import com.google.common.collect.ImmutableRangeSet;
+import com.google.common.collect.Range;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesStringTest {
@@ -22,69 +23,18 @@ class GeneratedTypesStringTest {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
             "/simple-string-demo.yang"));
 
-        boolean typedefStringFound = false;
-        boolean constantRegExListFound = false;
-        boolean constantRegExListTypeGeneric = false;
-        boolean constantRegExListTypeContainer = false;
-        boolean noStringInReqExListFound = false;
-        boolean constantRegExListValueOK = false;
-        boolean constantRegExListTypeOneGeneric = false;
-        for (var type : genTypes) {
-            if (type instanceof GeneratedTransferObject genTO) {
-                if (genTO.simpleName().equals("TypedefString")) {
-                    typedefStringFound = true;
+        final var genTO = assertInstanceOf(ScalarTypeObjectArchetype.class, genTypes.stream()
+            .filter(type -> type.simpleName().equals("TypedefString"))
+            .findFirst()
+            .orElseThrow());
 
-                    for (var con : genTO.getConstantDefinitions()) {
-                        if (!con.getName().equals("PATTERN_CONSTANTS")) {
-                            break;
-                        }
-                        constantRegExListFound = true;
-                        ParameterizedType paramType;
-                        if (!(con.getType() instanceof ParameterizedType parameterized)) {
-                            break;
-                        }
-                        paramType = parameterized;
+        final var restrictions = genTO.getRestrictions();
+        assertFalse(restrictions.isEmpty());
 
-                        if (!paramType.simpleName().equals("List")) {
-                            break;
-                        }
-                        constantRegExListTypeContainer = true;
-                        final var types = paramType.getActualTypeArguments();
+        final var length = restrictions.getLengthConstraint().orElseThrow();
+        assertEquals(ImmutableRangeSet.of(Range.closed(40, 40)), length.getAllowedRanges());
 
-                        if (types.size() != 1) {
-                            break;
-                        }
-                        constantRegExListTypeOneGeneric = true;
-
-                        if (!types.getFirst().simpleName().equals("String")) {
-                            break;
-                        }
-                        constantRegExListTypeGeneric = true;
-
-                        if (!(con.getValue() instanceof Map<?, ?> mapValue)) {
-                            break;
-                        }
-                        constantRegExListValueOK = true;
-
-                        for (var e : mapValue.entrySet()) {
-                            if (!(e.getKey() instanceof String) || !(e.getValue() instanceof String)) {
-                                noStringInReqExListFound = true;
-                                break;
-                            }
-                        }
-
-                    }
-                }
-            }
-
-        }
-
-        assertTrue(typedefStringFound, "Typedef >>TypedefString<< wasn't found");
-        assertTrue(constantRegExListFound, "Constant PATTERN_CONSTANTS is missing in TO");
-        assertTrue(constantRegExListTypeContainer, "Constant PATTERN_CONSTANTS doesn't have correct container type");
-        assertTrue(constantRegExListTypeOneGeneric, "Constant PATTERN_CONSTANTS has more than one generic type");
-        assertTrue(constantRegExListTypeGeneric, "Constant PATTERN_CONSTANTS doesn't have correct generic type");
-        assertTrue(constantRegExListValueOK, "Constant PATTERN_CONSTANTS doesn't contain List object");
-        assertFalse(noStringInReqExListFound, "In list found other type than String");
+        final var patterns = restrictions.getPatternConstraints();
+        assertEquals(3, patterns.size());
     }
 }
