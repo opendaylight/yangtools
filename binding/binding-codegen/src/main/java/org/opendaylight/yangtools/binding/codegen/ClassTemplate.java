@@ -52,7 +52,7 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
  */
 // FIXME: eliminate this class
 abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?>> extends ArchetypeTemplate<T>
-        permits ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
+        permits UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
 
