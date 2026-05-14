@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_STO_REGISTRAR;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.VALUE_PROP;
 
@@ -31,7 +29,7 @@ import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
  * A template for {@link ScalarTypeObject} specializations.
  */
 @NonNullByDefault
-final class ScalarTypeObjectTemplate extends ClassTemplate<ScalarTypeObjectArchetype> {
+abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarTypeObjectArchetype> {
     record Builder(ScalarTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
@@ -40,7 +38,35 @@ final class ScalarTypeObjectTemplate extends ClassTemplate<ScalarTypeObjectArche
 
         @Override
         public ScalarTypeObjectTemplate build() {
-            return new ScalarTypeObjectTemplate(type, root);
+            return ScalarTypeObjectTemplate.of(GeneratedClass.of(type), type, root);
+        }
+    }
+
+    private static final class Base extends ScalarTypeObjectTemplate {
+        private static final JavaTypeName SCALAR_TYPE_OBJECT = JavaTypeName.create(ScalarTypeObject.class);
+
+        Base(final GeneratedClass javaType, final ScalarTypeObjectArchetype archetype, final DataRootArchetype root) {
+            super(javaType, archetype, root);
+        }
+
+        @Override
+        BlockFragment implFragment() {
+            return bb -> bb.str(" implements ").str(importedName(SCALAR_TYPE_OBJECT)).str(", java.io.Serializable");
+        }
+    }
+
+    private static final class Derived extends ScalarTypeObjectTemplate {
+        private final ScalarTypeObjectArchetype superType;
+
+        Derived(final GeneratedClass javaType, final ScalarTypeObjectArchetype archetype, final DataRootArchetype root,
+                final ScalarTypeObjectArchetype superType) {
+            super(javaType, archetype, root);
+            this.superType = requireNonNull(superType);
+        }
+
+        @Override
+        BlockFragment implFragment() {
+            return bb -> bb.str(" extends ").str(importedName(superType.name()));
         }
     }
 
@@ -58,15 +84,62 @@ final class ScalarTypeObjectTemplate extends ClassTemplate<ScalarTypeObjectArche
         scalarType = ScalarTypeKind.of(archetype);
     }
 
-    private ScalarTypeObjectTemplate(final ScalarTypeObjectArchetype archetype, final DataRootArchetype root) {
-        super(GeneratedClass.of(archetype), archetype, root);
-        scalarType = ScalarTypeKind.of(archetype);
+    private static ScalarTypeObjectTemplate of(final GeneratedClass javaType, final ScalarTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        final var superType = archetype.getSuperType();
+        return superType == null ? new Base(javaType, archetype, root)
+            : new Derived(javaType, archetype, root, superType);
     }
 
     static BlockBuilder generateInner(final GeneratedClass.Nested javaType,
             final ScalarTypeObjectArchetype archetype, final DataRootArchetype root) {
-        return new ScalarTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
+        return ScalarTypeObjectTemplate.of(javaType, archetype, root).body(false);
     }
+
+    @Override
+    final BlockBuilder body() {
+        return body(true);
+    }
+
+    private BlockBuilder body(final boolean topLevel) {
+        final var archetype = archetype();
+        final var simpleName = archetype.simpleName();
+
+        final var bb = newBodyBuilder(archetype.statement(), archetype.typeDefinition(), topLevel)
+            .str("public ").str(topLevel ? "" : "static ").str("class ").str(simpleName).frg(implFragment()).oB()
+            .eol("@java.io.Serial")
+            .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
+            .nl();
+
+
+
+
+        //    builder.setTypedef(true);
+        //    builder.addImplementsType(BindingTypes.scalarTypeObject(javaType));
+        //    YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
+        //
+        //    final var genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
+        //    genPropBuilder.setReturnType(javaType);
+        //    builder.setRestrictions(AbstractTypeObjectGenerator.getRestrictions(typedef));
+        //    builder.setModuleName(module.argument().getLocalName());
+        //    builderFactory.addCodegenInformation(typedef, builder);
+        //
+        //    AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(typedef, builder);
+        //
+        //    if (javaType instanceof ConcreteType
+        //        // FIXME: This looks very suspicious: we should by checking for Types.STRING
+        //        && "String".equals(javaType.simpleName()) && typedef.getBaseType() != null) {
+        //        AbstractTypeObjectGenerator.addStringRegExAsConstant(builder,
+        //            AbstractTypeObjectGenerator.resolveRegExpressions(typedef));
+        //    }
+        //    AbstractTypeObjectGenerator.addUnits(builder, typedef);
+        //
+        //    AbstractTypeObjectGenerator.makeSerializable(builder);
+
+        return bb.cB();
+    }
+
+    abstract BlockFragment implFragment();
 
     @Override
     BlockBuilder defaultConstructor() {
