@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.SCALAR_TYPE_OBJECT;
-
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -75,25 +73,20 @@ enum ScalarTypeKind {
     }
 
     static ScalarTypeKind of(final ScalarTypeObjectArchetype archetype) {
-        final var ret = ofGTO(archetype);
+        final var ret = recursiveOf(archetype);
         if (ret != null) {
             return ret;
         }
         throw new VerifyException("Unexpected archetype " + archetype);
     }
 
-    private static @Nullable ScalarTypeKind ofGTO(final GeneratedTransferObject<?> gto) {
-        final var superType = gto.getSuperType();
+    private static @Nullable ScalarTypeKind recursiveOf(final ScalarTypeObjectArchetype archetype) {
+        final var superType = archetype.getSuperType();
         if (superType != null) {
-            final var superClass = ofGTO(superType);
-            return superClass == null ? null : ofSubclass(gto, superClass.hasRestrictions);
+            final var superClass = recursiveOf(superType);
+            return superClass == null ? null : ofSubclass(archetype, superClass.hasRestrictions);
         }
-
-        // FIXME: a better check, for example 'gto instanceof ScalarTypeObjectArchetype'
-        if (gto.getImplements().stream().noneMatch(ifc -> SCALAR_TYPE_OBJECT.name().equals(ifc.name()))) {
-            return null;
-        }
-        return hasRestrictions(gto) ? ROOT_RESTRICTING : ROOT;
+        return hasRestrictions(archetype) ? ROOT_RESTRICTING : ROOT;
     }
 
     private static ScalarTypeKind ofSubclass(final GeneratedTransferObject<?> gto, final boolean superRestricted) {
