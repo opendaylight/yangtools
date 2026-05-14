@@ -52,7 +52,7 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
  */
 // FIXME: eliminate this class
 abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?>> extends ArchetypeTemplate<T>
-        permits ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
+        permits UnionTypeObjectTemplate {
     private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
 
@@ -463,27 +463,7 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
     }
 
     @NonNullByDefault
-    BlockBuilder copyConstructor() {
-        final var simpleName = type().simpleName();
-
-        return newBlockBuilder().txt("""
-                  /**
-                   * Creates a copy from Source Object.
-                   *
-                   * @param source Source object
-                   */
-                  """)
-            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").jBlock(bb -> {
-                // TODO: consider splitting into a 'Block copyConstructorBody()' once we can do efficient block copies
-                if (!parentProperties.isEmpty()) {
-                    bb.eol("super(source);");
-                }
-                for (var prop : properties) {
-                    final var fieldName = fieldName(prop);
-                    bb.str("this.").str(fieldName).str(" = source.").str(fieldName).eS();
-                }
-            }).nl();
-    }
+    abstract BlockBuilder copyConstructor();
 
     @NonNullByDefault
     final BlockBuilder parentConstructor() {
