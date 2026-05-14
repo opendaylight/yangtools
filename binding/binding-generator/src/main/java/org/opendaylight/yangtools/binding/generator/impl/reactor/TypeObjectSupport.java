@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
@@ -102,8 +103,8 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
         ScalarTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
                 final TypeBuilderFactory builderFactory) {
             final var stmt = gen.statement();
-            return TypeObjectCreator.createScalarTypeObjectArchetype(gen.typeName(), stmt, stmt.typeDefinition(),
-                javaType, builderFactory, gen.currentModule().statement());
+            final var def = stmt.typeDefinition();
+            return new ScalarTypeObjectArchetype(gen.typeName(), stmt, def, javaType, Restrictions.of(def), null);
         }
     }
 
