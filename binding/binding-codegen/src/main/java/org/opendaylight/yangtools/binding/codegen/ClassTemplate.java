@@ -8,26 +8,12 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT16_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT32_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT64_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT8_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT16_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -37,7 +23,6 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
@@ -52,10 +37,7 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
  */
 // FIXME: eliminate this class
 abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?>> extends ArchetypeTemplate<T>
-        permits ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
-    private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
-        BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
-
+        permits UnionTypeObjectTemplate {
     final @NonNull List<GeneratedProperty> allProperties;
     final @NonNull List<GeneratedProperty> finalProperties;
     final @NonNull List<GeneratedProperty> parentProperties;
@@ -192,7 +174,6 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
 
         bb
             .blk(constructors())
-            .blk(defaultInstance())
             .blk(propertyMethods());
 
         // call out to BitsTypeObjectTemplate
@@ -332,46 +313,6 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
         // no-op
     }
 
-    // FIXME: this method should be specialized in BitsTypeObjectTemplate, as 'type bits' is an animal completely
-    //        different from ScalarTypeObjects the rest of this method handles.
-    @Nullable BlockBuilder defaultInstance() {
-        final var archetype = archetype();
-        if (!archetype.isTypedef() || allProperties.isEmpty()) {
-            return null;
-        }
-
-        final var prop = allProperties.getFirst();
-        final var propType = prop.getReturnType();
-        if (INSTANCE_IDENTIFIER.name().equals(propType.name())) {
-            return null;
-        }
-
-        final var simpleName = archetype.simpleName();
-        return newBlockBuilder()
-            .nl()
-            .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").jBlock(bb -> {
-                // FIXME: unify handling here ...
-                if (VALUEOF_TYPES.contains(propType)) {
-                    bb.str("return new ").str(simpleName).str("(").str(importedName(propType))
-                    .eol(".valueOf(defaultValue));");
-                } else if (propType instanceof Decimal64Type decimal64) {
-                    bb.str("return new ").str(simpleName).str("(").str(importedName(propType))
-                    .str(".valueOf(defaultValue).scaleTo(").jInt(decimal64.fractionDigits()).eol("));");
-                } else if (propType.equals(STRING_TYPE)) {
-                    bb.str("return new ").str(simpleName).eol("(defaultValue);");
-                } else if (propType.equals(BINARY_TYPE)) {
-                    bb.str("return new ").str(simpleName).str("(").str(importedName(JU_BASE64))
-                    .eol(".getDecoder().decode(defaultValue));");
-                } else if (propType.equals(EMPTY_TYPE)) {
-                    bb.str("return new ").str(simpleName).str("(").str(importedName(CODEHELPERS))
-                    .eol(".emptyFor(defaultValue));");
-                } else {
-                    bb.str("return new ").str(simpleName).str("(new ").str(importedName(propType))
-                        .eol("(defaultValue));");
-                }
-            }).nl();
-    }
-
     @Nullable BlockBuilder constructors() {
         final var bb = newBlockBuilder()
             .nl()
@@ -463,27 +404,7 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
     }
 
     @NonNullByDefault
-    BlockBuilder copyConstructor() {
-        final var simpleName = type().simpleName();
-
-        return newBlockBuilder().txt("""
-                  /**
-                   * Creates a copy from Source Object.
-                   *
-                   * @param source Source object
-                   */
-                  """)
-            .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").jBlock(bb -> {
-                // TODO: consider splitting into a 'Block copyConstructorBody()' once we can do efficient block copies
-                if (!parentProperties.isEmpty()) {
-                    bb.eol("super(source);");
-                }
-                for (var prop : properties) {
-                    final var fieldName = fieldName(prop);
-                    bb.str("this.").str(fieldName).str(" = source.").str(fieldName).eS();
-                }
-            }).nl();
-    }
+    abstract BlockBuilder copyConstructor();
 
     @NonNullByDefault
     final BlockBuilder parentConstructor() {
