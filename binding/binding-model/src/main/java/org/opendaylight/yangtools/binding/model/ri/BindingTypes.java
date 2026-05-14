@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
-import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
@@ -57,7 +56,6 @@ public final class BindingTypes {
     public static final @NonNull ConcreteType QNAME = typeForClass(QName.class);
     public static final @NonNull ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final @NonNull ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
-    public static final @NonNull ConcreteType SCALAR_TYPE_OBJECT = typeForClass(ScalarTypeObject.class);
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final @NonNull ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
     public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
@@ -281,18 +279,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType rpcResult(final Type type) {
         return ParameterizedType.of(RPC_RESULT, type);
-    }
-
-    /**
-     * Type specializing {@link ScalarTypeObject} for a particular type.
-     *
-     * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code ScalarTypeObject<Type>}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType scalarTypeObject(final Type type) {
-        return ParameterizedType.of(SCALAR_TYPE_OBJECT, type);
     }
 
     /**
