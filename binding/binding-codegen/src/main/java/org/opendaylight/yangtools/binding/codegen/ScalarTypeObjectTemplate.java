@@ -68,6 +68,28 @@ final class ScalarTypeObjectTemplate extends ClassTemplate<ScalarTypeObjectArche
         return new ScalarTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
     }
 
+//    builder.setTypedef(true);
+//    builder.addImplementsType(BindingTypes.scalarTypeObject(javaType));
+//    YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
+//
+//    final var genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
+//    genPropBuilder.setReturnType(javaType);
+//    builder.setRestrictions(AbstractTypeObjectGenerator.getRestrictions(typedef));
+//    builder.setModuleName(module.argument().getLocalName());
+//    builderFactory.addCodegenInformation(typedef, builder);
+//
+//    AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(typedef, builder);
+//
+//    if (javaType instanceof ConcreteType
+//        // FIXME: This looks very suspicious: we should by checking for Types.STRING
+//        && "String".equals(javaType.simpleName()) && typedef.getBaseType() != null) {
+//        AbstractTypeObjectGenerator.addStringRegExAsConstant(builder,
+//            AbstractTypeObjectGenerator.resolveRegExpressions(typedef));
+//    }
+//    AbstractTypeObjectGenerator.addUnits(builder, typedef);
+//
+//    AbstractTypeObjectGenerator.makeSerializable(builder);
+
     @Override
     BlockBuilder defaultConstructor() {
         final var value = valueProperty(allProperties);

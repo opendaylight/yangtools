@@ -35,7 +35,7 @@ public record BitsTypeObjectArchetype(
         BitsTypeDefinition typeDefinition,
         @Nullable BitsTypeObjectArchetype superType)
         implements GeneratedTransferObject<BitsTypeObject>, Archetype.Compat<TypeEffectiveStatement.MandatoryIn<?, ?>> {
-    private static final JavaTypeName SERIALIZABLE = JavaTypeName.create(Serializable.class);
+    static final JavaTypeName SERIALIZABLE = JavaTypeName.create(Serializable.class);
 
     public BitsTypeObjectArchetype {
         requireNonNull(name);

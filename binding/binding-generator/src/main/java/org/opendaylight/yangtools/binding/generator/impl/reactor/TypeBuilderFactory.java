@@ -22,10 +22,8 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeScalarTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -43,11 +41,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
         private Codegen() {
             // Hidden on purpose
-        }
-
-        @Override
-        ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(final JavaTypeName identifier) {
-            return new CodegenScalarTypeObjectArchetypeBuilder(identifier);
         }
 
         @Override
@@ -99,11 +92,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(final JavaTypeName identifier) {
-            return new RuntimeScalarTypeObjectArchetypeBuilder(identifier);
-        }
-
-        @Override
         UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
             return new RuntimeUnionTypeObjectArchetypeBuilder(identifier);
         }
@@ -141,9 +129,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     }
 
     @NonNullByDefault
-    abstract ScalarTypeObjectArchetype.Builder newScalarTypeObjectBuilder(JavaTypeName identifier);
-
-    @NonNullByDefault
     abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
@@ -154,7 +139,7 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
             final GeneratedTransferObject<?> to) {
         return switch (to) {
             case BitsTypeObjectArchetype bits -> throw new VerifyException("Should never be called with " + bits);
-            case ScalarTypeObjectArchetype scalar -> newScalarTypeObjectBuilder(typeName);
+            case ScalarTypeObjectArchetype scalar -> throw new VerifyException("Should never be called with " + scalar);
             case UnionTypeObjectArchetype union ->
                 newUnionTypeObjectBuilder(typeName).setTypePropertyNames(union.typePropertyNames());
             case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
