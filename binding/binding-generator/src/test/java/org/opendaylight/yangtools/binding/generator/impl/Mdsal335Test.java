@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal335Test {
@@ -21,10 +24,14 @@ class Mdsal335Test {
         assertNotNull(generateTypes);
         assertEquals(3, generateTypes.size());
 
-        final var gen = generateTypes.stream()
+        final var gen = assertInstanceOf(ScalarTypeObjectArchetype.class, generateTypes.stream()
             .filter(type -> type.canonicalName()
                 .equals("org.opendaylight.yang.gen.v1.mdsal335.norev.Ipv4AddressNoZone"))
-            .findFirst().orElseThrow();
-        assertEquals(1, gen.getConstantDefinitions().size());
+            .findFirst().orElseThrow());
+        final var restrictions = gen.getRestrictions();
+        assertFalse(restrictions.isEmpty());
+        final var patterns = restrictions.getPatternConstraints();
+        assertEquals(1, patterns.size());
+        assertEquals("[0-9\\.]*", patterns.getFirst().getRegularExpressionString());
     }
 }

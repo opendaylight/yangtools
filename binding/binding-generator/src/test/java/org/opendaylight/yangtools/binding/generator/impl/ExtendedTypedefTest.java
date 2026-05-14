@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -15,6 +16,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -24,20 +27,20 @@ class ExtendedTypedefTest {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResources(
             ExtendedTypedefTest.class, "/typedef_of_typedef.yang", "/ietf-models/ietf-inet-types.yang"));
 
-        GeneratedTransferObject<?> simpleTypedef4 = null;
-        GeneratedTransferObject<?> extendedTypedefUnion = null;
-        GeneratedTransferObject<?> unionTypedef = null;
-        GeneratedTransferObject<?> typedefFromImport = null;
+        ScalarTypeObjectArchetype simpleTypedef4 = null;
+        UnionTypeObjectArchetype extendedTypedefUnion = null;
+        UnionTypeObjectArchetype unionTypedef = null;
+        ScalarTypeObjectArchetype typedefFromImport = null;
         for (var type : genTypes) {
             if (type instanceof GeneratedTransferObject gto) {
                 if (type.simpleName().equals("SimpleTypedef4")) {
-                    simpleTypedef4 = gto;
+                    simpleTypedef4 = assertInstanceOf(ScalarTypeObjectArchetype.class, gto);
                 } else if (type.simpleName().equals("ExtendedTypedefUnion")) {
-                    extendedTypedefUnion = gto;
+                    extendedTypedefUnion = assertInstanceOf(UnionTypeObjectArchetype.class, gto);
                 } else if (type.simpleName().equals("UnionTypedef")) {
-                    unionTypedef = gto;
+                    unionTypedef = assertInstanceOf(UnionTypeObjectArchetype.class, gto);
                 } else if (type.simpleName().equals("TypedefFromImport")) {
-                    typedefFromImport = gto;
+                    typedefFromImport = assertInstanceOf(ScalarTypeObjectArchetype.class, gto);
                 }
             }
         }
@@ -54,7 +57,7 @@ class ExtendedTypedefTest {
 
         assertEquals(List.of(), simpleTypedef4.getProperties(), "SimpleTypedef4 shouldn't have properties.");
 
-        var extendTO = simpleTypedef4.getSuperType();
+        GeneratedTransferObject<?> extendTO = simpleTypedef4.getSuperType();
         assertNotNull(extendTO, "SimpleTypedef4 should have extend.");
         assertEquals("SimpleTypedef3", extendTO.simpleName(), "Incorrect extension for SimpleTypedef4.");
         assertEquals(List.of(), extendTO.getProperties(), "SimpleTypedef3 shouldn't have properties.");
@@ -67,11 +70,7 @@ class ExtendedTypedefTest {
         extendTO = extendTO.getSuperType();
         assertNotNull(extendTO, "SimpleTypedef2 should have extend.");
         assertEquals("SimpleTypedef1", extendTO.simpleName(), "SimpleTypedef2 should be extended with SimpleTypedef1.");
-        var properties = extendTO.getProperties();
-        assertEquals(1, properties.size(), "Incorrect number of properties in class SimpleTypedef1.");
-
-        assertEquals("value", properties.getFirst().getName(), "Incorrect property's name");
-        assertEquals(BaseYangTypes.UINT8_TYPE, properties.get(0).getReturnType(), "Property's incorrect type");
+        assertEquals(BaseYangTypes.UINT8_TYPE, assertInstanceOf(ScalarTypeObjectArchetype.class, extendTO).valueType());
 
         extendTO = extendTO.getSuperType();
         assertNull(extendTO, "SimpleTypedef1 shouldn't have extend.");
@@ -85,7 +84,7 @@ class ExtendedTypedefTest {
         assertEquals("UnionTypedef", extendTO.simpleName(), "Incorrect extension fo ExtendedTypedefUnion.");
         assertNull(extendTO.getSuperType(), "UnionTypedef shouldn't be extended");
 
-        properties = extendTO.getProperties();
+        var properties = extendTO.getProperties();
         assertEquals(4, properties.size(), "Incorrect number of properties for UnionTypedef.");
 
         GeneratedProperty simpleTypedef4Property = null;
