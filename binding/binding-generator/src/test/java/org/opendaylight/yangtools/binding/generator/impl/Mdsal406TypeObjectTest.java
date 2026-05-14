@@ -18,7 +18,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -42,15 +42,11 @@ class Mdsal406TypeObjectTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(CONTEXT);
         assertNotNull(generateTypes);
 
-        final var typedefType = generateTypes.stream().filter(type -> type.canonicalName()
-            .equals("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.MyBinary")).findFirst()
-            .orElseThrow();
-
-        assertNotNull(typedefType.getImplements());
-        final var objectType = typedefType.getImplements().stream()
-                .filter(type -> type.canonicalName()
-                .equals("org.opendaylight.yangtools.binding.ScalarTypeObject")).findAny().orElseThrow();
-        assertEquals(BindingTypes.scalarTypeObject(Types.BYTE_ARRAY), objectType);
+        final var typedefType = assertInstanceOf(ScalarTypeObjectArchetype.class,
+            generateTypes.stream().filter(type -> type.canonicalName()
+                .equals("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.MyBinary")).findFirst()
+                .orElseThrow());
+        assertEquals(Types.BYTE_ARRAY, typedefType.valueType());
     }
 
     @Test
