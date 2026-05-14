@@ -1,0 +1,14 @@
+module yt1886 {
+  yang-version 1.1;
+  namespace yt1886;
+  prefix yt1886;
+
+  typedef foo {
+    type bits {
+      bit bit-one;
+      bit BitOne;
+      bit bitOne;
+      bit bit_one;
+    }
+  }
+}
