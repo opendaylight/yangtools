@@ -19,13 +19,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMember;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 
 /**
  * By type member {@link Comparator} which provides sorting by type for members (variables)
@@ -107,23 +106,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         return switch (type) {
             case ConcreteType concrete -> concrete;
             case ParameterizedType generated -> generated.getRawType();
-            case GeneratedTransferObject<?> gto -> {
-                var rootGto = gto;
-                while (true) {
-                    final var superType = rootGto.getSuperType();
-                    if (superType == null) {
-                        break;
-                    }
-                    rootGto = superType;
-                }
-
-                for (var s : rootGto.getProperties()) {
-                    if (TypeConstants.VALUE_PROP.equals(s.getName())) {
-                        yield s.getReturnType();
-                    }
-                }
-                yield type;
-            }
+            case ScalarTypeObjectArchetype scalar -> scalar.valueType();
             default -> type;
         };
     }
