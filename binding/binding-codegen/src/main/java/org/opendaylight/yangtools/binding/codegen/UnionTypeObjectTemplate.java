@@ -22,10 +22,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
@@ -216,17 +217,8 @@ final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchety
             .cB();
     }
 
-    private static @Nullable Type typedefReturnType(final Type type) {
-        if (type instanceof GeneratedTransferObject gto && gto.isTypedef()) {
-            final var props = gto.getProperties();
-            if (props != null && props.size() == 1) {
-                final var prop = props.getFirst();
-                if (prop.getName().equals("value")) {
-                    return prop.getReturnType();
-                }
-            }
-        }
-        return null;
+    private static @Nullable ConcreteType typedefReturnType(final Type type) {
+        return type instanceof ScalarTypeObjectArchetype scalar ? scalar.valueType() : null;
     }
 
     @Override
@@ -257,10 +249,5 @@ final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchety
                     bb.eS();
                 }
             }).nl();
-    }
-
-    @Override
-    @Nullable BlockBuilder defaultInstance() {
-        return null;
     }
 }

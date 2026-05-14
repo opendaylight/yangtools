@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -272,8 +273,8 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionRestrictedExtType() {
-        final var expected = assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8Restricted"));
-        assertEquals(1, expected.getProperties().size());
+        final var expected = assertInstanceOf(ScalarTypeObjectArchetype.class,
+            assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8Restricted")));
         final var rangeConstraints = expected.getRestrictions().getRangeConstraint();
         assertTrue(rangeConstraints.isPresent());
         final var it = rangeConstraints.orElseThrow().getAllowedRanges().asRanges().iterator();
@@ -288,9 +289,8 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionExtType() {
-        final var expected = assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8"));
-        assertEquals(1, expected.getProperties().size());
-
+        final var expected = assertInstanceOf(ScalarTypeObjectArchetype.class,
+            assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8")));
         assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getYangInt8Type").getReturnType());
     }
 

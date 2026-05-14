@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
 
 // FIXME: package-private and abstract
 public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
-        permits CodegenScalarTypeObjectArchetypeBuilder, CodegenUnionTypeObjectArchetypeBuilder {
+        permits CodegenUnionTypeObjectArchetypeBuilder {
     private Restrictions restrictions;
     private String reference;
     private String description;
@@ -62,8 +62,7 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
     }
 
     @Deprecated(since = "16.0.0", forRemoval = true)
-    static sealed class GTO<T extends TypeObject> extends AbstractGeneratedTransferObject<T>
-            permits CodegenScalarTO, CodegenUnionTO {
+    static sealed class GTO<T extends TypeObject> extends AbstractGeneratedTransferObject<T> permits CodegenUnionTO {
         private final @Nullable Restrictions restrictions;
         private final @Nullable String reference;
         private final @Nullable String description;
