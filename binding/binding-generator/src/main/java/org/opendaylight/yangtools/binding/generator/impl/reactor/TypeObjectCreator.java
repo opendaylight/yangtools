@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -80,14 +78,6 @@ final class TypeObjectCreator {
         this.module = requireNonNull(module);
     }
 
-    static ScalarTypeObjectArchetype createScalarTypeObjectArchetype(final JavaTypeName typeName,
-            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final TypeDefinition<?> typeDefinition,
-            final ConcreteType javaType, final TypeBuilderFactory builderFactory,
-            final ModuleEffectiveStatement module) {
-        return new TypeObjectCreator(statement, builderFactory, module)
-            .createScalar(typeName, javaType, typeDefinition);
-    }
-
     static Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> createUnionTypeObjectArchetype(
             final JavaTypeName typeName, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
             final UnionTypeDefinition typeDefinition, final TypeEffectiveStatement type,
@@ -97,33 +87,6 @@ final class TypeObjectCreator {
         final var archetype = new TypeObjectCreator(statement, builderFactory, module)
             .createUnion(tmp, dependencies, typeName, type, typeDefinition);
         return Map.entry(archetype, tmp);
-    }
-
-    private ScalarTypeObjectArchetype createScalar(final JavaTypeName typeName, final Type javaType,
-            final TypeDefinition<?> typedef) {
-        final var builder = builderFactory.newScalarTypeObjectBuilder(typeName);
-        builder.setTypedef(true);
-        builder.addImplementsType(BindingTypes.scalarTypeObject(javaType));
-        YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
-
-        final var genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
-        genPropBuilder.setReturnType(javaType);
-        builder.setRestrictions(AbstractTypeObjectGenerator.getRestrictions(typedef));
-        builder.setModuleName(module.argument().getLocalName());
-        builderFactory.addCodegenInformation(typedef, builder);
-
-        AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(typedef, builder);
-
-        if (javaType instanceof ConcreteType
-            // FIXME: This looks very suspicious: we should by checking for Types.STRING
-            && "String".equals(javaType.simpleName()) && typedef.getBaseType() != null) {
-            AbstractTypeObjectGenerator.addStringRegExAsConstant(builder,
-                AbstractTypeObjectGenerator.resolveRegExpressions(typedef));
-        }
-        AbstractTypeObjectGenerator.addUnits(builder, typedef);
-
-        AbstractTypeObjectGenerator.makeSerializable(builder);
-        return builder.build();
     }
 
     private UnionTypeObjectArchetype createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
