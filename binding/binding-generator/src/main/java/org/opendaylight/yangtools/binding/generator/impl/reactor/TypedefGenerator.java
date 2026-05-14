@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntim
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -82,6 +83,9 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         final var typedef = statement.typeDefinition();
         if (baseType instanceof BitsTypeObjectArchetype bits) {
             return new BitsTypeObjectArchetype(typeName, statement, (BitsTypeDefinition) typedef, bits);
+        }
+        if (baseType instanceof ScalarTypeObjectArchetype scalar) {
+            return new ScalarTypeObjectArchetype(typeName, statement, typedef, scalar.valueType(), scalar);
         }
 
         final var builder = builderFactory.newTOBuilder(typeName, baseType);
