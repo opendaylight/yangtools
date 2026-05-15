@@ -87,7 +87,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
 
         assertEquals(9, bitsExtClass.getDeclaredFields().length);
         CompilationTestUtils.assertContainsConstructor(bitsExtClass, bitsExtClass);
-        assertEquals(2, bitsExtClass.getConstructors().length);
+        assertEquals(1, bitsExtClass.getConstructors().length);
         Method defInst = CompilationTestUtils.assertContainsMethod(bitsExtClass, bitsExtClass, "getDefaultInstance",
             String.class);
         CompilationTestUtils.assertContainsDefaultMethods(bitsExtClass);
