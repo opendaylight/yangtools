@@ -67,18 +67,22 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             bb.newLine();
 
             // default constructor
-            openDefaultCtor(bb, props);
+            final var archetype = archetype();
+            openDefaultCtor(bb, archetype, props);
             for (var propName : props.keySet()) {
                 bb.str("this._").str(propName).str(" = _").str(propName).eS();
             }
             bb.cB().newLine();
 
-            // copy constructor
-            openCopyCtor(bb);
-            for (var propName : props.keySet()) {
-                bb.str("this._").str(propName).str(" = source._").str(propName).eS();
+            // copy constructor: only needed if have subclasses
+            if (nonFinal(archetype)) {
+                final var simpleName = archetype.simpleName();
+                bb.str("protected ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
+                for (var propName : props.keySet()) {
+                    bb.str("this._").str(propName).str(" = source._").str(propName).eS();
+                }
+                bb.cB().newLine();
             }
-            bb.cB().newLine();
 
             appendGetDefaultInstance(bb, props);
 
@@ -154,7 +158,8 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             }
 
             // default constructor
-            openDefaultCtor(bb, props);
+            final var archetype = archetype();
+            openDefaultCtor(bb, archetype, props);
             bb.str("super(");
             final var sit = superProps.keySet().iterator();
             while (sit.hasNext()) {
@@ -168,19 +173,43 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             bb.eol(");").cB().newLine();
 
             // copy constructor
-            openCopyCtor(bb);
-            bb.eol("super(source);").cB().newLine();
+            var rootType = superType;
+            while (true) {
+                final var nextSuper = rootType.superType();
+                if (nextSuper == null) {
+                    break;
+                }
+                rootType = nextSuper;
+            }
+            bb
+                .str("public ").str(archetype.simpleName()).str("(").str(importedName(rootType.name())).str(" source)")
+                    .oB()
+                    .eol("super(source);");
+            if (override != null) {
+                // check whether any of the restricted bits are set
+                final var codeHelpers = importedName(CODEHELPERS);
+                for (var entry : superProps.entrySet()) {
+                    final var propName = entry.getKey();
+                    if (!props.containsKey(propName)) {
+                        bb
+                            .str(codeHelpers).str(".checkBit(").jStr(entry.getValue().getName()).str(", ")
+                                .str(getterMethodName(propName)).eol("());");
+                    }
+                }
+            }
+            bb.cB().newLine();
 
             appendGetDefaultInstance(bb, props);
 
             if (override != null) {
                 // override getters for invalid bits
+                final var deprecated = importedName(DEPRECATED);
                 for (var propName : superProps.keySet()) {
                     if (!props.containsKey(propName)) {
                         bb
                             .nl()
                             .at().eol(override)
-                            .at().str(importedName(DEPRECATED)).eol("(forRemoval = true)")
+                            .at().str(deprecated).eol("(forRemoval = true)")
                             .str("public final boolean ").str(getterMethodName(propName)).str("()").oB()
                                 .eol("return false;")
                             .cB();
@@ -233,11 +262,15 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
     }
 
     private static String modifiers(final BitsTypeObjectArchetype archetype, final boolean topLevel) {
-        final var inTypedef = archetype.statement() instanceof TypedefEffectiveStatement;
+        final var nonFinal = nonFinal(archetype);
         if (topLevel) {
-            return inTypedef ? " " : " final ";
+            return nonFinal ? " " : " final ";
         }
-        return inTypedef ? " static " : " static final ";
+        return nonFinal ? " static " : " static final ";
+    }
+
+    private static boolean nonFinal(final BitsTypeObjectArchetype archetype) {
+        return archetype.statement() instanceof TypedefEffectiveStatement;
     }
 
     abstract BlockFragment implFragment();
@@ -261,11 +294,12 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         bb.eol(");").newLine();
     }
 
-    final void openDefaultCtor(final BlockBuilder bb, final Map<String, Bit> props) {
+    private static void openDefaultCtor(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
+            final Map<String, Bit> props) {
         final var alphaSorted = new ArrayList<>(props.keySet());
         alphaSorted.sort(Comparator.naturalOrder());
 
-        bb.str("public ").str(archetype().simpleName()).str("(");
+        bb.str("public ").str(archetype.simpleName()).str("(");
         var it = alphaSorted.iterator();
         while (true) {
             bb.str("boolean _").str(it.next());
@@ -275,14 +309,6 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             bb.str(", ");
         }
         bb.str(")").oB();
-    }
-
-    // FIXME: do not generate if this class is final
-    final void openCopyCtor(final BlockBuilder bb) {
-        // FIXME: protected
-        final var simpleName = archetype().simpleName();
-        // FIXME: protected
-        bb.str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
     }
 
     final BlockBuilder appendGetDefaultInstance(final BlockBuilder bb, final Map<String, Bit> props) {
