@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -525,14 +526,16 @@ public final class CodeHelpers {
     //        In order to fix this, we actually need to define a string format that the BitsTypeObject gives out
     //        (by talking to this class). This method would then parse it and set all the present bits.
     @NonNullByDefault
-    public static boolean[] parseBitsDefaultValue(final String defaultValue, final String... bits) {
+    public static boolean[] parseBitsDefaultValue(final String defaultValue, final ImmutableSet<String> bits) {
         final var checked = requireNonNull(defaultValue);
-        for (int i = 0; i < bits.length; ++i) {
-            if (checked.equals(bits[i])) {
-                final var ret = new boolean[bits.length];
-                ret[i] = true;
+        int offset = 0;
+        for (var bit : bits) {
+            if (checked.equals(bit)) {
+                final var ret = new boolean[bits.size()];
+                ret[offset] = true;
                 return ret;
             }
+            ++offset;
         }
         throw new IllegalArgumentException("invalid default parameter");
     }
