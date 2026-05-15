@@ -246,7 +246,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
     final void appendValidNamesConstant(final BlockBuilder bb, final Collection<? extends Bit> bits) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").gen(immutableSet, importedName(STRING)).str(" " + VALID_NAMES_NAME + " = ")
+        bb.str("private static final ").gen(immutableSet, importedName(STRING)).str(" " + VALID_NAMES_NAME + " = ")
             .str(immutableSet).str(".of(");
 
         final var it = bits.iterator();
