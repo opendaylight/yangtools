@@ -84,7 +84,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 bb.cB().newLine();
             }
 
-            appendGetDefaultInstance(bb, props);
+            appendGetDefaultInstance(bb, archetype, props);
 
             // getters
             for (var propName : props.keySet()) {
@@ -199,7 +199,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             }
             bb.cB().newLine();
 
-            appendGetDefaultInstance(bb, props);
+            appendGetDefaultInstance(bb, archetype, props);
 
             if (override != null) {
                 // override getters for invalid bits
@@ -311,36 +311,39 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         bb.str(")").oB();
     }
 
-    final BlockBuilder appendGetDefaultInstance(final BlockBuilder bb, final Map<String, Bit> props) {
-        final var simpleName = archetype().simpleName();
-        final var alphaSorted = props.entrySet().stream()
-            .sorted(Comparator.comparing(Map.Entry::getKey))
-            .map(entry -> entry.getValue().getName())
-            .collect(Collectors.toUnmodifiableList());
-
+    final BlockBuilder appendGetDefaultInstance(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
+            final Map<String, Bit> props) {
+        final var simpleName = archetype.simpleName();
         bb
             .str("public static ").str(simpleName).str(" getDefaultInstance(String defaultValue)").oB()
-                .str("var values = ").str(importedName(CODEHELPERS)).eol(".parseBitsDefaultValue(defaultValue,");
-        // Note: we can use VALID_NAMES here, as the bit order is alpha-sorted.
-        // FIXME: we really should be able to parse the bits by position and then just change the order in which we
-        //        access the array
-        final var it = alphaSorted.iterator();
+                .str("var values = ").str(importedName(CODEHELPERS))
+                    .eol(".parseBitsDefaultValue(defaultValue, " + VALID_NAMES_NAME + ");")
+                .str("return new ").str(simpleName).eol("(");
+
+        // values are ordered by position, the constructor arguments are alpha-sorted, so we need to account for that
+        record PropAndOffset(String name, int offset) {
+            PropAndOffset {
+                requireNonNull(name);
+            }
+        }
+        final var size = props.size();
+        final var tmp = new ArrayList<PropAndOffset>(size);
+        int offset = 0;
+        for (var propName : props.keySet()) {
+            tmp.add(new PropAndOffset(propName, offset++));
+        }
+        tmp.sort(Comparator.comparing(PropAndOffset::name));
+
+        final var it = tmp.iterator();
         while (true) {
-            bb.ind().jStr(it.next());
+            bb.ind("values[").jInt(it.next().offset).str("]");
             if (!it.hasNext()) {
                 break;
             }
             bb.eol(",");
         }
-        bb
-            .eol(");")
-            .str("return new ").str(simpleName).eol("(");
-        final var last = props.size() - 1;
-        for (int i = 0; i < last; ++i) {
-            bb.ind("values[").jInt(i).eol("],");
-        }
         return bb
-            .ind("values[").jInt(last).eol("]);")
+            .eol(");")
             .cB();
     }
 
