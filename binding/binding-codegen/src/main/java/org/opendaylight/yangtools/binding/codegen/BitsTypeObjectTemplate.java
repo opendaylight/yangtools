@@ -61,6 +61,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             appendValidNamesConstant(bb, bits);
 
             // fields
+            bb.newLine();
             for (var propName : props.keySet()) {
                 bb.str("private final boolean _").str(propName).eS();
             }
@@ -159,6 +160,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
             // default constructor
             final var archetype = archetype();
+            bb.newLine();
             openDefaultCtor(bb, archetype, props);
             bb.str("super(");
             final var sit = superProps.keySet().iterator();
@@ -253,8 +255,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         final var bb = newBodyBuilder(archetype.statement(), archetype.typeDefinition(), topLevel)
             .str("public").str(modifiers(archetype, topLevel)).str("class ").str(simpleName).frg(implFragment()).oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
-                .nl();
+                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS();
 
         final var bits = archetype.typeDefinition().getBits();
         appendBody(bb, bits, computeProperties(bits));
@@ -279,7 +280,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
     final void appendValidNamesConstant(final BlockBuilder bb, final Collection<? extends Bit> bits) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").gen(immutableSet, importedName(STRING)).str(" " + VALID_NAMES_NAME + " = ")
+        bb.str("private static final ").gen(immutableSet, importedName(STRING)).str(" " + VALID_NAMES_NAME + " = ")
             .str(immutableSet).str(".of(");
 
         final var it = bits.iterator();
@@ -291,7 +292,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             bb.str(", ");
         }
 
-        bb.eol(");").newLine();
+        bb.eol(");");
     }
 
     private static void openDefaultCtor(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
