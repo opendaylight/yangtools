@@ -497,6 +497,21 @@ public final class CodeHelpers {
     }
 
     /**
+     * Check whether a bit is not present.
+     *
+     * @param bit the bit name
+     * @param present the bit value
+     * @throws IllegalArgumentException if {@code present} is {@code true}
+     * @since 16.0.0
+     */
+    @NonNullByDefault
+    public static void checkBit(final String bit, final boolean present) {
+        if (present) {
+            throw new IllegalArgumentException("Invalid bit: " + bit);
+        }
+    }
+
+    /**
      * Parse a {@link BitsTypeObject} {@code defaultValue} string for the purposes of its generated
      * {@code getDefaultInstance(String)} method.
      *
