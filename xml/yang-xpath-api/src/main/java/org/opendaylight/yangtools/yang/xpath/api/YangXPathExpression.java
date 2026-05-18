@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  *     the data tree or an {@code action}/{@code rpc}/{@code notification} or similar context.
  * </li>
  * <li>Context-bound Expressions, where the expression is bound to a {@code context node}, i.e. {@code current()}
- *     function result is know. This API does not handle this state, as it is inherently bound to a particular data
+ *     function result is known. This API does not handle this state, as it is inherently bound to a particular data
  *     object model.
  * </li>
  * </ul>
