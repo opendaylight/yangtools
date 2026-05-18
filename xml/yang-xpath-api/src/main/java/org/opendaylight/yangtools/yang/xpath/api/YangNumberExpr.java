@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A number-bearing expression.
  */
 public abstract sealed class YangNumberExpr implements YangExpr permits BigDecimalNumberExpr, DoubleNumberExpr {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     public abstract Number getNumber();

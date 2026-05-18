@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
-import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -19,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 public sealed class YangFilterExpr implements YangExpr, YangPredicateAware {
     private static final class WithPredicates extends YangFilterExpr {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableSet<YangExpr> predicates;
@@ -34,7 +34,7 @@ public sealed class YangFilterExpr implements YangExpr, YangPredicateAware {
         }
     }
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final YangExpr expr;

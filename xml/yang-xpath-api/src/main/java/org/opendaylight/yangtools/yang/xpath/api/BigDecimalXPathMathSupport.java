@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import java.io.Serial;
 import java.math.BigDecimal;
 
 final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigDecimalNumberExpr> {
     static final BigDecimalXPathMathSupport INSTANCE = new BigDecimalXPathMathSupport();
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final BigDecimalNumberExpr ZERO = BigDecimalNumberExpr.of(BigDecimal.ZERO);
     private static final BigDecimalNumberExpr ONE = BigDecimalNumberExpr.of(BigDecimal.ONE);

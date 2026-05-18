@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import java.io.Serial;
-
 final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNumberExpr> {
     static final DoubleXPathMathSupport INSTANCE = new DoubleXPathMathSupport();
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private DoubleXPathMathSupport() {

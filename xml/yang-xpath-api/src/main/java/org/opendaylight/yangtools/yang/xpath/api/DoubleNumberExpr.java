@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.xpath.api;
 
-import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 
 final class DoubleNumberExpr extends YangNumberExpr {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final double value;

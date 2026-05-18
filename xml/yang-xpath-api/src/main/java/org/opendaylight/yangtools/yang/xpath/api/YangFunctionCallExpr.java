@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  */
 public sealed class YangFunctionCallExpr implements YangExpr {
     private static final class WithArgs extends YangFunctionCallExpr {
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final ImmutableList<YangExpr> arguments;
@@ -38,7 +38,7 @@ public sealed class YangFunctionCallExpr implements YangExpr {
         }
     }
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final QName name;

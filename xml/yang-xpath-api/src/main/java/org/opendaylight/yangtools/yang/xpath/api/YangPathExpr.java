@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
@@ -17,7 +16,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 
 public sealed class YangPathExpr implements YangExpr {
     private static final class WithLocation extends YangPathExpr {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         private final Relative locationPath;
@@ -33,7 +32,7 @@ public sealed class YangPathExpr implements YangExpr {
         }
     }
 
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final YangExpr filterExpr;

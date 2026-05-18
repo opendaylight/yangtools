@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import static java.util.Objects.requireNonNull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.Serial;
 
 /**
  * YANG XPath binary operator.
@@ -88,7 +87,7 @@ public enum YangBinaryOperator {
 
     @SuppressFBWarnings(value = "SE_INNER_CLASS", justification = "Outer class is a retained enumeration")
     final class Expr extends YangBinaryExpr {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
         Expr(final YangExpr leftExpr, final YangExpr rightExpr) {

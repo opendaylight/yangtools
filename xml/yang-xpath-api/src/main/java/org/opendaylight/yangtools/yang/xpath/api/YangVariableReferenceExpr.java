@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serial;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public final class YangVariableReferenceExpr implements YangExpr {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final QName variableName;

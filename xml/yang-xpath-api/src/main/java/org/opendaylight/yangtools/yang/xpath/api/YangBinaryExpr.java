@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serial;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -17,7 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * A binary expression formed of a {@link #getLeftExpr()}, an {@link #getOperator()} and a {@link #getRightExpr()}.
  */
 public abstract sealed class YangBinaryExpr implements YangExpr permits YangBinaryOperator.Expr {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final YangExpr leftExpr;
