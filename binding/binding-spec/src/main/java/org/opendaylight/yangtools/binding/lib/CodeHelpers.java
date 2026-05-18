@@ -1204,6 +1204,186 @@ public final class CodeHelpers {
         return BitsSVBuilder.Empty.INSTANCE;
     }
 
+    public static boolean bit0(final byte storage) {
+        return (storage & 0x01) != 0;
+    }
+
+    public static boolean bit1(final byte storage) {
+        return (storage & 0x02) != 0;
+    }
+
+    public static boolean bit2(final byte storage) {
+        return (storage & 0x04) != 0;
+    }
+
+    public static boolean bit3(final byte storage) {
+        return (storage & 0x08) != 0;
+    }
+
+    public static boolean bit4(final byte storage) {
+        return (storage & 0x10) != 0;
+    }
+
+    public static boolean bit5(final byte storage) {
+        return (storage & 0x20) != 0;
+    }
+
+    public static boolean bit6(final byte storage) {
+        return (storage & 0x40) != 0;
+    }
+
+    public static boolean bit7(final byte storage) {
+        return (storage & 0x80) != 0;
+    }
+
+    public static byte bitField(final boolean bit0) {
+        return bit0 ? (byte) 0x01 : 0;
+    }
+
+    public static byte bitField(final boolean bit0, final boolean bit1) {
+        int ret = 0;
+        if (bit0) {
+            ret |= 0x01;
+        }
+        if (bit1) {
+            ret |= 0x02;
+        }
+        return (byte) ret;
+    }
+
+    public static byte bitField(final boolean bit0, final boolean bit1, final boolean bit2) {
+        int ret = 0;
+        if (bit0) {
+            ret |= 0x01;
+        }
+        if (bit1) {
+            ret |= 0x02;
+        }
+        if (bit2) {
+            ret |= 0x04;
+        }
+        return (byte) ret;
+   }
+
+    public static byte bitField(final boolean bit0, final boolean bit1, final boolean bit2, final boolean bit3) {
+        int ret = 0;
+        if (bit0) {
+            ret |= 0x01;
+        }
+        if (bit1) {
+            ret |= 0x02;
+        }
+        if (bit2) {
+            ret |= 0x04;
+        }
+        if (bit3) {
+            ret |= 0x08;
+        }
+        return (byte) ret;
+    }
+
+    public static byte bitField(final boolean bit0, final boolean bit1, final boolean bit2, final boolean bit3,
+            final boolean bit4) {
+        int ret = 0;
+        if (bit0) {
+            ret |= 0x01;
+        }
+        if (bit1) {
+            ret |= 0x02;
+        }
+        if (bit2) {
+            ret |= 0x04;
+        }
+        if (bit3) {
+            ret |= 0x08;
+        }
+        if (bit4) {
+            ret |= 0x10;
+        }
+        return (byte) ret;
+    }
+
+    public static byte bitField(final boolean bit0, final boolean bit1, final boolean bit2, final boolean bit3,
+            final boolean bit4, final boolean bit5) {
+        int ret = 0;
+        if (bit0) {
+            ret |= 0x01;
+        }
+        if (bit1) {
+            ret |= 0x02;
+        }
+        if (bit2) {
+            ret |= 0x04;
+        }
+        if (bit3) {
+            ret |= 0x08;
+        }
+        if (bit4) {
+            ret |= 0x10;
+        }
+        if (bit5) {
+            ret |= 0x20;
+        }
+        return (byte) ret;
+    }
+
+    public static byte bitField(final boolean bit0, final boolean bit1, final boolean bit2, final boolean bit3,
+            final boolean bit4, final boolean bit5, final boolean bit6) {
+        int ret = 0;
+        if (bit0) {
+            ret |= 0x01;
+        }
+        if (bit1) {
+            ret |= 0x02;
+        }
+        if (bit2) {
+            ret |= 0x04;
+        }
+        if (bit3) {
+            ret |= 0x08;
+        }
+        if (bit4) {
+            ret |= 0x10;
+        }
+        if (bit5) {
+            ret |= 0x20;
+        }
+        if (bit6) {
+            ret |= 0x40;
+        }
+        return (byte) ret;
+    }
+
+    public static byte bitField(final boolean bit0, final boolean bit1, final boolean bit2, final boolean bit3,
+            final boolean bit4, final boolean bit5, final boolean bit6, final boolean bit7) {
+        int ret = 0;
+        if (bit0) {
+            ret |= 0x01;
+        }
+        if (bit1) {
+            ret |= 0x02;
+        }
+        if (bit2) {
+            ret |= 0x04;
+        }
+        if (bit3) {
+            ret |= 0x08;
+        }
+        if (bit4) {
+            ret |= 0x10;
+        }
+        if (bit5) {
+            ret |= 0x20;
+        }
+        if (bit6) {
+            ret |= 0x40;
+        }
+        if (bit7) {
+            ret |= 0x80;
+        }
+        return (byte) ret;
+    }
+
     //
     ////
     ////// ScalarTypeObject implementation methods
