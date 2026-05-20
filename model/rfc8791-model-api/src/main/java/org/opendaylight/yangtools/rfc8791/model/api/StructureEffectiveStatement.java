@@ -9,8 +9,12 @@ package org.opendaylight.yangtools.rfc8791.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DataContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * Effective representation of a {@code sx:structure} statement.
@@ -18,7 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
  * @since 14.0.21
  */
 public interface StructureEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<QName, @NonNull StructureStatement> {
+        extends DataTreeAwareEffectiveStatement<QName, @NonNull StructureStatement>,
+                DescriptionEffectiveStatement.OptionalIn<QName, @NonNull StructureStatement>,
+                ReferenceEffectiveStatement.OptionalIn<QName, @NonNull StructureStatement>,
+                TypedefEffectiveStatement.MultipleIn<QName, @NonNull StructureStatement>,
+                DataContainerCompat<QName, @NonNull StructureStatement> {
     @Override
     default StatementDefinition<QName, @NonNull StructureStatement, ?> statementDefinition() {
         return StructureStatement.DEF;

@@ -9,15 +9,22 @@ package org.opendaylight.yangtools.rfc8791.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatementMultipleIn;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 
 /**
  * Declared representation of a {@code sx:augment-structure} statement.
  *
  * @since 14.0.21
  */
-public interface AugmentStructureStatement extends DeclaredStatement<AugmentStructureArgument> {
+public interface AugmentStructureStatement extends DataDefinitionStatement.MultipleIn<AugmentStructureArgument>,
+        DescriptionStatement.OptionalIn<AugmentStructureArgument>,
+        GroupingStatementMultipleIn<AugmentStructureArgument>, ReferenceStatement.OptionalIn<AugmentStructureArgument>,
+        TypedefStatement.MultipleIn<AugmentStructureArgument> {
     /**
      * The definition of {@code sx:augment-structure} statement.
      */
