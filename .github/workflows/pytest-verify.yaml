@@ -1,0 +1,150 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024 The Linux Foundation
+
+name: Gerrit Composed PyTest Verify
+
+on:
+  workflow_dispatch:
+    inputs:
+      GERRIT_BRANCH:
+        description: "Branch that change is against"
+        required: true
+        type: string
+      GERRIT_CHANGE_ID:
+        description: "The ID for the change"
+        required: true
+        type: string
+      GERRIT_CHANGE_NUMBER:
+        description: "The Gerrit number"
+        required: false
+        type: string
+      GERRIT_CHANGE_URL:
+        description: "URL to the change"
+        required: false
+        type: string
+      GERRIT_EVENT_TYPE:
+        description: "Type of Gerrit event"
+        required: false
+        type: string
+      GERRIT_PATCHSET_NUMBER:
+        description: "The patch number for the change"
+        required: false
+        type: string
+      GERRIT_PATCHSET_REVISION:
+        description: "The revision sha"
+        required: false
+        type: string
+      GERRIT_PROJECT:
+        description: "Project in Gerrit"
+        required: false
+        type: string
+      GERRIT_REFSPEC:
+        description: "Gerrit refspec of change"
+        required: false
+        type: string
+      JDK_VERSION:
+        description: "OpenJDK version"
+        required: false
+        default: "17"
+        type: string
+      MVN_VERSION:
+        description: "Maven version"
+        required: false
+        default: "3.8.2"
+        type: string
+      MVN_PARAMS:
+        description: "Maven parameters to pass to the mvn command"
+        required: false
+        default: ""
+        type: string
+      MVN_PHASES:
+        description: "Comma separated list of phases to execute"
+        required: false
+        default: "clean deploy"
+        type: string
+      MVN_OPTS:
+        description: "Maven options"
+        required: false
+        # yamllint disable rule:line-length
+        default: >-
+          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+          -Dmaven.repo.local=/tmp/r -Dorg.ops4j.pax.url.mvn.localRepository=/tmp/r
+          -DaltDeploymentRepository=staging::default::file:"${GITHUB_WORKSPACE}"/m2repo
+        # yamllint enable rule:line-length
+        type: string
+      MVN_POM_FILE:
+        description: "Path to pom.xml file."
+        required: false
+        default: "pom.xml"
+        type: string
+      MVN_PROFILES:
+        description: "Comma-delimited list of profiles to activate"
+        required: false
+        default: "q,integration-tests"
+        type: string
+      MVN_GLOBAL_SETTINGS:
+        description: "Maven global settings configuration."
+        required: false
+        default: ""
+        type: string
+      ENV_VARS:
+        # yamllint disable-line rule:line-length
+        description: "Pass GitHub variables to be exported as environment variables via `toJSON(vars)` or specific variables encoded in JSON format"
+        required: false
+        default: "{}"
+        type: string
+      ENV_SECRETS:
+        # yamllint disable-line rule:line-length
+        description: "Pass GitHub secrets to be exported as environment variables via `toJSON(secrets)` or specific secrets encoded in JSON format"
+        required: false
+        default: "{}"
+        type: string
+
+
+
+
+concurrency:
+  group: gerrit-verify-test-${{ github.workflow }}-${{ github.event.inputs.GERRIT_BRANCH }}-${{ github.event.inputs.GERRIT_CHANGE_ID || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  pytest-verify:
+    runs-on: ubuntu-latest
+    steps:
+      # yamllint disable-line rule:line-length
+      - uses: lfreleng-actions/checkout-gerrit-change-action@8523d768952d9690702b4696a8310d2a84b1be39  # v1.0.1
+        with:
+          gerrit-refspec: ${{ inputs.GERRIT_REFSPEC }}
+          gerrit-project: ${{ inputs.GERRIT_PROJECT }}
+          gerrit-url: ${{ vars.GERRIT_URL }}
+          delay: "0s"
+      # yamllint disable-line rule:line-length
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        id: setup-python
+        with:
+          python-version: "3.12"
+      - name: Verify Python Version
+        run: python --version
+      - name: Install tox
+        run: python -m pip install --upgrade pip tox
+      - name: Run Maven
+        # yamllint disable-line rule:line-length
+        uses: lfreleng-actions/maven-build-action@3e8765bbc2685951fb7c2be03964304179106b70 # v0.2.1
+        with:
+          java-version: ${{ inputs.JDK_VERSION }}
+          mvn-version: ${{ inputs.MVN_VERSION }}
+          mvn-params: ${{ inputs.MVN_PARAMS }}
+          mvn-phases: ${{ inputs.MVN_PHASES }}
+          mvn-opts: ${{ inputs.MVN_OPTS }}
+          mvn-pom-file: ${{ inputs.MVN_POM_FILE }}
+          mvn-profiles: ${{ inputs.MVN_PROFILES }}
+          env-vars: ${{ inputs.ENV_VARS }}
+          env-secrets: ${{ inputs.ENV_SECRETS }}
+          global-settings: ${{ inputs.MVN_GLOBAL_SETTINGS }}
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: tests/allure-results/
