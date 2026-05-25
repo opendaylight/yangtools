@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.ThirdParty;
@@ -18,13 +20,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 
 class LeafReferenceTest extends AbstractBindingCodecTest {
-    private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
-    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
-            .child(TopLevelList.class, TOP_FOO_KEY).build();
-
     @Test
     void testCaseWithLeafReferencesType() {
         final var augment = new TreeComplexLeavesBuilder()
@@ -39,10 +37,12 @@ class LeafReferenceTest extends AbstractBindingCodecTest {
             .setName("foo")
             .addAugmentation(augment)
             .build();
-        final var dom = codecContext.toNormalizedDataObject(BA_TOP_LEVEL_LIST, list);
+        final var dom = codecContext.toNormalizedDataObject(
+            DataObjectReference.builder(Top.class).child(TopLevelList.class, new TopLevelListKey("foo")).build(), list);
         final var readed = codecContext.fromNormalizedNode(dom.path(), dom.node());
-        final var readAugment = ((TopLevelList) readed.getValue()).augmentation(TreeComplexLeaves.class);
-
+        assertNotNull(readed);
+        final var readAugment = assertInstanceOf(TopLevelList.class,  readed.getValue())
+            .augmentation(TreeComplexLeaves.class);
         assertEquals(augment, readAugment);
     }
 }
