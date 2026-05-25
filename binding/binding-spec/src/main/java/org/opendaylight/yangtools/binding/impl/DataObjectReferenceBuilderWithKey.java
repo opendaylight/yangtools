@@ -32,7 +32,7 @@ public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>
     @Override
     public DataObjectReference.WithKey<T, K> build() {
         final var steps = buildSteps();
-        return wildcard() ? new DataObjectReferenceWithKey<>(steps) : new DataObjectIdentifierWithKey<>(null, steps);
+        return exact() ? new DataObjectIdentifierWithKey<>(null, steps) : new DataObjectReferenceWithKey<>(steps);
     }
 
     @Override
