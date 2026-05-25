@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,7 +36,6 @@ import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingException;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -70,6 +70,7 @@ class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTes
     @Test
     void testYangIIToBindingAwareIIListWithKey() {
         final var instanceIdentifier = codecContext.fromYangInstanceIdentifier(BI_TOP_LEVEL_LIST_1_PATH);
+        assertNotNull(instanceIdentifier);
         final var last = Iterables.getLast(instanceIdentifier.steps());
         assertEquals(TopLevelList.class, instanceIdentifier.lastStep().type());
         assertTrue(instanceIdentifier.isExact());
@@ -82,7 +83,7 @@ class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTes
     @Test
     void testBindingAwareIIToYangIContainer() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
-                InstanceIdentifier.create(Top.class).child(TopLevelList.class));
+            DataObjectReference.builder(Top.class).child(TopLevelList.class).build());
         final var lastPathArgument = assertInstanceOf(NodeIdentifier.class,
             yangInstanceIdentifier.getLastPathArgument());
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
@@ -91,7 +92,7 @@ class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTes
     @Test
     void testBindingAwareIIToYangIIWildcard() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
-                InstanceIdentifier.create(Top.class).child(TopLevelList.class));
+            DataObjectReference.builder(Top.class).child(TopLevelList.class).build());
         final var lastPathArgument =
             assertInstanceOf(NodeIdentifier.class, yangInstanceIdentifier.getLastPathArgument());
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
@@ -100,7 +101,7 @@ class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTes
     @Test
     void testBindingAwareIIToYangIIListWithKey() {
         final var yangInstanceIdentifier = codecContext.toYangInstanceIdentifier(
-                InstanceIdentifier.create(Top.class).child(TopLevelList.class, TOP_FOO_KEY));
+            DataObjectReference.builder(Top.class).child(TopLevelList.class, TOP_FOO_KEY).build());
         final var lastPathArgument = assertInstanceOf(NodeIdentifierWithPredicates.class,
             yangInstanceIdentifier.getLastPathArgument());
         assertTrue(lastPathArgument.values().contains(TOP_LEVEL_LIST_KEY_VALUE));

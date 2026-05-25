@@ -45,7 +45,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.test.foo4798.rev160101.Root;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -297,7 +297,8 @@ class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodecTest {
 
     @Test
     void choiceToNormalized() {
-        final var entry = codecContext.toNormalizedDataObject(InstanceIdentifier.create(ChoiceContainer.class),
+        final var entry = codecContext.toNormalizedDataObject(
+            DataObjectReference.builder(ChoiceContainer.class).build(),
             new ChoiceContainerBuilder()
                 .setIdentifier(new ExtendedBuilder()
                     .setExtendedId(new ExtendedIdBuilder().setId("identifier_value").build())
@@ -513,7 +514,7 @@ class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodecTest {
             ).build()
         ).build();
 
-        final var biResult = codecContext.toNormalizedDataObject(InstanceIdentifier.create(Top.class), top);
+        final var biResult = codecContext.toNormalizedDataObject(DataObjectReference.builder(Top.class).build(), top);
 
         final var topNormalized = ImmutableNodes.newContainerBuilder()
             .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
@@ -533,8 +534,8 @@ class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodecTest {
         assertEquals(topNormalized, biResult.node());
 
         final var baResult = codecContext.fromNormalizedNode(BI_TOP_PATH, topNormalized);
-
-        assertEquals(InstanceIdentifier.create(Top.class), baResult.getKey());
+        assertNotNull(baResult);
+        assertEquals(DataObjectReference.builder(Top.class).build(), baResult.getKey());
         assertEquals(top, baResult.getValue());
     }
 }

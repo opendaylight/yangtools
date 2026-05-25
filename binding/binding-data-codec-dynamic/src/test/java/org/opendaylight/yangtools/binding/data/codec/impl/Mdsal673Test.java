@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.Foo;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.BarBuilder;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
@@ -34,7 +34,7 @@ class Mdsal673Test extends AbstractBindingCodecTest {
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO),
             ImmutableNodes.newContainerBuilder().withNodeIdentifier(FOO).build());
         assertNotNull(entry);
-        assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
+        assertEquals(DataObjectIdentifier.builder(Foo.class).build(), entry.getKey());
 
         final var foo = assertInstanceOf(Foo.class, entry.getValue());
         assertNull(foo.getBar());
@@ -54,7 +54,7 @@ class Mdsal673Test extends AbstractBindingCodecTest {
                 .withChild(ImmutableNodes.newContainerBuilder().withNodeIdentifier(BAR).build())
                 .build());
         assertNotNull(entry);
-        assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
+        assertEquals(DataObjectIdentifier.builder(Foo.class).build(), entry.getKey());
 
         final var foo = assertInstanceOf(Foo.class, entry.getValue());
         final var bar = foo.getBar();
@@ -80,7 +80,7 @@ class Mdsal673Test extends AbstractBindingCodecTest {
             .build();
         final var entry = codecContext.fromNormalizedNode(YangInstanceIdentifier.of(FOO), data);
         assertNotNull(entry);
-        assertEquals(InstanceIdentifier.create(Foo.class), entry.getKey());
+        assertEquals(DataObjectIdentifier.builder(Foo.class).build(), entry.getKey());
 
         final var foo = assertInstanceOf(Foo.class, entry.getValue());
         final var bar = foo.getBar();
