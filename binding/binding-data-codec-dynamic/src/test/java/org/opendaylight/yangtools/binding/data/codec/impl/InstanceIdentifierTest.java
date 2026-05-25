@@ -21,8 +21,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier.WithKey;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -31,12 +31,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 
 class InstanceIdentifierTest extends AbstractBindingCodecTest {
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
-    private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
+    private static final DataObjectIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = DataObjectIdentifier.builder(Top.class)
             .child(TopLevelList.class, TOP_FOO_KEY).build();
-    private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY = BA_TOP_LEVEL_LIST
-            .augmentation(TreeLeafOnlyAugment.class);
-    private static final InstanceIdentifier<ListViaUses> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST
-            .augmentation(TreeComplexUsesAugment.class).child(ListViaUses.class, new ListViaUsesKey("bar"));
+    private static final DataObjectIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY = BA_TOP_LEVEL_LIST.toBuilder()
+            .augmentation(TreeLeafOnlyAugment.class).build();
+    private static final DataObjectIdentifier<ListViaUses> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST.toBuilder()
+            .augmentation(TreeComplexUsesAugment.class).child(ListViaUses.class, new ListViaUsesKey("bar")).build();
 
     @Test
     void testComplexAugmentationSerialization() {

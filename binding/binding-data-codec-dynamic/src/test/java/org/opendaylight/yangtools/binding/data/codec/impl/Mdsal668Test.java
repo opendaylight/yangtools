@@ -16,13 +16,12 @@ import org.opendaylight.yang.gen.v1.mdsal668.norev.FooBuilder;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.Bar;
 import org.opendaylight.yang.gen.v1.mdsal668.norev.bar.BarBuilder;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 class Mdsal668Test extends AbstractBindingCodecTest {
     private static final NodeIdentifier FOO = new NodeIdentifier(Foo.QNAME);
-    private static final DataObjectIdentifier<Foo> FOO_IID = InstanceIdentifier.create(Foo.class).toIdentifier();
+    private static final DataObjectIdentifier<Foo> FOO_IID = DataObjectIdentifier.builder(Foo.class).build();
 
     @Test
     void testLeaflistLeafref() {
