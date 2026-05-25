@@ -40,42 +40,42 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public <A extends Augmentation<? super T>> Builder<A> augmentation(final Class<A> augmentation) {
+    public final <A extends Augmentation<? super T>> Builder<A> augmentation(final Class<A> augmentation) {
         return append(new NodeStep<>(augmentation));
     }
 
     @Override
-    public <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
+    public final <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
         return append(DataObjectStep.of(container));
     }
 
     @Override
-    public <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
+    public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
             final Class<C> caze, final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }
 
     @Override
-    public <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> Builder.WithKey<N, K> child(
+    public final <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> Builder.WithKey<N, K> child(
             final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, listKey));
     }
 
     @Override
-    public <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
+    public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
             N extends EntryObject<N, K> & ChildOf<? super C>>
             Builder.WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
     @Override
-    protected final void appendItem(final InexactDataObjectStep<?> item) {
+    final void appendItem(final InexactDataObjectStep<?> item) {
         throw new IllegalArgumentException("Cannot make inexact step " + item);
     }
 
     @Override
-    protected abstract <X extends DataObject> Builder<X> append(DataObjectStep<X> step);
+    abstract <X extends DataObject> Builder<X> append(DataObjectStep<X> step);
 
     @Override
-    protected abstract <X extends EntryObject<X, Y>, Y extends Key<X>> Builder.WithKey<X, Y> append(KeyStep<Y, X> step);
+    abstract <X extends EntryObject<X, Y>, Y extends Key<X>> Builder.WithKey<X, Y> append(KeyStep<Y, X> step);
 }

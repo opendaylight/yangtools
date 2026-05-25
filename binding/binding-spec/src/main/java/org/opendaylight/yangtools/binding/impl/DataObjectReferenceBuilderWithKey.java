@@ -36,13 +36,13 @@ public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>
     }
 
     @Override
-    protected <X extends DataObject> DataObjectReferenceBuilder<X> append(final DataObjectStep<X> step) {
+    <X extends DataObject> DataObjectReferenceBuilder<X> append(final DataObjectStep<X> step) {
         return new DataObjectReferenceBuilder<X>(this).append(step);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
+    <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         appendItem(step);
         return (DataObjectReferenceBuilderWithKey<X, Y>) this;

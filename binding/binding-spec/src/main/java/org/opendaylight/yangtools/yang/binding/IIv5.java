@@ -14,6 +14,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 
 final class IIv5 implements Externalizable {
@@ -25,10 +26,6 @@ final class IIv5 implements Externalizable {
     @SuppressWarnings("redundantModifier")
     public IIv5() {
         // For Externalizable
-    }
-
-    IIv5(final InstanceIdentifier<?> source) {
-        steps = ImmutableList.copyOf(source.steps());
     }
 
     @Override
@@ -51,6 +48,6 @@ final class IIv5 implements Externalizable {
 
     @java.io.Serial
     private Object readResolve() throws ObjectStreamException {
-        return InstanceIdentifier.unsafeOf(steps);
+        return DataObjectReference.ofUnsafeSteps(steps);
     }
 }

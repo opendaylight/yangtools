@@ -11,5 +11,8 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 
 public interface Nodes extends ChildOf<NodesData>, DataObject {
-
+    @Override
+    default Class<Nodes> implementedInterface() {
+        return Nodes.class;
+    }
 }

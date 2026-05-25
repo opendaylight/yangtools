@@ -30,14 +30,12 @@ import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.NodeStep;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
  * Base implementation of {@link DataObjectReference}.
  */
 public abstract sealed class AbstractDataObjectReference<T extends DataObject, S extends DataObjectStep<?>>
-        implements DataObjectReference<T>
-        permits DataObjectIdentifierImpl, DataObjectReferenceImpl, InstanceIdentifier {
+        implements DataObjectReference<T> permits DataObjectIdentifierImpl, DataObjectReferenceImpl {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
@@ -46,7 +44,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
 
     private final @NonNull Iterable<? extends @NonNull S> steps;
 
-    protected AbstractDataObjectReference(final Iterable<? extends @NonNull S> steps) {
+    AbstractDataObjectReference(final Iterable<? extends @NonNull S> steps) {
         this.steps = requireNonNull(steps);
         for (var step : steps) {
             final var type = step.type();
@@ -66,9 +64,9 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
         return getLast(steps);
     }
 
-    // FIXME: final when we do not have InstanceIdentifier
     @Override
-    public <N extends EntryObject<N, K>, K extends Key<N>> @Nullable K firstKeyOf(final Class<@NonNull N> listItem) {
+    public final <N extends EntryObject<N, K>, K extends Key<N>> @Nullable K firstKeyOf(
+            final Class<@NonNull N> listItem) {
         // Guard against nulls and type smuggling
         final var item = listItem.asSubclass(EntryObject.class);
 
@@ -162,12 +160,12 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
         return fqpn + '.';
     }
 
-    protected @NonNull Class<?> contract() {
+    @NonNull Class<?> contract() {
         return DataObjectReference.class;
     }
 
     @SuppressWarnings("unchecked")
-    protected static final <T> @NonNull T getLast(final Iterable<?> steps) {
+    static final <T> @NonNull T getLast(final Iterable<?> steps) {
         return (@NonNull T) switch (steps) {
             case AppendIterable<?> append -> append.last();
             case List<?> list -> list.getLast();
@@ -175,21 +173,17 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
         };
     }
 
-    protected final void throwNSE() throws NotSerializableException {
+    final void throwNSE() throws NotSerializableException {
         throw new NotSerializableException(getClass().getName());
     }
 
     @java.io.Serial
-    protected final Object writeReplace() throws ObjectStreamException {
-        return toSerialForm();
-    }
-
-    protected @NonNull Object toSerialForm() {
+    final Object writeReplace() throws ObjectStreamException {
         return new ORv1(this);
     }
 
     @NonNullByDefault
-    protected static final <T> Iterable<? extends T> concat(final Iterable<? extends T> others, final T last) {
+    static final <T> Iterable<? extends T> concat(final Iterable<? extends T> others, final T last) {
         return new AppendIterable<>(others, last);
     }
 

@@ -45,13 +45,13 @@ public final class DataObjectIdentifierBuilder<T extends DataObject> extends Abs
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <X extends DataObject> DataObjectIdentifierBuilder<X> append(final DataObjectStep<X> step) {
+    <X extends DataObject> DataObjectIdentifierBuilder<X> append(final DataObjectStep<X> step) {
         appendItem(step);
         return (DataObjectIdentifierBuilder<X>) this;
     }
 
     @Override
-    protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
+    <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         return new DataObjectIdentifierBuilderWithKey<X, Y>(this).append(step);
     }
