@@ -98,9 +98,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         DataObjectIdentifier.Builder.WithKey<T, K> toBuilder();
 
         /**
-         * Returns this instance.
-         *
-         * @return this instance
+         * {@return this instance}
          * @deprecated This method should not be directly invoked.
          */
         @Override
@@ -187,21 +185,13 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
     Builder<T> toBuilder();
 
     /**
-     * Returns this instance.
-     *
-     * @return this instance
+     * {@return this instance}
      * @deprecated This method should not be directly invoked.
      */
     @Override
     @Deprecated(since = "14.0.15", forRemoval = true)
     default DataObjectIdentifier<T> toIdentifier() {
         return this;
-    }
-
-    @Override
-    @Deprecated(since = "14.0.0")
-    default boolean isWildcarded() {
-        return false;
     }
 
     /**

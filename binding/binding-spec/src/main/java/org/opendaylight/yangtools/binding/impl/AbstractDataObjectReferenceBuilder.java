@@ -44,7 +44,7 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
 
     AbstractDataObjectReferenceBuilder(final DataObjectReference<T> base) {
         pathBuilder = new ArrayList<>(4);
-        wildcard = base.isWildcarded();
+        wildcard = !base.isExact();
         basePath = base.steps();
     }
 
