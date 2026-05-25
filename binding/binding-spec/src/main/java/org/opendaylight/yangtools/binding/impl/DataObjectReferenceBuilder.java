@@ -30,7 +30,7 @@ public final class DataObjectReferenceBuilder<T extends DataObject> extends Abst
     @Override
     public DataObjectReference<T> build() {
         final var steps = buildSteps();
-        return wildcard() ? new DataObjectReferenceImpl<>(steps) : new DataObjectIdentifierImpl<>(null, steps);
+        return exact() ? new DataObjectIdentifierImpl<>(null, steps) : new DataObjectReferenceImpl<>(steps);
     }
 
     @Override

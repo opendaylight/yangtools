@@ -34,17 +34,17 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
     private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
 
-    private boolean wildcard;
+    private boolean exact;
 
     AbstractDataObjectReferenceBuilder(final AbstractDataObjectReferenceBuilder<?> prev) {
         pathBuilder = prev.pathBuilder;
         basePath = prev.basePath;
-        wildcard = prev.wildcard;
+        exact = prev.exact;
     }
 
     AbstractDataObjectReferenceBuilder(final DataObjectReference<T> base) {
         pathBuilder = new ArrayList<>(4);
-        wildcard = base.isWildcarded();
+        exact = base.isExact();
         basePath = base.steps();
     }
 
@@ -52,14 +52,14 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
         pathBuilder = new ArrayList<>(4);
         basePath = null;
         pathBuilder.add(requireNonNull(item));
-        wildcard = item instanceof InexactDataObjectStep;
+        exact = item instanceof ExactDataObjectStep;
     }
 
     AbstractDataObjectReferenceBuilder(final ExactDataObjectStep<?> item) {
         pathBuilder = new ArrayList<>(4);
         basePath = null;
         pathBuilder.add(requireNonNull(item));
-        wildcard = false;
+        exact = true;
     }
 
     @Override
@@ -98,8 +98,8 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
 
     abstract <X extends EntryObject<X, Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(@NonNull KeyStep<Y, X> step);
 
-    final boolean wildcard() {
-        return wildcard;
+    final boolean exact() {
+        return exact;
     }
 
     final void appendItem(final DataObjectStep<?> item) {
@@ -116,7 +116,7 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     // see AbstractDataObjectIdentifierBuilder.appendItem()
     void appendItem(final @NonNull InexactDataObjectStep<?> item) {
         pathBuilder.add(item);
-        wildcard = true;
+        exact = false;
     }
 
     final @NonNull Iterable<? extends @NonNull DataObjectStep<?>> buildSteps() {

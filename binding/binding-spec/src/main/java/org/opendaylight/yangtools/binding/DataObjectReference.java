@@ -160,28 +160,6 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         default K key() {
             return lastStep().key();
         }
-
-        /**
-         * Return the key attached to this identifier. This method is equivalent to calling {@link #key()}.
-         *
-         * @return Key associated with this instance identifier.
-         * @deprecated Use {@link #key()} instead.
-         */
-        @Deprecated(since = "14.0.0")
-        default @NonNull K getKey() {
-            return key();
-        }
-    }
-
-    /**
-     * Create a new {@link Builder} initialized to produce a reference equal to this one.
-     *
-     * @return A builder instance
-     * @deprecated Use {@link #toBuilder()} instead.
-     */
-    @Deprecated(since = "14.0.0")
-    default @NonNull Builder<T> builder() {
-        return toBuilder();
     }
 
     static <T extends ChildOf<? extends DataRoot<?>>> @NonNull Builder<T> builder(final @NonNull Class<T> container) {
@@ -290,18 +268,5 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      */
     default boolean isExact() {
         return false;
-    }
-
-    /**
-     * Returns {@code true} if this reference contains an {@link InexactDataObjectStep}s.
-     *
-     * @implSpec
-     *     The default implementation returns {@code true} to simplify implementation hierarchy.
-     * @return {@code true} if this reference contains an {@link InexactDataObjectStep}
-     * @deprecated Use negated result of {@link #isExact()} instead
-     */
-    @Deprecated(since = "14.0.0")
-    default boolean isWildcarded() {
-        return true;
     }
 }
