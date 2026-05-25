@@ -12,8 +12,6 @@ module org.opendaylight.yangtools.binding.spec {
     exports org.opendaylight.yangtools.binding.lib;
     exports org.opendaylight.yangtools.binding.meta;
     exports org.opendaylight.yangtools.binding.util;
-    // FIXME: inhume this package
-    exports org.opendaylight.yangtools.yang.binding;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
