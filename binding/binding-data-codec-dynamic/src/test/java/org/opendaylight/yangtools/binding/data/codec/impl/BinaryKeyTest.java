@@ -8,16 +8,17 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryList;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryListBuilder;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 
 class BinaryKeyTest extends AbstractBindingCodecTest {
-    private final InstanceIdentifier<BinaryList> instanceIdentifier = InstanceIdentifier.create(BinaryList.class);
-
     @Test
     void binaryKeyTest() {
         final byte[] binaryKey1 = { 1, 1, 1 };
@@ -42,8 +43,12 @@ class BinaryKeyTest extends AbstractBindingCodecTest {
         assertNotEquals(processedBinaryList1, processedBinaryList2);
     }
 
+    @NonNullByDefault
     private BinaryList process(final BinaryList binaryList) {
-        final var entry = codecContext.toNormalizedDataObject(instanceIdentifier, binaryList);
-        return (BinaryList) codecContext.fromNormalizedNode(entry.path(), entry.node()).getValue();
+        final var toEntry = codecContext.toNormalizedDataObject(
+            DataObjectReference.builder(BinaryList.class).build(), binaryList);
+        final var fromEntry = codecContext.fromNormalizedNode(toEntry.path(), toEntry.node());
+        assertNotNull(fromEntry);
+        return assertInstanceOf(BinaryList.class,  fromEntry.getValue());
     }
 }
