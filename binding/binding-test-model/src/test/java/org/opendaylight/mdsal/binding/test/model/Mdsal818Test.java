@@ -17,31 +17,30 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 
 class Mdsal818Test {
     @Test
     void simpleWildcardInstanceIdentitifer() {
-        final var id = InstanceIdentifier.builder(Top.class).child(TopLevelList.class).build();
-        assertTrue(id.isWildcarded());
-        assertFalse(id instanceof KeyedInstanceIdentifier);
+        final var id = DataObjectReference.builder(Top.class).child(TopLevelList.class).build();
+        assertFalse(id.isExact());
     }
 
     @Test
     void simpleKeyedInstanceIdentitifer() {
-        final var first = assertInstanceOf(KeyedInstanceIdentifier.class, InstanceIdentifier.builder(Top.class)
+        final var first = assertInstanceOf(DataObjectIdentifier.WithKey.class, DataObjectReference.builder(Top.class)
             .child(TopLevelList.class, new TopLevelListKey("foo"))
             .build());
-        assertFalse(first.isWildcarded());
+        assertTrue(first.isExact());
     }
 
     @Test
     void wildcardKeyedInstanceIdentitifer() {
-        final var first = assertInstanceOf(KeyedInstanceIdentifier.class, InstanceIdentifier.builder(Top.class)
+        final var first = assertInstanceOf(DataObjectReference.WithKey.class, DataObjectReference.builder(Top.class)
             .child(TopLevelList.class)
             .child(NestedList.class, new NestedListKey("foo"))
             .build());
-        assertTrue(first.isWildcarded());
+        assertFalse(first.isExact());
     }
 }
