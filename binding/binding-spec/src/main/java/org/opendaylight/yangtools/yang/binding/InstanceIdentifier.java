@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
@@ -477,10 +476,6 @@ public sealed class InstanceIdentifier<T extends DataObject> extends AbstractDat
         do {
             arg = it.next();
             // Non-null is implied by our callers
-            final var type = verifyNotNull(arg).type();
-            checkArgument(ChildOf.class.isAssignableFrom(type) || Augmentation.class.isAssignableFrom(type),
-                "%s is not a valid path argument", type);
-
             if (!(arg instanceof ExactDataObjectStep)) {
                 wildcard = true;
             }

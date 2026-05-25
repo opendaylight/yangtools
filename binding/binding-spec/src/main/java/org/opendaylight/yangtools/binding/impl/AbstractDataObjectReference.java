@@ -19,6 +19,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
@@ -46,6 +48,12 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
 
     protected AbstractDataObjectReference(final Iterable<? extends @NonNull S> steps) {
         this.steps = requireNonNull(steps);
+        for (var step : steps) {
+            final var type = step.type();
+            if (!ChildOf.class.isAssignableFrom(type) && !Augmentation.class.isAssignableFrom(type)) {
+                throw new IllegalArgumentException(type + " is not a valid path argument");
+            }
+        }
     }
 
     @Override
