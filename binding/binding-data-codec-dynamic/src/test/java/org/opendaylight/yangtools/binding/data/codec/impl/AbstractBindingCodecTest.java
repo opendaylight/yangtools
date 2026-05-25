@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -25,6 +26,7 @@ abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTest {
     protected final <T extends DataObject> T thereAndBackAgain(final DataObjectReference<T> path, final T data) {
         final var there = codecContext.toNormalizedDataObject(path, data);
         final var backAgain = codecContext.fromNormalizedNode(there.path(), there.node());
+        assertNotNull(backAgain);
         assertEquals(path, backAgain.getKey());
         return (T) backAgain.getValue();
     }
