@@ -11,5 +11,8 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 
 public interface FooRoot extends ChildOf<FooData>, DataObject {
-
+    @Override
+    default Class<FooRoot> implementedInterface() {
+        return FooRoot.class;
+    }
 }

@@ -14,8 +14,10 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 
+@Deprecated(since = "16.0.0", forRemoval = true)
 final class IIv5 implements Externalizable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
@@ -25,10 +27,6 @@ final class IIv5 implements Externalizable {
     @SuppressWarnings("redundantModifier")
     public IIv5() {
         // For Externalizable
-    }
-
-    IIv5(final InstanceIdentifier<?> source) {
-        steps = ImmutableList.copyOf(source.steps());
     }
 
     @Override
@@ -51,6 +49,6 @@ final class IIv5 implements Externalizable {
 
     @java.io.Serial
     private Object readResolve() throws ObjectStreamException {
-        return InstanceIdentifier.unsafeOf(steps);
+        return DataObjectReference.ofUnsafeSteps(steps);
     }
 }

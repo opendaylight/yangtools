@@ -21,9 +21,6 @@ import org.opendaylight.yangtools.binding.impl.DataObjectReferenceBuilderWithKey
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceImpl;
 import org.opendaylight.yangtools.binding.impl.DataObjectReferenceWithKey;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.KeyedBuilder;
-import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 
 /**
  * A reference to a {@link DataObject} with semantics partially overlapping with to YANG {@code instance-identifier}.
@@ -43,9 +40,6 @@ import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
  * </ol>
  * An explicit conversion to {@link DataObjectIdentifier} can be attempted via {@link #toIdentifier()} method.
  *
- * <p>The legacy {@link InstanceIdentifier} is implements the second kind via its class hierarchy, but indicates its
- * compliance via {@link #isExact()} method.
- *
  * @param <T> type of {@link DataObject} held in the last step.
  */
 public sealed interface DataObjectReference<T extends DataObject> extends Immutable, PathLike, Serializable
@@ -64,7 +58,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @param <K> {@link Key} type
          */
         sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>> extends Builder<T>
-                permits DataObjectIdentifier.Builder.WithKey, DataObjectReferenceBuilderWithKey, KeyedBuilder {
+                permits DataObjectIdentifier.Builder.WithKey, DataObjectReferenceBuilderWithKey {
             @Override
             DataObjectReference.WithKey<T, K> build();
         }
@@ -152,7 +146,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
      * @param <T> EntryObject type
      */
     sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>> extends DataObjectReference<T>, KeyAware<K>
-            permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey, KeyedInstanceIdentifier {
+            permits DataObjectIdentifier.WithKey, DataObjectReferenceWithKey {
         @Override
         KeyStep<K, T> lastStep();
 
@@ -168,8 +162,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         }
 
         /**
-         * Return the key attached to this identifier. This method is equivalent to calling
-         * {@link InstanceIdentifier#keyOf(InstanceIdentifier)}.
+         * Return the key attached to this identifier. This method is equivalent to calling {@link #key()}.
          *
          * @return Key associated with this instance identifier.
          * @deprecated Use {@link #key()} instead.

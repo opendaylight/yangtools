@@ -35,13 +35,13 @@ public final class DataObjectReferenceBuilder<T extends DataObject> extends Abst
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <X extends DataObject> DataObjectReferenceBuilder<X> append(final DataObjectStep<X> step) {
+    <X extends DataObject> DataObjectReferenceBuilder<X> append(final DataObjectStep<X> step) {
         appendItem(step);
         return (DataObjectReferenceBuilder<X>) this;
     }
 
     @Override
-    protected <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
+    <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         return new DataObjectReferenceBuilderWithKey<X, Y>(this).append(step);
     }
