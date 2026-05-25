@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -74,7 +73,6 @@ class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTes
         final var last = Iterables.getLast(instanceIdentifier.steps());
         assertEquals(TopLevelList.class, instanceIdentifier.lastStep().type());
         assertTrue(instanceIdentifier.isExact());
-        assertFalse(instanceIdentifier.isWildcarded());
         final var key = assertInstanceOf(KeyStep.class, last).key();
         assertEquals(TopLevelListKey.class, key.getClass());
         assertEquals(TOP_LEVEL_LIST_KEY_VALUE, ((TopLevelListKey)key).getName());
