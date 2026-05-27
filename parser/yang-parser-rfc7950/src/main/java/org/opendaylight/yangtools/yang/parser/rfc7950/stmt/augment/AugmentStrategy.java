@@ -91,18 +91,15 @@ abstract sealed class AugmentStrategy {
     }
 
     /**
-     * Common semantics when the {@code augment} must not add mandatory nodes anywhere.
+     * Common superclass for strategies which are potentially rejecting mandatory nodes.
      */
-    @NonNullByDefault
-    private static final class Reject extends AugmentStrategy {
-        static final Reject INSTANCE = new Reject();
-
-        private Reject() {
+    private abstract static sealed class Reject extends AugmentStrategy {
+        Reject() {
             super(CopyType.ADDED_BY_AUGMENTATION);
         }
 
         @Override
-        boolean computeRejectMandatory(final QNameModule augmentModule, final SchemaNodeIdentifier augmentArg,
+        final boolean computeRejectMandatory(final QNameModule augmentModule, final SchemaNodeIdentifier augmentArg,
                 final Mutable<?, ?, ?> target) {
             final var lastArg = augmentArg.lastNodeIdentifier();
             verifyArgument(lastArg, target);
@@ -178,7 +175,7 @@ abstract sealed class AugmentStrategy {
         }
 
         @Override
-        Iterator<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
+        final Iterator<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
             final var nodes = recMandatoryNodesOf(stmt);
             return nodes != null ? nodes : Collections.emptyIterator();
         }
@@ -221,6 +218,30 @@ abstract sealed class AugmentStrategy {
         }
     }
 
+    /**
+     * Common semantics when the {@code augment} must not add mandatory nodes anywhere.
+     */
+    @NonNullByDefault
+    private static final class RejectAll extends Reject {
+        static final RejectAll INSTANCE = new RejectAll();
+
+        private RejectAll() {
+            // Hidden on purpose
+        }
+    }
+
+    /**
+     * Semantics for RFC7950 unconditional {@code augment}, which may introduce non-configuration mandatory nodes.
+     */
+    @NonNullByDefault
+    private static final class RejectNonConfig extends Reject {
+        static final RejectNonConfig INSTANCE = new RejectNonConfig();
+
+        private RejectNonConfig() {
+            // Hidden on purpose
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(AugmentStrategy.class);
     /**
      * YANG statements that apply to the {@code augment} statement itself, not to the {@code target node}.
@@ -240,7 +261,7 @@ abstract sealed class AugmentStrategy {
      */
     @NonNullByDefault
     static final AugmentStrategy rfc6020() {
-        return Reject.INSTANCE;
+        return RejectAll.INSTANCE;
     }
 
     /**
@@ -258,8 +279,7 @@ abstract sealed class AugmentStrategy {
      */
     @NonNullByDefault
     static final AugmentStrategy unconditional() {
-        // FIXME: YANGTOOLS-1890: a dedicated instance
-        return Reject.INSTANCE;
+        return RejectNonConfig.INSTANCE;
     }
 
     static final void apply(final @NonNull AugmentStrategyResolver strategyResolver,
