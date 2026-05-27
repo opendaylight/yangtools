@@ -143,6 +143,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
                     };
                     case "java.lang" -> switch (typeName.simpleName()) {
                         case "Boolean", "Byte", "Short", "Integer", "Long" -> RANK_FIXED_SIZE;
+                        case "Object" -> RANK_COMPOSITE;
                         case "String" -> RANK_VARIABLE_ARRAY;
                         default -> unhandled(typeName);
                     };
