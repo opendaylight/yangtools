@@ -1,0 +1,35 @@
+module baz {
+  yang-version 1.1;
+  namespace baz;
+  prefix baz;
+
+  import foo { prefix foo; }
+
+  augment /foo:cfg/foo:act/foo:input {
+    leaf bar {
+      type string;
+      mandatory true;
+    }
+  }
+
+  augment /foo:cfg/foo:notif {
+    leaf bar {
+      type string;
+      mandatory true;
+    }
+  }
+
+  augment /foo:non-cfg {
+    leaf bar {
+      type string;
+      mandatory true;
+    }
+  }
+
+  augment /foo:foo/foo:output {
+    leaf bar {
+      type string;
+      mandatory true;
+    }
+  }
+}
