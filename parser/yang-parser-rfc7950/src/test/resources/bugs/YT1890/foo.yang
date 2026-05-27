@@ -1,0 +1,17 @@
+module foo {
+  yang-version 1.1;
+  namespace foo;
+  prefix foo;
+
+  container cfg {
+    action act;
+
+    notification notif;
+  }
+
+  container non-cfg {
+    config false;
+  }
+
+  rpc foo;
+}
