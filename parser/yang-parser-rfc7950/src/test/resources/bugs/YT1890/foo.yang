@@ -1,0 +1,10 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  container cfg;
+
+  container non-cfg {
+    config false;
+  }
+}
