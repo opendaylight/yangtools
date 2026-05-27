@@ -91,18 +91,16 @@ abstract sealed class AugmentStrategy {
     }
 
     /**
-     * Common semantics when the {@code augment} must not add mandatory nodes anywhere.
+     * Common superclass for strategies which are potentially rejecting mandatory nodes.
      */
     @NonNullByDefault
-    private static final class Reject extends AugmentStrategy {
-        static final Reject INSTANCE = new Reject();
-
-        private Reject() {
+    private abstract static sealed class Reject extends AugmentStrategy {
+        Reject() {
             super(CopyType.ADDED_BY_AUGMENTATION);
         }
 
         @Override
-        boolean computeRejectMandatory(final QNameModule augmentModule, final SchemaNodeIdentifier augmentArg,
+        final boolean computeRejectMandatory(final QNameModule augmentModule, final SchemaNodeIdentifier augmentArg,
                 final Mutable<?, ?, ?> target) {
             final var lastArg = augmentArg.lastNodeIdentifier();
             verifyArgument(lastArg, target);
@@ -177,8 +175,23 @@ abstract sealed class AugmentStrategy {
             }
         }
 
+        private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
+            var parent = child.coerceParentContext();
+            while (!parent.produces(AugmentStatement.DEF)) {
+                parent = parent.coerceParentContext();
+            }
+            return parent;
+        }
+
+        private static void verifyArgument(final QName expected, final BoundStmtCtx<?> stmt) {
+            final var targetArg = stmt.argument();
+            if (!expected.equals(targetArg)) {
+                throw new VerifyException(stmt + " does not match " + expected);
+            }
+        }
+
         @Override
-        Iterator<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
+        final Iterator<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
             final var nodes = recMandatoryNodesOf(stmt);
             return nodes != null ? nodes : Collections.emptyIterator();
         }
@@ -219,6 +232,39 @@ abstract sealed class AugmentStrategy {
             }
             return null;
         }
+
+        private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
+            return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
+        }
+
+        private static <A, D extends DeclaredStatement<A>> @Nullable A firstSubstatementAttributeOf(
+                final StmtContext<?, ?, ?> ctx, final StatementDefinition<A, D, ?> def) {
+            return StmtContextUtils.firstAttributeOf(ctx.allSubstatements(), def.declaredRepresentation());
+        }
+    }
+
+    /**
+     * Common semantics when the {@code augment} must not add mandatory nodes anywhere.
+     */
+    @NonNullByDefault
+    private static final class RejectAll extends Reject {
+        static final RejectAll INSTANCE = new RejectAll();
+
+        private RejectAll() {
+            // Hidden on purpose
+        }
+    }
+
+    /**
+     * Semantics for RFC7950 unconditional {@code augment}, which may introduce non-configuration mandatory nodes.
+     */
+    @NonNullByDefault
+    private static final class RejectNonConfig extends Reject {
+        static final RejectNonConfig INSTANCE = new RejectNonConfig();
+
+        private RejectNonConfig() {
+            // Hidden on purpose
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(AugmentStrategy.class);
@@ -240,7 +286,7 @@ abstract sealed class AugmentStrategy {
      */
     @NonNullByDefault
     static final AugmentStrategy rfc6020() {
-        return Reject.INSTANCE;
+        return RejectAll.INSTANCE;
     }
 
     /**
@@ -258,8 +304,7 @@ abstract sealed class AugmentStrategy {
      */
     @NonNullByDefault
     static final AugmentStrategy unconditional() {
-        // FIXME: YANGTOOLS-1890: a dedicated instance
-        return Reject.INSTANCE;
+        return RejectNonConfig.INSTANCE;
     }
 
     static final void apply(final @NonNull AugmentStrategyResolver strategyResolver,
@@ -370,30 +415,5 @@ abstract sealed class AugmentStrategy {
         return new InferenceException(mandatoryNode,
             "An augment cannot add node '%s' because it is mandatory and in module different than target",
             mandatoryNode.rawArgument());
-    }
-
-    @NonNullByDefault
-    private static void verifyArgument(final QName expected, final BoundStmtCtx<?> stmt) {
-        final var targetArg = stmt.argument();
-        if (!expected.equals(targetArg)) {
-            throw new VerifyException(stmt + " does not match " + expected);
-        }
-    }
-
-    private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
-    }
-
-    private static <A, D extends DeclaredStatement<A>> @Nullable A firstSubstatementAttributeOf(
-            final StmtContext<?, ?, ?> ctx, final StatementDefinition<A, D, ?> def) {
-        return StmtContextUtils.firstAttributeOf(ctx.allSubstatements(), def.declaredRepresentation());
-    }
-
-    private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
-        var parent = child.coerceParentContext();
-        while (!parent.produces(AugmentStatement.DEF)) {
-            parent = parent.coerceParentContext();
-        }
-        return parent;
     }
 }

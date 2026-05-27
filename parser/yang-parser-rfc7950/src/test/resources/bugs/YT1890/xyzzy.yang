@@ -1,0 +1,12 @@
+module xyzzy {
+  namespace xyzzy;
+  prefix xyzzy;
+
+  import foo { prefix foo; }
+
+  deviation /foo:cfg {
+    deviate add {
+      config false;
+    }
+  }
+}
