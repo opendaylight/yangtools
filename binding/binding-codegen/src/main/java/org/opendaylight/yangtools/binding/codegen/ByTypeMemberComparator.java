@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +35,7 @@ import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
  */
 @Beta
 final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T>, Serializable {
-    @Serial
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -98,7 +97,7 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
         return member1.getName().compareTo(member2.getName());
     }
 
-    @Serial
+    @java.io.Serial
     @SuppressWarnings("static-method")
     private Object readResolve() {
         return INSTANCE;
