@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent-lite</artifactId>
-        <version>14.3.3</version>
+        <version>14.3.4</version>
         <relativePath/>
     </parent>
 
