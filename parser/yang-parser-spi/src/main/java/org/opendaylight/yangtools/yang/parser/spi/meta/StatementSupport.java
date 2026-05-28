@@ -239,8 +239,8 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
 
     /**
      * Statement tree instantiation policy. This construct does not have a direct definition in YANG, but is a capture
-     * capture of a couple of statement processing quirks present in RFC7950 and its extensions as they apply to our
-     * modeling of YANG metamodel.
+     * of a couple of statement processing quirks present in RFC7950 and its extensions as they apply to our modeling
+     * of YANG metamodel.
      *
      * <p>An instantiation policy is inherited along the parent/child axis, so that parent's policy dominates the policy
      * decision in all child contexts. For {@link #configHandling()} this works by preferring the higher-ordinal member,
