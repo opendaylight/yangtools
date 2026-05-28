@@ -579,9 +579,6 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
      *
      * <p>This method maintains a resolution cache, so once we have returned a result, we will keep on returning the
      * same result without performing any lookups, solely to support {@link #effectiveConfig()}.
-     *
-     * <p>Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
-     * {@link #isIgnoringConfig(StatementContextBase)}.
      */
     final @Nullable Boolean effectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
         final var cfgFlags = flags & MASK_CONFIG;
