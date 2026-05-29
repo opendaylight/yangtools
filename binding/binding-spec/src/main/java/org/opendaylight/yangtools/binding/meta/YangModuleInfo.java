@@ -8,16 +8,17 @@
 package org.opendaylight.yangtools.binding.meta;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 
 /**
  * Information and model capture for Binding V1. Instances of this class identify a packaged model and allow access
@@ -35,8 +36,29 @@ public interface YangModuleInfo extends Immutable {
      * {@link QName#getModule()} and module name maps to {@link QName#getLocalName()}.
      *
      * @return YANG module name.
+     * @since 16.0.0
      */
-    QName getName();
+    QName name();
+
+    /**
+     * Returns YANG module name, as a composite {@link QName}. Module's namespace and revision maps to
+     * {@link QName#getModule()} and module name maps to {@link QName#getLocalName()}.
+     *
+     * @return YANG module name.
+     * @deprecated Use {@link #name()} instead.
+     */
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    default QName getName() {
+        return name();
+    }
+
+    /**
+     * {@return the module's namespace and revision expressed as a {@link QNameModule}}
+     * @since 16.0.0
+     */
+    default QNameModule module() {
+        return name().getModule();
+    }
 
     /**
      * Return an open stream containing YANG text for this module. The stream is required to be UTF-8 encoded.
@@ -53,7 +75,7 @@ public interface YangModuleInfo extends Immutable {
      * @return {@link YangModuleInfo} objects of all imported modules.
      */
     default Collection<YangModuleInfo> getImportedModules() {
-        return ImmutableList.of();
+        return List.of();
     }
 
     /**
@@ -70,7 +92,7 @@ public interface YangModuleInfo extends Immutable {
 
             @Override
             public String toString() {
-                return MoreObjects.toStringHelper(this).add("name", getName()).toString();
+                return MoreObjects.toStringHelper(this).add("name", name()).toString();
             }
         };
     }

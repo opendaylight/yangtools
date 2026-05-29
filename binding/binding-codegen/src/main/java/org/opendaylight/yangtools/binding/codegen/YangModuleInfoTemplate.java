@@ -359,7 +359,7 @@ public final class YangModuleInfoTemplate {
             .txt("""
 
                   @Override
-                  public QName getName() {
+                  public QName name() {
                       return NAME;
                   }
 
