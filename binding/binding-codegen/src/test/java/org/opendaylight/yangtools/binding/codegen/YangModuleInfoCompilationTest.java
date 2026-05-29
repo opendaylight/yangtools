@@ -131,7 +131,7 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
                 }
 
                 @Override
-                public QName getName() {
+                public QName name() {
                     return NAME;
                 }
 
@@ -158,7 +158,7 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
                     }
 
                     @Override
-                    public QName getName() {
+                    public QName name() {
                         return NAME;
                     }
 
