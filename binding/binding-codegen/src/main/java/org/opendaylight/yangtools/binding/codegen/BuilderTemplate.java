@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -292,9 +291,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                     bb.blk(generateIfCheck(impl, done));
                 }
                 bb.str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
-                    .jStr(getAllIfcs(targetType).stream()
-                        .map(this::importedName)
-                        .collect(Collectors.toUnmodifiableList()).toString()).eol(");");
+                    .jStr(getAllIfcs(targetType).stream().map(this::importedName).toList().toString()).eol(");");
             }).nl();
     }
 
