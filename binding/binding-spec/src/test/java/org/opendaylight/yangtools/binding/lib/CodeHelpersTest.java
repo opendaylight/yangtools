@@ -18,8 +18,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -54,8 +56,13 @@ class CodeHelpersTest {
         final var list = List.of(this);
         assertSame(list, CodeHelpers.checkListFieldCast(CodeHelpersTest.class, "foo", list));
 
-        var iae = assertThrows(IllegalArgumentException.class,
-            () -> CodeHelpers.checkListFieldCast(CodeHelpersTest.class, "foo", Collections.singletonList(null)));
+        var iae = assertThrows(IllegalArgumentException.class, new Executable() {
+            @Override
+            @SuppressModernizer
+            public void execute() {
+                CodeHelpers.checkListFieldCast(CodeHelpersTest.class, "foo", Collections.singletonList(null));
+            }
+        });
         assertInstanceOf(NullPointerException.class, iae.getCause());
 
         iae = assertThrows(IllegalArgumentException.class,
@@ -70,8 +77,13 @@ class CodeHelpersTest {
         final var list = Set.of(this);
         assertSame(list, CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", list));
 
-        var iae = assertThrows(IllegalArgumentException.class,
-            () -> CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Collections.singleton(null)));
+        var iae = assertThrows(IllegalArgumentException.class, new Executable() {
+            @Override
+            @SuppressModernizer
+            public void execute() {
+                CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Collections.singleton(null));
+            }
+        });
         assertInstanceOf(NullPointerException.class, iae.getCause());
 
         iae = assertThrows(IllegalArgumentException.class,
