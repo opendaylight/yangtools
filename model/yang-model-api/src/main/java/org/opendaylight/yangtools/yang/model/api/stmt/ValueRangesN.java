@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -20,7 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 record ValueRangesN(List<ValueRange> ranges) implements ValueRanges {
     ValueRangesN {
-        requireNonNull(ranges);
+        ranges = List.copyOf(ranges);
     }
 
     @Override
