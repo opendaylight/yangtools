@@ -90,9 +90,9 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
             }
         }
 
-        throw new IllegalArgumentException(String.format(
-            "This cache does not support representation: %s, supported representations are: %s",
-            representation, STORAGE_ADAPTERS.keySet()));
+        throw new IllegalArgumentException(
+            "This cache does not support representation: %s, supported representations are: %s".formatted(
+                representation, STORAGE_ADAPTERS.keySet()));
     }
 
     /**

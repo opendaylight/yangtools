@@ -34,6 +34,6 @@ public class InvalidSubstatementException extends SourceException {
 
     public InvalidSubstatementException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
-        this(String.format(format, args), source);
+        this(format.formatted(args), source);
     }
 }

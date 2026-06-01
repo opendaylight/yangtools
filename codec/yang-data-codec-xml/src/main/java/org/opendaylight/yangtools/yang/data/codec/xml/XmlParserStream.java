@@ -514,9 +514,9 @@ public final class XmlParserStream implements Closeable, Flushable {
                     if (!childDataSchemaNodes.isEmpty()) {
                         final boolean elementList = isElementList(childDataSchemaNodes);
                         if (!added && !elementList) {
-                            throw new XMLStreamException(String.format(
-                                "Duplicate element \"%s\" in namespace \"%s\" with parent \"%s\" in XML input",
-                                xmlElementName, elementNS, parentSchema), in.getLocation());
+                            throw new XMLStreamException(
+                                "Duplicate element \"%s\" in namespace \"%s\" with parent \"%s\" in XML input"
+                                    .formatted(xmlElementName, elementNS, parentSchema), in.getLocation());
                         }
 
                         // We have a match, proceed with it
@@ -564,9 +564,9 @@ public final class XmlParserStream implements Closeable, Flushable {
 
                     // We have not handled the node -- let's decide what to do about that
                     if (strictParsing) {
-                        throw new XMLStreamException(String.format(
-                            "Schema for node with name %s and namespace %s does not exist in parent %s", xmlElementName,
-                            elementNS, parentSchema), in.getLocation());
+                        throw new XMLStreamException(
+                            "Schema for node with name %s and namespace %s does not exist in parent %s".formatted(
+                                xmlElementName, elementNS, parentSchema), in.getLocation());
                     }
 
                     LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" in parent {}", elementNS,

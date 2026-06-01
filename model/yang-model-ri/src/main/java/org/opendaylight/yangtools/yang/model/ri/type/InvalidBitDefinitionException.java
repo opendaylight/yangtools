@@ -27,7 +27,7 @@ public class InvalidBitDefinitionException extends IllegalArgumentException {
 
     public InvalidBitDefinitionException(final Bit offendingBit, final String format,
             final Object... args) {
-        this(offendingBit, String.format(format, args));
+        this(offendingBit, format.formatted(args));
     }
 
     public Bit getOffendingBit() {

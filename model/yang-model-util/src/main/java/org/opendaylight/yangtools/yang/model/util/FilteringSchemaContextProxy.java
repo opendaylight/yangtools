@@ -206,7 +206,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
     @Override
     public String toString() {
-        return String.format("SchemaContextProxyImpl{filteredModules=%s}", filteredModules);
+        return "SchemaContextProxyImpl{filteredModules=" + filteredModules + "}";
     }
 
     public static final class ModuleId {
@@ -248,7 +248,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         @Override
         public String toString() {
-            return String.format("ModuleId{name='%s', rev=%s}",name,rev);
+            return "ModuleId{name='%s', rev=%s}".formatted(name, rev);
         }
     }
 }

@@ -19,12 +19,12 @@ public class InvalidRangeConstraintException extends IllegalArgumentException {
 
     protected InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, final String message) {
         super(message);
-        this.offendingRangeConstraint = ImmutableRangeSet.copyOf(offendingConstraint);
+        offendingRangeConstraint = ImmutableRangeSet.copyOf(offendingConstraint);
     }
 
     public InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, final String format,
             final Object... args) {
-        this(offendingConstraint, String.format(format, args));
+        this(offendingConstraint, format.formatted(args));
     }
 
     public final RangeSet<?> getOffendingRanges() {
