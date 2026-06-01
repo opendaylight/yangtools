@@ -59,7 +59,7 @@ class Bug6868Test extends AbstractYangTest {
         for (var unexpectedContainer : Sets.difference(ALL_CONTAINERS, expectedContainers)) {
             assertEquals(Optional.empty(),
                 schemaContext.findDataTreeChild(QName.create(FOO_NS, unexpectedContainer)),
-                String.format("Unexpected container %s.", unexpectedContainer));
+                "Unexpected container %s.".formatted(unexpectedContainer));
         }
     }
 
