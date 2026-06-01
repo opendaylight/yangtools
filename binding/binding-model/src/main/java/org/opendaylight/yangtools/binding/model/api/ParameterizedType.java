@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
@@ -79,7 +78,7 @@ public sealed interface ParameterizedType extends Type
     static ParameterizedType of(final Type rawType, final Type firstArg, final Type secondArg, final Type... others) {
         return of(rawType, Stream.concat(Stream.of(firstArg, secondArg), Arrays.stream(others))
             .map(Objects::requireNonNull)
-            .collect(Collectors.toUnmodifiableList()));
+            .toList());
     }
 
     /**
