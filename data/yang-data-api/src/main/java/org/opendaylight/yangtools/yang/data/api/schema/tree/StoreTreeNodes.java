@@ -53,7 +53,7 @@ public final class StoreTreeNodes {
         for (PathArgument pathArg : path.getPathArguments()) {
             current = current.childByArg(pathArg);
             if (current == null) {
-                throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
+                throw new IllegalArgumentException("Child %s is not present in tree.".formatted(
                         path.getAncestor(depth)));
             }
             ++depth;

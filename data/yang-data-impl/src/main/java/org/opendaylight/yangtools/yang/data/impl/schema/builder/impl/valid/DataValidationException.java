@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 public class DataValidationException extends RuntimeException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     public DataValidationException(final String message) {
@@ -49,7 +50,7 @@ public class DataValidationException extends RuntimeException {
     public static void checkLegalData(final boolean isLegal, final String messageTemplate,
             final Object... messageAttrs) {
         if (!isLegal) {
-            throw new DataValidationException(String.format(messageTemplate, messageAttrs));
+            throw new DataValidationException(messageTemplate.formatted(messageAttrs));
         }
     }
 
@@ -82,19 +83,18 @@ public class DataValidationException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
         IllegalChildException(final PathArgument child, final DataNodeContainer schema, final Set<QName> childNodes) {
-            super(String.format(
-                "Unknown child node: %s, does not belong to: %s as a direct child. Direct child nodes: %s",
+            super("Unknown child node: %s, does not belong to: %s as a direct child. Direct child nodes: %s".formatted(
                 child, schema, childNodes));
         }
 
         IllegalChildException(final PathArgument child, final ChoiceSchemaNode schema) {
-            super(String.format("Unknown child node: %s, not detected in choice: %s", child, schema));
+            super("Unknown child node: %s, not detected in choice: %s".formatted(child, schema));
         }
 
         IllegalChildException(final PathArgument child, final DataSchemaNode schema,
                 final Set<QName> childNodes) {
-            super(String.format("Unknown child node: %s, does not belong to: %s as a child. Child nodes: %s", child,
-                schema, childNodes));
+            super("Unknown child node: %s, does not belong to: %s as a child. Child nodes: %s".formatted(child, schema,
+                childNodes));
         }
     }
 
@@ -103,7 +103,7 @@ public class DataValidationException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 
         public IllegalListKeyException(final String format, final Object... args) {
-            super(String.format(format, args));
+            super(format.formatted(args));
         }
 
         IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id) {
