@@ -17,7 +17,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserComponent;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -59,7 +58,7 @@ abstract class AbstractSchemaRepositoryTest {
                 yangSource.setResult();
                 return yangSource.getId();
             })
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
 
         return sharedSchemaRepository
             .createEffectiveModelContextFactory(SchemaContextFactoryConfiguration.builder()
