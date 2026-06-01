@@ -54,7 +54,7 @@ final class UnionValueOptionContext {
     @SuppressWarnings("checkstyle:illegalCatch")
     Object deserializeUnion(final Object input) {
         // Side-step potential exceptions by checking the type if it is available
-        if (codec instanceof EncapsulatedValueCodec && !((EncapsulatedValueCodec) codec).canAcceptObject(input)) {
+        if (codec instanceof EncapsulatedValueCodec evc && !evc.canAcceptObject(input)) {
             return null;
         }
 
