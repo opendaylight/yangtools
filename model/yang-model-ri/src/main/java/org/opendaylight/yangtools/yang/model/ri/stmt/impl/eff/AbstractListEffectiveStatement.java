@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -68,11 +66,11 @@ abstract class AbstractListEffectiveStatement extends WithTypedefNamespace<QName
     }
 
     @Override
-    public final Collection<? extends UniqueEffectiveStatement> getUniqueConstraints() {
+    public final List<? extends UniqueEffectiveStatement> getUniqueConstraints() {
         return effectiveSubstatements().stream()
             .filter(UniqueEffectiveStatement.class::isInstance)
             .map(UniqueEffectiveStatement.class::cast)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
     }
 
     @Override
