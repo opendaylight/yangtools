@@ -449,7 +449,7 @@ class YangToSourcesProcessor {
                     return true;
                 })
                 .filter(file -> file.getFileName().toString().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION))
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
         }
     }
 
