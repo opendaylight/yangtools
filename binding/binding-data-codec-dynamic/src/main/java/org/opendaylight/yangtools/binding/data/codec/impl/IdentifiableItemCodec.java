@@ -17,7 +17,6 @@ import java.lang.reflect.Constructor;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
@@ -94,8 +93,8 @@ abstract sealed class IdentifiableItemCodec {
             final var tmp = keys.stream()
                 // This is not terribly efficient but gets the job done
                 .sorted(Comparator.comparing(leaf -> Naming.getPropertyName(leaf.getLocalName())))
-                .collect(Collectors.toUnmodifiableList());
-            keysInBindingOrder = tmp.equals(keys) ? keys : tmp;
+                .toList();
+            keysInBindingOrder = tmp.equals(keys) ? keys : List.copyOf(tmp);
         }
 
         @Override
