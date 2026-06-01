@@ -172,7 +172,7 @@ final class YangModuleInfoScanner extends BundleTracker<Registration> {
         private static final long serialVersionUID = 1L;
 
         ScanningException(final Exception cause, final String format, final Object... args) {
-            super(String.format(format, args), cause);
+            super(format.formatted(args), cause);
         }
     }
 }

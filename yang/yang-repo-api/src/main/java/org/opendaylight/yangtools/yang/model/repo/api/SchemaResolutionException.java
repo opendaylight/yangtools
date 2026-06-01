@@ -50,8 +50,8 @@ public class SchemaResolutionException extends SchemaSourceException {
 
     private static String formatMessage(final String message, final SourceIdentifier failedSource,
             final Collection<?> resolvedSources, final Multimap<?, ?> unsatisfiedImports) {
-        return String.format("%s, failed source: %s, resolved sources: %s, unsatisfied imports: %s", message,
-                failedSource, resolvedSources, unsatisfiedImports);
+        return "%s, failed source: %s, resolved sources: %s, unsatisfied imports: %s".formatted(message, failedSource,
+                resolvedSources, unsatisfiedImports);
     }
 
     /**

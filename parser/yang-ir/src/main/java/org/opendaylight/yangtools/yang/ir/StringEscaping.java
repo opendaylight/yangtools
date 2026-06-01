@@ -49,9 +49,10 @@ public enum StringEscaping {
                     final var escape = str.charAt(index + 1);
                     index = switch (escape) {
                         case 'n', 't', '\\', '\"' -> str.indexOf('\\', index + 2);
-                        default -> throw new ParseException(String.format("""
+                        default -> throw new ParseException("""
                             YANG 1.1: illegal double quoted string (%s). In double quoted string the backslash must be \
-                            followed by one of the following character [n,t,",\\], but was '%s'.""", str, escape),
+                            followed by one of the following character [n,t,",\\], but was '%s'.""".formatted(
+                                str, escape),
                             index);
                     };
                 }
