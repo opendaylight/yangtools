@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -65,7 +64,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
                 }
                 return leafGen.methodReturnType(builderFactory);
             })
-            .collect(Collectors.toUnmodifiableList()));
+            .toList());
     }
 
     @Override
