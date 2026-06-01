@@ -65,40 +65,41 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <configuration/>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>single</goal>
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <!-- TODO investigate why jar fails without this
-                                filter -->
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <inlineDescriptors>
+                                <!-- same as jar-with-dependencies, but with a different id -->
+                                <inlineDescriptor>
+                                    <id>executable</id>
+                                    <formats>
+                                        <format>jar</format>
+                                    </formats>
+                                    <includeBaseDirectory>false</includeBaseDirectory>
+                                    <dependencySets>
+                                        <dependencySet>
+                                            <outputDirectory>/</outputDirectory>
+                                            <useProjectArtifact>true</useProjectArtifact>
+                                            <unpack>true</unpack>
+                                            <scope>runtime</scope>
+                                        </dependencySet>
+                                    </dependencySets>
+                                </inlineDescriptor>
+                            </inlineDescriptors>
+                            <archive>
+                                <manifest>
                                     <mainClass>org.opendaylight.yangtools.yang.validation.tool.Main</mainClass>
-                                </transformer>
-                            </transformers>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>executable</shadedClassifierName>
+                                </manifest>
+                            </archive>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>
