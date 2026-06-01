@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -93,7 +92,7 @@ public final class UniqueStatementSupport
                 return allMatch(nodeIds.stream(), targetModule) ? descendant
                     : Descendant.of(Lists.transform(nodeIds, nodeId -> nodeId.bindTo(targetModule).intern()));
             })
-            .collect(Collectors.toUnmodifiableList()));
+            .toList());
     }
 
     @Override
@@ -148,7 +147,7 @@ public final class UniqueStatementSupport
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         return SEP_SPLITTER.splitToStream(CRLF_PATTERN.matcher(argumentValue).replaceAll("\n"))
             .map(uniqueArgToken -> binding.parseDescendantSchemaNodeid(stmt, uniqueArgToken))
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
     }
 
     /**
