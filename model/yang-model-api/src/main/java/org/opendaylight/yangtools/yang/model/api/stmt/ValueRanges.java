@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
@@ -56,7 +55,7 @@ public sealed interface ValueRanges extends SizedIterable<ValueRange> permits Va
      */
     static ValueRanges of(final List<ValueRange> ranges) {
         // remove any duplicates and collect to an immutable list
-        final var copy = ranges.stream().distinct().collect(Collectors.toUnmodifiableList());
+        final var copy = ranges.stream().distinct().toList();
         return switch (copy.size()) {
             case 0 -> throw new IllegalArgumentException("empty ranges");
             case 1 -> new ValueRanges1(copy.getFirst());
