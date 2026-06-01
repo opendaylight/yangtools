@@ -16,7 +16,6 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Uninterruptibles;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -160,12 +159,12 @@ class QueuedNotificationManagerTest {
         final var listener = new TestListener<Integer>(count, 1);
         listener.sleepTime = 20;
 
-        manager.submitNotifications(listener, Arrays.asList(1, 2));
+        manager.submitNotifications(listener, List.of(1, 2));
         manager.submitNotification(listener, 3);
-        manager.submitNotifications(listener, Arrays.asList(4, 5));
+        manager.submitNotifications(listener, List.of(4, 5));
         manager.submitNotification(listener, 6);
 
-        manager.submitNotifications(null, Collections.emptyList());
+        manager.submitNotifications(null, List.of());
         manager.submitNotifications(listener, null);
         manager.submitNotification(listener, null);
 
@@ -174,7 +173,7 @@ class QueuedNotificationManagerTest {
         listener.sleepTime = 0;
 
         final var expNotifications = new ArrayList<Integer>(count);
-        expNotifications.addAll(Arrays.asList(1, 2, 3, 4, 5, 6));
+        expNotifications.addAll(List.of(1, 2, 3, 4, 5, 6));
         final var initialCount = 6;
         for (int i = 1; i <= count - initialCount; i++) {
             Integer val = initialCount + i;
