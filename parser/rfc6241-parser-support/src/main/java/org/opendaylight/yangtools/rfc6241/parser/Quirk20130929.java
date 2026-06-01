@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfConstants;
@@ -98,7 +97,7 @@ final class Quirk20130929 implements InferenceAction {
             // latest revisions first
             .sorted((e1, e2) -> e2.getKey().revisionUnion().compareTo(e1.getKey().revisionUnion()))
             .map(Entry::getValue)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
         if (nacmModules.isEmpty()) {
             LOG.debug("Ignoring quirk as there are no ietf-netconf-acm modules present");
             return;
