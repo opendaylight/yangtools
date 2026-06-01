@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -75,7 +74,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
         }
 
         // All values constructor
-        final var sortedProps = props.stream().sorted(PROP_COMPARATOR).collect(Collectors.toUnmodifiableList());
+        final var sortedProps = props.stream().sorted(PROP_COMPARATOR).toList();
         bb
             .nl()
             .eol("/**")
