@@ -28,6 +28,7 @@
             !org.opendaylight.yangtools.util.concurrent.ImmutableThreadFactoryProvider,
             !org.opendaylight.yangtools.util.concurrent.ImmutableThreadFactoryProvider$Builder
         </spotbugs.onlyAnalyze>
+        <odlparent.modernizer.enforce>false</odlparent.modernizer.enforce>
     </properties>
 
     <dependencies>
