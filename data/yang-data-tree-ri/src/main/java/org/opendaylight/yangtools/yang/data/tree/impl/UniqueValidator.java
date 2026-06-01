@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -135,9 +134,7 @@ abstract class UniqueValidator<T> implements Immutable {
     }
 
     private static @NonNull Descendant decodeDescendant(final Object obj) {
-        return Descendant.of(decodePath(obj).stream()
-            .map(NodeIdentifier::getNodeType)
-            .collect(Collectors.toUnmodifiableList()));
+        return Descendant.of(decodePath(obj).stream().map(NodeIdentifier::getNodeType).toList());
     }
 
     /**
