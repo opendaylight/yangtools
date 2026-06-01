@@ -11,7 +11,6 @@ import java.io.File;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
-import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +36,7 @@ final class Params {
         return parser;
     }
 
-    File @Nullable [] listFiles() {
+    File[] listFiles() {
         if (yangSourceDir == null) {
             return null;
         }
