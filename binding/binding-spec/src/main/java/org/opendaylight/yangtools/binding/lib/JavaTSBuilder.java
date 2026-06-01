@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.lib;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
 import java.util.HexFormat;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -29,11 +28,11 @@ import org.opendaylight.yangtools.concepts.Mutable;
 @NonNullByDefault
 public final class JavaTSBuilder implements Mutable {
     private final StringBuilder sb = new StringBuilder();
-    private final Collection<Augmentation<?>> augmentations;
+    private final List<? extends Augmentation<?>> augmentations;
 
     private boolean needComma;
 
-    JavaTSBuilder(final Class<?> clazz, final List<Augmentation<?>> augmentations) {
+    JavaTSBuilder(final Class<?> clazz, final List<? extends Augmentation<?>> augmentations) {
         this.augmentations = requireNonNull(augmentations);
         sb.append(clazz.getSimpleName()).append('{');
     }
