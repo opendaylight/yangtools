@@ -23,7 +23,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -1093,9 +1092,8 @@ public final class CodeHelpers {
     private static <T extends Augmentable<T> & DataContainer> @NonNull JavaTSBuilder jcTSB(
             final @NonNull Class<?> clazz,
             final @NonNull Map<Class<? extends Augmentation<T>>, @NonNull Augmentation<T>> augmentations) {
-        return new JavaTSBuilder(clazz, augmentations.values().stream()
-            .sorted(AUGMENTATION_BY_CANONICAL_NAME)
-            .collect(Collectors.toUnmodifiableList()));
+        return new JavaTSBuilder(clazz,
+            augmentations.values().stream().sorted(AUGMENTATION_BY_CANONICAL_NAME).toList());
     }
 
     //
