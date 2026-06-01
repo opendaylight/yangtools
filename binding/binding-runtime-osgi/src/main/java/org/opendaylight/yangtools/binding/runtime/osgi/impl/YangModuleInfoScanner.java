@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.meta.YangFeatureProvider;
@@ -61,7 +60,7 @@ final class YangModuleInfoScanner extends BundleTracker<Registration> {
         // Load YangModuleInfos
         final var moduleInfos = loadBundleServices(bundle, YangModelBindingProvider.class).stream()
             .map(YangModelBindingProvider::getModuleInfo)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
 
         // Load YangFeatureProviders
         @SuppressWarnings({ "rawtypes", "unchecked" })
