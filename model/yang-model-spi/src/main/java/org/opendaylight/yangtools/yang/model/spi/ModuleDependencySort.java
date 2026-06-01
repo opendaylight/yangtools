@@ -103,8 +103,9 @@ public final class ModuleDependencySort {
             if (prev != null) {
                 final String name = prev.getName();
                 if (!fromName.equals(name)) {
-                    LOG.warn("Error while sorting module [{}, {}]: module with same namespace ({}) already loaded:"
-                        + " [{}, {}]", fromName, fromRevision, ns, name, prev.getRevision());
+                    LOG.warn(
+                        "Error while sorting module [{}, {}]: module with same namespace ({}) already loaded: [{}, {}]",
+                        fromName, fromRevision, ns, name, prev.getRevision());
                 }
             }
 
@@ -125,9 +126,9 @@ public final class ModuleDependencySort {
                     final Optional<Revision> impRevision = imported.get(toName);
                     if (impRevision != null && impRevision.isPresent() && !impRevision.equals(toRevision)
                             && toRevision.isPresent()) {
-                        throw new IllegalArgumentException(String.format(
-                            "Module:%s imported twice with different revisions:%s, %s", toName,
-                            formatRevDate(impRevision), formatRevDate(toRevision)));
+                        throw new IllegalArgumentException(
+                            "Module:%s imported twice with different revisions:%s, %s".formatted(toName,
+                                formatRevDate(impRevision), formatRevDate(toRevision)));
                     }
                 }
 
@@ -181,7 +182,7 @@ public final class ModuleDependencySort {
         LOG.warn("Not existing module imported:{}:{} by:{}:{}", toName, formatRevDate(toRevision), fromName,
             formatRevDate(fromRevision));
         LOG.warn("Available models: {}", moduleGraph);
-        throw new IllegalArgumentException(String.format("Not existing module imported:%s:%s by:%s:%s", toName,
+        throw new IllegalArgumentException("Not existing module imported:%s:%s by:%s:%s".formatted(toName,
             formatRevDate(toRevision), fromName, formatRevDate(fromRevision)));
     }
 
@@ -198,7 +199,7 @@ public final class ModuleDependencySort {
             final Optional<Revision> rev = momb.getRevision();
             final Map<Optional<Revision>, ModuleNodeImpl> revs = moduleGraph.row(name);
             if (revs.containsKey(rev)) {
-                throw new IllegalArgumentException(String.format("Module:%s with revision:%s declared twice", name,
+                throw new IllegalArgumentException("Module:%s with revision:%s declared twice".formatted(name,
                     formatRevDate(rev)));
             }
 

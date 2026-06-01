@@ -52,7 +52,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
             path.add(it.next().getModification().getIdentifier());
         }
 
-        throw new SchemaValidationFailedException(String.format("Child %s is not present in schema tree.", path));
+        throw new SchemaValidationFailedException("Child " + path + " is not present in schema tree.");
     }
 
     @Override

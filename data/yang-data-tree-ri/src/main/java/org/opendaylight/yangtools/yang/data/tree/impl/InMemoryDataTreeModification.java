@@ -356,8 +356,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         for (var pathArg : path.getPathArguments()) {
             operation = operation.childByArg(pathArg);
             if (operation == null) {
-                throw new SchemaValidationFailedException(String.format("Child %s is not present in schema tree.",
-                        path.getAncestor(depth)));
+                throw new SchemaValidationFailedException("Child %s is not present in schema tree.".formatted(
+                    path.getAncestor(depth)));
             }
             ++depth;
 

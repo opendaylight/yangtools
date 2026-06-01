@@ -93,14 +93,13 @@ class YT1571Test {
 
     private static void assertPatternMatch(final Pattern pattern, final CharSequence[] match) {
         for (final var c : match) {
-            assertTrue(pattern.matcher(c).matches(), String.format("CharSequence %s do not match pattern %s", c,
-                pattern));
+            assertTrue(pattern.matcher(c).matches(), "CharSequence %s do not match pattern %s".formatted(c, pattern));
         }
     }
 
     private static void assertPatternNotMatch(final Pattern pattern, final CharSequence[] notMatch) {
         for (final var c : notMatch) {
-            assertFalse(pattern.matcher(c).matches(), String.format("CharSequence %s should not match pattern %s", c,
+            assertFalse(pattern.matcher(c).matches(), "CharSequence %s should not match pattern %s".formatted(c,
                 pattern));
         }
     }

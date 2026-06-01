@@ -41,8 +41,8 @@ final class UnionValueOptionContext {
             unionCtor = MethodHandles.publicLookup().findConstructor(unionType,
                 MethodType.methodType(void.class, valueType)).asType(OBJECT_TYPE);
         } catch (IllegalAccessException | NoSuchMethodException e) {
-            throw new IllegalStateException(String.format("Failed to access constructor for %s in type %s", valueType,
-                    unionType), e);
+            throw new IllegalStateException(
+                "Failed to access constructor for %s in type %s".formatted(valueType, unionType), e);
         }
     }
 

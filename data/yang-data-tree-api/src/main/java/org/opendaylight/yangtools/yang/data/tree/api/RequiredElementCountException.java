@@ -39,7 +39,7 @@ public final class RequiredElementCountException extends DataValidationFailedExc
 
     public RequiredElementCountException(final YangInstanceIdentifier path, final String appTag, final String format,
             final Object... args) {
-        this(path, appTag, String.format(format, args));
+        this(path, appTag, format.formatted(args));
     }
 
     @Override
