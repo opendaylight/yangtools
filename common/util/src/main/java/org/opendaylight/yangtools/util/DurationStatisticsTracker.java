@@ -180,7 +180,7 @@ public abstract class DurationStatisticsTracker {
         sb.append(formatDecimalValue(value)).append(' ').append(abbreviate(unit));
 
         if (timeStamp != null) {
-            sb.append(String.format(" at %1$tD %1$tT", new Date(timeStamp)));
+            sb.append(" at %1$tD %1$tT".formatted(new Date(timeStamp)));
         }
 
         return sb.toString();
