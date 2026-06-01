@@ -27,7 +27,7 @@ public final class MissingSchemaForClassException extends MissingSchemaException
     private transient Class<?> bindingClass;
 
     public MissingSchemaForClassException(final Class<?> clz) {
-        super(String.format("Schema is not available for %s", clz));
+        super("Schema is not available for " + clz);
         bindingClass = requireNonNull(clz);
     }
 

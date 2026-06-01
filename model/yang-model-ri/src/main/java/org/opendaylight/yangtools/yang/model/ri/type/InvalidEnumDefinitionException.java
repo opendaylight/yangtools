@@ -27,7 +27,7 @@ public class InvalidEnumDefinitionException extends IllegalArgumentException {
 
     public InvalidEnumDefinitionException(final EnumPair offendingEnum, final String format,
             final Object... args) {
-        this(offendingEnum, String.format(format, args));
+        this(offendingEnum, format.formatted(args));
     }
 
     public EnumPair getOffendingEnum() {

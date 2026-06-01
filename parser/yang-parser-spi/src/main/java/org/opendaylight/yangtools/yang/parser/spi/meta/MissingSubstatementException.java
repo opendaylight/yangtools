@@ -34,6 +34,6 @@ public class MissingSubstatementException extends SourceException {
 
     public MissingSubstatementException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
-        this(String.format(format, args), source);
+        this(format.formatted(args), source);
     }
 }
