@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -47,8 +46,7 @@ record TypeAnalysis(
         methods.addAll(type.getMethodDefinitions());
         final var augmentType = collectImplementedMethods(type, methods, type.getImplements());
 
-        return new TypeAnalysis(
-            propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).collect(Collectors.toUnmodifiableList())),
+        return new TypeAnalysis(propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).toList()),
             augmentType);
     }
 
