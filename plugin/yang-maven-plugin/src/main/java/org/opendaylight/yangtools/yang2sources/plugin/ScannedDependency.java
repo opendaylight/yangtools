@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -100,13 +99,13 @@ abstract sealed class ScannedDependency {
         return result;
     }
 
-    private static List<ScannedDependency> scanDirectory(final Path yangDir) throws IOException {
+    private static List<Single> scanDirectory(final Path yangDir) throws IOException {
         try (var stream = Files.newDirectoryStream(yangDir)) {
             return StreamSupport.stream(stream.spliterator(), false)
                 .filter(path -> path.getFileName().toString().endsWith(RFC6020_YANG_FILE_EXTENSION))
                 .filter(Files::isRegularFile)
                 .map(Single::new)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
         }
     }
 
@@ -124,7 +123,7 @@ abstract sealed class ScannedDependency {
                     .filter(path -> path.getFileName().toString().endsWith(RFC6020_YANG_FILE_EXTENSION))
                     .map(root::relativize)
                     .sorted()
-                    .collect(Collectors.toUnmodifiableList());
+                    .toList();
             }
         }
         return files.isEmpty() ? List.of() : List.of(new Zip(zipFile, files));
