@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
@@ -78,7 +77,7 @@ final class OperationsCreateLeafStatements implements InferenceAction {
             .sorted(Comparator.naturalOrder())
             // each QName should be distinct, but let's make sure anyway
             .distinct()
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
 
         if (!qnames.isEmpty()) {
             final var leafSupport = getSupport(LeafStatement.DEF, LeafEffectiveStatement.class);

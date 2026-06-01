@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc8040.parser;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataConstants;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
@@ -183,7 +182,7 @@ final class YangDataStatementSupport
         final var schemaSub = substatements.stream()
             .filter(SchemaTreeEffectiveStatement.class::isInstance)
             .map(SchemaTreeEffectiveStatement.class::cast)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
         final var child = switch (schemaSub.size()) {
             case 0 -> throw new MissingSubstatementException(stmt, "yang-data requires at least one substatement");
             case 1 -> {
