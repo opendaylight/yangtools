@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -64,7 +63,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
                 }
                 return childCase;
             })
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
     }
 
     final @NonNull S statement() {
