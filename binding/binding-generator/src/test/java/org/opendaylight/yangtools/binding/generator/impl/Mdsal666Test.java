@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -25,8 +24,7 @@ class Mdsal666Test {
     @Test
     void rpcPushesGrouping() {
         final var generatedNames = DefaultBindingGenerator.generateFor(
-            YangParserTestUtils.parseYangResource("/mdsal666.yang")).stream().map(GeneratedType::name)
-            .collect(Collectors.toUnmodifiableList());
+            YangParserTestUtils.parseYangResource("/mdsal666.yang")).stream().map(GeneratedType::name).toList();
         assertEquals(10, generatedNames.size());
 
         // 'rpc foo' ...
