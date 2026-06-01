@@ -175,8 +175,9 @@ final class TypeObjectCreator {
                     generatedType = subBits;
                 } else if (BuiltInType.IDENTITYREF.typeName().equals(subName)) {
                     propSource = stmt.findFirstEffectiveSubstatement(BaseEffectiveStatement.class)
-                        .orElseThrow(() -> new VerifyException(String.format("Invalid identityref "
-                            + "definition %s in %s, missing BASE statement", stmt, definingStatement)))
+                        .orElseThrow(() -> new VerifyException(
+                            "Invalid identityref definition %s in %s, missing BASE statement".formatted(
+                                stmt, definingStatement)))
                         .argument().getLocalName();
                     generatedType = verifyNotNull(dependencies.identityrefOf(stmt),
                         "Cannot resolve identityref %s in %s", stmt, definingStatement)
