@@ -40,11 +40,10 @@ import org.slf4j.LoggerFactory;
  * previous tasks have been dispatched are appended to the existing queue. When all tasks have been dispatched,
  * the queue and dispatcher task are discarded.
  *
- * @author Thomas Pantelis
- * @author Robert Varga
- *
  * @param <K> worker key type
  * @param <T> task type
+ * @author Thomas Pantelis
+ * @author Robert Varga
  */
 abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable<String> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBatchingExecutor.class);
@@ -219,10 +218,11 @@ abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable
                     final int avail = maxQueueCapacity - queue.size();
                     if (avail <= 0) {
                         if (canWait <= 0) {
-                            LOG.warn("{}: Failed to offer tasks {} to the queue for worker {}. Exceeded "
-                                + "maximum allowable time of {} minutes; the worker is likely in an unrecoverable "
-                                + "state (deadlock or endless loop). ", getIdentifier(), ImmutableList.copyOf(tasks),
-                                key, MAX_NOTIFICATION_OFFER_MINUTES);
+                            LOG.warn("""
+                                {}: Failed to offer tasks {} to the queue for worker {}. Exceeded maximum allowable \
+                                time of {} minutes; the worker is likely in an unrecoverable state (deadlock or \
+                                endless loop).""", getIdentifier(), ImmutableList.copyOf(tasks), key,
+                                MAX_NOTIFICATION_OFFER_MINUTES);
                             return true;
                         }
 
