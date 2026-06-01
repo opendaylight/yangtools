@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
@@ -31,7 +30,7 @@ public final class RequiredElementCountException extends DataValidationFailedExc
     @java.io.Serial
     private static final long serialVersionUID = 2L;
 
-    private final @NonNull String appTag;
+    private final String appTag;
 
     public RequiredElementCountException(final YangInstanceIdentifier path, final String appTag, final String message) {
         super(path, message);
