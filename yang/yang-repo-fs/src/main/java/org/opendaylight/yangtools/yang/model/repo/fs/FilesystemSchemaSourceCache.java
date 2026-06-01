@@ -26,7 +26,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,7 +52,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
 
     // Init storage adapters
     private static final Map<Class<? extends SourceRepresentation>, StorageAdapter<? extends SourceRepresentation>>
-        STORAGE_ADAPTERS = Collections.singletonMap(YangTextSource.class, new YangTextStorageAdapter());
+        STORAGE_ADAPTERS = Map.of(YangTextSource.class, new YangTextStorageAdapter());
 
     private static final Pattern CACHED_FILE_PATTERN =
             Pattern.compile("(?<moduleName>[^@]+)" + "(@(?<revision>" + Revision.STRING_FORMAT_PATTERN + "))?");
