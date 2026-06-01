@@ -19,7 +19,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -120,7 +119,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         sources.computeIfAbsent(source.getSourceIdentifier(), ignored -> ArrayListMultimap.create())
             .put(source.getRepresentation(), reg);
 
-        final var reps = Collections.<PotentialSchemaSource<?>>singleton(source);
+        final var reps = List.<PotentialSchemaSource<?>>of(source);
         for (var l : listeners) {
             l.getInstance().schemaSourceRegistered(reps);
         }
