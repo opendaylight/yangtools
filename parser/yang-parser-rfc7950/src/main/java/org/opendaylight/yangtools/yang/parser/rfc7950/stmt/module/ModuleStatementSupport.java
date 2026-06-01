@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -199,7 +198,7 @@ public final class ModuleStatementSupport
         return submodules == null ? List.of() : submodules.values().stream()
             .sorted(Comparator.comparing(StmtContext::argument))
             .map(StmtContext::buildEffective)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
     }
 
     private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {
