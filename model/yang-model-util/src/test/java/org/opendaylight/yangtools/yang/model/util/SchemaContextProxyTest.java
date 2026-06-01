@@ -561,7 +561,7 @@ class SchemaContextProxyTest {
 
                 @Override
                 public String toString() {
-                    return String.format("Module: %s, revision:%s", module.getName(), module.getRevision());
+                    return "Module: %s, revision:%s".formatted(module.getName(), module.getRevision());
                 }
 
                 @Override

@@ -139,8 +139,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
                     min = function.apply(range.lowerBound());
                     max = function.apply(range.upperBound());
                 } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(String.format("Constraint %s does not fit into range of %s",
-                        range, clazz.getSimpleName()), e);
+                    throw new IllegalArgumentException(
+                        "Constraint %s does not fit into range of %s".formatted(range, clazz.getSimpleName()), e);
                 }
 
                 builder.add(Range.closed((T)min, (T)max));
