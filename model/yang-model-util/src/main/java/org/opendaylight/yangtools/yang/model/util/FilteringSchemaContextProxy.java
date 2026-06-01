@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -22,7 +21,6 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeMultimap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +35,8 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.spi.AbstractSchemaContext;
 
 public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
@@ -66,11 +62,10 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         requireNonNull(rootModules, "Base modules cannot be null.");
         requireNonNull(additionalModuleIds, "Additional modules cannot be null.");
 
-        final Builder<Module> filteredModulesBuilder = new Builder<>();
+        final var filteredModulesBuilder = ImmutableSet.<Module>builder();
 
         // preparing map to get all modules with one name but difference in revision
-        final TreeMultimap<String, Module> nameToModulesAll = TreeMultimap.create(String::compareTo,
-            REVISION_COMPARATOR);
+        final var nameToModulesAll = TreeMultimap.<String, Module>create(String::compareTo, REVISION_COMPARATOR);
 
         nameToModulesAll.putAll(getStringModuleMap(delegate));
 
@@ -88,16 +83,16 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         /**
          * Instead of doing this on each invocation of getModules(), pre-compute it once and keep it around.
          */
-        final List<Module> sortedModules = new ArrayList<>(filteredModulesBuilder.build());
+        final var sortedModules = new ArrayList<>(filteredModulesBuilder.build());
         sortedModules.sort(NAME_REVISION_COMPARATOR);
         filteredModules = ImmutableSet.copyOf(sortedModules);
 
-        final SetMultimap<XMLNamespace, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
+        final var nsMap = Multimaps.<XMLNamespace, Module>newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
-        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
+        final var nameMap = Multimaps.<String, Module>newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
-        final ImmutableMap.Builder<QNameModule, Module> moduleMapBuilder = ImmutableMap.builder();
-        for (final Module module : filteredModules) {
+        final var moduleMapBuilder = ImmutableMap.<QNameModule, Module>builder();
+        for (var module : filteredModules) {
             nameMap.put(module.getName(), module);
             nsMap.put(module.getNamespace(), module);
             moduleMapBuilder.put(module.getQNameModule(), module);
@@ -109,13 +104,13 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     private static void processForAdditionalModules(final SchemaContext delegate,
-            final Set<ModuleId> additionalModuleIds, final Builder<Module> filteredModulesBuilder) {
+            final Set<ModuleId> additionalModuleIds, final ImmutableSet.Builder<Module> filteredModulesBuilder) {
         filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(),
             module -> selectAdditionalModules(module, additionalModuleIds)));
     }
 
     private void processForRootModules(final SchemaContext delegate, final Collection<ModuleId> rootModules,
-            final Builder<Module> filteredModulesBuilder) {
+            final ImmutableSet.Builder<Module> filteredModulesBuilder) {
         filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(),
             module -> checkModuleDependency(module, rootModules)));
     }
@@ -129,27 +124,26 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             final Collection<? extends @NonNull Module> baseModules,
             final TreeMultimap<String, Module> nameToModulesAll) {
 
-        List<Module> relatedModules = new LinkedList<>();
+        var relatedModules = new LinkedList<Module>();
 
-        for (Module module : baseModules) {
-            for (ModuleImport moduleImport : module.getImports()) {
-                Optional<Revision> revisionDate = moduleImport.getRevision();
+        for (var module : baseModules) {
+            for (var moduleImport : module.getImports()) {
+                var revisionDate = moduleImport.getRevision();
                 if (revisionDate.isEmpty()) {
                     revisionDate = nameToModulesAll.get(moduleImport.getModuleName().getLocalName()).first()
                         .getRevision();
                 }
 
-                ModuleId key = new ModuleId(moduleImport.getModuleName(), revisionDate);
-                Module importedModule = allModules.get(key);
+                var key = new ModuleId(moduleImport.getModuleName(), revisionDate);
+                var importedModule = allModules.get(key);
 
-                Preconditions.checkArgument(importedModule != null,
+                checkArgument(importedModule != null,
                         "Invalid schema, cannot find imported module: %s from module: %s, %s, modules:%s", key,
                         module.getQNameModule(), module.getName(), allModules);
                 relatedModules.add(importedModule);
 
                 //calling imports recursive
-                relatedModules.addAll(getImportedModules(allModules, Collections.singleton(importedModule),
-                            nameToModulesAll));
+                relatedModules.addAll(getImportedModules(allModules, List.of(importedModule), nameToModulesAll));
             }
         }
 
@@ -182,13 +176,13 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
     //check for any dependency regarding given string
     private boolean checkModuleDependency(final ModuleLike module, final Collection<ModuleId> rootModules) {
-        for (ModuleId rootModule : rootModules) {
+        for (var rootModule : rootModules) {
             if (rootModule.equals(new ModuleId(module.getName(), module.getRevision()))) {
                 return true;
             }
 
             //handling/checking imports regarding root modules
-            for (ModuleImport moduleImport : module.getImports()) {
+            for (var moduleImport : module.getImports()) {
                 if (moduleImport.getModuleName().equals(rootModule.getName())) {
                     return moduleImport.getRevision().isEmpty()
                             || moduleImport.getRevision().equals(rootModule.getRev());
@@ -196,7 +190,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             }
 
             //submodules handling
-            for (Submodule moduleSub : module.getSubmodules()) {
+            for (var moduleSub : module.getSubmodules()) {
                 return checkModuleDependency(moduleSub, rootModules);
             }
         }
