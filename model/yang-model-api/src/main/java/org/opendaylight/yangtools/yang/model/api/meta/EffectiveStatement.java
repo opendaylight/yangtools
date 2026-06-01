@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -110,15 +109,15 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
      * @param type substatement type
      * @return A stream of all effective substatements of specified type.
      */
-    default <T extends EffectiveStatement<?, ?>> @NonNull Stream<T> streamEffectiveSubstatements(
+    default <T extends EffectiveStatement<?, ?>> @NonNull Stream<@NonNull T> streamEffectiveSubstatements(
             final @NonNull Class<T> type) {
         return effectiveSubstatements().stream().filter(type::isInstance).map(type::cast);
     }
 
     @Beta
-    default <Z extends EffectiveStatement<?, ?>> @NonNull Collection<Z> collectEffectiveSubstatements(
+    default <Z extends EffectiveStatement<?, ?>> @NonNull Collection<@NonNull Z> collectEffectiveSubstatements(
             final @NonNull Class<Z> stmt) {
-        return streamEffectiveSubstatements(stmt).collect(Collectors.toUnmodifiableList());
+        return streamEffectiveSubstatements(stmt).toList();
     }
 
     @Beta
