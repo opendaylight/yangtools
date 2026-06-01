@@ -24,6 +24,7 @@
     <properties>
         <!-- FIXME: fix these up and set <maven.javadoc.failOnWarnings>true</maven.javadoc.failOnWarnings> -->
         <doclint>all,-missing</doclint>
+        <odlparent.modernizer.enforce>false</odlparent.modernizer.enforce>
     </properties>
 
     <dependencies>
