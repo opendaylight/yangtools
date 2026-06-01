@@ -11,10 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -189,7 +188,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
     @Override
     @Deprecated
     default Collection<? extends ActionDefinition> getActions() {
-        return ImmutableSet.of();
+        return Set.of();
     }
 
     @Override
@@ -227,7 +226,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
     @Override
     @Deprecated
     default Collection<? extends @NonNull MustDefinition> getMustConstraints() {
-        return ImmutableSet.of();
+        return Set.of();
     }
 
     @Override
@@ -270,13 +269,13 @@ public interface SchemaContext extends ContainerLike, Immutable {
     @Override
     @Deprecated
     default Collection<? extends UsesNode> getUses() {
-        return Collections.emptySet();
+        return Set.of();
     }
 
     @Override
     @Deprecated
     default Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
-        return Collections.emptySet();
+        return Set.of();
     }
 
     @Beta
