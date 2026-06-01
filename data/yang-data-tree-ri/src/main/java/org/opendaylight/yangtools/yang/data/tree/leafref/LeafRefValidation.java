@@ -301,11 +301,10 @@ public final class LeafRefValidation {
                         + "of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
                         leafRefTargetNodeValues, leaf.name(), leafRefContext.getCurrentNodePath(),
                         leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED);
-                errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s by validation of leafref"
-                        + " TARGET node: %s path of invalid LEAFREF node: %s leafRef target path: %s %s", leafRefsValue,
+                errorsMessages.add("Invalid leafref value [%s] allowed values %s by validation of leafref TARGET node: "
+                    + "%s path of invalid LEAFREF node: %s leafRef target path: %s %s".formatted(leafRefsValue,
                         leafRefTargetNodeValues, leaf.name(), leafRefContext.getCurrentNodePath(),
-                        leafRefContext.getAbsoluteLeafRefTargetPath(),
-                        FAILED));
+                        leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED));
             });
         });
     }
@@ -327,9 +326,9 @@ public final class LeafRefValidation {
             referencingCtx.getNodeName(), leaf.body(), FAILED);
         LOG.debug("Invalid leafref value [{}] allowed values {} of LEAFREF node: {} leafRef target path: {}",
             leaf.body(), values, leaf.name(), referencingCtx.getAbsoluteLeafRefTargetPath());
-        errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s of LEAFREF node: %s leafRef "
-                + "target path: %s", leaf.body(), values, leaf.name(),
-                referencingCtx.getAbsoluteLeafRefTargetPath()));
+        errorsMessages.add(
+            "Invalid leafref value [%s] allowed values %s of LEAFREF node: %s leafRef target path: %s".formatted(
+                leaf.body(), values, leaf.name(), referencingCtx.getAbsoluteLeafRefTargetPath()));
     }
 
     private Set<Object> computeValues(final NormalizedNode node, final ArrayDeque<QNameWithPredicate> path,

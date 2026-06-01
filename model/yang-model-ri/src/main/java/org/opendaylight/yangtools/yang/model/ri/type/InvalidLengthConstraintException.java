@@ -15,6 +15,6 @@ public final class InvalidLengthConstraintException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public InvalidLengthConstraintException(final @NonNull String format, final Object... args) {
-        super(String.format(format, args));
+        super(format.formatted(args));
     }
 }

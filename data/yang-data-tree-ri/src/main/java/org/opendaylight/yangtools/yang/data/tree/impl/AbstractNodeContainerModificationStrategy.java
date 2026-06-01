@@ -117,9 +117,9 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
             for (var child : container.body()) {
                 final var childOp = childByArg(child.name());
                 if (childOp == null) {
-                    throw new SchemaValidationFailedException(String.format(
-                        "Node %s is not a valid child of %s according to the schema.",
-                        child.name(), container.name()));
+                    throw new SchemaValidationFailedException(
+                        "Node %s is not a valid child of %s according to the schema.".formatted(
+                            child.name(), container.name()));
                 }
                 childOp.fullVerifyStructure(child);
             }
@@ -156,7 +156,7 @@ abstract sealed class AbstractNodeContainerModificationStrategy<T extends DataSc
             final var childOp = childByArg(child.name());
             if (childOp == null) {
                 throw new SchemaValidationFailedException(
-                    String.format("Node %s is not a valid child of %s according to the schema.",
+                    "Node %s is not a valid child of %s according to the schema.".formatted(
                         child.name(), container.name()));
             }
 

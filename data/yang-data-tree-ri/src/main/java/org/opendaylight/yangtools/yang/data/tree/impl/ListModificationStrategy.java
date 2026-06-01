@@ -66,8 +66,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        throw new IllegalStateException(String.format("Merge of modification %s on unkeyed list should never be called",
-            modification));
+        throw new IllegalStateException(
+            "Merge of modification " + modification + " on unkeyed list should never be called");
     }
 
     @Override
