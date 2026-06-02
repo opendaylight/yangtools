@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  *
  * <p>Type yang-system-test -h for usage.
  */
-@SuppressWarnings({"checkstyle:LoggerMustBeSlf4j", "checkstyle:LoggerFactoryClassParameter"})
 public final class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final ch.qos.logback.classic.Logger LOG_ROOT =
