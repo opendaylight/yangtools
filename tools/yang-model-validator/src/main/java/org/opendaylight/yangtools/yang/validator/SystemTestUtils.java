@@ -18,13 +18,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -35,18 +34,10 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 
 final class SystemTestUtils {
-
     private static final Pattern MODULE_PATTERN = Pattern.compile("module(.*?)\\{");
     private static final Pattern WHITESPACES = Pattern.compile("\\s+");
-    private static final @NonNull YangParserFactory PARSER_FACTORY;
-
-    static {
-        final Iterator<@NonNull YangParserFactory> it = ServiceLoader.load(YangParserFactory.class).iterator();
-        if (!it.hasNext()) {
-            throw new IllegalStateException("No YangParserFactory found");
-        }
-        PARSER_FACTORY = it.next();
-    }
+    private static final @NonNull YangParserFactory PARSER_FACTORY =
+        DaggerDefaultYangParserComponent.create().parserFactory();
 
     private SystemTestUtils() {
         // Hidden on purpose
