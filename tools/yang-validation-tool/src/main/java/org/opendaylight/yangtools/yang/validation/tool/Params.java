@@ -11,6 +11,7 @@ import java.io.File;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
+import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,32 +37,27 @@ final class Params {
         return parser;
     }
 
-    public boolean isValid() {
+    File @Nullable [] listFiles() {
         if (yangSourceDir == null) {
-            return false;
+            return null;
         }
         if (!yangSourceDir.exists()) {
             LOG.error("Yang source directory has to exist");
-            return false;
+            return null;
         }
         if (!yangSourceDir.canRead()) {
             LOG.error("Yang source directory has to be readable");
-            return false;
+            return null;
         }
-        final String[] listed = yangSourceDir.list();
-        if (listed == null) {
+        final var files = yangSourceDir.listFiles();
+        if (files == null) {
             LOG.error("Yang source directory {} is not a directory or cannot be read", yangSourceDir.getPath());
-            return false;
+            return null;
         }
-        if (listed.length == 0) {
+        if (files.length == 0) {
             LOG.error("Yang source directory {} doesn't contain any model", yangSourceDir.getPath());
-            return false;
+            return null;
         }
-
-        return true;
-    }
-
-    public File getYangSourceDir() {
-        return yangSourceDir;
+        return files;
     }
 }

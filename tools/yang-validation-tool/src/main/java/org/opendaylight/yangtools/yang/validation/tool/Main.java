@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.validation.tool;
 
-import java.io.File;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +20,16 @@ public final class Main {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     public static void main(final String[] args) {
-        final Params params = ParamsUtil.parseArgs(args, Params.getParser());
+        final var params = ParamsUtil.parseArgs(args, Params.getParser());
+        final var files = params.listFiles();
+        if (files == null) {
+            return;
+        }
 
-        if (params.isValid()) {
-            final File[] yangModels = params.getYangSourceDir().listFiles();
-
-            try {
-                YangParserTestUtils.parseYangFiles(yangModels);
-            } catch (Exception e) {
-                LOG.error("Yang files could not be parsed.", e);
-            }
+        try {
+            YangParserTestUtils.parseYangFiles(files);
+        } catch (Exception e) {
+            LOG.error("Yang files could not be parsed.", e);
         }
     }
 }
