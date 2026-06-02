@@ -34,8 +34,11 @@ public final class Main {
         for (var file : files) {
             try {
                 parser.addSource(new FileYangTextSource(file.toPath()));
-            } catch (YangSyntaxErrorException | IOException e) {
+            } catch (IOException e) {
                 LOG.error("Failed to read {}", file, e);
+                return;
+            } catch (YangSyntaxErrorException e) {
+                LOG.error("Failed to parse {}", file, e);
                 return;
             }
         }
@@ -44,7 +47,7 @@ public final class Main {
         try {
             modelContext = parser.buildEffectiveModel();
         } catch (YangParserException e) {
-            LOG.error("YANG files could not be parsed", e);
+            LOG.error("YANG files could not be assembled", e);
             return;
         }
 
