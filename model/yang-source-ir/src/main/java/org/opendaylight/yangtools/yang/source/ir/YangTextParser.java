@@ -77,7 +77,9 @@ final class YangTextParser extends BaseErrorListener {
     @Override
     public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
             final int charPositionInLine, final String msg, final RecognitionException cause) {
-        exceptions.add(new SourceSyntaxException(msg, StatementDeclarations.inText(fileName, line, charPositionInLine),
-            cause));
+        // startColumn has to be positive, yet charPositionInLine can be 0: just pretend it is 1
+        // TODO: can we do something better?
+        final var column = charPositionInLine == 0 ? 1 : charPositionInLine;
+        exceptions.add(new SourceSyntaxException(msg, StatementDeclarations.inText(fileName, line, column), cause));
     }
 }
