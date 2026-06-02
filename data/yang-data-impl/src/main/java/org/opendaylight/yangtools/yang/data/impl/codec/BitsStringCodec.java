@@ -10,12 +10,13 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 @Beta
 public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
         implements BitsCodec<String> {
-    private static final Joiner JOINER = Joiner.on(" ").skipNulls();
     private static final Splitter SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
     private final ImmutableSet<String> validBits;
@@ -70,6 +70,6 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
 
     @Override
     protected String serializeImpl(final Set<String> input) {
-        return JOINER.join(input);
+        return input.stream().map(Objects::requireNonNull).collect(Collectors.joining(" "));
     }
 }
