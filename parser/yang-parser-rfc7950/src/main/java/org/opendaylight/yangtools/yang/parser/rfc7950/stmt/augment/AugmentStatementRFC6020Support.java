@@ -50,8 +50,8 @@ public final class AugmentStatementRFC6020Support extends AbstractAugmentStateme
     }
 
     @Override
-    MandatoryNodesAllowed mandatoryNodesAllowed(
+    AugmentStrategy strategyFor(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt) {
-        return MandatoryNodesAllowed.NEVER;
+        return AugmentStrategy.RFC6020;
     }
 }
