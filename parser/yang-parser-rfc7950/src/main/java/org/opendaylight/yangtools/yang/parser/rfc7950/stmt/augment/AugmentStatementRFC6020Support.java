@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -35,7 +38,8 @@ public final class AugmentStatementRFC6020Support extends AbstractAugmentStateme
     }
 
     @Override
-    boolean allowsMandatory(final StmtContext<?, ?, ?> ctx) {
-        return false;
+    MandatoryNodesAllowed mandatoryNodesAllowed(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt) {
+        return MandatoryNodesAllowed.NEVER;
     }
 }

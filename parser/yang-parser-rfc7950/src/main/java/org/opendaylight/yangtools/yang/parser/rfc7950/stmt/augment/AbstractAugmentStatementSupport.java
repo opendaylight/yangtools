@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -140,7 +141,8 @@ abstract class AbstractAugmentStatementSupport
         }
     }
 
-    abstract boolean allowsMandatory(StmtContext<?, ?, ?> ctx);
+    abstract @NonNull MandatoryNodesAllowed mandatoryNodesAllowed(
+        @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt);
 
     static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.
