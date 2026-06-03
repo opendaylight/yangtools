@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -67,9 +69,9 @@ final class AugmentInferenceAction implements InferenceAction {
         UsesStatement.DEF,
         WhenStatement.DEF);
 
-    private final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
-    private final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
-    private final AbstractAugmentStatementSupport statementSupport;
+    private final @NonNull Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
+    private final @NonNull Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
+    private final @NonNull AbstractAugmentStatementSupport statementSupport;
 
     private boolean targetUnavailable;
 
@@ -102,7 +104,7 @@ final class AugmentInferenceAction implements InferenceAction {
             augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), augmentTargetCtx);
         }
 
-        copyFromSourceToTarget(augmentNode, augmentTargetCtx);
+        copyFromSourceToTarget(augmentNode, augmentTargetCtx, statementSupport.mandatoryNodesAllowed(augmentNode));
         augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
     }
 
@@ -138,14 +140,18 @@ final class AugmentInferenceAction implements InferenceAction {
         }
     }
 
-    private void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx) {
+    // Note: 'sourceCtx' is an opaque read-only view of 'this.augmentNode'
+    @NonNullByDefault
+    private static void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx,
+            final MandatoryNodesAllowed mandatoryNodesAllowed) {
         final var typeOfCopy = sourceCtx.coerceParentContext().produces(UsesStatement.DEF)
             ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
         /*
          * Since Yang 1.1, if an augmentation is made conditional with a
          * "when" statement, it is allowed to add mandatory nodes.
          */
-        final boolean skipCheckOfMandatoryNodes = statementSupport.allowsMandatory(sourceCtx);
+        // FIXME: YANGTOOLS-1890: correct the logic here
+        final boolean skipCheckOfMandatoryNodes = mandatoryNodesAllowed == MandatoryNodesAllowed.ALWAYS;
         final boolean unsupported = !sourceCtx.isSupportedByFeatures();
 
         final var declared = sourceCtx.declaredSubstatements();

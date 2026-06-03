@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
@@ -58,7 +60,13 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
     }
 
     @Override
-    boolean allowsMandatory(final StmtContext<?, ?, ?> ctx) {
-        return ctx.produces(AugmentStatement.DEF) && ctx.hasSubstatement(WhenEffectiveStatement.class);
+    MandatoryNodesAllowed mandatoryNodesAllowed(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt) {
+        // RFC7950, page 120:
+        //    If the augmentation adds mandatory nodes (see Section 3) that
+        //    represent configuration to a target node in another module, the
+        //    augmentation MUST be made conditional with a "when" statement.
+        return stmt.hasSubstatement(WhenEffectiveStatement.class) ? MandatoryNodesAllowed.ALWAYS
+            : MandatoryNodesAllowed.NON_CONFIG;
     }
 }
