@@ -121,7 +121,8 @@ abstract class AbstractAugmentStatementSupport
         }
     }
 
-    abstract boolean allowsMandatory(StmtContext<?, ?, ?> ctx);
+    abstract @NonNull MandatoryNodesAllowed mandatoryNodesAllowed(
+        @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt);
 
     static final StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.
