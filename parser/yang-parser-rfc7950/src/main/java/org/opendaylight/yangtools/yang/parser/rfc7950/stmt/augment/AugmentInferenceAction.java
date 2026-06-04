@@ -7,28 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -46,8 +36,6 @@ import org.slf4j.LoggerFactory;
  */
 final class AugmentInferenceAction implements InferenceAction {
     private static final Logger LOG = LoggerFactory.getLogger(AugmentInferenceAction.class);
-    private static final ImmutableSet<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES,
-        YangStmtMapping.WHEN, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
 
     private final @NonNull Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
     private final @NonNull Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
@@ -84,7 +72,7 @@ final class AugmentInferenceAction implements InferenceAction {
             augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), augmentTargetCtx);
         }
 
-        copyFromSourceToTarget(augmentNode, augmentTargetCtx, statementSupport.mandatoryNodesAllowed(augmentNode));
+        statementSupport.strategyFor(augmentNode).copyFromSourceToTarget(augmentNode, augmentTargetCtx);
         augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
     }
 
@@ -120,162 +108,6 @@ final class AugmentInferenceAction implements InferenceAction {
         } else {
             prerequisiteFailed(List.of(unavail));
         }
-    }
-
-    // Note: 'sourceCtx' is an opaque read-only view of 'this.augmentNode'
-    @NonNullByDefault
-    private static void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx,
-            final MandatoryNodesAllowed mandatoryNodesAllowed) {
-        final var typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
-            ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
-        /*
-         * Since Yang 1.1, if an augmentation is made conditional with a
-         * "when" statement, it is allowed to add mandatory nodes.
-         */
-        // FIXME: YANGTOOLS-1890: correct the logic here
-        final boolean skipCheckOfMandatoryNodes = mandatoryNodesAllowed == MandatoryNodesAllowed.ALWAYS;
-        final boolean unsupported = !sourceCtx.isSupportedByFeatures();
-
-        final var declared = sourceCtx.declaredSubstatements();
-        final var effective = sourceCtx.effectiveSubstatements();
-        final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
-
-        for (var originalStmtCtx : declared) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes,
-                unsupported || !originalStmtCtx.isSupportedByFeatures());
-        }
-        for (var originalStmtCtx : effective) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes, unsupported);
-        }
-
-        targetCtx.addEffectiveSubstatements(buffer);
-    }
-
-    private static void copyStatement(final StmtContext<?, ?, ?> original, final Mutable<?, ?, ?> target,
-            final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer,
-            final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
-        // We always copy statements, but if either the source statement or the augmentation which causes it are not
-        // supported to build we also mark the target as such.
-        if (!NOCOPY_DEF_SET.contains(original.publicDefinition())) {
-            validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
-
-            final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
-            if (unsupported) {
-                copy.setUnsupported();
-            }
-            buffer.add(copy);
-        } else if (!unsupported && original.publicDefinition() == YangStmtMapping.TYPEDEF) {
-            // FIXME: what is this branch doing, really?
-            //        Typedef's policy would imply a replica, hence normal target.childCopyOf(original, typeOfCopy)
-            //        would suffice.
-            //        What does the !unsupported thing want to do?
-            buffer.add(original.replicaAsChildOf(target));
-        }
-    }
-
-    private static void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
-            final Mutable<?, ?, ?> targetCtx, final CopyType typeOfCopy, final boolean skipCheckOfMandatoryNodes) {
-        if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
-                && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
-            checkForMandatoryNodes(sourceCtx);
-        }
-
-        // Data definition statements must not collide on their namespace
-        if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
-            for (StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
-                if (subStatement.producesDeclared(DataDefinitionStatement.class)) {
-                    InferenceException.throwIf(Objects.equals(sourceCtx.argument(), subStatement.argument()), sourceCtx,
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawArgument());
-                }
-            }
-        }
-    }
-
-    private static void checkForMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx) {
-        if (StmtContextUtils.isNonPresenceContainer(sourceCtx)) {
-            /*
-             * We need to iterate over both declared and effective sub-statements,
-             * because a mandatory node can be:
-             * a) declared in augment body
-             * b) added to augment body also via uses of a grouping and
-             * such sub-statements are stored in effective sub-statements collection.
-             */
-            sourceCtx.allSubstatementsStream().forEach(AugmentInferenceAction::checkForMandatoryNodes);
-        }
-
-        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx), sourceCtx,
-            "An augment cannot add node '%s' because it is mandatory and in module different than target",
-            sourceCtx.rawArgument());
-    }
-
-    private static boolean requireCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
-            Mutable<?, ?, ?> targetCtx) {
-        /*
-         * If the statement argument is not QName, it cannot be mandatory
-         * statement, therefore return false and skip mandatory nodes validation
-         */
-        final Object arg = sourceCtx.argument();
-        if (!(arg instanceof QName sourceStmtQName)) {
-            return false;
-        }
-        // RootStatementContext, for example
-        final Mutable<?, ?, ?> root = targetCtx.getRoot();
-        do {
-            final Object targetArg = targetCtx.argument();
-            verify(targetArg instanceof QName, "Argument of augment target statement must be QName, not %s", targetArg);
-            final QName targetStmtQName = (QName) targetArg;
-            /*
-             * If target is from another module, return true and perform mandatory nodes validation
-             */
-            if (!targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
-                return true;
-            }
-
-            /*
-             * If target or one of the target's ancestors from the same namespace
-             * is a presence container
-             * or is non-mandatory choice
-             * or is non-mandatory list
-             * return false and skip mandatory nodes validation, because these nodes
-             * are not mandatory node containers according to RFC 6020 section 3.1.
-             */
-            if (StmtContextUtils.isPresenceContainer(targetCtx)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.CHOICE)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.LIST)) {
-                return false;
-            }
-
-            // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
-            // conditional -- in which case we do not run further checks
-            if (targetCtx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                final var optPrevCopy = targetCtx.getPreviousCopyCtx();
-                if (optPrevCopy.isPresent()) {
-                    final var original = optPrevCopy.orElseThrow();
-                    final var origArg = original.getArgument();
-                    verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
-
-                    if (sourceStmtQName.getModule().equals(((QName) origArg).getModule())
-                        && AbstractAugmentStatementSupport.hasWhenSubstatement(getParentAugmentation(original))) {
-                        return false;
-                    }
-                }
-            }
-        } while ((targetCtx = targetCtx.getParentContext()) != root);
-
-        /*
-         * All target node's parents belong to the same module as source node,
-         * therefore return false and skip mandatory nodes validation.
-         */
-        return false;
-    }
-
-    private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
-        StmtContext<?, ?, ?> parent = verifyNotNull(child.getParentContext(), "Child %s has not parent", child);
-        while (parent.publicDefinition() != YangStmtMapping.AUGMENT) {
-            parent = verifyNotNull(parent.getParentContext(), "Failed to find augmentation parent of %s", child);
-        }
-        return parent;
     }
 
     private static boolean isSupportedAugmentTarget(final StmtContext<?, ?, ?> substatementCtx) {

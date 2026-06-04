@@ -45,13 +45,13 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
     }
 
     @Override
-    MandatoryNodesAllowed mandatoryNodesAllowed(
+    AugmentStrategy strategyFor(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt) {
         // RFC7950, page 120:
         //    If the augmentation adds mandatory nodes (see Section 3) that
         //    represent configuration to a target node in another module, the
         //    augmentation MUST be made conditional with a "when" statement.
-        return stmt.hasSubstatement(WhenEffectiveStatement.class) ? MandatoryNodesAllowed.ALWAYS
-            : MandatoryNodesAllowed.NON_CONFIG;
+        return stmt.hasSubstatement(WhenEffectiveStatement.class) ? AugmentStrategy.RFC7950_CONDITIONAL
+            : AugmentStrategy.RFC7950_UNCONDITIONAL;
     }
 }
