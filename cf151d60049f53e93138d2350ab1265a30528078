@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81a3eaf3_c5243cf2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-06-04T14:04:45Z",
+      "side": 1,
+      "message": "Hmm... so this is examining parent hierarchy looking at substatements.\n\nI do not believe we can do this without running re-validation at EFFECTIVE_MODEL, as whatever find (or do not find) may be changed via \u0027deviate\u0027 after we looked at it 😞",
+      "revId": "cf151d60049f53e93138d2350ab1265a30528078",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
