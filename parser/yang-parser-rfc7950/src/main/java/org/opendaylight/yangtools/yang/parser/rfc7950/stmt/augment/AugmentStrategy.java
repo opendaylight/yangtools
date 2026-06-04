@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 /**
  * A strategy for copying statements from a {@code augment} statement to its {@code target node}.
  */
+// TODO: refactor to a sealed class so RFC* members and SAME_MODULE/USES members have two disjuct superclasses
 enum AugmentStrategy {
     /**
      * RFC6020 semantics: mandatory nodes must not be introduced.
