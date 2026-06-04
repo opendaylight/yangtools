@@ -21,6 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -154,15 +157,29 @@ enum AugmentStrategy {
                 return true;
             }
 
-            // If target or one of the target's ancestors from the same namespace
-            // - is a presence container, or
-            // - is non-mandatory choice, or
-            // - is non-mandatory list
-            // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1.
-            if (StmtContextUtils.isPresenceContainer(targetCtx)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.CHOICE)
-                || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.LIST)) {
-                return false;
+            // if target or one of the target's ancestors from the same namespace
+            //   - is a presence container, or
+            //   - is non-mandatory list, or
+            //   - is non-mandatory choice
+            // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1
+            if (targetCtx.publicDefinition() == YangStmtMapping.CONTAINER) {
+                if (targetCtx.hasSubstatement(PresenceEffectiveStatement.class)) {
+                    return false;
+                }
+            } else if (targetCtx.publicDefinition() == YangStmtMapping.LIST) {
+                // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
+                final var minElements = StmtContextUtils.firstSubstatementAttributeOf(targetCtx,
+                    MinElementsStatement.class);
+                if (minElements == null || minElements == 0) {
+                    return false;
+                }
+            } else if (targetCtx.publicDefinition() == YangStmtMapping.CHOICE) {
+                // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
+                final var mandatory = StmtContextUtils.firstSubstatementAttributeOf(targetCtx,
+                    MandatoryStatement.class);
+                if (mandatory == null || !mandatory) {
+                    return false;
+                }
             }
 
             // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
