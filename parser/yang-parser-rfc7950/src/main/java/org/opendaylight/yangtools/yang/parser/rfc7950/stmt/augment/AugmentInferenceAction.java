@@ -80,13 +80,19 @@ final class AugmentInferenceAction implements InferenceAction {
 
     @NonNullByDefault
     private AugmentStrategy strategyFor(final StmtContext<?, ?, ?> targetNode) {
+        final var augmentParent = augmentNode.coerceParentContext();
+
         // 'augment' statement in a 'uses' statement
-        if (augmentNode.coerceParentContext().producesDeclared(UsesStatement.class)) {
+        if (augmentParent.producesDeclared(UsesStatement.class)) {
             return AugmentStrategy.USES;
         }
 
-        // 'augment' statement in a 'module' or 'submodule' statement
-        return statementSupport.strategyFor(augmentNode);
+        // 'augment' statement in a 'module' or 'submodule', with target node being ...
+        return augmentParent.currentModule().equals(targetNode.currentModule())
+            // ... in the same module
+            ? AugmentStrategy.SAME_MODULE
+            // ... in another module (but perhaps introduced by this module)
+            : statementSupport.strategyFor(augmentNode);
     }
 
     @Override
