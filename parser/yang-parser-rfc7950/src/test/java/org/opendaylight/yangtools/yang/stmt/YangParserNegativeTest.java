@@ -79,8 +79,10 @@ class YangParserNegativeTest extends AbstractYangTest {
     @Test
     void testDuplicityInAugmentTarget1() {
         assertInferenceExceptionMessage(
-            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang")
-            .startsWith("An augment cannot add node named 'id' because this name is already used in target");
+            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang").startsWith("""
+                Cannot add leaf statement named 'id' because augment target already contains a leaf statement with the \
+                same name (originating from """)
+            .contains("duplicity/augment1.yang:14:9) [at ").endsWith("duplicity/augment1.yang:20:9]");
     }
 
     @Test
