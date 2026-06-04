@@ -174,14 +174,27 @@ enum AugmentStrategy {
                 return true;
             }
 
-            // If target or one of the target's ancestors from the same namespace
-            // - is a presence container, or
-            // - is non-mandatory choice, or
-            // - is non-mandatory list
-            // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1.
-            if (isPresenceContainer(targetCtx) || isNotMandatoryNodeOfType(targetCtx, ChoiceStatement.DEF)
-                || isNotMandatoryNodeOfType(targetCtx, ListStatement.DEF)) {
-                return false;
+            // if target or one of the target's ancestors from the same namespace
+            //   - is a presence container, or
+            //   - is non-mandatory list, or
+            //   - is non-mandatory choice
+            // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1
+            if (targetCtx.produces(ContainerStatement.DEF)) {
+                if (containsPresenceSubStmt(targetCtx)) {
+                    return false;
+                }
+            } else if (targetCtx.produces(ListStatement.DEF)) {
+                // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
+                final var minElements = firstSubstatementAttributeOf(targetCtx, MinElementsStatement.DEF);
+                if (minElements == null || minElements.matchesAll()) {
+                    return false;
+                }
+            } else if (targetCtx.produces(ChoiceStatement.DEF)) {
+                // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
+                final var mandatory = firstSubstatementAttributeOf(targetCtx, MandatoryStatement.DEF);
+                if (mandatory == null || !mandatory) {
+                    return false;
+                }
             }
 
             // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
@@ -248,20 +261,6 @@ enum AugmentStrategy {
     }
 
     /**
-     * Checks whether a statement context is a statement of supplied statement definition and whether it is not
-     * mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020.
-     *
-     * @param stmtCtx statement context
-     * @param stmtDef statement definition
-     * @return true if supplied statement context is a statement of supplied statement definition and if it is not
-     *         a mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020
-     */
-    private static boolean isNotMandatoryNodeOfType(final StmtContext<?, ?, ?> stmtCtx,
-            final StatementDefinition<?, ?, ?> stmtDef) {
-        return stmtCtx.produces(stmtDef) && !isMandatoryNode(stmtCtx);
-    }
-
-    /**
      * Checks whether statement context is a non-presence container or not.
      *
      * @param stmtCtx statement context
@@ -269,16 +268,6 @@ enum AugmentStrategy {
      */
     private static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
         return stmtCtx.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmtCtx);
-    }
-
-    /**
-     * Checks whether statement context is a presence container or not.
-     *
-     * @param stmtCtx statement context
-     * @return true if it is a presence container
-     */
-    private static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.produces(ContainerStatement.DEF) && containsPresenceSubStmt(stmtCtx);
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
