@@ -82,6 +82,10 @@ final class AugmentInferenceAction implements InferenceAction {
         if (augmentNode.coerceParentContext().produces(UsesStatement.DEF)) {
             return AugmentStrategy.USES;
         }
+        // 'augment' statement and target node are in the same module
+        if (augmentNode.currentModule().equals(targetNode.currentModule())) {
+            return AugmentStrategy.SAME_MODULE;
+        }
 
         // 'augment' statement in a 'module' or 'submodule' statement
         return statementSupport.strategyFor(augmentNode);
