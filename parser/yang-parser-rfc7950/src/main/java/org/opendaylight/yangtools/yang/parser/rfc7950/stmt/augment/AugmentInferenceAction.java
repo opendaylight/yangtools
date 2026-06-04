@@ -32,21 +32,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Inference action, split out of {@link AbstractAugmentStatementSupport} for clarity and potential specialization.
+ * Inference action, split out of {@link AugmentStatementSupport} for clarity and potential specialization.
  */
 final class AugmentInferenceAction implements InferenceAction {
     private static final Logger LOG = LoggerFactory.getLogger(AugmentInferenceAction.class);
 
     private final @NonNull Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
     private final @NonNull Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
-    private final @NonNull AbstractAugmentStatementSupport statementSupport;
+    private final @NonNull AugmentStrategyResolver strategyResolver;
 
     private boolean targetUnavailable;
 
-    AugmentInferenceAction(final AbstractAugmentStatementSupport statementSupport,
+    AugmentInferenceAction(final AugmentStrategyResolver strategyResolver,
             final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode,
             final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target) {
-        this.statementSupport = requireNonNull(statementSupport);
+        this.strategyResolver = requireNonNull(strategyResolver);
         this.augmentNode = requireNonNull(augmentNode);
         this.target = requireNonNull(target);
     }
@@ -60,7 +60,7 @@ final class AugmentInferenceAction implements InferenceAction {
         }
 
         final var targetNode = target.resolve(ctx);
-        if (!isSupportedAugmentTarget(targetNode) || AbstractAugmentStatementSupport.isInExtensionBody(targetNode)) {
+        if (!isSupportedAugmentTarget(targetNode) || AugmentStatementSupport.isInExtensionBody(targetNode)) {
             augmentNode.setUnsupported();
             return;
         }
@@ -89,7 +89,7 @@ final class AugmentInferenceAction implements InferenceAction {
             // ... in the same module
             ? AugmentStrategy.SAME_MODULE
             // ... in another module (but perhaps introduced by this module)
-            : statementSupport.strategyFor(augmentNode);
+            : strategyResolver.strategyFor(augmentNode);
     }
 
     @Override
@@ -103,7 +103,7 @@ final class AugmentInferenceAction implements InferenceAction {
 
             final var augmentArg = augmentNode.getArgument();
             final var targetNode = ParserNamespaces.findSchemaTreeStatement(
-                AbstractAugmentStatementSupport.getSearchRoot(augmentNode), augmentArg);
+                AugmentStatementSupport.getSearchRoot(augmentNode), augmentArg);
             if (targetNode.isPresent() && targetNode.orElseThrow().producesExtension()) {
                 augmentNode.setUnsupported();
                 LOG.warn("Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
@@ -126,6 +126,8 @@ final class AugmentInferenceAction implements InferenceAction {
 
     private static boolean isSupportedAugmentTarget(final StmtContext<?, ?, ?> substatementCtx) {
         /*
+         * FIXME: deal with the accuracy/applicablity of the following:
+         *
          * :TODO Substatement must be allowed augment target type e.g.
          * Container, etc... and must not be for example grouping, identity etc.
          * It is problem in case when more than one substatements have the same
@@ -133,11 +135,11 @@ final class AugmentInferenceAction implements InferenceAction {
          * the same QName. We must find the Container and the Grouping must be
          * ignored as disallowed augment target.
          */
-        final Collection<?> allowedAugmentTargets = substatementCtx.namespaceItem(
-            ValidationBundles.NAMESPACE, ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
+        final var allowedTargets = substatementCtx.namespaceItem(ValidationBundles.NAMESPACE,
+            ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
 
         // if no allowed target is returned we consider all targets allowed
-        return allowedAugmentTargets == null || allowedAugmentTargets.isEmpty()
-                || allowedAugmentTargets.contains(substatementCtx.publicDefinition());
+        return allowedTargets == null || allowedTargets.isEmpty()
+            || allowedTargets.contains(substatementCtx.publicDefinition());
     }
 }
