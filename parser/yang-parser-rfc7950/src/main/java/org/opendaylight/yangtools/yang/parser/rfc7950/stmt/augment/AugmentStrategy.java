@@ -9,16 +9,17 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -32,17 +33,21 @@ enum AugmentStrategy {
     /**
      * RFC6020 semantics: mandatory nodes must not be introduced.
      */
-    RFC6020(false),
+    RFC6020(CopyType.ADDED_BY_AUGMENTATION, false),
     /**
      * RFC7950 semantics and the augmentation is unconditional: mandatory nodes may be introduced only to target nodes
      * which do not represent configuration.
      */
-    RFC7950_UNCONDITIONAL(false),
+    RFC7950_UNCONDITIONAL(CopyType.ADDED_BY_AUGMENTATION, false),
     /**
      * RFC7950 semantics and the augmentation is conditional via {@code when}: mandatory nodes may be introduced to any
      * target node.
      */
-    RFC7950_CONDITIONAL(true);
+    RFC7950_CONDITIONAL(CopyType.ADDED_BY_AUGMENTATION, true),
+    /**
+     * Common semantics when the {@code augment} statement is a substatement to the {@code uses} statement.
+     */
+    USES(CopyType.ADDED_BY_USES_AUGMENTATION, true);
 
     /**
      * YANG statements that apply to the {@code augment} statement itself, not to the {@code target node}.
@@ -52,40 +57,39 @@ enum AugmentStrategy {
 
     // FIXME: YANGTOOLS-1890: correct the logic around this boolean
     private final boolean skipCheckOfMandatoryNodes;
+    private final @NonNull CopyType copyType;
 
-    AugmentStrategy(final boolean skipCheckOfMandatoryNodes) {
+    @NonNullByDefault
+    AugmentStrategy(final CopyType copyType, final boolean skipCheckOfMandatoryNodes) {
+        this.copyType = requireNonNull(copyType);
         this.skipCheckOfMandatoryNodes = skipCheckOfMandatoryNodes;
     }
 
     @NonNullByDefault
     void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx) {
-        final var typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
-            ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
-        final boolean unsupported = !sourceCtx.isSupportedByFeatures();
-
+        final var unsupported = !sourceCtx.isSupportedByFeatures();
         final var declared = sourceCtx.declaredSubstatements();
         final var effective = sourceCtx.effectiveSubstatements();
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
 
         for (var originalStmtCtx : declared) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer,
-                unsupported || !originalStmtCtx.isSupportedByFeatures());
+            copyStatement(originalStmtCtx, targetCtx, buffer, unsupported || !originalStmtCtx.isSupportedByFeatures());
         }
         for (var originalStmtCtx : effective) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, unsupported);
+            copyStatement(originalStmtCtx, targetCtx, buffer, unsupported);
         }
 
         targetCtx.addEffectiveSubstatements(buffer);
     }
 
     private void copyStatement(final StmtContext<?, ?, ?> original, final Mutable<?, ?, ?> target,
-            final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer, final boolean unsupported) {
+            final Collection<Mutable<?, ?, ?>> buffer, final boolean unsupported) {
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
         if (!NOCOPY_DEF_SET.contains(original.publicDefinition())) {
-            validateNodeCanBeCopiedByAugment(original, target, typeOfCopy);
+            validateNodeCanBeCopiedByAugment(original, target);
 
-            final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
+            final var copy = target.childCopyOf(original, copyType);
             if (unsupported) {
                 copy.setUnsupported();
             }
@@ -100,9 +104,8 @@ enum AugmentStrategy {
     }
 
     private void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
-            final Mutable<?, ?, ?> targetCtx, final CopyType typeOfCopy) {
-        if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
-                && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
+            final Mutable<?, ?, ?> targetCtx) {
+        if (!skipCheckOfMandatoryNodes && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             checkForMandatoryNodes(sourceCtx);
         }
 
