@@ -116,7 +116,21 @@ enum AugmentStrategy {
             return;
         }
 
-        validateNodeCanBeCopiedByAugment(stmt, target);
+        if (!skipCheckOfMandatoryNodes && requireCheckOfMandatoryNodes(stmt, target)) {
+            checkForMandatoryNodes(stmt);
+        }
+
+        // Data definition statements must not collide on their namespace
+        if (stmt.producesDeclared(DataDefinitionStatement.class)) {
+            for (var subStatement : target.allSubstatements()) {
+                final var declaring = subStatement.tryDeclaring(DataDefinitionStatement.class);
+                if (declaring != null && Objects.equals(stmt.argument(), declaring.argument())) {
+                    throw new InferenceException(stmt,
+                        "An augment cannot add node named '%s' because this name is already used in target",
+                        stmt.rawArgument());
+                }
+            }
+        }
 
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
@@ -125,25 +139,6 @@ enum AugmentStrategy {
             copy.setUnsupported();
         }
         buffer.add(copy);
-    }
-
-    private void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
-            final Mutable<?, ?, ?> targetCtx) {
-        if (!skipCheckOfMandatoryNodes && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
-            checkForMandatoryNodes(sourceCtx);
-        }
-
-        // Data definition statements must not collide on their namespace
-        if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
-            for (var subStatement : targetCtx.allSubstatements()) {
-                final var declaring = subStatement.tryDeclaring(DataDefinitionStatement.class);
-                if (declaring != null && Objects.equals(sourceCtx.argument(), declaring.argument())) {
-                    throw new InferenceException(sourceCtx,
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawArgument());
-                }
-            }
-        }
     }
 
     private static boolean requireCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
