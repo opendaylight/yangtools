@@ -141,7 +141,7 @@ abstract class AbstractAugmentStatementSupport
         }
     }
 
-    abstract @NonNull MandatoryNodesAllowed mandatoryNodesAllowed(
+    abstract @NonNull AugmentStrategy strategyFor(
         @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt);
 
     static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
