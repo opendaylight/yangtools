@@ -80,16 +80,15 @@ class YangParserNegativeTest extends AbstractYangTest {
     void testDuplicityInAugmentTarget1() {
         assertInferenceExceptionMessage(
             "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang")
-            .startsWith("An augment cannot add node named 'id' because this name is already used in target");
+            .startsWith("An augment cannot add node named 'id' because this name is already used in target")
+            .endsWith("duplicity/augment1.yang:20:9]");
     }
 
     @Test
     void testDuplicityInAugmentTarget2() {
-        assertSourceExceptionMessage(
-            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang").startsWith("""
-                Error in module 'augment0': cannot add \
-                '(urn:simple.augment2.demo?revision=2014-06-02)delta'. Node name collision: \
-                '(urn:simple.augment2.demo?revision=2014-06-02)delta' already declared at """)
+        assertInferenceExceptionMessage(
+            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang")
+            .startsWith("An augment cannot add node named 'delta' because this name is already used in target")
             .endsWith("duplicity/augment2.yang:17:9]");
     }
 
