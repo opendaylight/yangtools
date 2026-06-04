@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
@@ -112,23 +111,20 @@ enum AugmentStrategy {
 
     private void copyStatement(final StmtContext<?, ?, ?> stmt, final Mutable<?, ?, ?> target,
             final List<Mutable<?, ?, ?>> buffer, final boolean unsupported) {
+        // do not copy statements that pertain to the augment itself
+        if (stmt.producesAnyOf(NOCOPY_DEF_SET)) {
+            return;
+        }
+
+        validateNodeCanBeCopiedByAugment(stmt, target);
+
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
-        if (!stmt.producesAnyOf(NOCOPY_DEF_SET)) {
-            validateNodeCanBeCopiedByAugment(stmt, target);
-
-            final var copy = target.childCopyOf(stmt, copyType);
-            if (unsupported) {
-                copy.setUnsupported();
-            }
-            buffer.add(copy);
-        } else if (!unsupported && stmt.produces(TypedefStatement.DEF)) {
-            // FIXME: what is this branch doing, really?
-            //        Typedef's policy would imply a replica, hence normal target.childCopyOf(original, typeOfCopy)
-            //        would suffice.
-            //        What does the !unsupported thing want to do?
-            buffer.add(stmt.replicaAsChildOf(target));
+        final var copy = target.childCopyOf(stmt, copyType);
+        if (unsupported) {
+            copy.setUnsupported();
         }
+        buffer.add(copy);
     }
 
     private void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
