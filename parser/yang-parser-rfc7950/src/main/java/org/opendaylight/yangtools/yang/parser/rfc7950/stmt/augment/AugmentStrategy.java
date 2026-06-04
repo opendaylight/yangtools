@@ -45,6 +45,10 @@ enum AugmentStrategy {
      */
     RFC7950_CONDITIONAL(CopyType.ADDED_BY_AUGMENTATION, true),
     /**
+     * Common semantics when the {@code augment} target resides in the same module as the {@code augment} statement.
+     */
+    SAME_MODULE(CopyType.ADDED_BY_AUGMENTATION, true),
+    /**
      * Common semantics when the {@code augment} statement is a substatement to the {@code uses} statement.
      */
     USES(CopyType.ADDED_BY_USES_AUGMENTATION, true);
@@ -171,6 +175,8 @@ enum AugmentStrategy {
                 }
             }
         } while ((targetCtx = targetCtx.getParentContext()) != root);
+
+        // FIXME: we should never reach here
 
         /*
          * All target node's parents belong to the same module as source node,
