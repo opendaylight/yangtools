@@ -38,9 +38,10 @@ class YangParserNegativeTest extends AbstractYangTest {
     @Test
     void testInvalidRefine() {
         assertSourceException(
-            containsString("Error in module 'test4' in the refine of uses "
-            + "'Descendant{qnames=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
-            + " the target 'LEAF_LIST'."),
+            containsString("""
+                Error in module 'test4' in the refine of uses \
+                'Descendant{qnames=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for\
+                 the target 'LEAF_LIST'."""),
             "/negative-scenario/testfile4.yang");
     }
 
@@ -58,25 +59,28 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testDuplicateContainer() {
-        assertSourceException(startsWith("Error in module 'container': cannot add "
-            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
-            + "declared"),
+        assertSourceException(startsWith("""
+            Error in module 'container': cannot add \
+            '(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already \
+            declared"""),
             "/negative-scenario/duplicity/container.yang");
     }
 
     @Test
     void testDuplicateContainerList() {
-        assertSourceException(startsWith("Error in module 'container-list': cannot add "
-            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
-            + "declared"),
+        assertSourceException(startsWith("""
+            Error in module 'container-list': cannot add \
+            '(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already \
+            declared"""),
             "/negative-scenario/duplicity/container-list.yang");
     }
 
     @Test
     void testDuplicateContainerLeaf() {
-        assertSourceException(startsWith("Error in module 'container-leaf': cannot add "
-            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
-            + "declared"),
+        assertSourceException(startsWith("""
+            Error in module 'container-leaf': cannot add \
+            '(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already \
+            declared"""),
             "/negative-scenario/duplicity/container-leaf.yang");
     }
 
@@ -89,17 +93,23 @@ class YangParserNegativeTest extends AbstractYangTest {
 
     @Test
     void testDuplicityInAugmentTarget1() {
-        assertInferenceException(
+        assertInferenceException(allOf(
+            startsWith("""
+                Cannot add leaf statement named 'id' because augment target already contains a leaf statement with the \
+                same name (originating from """),
+            containsString("duplicity/augment1.yang:14:9) [at "),
             startsWith("An augment cannot add node named 'id' because this name is already used in target"),
+            endsWith("duplicity/augment1.yang:20:9]")),
             "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang");
     }
 
     @Test
     void testDuplicityInAugmentTarget2() {
         assertSourceException(allOf(
-            startsWith("Error in module 'augment0': cannot add "
-                + "'(urn:simple.augment2.demo?revision=2014-06-02)delta'. Node name collision: "
-                + "'(urn:simple.augment2.demo?revision=2014-06-02)delta' already declared at "),
+            startsWith("""
+                Cannot add anyxml statement named 'delta' because augment target already contains a case statement \
+                with the same name (originating from """),
+            containsString("duplicity/augment2.yang:13:9) [at "),
             endsWith("duplicity/augment2.yang:17:9]")),
             "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang");
     }
