@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
@@ -71,8 +72,19 @@ final class AugmentInferenceAction implements InferenceAction {
             augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), augmentTargetCtx);
         }
 
-        statementSupport.strategyFor(augmentNode).copyFromSourceToTarget(augmentNode, augmentTargetCtx);
+        strategyFor(augmentTargetCtx).copyFromSourceToTarget(augmentNode, augmentTargetCtx);
         augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
+    }
+
+    @NonNullByDefault
+    private AugmentStrategy strategyFor(final Mutable<?, ?, ?> targetNode) {
+        // 'augment' statement in a 'uses' statement
+        if (augmentNode.coerceParentContext().produces(UsesStatement.DEF)) {
+            return AugmentStrategy.USES;
+        }
+
+        // 'augment' statement in a 'module' or 'submodule' statement
+        return statementSupport.strategyFor(augmentNode);
     }
 
     @Override
