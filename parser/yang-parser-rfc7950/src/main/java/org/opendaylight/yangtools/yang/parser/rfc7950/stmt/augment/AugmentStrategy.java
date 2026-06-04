@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -129,15 +129,16 @@ enum AugmentStrategy {
             checkForMandatoryNodes(stmt);
         }
 
-        // Data definition statements must not collide on their namespace
-        if (stmt.producesDeclared(DataDefinitionStatement.class)) {
-            for (var subStatement : target.allSubstatements()) {
-                final var declaring = subStatement.tryDeclaring(DataDefinitionStatement.class);
-                if (declaring != null && Objects.equals(stmt.argument(), declaring.argument())) {
-                    throw new InferenceException(stmt,
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        stmt.rawArgument());
-                }
+        // data definition statements must not collide on schema tree namespace
+        final var dataDef = stmt.tryDeclaring(DataDefinitionStatement.class);
+        if (dataDef != null) {
+            final var arg = dataDef.getArgument();
+            final var existing = target.namespaceItem(ParserNamespaces.schemaTree(), arg);
+            if (existing != null) {
+                throw new InferenceException(dataDef, """
+                    Cannot add %s statement named '%s' because augment target already contains a %s statement with the \
+                    same name (originating from %s)""", dataDef.publicDefinition().humanName(), arg.getLocalName(),
+                    existing.publicDefinition().humanName(), existing.sourceReference());
             }
         }
 
