@@ -96,7 +96,30 @@ enum AugmentStrategy {
             return;
         }
 
-        validateNodeCanBeCopiedByAugment(stmt, target);
+        // FIXME: These two checks are competing with each other for what gets reported: we can have an augment
+        //        overlapping with an on schema tree namespace and the node cannot be legally introduced, for example
+        //        because it is introducing a mandatory node into another module.
+        //
+        //        The problem is that the determination of whether an introduced node is effectively mandatory, depends
+        //        on ancestor hierarchy, which can be modified after this code runs by 'deviate' -- and thus can only
+        //        be reliably ascertained only after the entire the top-most schema node has transitioned to
+        //        EFFECTIVE_MODEL.
+
+        if (!skipCheckOfMandatoryNodes && requireCheckOfMandatoryNodes(stmt, target)) {
+            checkForMandatoryNodes(stmt);
+        }
+
+        // Data definition statements must not collide on their namespace
+        if (stmt.producesDeclared(DataDefinitionStatement.class)) {
+            for (var subStatement : target.allSubstatements()) {
+                if (subStatement.producesDeclared(DataDefinitionStatement.class)
+                    && Objects.equals(stmt.argument(), subStatement.argument())) {
+                    throw new InferenceException(stmt,
+                        "An augment cannot add node named '%s' because this name is already used in target",
+                        stmt.rawArgument());
+                }
+            }
+        }
 
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
@@ -105,24 +128,6 @@ enum AugmentStrategy {
             copy.setUnsupported();
         }
         buffer.add(copy);
-    }
-
-    private void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
-            final Mutable<?, ?, ?> targetCtx) {
-        if (!skipCheckOfMandatoryNodes && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
-            checkForMandatoryNodes(sourceCtx);
-        }
-
-        // Data definition statements must not collide on their namespace
-        if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
-            for (var subStatement : targetCtx.allSubstatements()) {
-                if (subStatement.producesDeclared(DataDefinitionStatement.class)) {
-                    InferenceException.throwIf(Objects.equals(sourceCtx.argument(), subStatement.argument()), sourceCtx,
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawArgument());
-                }
-            }
-        }
     }
 
     private static boolean requireCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
