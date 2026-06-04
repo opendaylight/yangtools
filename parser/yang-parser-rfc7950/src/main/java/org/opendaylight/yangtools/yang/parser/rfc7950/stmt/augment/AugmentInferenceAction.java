@@ -59,21 +59,20 @@ final class AugmentInferenceAction implements InferenceAction {
             return;
         }
 
-        final var augmentTargetCtx = target.resolve(ctx);
-        if (!isSupportedAugmentTarget(augmentTargetCtx)
-            || AbstractAugmentStatementSupport.isInExtensionBody(augmentTargetCtx)) {
+        final var targetNode = target.resolve(ctx);
+        if (!isSupportedAugmentTarget(targetNode) || AbstractAugmentStatementSupport.isInExtensionBody(targetNode)) {
             augmentNode.setUnsupported();
             return;
         }
 
-        // We are targeting a context which is creating implicit nodes. In order to keep things consistent,
-        // we will need to circle back when creating effective statements.
-        if (augmentTargetCtx.hasImplicitParentSupport()) {
-            augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), augmentTargetCtx);
+        // We are targeting a context which is creating implicit nodes. In order to keep things consistent, we will need
+        // to circle back when creating effective statements.
+        if (targetNode.hasImplicitParentSupport()) {
+            augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), targetNode);
         }
 
-        strategyFor(augmentTargetCtx).copyFromSourceToTarget(augmentNode, augmentTargetCtx);
-        augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
+        strategyFor(targetNode).apply(augmentNode, targetNode);
+        targetNode.addEffectiveSubstatement(augmentNode.replicaAsChildOf(targetNode));
     }
 
     @NonNullByDefault
