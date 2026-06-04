@@ -80,17 +80,17 @@ enum AugmentStrategy {
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
 
         for (var stmt : declared) {
-            copyStatement(stmt, target, buffer, unsupported || !stmt.isSupportedByFeatures());
+            copyStatement(buffer, target, stmt, unsupported || !stmt.isSupportedByFeatures());
         }
         for (var stmt : effective) {
-            copyStatement(stmt, target, buffer, unsupported);
+            copyStatement(buffer, target, stmt, unsupported);
         }
 
         target.addEffectiveSubstatements(buffer);
     }
 
-    private void copyStatement(final StmtContext<?, ?, ?> stmt, final Mutable<?, ?, ?> target,
-            final List<Mutable<?, ?, ?>> buffer, final boolean unsupported) {
+    private void copyStatement(final List<Mutable<?, ?, ?>> buffer, final Mutable<?, ?, ?> target,
+            final StmtContext<?, ?, ?> stmt, final boolean unsupported) {
         // do not copy statements that pertain to the augment itself
         if (NOCOPY_DEF_SET.contains(stmt.publicDefinition())) {
             return;
