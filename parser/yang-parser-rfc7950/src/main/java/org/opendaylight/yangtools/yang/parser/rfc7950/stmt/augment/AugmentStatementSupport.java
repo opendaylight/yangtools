@@ -7,19 +7,37 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -38,16 +56,66 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractAugmentStatementSupport
+public final class AugmentStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, @NonNull AugmentStatement, AugmentEffectiveStatement> {
-    AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+    private static final @NonNull SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(AugmentStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(CaseStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(UsesStatement.DEF)
+            .addOptional(WhenStatement.DEF)
+            .build();
+
+    private static final @NonNull SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(AugmentStatement.DEF)
+            .addAny(ActionStatement.DEF)
+            .addAny(AnydataStatement.DEF)
+            .addAny(AnyxmlStatement.DEF)
+            .addAny(CaseStatement.DEF)
+            .addAny(ChoiceStatement.DEF)
+            .addAny(ContainerStatement.DEF)
+            .addOptional(DescriptionStatement.DEF)
+            .addAny(IfFeatureStatement.DEF)
+            .addAny(LeafStatement.DEF)
+            .addAny(LeafListStatement.DEF)
+            .addAny(ListStatement.DEF)
+            .addAny(NotificationStatement.DEF)
+            .addOptional(ReferenceStatement.DEF)
+            .addOptional(StatusStatement.DEF)
+            .addAny(UsesStatement.DEF)
+            .addOptional(WhenStatement.DEF)
+            .build();
+
+    private final @NonNull AugmentStrategyResolver strategyResolver;
+
+    @NonNullByDefault
+    private AugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
+            final AugmentStrategyResolver strategyResolver) {
         super(AugmentStatement.DEF, StatementPolicy.copyDeclared(
             (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
             SubtreePolicy.template(), config, validator);
+        this.strategyResolver = requireNonNull(strategyResolver);
+    }
+
+    public static @NonNull AugmentStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new AugmentStatementSupport(config, RFC6020_VALIDATOR, AugmentStrategyResolver.RFC6020);
+    }
+
+    public static @NonNull AugmentStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new AugmentStatementSupport(config, RFC7950_VALIDATOR, AugmentStrategyResolver.RFC7950);
     }
 
     @Override
-    public final SchemaNodeIdentifier parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
+    public SchemaNodeIdentifier parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
             final String rawArgument) {
         // As per:
         //   https://www.rfc-editor.org/rfc/rfc6020#section-7.15
@@ -62,7 +130,7 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
+    public void onFullDefinitionDeclared(
             final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode) {
         if (!augmentNode.isSupportedByFeatures()) {
             // We need this augment node to be present, but it should not escape to effective world
@@ -80,23 +148,23 @@ abstract class AbstractAugmentStatementSupport
         final var target = augmentAction.mutatesEffectiveCtxPath(getSearchRoot(augmentNode),
             ParserNamespaces.schemaTree(), augmentNode.getArgument().getNodeIdentifiers());
 
-        augmentAction.apply(new AugmentInferenceAction(this, augmentNode, target));
+        augmentAction.apply(new AugmentInferenceAction(strategyResolver, augmentNode, target));
     }
 
     @Override
-    protected final AugmentStatement createDeclared(final BoundStmtCtx<SchemaNodeIdentifier> ctx,
+    protected AugmentStatement createDeclared(final BoundStmtCtx<SchemaNodeIdentifier> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createAugment(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final AugmentStatement attachDeclarationReference(final AugmentStatement stmt,
+    protected AugmentStatement attachDeclarationReference(final AugmentStatement stmt,
             final DeclarationReference reference) {
         return DeclaredStatementDecorators.decorateAugment(stmt, reference);
     }
 
     @Override
-    protected final Stream<? extends StmtContext<?, ?, ?>> statementsToBuild(
+    protected Stream<? extends StmtContext<?, ?, ?>> statementsToBuild(
             final Current<SchemaNodeIdentifier, @NonNull AugmentStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
@@ -107,7 +175,7 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    protected final AugmentEffectiveStatement createEffective(
+    protected AugmentEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final int flags = new FlagsBuilder()
@@ -121,10 +189,7 @@ abstract class AbstractAugmentStatementSupport
         }
     }
 
-    abstract @NonNull AugmentStrategy strategyFor(
-        @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt);
-
-    static final StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
+    static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.
         final var parent = augmentContext.coerceParentContext();
         return parent.produces(UsesStatement.DEF) ? parent.getParentContext() : parent;
@@ -139,7 +204,7 @@ abstract class AbstractAugmentStatementSupport
     //               UnknownStatement, but its EffectiveStatement projection supports SchemaTreeAwareEffectiveStatement
     //               we should operate normally -- the StatementSupport exposing such semantics is responsible for
     //               arranging the backend details.
-    static final boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
+    static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
         var current = stmtCtx;
 
         while (true) {
