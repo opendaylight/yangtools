@@ -78,12 +78,22 @@ final class AugmentInferenceAction implements InferenceAction {
 
     @NonNullByDefault
     private AugmentStrategy strategyFor(final Mutable<?, ?, ?> targetNode) {
+        final var augmentParent = augmentNode.coerceParentContext();
+
         // 'augment' statement in a 'uses' statement
-        if (augmentNode.coerceParentContext().produces(UsesStatement.DEF)) {
+        if (augmentParent.produces(UsesStatement.DEF)) {
             return AugmentStrategy.USES;
         }
 
-        // 'augment' statement in a 'module' or 'submodule' statement
+        // 'augment' statement in a 'module' or 'submodule' is implied from this point on: determine the augment's home
+        // module, as we will need it to determine the augment's relationship to the target
+        final var augmentModule = augmentParent.currentModule();
+
+        // 'augment' statement and target node are in the same module
+        if (augmentModule.equals(targetNode.currentModule())) {
+            return AugmentStrategy.SAME_MODULE;
+        }
+
         return statementSupport.strategyFor(augmentNode);
     }
 
