@@ -12,14 +12,17 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -69,41 +72,41 @@ enum AugmentStrategy {
         this.skipCheckOfMandatoryNodes = skipCheckOfMandatoryNodes;
     }
 
-    @NonNullByDefault
-    void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceCtx, final Mutable<?, ?, ?> targetCtx) {
-        final var unsupported = !sourceCtx.isSupportedByFeatures();
-        final var declared = sourceCtx.declaredSubstatements();
-        final var effective = sourceCtx.effectiveSubstatements();
+    void apply(final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
+            final @NonNull Mutable<?, ?, ?> target) {
+        final var unsupported = !augment.isSupportedByFeatures();
+        final var declared = augment.declaredSubstatements();
+        final var effective = augment.effectiveSubstatements();
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
 
-        for (var originalStmtCtx : declared) {
-            copyStatement(originalStmtCtx, targetCtx, buffer, unsupported || !originalStmtCtx.isSupportedByFeatures());
+        for (var stmt : declared) {
+            copyStatement(stmt, target, buffer, unsupported || !stmt.isSupportedByFeatures());
         }
-        for (var originalStmtCtx : effective) {
-            copyStatement(originalStmtCtx, targetCtx, buffer, unsupported);
+        for (var stmt : effective) {
+            copyStatement(stmt, target, buffer, unsupported);
         }
 
-        targetCtx.addEffectiveSubstatements(buffer);
+        target.addEffectiveSubstatements(buffer);
     }
 
-    private void copyStatement(final StmtContext<?, ?, ?> original, final Mutable<?, ?, ?> target,
-            final Collection<Mutable<?, ?, ?>> buffer, final boolean unsupported) {
+    private void copyStatement(final StmtContext<?, ?, ?> stmt, final Mutable<?, ?, ?> target,
+            final List<Mutable<?, ?, ?>> buffer, final boolean unsupported) {
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
-        if (!NOCOPY_DEF_SET.contains(original.publicDefinition())) {
-            validateNodeCanBeCopiedByAugment(original, target);
+        if (!NOCOPY_DEF_SET.contains(stmt.publicDefinition())) {
+            validateNodeCanBeCopiedByAugment(stmt, target);
 
-            final var copy = target.childCopyOf(original, copyType);
+            final var copy = target.childCopyOf(stmt, copyType);
             if (unsupported) {
                 copy.setUnsupported();
             }
             buffer.add(copy);
-        } else if (!unsupported && original.publicDefinition() == YangStmtMapping.TYPEDEF) {
+        } else if (!unsupported && stmt.publicDefinition() == YangStmtMapping.TYPEDEF) {
             // FIXME: what is this branch doing, really?
             //        Typedef's policy would imply a replica, hence normal target.childCopyOf(original, typeOfCopy)
             //        would suffice.
             //        What does the !unsupported thing want to do?
-            buffer.add(original.replicaAsChildOf(target));
+            buffer.add(stmt.replicaAsChildOf(target));
         }
     }
 
