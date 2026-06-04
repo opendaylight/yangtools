@@ -171,16 +171,6 @@ enum AugmentStrategy {
                 return true;
             }
 
-            // If target or one of the target's ancestors from the same namespace
-            // - is a presence container, or
-            // - is non-mandatory choice, or
-            // - is non-mandatory list
-            // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1.
-            if (isPresenceContainer(targetCtx) || isNotMandatoryNodeOfType(targetCtx, ChoiceStatement.DEF)
-                || isNotMandatoryNodeOfType(targetCtx, ListStatement.DEF)) {
-                return false;
-            }
-
             // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
             // conditional -- in which case we do not run further checks
             if (targetCtx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
@@ -245,20 +235,6 @@ enum AugmentStrategy {
     }
 
     /**
-     * Checks whether a statement context is a statement of supplied statement definition and whether it is not
-     * mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020.
-     *
-     * @param stmtCtx statement context
-     * @param stmtDef statement definition
-     * @return true if supplied statement context is a statement of supplied statement definition and if it is not
-     *         a mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020
-     */
-    private static boolean isNotMandatoryNodeOfType(final StmtContext<?, ?, ?> stmtCtx,
-            final StatementDefinition<?, ?, ?> stmtDef) {
-        return stmtCtx.produces(stmtDef) && !isMandatoryNode(stmtCtx);
-    }
-
-    /**
      * Checks whether statement context is a non-presence container or not.
      *
      * @param stmtCtx statement context
@@ -266,16 +242,6 @@ enum AugmentStrategy {
      */
     private static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
         return stmtCtx.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmtCtx);
-    }
-
-    /**
-     * Checks whether statement context is a presence container or not.
-     *
-     * @param stmtCtx statement context
-     * @return true if it is a presence container
-     */
-    private static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.produces(ContainerStatement.DEF) && containsPresenceSubStmt(stmtCtx);
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
