@@ -142,14 +142,11 @@ enum AugmentStrategy {
                 return true;
             }
 
-            /*
-             * If target or one of the target's ancestors from the same namespace
-             * is a presence container
-             * or is non-mandatory choice
-             * or is non-mandatory list
-             * return false and skip mandatory nodes validation, because these nodes
-             * are not mandatory node containers according to RFC 6020 section 3.1.
-             */
+            // If target or one of the target's ancestors from the same namespace
+            // - is a presence container, or
+            // - is non-mandatory choice, or
+            // - is non-mandatory list
+            // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1.
             if (StmtContextUtils.isPresenceContainer(targetCtx)
                 || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.CHOICE)
                 || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.LIST)) {
