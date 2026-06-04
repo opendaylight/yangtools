@@ -184,6 +184,8 @@ enum AugmentStrategy {
                         return false;
                     }
                 }
+            } else {
+                System.out.println("wha");
             }
         } while ((targetCtx = targetCtx.getParentContext()) != root);
 
