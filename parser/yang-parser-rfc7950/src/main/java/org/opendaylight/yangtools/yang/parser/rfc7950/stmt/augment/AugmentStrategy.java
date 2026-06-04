@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -109,15 +109,16 @@ enum AugmentStrategy {
             checkForMandatoryNodes(stmt);
         }
 
-        // Data definition statements must not collide on their namespace
+        // data definition statements must not collide on schema tree namespace
         if (stmt.producesDeclared(DataDefinitionStatement.class)) {
-            for (var subStatement : target.allSubstatements()) {
-                if (subStatement.producesDeclared(DataDefinitionStatement.class)
-                    && Objects.equals(stmt.argument(), subStatement.argument())) {
-                    throw new InferenceException(stmt,
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        stmt.rawArgument());
-                }
+            final var arg = (QName) stmt.getArgument();
+            final var existing = target.namespaceItem(ParserNamespaces.schemaTree(), arg);
+            if (existing != null) {
+                throw new InferenceException(stmt, """
+                    Cannot add %s statement named '%s' because augment target already contains a %s statement with the \
+                    same name (originating from %s)""", stmt.publicDefinition().getStatementName().getLocalName(),
+                    arg.getLocalName(), existing.publicDefinition().getStatementName().getLocalName(),
+                    existing.sourceReference());
             }
         }
 
