@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -45,19 +48,69 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractAugmentStatementSupport
+public final class AugmentStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
-    AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+    private static final @NonNull SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CASE)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
+            .build();
+
+    private static final @NonNull SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.ACTION)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CASE)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
+            .build();
+
+    private final @NonNull AugmentStrategyResolver strategyResolver;
+
+    @NonNullByDefault
+    private AugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
+            final AugmentStrategyResolver strategyResolver) {
         super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
             (copy, current, substatements) -> copy.getArgument().equals(current.getArgument())),
             config, validator);
+        this.strategyResolver = requireNonNull(strategyResolver);
+    }
+
+    public static @NonNull AugmentStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new AugmentStatementSupport(config, RFC6020_VALIDATOR, AugmentStrategyResolver.RFC6020);
+    }
+
+    public static @NonNull AugmentStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new AugmentStatementSupport(config, RFC7950_VALIDATOR, AugmentStrategyResolver.RFC7950);
     }
 
     @Override
-    public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         SourceException.throwIf(PATH_REL_PATTERN1.matcher(value).matches()
             || PATH_REL_PATTERN2.matcher(value).matches(), ctx,
             "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses", value);
@@ -82,7 +135,7 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
+    public void onFullDefinitionDeclared(
             final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode) {
         if (!augmentNode.isSupportedByFeatures()) {
             // We need this augment node to be present, but it should not escape to effective world
@@ -100,23 +153,23 @@ abstract class AbstractAugmentStatementSupport
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtxPath(
             getSearchRoot(augmentNode), ParserNamespaces.schemaTree(), augmentNode.getArgument().getNodeIdentifiers());
 
-        augmentAction.apply(new AugmentInferenceAction(this, augmentNode, target));
+        augmentAction.apply(new AugmentInferenceAction(strategyResolver, augmentNode, target));
     }
 
     @Override
-    protected final AugmentStatement createDeclared(final BoundStmtCtx<SchemaNodeIdentifier> ctx,
+    protected AugmentStatement createDeclared(final BoundStmtCtx<SchemaNodeIdentifier> ctx,
             final ImmutableList<DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createAugment(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final AugmentStatement attachDeclarationReference(final AugmentStatement stmt,
+    protected AugmentStatement attachDeclarationReference(final AugmentStatement stmt,
             final DeclarationReference reference) {
         return DeclaredStatementDecorators.decorateAugment(stmt, reference);
     }
 
     @Override
-    protected final Stream<? extends StmtContext<?, ?, ?>> statementsToBuild(
+    protected Stream<? extends StmtContext<?, ?, ?>> statementsToBuild(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> substatements) {
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
@@ -127,7 +180,7 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    protected final AugmentEffectiveStatement createEffective(
+    protected AugmentEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final int flags = new FlagsBuilder()
@@ -140,9 +193,6 @@ abstract class AbstractAugmentStatementSupport
             throw new SourceException(e.getMessage(), stmt, e);
         }
     }
-
-    abstract @NonNull AugmentStrategy strategyFor(
-        @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt);
 
     static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.

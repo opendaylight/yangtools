@@ -16,8 +16,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC6020Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportedVersionNamespace;
@@ -354,8 +353,8 @@ public final class RFC7950Reactors {
             .addSupport(new OrderedByStatementSupport(config))
             .addSupport(new WhenStatementSupport(xpathSupport, config))
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
-            .addVersionSpecificSupport(VERSION_1, new AugmentStatementRFC6020Support(config))
-            .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRFC7950Support(config))
+            .addVersionSpecificSupport(VERSION_1, AugmentStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, AugmentStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1, RefineStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, RefineStatementSupport.rfc7950Instance(config))
             .addSupport(new FeatureStatementSupport(config))
