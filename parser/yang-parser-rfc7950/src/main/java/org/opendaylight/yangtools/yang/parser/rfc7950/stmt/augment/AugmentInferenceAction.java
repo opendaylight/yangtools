@@ -83,6 +83,12 @@ final class AugmentInferenceAction implements InferenceAction {
             return AugmentStrategy.USES;
         }
 
+        final var augmentModule = augmentNode.currentModule();
+        // 'augment' statement and target node are in the same module
+        if (augmentModule.equals(targetNode.currentModule())) {
+            return AugmentStrategy.SAME_MODULE;
+        }
+
         // 'augment' statement in a 'module' or 'submodule' statement
         return statementSupport.strategyFor(augmentNode);
     }
