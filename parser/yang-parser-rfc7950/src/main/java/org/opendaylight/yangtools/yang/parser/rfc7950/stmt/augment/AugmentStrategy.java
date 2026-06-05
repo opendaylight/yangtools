@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
@@ -39,8 +40,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -53,25 +56,72 @@ enum AugmentStrategy {
     /**
      * RFC6020 semantics: mandatory nodes must not be introduced.
      */
-    RFC6020(CopyType.ADDED_BY_AUGMENTATION, false),
+    RFC6020(Extractor.REGULAR, CopyType.ADDED_BY_AUGMENTATION),
     /**
      * RFC7950 semantics and the augmentation is unconditional: mandatory nodes may be introduced only to target nodes
      * which do not represent configuration.
      */
-    RFC7950_UNCONDITIONAL(CopyType.ADDED_BY_AUGMENTATION, false),
+    RFC7950_UNCONDITIONAL(Extractor.REGULAR, CopyType.ADDED_BY_AUGMENTATION),
     /**
      * RFC7950 semantics and the augmentation is conditional via {@code when}: mandatory nodes may be introduced to any
      * target node.
      */
-    RFC7950_CONDITIONAL(CopyType.ADDED_BY_AUGMENTATION, true),
+    RFC7950_CONDITIONAL(Extractor.NOOP, CopyType.ADDED_BY_AUGMENTATION),
     /**
      * Common semantics when the {@code augment} target resides in the same module as the {@code augment} statement.
      */
-    SAME_MODULE(CopyType.ADDED_BY_AUGMENTATION, true),
+    SAME_MODULE(Extractor.NOOP, CopyType.ADDED_BY_AUGMENTATION),
     /**
      * Common semantics when the {@code augment} statement is a substatement to the {@code uses} statement.
      */
-    USES(CopyType.ADDED_BY_USES_AUGMENTATION, true);
+    USES(Extractor.NOOP, CopyType.ADDED_BY_USES_AUGMENTATION);
+
+    @NonNullByDefault
+    private enum Extractor {
+        NOOP() {
+            @Override
+            List<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
+                return List.of();
+            }
+        },
+        REGULAR() {
+            @Override
+            List<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
+                return recmandatoryNodesOf(stmt);
+            }
+
+            private static List<CommonStmtCtx> recmandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
+                if (stmt.producesAnyOf(LeafStatement.DEF, ChoiceStatement.DEF, AnyxmlStatement.DEF)) {
+                    if (Boolean.TRUE.equals(firstSubstatementAttributeOf(stmt, MandatoryStatement.DEF))) {
+                        return List.of(stmt);
+                    }
+                } else if (stmt.producesAnyOf(ListStatement.DEF, LeafListStatement.DEF)) {
+                    final var minElements = firstSubstatementAttributeOf(stmt, MinElementsStatement.DEF);
+                    if (minElements != null && minElements.lowerInt() > -1) {
+                        return List.of(stmt);
+                    }
+                } else if (stmt.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmt)) {
+                    final var ret = new ArrayList<CommonStmtCtx>();
+                    // We need to iterate over both declared and effective sub-statements, because a mandatory node can
+                    // be either
+                    //   a) declared in augment body, or
+                    //   b) added to augment body also via uses of a grouping and such sub-statements are stored in
+                    //      effective sub-statements collection.
+                    for (var sub : stmt.allSubstatements()) {
+                        ret.addAll(recmandatoryNodesOf(sub));
+                    }
+                    return ret;
+                }
+                return List.of();
+            }
+        };
+
+        /**
+         * {@return all statements which is causing specified statement to be considered mandatory}
+         * @param stmt the statement
+         */
+        abstract List<CommonStmtCtx> mandatoryNodesOf(StmtContext<?, ?, ?> stmt);
+    }
 
     /**
      * YANG statements that apply to the {@code augment} statement itself, not to the {@code target node}.
@@ -83,35 +133,36 @@ enum AugmentStrategy {
         UsesStatement.DEF,
         WhenStatement.DEF);
 
-    // FIXME: YANGTOOLS-1890: correct the logic around this boolean
-    private final boolean skipCheckOfMandatoryNodes;
+    private final @NonNull Extractor extractor;
     private final @NonNull CopyType copyType;
 
     @NonNullByDefault
-    AugmentStrategy(final CopyType copyType, final boolean skipCheckOfMandatoryNodes) {
+    AugmentStrategy(final Extractor extractor, final CopyType copyType) {
+        this.extractor = requireNonNull(extractor);
         this.copyType = requireNonNull(copyType);
-        this.skipCheckOfMandatoryNodes = skipCheckOfMandatoryNodes;
     }
 
-    void apply(final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
+    final void apply(
+            final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
             final @NonNull Mutable<?, ?, ?> target) {
+        final var augmentModule = augment.currentModule();
         final var unsupported = !augment.isSupportedByFeatures();
         final var declared = augment.declaredSubstatements();
         final var effective = augment.effectiveSubstatements();
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
 
         for (var stmt : declared) {
-            copyStatement(buffer, target, stmt, unsupported || !stmt.isSupportedByFeatures());
+            copyStatement(buffer, target, augmentModule, stmt, unsupported || !stmt.isSupportedByFeatures());
         }
         for (var stmt : effective) {
-            copyStatement(buffer, target, stmt, unsupported);
+            copyStatement(buffer, target, augmentModule, stmt, unsupported);
         }
 
         target.addEffectiveSubstatements(buffer);
     }
 
-    private void copyStatement(final List<Mutable<?, ?, ?>> buffer, final Mutable<?, ?, ?> target,
-            final StmtContext<?, ?, ?> stmt, final boolean unsupported) {
+    private void copyStatement(final @NonNull List<Mutable<?, ?, ?>> buffer, final @NonNull Mutable<?, ?, ?> target,
+            final @NonNull QNameModule augmentModule,final StmtContext<?, ?, ?> stmt, final boolean unsupported) {
         // do not copy statements that pertain to the augment itself
         if (stmt.producesAnyOf(NOCOPY_DEF_SET)) {
             return;
@@ -126,8 +177,11 @@ enum AugmentStrategy {
         //        be reliably ascertained only after the entire the top-most schema node has transitioned to
         //        EFFECTIVE_MODEL.
 
-        if (!skipCheckOfMandatoryNodes && requireCheckOfMandatoryNodes(stmt, target)) {
-            checkForMandatoryNodes(stmt);
+        final var mandatoryNodes = extractor.mandatoryNodesOf(stmt).iterator();
+        if (mandatoryNodes.hasNext() && needMandatoryCheckIn(augmentModule, target)) {
+            final var ex = newMandatoryViolation(mandatoryNodes.next());
+            mandatoryNodes.forEachRemaining(mandatoryNode -> ex.addSuppressed(newMandatoryViolation(mandatoryNode)));
+            throw ex;
         }
 
         // data definition statements must not collide on schema tree namespace
@@ -152,26 +206,24 @@ enum AugmentStrategy {
         buffer.add(copy);
     }
 
-    private static boolean requireCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
-            Mutable<?, ?, ?> targetCtx) {
-        /*
-         * If the statement argument is not QName, it cannot be mandatory
-         * statement, therefore return false and skip mandatory nodes validation
-         */
-        final Object arg = sourceCtx.argument();
-        if (!(arg instanceof QName sourceStmtQName)) {
-            return false;
-        }
-        // RootStatementContext, for example
-        final Mutable<?, ?, ?> root = targetCtx.getRoot();
-        do {
-            final Object targetArg = targetCtx.argument();
-            verify(targetArg instanceof QName, "Argument of augment target statement must be QName, not %s", targetArg);
-            final QName targetStmtQName = (QName) targetArg;
-            /*
-             * If target is from another module, return true and perform mandatory nodes validation
-             */
-            if (!targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
+    @NonNullByDefault
+    private static InferenceException newMandatoryViolation(final CommonStmtCtx mandatoryNode) {
+        return new InferenceException(mandatoryNode,
+            "An augment cannot add node '%s' because it is mandatory and in module different than target",
+            mandatoryNode.rawArgument());
+    }
+
+    @NonNullByDefault
+    private static boolean needMandatoryCheckIn(final QNameModule augmentModule, final StmtContext<?, ?, ?> target) {
+        var current = target;
+        while (true) {
+            final var currentArg = current.argument();
+            if (!(currentArg instanceof QName currentQName)) {
+                throw new VerifyException("Argument of augment target statement must be QName, not " + currentArg);
+            }
+
+            // if current is from another module we need to perform mandatory nodes validation
+            if (!currentQName.getModule().equals(augmentModule)) {
                 return true;
             }
 
@@ -180,19 +232,19 @@ enum AugmentStrategy {
             //   - is non-mandatory list, or
             //   - is non-mandatory choice
             // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1
-            if (targetCtx.produces(ContainerStatement.DEF)) {
-                if (containsPresenceSubStmt(targetCtx)) {
+            if (current.produces(ContainerStatement.DEF)) {
+                if (containsPresenceSubStmt(current)) {
                     return false;
                 }
-            } else if (targetCtx.produces(ListStatement.DEF)) {
+            } else if (current.produces(ListStatement.DEF)) {
                 // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
-                final var minElements = firstSubstatementAttributeOf(targetCtx, MinElementsStatement.DEF);
+                final var minElements = firstSubstatementAttributeOf(current, MinElementsStatement.DEF);
                 if (minElements == null || minElements.matchesAll()) {
                     return false;
                 }
-            } else if (targetCtx.produces(ChoiceStatement.DEF)) {
+            } else if (current.produces(ChoiceStatement.DEF)) {
                 // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
-                final var mandatory = firstSubstatementAttributeOf(targetCtx, MandatoryStatement.DEF);
+                final var mandatory = firstSubstatementAttributeOf(current, MandatoryStatement.DEF);
                 if (mandatory == null || !mandatory) {
                     return false;
                 }
@@ -200,75 +252,31 @@ enum AugmentStrategy {
 
             // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
             // conditional -- in which case we do not run further checks
-            if (targetCtx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                final var original = targetCtx.previousCopyCtx();
+            if (current.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                final var original = current.previousCopyCtx();
                 if (original != null) {
                     final var origArg = original.getArgument();
-                    verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
+                    if (!(origArg instanceof QName origQName)) {
+                        throw new VerifyException("Unexpected statement argument " + origArg);
+                    }
 
-                    if (sourceStmtQName.getModule().equals(((QName) origArg).getModule())
-                        && getParentAugmentation(original).hasSubstatement(WhenEffectiveStatement.class)) {
-                        return false;
+                    if (augmentModule.equals(origQName.getModule())) {
+                        final var parentAugmentation = getParentAugmentation(original);
+                        // FIXME: defer to resolver as this check is only applicable if the augmentation is hosted in a
+                        //        RFC7950 source
+                        if (parentAugmentation.hasSubstatement(WhenEffectiveStatement.class)) {
+                            return false;
+                        }
                     }
                 }
             }
-        } while ((targetCtx = targetCtx.getParentContext()) != root);
 
-        // FIXME: we should never reach here
-
-        /*
-         * All target node's parents belong to the same module as source node,
-         * therefore return false and skip mandatory nodes validation.
-         */
-        return false;
-    }
-
-    private static void checkForMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx) {
-        if (isNonPresenceContainer(sourceCtx)) {
-            /*
-             * We need to iterate over both declared and effective sub-statements,
-             * because a mandatory node can be:
-             * a) declared in augment body
-             * b) added to augment body also via uses of a grouping and
-             * such sub-statements are stored in effective sub-statements collection.
-             */
-            sourceCtx.allSubstatementsStream().forEach(AugmentStrategy::checkForMandatoryNodes);
+            final var parent = current.coerceParentContext();
+            if (parent instanceof RootStmtContext) {
+                throw new VerifyException("reached root " + parent + " from " + target);
+            }
+            current = parent;
         }
-
-        InferenceException.throwIf(isMandatoryNode(sourceCtx), sourceCtx,
-            "An augment cannot add node '%s' because it is mandatory and in module different than target",
-            sourceCtx.rawArgument());
-    }
-
-    /**
-     * Checks whether statement context is a mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020 or
-     * not.
-     *
-     * @param stmtCtx statement context
-     * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list according to RFC6020.
-     */
-    private static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
-        // FIXME: check for MandatoryStatementAwareDeclaredStatement, renamed to MandatoryStatement.Parent via
-        //        producesDeclared()
-        if (stmtCtx.producesAnyOf(LeafStatement.DEF, ChoiceStatement.DEF, AnyxmlStatement.DEF)) {
-            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.DEF));
-        }
-        // FIXME: check for MultipleElementsDeclaredStatement via producesDeclared()
-        if (stmtCtx.producesAnyOf(ListStatement.DEF, LeafListStatement.DEF)) {
-            final var minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.DEF);
-            return minElements != null && minElements.lowerInt() > -1;
-        }
-        return false;
-    }
-
-    /**
-     * Checks whether statement context is a non-presence container or not.
-     *
-     * @param stmtCtx statement context
-     * @return true if it is a non-presence container
-     */
-    private static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmtCtx);
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
