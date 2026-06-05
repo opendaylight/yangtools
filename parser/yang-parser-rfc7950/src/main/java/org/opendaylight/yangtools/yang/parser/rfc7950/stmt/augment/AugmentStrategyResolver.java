@@ -25,7 +25,7 @@ enum AugmentStrategyResolver {
         @Override
         AugmentStrategy strategyFor(
                 final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> stmt) {
-            return AugmentStrategy.RFC6020;
+            return AugmentStrategy.rfc6020();
         }
     },
     /**
@@ -39,8 +39,8 @@ enum AugmentStrategyResolver {
             //    If the augmentation adds mandatory nodes (see Section 3) that
             //    represent configuration to a target node in another module, the
             //    augmentation MUST be made conditional with a "when" statement.
-            return stmt.hasSubstatement(WhenEffectiveStatement.class) ? AugmentStrategy.RFC7950_CONDITIONAL
-                : AugmentStrategy.RFC7950_UNCONDITIONAL;
+            return stmt.hasSubstatement(WhenEffectiveStatement.class) ? AugmentStrategy.conditional()
+                : AugmentStrategy.unconditional();
         }
     };
 
