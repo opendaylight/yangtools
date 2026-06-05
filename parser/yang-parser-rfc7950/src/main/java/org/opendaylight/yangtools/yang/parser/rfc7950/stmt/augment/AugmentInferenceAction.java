@@ -73,25 +73,30 @@ final class AugmentInferenceAction implements InferenceAction {
             augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), targetNode);
         }
 
-        strategyFor(targetNode).apply(augmentNode, targetNode);
+        apply(targetNode);
+
         targetNode.addEffectiveSubstatement(augmentNode.replicaAsChildOf(targetNode));
     }
 
     @NonNullByDefault
-    private AugmentStrategy strategyFor(final StmtContext<?, ?, ?> targetNode) {
+    private void apply(final Mutable<?, ?, ?> targetNode) {
         final var augmentParent = augmentNode.coerceParentContext();
 
         // 'augment' statement in a 'uses' statement
         if (augmentParent.producesDeclared(UsesStatement.class)) {
-            return AugmentStrategy.USES;
+            AugmentStrategy.applyUses(augmentNode, targetNode);
+            return;
         }
 
         // 'augment' statement in a 'module' or 'submodule', with target node being ...
-        return augmentParent.definingModule().equals(targetNode.definingModule())
+        final var augmentModule = augmentParent.definingModule();
+        if (augmentModule.equals(targetNode.definingModule())) {
             // ... in the same module
-            ? AugmentStrategy.SAME_MODULE
-            // ... in another module (but perhaps introduced by this module)
-            : strategyResolver.strategyFor(augmentNode);
+            AugmentStrategy.applySame(augmentNode, targetNode);
+        } else {
+            // ... in another module
+            AugmentStrategy.applyAnother(augmentNode, targetNode, strategyResolver, augmentModule);
+        }
     }
 
     @Override

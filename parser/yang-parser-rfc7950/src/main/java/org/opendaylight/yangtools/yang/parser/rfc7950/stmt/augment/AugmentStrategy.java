@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
+import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -38,11 +39,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A strategy for copying statements from a {@code augment} statement to its {@code target node}.
  */
-// TODO: refactor to a sealed class so RFC* members and SAME_MODULE/USES members have two disjuct superclasses
+// TODO: refactor to a sealed class so RFC* members and SAME_MODULE/USES members can be hidden, perhaps with each of the
+//       two kinds having a dedicated superclass
 enum AugmentStrategy {
     /**
      * RFC6020 semantics: mandatory nodes must not be introduced.
@@ -130,6 +134,7 @@ enum AugmentStrategy {
         abstract Iterator<CommonStmtCtx> mandatoryNodesOf(StmtContext<?, ?, ?> stmt);
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(AugmentStrategy.class);
     /**
      * YANG statements that apply to the {@code augment} statement itself, not to the {@code target node}.
      */
@@ -145,27 +150,54 @@ enum AugmentStrategy {
         this.copyType = requireNonNull(copyType);
     }
 
-    final void apply(
+    static void applyAnother(
+            final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
+            final @NonNull Mutable<?, ?, ?> target, final @NonNull AugmentStrategyResolver strategyResolver,
+            final @NonNull QNameModule augmentModule) {
+        final var augmentArg = augment.getArgument();
+        final var lastArg = augmentArg.lastNodeIdentifier();
+        verifyArgument(lastArg, target);
+
+        final var withMandatoryCheck = augmentModule.equals(lastArg.getModule())
+            // ... introduced by an augment statement defined with the same home module
+            ? needMandatoryCheckIn(target, augmentArg.getNodeIdentifiers().reversed().iterator())
+            : true;
+
+        strategyResolver.strategyFor(augment).apply(augment, target, withMandatoryCheck);
+    }
+
+    static void applySame(
             final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
             final @NonNull Mutable<?, ?, ?> target) {
-        final var augmentModule = augment.definingModule();
+        SAME_MODULE.apply(augment, target, false);
+    }
+
+    static void applyUses(
+            final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
+            final @NonNull Mutable<?, ?, ?> target) {
+        USES.apply(augment, target, false);
+    }
+
+    private void apply(
+            final @NonNull StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augment,
+            final @NonNull Mutable<?, ?, ?> target, final boolean withMandatoryCheck) {
         final var unsupported = !augment.isSupportedByFeatures();
         final var declared = augment.declaredSubstatements();
         final var effective = augment.effectiveSubstatements();
         final var buffer = new ArrayList<Mutable<?, ?, ?>>(declared.size() + effective.size());
 
         for (var stmt : declared) {
-            copyStatement(buffer, target, augmentModule, stmt, unsupported || !stmt.isSupportedByFeatures());
+            copyStatement(buffer, target, withMandatoryCheck, stmt, unsupported || !stmt.isSupportedByFeatures());
         }
         for (var stmt : effective) {
-            copyStatement(buffer, target, augmentModule, stmt, unsupported);
+            copyStatement(buffer, target, withMandatoryCheck, stmt, unsupported);
         }
 
         target.addEffectiveSubstatements(buffer);
     }
 
     private void copyStatement(final @NonNull List<Mutable<?, ?, ?>> buffer, final @NonNull Mutable<?, ?, ?> target,
-            final @NonNull QNameModule augmentModule,final StmtContext<?, ?, ?> stmt, final boolean unsupported) {
+            final boolean withMandatoryCheck, final StmtContext<?, ?, ?> stmt, final boolean unsupported) {
         // do not copy statements that pertain to the augment itself
         if (NOCOPY_DEF_SET.contains(stmt.publicDefinition())) {
             return;
@@ -180,11 +212,16 @@ enum AugmentStrategy {
         //        be reliably ascertained only after the entire the top-most schema node has transitioned to
         //        EFFECTIVE_MODEL.
 
-        final var mandatoryNodes = extractor.mandatoryNodesOf(stmt);
-        if (mandatoryNodes.hasNext() && needMandatoryCheckIn(augmentModule, target)) {
-            final var ex = newMandatoryViolation(mandatoryNodes.next());
-            mandatoryNodes.forEachRemaining(mandatoryNode -> ex.addSuppressed(newMandatoryViolation(mandatoryNode)));
-            throw ex;
+        if (withMandatoryCheck) {
+            final var mandatoryNodes = extractor.mandatoryNodesOf(stmt);
+            if (mandatoryNodes.hasNext()) {
+                final var ex = newMandatoryViolation(mandatoryNodes.next());
+                mandatoryNodes.forEachRemaining(mandatoryNode -> {
+                    LOG.debug("Additional mandatory violation at {}", mandatoryNode.sourceReference());
+                    ex.addSuppressed(newMandatoryViolation(mandatoryNode));
+                });
+                throw ex;
+            }
         }
 
         // data definition statements must not collide on schema tree namespace
@@ -216,23 +253,12 @@ enum AugmentStrategy {
             mandatoryNode.rawArgument());
     }
 
-    // FIXME: YANGTOOLS-1890: this method should be provided AugmentInferenceAction by when it determines the target
-    //                        node has the same namespace. In other cases it should just return true -- as is implied
-    //                        by the first loop iteration
     @NonNullByDefault
-    private static boolean needMandatoryCheckIn(final QNameModule augmentModule, final StmtContext<?, ?, ?> target) {
+    private static boolean needMandatoryCheckIn(final StmtContext<?, ?, ?> target, final Iterator<QName> identifiers) {
+        final var augmentModule = identifiers.next().getModule();
+
         var current = target;
         while (true) {
-            final var currentArg = current.argument();
-            if (!(currentArg instanceof QName currentQName)) {
-                throw new VerifyException("Argument of augment target statement must be QName, not " + currentArg);
-            }
-
-            // if current is from another module we need to perform mandatory nodes validation
-            if (!currentQName.getModule().equals(augmentModule)) {
-                return true;
-            }
-
             // if target or one of the target's ancestors from the same namespace
             //   - is a presence container, or
             //   - is non-mandatory list, or
@@ -277,11 +303,26 @@ enum AugmentStrategy {
                 }
             }
 
+            final var next = identifiers.next();
+            // if current is from another module we need to perform mandatory nodes validation
+            if (!augmentModule.equals(next.getModule())) {
+                return true;
+            }
+
             final var parent = current.coerceParentContext();
             if (parent instanceof RootStmtContext) {
                 throw new VerifyException("reached root " + parent + " from " + target);
             }
+            verifyArgument(next, parent);
             current = parent;
+        }
+    }
+
+    @NonNullByDefault
+    private static void verifyArgument(final QName expected, final BoundStmtCtx<?> stmt) {
+        final var targetArg = stmt.argument();
+        if (!expected.equals(targetArg)) {
+            throw new VerifyException(stmt + " does not match " + expected);
         }
     }
 
