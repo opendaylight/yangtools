@@ -12,14 +12,12 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -73,30 +71,8 @@ final class AugmentInferenceAction implements InferenceAction {
             augmentNode.addToNs(AugmentImplicitHandlingNamespace.INSTANCE, Empty.value(), targetNode);
         }
 
-        apply(targetNode);
-
+        AugmentStrategy.apply(strategyResolver, augmentNode, targetNode);
         targetNode.addEffectiveSubstatement(augmentNode.replicaAsChildOf(targetNode));
-    }
-
-    @NonNullByDefault
-    private void apply(final Mutable<?, ?, ?> targetNode) {
-        final var augmentParent = augmentNode.coerceParentContext();
-
-        // 'augment' statement in a 'uses' statement
-        if (augmentParent.producesDeclared(UsesStatement.class)) {
-            AugmentStrategy.applyUses(augmentNode, targetNode);
-            return;
-        }
-
-        // 'augment' statement in a 'module' or 'submodule', with target node being ...
-        final var augmentModule = augmentParent.definingModule();
-        if (augmentModule.equals(targetNode.definingModule())) {
-            // ... in the same module
-            AugmentStrategy.applySame(augmentNode, targetNode);
-        } else {
-            // ... in another module
-            AugmentStrategy.applyAnother(augmentNode, targetNode, strategyResolver, augmentModule);
-        }
     }
 
     @Override
