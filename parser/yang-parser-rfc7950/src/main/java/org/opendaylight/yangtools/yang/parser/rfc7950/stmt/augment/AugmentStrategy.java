@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -30,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -65,6 +67,12 @@ abstract sealed class AugmentStrategy {
         }
 
         @Override
+        boolean computeRejectMandatory(final QNameModule augmentModule, final SchemaNodeIdentifier augmentArg,
+                final Mutable<?, ?, ?> target) {
+            return false;
+        }
+
+        @Override
         Iterator<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
             return Collections.emptyIterator();
         }
@@ -79,6 +87,85 @@ abstract sealed class AugmentStrategy {
 
         private Reject() {
             super(CopyType.ADDED_BY_AUGMENTATION);
+        }
+
+        @Override
+        boolean computeRejectMandatory(final QNameModule augmentModule, final SchemaNodeIdentifier augmentArg,
+                final Mutable<?, ?, ?> target) {
+            final var lastArg = augmentArg.lastNodeIdentifier();
+            verifyArgument(lastArg, target);
+
+            // targetting a node introduced by another module
+            if (!augmentModule.equals(lastArg.getModule())) {
+                return true;
+            }
+
+            // targetting a node introduced by an augment statement defined with the same home module
+            final var identifiers = augmentArg.getNodeIdentifiers().reversed().iterator();
+            identifiers.next();
+
+            var current = target;
+            while (true) {
+                // if target or one of the target's ancestors from the same namespace
+                //   - is a presence container, or
+                //   - is non-mandatory list, or
+                //   - is non-mandatory choice
+                // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1
+                if (current.publicDefinition() == YangStmtMapping.CONTAINER) {
+                    if (current.hasSubstatement(PresenceEffectiveStatement.class)) {
+                        return false;
+                    }
+                } else if (current.publicDefinition() == YangStmtMapping.LIST) {
+                    // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
+                    final var minElements = StmtContextUtils.firstSubstatementAttributeOf(current,
+                        MinElementsStatement.class);
+                    if (minElements == null || minElements == 0) {
+                        return false;
+                    }
+                } else if (current.publicDefinition() == YangStmtMapping.CHOICE) {
+                    // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
+                    final var mandatory = StmtContextUtils.firstSubstatementAttributeOf(current,
+                        MandatoryStatement.class);
+                    if (mandatory == null || !mandatory) {
+                        return false;
+                    }
+                }
+
+                // This could be an augmentation stacked on top of a previous augmentation from the same module, which
+                // is conditional -- in which case we do not run further checks
+                if (current.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                    final var optPrevCopy = current.getPreviousCopyCtx();
+                    if (optPrevCopy.isPresent()) {
+                        final var original = optPrevCopy.orElseThrow();
+                        final var origArg = original.getArgument();
+                        if (!(origArg instanceof QName origQName)) {
+                            throw new VerifyException("Unexpected statement argument " + origArg);
+                        }
+
+                        if (augmentModule.equals(origQName.getModule())) {
+                            final var parentAugmentation = getParentAugmentation(original);
+                            // FIXME: defer to resolver as this check is only applicable if the augmentation is hosted
+                            //        in a RFC7950 source
+                            if (parentAugmentation.hasSubstatement(WhenEffectiveStatement.class)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                final var next = identifiers.next();
+                // if current is from another module we need to perform mandatory nodes validation
+                if (!augmentModule.equals(next.getModule())) {
+                    return true;
+                }
+
+                final var parent = current.coerceParentContext();
+                if (parent instanceof RootStmtContext) {
+                    throw new VerifyException("reached root " + parent + " from " + target);
+                }
+                verifyArgument(next, parent);
+                current = parent;
+            }
         }
 
         @Override
@@ -189,15 +276,8 @@ abstract sealed class AugmentStrategy {
         }
 
         // ... in another module
-        final var augmentArg = augment.getArgument();
-        final var lastArg = augmentArg.lastNodeIdentifier();
-        verifyArgument(lastArg, target);
-
-        final var withMandatoryCheck = !augmentModule.equals(lastArg.getModule()) ? true
-            // ... introduced by an augment statement defined with the same home module
-            : needMandatoryCheckIn(target, augmentArg.getNodeIdentifiers().reversed().iterator());
-
-        strategyResolver.strategyFor(augment).apply(augment, target, withMandatoryCheck);
+        final var strategy = strategyResolver.strategyFor(augment);
+        strategy.apply(augment, target, strategy.computeRejectMandatory(augmentModule, augment.getArgument(), target));
     }
 
     final void apply(
@@ -268,6 +348,10 @@ abstract sealed class AugmentStrategy {
         buffer.add(copy);
     }
 
+    @NonNullByDefault
+    abstract boolean computeRejectMandatory(QNameModule augmentModule, SchemaNodeIdentifier augmentArg,
+        Mutable<?, ?, ?> target);
+
     /**
      * {@return all statements which is causing specified statement to be considered mandatory}
      * @param stmt the statement
@@ -280,71 +364,6 @@ abstract sealed class AugmentStrategy {
         return new InferenceException(mandatoryNode,
             "An augment cannot add node '%s' because it is mandatory and in module different than target",
             mandatoryNode.rawArgument());
-    }
-
-    @NonNullByDefault
-    private static boolean needMandatoryCheckIn(final StmtContext<?, ?, ?> target, final Iterator<QName> identifiers) {
-        final var augmentModule = identifiers.next().getModule();
-
-        var current = target;
-        while (true) {
-            // if target or one of the target's ancestors from the same namespace
-            //   - is a presence container, or
-            //   - is non-mandatory list, or
-            //   - is non-mandatory choice
-            // we can terminate early as it is not a mandatory node container as per RFC6020 section 3.1
-            if (current.publicDefinition() == YangStmtMapping.CONTAINER) {
-                if (current.hasSubstatement(PresenceEffectiveStatement.class)) {
-                    return false;
-                }
-            } else if (current.publicDefinition() == YangStmtMapping.LIST) {
-                // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
-                final var minElements = StmtContextUtils.firstSubstatementAttributeOf(current,
-                    MinElementsStatement.class);
-                if (minElements == null || minElements == 0) {
-                    return false;
-                }
-            } else if (current.publicDefinition() == YangStmtMapping.CHOICE) {
-                // FIXME: YANGTOOLS-1894: this check is unstable when deviations are in play
-                final var mandatory = StmtContextUtils.firstSubstatementAttributeOf(current, MandatoryStatement.class);
-                if (mandatory == null || !mandatory) {
-                    return false;
-                }
-            }
-
-            // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
-            // conditional -- in which case we do not run further checks
-            if (current.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                final var optPrevCopy = current.getPreviousCopyCtx();
-                if (optPrevCopy.isPresent()) {
-                    final var original = optPrevCopy.orElseThrow();
-                    final var origArg = original.getArgument();
-                    if (!(origArg instanceof QName origQName)) {
-                        throw new VerifyException("Unexpected statement argument " + origArg);
-                    }
-
-                    if (augmentModule.equals(origQName.getModule())
-                        // FIXME: defer to resolver as this check is only applicable if the augmentation is hosted in a
-                        //        RFC7950 source
-                        && AugmentStatementSupport.hasWhenSubstatement(getParentAugmentation(original))) {
-                        return false;
-                    }
-                }
-            }
-
-            final var next = identifiers.next();
-            // if current is from another module we need to perform mandatory nodes validation
-            if (!augmentModule.equals(next.getModule())) {
-                return true;
-            }
-
-            final var parent = current.coerceParentContext();
-            if (parent instanceof RootStmtContext) {
-                throw new VerifyException("reached root " + parent + " from " + target);
-            }
-            verifyArgument(next, parent);
-            current = parent;
-        }
     }
 
     @NonNullByDefault
