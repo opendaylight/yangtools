@@ -85,7 +85,8 @@ abstract sealed class AugmentStrategy {
 
         @Override
         Iterator<CommonStmtCtx> mandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
-            return Collections.emptyIterator();
+            // should never be called
+            throw new UnsupportedOperationException();
         }
     }
 
