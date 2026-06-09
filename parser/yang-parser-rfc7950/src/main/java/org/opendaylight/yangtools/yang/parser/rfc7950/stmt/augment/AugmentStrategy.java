@@ -198,26 +198,26 @@ abstract sealed class AugmentStrategy {
             return nodes != null ? nodes : Collections.emptyIterator();
         }
 
-        private static @Nullable Iterator<CommonStmtCtx> recMandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
+        private @Nullable Iterator<CommonStmtCtx> recMandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
             final var mandatory = tryMandatoryNode(stmt);
             return mandatory != null ? mandatory : tryNonPresenceContainer(stmt);
         }
 
-        private static @Nullable Iterator<CommonStmtCtx> tryMandatoryNode(final StmtContext<?, ?, ?> stmt) {
+        private @Nullable Iterator<CommonStmtCtx> tryMandatoryNode(final StmtContext<?, ?, ?> stmt) {
             if (stmt.producesAnyOf(LeafStatement.DEF, ChoiceStatement.DEF, AnyxmlStatement.DEF)) {
                 return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmt, MandatoryStatement.DEF))
-                    ? Iterators.singletonIterator(stmt) : Collections.emptyIterator();
+                    && isMandatory(stmt) ? Iterators.singletonIterator(stmt) : Collections.emptyIterator();
             }
             if (stmt.producesAnyOf(ListStatement.DEF, LeafListStatement.DEF)) {
                 final var minElements = firstSubstatementAttributeOf(stmt, MinElementsStatement.DEF);
-                return minElements != null && minElements.lowerInt() > -1
+                return minElements != null && minElements.lowerInt() > -1 && isMandatory(stmt)
                     ? Iterators.singletonIterator(stmt) : Collections.emptyIterator();
             }
             return null;
         }
 
-        private static @Nullable Iterator<CommonStmtCtx> tryNonPresenceContainer(final StmtContext<?, ?, ?> stmt) {
-            if (stmt.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmt)) {
+        private @Nullable Iterator<CommonStmtCtx> tryNonPresenceContainer(final StmtContext<?, ?, ?> stmt) {
+            if (stmt.produces(ContainerStatement.DEF) && !containsPresenceSubStmt(stmt) && isMandatory(stmt)) {
                 final var ret = new ArrayList<CommonStmtCtx>();
                 // We need to iterate over both declared and effective sub-statements, because a mandatory node can
                 // be either
@@ -234,6 +234,8 @@ abstract sealed class AugmentStrategy {
             }
             return null;
         }
+
+        abstract boolean isMandatory(StmtContext<?, ?, ?> stmt);
 
         private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
             return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
@@ -259,6 +261,11 @@ abstract sealed class AugmentStrategy {
         @Override
         boolean computeRejectMandatory(final StmtContext<?, ?, ?> stmt) {
             // if current is from another module we need to perform mandatory nodes validation
+            return true;
+        }
+
+        @Override
+        boolean isMandatory(final StmtContext<?, ?, ?> stmt) {
             return true;
         }
     }
@@ -293,6 +300,11 @@ abstract sealed class AugmentStrategy {
                 }
                 current = parent;
             }
+        }
+
+        @Override
+        boolean isMandatory(final StmtContext<?, ?, ?> stmt) {
+            return !isNonConfig(stmt);
         }
 
         private static boolean isNonConfig(final StmtContext<?, ?, ?> stmt) {
