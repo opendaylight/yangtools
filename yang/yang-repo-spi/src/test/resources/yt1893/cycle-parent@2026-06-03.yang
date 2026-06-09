@@ -1,0 +1,18 @@
+module cycle-parent {
+  yang-version 1.1;
+  namespace "urn:example:cycle-parent";
+  prefix cp;
+
+  include cycle-a;
+  include cycle-b;
+
+  revision 2026-06-03 {
+    description
+      "Minimal parent module for netconf-testtool cyclic submodule include repro.";
+  }
+
+  container root {
+    uses a-grouping;
+    uses b-grouping;
+  }
+}
