@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>feature-parent</artifactId>
-        <version>15.1.2-SNAPSHOT</version>
+        <version>15.1.2</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
