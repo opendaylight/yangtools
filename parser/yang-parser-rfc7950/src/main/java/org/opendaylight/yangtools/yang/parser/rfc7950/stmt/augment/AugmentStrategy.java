@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
@@ -328,7 +329,7 @@ abstract sealed class AugmentStrategy {
         }
 
         // data definition statements must not collide on schema tree namespace
-        if (stmt.producesDeclared(DataDefinitionStatement.class)) {
+        if (stmt.producesDeclared(DataDefinitionStatement.class) || stmt.producesDeclared(CaseStatement.class)) {
             final var arg = (QName) stmt.getArgument();
             final var existing = target.namespaceItem(ParserNamespaces.schemaTree(), arg);
             if (existing != null) {
