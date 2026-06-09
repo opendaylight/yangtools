@@ -1,0 +1,20 @@
+submodule cycle-b {
+  yang-version 1.1;
+
+  belongs-to cycle-parent {
+    prefix cp;
+  }
+
+  include cycle-a;
+
+  revision 2026-06-03 {
+    description
+      "Second submodule in the cyclic include pair.";
+  }
+
+  grouping b-grouping {
+    leaf b-leaf {
+      type string;
+    }
+  }
+}
