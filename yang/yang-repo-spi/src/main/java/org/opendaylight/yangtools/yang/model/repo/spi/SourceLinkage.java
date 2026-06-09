@@ -7,15 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo.Submodule;
@@ -39,50 +42,33 @@ abstract sealed class SourceLinkage permits RevisionSourceLinkage {
     private final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports;
 
     SourceLinkage(final Map<SourceIdentifier, SourceInfo> depInfo) {
-        final var resolved = HashSet.<SourceIdentifier>newHashSet(depInfo.size());
-        final var pending = new HashMap<>(depInfo);
-        final var submodules = new ArrayList<Submodule>();
+        // Submodules of the same parent module may 'include' each other, forming a cycle. Identify such "sibling"
+        // includes up front so the build-up pass can leave them out of its ordering.
+        final var siblingIncludes = siblingIncludes(depInfo);
 
-        // First pass: resolve 'include' and 'import' statements for each source
-        boolean progress;
-        do {
-            progress = false;
+        // First pass: build-up resolution over imports and non-sibling includes. A genuine cycle through those (e.g.
+        // two modules importing each other) never resolves. Sibling includes are exempt and instead
+        // validated by the second pass, mirroring the reactor's SourceLinkageResolver.
+        final var resolved = HashMap.<SourceIdentifier, SourceInfo>newHashMap(depInfo.size());
+        buildUp(new HashMap<>(depInfo), resolved, siblingIncludes);
 
-            final var it = pending.values().iterator();
-            while (it.hasNext()) {
-                final var dep = it.next();
-                if (tryResolve(resolved, dep)) {
-                    final var sourceId = dep.sourceId();
-                    LOG.debug("Resolved source {}", sourceId);
-                    resolved.add(sourceId);
-                    it.remove();
-                    progress = true;
+        // Second pass: drop any resolved source whose sibling includes or 'belongs-to' are unsatisfied, cascading.
+        // Hard-dependency cycles never entered 'resolved', so this can't resurrect them; sibling cycles survive as
+        // their mutual targets are present.
+        prune(resolved);
 
-                    // Stash submodules for second pass
-                    if (dep instanceof Submodule submodule) {
-                        submodules.add(submodule);
-                    }
-                }
-            }
-        } while (progress);
+        resolvedSources = ImmutableList.copyOf(resolved.keySet());
 
-        // Second pass: validate 'belongs-to' in submodules
-        for (var submodule : submodules) {
-            final var belongsTo = submodule.belongsTo();
-            if (!isKnown(resolved, belongsTo)) {
-                // belongs-to check failed, move the source back to pending
-                final var sourceId = submodule.sourceId();
-                LOG.debug("Source {} is missing belongs-to {}", sourceId, belongsTo);
-                pending.put(sourceId, submodule);
-                resolved.remove(sourceId);
-            }
-        }
-
-        resolvedSources = ImmutableList.copyOf(resolved);
-        unresolvedSources = ImmutableList.copyOf(pending.keySet());
-
+        // Collect the unresolved sources and their outright-missing dependencies. Both output lists are keyed by the
+        // content-derived SourceInfo.sourceId(), consistent with resolvedSources above.
+        final var unresolved = ImmutableList.<SourceIdentifier>builder();
         final var unstatisfied = ImmutableMultimap.<SourceIdentifier, SourceDependency>builder();
-        for (var info : pending.values()) {
+        for (var info : depInfo.values()) {
+            if (resolved.containsKey(info.sourceId())) {
+                continue;
+            }
+            unresolved.add(info.sourceId());
+
             for (var dep : info.imports()) {
                 if (!isKnown(depInfo.keySet(), dep)) {
                     unstatisfied.put(info.sourceId(), dep);
@@ -100,7 +86,50 @@ abstract sealed class SourceLinkage permits RevisionSourceLinkage {
                 }
             }
         }
+        unresolvedSources = unresolved.build();
         unsatisfiedImports = unstatisfied.build();
+    }
+
+    /**
+     * Build up {@code resolved} from {@code pending}, repeatedly promoting every source whose hard dependencies are
+     * already resolved, until a full sweep promotes nothing more.
+     */
+    private void buildUp(final Map<SourceIdentifier, SourceInfo> pending,
+            final Map<SourceIdentifier, SourceInfo> resolved, final Map<SourceIdentifier, Set<Include>> siblings) {
+        boolean promoted;
+        do {
+            promoted = false;
+            final var it = pending.values().iterator();
+            while (it.hasNext()) {
+                final var info = it.next();
+                if (tryResolve(resolved.keySet(), info, siblings.getOrDefault(info.sourceId(), Set.of()))) {
+                    LOG.debug("Resolved source {}", info.sourceId());
+                    resolved.put(info.sourceId(), info);
+                    it.remove();
+                    promoted = true;
+                }
+            }
+        } while (promoted);
+    }
+
+    /**
+     * Prune {@code resolved}, repeatedly dropping every source which is no longer fully resolved, until a full sweep
+     * drops nothing more. Dropping cascades, as a source may become unresolved once one of its dependencies is gone.
+     */
+    private void prune(final Map<SourceIdentifier, SourceInfo> resolved) {
+        boolean dropped;
+        do {
+            dropped = false;
+            final var it = resolved.values().iterator();
+            while (it.hasNext()) {
+                final var info = it.next();
+                if (!isFullyResolved(resolved.keySet(), info)) {
+                    LOG.debug("Dropping source {}: dependency no longer resolved", info.sourceId());
+                    it.remove();
+                    dropped = true;
+                }
+            }
+        } while (dropped);
     }
 
     @NonNullByDefault
@@ -141,7 +170,12 @@ abstract sealed class SourceLinkage permits RevisionSourceLinkage {
         return unsatisfiedImports;
     }
 
-    private boolean tryResolve(final Collection<SourceIdentifier> resolved, final SourceInfo info) {
+    /**
+     * Build-up check: a source is resolvable once all of its imports and non-sibling includes are resolved. The
+     * sibling includes in {@code siblingIncludes} and {@code belongs-to} are intentionally not required here.
+     */
+    private boolean tryResolve(final Collection<SourceIdentifier> resolved, final SourceInfo info,
+            final Set<Include> siblingIncludes) {
         for (var dep : info.imports()) {
             if (!isKnown(resolved, dep)) {
                 LOG.debug("Source {} is missing import {}", info.sourceId(), dep);
@@ -149,12 +183,71 @@ abstract sealed class SourceLinkage permits RevisionSourceLinkage {
             }
         }
         for (var dep : info.includes()) {
-            if (!isKnown(resolved, dep)) {
+            if (!siblingIncludes.contains(dep) && !isKnown(resolved, dep)) {
                 LOG.debug("Source {} is missing include {}", info.sourceId(), dep);
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Elimination check: a source remains resolved only while every one of its imports, includes (sibling ones
+     * included) and {@code belongs-to} is satisfied by the still-resolved set.
+     */
+    private boolean isFullyResolved(final Collection<SourceIdentifier> resolved, final SourceInfo info) {
+        for (var dep : info.imports()) {
+            if (!isKnown(resolved, dep)) {
+                return false;
+            }
+        }
+        for (var dep : info.includes()) {
+            if (!isKnown(resolved, dep)) {
+                return false;
+            }
+        }
+        return !(info instanceof Submodule submodule) || isKnown(resolved, submodule.belongsTo());
+    }
+
+    /**
+     * {@return the includes of each submodule which point at a sibling submodule, i.e. one present in the reactor and
+     *          sharing the same {@code belongs-to} parent module} The result is keyed by the content-derived
+     *          {@link SourceInfo#sourceId()} of the including submodule.
+     */
+    private static Map<SourceIdentifier, Set<Include>> siblingIncludes(
+            final Map<SourceIdentifier, SourceInfo> depInfo) {
+        // Index present submodules by the name of their belongs-to parent module.
+        final var byParent = ArrayListMultimap.<Unqualified, Submodule>create();
+        for (var info : depInfo.values()) {
+            if (info instanceof Submodule submodule) {
+                byParent.put(submodule.belongsTo().name(), submodule);
+            }
+        }
+
+        final var result = new HashMap<SourceIdentifier, Set<Include>>();
+        for (var info : depInfo.values()) {
+            if (!(info instanceof Submodule submodule)) {
+                continue;
+            }
+
+            Set<Include> siblings = null;
+            for (var include : submodule.includes()) {
+                for (var candidate : byParent.get(submodule.belongsTo().name())) {
+                    if (!candidate.sourceId().equals(submodule.sourceId())
+                        && include.isSatisfiedBy(candidate.sourceId())) {
+                        if (siblings == null) {
+                            siblings = new HashSet<>();
+                        }
+                        siblings.add(include);
+                        break;
+                    }
+                }
+            }
+            if (siblings != null) {
+                result.put(submodule.sourceId(), siblings);
+            }
+        }
+        return result;
     }
 
     abstract boolean isKnown(Collection<SourceIdentifier> haystack, SourceDependency dependency);
