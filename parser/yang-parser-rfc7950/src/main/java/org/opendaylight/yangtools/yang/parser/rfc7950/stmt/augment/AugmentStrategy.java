@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -47,6 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -333,17 +335,7 @@ abstract sealed class AugmentStrategy {
         }
 
         // data definition statements must not collide on schema tree namespace
-        final var dataDef = stmt.tryDeclaring(DataDefinitionStatement.class);
-        if (dataDef != null) {
-            final var arg = dataDef.getArgument();
-            final var existing = target.namespaceItem(ParserNamespaces.schemaTree(), arg);
-            if (existing != null) {
-                throw new InferenceException(dataDef, """
-                    Cannot add %s statement named '%s' because augment target already contains a %s statement with the \
-                    same name (originating from %s)""", dataDef.publicDefinition().humanName(), arg.getLocalName(),
-                    existing.publicDefinition().humanName(), existing.sourceReference());
-            }
-        }
+        checkSchemaTreeConflict(stmt, target);
 
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
@@ -352,6 +344,32 @@ abstract sealed class AugmentStrategy {
             copy.setUnsupported();
         }
         buffer.add(copy);
+    }
+
+    @NonNullByDefault
+    private static void checkSchemaTreeConflict(final StmtContext<?, ?, ?> stmt, final NamespaceStmtCtx target) {
+        final var dataDefStmt = stmt.tryDeclaring(DataDefinitionStatement.class);
+        if (dataDefStmt != null) {
+            checkSchemaTreeConflict(dataDefStmt, dataDefStmt.getArgument(), target);
+            return;
+        }
+        final var caseStmt = stmt.tryDeclaring(CaseStatement.class);
+        if (caseStmt != null) {
+            checkSchemaTreeConflict(caseStmt, caseStmt.getArgument(), target);
+            return;
+        }
+    }
+
+    @NonNullByDefault
+    private static void checkSchemaTreeConflict(final CommonStmtCtx stmt, final QName qname,
+            final NamespaceStmtCtx target) {
+        final var existing = target.namespaceItem(ParserNamespaces.schemaTree(), qname);
+        if (existing != null) {
+            throw new InferenceException(stmt, """
+                Cannot add %s statement named '%s' because augment target already contains a %s statement with the \
+                same name (originating from %s)""", stmt.publicDefinition().humanName(), qname.getLocalName(),
+                existing.publicDefinition().humanName(), existing.sourceReference());
+        }
     }
 
     @NonNullByDefault
