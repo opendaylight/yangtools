@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 
-public class YT1428Test extends AbstractSchemaRepositoryTest {
+class YT1428Test extends AbstractSchemaRepositoryTest {
     @Test
     void testDeviateSourceReported() {
         final var ex = assertExecutionException(null, "/yt1428/orig.yang", "/yt1428/deviate.yang");
