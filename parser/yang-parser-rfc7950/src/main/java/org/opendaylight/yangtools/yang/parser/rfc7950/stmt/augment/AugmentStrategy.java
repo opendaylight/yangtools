@@ -192,29 +192,30 @@ abstract sealed class AugmentStrategy {
             return nodes != null ? nodes : Collections.emptyIterator();
         }
 
-        private static @Nullable Iterator<CommonStmtCtx> recMandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
+        private @Nullable Iterator<CommonStmtCtx> recMandatoryNodesOf(final StmtContext<?, ?, ?> stmt) {
             final var mandatory = tryMandatoryNode(stmt);
             return mandatory != null ? mandatory : tryNonPresenceContainer(stmt);
         }
 
-        private static @Nullable Iterator<CommonStmtCtx> tryMandatoryNode(final StmtContext<?, ?, ?> stmt) {
+        private @Nullable Iterator<CommonStmtCtx> tryMandatoryNode(final StmtContext<?, ?, ?> stmt) {
             final var def = stmt.publicDefinition();
             if (def == YangStmtMapping.LEAF || def == YangStmtMapping.CHOICE || def == YangStmtMapping.ANYXML) {
                 return Boolean.TRUE.equals(StmtContextUtils.firstSubstatementAttributeOf(stmt,
-                    MandatoryStatement.class)) ? Iterators.singletonIterator(stmt) : Collections.emptyIterator();
+                    MandatoryStatement.class)) && isMandatory(stmt) ? Iterators.singletonIterator(stmt)
+                        : Collections.emptyIterator();
             }
             if (def == YangStmtMapping.LIST || def == YangStmtMapping.LEAF_LIST) {
                 final var minElements = StmtContextUtils.firstSubstatementAttributeOf(stmt,
                     MinElementsStatement.class);
-                return minElements != null && minElements > 0
+                return minElements != null && minElements > 0 && isMandatory(stmt)
                     ? Iterators.singletonIterator(stmt) : Collections.emptyIterator();
             }
             return null;
         }
 
-        private static @Nullable Iterator<CommonStmtCtx> tryNonPresenceContainer(final StmtContext<?, ?, ?> stmt) {
+        private @Nullable Iterator<CommonStmtCtx> tryNonPresenceContainer(final StmtContext<?, ?, ?> stmt) {
             if (stmt.publicDefinition() == YangStmtMapping.CONTAINER
-                && !stmt.hasSubstatement(PresenceEffectiveStatement.class)) {
+                && !stmt.hasSubstatement(PresenceEffectiveStatement.class) && isMandatory(stmt)) {
                 final var ret = new ArrayList<CommonStmtCtx>();
                 // We need to iterate over both declared and effective sub-statements, because a mandatory node can
                 // be either
@@ -231,6 +232,8 @@ abstract sealed class AugmentStrategy {
             }
             return null;
         }
+
+        abstract boolean isMandatory(StmtContext<?, ?, ?> stmt);
     }
 
     /**
@@ -247,6 +250,11 @@ abstract sealed class AugmentStrategy {
         @Override
         boolean computeRejectMandatory(final StmtContext<?, ?, ?> stmt) {
             // if current is from another module we need to perform mandatory nodes validation
+            return true;
+        }
+
+        @Override
+        boolean isMandatory(final StmtContext<?, ?, ?> stmt) {
             return true;
         }
     }
@@ -284,6 +292,11 @@ abstract sealed class AugmentStrategy {
                 }
                 current = parent;
             }
+        }
+
+        @Override
+        boolean isMandatory(final StmtContext<?, ?, ?> stmt) {
+            return !isNonConfig(stmt);
         }
 
         private static boolean isNonConfig(final StmtContext<?, ?, ?> stmt) {

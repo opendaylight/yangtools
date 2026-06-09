@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class YT1890Test extends AbstractYangTest {
@@ -35,7 +34,6 @@ class YT1890Test extends AbstractYangTest {
     }
 
     @Test
-    @Disabled("non-config support not complete")
     void allowConfigAugmentNonConfig() {
         // plain augment to an implied config=true context introducing a mandatory config=false statement
         assertEffectiveModel("/bugs/YT1890/foo.yang", "/bugs/YT1890/qux.yang");
