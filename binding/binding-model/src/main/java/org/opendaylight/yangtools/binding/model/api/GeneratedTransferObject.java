@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.TypeObject;
@@ -49,14 +48,4 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
      * @return Base type of Java representation of YANG typedef if set, otherwise it returns null
      */
     @Nullable TypeDefinition<?> getBaseType();
-
-    default Optional<? extends GeneratedProperty> findProperty(final String name) {
-        final var optProp = getProperties().stream().filter(prop -> name.equals(prop.getName())).findFirst();
-        if (optProp.isPresent()) {
-            return optProp;
-        }
-
-        final var parent = getSuperType();
-        return parent != null ? parent.findProperty(name) : Optional.empty();
-    }
 }

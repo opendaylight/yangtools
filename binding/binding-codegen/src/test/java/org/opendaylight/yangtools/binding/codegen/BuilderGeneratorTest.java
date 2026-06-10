@@ -15,12 +15,11 @@ import static org.mockito.Mockito.spy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
@@ -182,7 +181,11 @@ public class BuilderGeneratorTest {
         assertEquals(27, types.size());
 
         final var bt = new BuilderTemplate.Builder(types.stream()
-            .filter(t -> t.simpleName().equals("Nodes")).findFirst().orElseThrow()).build();
+            .filter(t -> t.simpleName().equals("Nodes"))
+            .findFirst()
+            .map(LegacyArchetype.class::cast)
+            .orElseThrow())
+            .build();
 
         final var sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())
@@ -205,13 +208,13 @@ public class BuilderGeneratorTest {
                 "idGroupContainer", "idList", "idUnion", "idUnionDef"), sortedProperties);
     }
 
-    private static GeneratedType mockAugment(final GeneratedType genType) {
+    private static LegacyArchetype mockAugment(final LegacyArchetype genType) {
         doReturn(List.of(BindingTypes.augmentable(genType))).when(genType).getImplements();
         return genType;
     }
 
-    private static GeneratedType mockGenTypeMoreMeth(final String methodeName) {
-        final var genType = spy(GeneratedType.class);
+    private static LegacyArchetype mockGenTypeMoreMeth(final String methodeName) {
+        final var genType = spy(LegacyArchetype.class);
         doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();
         doReturn(TEST).when(genType).packageName();
@@ -221,16 +224,16 @@ public class BuilderGeneratorTest {
         return genType;
     }
 
-    private static BlockBuilder genToString(final GeneratedType genType) {
+    private static BlockBuilder genToString(final LegacyArchetype genType) {
         return new InterfaceTemplate(genType, mock(DataRootArchetype.class)).generateBindingToString();
     }
 
-    private static @Nullable BlockBuilder genHashCode(final GeneratedType genType) {
+    private static BlockBuilder genHashCode(final LegacyArchetype genType) {
         return new InterfaceTemplate(genType, mock(DataRootArchetype.class)).generateBindingHashCode();
     }
 
-    private static GeneratedType mockGenType(final String methodeName) {
-        final var genType = spy(GeneratedType.class);
+    private static LegacyArchetype mockGenType(final String methodeName) {
+        final var genType = spy(LegacyArchetype.class);
         doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();
         doReturn(TEST).when(genType).packageName();

@@ -26,9 +26,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
@@ -48,7 +49,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     static final class Nested extends GeneratedClass {
         private final GeneratedClass enclosingClass;
 
-        private Nested(final GeneratedClass enclosingClass, final GeneratedType genType) {
+        private Nested(final GeneratedClass enclosingClass, final Archetype genType) {
             super(genType);
             this.enclosingClass = requireNonNull(enclosingClass);
         }
@@ -114,7 +115,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     static final class TopLevel extends GeneratedClass {
         private final HashBiMap<JavaTypeName, String> importedTypes = HashBiMap.create();
 
-        private TopLevel(final GeneratedType genType) {
+        private TopLevel(final Archetype genType) {
             super(genType);
         }
 
@@ -176,11 +177,11 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     private final Set<String> conflictingNames;
     private final JavaTypeName name;
 
-    GeneratedClass(final GeneratedType genType) {
+    GeneratedClass(final Archetype genType) {
         name = genType.name();
 
-        nestedClasses = genType.getEnclosedTypes().stream()
-            .collect(Collectors.toUnmodifiableMap(GeneratedType::simpleName, type -> new Nested(this, type)));
+        nestedClasses = genType.enclosedTypes().stream()
+            .collect(Collectors.toUnmodifiableMap(Archetype::simpleName, type -> new Nested(this, type)));
 
         final var cb = new HashSet<String>();
         if (genType instanceof EnumTypeObjectArchetype enumeration) {
@@ -192,26 +193,28 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         conflictingNames = Set.copyOf(cb);
     }
 
-    private void collectAccessibleTypes(final HashSet<String> set, final GeneratedType type) {
-        for (var impl : type.getImplements()) {
-            if (impl instanceof GeneratedType genType) {
-                for (var inner : genType.getEnclosedTypes()) {
-                    set.add(inner.name().simpleName());
+    private void collectAccessibleTypes(final HashSet<String> set, final Archetype type) {
+        if (type instanceof LegacyArchetype archetype) {
+            for (var impl : archetype.getImplements()) {
+                if (impl instanceof Archetype genType) {
+                    for (var inner : genType.enclosedTypes()) {
+                        set.add(inner.name().simpleName());
+                    }
+                    collectAccessibleTypes(set, genType);
                 }
-                collectAccessibleTypes(set, genType);
             }
         }
     }
 
     /**
-     * {@return a new {@link GeneratedClass.TopLevel top-level class} for the specified {@link GeneratedType}}
+     * {@return a new {@link GeneratedClass.TopLevel top-level class} for the specified {@link Archetype}}
      * @param genType the generated type
      */
     // FIXME: this method should:
     //        - accept a GeneratedType -> Template resolver
     //        - do the work of BaseTemplate.generate()
     //        - return a Block
-    static GeneratedClass.TopLevel of(final GeneratedType genType) {
+    static GeneratedClass.TopLevel of(final Archetype genType) {
         return new TopLevel(genType);
     }
 
@@ -308,7 +311,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
 
     // FIXME: the three callers look like they could just iterate over this.nestedClasses, as they seem to derive their
     //        argument to this method from type.getEnclosedTypes()
-    final Nested getNestedClass(final GeneratedType type) {
+    final Nested getNestedClass(final Archetype type) {
         return verifyNotNull(nestedClasses.get(type.simpleName()));
     }
 

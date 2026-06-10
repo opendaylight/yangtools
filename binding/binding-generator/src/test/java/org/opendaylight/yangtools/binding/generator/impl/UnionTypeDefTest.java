@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -35,9 +36,10 @@ class UnionTypeDefTest {
         final var cont = generateTypes.stream()
             .filter(type -> type.simpleName().equals("Cont"))
             .findFirst()
+            .map(LegacyArchetype.class::cast)
             .orElseThrow();
 
-        final var enclosedTypes = cont.getEnclosedTypes();
+        final var enclosedTypes = cont.enclosedTypes();
         assertEquals(1, enclosedTypes.size());
 
         final var refType = assertInstanceOf(UnionTypeObjectArchetype.class, enclosedTypes.getFirst());
