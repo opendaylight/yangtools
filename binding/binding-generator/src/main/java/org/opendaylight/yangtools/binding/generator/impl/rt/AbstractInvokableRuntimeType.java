@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
@@ -22,7 +22,7 @@ abstract sealed class AbstractInvokableRuntimeType<S extends EffectiveStatement<
     private final @NonNull InputRuntimeType input;
     private final @NonNull OutputRuntimeType output;
 
-    AbstractInvokableRuntimeType(final GeneratedType bindingType, final S statement, final List<RuntimeType> children) {
+    AbstractInvokableRuntimeType(final Archetype bindingType, final S statement, final List<RuntimeType> children) {
         super(bindingType, statement, children);
         input = child(children, InputRuntimeType.class);
         output = child(children, OutputRuntimeType.class);

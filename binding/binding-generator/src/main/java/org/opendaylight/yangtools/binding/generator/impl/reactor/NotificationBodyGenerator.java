@@ -13,7 +13,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -45,7 +46,7 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var typeName = typeName();
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName);
         builder.addImplementsType(BindingTypes.notificationBody(TypeRef.of(typeName())));
@@ -69,7 +70,7 @@ final class NotificationBodyGenerator
             final NotificationEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            NotificationBodyRuntimeType build(final GeneratedType type, final NotificationEffectiveStatement statement,
+            NotificationBodyRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // uninstantiated: cannot be targeted by 'augment'
                 if (augments.isEmpty()) {

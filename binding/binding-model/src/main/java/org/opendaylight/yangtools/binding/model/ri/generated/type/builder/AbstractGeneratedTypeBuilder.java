@@ -13,12 +13,13 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -37,7 +38,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     private List<EnumTypeObjectArchetype> enumDefinitions = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
-    private List<GeneratedType> enclosedTypes = List.of();
+    private List<Archetype> enclosedTypes = List.of();
     private List<GeneratedPropertyBuilder> properties = List.of();
     private @Nullable TypeComment comment;
     private YangSourceDefinition yangSourceDefinition;
@@ -73,14 +74,14 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
         return methodDefinitions;
     }
 
-    protected final List<GeneratedType> getEnclosedTypes() {
+    protected final List<Archetype> getEnclosedTypes() {
         return enclosedTypes;
     }
 
-    protected abstract T thisInstance();
+    protected abstract @NonNull T thisInstance();
 
     @Override
-    public final T addEnclosedType(final GeneratedType genType) {
+    public final T addEnclosedType(final Archetype genType) {
         if (enclosedTypes.contains(requireNonNull(genType))) {
             throw new IllegalArgumentException("This generated type already contains equal enclosing transfer object.");
         }
