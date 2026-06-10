@@ -12,24 +12,24 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * A generated type. Every Java interface has to be specified with:
+ * A legacy {@link Archetype} for an interface class, which needs to be specified with:
  * <ul>
- * <li><code>package</code> that belongs into</li>
- * <li><code>interface</code> name (with commentary that <b>SHOULD</b> be present to proper define interface and base
- * <i>contracts</i> specified for interface)</li>
- * <li>Each Generated Type can define list of types that Generated Type can implement to extend it's definition
- * (i.e. interface extends list of interfaces or java class implements list of interfaces)</li>
- * <li>Each Generated Type can contain multiple enclosed definitions of Generated Types (i.e. interface can contain N
- * enclosed interface definitions or enclosed classes)</li>
- * <li><code>enum</code> and <code>constant</code> definitions (i.e. each constant definition is by default defined
- * as <code>public static final</code> + type (either primitive or object) and constant name</li>
- * <li><code>method definitions</code> with specified input parameters (with types) and return values</li>
+ *   <li>{@code package} that belongs into</li>
+ *   <li>{@code interface} name (with commentary that <b>SHOULD</b> be present to proper define interface and base
+ *       <i>contracts</i> specified for interface)</li>
+ *   <li>Each Generated Type can define list of types that Generated Type can implement to extend it's definition
+ *       (i.e. interface extends list of interfaces or java class implements list of interfaces)</li>
+ *   <li>Each Generated Type can contain multiple enclosed definitions of Generated Types (i.e. interface can contain N
+ *       enclosed interface definitions or enclosed classes)</li>
+ *   <li>{@code enum} and {@code constant} definitions (i.e. each constant definition is by default defined as
+ *       {@code public static final} + type (either primitive or object) and constant name</li>
+ *   <li>{@code method definitions} with specified input parameters (with types) and return values</li>
  * </ul>
  *
  * <p>By the definition of the interface constant, enum, enclosed types and method definitions MUST be public, so there
  * is no need to specify the scope of visibility.
  */
-public non-sealed interface GeneratedType extends Type {
+public non-sealed interface LegacyArchetype extends Archetype {
     /**
      * Returns a string that contains a human-readable textual description of
      * type definition.
@@ -72,14 +72,6 @@ public non-sealed interface GeneratedType extends Type {
     @NonNull List<AnnotationType> getAnnotations();
 
     /**
-     * {@return {@code true} if The Generated Type is defined as abstract}
-     */
-    @Deprecated(forRemoval = true)
-    default boolean isAbstract() {
-        return true;
-    }
-
-    /**
      * {@return List of Types that Generated Type will implement}
      */
     @NonNull List<Type> getImplements();
@@ -87,7 +79,7 @@ public non-sealed interface GeneratedType extends Type {
     /**
      * {@return List of enclosing Generated Types}
      */
-    @NonNull List<GeneratedType> getEnclosedTypes();
+    @NonNull List<Archetype> getEnclosedTypes();
 
     /**
      * {@return List of all Enumerator definitions associated with Generated Type}
