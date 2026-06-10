@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.rt;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -23,7 +23,7 @@ abstract class AbstractAugmentableRuntimeType<S extends EffectiveStatement<?, ?>
         extends AbstractCompositeRuntimeType<S> implements AugmentableRuntimeType {
     private final @NonNull ImmutableList<AugmentRuntimeType> augments;
 
-    AbstractAugmentableRuntimeType(final GeneratedType bindingType, final S statement, final List<RuntimeType> children,
+    AbstractAugmentableRuntimeType(final Archetype bindingType, final S statement, final List<RuntimeType> children,
             final List<AugmentRuntimeType> augments) {
         super(bindingType, statement, children);
         this.augments = ImmutableList.copyOf(augments);

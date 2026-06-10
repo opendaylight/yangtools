@@ -101,46 +101,4 @@ public record EnumTypeObjectArchetype(
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("name", name).add("type", typeDefinition).toString();
     }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedType> getEnclosedTypes() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedProperty> getProperties() {
-        return List.of();
-    }
 }

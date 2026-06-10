@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
@@ -17,6 +17,7 @@ public interface TypedefRuntimeType extends GeneratedRuntimeType {
     @Override
     TypedefEffectiveStatement statement();
 
+    // FIXME: TypeObjectArchetype<?>
     @Override
-    GeneratedType javaType();
+    Archetype javaType();
 }

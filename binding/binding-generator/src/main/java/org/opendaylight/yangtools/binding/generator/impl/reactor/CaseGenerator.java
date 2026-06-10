@@ -12,7 +12,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -40,7 +41,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
 
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)
@@ -88,7 +89,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
             final CaseEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            CaseRuntimeType build(final GeneratedType generatedType, final CaseEffectiveStatement statement,
+            CaseRuntimeType build(final Archetype generatedType, final CaseEffectiveStatement statement,
                     final List<RuntimeType> childTypes, final List<AugmentRuntimeType> augmentTypes) {
                 return new DefaultCaseRuntimeType(generatedType, statement, childTypes, augmentTypes);
             }

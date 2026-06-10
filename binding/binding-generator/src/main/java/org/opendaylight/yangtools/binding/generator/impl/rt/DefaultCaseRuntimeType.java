@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 public final class DefaultCaseRuntimeType extends AbstractAugmentableRuntimeType<CaseEffectiveStatement>
         implements CaseRuntimeType {
-    public DefaultCaseRuntimeType(final GeneratedType bindingType, final CaseEffectiveStatement statement,
+    public DefaultCaseRuntimeType(final Archetype bindingType, final CaseEffectiveStatement statement,
             final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
         super(bindingType, statement, children, augments);
     }
