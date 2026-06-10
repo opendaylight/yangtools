@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -48,15 +48,15 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     private final ImmutableSortedMap<String, ModuleRuntimeType> modulesByPackage;
     private final ImmutableMap<QName, IdentityRuntimeType> identities;
     private final ImmutableMap<JavaTypeName, RuntimeType> types;
-    private final ImmutableListMultimap<GeneratedType, CaseRuntimeType> caseToSubstitutionCases;
-    private final ImmutableListMultimap<GeneratedType, AugmentRuntimeType> augmentToSubstitutionAugments;
+    private final ImmutableListMultimap<LegacyArchetype, CaseRuntimeType> caseToSubstitutionCases;
+    private final ImmutableListMultimap<LegacyArchetype, AugmentRuntimeType> augmentToSubstitutionAugments;
 
     public DefaultBindingRuntimeTypes(final EffectiveModelContext modelContext,
             final Map<QNameModule, ModuleRuntimeType> modules, final Map<JavaTypeName, RuntimeType> types,
             final Map<QName, IdentityRuntimeType> identities,
             final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases,
-            final Multimap<GeneratedType, CaseRuntimeType> caseToSubstitutionCases,
-            final Multimap<GeneratedType, AugmentRuntimeType> augmentToSubstitutionAugments) {
+            final Multimap<LegacyArchetype, CaseRuntimeType> caseToSubstitutionCases,
+            final Multimap<LegacyArchetype, AugmentRuntimeType> augmentToSubstitutionAugments) {
         this.modelContext = requireNonNull(modelContext);
         this.identities = ImmutableMap.copyOf(identities);
         this.types = ImmutableMap.copyOf(types);

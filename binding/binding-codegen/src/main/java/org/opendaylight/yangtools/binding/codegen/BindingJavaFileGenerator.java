@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -61,13 +61,13 @@ final class BindingJavaFileGenerator {
     }
 
     static HashBasedTable<GeneratedFileType, GeneratedFilePath, GeneratedFile> generateFiles(
-            final boolean ignoreDuplicateFiles, final List<GeneratedType> types) {
+            final boolean ignoreDuplicateFiles, final List<Archetype> types) {
         final var tmp = new BindingJavaFileGenerator(ignoreDuplicateFiles);
         tmp.generateFiles(types);
         return tmp.result;
     }
 
-    private void generateFiles(final List<GeneratedType> types) {
+    private void generateFiles(final List<Archetype> types) {
         // First pass: catch all DataRootArchetypes, as they provide ModuleEffectiveStatement for other templates to use
         final var modules = new HashMap<String, DataRootTemplate.Builder>();
         for (var type : types) {
@@ -92,10 +92,25 @@ final class BindingJavaFileGenerator {
             final var root = rootBuilder.type();
 
             switch (type) {
-                case Archetype archetype -> generateArchetype(root, archetype);
-                default -> {
-                    generateBuilder(type);
-                    generateFile(new InterfaceTemplate.Builder(type, root));
+                case DataRootArchetype archetype -> {
+                    // processed separately
+                }
+                case ChoiceInArchetype archetype -> generateFile(new ChoiceInTemplate.Builder(archetype, root));
+                case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
+                case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
+                case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
+                case OpaqueObjectArchetype<?> archetype ->
+                    generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
+                case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
+
+                // TypeObject specializations
+                case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao, root));
+                case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
+                case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
+                case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
+                case LegacyArchetype legacy -> {
+                    generateBuilder(legacy);
+                    generateFile(new InterfaceTemplate.Builder(legacy, root));
                 }
             }
         }
@@ -107,27 +122,7 @@ final class BindingJavaFileGenerator {
         }
     }
 
-    private void generateArchetype(final DataRootArchetype root, final Archetype type) {
-        switch (type) {
-            case DataRootArchetype archetype -> {
-                // processed separately
-            }
-            case ChoiceInArchetype archetype -> generateFile(new ChoiceInTemplate.Builder(archetype, root));
-            case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
-            case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
-            case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
-            case OpaqueObjectArchetype<?> archetype -> generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
-            case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
-
-            // TypeObject specializations
-            case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao, root));
-            case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
-            case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
-            case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
-        }
-    }
-
-    private void generateBuilder(final GeneratedType type) {
+    private void generateBuilder(final LegacyArchetype type) {
         // FIXME: express this in GeneratedType hierarchy as a marker interface
         for (var iface : type.getImplements()) {
             if (BUILDER_INTERFACES.contains(iface.name())) {

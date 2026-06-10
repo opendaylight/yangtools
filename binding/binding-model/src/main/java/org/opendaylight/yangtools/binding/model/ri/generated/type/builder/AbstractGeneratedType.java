@@ -22,10 +22,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -35,13 +36,13 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedProper
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 
-abstract class AbstractGeneratedType implements GeneratedType {
+abstract class AbstractGeneratedType implements LegacyArchetype {
     private final @NonNull JavaTypeName name;
     private final @NonNull List<AnnotationType> annotations;
     private final @NonNull List<Type> implementsTypes;
     private final @NonNull List<Constant> constants;
     private final @NonNull List<MethodSignature> methodSignatures;
-    private final @NonNull List<GeneratedType> enclosedTypes;
+    private final @NonNull List<Archetype> enclosedTypes;
     private final @NonNull List<GeneratedProperty> properties;
     private final @Nullable YangSourceDefinition definition;
     private final @Nullable TypeComment comment;
@@ -92,9 +93,9 @@ abstract class AbstractGeneratedType implements GeneratedType {
         };
     }
 
-    private static List<GeneratedType> toUnmodifiableEnclosedTypes(
+    private static List<Archetype> toUnmodifiableEnclosedTypes(
             final List<GeneratedTypeBuilder> enclosedGenTypeBuilders) {
-        final var enclosedTypesList = new ArrayList<GeneratedType>(enclosedGenTypeBuilders.size());
+        final var enclosedTypesList = new ArrayList<Archetype>(enclosedGenTypeBuilders.size());
         for (var builder : enclosedGenTypeBuilders) {
             if (builder != null) {
                 enclosedTypesList.add(builder.build());
@@ -155,7 +156,7 @@ abstract class AbstractGeneratedType implements GeneratedType {
     }
 
     @Override
-    public final List<GeneratedType> getEnclosedTypes() {
+    public final List<Archetype> enclosedTypes() {
         return enclosedTypes;
     }
 

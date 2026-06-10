@@ -20,11 +20,12 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -55,7 +56,7 @@ public class DefaultBindingGeneratorTest {
         JavaTypeName.create(TEST_TYPE_PROVIDER, "Foo");
 
     public static EffectiveModelContext SCHEMA_CONTEXT;
-    public static List<GeneratedType> TYPES;
+    public static List<Archetype> TYPES;
 
     @BeforeAll
     static void beforeAll() {
@@ -136,7 +137,7 @@ public class DefaultBindingGeneratorTest {
 
         assertEquals(3, gto.typePropertyNames().size());
         assertEquals(3, gto.typePropertyTypes().size());
-        final var enclosed = gto.getEnclosedTypes();
+        final var enclosed = gto.enclosedTypes();
         assertEquals(1, enclosed.size());
 
         final var union1 = assertInstanceOf(UnionTypeObjectArchetype.class, enclosed.getFirst());
@@ -147,7 +148,7 @@ public class DefaultBindingGeneratorTest {
         assertEquals(1, types.size());
         final var enumType = assertInstanceOf(EnumTypeObjectArchetype.class, types.getFirst());
         assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1.Enumeration", enumType.canonicalName());
-        assertEquals(List.of(enumType), union1.getEnclosedTypes());
+        assertEquals(List.of(enumType), union1.enclosedTypes());
     }
 
     @Test
@@ -156,7 +157,7 @@ public class DefaultBindingGeneratorTest {
             assertGeneratedType(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion")));
         assertEquals(List.of("innerUnion", "string"), gto.typePropertyNames());
         assertEquals(2, gto.typePropertyTypes().size());
-        assertEquals(List.of(), gto.getEnclosedTypes());
+        assertEquals(List.of(), gto.enclosedTypes());
     }
 
     @Test
@@ -300,7 +301,8 @@ public class DefaultBindingGeneratorTest {
     }
 
     private static MethodSignature assertGeneratedMethod(final JavaTypeName typeName, final String methodName) {
-        return assertGeneratedMethod(assertGeneratedType(typeName).getMethodDefinitions(), methodName);
+        return assertGeneratedMethod(
+            assertInstanceOf(LegacyArchetype.class, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
     }
 
     private static MethodSignature assertGeneratedMethod(final List<MethodSignature> methods, final String name) {
@@ -309,7 +311,7 @@ public class DefaultBindingGeneratorTest {
             .orElseThrow(() -> new AssertionError("Method " + name + " not present"));
     }
 
-    private static GeneratedType assertGeneratedType(final JavaTypeName name) {
+    private static Archetype assertGeneratedType(final JavaTypeName name) {
         return TYPES.stream()
             .filter(type -> name.equals(type.name()))
             .findFirst()
