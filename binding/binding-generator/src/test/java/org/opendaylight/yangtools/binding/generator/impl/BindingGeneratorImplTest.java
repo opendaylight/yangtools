@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -33,23 +33,25 @@ class BindingGeneratorImplTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/choice-test.yang"));
 
-        GeneratedType choiceTestData = null;
-        GeneratedType myRootContainer = null;
-        GeneratedType myList = null;
-        GeneratedType myContainer = null;
-        GeneratedType myList2 = null;
-        GeneratedType myContainer2 = null;
+        LegacyArchetype choiceTestData = null;
+        LegacyArchetype myRootContainer = null;
+        LegacyArchetype myList = null;
+        LegacyArchetype myContainer = null;
+        LegacyArchetype myList2 = null;
+        LegacyArchetype myContainer2 = null;
 
         for (var type : generateTypes) {
-            switch (type.simpleName()) {
-                case "ChoiceTestData" -> choiceTestData = type;
-                case "Myrootcontainer" -> myRootContainer = type;
-                case "Mylist" -> myList = type;
-                case "Mylist2" -> myList2 = type;
-                case "Mycontainer" -> myContainer = type;
-                case "Mycontainer2" -> myContainer2 = type;
-                default -> {
-                    // ignore
+            if (type instanceof LegacyArchetype archetype) {
+                switch (type.simpleName()) {
+                    case "ChoiceTestData" -> choiceTestData = archetype;
+                    case "Myrootcontainer" -> myRootContainer = archetype;
+                    case "Mylist" -> myList = archetype;
+                    case "Mylist2" -> myList2 = archetype;
+                    case "Mycontainer" -> myContainer = archetype;
+                    case "Mycontainer2" -> myContainer2 = archetype;
+                    default -> {
+                        // ignore
+                    }
                 }
             }
         }
@@ -107,10 +109,10 @@ class BindingGeneratorImplTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/notification-test.yang"));
 
-        GeneratedType foo = null;
+        LegacyArchetype foo = null;
         for (var type : generateTypes) {
             if (type.simpleName().equals("Foo")) {
-                foo = type;
+                foo = assertInstanceOf(LegacyArchetype.class, type);
                 break;
             }
         }

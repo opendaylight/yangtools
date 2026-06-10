@@ -17,9 +17,9 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -36,45 +36,38 @@ class GeneratedTypesLeafrefTest {
         assertEquals(55, genTypes.size());
 
         KeyArchetype gtIfcKey = null;
-        GeneratedType gtIfc = null;
-        GeneratedType gtNetworkLink = null;
-        GeneratedType gtSource = null;
-        GeneratedType gtDest = null;
-        GeneratedType gtTunnel = null;
+        LegacyArchetype gtIfc = null;
+        LegacyArchetype gtNetworkLink = null;
+        LegacyArchetype gtSource = null;
+        LegacyArchetype gtDest = null;
+        LegacyArchetype gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
-        GeneratedType gtTopology = null;
+        LegacyArchetype gtTopology = null;
         for (final Type type : genTypes) {
             String name = type.simpleName();
             if ("InterfaceKey".equals(name)
                     && "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces".equals(
                         type.packageName())) {
-                gtIfcKey = (KeyArchetype) type;
+                gtIfcKey = assertInstanceOf(KeyArchetype.class, type);
             } else {
                 switch (name) {
-                    case "Interface":
-                        gtIfc = (GeneratedType) type;
-                        break;
-                    case "NetworkLink":
-                        gtNetworkLink = (GeneratedType) type;
-                        break;
-                    case "SourceNode":
-                        gtSource = (GeneratedType) type;
-                        break;
-                    case "DestinationNode":
-                        gtDest = (GeneratedType) type;
-                        break;
-                    case "Tunnel":
-                        gtTunnel = (GeneratedType) type;
-                        break;
-                    case "TunnelKey":
-                        gtTunnelKey = (KeyArchetype) type;
-                        break;
-                    case "Topology":
-                        gtTopology = (GeneratedType) type;
-                        break;
-                    case null:
-                    default:
-                        break;
+                    case "Interface" ->
+                        gtIfc = assertInstanceOf(LegacyArchetype.class, type);
+                    case "NetworkLink" ->
+                        gtNetworkLink = assertInstanceOf(LegacyArchetype.class, type);
+                    case "SourceNode" ->
+                        gtSource = assertInstanceOf(LegacyArchetype.class, type);
+                    case "DestinationNode" ->
+                        gtDest = assertInstanceOf(LegacyArchetype.class, type);
+                    case "Tunnel" ->
+                        gtTunnel = assertInstanceOf(LegacyArchetype.class, type);
+                    case "TunnelKey" ->
+                        gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
+                    case "Topology" ->
+                        gtTopology = assertInstanceOf(LegacyArchetype.class, type);
+                    default -> {
+                        // no-op
+                    }
                 }
             }
         }

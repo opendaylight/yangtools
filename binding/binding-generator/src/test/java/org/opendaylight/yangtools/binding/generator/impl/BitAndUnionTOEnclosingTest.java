@@ -16,33 +16,34 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BitAndUnionTOEnclosingTest {
-    private static List<GeneratedType> genTypes = null;
-    private static GeneratedType parentContainer = null;
+    private static List<Archetype> genTypes = null;
+    private static LegacyArchetype parentContainer = null;
 
     @BeforeAll
     static void loadTestResources() {
         genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/bit_and_union.yang"));
 
         for (var genType : genTypes) {
-            if (genType.simpleName().equals("ParentContainer") && !(genType instanceof GeneratedTransferObject)) {
-                parentContainer = genType;
+            if (genType.simpleName().equals("ParentContainer") && genType instanceof LegacyArchetype archetype) {
+                parentContainer = archetype;
             }
         }
     }
 
     @Test
     void testNestedTypesInLeaf() {
-        final var enclosedTypes = parentContainer.getEnclosedTypes();
+        final var enclosedTypes = parentContainer.enclosedTypes();
         assertEquals(3, enclosedTypes.size());
 
         // nested types in leaf
@@ -57,7 +58,7 @@ class BitAndUnionTOEnclosingTest {
             lfLeaf.name().immediatelyEnclosingClass());
 
         // nested types in Lf
-        final var lfTypes = lfLeaf.getEnclosedTypes();
+        final var lfTypes = lfLeaf.enclosedTypes();
         assertEquals(1, lfTypes.size());
 
         final var lf1Leaf = assertInstanceOf(UnionTypeObjectArchetype.class, lfTypes.getFirst());
@@ -70,7 +71,7 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(List.of(BaseYangTypes.STRING_TYPE, lf1Leaf), lfLeaf.typePropertyTypes());
 
         // nested types in Lf1
-        final var lf1Types = lf1Leaf.getEnclosedTypes();
+        final var lf1Types = lf1Leaf.enclosedTypes();
         assertEquals(1, lf1Types.size());
 
         final var lf2Leaf = assertInstanceOf(UnionTypeObjectArchetype.class, lf1Types.getFirst());
@@ -105,7 +106,7 @@ class BitAndUnionTOEnclosingTest {
         assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", typeUnionTypedef.packageName(),
             "TypeUnion has incorrect package name.");
 
-        final var nestedUnions = typeUnionTypedef.getEnclosedTypes();
+        final var nestedUnions = typeUnionTypedef.enclosedTypes();
         assertEquals(1, nestedUnions.size(), "Incorrect number of nested unions");
         final var typeUnion1 = assertInstanceOf(UnionTypeObjectArchetype.class, nestedUnions.getFirst());
         assertEquals("TypeUnion$1", typeUnion1.simpleName());
@@ -115,7 +116,7 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(List.of("string", "typeUnion$1"), typeUnionTypedef.typePropertyNames());
         assertEquals(List.of(BaseYangTypes.STRING_TYPE, typeUnion1), typeUnionTypedef.typePropertyTypes());
 
-        final var nestedUnions1 = typeUnion1.getEnclosedTypes();
+        final var nestedUnions1 = typeUnion1.enclosedTypes();
         assertEquals(1, nestedUnions1.size());
         final var typeUnion2 = assertInstanceOf(UnionTypeObjectArchetype.class, nestedUnions1.getFirst());
         assertEquals("TypeUnion$2", typeUnion2.simpleName());
@@ -137,7 +138,7 @@ class BitAndUnionTOEnclosingTest {
 
         BitsTypeObjectArchetype bitLeaf = null;
         UnionTypeObjectArchetype unionLeaf = null;
-        for (var genType : parentContainer.getEnclosedTypes()) {
+        for (var genType : parentContainer.enclosedTypes()) {
             if (genType instanceof GeneratedTransferObject gto) {
                 if (gto.simpleName().equals("BitLeaf")) {
                     bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, gto);
@@ -162,7 +163,7 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(QName.create("urn:bit:union:in:leaf", "2013-06-26", "bits"), bitsDef.getQName());
         assertEquals(3, bitsDef.getBits().size());
 
-        assertEquals(List.of(), unionLeaf.getEnclosedTypes());
+        assertEquals(List.of(), unionLeaf.enclosedTypes());
         assertEquals(List.of("int32", "string", "string", "string", "uint8"), unionLeaf.typePropertyNames());
         assertEquals(List.of(BaseYangTypes.INT32_TYPE, BaseYangTypes.STRING_TYPE, BaseYangTypes.UINT8_TYPE),
             unionLeaf.typePropertyTypes());

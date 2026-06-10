@@ -42,13 +42,9 @@ final class DataRootTemplate extends InterfaceTemplate {
         super(archetype, archetype);
     }
 
-    private @NonNull DataRootArchetype archetype() {
-        return (DataRootArchetype) type();
-    }
-
     @Override
     BlockBuilder generateConstants() {
-        final var archetype = archetype();
+        final var archetype = (DataRootArchetype) archetype();
 
         // pre-compute constants: split out for future isolation
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);

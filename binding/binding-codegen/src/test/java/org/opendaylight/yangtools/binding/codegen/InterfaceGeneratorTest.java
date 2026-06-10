@@ -18,8 +18,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -93,8 +93,8 @@ class InterfaceGeneratorTest {
             """, genType);
     }
 
-    private static @NonNull GeneratedType mockGenType(final MethodSignature methSign) {
-        final var genType = spy(GeneratedType.class);
+    private static @NonNull LegacyArchetype mockGenType(final MethodSignature methSign) {
+        final var genType = spy(LegacyArchetype.class);
         doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();
         doReturn(TEST).when(genType).packageName();
@@ -120,7 +120,7 @@ class InterfaceGeneratorTest {
     }
 
     @NonNullByDefault
-    private static void assertInterface(final String expected, final GeneratedType genType) {
+    private static void assertInterface(final String expected, final LegacyArchetype genType) {
         final var sb = new StringBuilder();
         new InterfaceTemplate.Builder(genType, mock(DataRootArchetype.class)).build().generateTo(sb);
         assertEquals(expected, sb.toString());
