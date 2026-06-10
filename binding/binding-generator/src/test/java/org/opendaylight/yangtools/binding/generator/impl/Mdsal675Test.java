@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -16,9 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anydata;
+import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anyxml;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -41,7 +46,7 @@ class Mdsal675Test {
         assertNotNull(allGenTypes);
         assertEquals(29, allGenTypes.size());
         final var genTypesMap = allGenTypes.stream()
-            .collect(ImmutableMap.toImmutableMap(GeneratedType::canonicalName, Function.identity()));
+            .collect(ImmutableMap.toImmutableMap(Archetype::canonicalName, Function.identity()));
 
         // ensure generated yang-data classes contain getters for inner structure types
 
@@ -68,12 +73,12 @@ class Mdsal675Test {
         // yang-data > anydata
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithAnydata"),
-                assertGenType(genTypesMap, PACKAGE + "yang.data.with.anydata.AnydataFromYangData"),
+                assertAnydata(genTypesMap, PACKAGE + "yang.data.with.anydata.AnydataFromYangData"),
                 List.of("getAnydataFromYangData", "requireAnydataFromYangData"));
         // yang-data > anyxml
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithAnyxml"),
-                assertGenType(genTypesMap, PACKAGE + "yang.data.with.anyxml.AnyxmlFromYangData"),
+                assertAnyxml(genTypesMap, PACKAGE + "yang.data.with.anyxml.AnyxmlFromYangData"),
                 List.of("getAnyxmlFromYangData", "requireAnyxmlFromYangData"));
 
         // ensure generated yang-data classes extending inner group so group content is reachable
@@ -107,13 +112,13 @@ class Mdsal675Test {
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithAnydataFromGroup"),
                 assertGenType(genTypesMap, PACKAGE + "GrpForAnydata"),
-                assertGenType(genTypesMap, PACKAGE + "grp._for.anydata.AnydataFromGroup"),
+                assertAnydata(genTypesMap, PACKAGE + "grp._for.anydata.AnydataFromGroup"),
                 List.of("getAnydataFromGroup", "requireAnydataFromGroup"));
         // yang-data > uses > group > anyxml
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithAnyxmlFromGroup"),
                 assertGenType(genTypesMap, PACKAGE + "GrpForAnyxml"),
-                assertGenType(genTypesMap, PACKAGE + "grp._for.anyxml.AnyxmlFromGroup"),
+                assertAnyxml(genTypesMap, PACKAGE + "grp._for.anyxml.AnyxmlFromGroup"),
                 List.of("getAnyxmlFromGroup", "requireAnyxmlFromGroup"));
 
         // ensure module class has only getter for root container
@@ -136,7 +141,7 @@ class Mdsal675Test {
                         "/yang-data-models/ietf-restconf.yang", "/yang-data-models/yang-data-naming.yang"));
         assertNotNull(allGenTypes);
         assertEquals(22, allGenTypes.size());
-        final var genTypeNames = allGenTypes.stream().map(GeneratedType::canonicalName)
+        final var genTypeNames = allGenTypes.stream().map(Archetype::canonicalName)
             .collect(Collectors.toSet());
 
         // template name is not compliant to YANG identifier -> char encoding used, name starts with $ char
@@ -170,13 +175,26 @@ class Mdsal675Test {
         assertThat(genTypeNames).contains(PACKAGE2 + "$$2d$$2e$$2f$$23$$.Foo");
     }
 
-    private static GeneratedType assertGenType(final Map<String, GeneratedType> genTypesMap, final String className) {
-        final var ret = genTypesMap.get(className);
-        assertNotNull(ret, "no type generated: " + className);
-        return ret;
+    private static Anydata assertAnydata(final Map<String, Archetype> genTypesMap, final String className) {
+        return assertArchetype(genTypesMap, className, Anydata.class);
     }
 
-    private static void assertYangDataGenType(final GeneratedType yangDataType, final Type contentType,
+    private static Anyxml assertAnyxml(final Map<String, Archetype> genTypesMap, final String className) {
+        return assertArchetype(genTypesMap, className, Anyxml.class);
+    }
+
+    private static LegacyArchetype assertGenType(final Map<String, Archetype> genTypesMap, final String className) {
+        return assertArchetype(genTypesMap, className, LegacyArchetype.class);
+    }
+
+    private static <T extends Archetype> @NonNull T assertArchetype(final Map<String, Archetype> genTypesMap,
+            final String className, final Class<T> clazz) {
+        final var ret = genTypesMap.get(className);
+        assertNotNull(ret, "no type generated: " + className);
+        return assertInstanceOf(clazz, ret);
+    }
+
+    private static void assertYangDataGenType(final LegacyArchetype yangDataType, final Type contentType,
             final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
@@ -185,7 +203,7 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertYangDataGenType(final GeneratedType yangDataType, final GeneratedType groupType,
+    private static void assertYangDataGenType(final LegacyArchetype yangDataType, final LegacyArchetype groupType,
             final Type contentType, final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         assertImplements(yangDataType, groupType);
@@ -195,13 +213,13 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertHasMethod(final GeneratedType genType, final String methodName,
+    private static void assertHasMethod(final LegacyArchetype genType, final String methodName,
             final Type returnType) {
         assertThat(genType.getMethodDefinitions())
             .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
     }
 
-    private static void assertImplements(final GeneratedType genType, final Type implementedType) {
+    private static void assertImplements(final LegacyArchetype genType, final Type implementedType) {
         assertThat(genType.getImplements()).contains(implementedType);
     }
 }

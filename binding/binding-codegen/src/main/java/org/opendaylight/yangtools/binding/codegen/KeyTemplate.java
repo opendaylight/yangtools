@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -55,23 +54,10 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             .eol(" *")
             .str(" * @see ").eol(entryObject)
             .eol(" */")
-            .blk(annotationDeclaration())
             .eol(generatedAnnotation())
+            // FIXME: YANGTOOLS-1812: generate deprecated annotation once we have the EntryObject's Archetype available
             .str("public final class ").str(typeName).str(" implements ").gen(importedName(KEY), entryObject)
                 .jBlock(this::classBody).nl();
-    }
-
-    private @Nullable BlockBuilder annotationDeclaration() {
-        final var annotations = type().getAnnotations();
-        if (annotations.isEmpty()) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        for (var annotation : annotations) {
-            bb.at().eol(annotation.simpleName());
-        }
-        return bb;
     }
 
     // Split out to keep indentation in check

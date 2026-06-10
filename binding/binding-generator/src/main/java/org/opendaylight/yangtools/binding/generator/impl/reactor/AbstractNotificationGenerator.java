@@ -11,7 +11,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -49,7 +50,7 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         builder.addImplementsType(notificationType(builder, builderFactory));
@@ -83,7 +84,7 @@ abstract class AbstractNotificationGenerator
             final NotificationEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            NotificationRuntimeType build(final GeneratedType type, final NotificationEffectiveStatement statement,
+            NotificationRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 return new DefaultNotificationRuntimeType(type, statement, children, augments);
             }
