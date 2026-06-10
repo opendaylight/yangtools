@@ -20,11 +20,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -391,7 +391,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final GeneratedType getGeneratedType(final TypeBuilderFactory builderFactory) {
+    final Archetype getGeneratedType(final TypeBuilderFactory builderFactory) {
         // For derived enumerations defer to base type
         return isDerivedEnumeration() ? baseGen.getGeneratedType(builderFactory)
             : super.getGeneratedType(builderFactory);

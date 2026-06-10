@@ -13,8 +13,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -48,8 +49,8 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory, final GeneratedType input,
-            final GeneratedType output) {
+    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory, final Archetype input,
+            final Archetype output) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         addImplementedType(builderFactory, builder, input, output);
         builder.addAnnotation(FUNCTIONAL_INTERFACE);
@@ -65,7 +66,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
 
     @NonNullByDefault
     private void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
-            final GeneratedType input, final GeneratedType output) {
+            final Archetype input, final Archetype output) {
         final var parent = getParent();
         final var parentType = TypeRef.of(parent.typeName());
         if (parent instanceof ListGenerator list) {
@@ -94,7 +95,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             final ActionEffectiveStatement statement) {
         return new InvokableRuntimeTypeBuilder<>(statement) {
             @Override
-            ActionRuntimeType build(final GeneratedType generatedType, final ActionEffectiveStatement statement,
+            ActionRuntimeType build(final Archetype generatedType, final ActionEffectiveStatement statement,
                     final List<RuntimeType> childTypes) {
                 return new DefaultActionRuntimeType(generatedType, statement, childTypes);
             }

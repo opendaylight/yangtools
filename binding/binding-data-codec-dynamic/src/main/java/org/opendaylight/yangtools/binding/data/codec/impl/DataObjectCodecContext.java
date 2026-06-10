@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -208,7 +207,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
         }
 
         final var factory = prototype().contextFactory();
-        final GeneratedType javaType = augment.javaType();
+        final var javaType = augment.javaType();
         final Class<? extends Augmentation<?>> augClass;
         try {
             augClass = factory.runtimeContext().loadClass(javaType);

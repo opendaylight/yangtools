@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
 import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -131,9 +131,9 @@ public final class YangModuleInfoTemplate {
 
     @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
-    static JavaTypeName nameInModuleOf(final GeneratedType genType) {
+    static JavaTypeName nameInModuleOf(final Archetype archetype) {
         // Yeah: not pretty but works
-        return JavaTypeName.create(rootToService(genType.packageName()), CLASS_NAME);
+        return JavaTypeName.create(rootToService(archetype.packageName()), CLASS_NAME);
     }
 
     @NonNullByDefault
