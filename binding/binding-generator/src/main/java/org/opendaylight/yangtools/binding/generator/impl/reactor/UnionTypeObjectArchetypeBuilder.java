@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -81,7 +81,7 @@ final class UnionTypeObjectArchetypeBuilder {
     private UnionTypeObjectArchetype createUnion(
             final Dependencies dependencies, final JavaTypeName typeName, final TypeEffectiveStatement type,
             final TypeDefinition<?> typedef) {
-        final var enclosedTypes = new ArrayList<GeneratedType>();
+        final var enclosedTypes = new ArrayList<TypeObjectArchetype<?>>();
         // A linear list of properties generated from subtypes. We need this information for runtime types, as it allows
         // direct mapping of type to corresponding property -- without having to resort to re-resolving the leafrefs
         // again.
@@ -203,7 +203,7 @@ final class UnionTypeObjectArchetypeBuilder {
         }
 
         return new UnionTypeObjectArchetype(typeName, definingStatement, typeProperties,
-            List.copyOf(properties.keySet()), enclosedTypes, null);
+            List.copyOf(properties.keySet()), List.copyOf(enclosedTypes), null);
     }
 
     // FIXME: this is legacy union/leafref property handling. The resulting value is *not* normalized for use as a

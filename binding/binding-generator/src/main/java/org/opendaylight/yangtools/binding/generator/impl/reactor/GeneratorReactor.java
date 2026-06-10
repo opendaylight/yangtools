@@ -26,7 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A multi-stage reactor for generating {@link GeneratedType} instances from an {@link EffectiveModelContext}.
+ * A multi-stage reactor for generating {@link Archetype} instances from an {@link EffectiveModelContext}.
  *
  * <p>The reason for multi-stage processing is that the problem ahead of us involves:
  * <ul>

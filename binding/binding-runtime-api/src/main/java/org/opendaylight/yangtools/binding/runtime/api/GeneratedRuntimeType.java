@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Identifiable;
 
 /**
- * A {@link RuntimeType} associated with a {@link GeneratedType}.
+ * A {@link RuntimeType} associated with a {@link Archetype}.
  */
 public interface GeneratedRuntimeType extends RuntimeType, Identifiable<JavaTypeName> {
     @Override
-    GeneratedType javaType();
+    Archetype javaType();
 
     @Override
     default JavaTypeName getIdentifier() {

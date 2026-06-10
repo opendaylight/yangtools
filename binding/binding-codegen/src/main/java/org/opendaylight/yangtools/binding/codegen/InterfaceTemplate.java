@@ -29,10 +29,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -49,9 +50,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Template for generating JAVA interfaces.
  */
-sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
+sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetype> permits DataRootTemplate {
     @NonNullByDefault
-    record Builder(GeneratedType type, DataRootArchetype root) implements Template.Builder {
+    record Builder(LegacyArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
@@ -77,19 +78,17 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     /**
      * List of generated types which are enclosed inside the generated type.
      */
-    private final List<GeneratedType> enclosedGeneratedTypes;
-    private final @NonNull DataRootArchetype root;
+    private final List<Archetype> enclosedGeneratedTypes;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final GeneratedType type, final DataRootArchetype root) {
-        super(GeneratedClass.of(type), type);
-        this.root = requireNonNull(root);
+    InterfaceTemplate(final LegacyArchetype type, final DataRootArchetype root) {
+        super(GeneratedClass.of(type), type, root);
 
         consts = type.getConstantDefinitions();
         methods = type.getMethodDefinitions();
-        enclosedGeneratedTypes = type.getEnclosedTypes();
+        enclosedGeneratedTypes = type.enclosedTypes();
     }
 
     private @NonNull TypeAnalysis typeAnalysis() {
@@ -98,16 +97,18 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     }
 
     private @NonNull TypeAnalysis loadTypeAnalysis() {
-        final var analysis = TypeAnalysis.of(type());
+        final var analysis = TypeAnalysis.of(archetype());
         typeAnalysis = analysis;
         return analysis;
     }
 
     @Override
     final BlockBuilder body() {
+        final var archetype = archetype();
+
         final var bb = newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
-            .blk(generateAnnotations(type().getAnnotations()))
+            .blk(wrapToDocumentation(formatDataForJavaDoc(archetype)))
+            .blk(generateAnnotations(archetype.getAnnotations()))
             .eol(generatedAnnotation())
             .str("public interface ").str(type().simpleName());
 
@@ -128,7 +129,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         //               Two {
         //       int VALUE = 42;
         //
-        final var ifaces = type().getImplements();
+        final var ifaces = archetype.getImplements();
         switch (ifaces.size()) {
             case 0 -> {
                 // No-op
@@ -164,7 +165,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     }
 
     @NonNullByDefault
-    private String formatDataForJavaDoc(final GeneratedType type) {
+    private String formatDataForJavaDoc(final LegacyArchetype type) {
         final var sb = new StringBuilder();
         final var comment = type.getComment();
         if (comment != null) {
@@ -409,7 +410,7 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     }
 
     private @Nullable BlockBuilder generateJavaDataContainerMethods() {
-        if (type().getImplements().stream()
+        if (archetype().getImplements().stream()
                 .noneMatch(iface -> iface.name().equals(BindingTypes.JAVA_DATACONTAINER.name()))) {
             return null;
         }

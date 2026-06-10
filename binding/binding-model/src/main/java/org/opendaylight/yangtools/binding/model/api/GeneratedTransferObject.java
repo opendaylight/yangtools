@@ -7,19 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * Common interface for {@link TypeObjectArchetype}s other than {@link EnumTypeObject}.
- *
- * <p>Generated Transfer Object extends {@link GeneratedType} and is designed to represent Java Class. The Generated
- * Transfer Object contains declarations of member fields stored in List of Properties. The Generated Transfer Object
- * can be extended by exactly ONE Generated Transfer Object as Java does not allow multiple inheritance. For retrieval
- * of implementing Generated Types use {@link #getImplements()} method.
+ * Common interface for {@link TypeObjectArchetype}s other than {@link EnumTypeObject}. These archetypes result in a
+ * non-abstract class, which is potentially a subclass of another class of the same kind.
  *
  * @param <T> {@link TypeObject} specialization
  */
@@ -49,14 +44,4 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
      * @return Base type of Java representation of YANG typedef if set, otherwise it returns null
      */
     @Nullable TypeDefinition<?> getBaseType();
-
-    default Optional<? extends GeneratedProperty> findProperty(final String name) {
-        final var optProp = getProperties().stream().filter(prop -> name.equals(prop.getName())).findFirst();
-        if (optProp.isPresent()) {
-            return optProp;
-        }
-
-        final var parent = getSuperType();
-        return parent != null ? parent.findProperty(name) : Optional.empty();
-    }
 }

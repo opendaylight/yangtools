@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 
 public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder>
@@ -20,7 +20,7 @@ public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuil
     }
 
     @Override
-    public GeneratedType build() {
+    public LegacyArchetype build() {
         return new GeneratedTypeImpl(this);
     }
 

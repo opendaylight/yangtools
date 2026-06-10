@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.GeneratedRuntimeType;
@@ -26,14 +26,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>>
-        extends StmtRuntimeType<S, GeneratedType> implements CompositeRuntimeType {
+abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>> extends StmtRuntimeType<S, Archetype>
+        implements CompositeRuntimeType {
     private static final RuntimeType[] EMPTY = new RuntimeType[0];
 
     private final ImmutableMap<JavaTypeName, GeneratedRuntimeType> byClass;
     private final Object bySchemaTree;
 
-    AbstractCompositeRuntimeType(final GeneratedType bindingType, final S statement, final List<RuntimeType> children) {
+    AbstractCompositeRuntimeType(final Archetype bindingType, final S statement, final List<RuntimeType> children) {
         super(bindingType, statement);
 
         byClass = children.stream()

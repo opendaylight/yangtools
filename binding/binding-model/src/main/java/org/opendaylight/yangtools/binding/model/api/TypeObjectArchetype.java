@@ -19,9 +19,5 @@ import org.opendaylight.yangtools.binding.TypeObject;
 @Beta
 public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archetype
         permits EnumTypeObjectArchetype, GeneratedTransferObject {
-    @Override
-    @Deprecated(forRemoval = true)
-    default boolean isAbstract() {
-        return false;
-    }
+    // nothing else
 }

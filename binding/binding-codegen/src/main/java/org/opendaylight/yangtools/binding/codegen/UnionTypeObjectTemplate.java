@@ -122,7 +122,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 .eol("@java.io.Serial")
                 .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
                  // inner classes
-                .blk(generateInnerClasses(root, archetype.getEnclosedTypes()));
+                .blk(generateInnerClasses(root, archetype.enclosedTypes()));
 
         if (statement instanceof TypedefEffectiveStatement typedef) {
             final var units = typedef.unitsStatement();
@@ -227,9 +227,10 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 bb.str("super(").str(asArguments(parentProperties)).eol(");");
             }
 
-            if (setterRestrictions != null) {
-                bb.blk(checkArgument(property, setterRestrictions, actualType, propFieldName)).newLine();
-            }
+// FIXME: YANGTOOLS-1621: this relies of fields being defined, which we
+//            if (setterRestrictions != null) {
+//                bb.blk(checkFieldValue(property, setterRestrictions, actualType, propFieldName)).newLine();
+//            }
 
             for (var other : finalProperties) {
                 bb.str("this.");
