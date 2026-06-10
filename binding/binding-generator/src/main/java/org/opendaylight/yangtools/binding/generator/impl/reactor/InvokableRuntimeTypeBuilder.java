@@ -11,7 +11,7 @@ import static com.google.common.base.Verify.verify;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -24,11 +24,11 @@ abstract class InvokableRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
     }
 
     @Override
-    final R build(final GeneratedType type, final S statement, final List<RuntimeType> children,
+    final R build(final Archetype type, final S statement, final List<RuntimeType> children,
             final List<AugmentRuntimeType> augments) {
         verify(augments.isEmpty(), "Unexpected augments %s", augments);
         return build(type, statement, children);
     }
 
-    abstract @NonNull R build(GeneratedType type, S statement, List<RuntimeType> children);
+    abstract @NonNull R build(Archetype type, S statement, List<RuntimeType> children);
 }

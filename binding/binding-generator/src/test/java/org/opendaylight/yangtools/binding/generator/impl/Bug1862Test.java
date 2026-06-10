@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -26,6 +27,7 @@ class Bug1862Test {
         final var fooGetter = types.stream()
             .filter(type -> type.canonicalName().equals(
                 "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.model.rev140912.Foo"))
+            .map(LegacyArchetype.class::cast)
             .findFirst().orElseThrow()
             .getMethodDefinitions().stream()
             .filter(method -> method.getName().equals("getBug1862RestrictedTypedef"))

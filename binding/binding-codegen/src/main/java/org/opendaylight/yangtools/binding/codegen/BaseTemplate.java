@@ -32,6 +32,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -39,8 +40,8 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -66,7 +67,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
-        permits ArchetypeTemplate, BuilderImplTemplate, BuilderTemplate, InterfaceTemplate {
+        permits ArchetypeTemplate, BuilderImplTemplate, BuilderTemplate {
     static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
 
     /**
@@ -92,7 +93,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         .build();
 
     @NonNullByDefault
-    BaseTemplate(final GeneratedClass javaType, final GeneratedType type) {
+    BaseTemplate(final GeneratedClass javaType, final Archetype type) {
         super(javaType, type);
     }
 
@@ -209,7 +210,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     @NonNullByDefault
-    final void appendSnippet(final StringBuilder sb, final GeneratedType type, final ModuleEffectiveStatement module,
+    final void appendSnippet(final StringBuilder sb, final Archetype type, final ModuleEffectiveStatement module,
             final EffectiveStatement<?, ?> stmt, final DocumentedNode node) {
         appendYangSnippet(sb
             .append('\n')
@@ -274,12 +275,14 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return sb;
     }
 
-    private static @Nullable Type findAugmentationArgument(final GeneratedType genType) {
-        for (var implType : genType.getImplements()) {
-            if (implType instanceof ParameterizedType parameterized) {
-                final var augmentType = extractAugmentationTarget(parameterized);
-                if (augmentType != null) {
-                    return augmentType;
+    private static @Nullable Type findAugmentationArgument(final Archetype genType) {
+        if (genType instanceof LegacyArchetype archetype) {
+            for (var implType : archetype.getImplements()) {
+                if (implType instanceof ParameterizedType parameterized) {
+                    final var augmentType = extractAugmentationTarget(parameterized);
+                    if (augmentType != null) {
+                        return augmentType;
+                    }
                 }
             }
         }
@@ -390,8 +393,8 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     // FIXME: return a Block
     @NonNullByDefault
-    final BlockBuilder checkArgument(final GeneratedProperty property, final Restrictions restrictions,
-            final Type actualType, final String value) {
+    final BlockBuilder checkFieldValue(final LegacyArchetype type, final GeneratedProperty property,
+            final Restrictions restrictions, final Type actualType, final String value) {
         verify(!restrictions.isEmpty());
 
         final var valueRef = actualType instanceof ConcreteType ? value : value + ".getValue()";
@@ -409,7 +412,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
         final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);
 
-        for (var currentConstant : type().getConstantDefinitions()) {
+        for (var currentConstant : type.getConstantDefinitions()) {
             final var currentName = currentConstant.getName();
 
             if (currentName.startsWith(PATTERN_CONSTANT_NAME)
@@ -423,7 +426,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     final @Nullable BlockBuilder generateInnerClasses(final @NonNull DataRootArchetype root,
-            final List<GeneratedType> innerTypes) {
+            final List<Archetype> innerTypes) {
         final var innerClasses = new ArrayList<BlockBuilder>();
         for (var innerType : innerTypes) {
             if (innerType instanceof TypeObjectArchetype<?> gto) {
