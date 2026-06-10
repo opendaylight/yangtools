@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
@@ -24,7 +25,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
         extends TypeBuilder, AnnotableTypeBuilder
         permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, GeneratedTypeBuilder {
     /**
-     * Adds a new enclosed {@link GeneratedType}into definition of Generated Type.
+     * Adds a new enclosed {@link Archetype} into definition of Generated Type.
      *
      * <br>
      * There is no need of specifying of Package Name because enclosing Type is already defined inside Generated Type
@@ -34,9 +35,9 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * If the parameter <code>genTOBuilder</code> of enclosing type is <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}.
      *
-     * @param genType the enclosed {@link GeneratedType}
+     * @param genType the enclosed {@link Archetype}
      */
-    T addEnclosedType(GeneratedType genType);
+    T addEnclosedType(Archetype genType);
 
     /**
      * Adds String definition of comment into Method Signature definition.<br>
@@ -192,7 +193,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
     void setYangSourceDefinition(@NonNull YangSourceDefinition definition);
 
     /**
-     * {@return a new immutable {@link GeneratedType} instance}
+     * {@return a new immutable {@link LegacyArchetype} instance}
      */
-    @NonNull GeneratedType build();
+    @NonNull LegacyArchetype build();
 }

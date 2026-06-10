@@ -11,7 +11,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultRpcRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.RpcRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -37,8 +37,8 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
     }
 
     @Override
-    RpcArchetype createTypeImpl(final TypeBuilderFactory builderFactory, final GeneratedType input,
-            final GeneratedType output) {
+    RpcArchetype createTypeImpl(final TypeBuilderFactory builderFactory, final Archetype input,
+            final Archetype output) {
         return new RpcArchetype(typeName(), statement(), input.name(), output.name());
     }
 
@@ -47,7 +47,7 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
             final RpcEffectiveStatement statement) {
         return new InvokableRuntimeTypeBuilder<>(statement) {
             @Override
-            RpcRuntimeType build(final GeneratedType generatedType, final RpcEffectiveStatement statement,
+            RpcRuntimeType build(final Archetype generatedType, final RpcEffectiveStatement statement,
                     final List<RuntimeType> childTypes) {
                 return new DefaultRpcRuntimeType(generatedType, statement, childTypes);
             }

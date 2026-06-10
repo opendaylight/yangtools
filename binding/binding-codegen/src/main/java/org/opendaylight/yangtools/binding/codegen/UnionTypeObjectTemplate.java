@@ -79,7 +79,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
 
-        enums = archetype.getEnclosedTypes().stream()
+        enums = archetype.enclosedTypes().stream()
             .filter(EnumTypeObjectArchetype.class::isInstance)
             .map(EnumTypeObjectArchetype.class::cast)
             .toList();
@@ -138,7 +138,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 .eol("@java.io.Serial")
                 .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
                  // inner classes
-                .blk(generateInnerClasses(root, archetype.getEnclosedTypes()))
+                .blk(generateInnerClasses(root, archetype.enclosedTypes()))
                 // inner EnumTypeObjects
                 .blk(generateInnerEnumTypeObjects(root, enums));
 

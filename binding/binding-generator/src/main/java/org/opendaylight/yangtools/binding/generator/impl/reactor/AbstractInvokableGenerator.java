@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -37,14 +37,14 @@ abstract sealed class AbstractInvokableGenerator<
     }
 
     @Override
-    final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final Archetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         return createTypeImpl(builderFactory,
             getChild(InputEffectiveStatement.class).getGeneratedType(builderFactory),
             getChild(OutputEffectiveStatement.class).getGeneratedType(builderFactory));
     }
 
     @NonNullByDefault
-    abstract GeneratedType createTypeImpl(TypeBuilderFactory builderFactory, GeneratedType input, GeneratedType output);
+    abstract Archetype createTypeImpl(TypeBuilderFactory builderFactory, Archetype input, Archetype output);
 
     @NonNullByDefault
     private <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Class<T> type) {

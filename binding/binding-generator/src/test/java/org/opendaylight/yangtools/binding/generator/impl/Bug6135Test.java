@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug6135Test {
@@ -21,10 +22,10 @@ class Bug6135Test {
             YangParserTestUtils.parseYangResource("/bug6135.yang"));
         assertEquals(5, generateTypes.size());
 
-        GeneratedType genInterface = null;
+        LegacyArchetype genInterface = null;
         for (var type : generateTypes) {
             if (type.simpleName().equals("TestLeafrefData")) {
-                genInterface = type;
+                genInterface = assertInstanceOf(LegacyArchetype.class, type);
                 break;
             }
         }

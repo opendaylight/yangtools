@@ -33,18 +33,18 @@ public record UnionTypeObjectArchetype(
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         List<String> typePropertyNames,
         List<Type> typePropertyTypes,
-        List<GeneratedType> getEnclosedTypes,
+        List<Archetype> enclosedTypes,
         Restrictions getRestrictions,
         @Nullable UnionTypeObjectArchetype getSuperType)
         implements GeneratedTransferObject<UnionTypeObject>,
-                   Archetype.Compat<TypeEffectiveStatement.MandatoryIn<?, ?>> {
+                   Archetype.WithStatement<TypeEffectiveStatement.MandatoryIn<?, ?>> {
     public UnionTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(getRestrictions);
         typePropertyNames = List.copyOf(typePropertyNames);
         typePropertyTypes = List.copyOf(typePropertyTypes);
-        getEnclosedTypes = List.copyOf(getEnclosedTypes);
+        enclosedTypes = List.copyOf(enclosedTypes);
 
         final var uniqueNames = typePropertyNames.stream().distinct().count();
         if (uniqueNames != typePropertyTypes.size()) {
@@ -69,47 +69,11 @@ public record UnionTypeObjectArchetype(
         return statement instanceof TypedefEffectiveStatement;
     }
 
-    @Override
-    public List<GeneratedType> getEnclosedTypes() {
-        return getEnclosedTypes;
-    }
-
     // FIXME: remove this method
-    @Override
     public List<GeneratedProperty> getProperties() {
         return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),
             (pn, pt) -> new GeneratedPropertyBuilderImpl(pn).setReadOnly(true).setReturnType(pt).toInstance())
             .toList();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<MethodSignature> getMethodDefinitions() {
-        return List.of();
     }
 
     @Override

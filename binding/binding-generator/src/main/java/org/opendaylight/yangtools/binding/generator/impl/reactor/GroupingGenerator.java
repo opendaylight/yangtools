@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultGroupingRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -68,7 +69,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
         builder.addImplementsType(BindingTypes.GROUPING);
         addUsesInterfaces(builder, builderFactory);
@@ -100,7 +101,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
 
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            GroupingRuntimeType build(final GeneratedType type, final GroupingEffectiveStatement statement,
+            GroupingRuntimeType build(final Archetype type, final GroupingEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // Groupings cannot be targeted by 'augment'
                 if (augments.isEmpty()) {

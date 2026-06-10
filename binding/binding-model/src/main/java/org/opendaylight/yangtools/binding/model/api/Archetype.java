@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -20,68 +20,21 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @since 15.0.0
  */
-@Beta
-public sealed interface Archetype extends GeneratedType, Immutable
-        permits Archetype.WithStatement, TypeObjectArchetype {
+@NonNullByDefault
+public sealed interface Archetype extends Type permits Archetype.WithStatement, LegacyArchetype, TypeObjectArchetype {
     /**
      * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
      *
      * @param <S> EffectiveStatement type
      * @since 16.0.0
      */
-    @Beta
     sealed interface WithStatement<S extends EffectiveStatement<?, ?>> extends Archetype
-            permits Compat, DataRootArchetype {
+            permits WithQName, BitsTypeObjectArchetype, EnumTypeObjectArchetype, KeyArchetype,
+                    ScalarTypeObjectArchetype, UnionTypeObjectArchetype, DataRootArchetype {
         /**
          * {@return the {@link EffectiveStatement}}
          */
         @NonNull S statement();
-    }
-
-    /**
-     * Compatibility {@link GeneratedType} implementing specified methods for archetypes which do not provide them
-     * anymore.
-     *
-     * @param <S> EffectiveStatement type
-     * @since 16.0.0
-     */
-    @Beta
-    sealed interface Compat<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
-            permits WithQName, BitsTypeObjectArchetype, EnumTypeObjectArchetype, KeyArchetype,
-                    ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
-        @Override
-        @Deprecated(forRemoval = true)
-        default String getDescription() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default String getReference() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default String getModuleName() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default @Nullable TypeComment getComment() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default @Nullable YangSourceDefinition yangSourceDefinition() {
-            throw uoe();
-        }
-
-        private static UnsupportedOperationException uoe() {
-            throw new UnsupportedOperationException("should never be called");
-        }
     }
 
     /**
@@ -91,7 +44,7 @@ public sealed interface Archetype extends GeneratedType, Immutable
      * @since 16.0.0
      */
     @Beta
-    sealed interface WithQName<S extends EffectiveStatement<QName, ?>> extends Compat<S>
+    sealed interface WithQName<S extends EffectiveStatement<QName, ?>> extends WithStatement<S>
             permits ChoiceInArchetype, FeatureArchetype, IdentityArchetype, OpaqueObjectArchetype, RpcArchetype {
         /**
          * {@return the value of {@value Naming#QNAME_STATIC_FIELD_NAME} field}
@@ -99,5 +52,12 @@ public sealed interface Archetype extends GeneratedType, Immutable
         default QName qnameConstant() {
             return statement().argument();
         }
+    }
+
+    /**
+     * {@return the list of enclosed {@link Archetype}s}
+     */
+    default List<Archetype> enclosedTypes() {
+        return List.of();
     }
 }
