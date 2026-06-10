@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -28,7 +28,7 @@ record DataRootArchetypeImpl(
         @NonNull ModuleEffectiveStatement statement,
         @NonNull List<Type> getImplements,
         @NonNull List<MethodSignature> getMethodDefinitions,
-        @NonNull List<GeneratedType> getEnclosedTypes,
+        @NonNull List<Archetype> getEnclosedTypes,
         @NonNull List<EnumTypeObjectArchetype> getEnumerations) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);

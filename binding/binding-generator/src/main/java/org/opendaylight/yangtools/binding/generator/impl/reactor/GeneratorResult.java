@@ -11,30 +11,30 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 class GeneratorResult implements Immutable {
     private static final class Nested extends GeneratorResult {
-        Nested(final GeneratedType generatedType) {
+        Nested(final Archetype generatedType) {
             super(generatedType);
         }
 
         @Override
-        GeneratedType enclosedType() {
+        Archetype enclosedType() {
             return generatedType();
         }
     }
 
     private static final @NonNull GeneratorResult EMPTY = new GeneratorResult();
 
-    private final @Nullable GeneratedType generatedType;
+    private final @Nullable Archetype generatedType;
 
     private GeneratorResult() {
         generatedType = null;
     }
 
-    private GeneratorResult(final GeneratedType generatedType) {
+    private GeneratorResult(final Archetype generatedType) {
         this.generatedType = requireNonNull(generatedType);
     }
 
@@ -42,19 +42,19 @@ class GeneratorResult implements Immutable {
         return EMPTY;
     }
 
-    static @NonNull GeneratorResult member(final GeneratedType generatedType) {
+    static @NonNull GeneratorResult member(final Archetype generatedType) {
         return new Nested(generatedType);
     }
 
-    static @NonNull GeneratorResult toplevel(final GeneratedType generatedType) {
+    static @NonNull GeneratorResult toplevel(final Archetype generatedType) {
         return new GeneratorResult(generatedType);
     }
 
-    final @Nullable GeneratedType generatedType() {
+    final @Nullable Archetype generatedType() {
         return generatedType;
     }
 
-    @Nullable GeneratedType enclosedType() {
+    @Nullable Archetype enclosedType() {
         return null;
     }
 }
