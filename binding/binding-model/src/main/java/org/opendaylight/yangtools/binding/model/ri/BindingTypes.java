@@ -39,9 +39,9 @@ import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -314,7 +314,7 @@ public final class BindingTypes {
      * @return {@code true} if the type is a generated {@link NotificationBody}
      */
     public static boolean isNotificationBody(final Type type) {
-        if (type instanceof GeneratedType generated) {
+        if (type instanceof LegacyArchetype generated) {
             for (var iface : generated.getImplements()) {
                 if (iface instanceof ParameterizedType parameterized
                     && NOTIFICATION_BODY.equals(parameterized.getRawType())) {
@@ -370,7 +370,7 @@ public final class BindingTypes {
      *         directly implement {@link EntryObject}
      * @since 16.0.0
      */
-    public static @Nullable KeyArchetype extractEntryObjectKey(final @NonNull GeneratedType genType) {
+    public static @Nullable KeyArchetype extractEntryObjectKey(final @NonNull LegacyArchetype genType) {
         for (var iface : genType.getImplements()) {
             if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
                 final var args = parameterized.getActualTypeArguments();

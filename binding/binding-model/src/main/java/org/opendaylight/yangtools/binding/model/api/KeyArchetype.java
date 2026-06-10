@@ -72,46 +72,4 @@ public record KeyArchetype(
 
         return props;
     }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public boolean isAbstract() {
-        return false;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedType> getEnclosedTypes() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
 }

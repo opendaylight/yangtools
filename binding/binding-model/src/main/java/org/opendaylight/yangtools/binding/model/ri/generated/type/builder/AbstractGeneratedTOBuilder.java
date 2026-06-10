@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public abstract sealed class AbstractGeneratedTOBuilder
-        extends AbstractGeneratedTypeBuilder<GeneratedTransferObject.Builder> implements GeneratedTransferObject.Builder
+        extends AbstractArchetypeBuilder<GeneratedTransferObject.Builder> implements GeneratedTransferObject.Builder
         permits CodegenGeneratedTOBuilder, RuntimeScalarTypeObjectArchetypeBuilder,
                 RuntimeUnionTypeObjectArchetypeBuilder {
     // FIXME are these three referenced anywhere at runtime?

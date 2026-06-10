@@ -30,9 +30,8 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignature
 import org.opendaylight.yangtools.util.LazyCollections;
 
 public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>>
-        extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
-        permits AbstractGeneratedTOBuilder, CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder,
-                DataRootArchetypeBuilder {
+        extends AbstractArchetypeBuilder<T>
+        permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder, DataRootArchetypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
     private List<Type> implementsTypes = List.of();
     private List<EnumTypeObjectArchetype> enumDefinitions = List.of();
@@ -77,8 +76,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     protected List<GeneratedTransferObject<?>> getEnclosedTransferObjects() {
         return enclosedTransferObjects;
     }
-
-    protected abstract T thisInstance();
 
     @Override
     public T addEnclosingTransferObject(final GeneratedTransferObject<?> genTO) {

@@ -182,8 +182,8 @@ public final class SerialVersionHelper {
         return hash;
     }
 
-    public static long computeSerialVersion(final GeneratedType to) {
-        final var svb = new SerialVersionHelper(to.name()).setAbstract(to.isAbstract());
+    public static long computeSerialVersion(final GeneratedTransferObject<?> to) {
+        final var svb = new SerialVersionHelper(to.name()).setAbstract(false);
 
         for (var iface : Collections2.filter(to.getImplements(), item -> !IGNORED_INTERFACES.contains(item))) {
             svb.addInterface(iface.name());
