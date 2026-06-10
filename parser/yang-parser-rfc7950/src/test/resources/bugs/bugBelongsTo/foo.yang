@@ -1,0 +1,7 @@
+module foo {
+    yang-version 1.1;
+    namespace "urn:foo";
+    prefix foo;
+
+    // Notice it DOES NOT include "foo-sub"
+}
