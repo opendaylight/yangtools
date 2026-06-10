@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -35,7 +35,7 @@ class Mdsal161Test {
         assertKeyStructure(types, "org.opendaylight.yang.gen.v1.mdsal161.norev.WithoutGrpTypedefKey");
     }
 
-    private static void assertKeyStructure(final Collection<GeneratedType> types, final String className) {
+    private static void assertKeyStructure(final Collection<Archetype> types, final String className) {
         final var optType = types.stream().filter(type -> type.canonicalName().equals(className)).findFirst();
         final var archetype = assertInstanceOf(KeyArchetype.class, optType.orElseThrow());
         assertEquals(2, archetype.getProperties().size());

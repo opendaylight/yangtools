@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -44,6 +45,7 @@ class LeafrefResolutionTest {
         final var neighborMethods = types.stream()
             .filter(type -> type.simpleName().equals("Neighbor"))
             .findFirst()
+            .map(LegacyArchetype.class::cast)
             .orElseThrow()
             .getMethodDefinitions();
         assertEquals(7, neighborMethods.size());

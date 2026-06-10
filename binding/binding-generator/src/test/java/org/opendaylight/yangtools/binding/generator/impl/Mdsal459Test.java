@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -25,7 +25,7 @@ class Mdsal459Test {
         assertNotNull(types);
         assertEquals(7, types.size());
 
-        final var typeNames = types.stream().map(GeneratedType::name).collect(Collectors.toSet());
+        final var typeNames = types.stream().map(Archetype::name).collect(Collectors.toSet());
         assertEquals(Set.of(
             JavaTypeName.create("org.opendaylight.yang.gen.v1.base.norev", "Foo"),
             JavaTypeName.create("org.opendaylight.yang.gen.v1.base.norev", "BaseData"),

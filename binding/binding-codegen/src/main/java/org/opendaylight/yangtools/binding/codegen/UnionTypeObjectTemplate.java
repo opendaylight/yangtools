@@ -129,7 +129,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 .eol("@java.io.Serial")
                 .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
                  // inner classes
-                .blk(generateInnerClasses(root, archetype.getEnclosedTypes()));
+                .blk(generateInnerClasses(root, archetype.enclosedTypes()));
 
         if (statement instanceof TypedefEffectiveStatement typedef) {
             final var units = typedef.unitsStatement();

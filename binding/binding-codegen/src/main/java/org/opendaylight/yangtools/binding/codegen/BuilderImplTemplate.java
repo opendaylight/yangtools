@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 
@@ -51,7 +51,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     private final @NonNull BuilderTemplate builder;
 
     @NonNullByDefault
-    BuilderImplTemplate(final BuilderTemplate builder, final GeneratedType type) {
+    BuilderImplTemplate(final BuilderTemplate builder, final LegacyArchetype type) {
         // FIXME: we should be delegating access to these fields to builder
         super(builder.javaType().getNestedClass(type), type, builder.targetType, builder.properties,
             builder.augmentType, builder.keyType);
@@ -129,7 +129,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 bb.blk(asGetterMethod(field));
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
+                if (field.getReturnType() instanceof LegacyArchetype fieldType && isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
                         .at().eol(override)
@@ -173,7 +173,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
     @NonNullByDefault
     MethodSignature findGetter(final String getterName) {
-        final var type = type();
+        final var type = (LegacyArchetype) type();
         final var getter = getterByName(type, getterName);
         if (getter == null) {
             throw new IllegalStateException(
@@ -183,13 +183,13 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final GeneratedType implType, final String getterName) {
+    private static @Nullable MethodSignature getterByName(final LegacyArchetype implType, final String getterName) {
         final var getter = getterByName(nonDefaultMethods(implType), getterName);
         if (getter != null) {
             return getter;
         }
         for (var ifc : implType.getImplements()) {
-            if (ifc instanceof GeneratedType genInterface) {
+            if (ifc instanceof LegacyArchetype genInterface) {
                 final var getterImpl = getterByName(genInterface, getterName);
                 if (getterImpl != null) {
                     return getterImpl;

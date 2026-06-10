@@ -34,9 +34,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -48,7 +47,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
  */
 final class BuilderTemplate extends AbstractBuilderTemplate {
     @NonNullByDefault
-    record Builder(GeneratedType type) implements Template.Builder {
+    record Builder(LegacyArchetype type) implements Template.Builder {
         Builder {
             requireNonNull(type);
         }
@@ -77,9 +76,9 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private final BuilderImplTemplate implTemplate;
 
     @NonNullByDefault
-    private BuilderTemplate(final GeneratedType builderType, final GeneratedType targetType) {
+    private BuilderTemplate(final LegacyArchetype builderType, final LegacyArchetype targetType) {
         super(builderType, targetType, BindingTypes.extractEntryObjectKey(targetType));
-        implTemplate = new BuilderImplTemplate(this, type().getEnclosedTypes().getFirst());
+        implTemplate = new BuilderImplTemplate(this, (LegacyArchetype) type().enclosedTypes().getFirst());
     }
 
     @Override
@@ -127,7 +126,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .eol(" *")
             .str(" * @param base ").str(targetTypeName).eol(" from which the builder should be initialized")
             .eol(" */")
-            .indented("public ", generateCopyConstructor(targetType, type().getEnclosedTypes().getFirst()))
+            .indented("public ", generateCopyConstructor(targetType, type().enclosedTypes().getFirst()))
             .nl()
             .blk(generateMethodFieldsFrom())
             .nl()
@@ -145,7 +144,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .str(" * {@return A new {@link ").str(targetTypeName).eol("} instance}")
             .eol(" */")
             .str("public ").str(importedNonNull(targetType)).str(" build()").oB()
-                .str("return new ").str(importedName(type().getEnclosedTypes().getFirst())).eol("(this);")
+                .str("return new ").str(importedName(type().enclosedTypes().getFirst())).eol("(this);")
             .cB()
             .nl()
             .blk(implTemplate.body())
@@ -182,14 +181,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @Nullable BlockBuilder generateConstructorsFromIfcs() {
-        if (targetType instanceof GeneratedTransferObject) {
-            return null;
-        }
-
         final var bb = newBlockBuilder().nl();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
-            if (impl instanceof GeneratedType genType) {
+            if (impl instanceof LegacyArchetype genType) {
                 if (first) {
                     first = false;
                 } else {
@@ -204,7 +199,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private @NonNull BlockBuilder generateConstructorFromIfc(final GeneratedType genType) {
+    private @NonNull BlockBuilder generateConstructorFromIfc(final LegacyArchetype genType) {
         final var bb = newBlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
@@ -220,7 +215,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 .newLine();
         }
         for (var implTypeImplement : genType.getImplements()) {
-            if (implTypeImplement instanceof GeneratedType implType) {
+            if (implTypeImplement instanceof LegacyArchetype implType) {
                 bb.blk(generateConstructorFromIfc(implType));
             }
         }
@@ -228,7 +223,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc) {
-        if (!(implementedIfc instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
+        if (!(implementedIfc instanceof LegacyArchetype ifc)) {
             return null;
         }
 
@@ -247,7 +242,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
 
     private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc,
             final Set<MethodSignature> alreadySetProperties) {
-        if (!(implementedIfc instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
+        if (!(implementedIfc instanceof LegacyArchetype ifc)) {
             return null;
         }
 
@@ -265,7 +260,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private static Set<MethodSignature> getSpecifiedGetters(final GeneratedType type) {
+    private static Set<MethodSignature> getSpecifiedGetters(final LegacyArchetype type) {
         return type.getMethodDefinitions().stream()
             .filter(JavaFileTemplate::hasOverrideAnnotation)
             .collect(ImmutableSet.toImmutableSet());
@@ -275,7 +270,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      * Generate 'fieldsFrom' method to set builder properties based on type of given argument.
      */
     private @Nullable BlockBuilder generateMethodFieldsFrom() {
-        if (targetType instanceof GeneratedTransferObject || !hasImplementsFromUses(targetType)) {
+        if (!hasImplementsFromUses(targetType)) {
             return null;
         }
 
@@ -324,7 +319,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     @NonNullByDefault
-    private BlockBuilder generateMethodFieldsFromComment(final GeneratedType type) {
+    private BlockBuilder generateMethodFieldsFromComment(final LegacyArchetype type) {
         // FIXME: create a specialized JavadocBuilder to help with this
         final var bb = newBlockBuilder().txt("""
                     /**
@@ -348,13 +343,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Method is used to find out if given type implements any interface from uses.
      */
-    private boolean hasImplementsFromUses(final GeneratedType type) {
+    private boolean hasImplementsFromUses(final LegacyArchetype type) {
         return getAllIfcs(type).stream()
-            .anyMatch(impl -> impl instanceof GeneratedType genType && hasNonDefaultMethods(genType));
+            .anyMatch(impl -> impl instanceof LegacyArchetype genType && hasNonDefaultMethods(genType));
     }
 
     private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
-        return !(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType) ? null : newBlockBuilder()
+        return !(impl instanceof LegacyArchetype implType) || !hasNonDefaultMethods(implType) ? null : newBlockBuilder()
             .str("if (arg instanceof ").str(importedName(implType)).str(" castArg)").oB()
                 .blk(printPropertySetter(implType))
                 .eol("isValidArg = true;")
@@ -362,7 +357,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
-        if (!(implementedIfc instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
+        if (!(implementedIfc instanceof LegacyArchetype ifc)) {
             return null;
         }
 
@@ -417,10 +412,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return !(type2 instanceof ParameterizedType);
     }
 
-    private static List<Type> getBaseIfcs(final GeneratedType type) {
+    private static List<Type> getBaseIfcs(final LegacyArchetype type) {
         final var baseIfcs = new ArrayList<Type>();
         for (var ifc : type.getImplements()) {
-            if (ifc instanceof GeneratedType genType && hasNonDefaultMethods(genType)) {
+            if (ifc instanceof LegacyArchetype genType && hasNonDefaultMethods(genType)) {
                 baseIfcs.add(genType);
             }
         }
@@ -428,13 +423,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private Set<Type> getAllIfcs(final Type type) {
-        if (!(type instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
+        if (!(type instanceof LegacyArchetype ifc)) {
             return Set.of();
         }
 
         final var baseIfcs = new HashSet<Type>();
         for (var impl : ifc.getImplements()) {
-            if (impl instanceof GeneratedType genType && hasNonDefaultMethods(genType)) {
+            if (impl instanceof LegacyArchetype genType && hasNonDefaultMethods(genType)) {
                 baseIfcs.add(genType);
             }
             baseIfcs.addAll(getAllIfcs(impl));
@@ -686,7 +681,8 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private @NonNull BlockBuilder createDescription(final GeneratedType targetType) {
+    @NonNullByDefault
+    private BlockBuilder createDescription(final LegacyArchetype targetType) {
         final var target = importedName(targetType);
         return newBlockBuilder()
             .str("Class that builds {@link ").str(target).eol("} instances. Overall design of the class is that of a")
@@ -737,7 +733,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    String formatDataForJavaDoc(final GeneratedType type) {
+    String formatDataForJavaDoc(final LegacyArchetype type) {
         return createDescription(type).toRawString();
     }
 
