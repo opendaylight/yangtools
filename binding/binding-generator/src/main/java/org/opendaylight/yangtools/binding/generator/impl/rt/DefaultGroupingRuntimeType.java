@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -22,7 +22,7 @@ public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeTy
         implements GroupingRuntimeType {
     private final @Nullable Object directUsers;
 
-    public DefaultGroupingRuntimeType(final GeneratedType bindingType, final GroupingEffectiveStatement statement,
+    public DefaultGroupingRuntimeType(final Archetype bindingType, final GroupingEffectiveStatement statement,
             final List<RuntimeType> children, final List<? extends CompositeRuntimeType> directUsers) {
         super(bindingType, statement, children);
         this.directUsers = switch (directUsers.size()) {
@@ -35,12 +35,10 @@ public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeTy
     @Override
     public List<CompositeRuntimeType> directUsers() {
         final var local = directUsers;
-        if (local == null) {
-            return List.of();
-        } else if (local instanceof CompositeRuntimeType[] array) {
-            return Collections.unmodifiableList(Arrays.asList(array));
-        } else {
-            return List.of((CompositeRuntimeType) local);
-        }
-    }
+        return switch (local) {
+            case null -> List.of();
+            case CompositeRuntimeType[] array -> Collections.unmodifiableList(Arrays.asList(array));
+            default -> List.of((CompositeRuntimeType) local);
+        };
+   }
 }

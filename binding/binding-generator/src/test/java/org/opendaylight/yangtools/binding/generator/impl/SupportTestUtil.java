@@ -13,8 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -25,7 +26,7 @@ final class SupportTestUtil {
         // Hidden on purpose
     }
 
-    static void containsMethods(final GeneratedType genType, final NameTypePattern... searchedSignsWhat) {
+    static void containsMethods(final LegacyArchetype genType, final NameTypePattern... searchedSignsWhat) {
         containsMethods(genType.getMethodDefinitions(), searchedSignsWhat);
     }
 
@@ -74,7 +75,7 @@ final class SupportTestUtil {
         return sb.toString();
     }
 
-    static void containsInterface(final String interfaceNameSearched, final GeneratedType genType) {
+    static void containsInterface(final String interfaceNameSearched, final LegacyArchetype genType) {
         for (var caseCImplement : genType.getImplements()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
                 return;
@@ -83,7 +84,8 @@ final class SupportTestUtil {
         fail("Generated type " + genType.simpleName() + " doesn't implement interface " + interfaceNameSearched);
     }
 
-    static void assertEntryObject(final GeneratedType type, final JavaTypeName expectedKeyType) {
+    @NonNullByDefault
+    static void assertEntryObject(final LegacyArchetype type, final JavaTypeName expectedKeyType) {
         final var key = BindingTypes.extractEntryObjectKey(type);
         assertNotNull(key);
         assertEquals(expectedKeyType, key.name());

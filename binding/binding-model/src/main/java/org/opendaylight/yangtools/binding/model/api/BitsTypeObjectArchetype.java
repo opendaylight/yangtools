@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -75,48 +74,6 @@ public record BitsTypeObjectArchetype(
     @Deprecated(forRemoval = true)
     public boolean isTypedef() {
         return statement instanceof TypedefEffectiveStatement;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedType> getEnclosedTypes() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedProperty> getProperties() {
-        return List.of();
     }
 
     @Override
