@@ -21,7 +21,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -148,7 +149,7 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
-    final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
 
         YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
@@ -210,11 +211,11 @@ abstract class AbstractAugmentGenerator
             final AugmentEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            AugmentRuntimeType build(final GeneratedType type, final AugmentEffectiveStatement statement,
+            AugmentRuntimeType build(final Archetype type, final AugmentEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // 'augment' cannot be targeted by augment
                 verify(augments.isEmpty(), "Unexpected augments %s", augments);
-                return new DefaultAugmentRuntimeType(type, statement, children);
+                return new DefaultAugmentRuntimeType((LegacyArchetype) type, statement, children);
             }
         };
     }

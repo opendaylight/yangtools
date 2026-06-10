@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -17,7 +18,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
@@ -41,7 +43,7 @@ class Mdsal675Test {
         assertNotNull(allGenTypes);
         assertEquals(29, allGenTypes.size());
         final var genTypesMap = allGenTypes.stream()
-            .collect(ImmutableMap.toImmutableMap(GeneratedType::canonicalName, Function.identity()));
+            .collect(ImmutableMap.toImmutableMap(Archetype::canonicalName, Function.identity()));
 
         // ensure generated yang-data classes contain getters for inner structure types
 
@@ -136,7 +138,7 @@ class Mdsal675Test {
                         "/yang-data-models/ietf-restconf.yang", "/yang-data-models/yang-data-naming.yang"));
         assertNotNull(allGenTypes);
         assertEquals(22, allGenTypes.size());
-        final var genTypeNames = allGenTypes.stream().map(GeneratedType::canonicalName)
+        final var genTypeNames = allGenTypes.stream().map(Archetype::canonicalName)
             .collect(Collectors.toSet());
 
         // template name is not compliant to YANG identifier -> char encoding used, name starts with $ char
@@ -170,13 +172,13 @@ class Mdsal675Test {
         assertThat(genTypeNames).contains(PACKAGE2 + "$$2d$$2e$$2f$$23$$.Foo");
     }
 
-    private static GeneratedType assertGenType(final Map<String, GeneratedType> genTypesMap, final String className) {
+    private static LegacyArchetype assertGenType(final Map<String, Archetype> genTypesMap, final String className) {
         final var ret = genTypesMap.get(className);
         assertNotNull(ret, "no type generated: " + className);
-        return ret;
+        return assertInstanceOf(LegacyArchetype.class, ret);
     }
 
-    private static void assertYangDataGenType(final GeneratedType yangDataType, final Type contentType,
+    private static void assertYangDataGenType(final LegacyArchetype yangDataType, final Type contentType,
             final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
@@ -185,7 +187,7 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertYangDataGenType(final GeneratedType yangDataType, final GeneratedType groupType,
+    private static void assertYangDataGenType(final LegacyArchetype yangDataType, final LegacyArchetype groupType,
             final Type contentType, final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         assertImplements(yangDataType, groupType);
@@ -195,13 +197,13 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertHasMethod(final GeneratedType genType, final String methodName,
+    private static void assertHasMethod(final LegacyArchetype genType, final String methodName,
             final Type returnType) {
         assertThat(genType.getMethodDefinitions())
             .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
     }
 
-    private static void assertImplements(final GeneratedType genType, final Type implementedType) {
+    private static void assertImplements(final LegacyArchetype genType, final Type implementedType) {
         assertThat(genType.getImplements()).contains(implementedType);
     }
 }

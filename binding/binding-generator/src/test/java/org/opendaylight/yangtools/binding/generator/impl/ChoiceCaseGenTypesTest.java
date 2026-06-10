@@ -14,8 +14,9 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class ChoiceCaseGenTypesTest {
@@ -28,81 +29,81 @@ class ChoiceCaseGenTypesTest {
         assertEquals(41, genTypes.size());
 
         // test for file choice-monitoring
-        var pcgPref = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.choice.monitoring.rev130701."
+        final var locks = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.choice.monitoring.rev130701."
                 + "netconf.state.datastores.datastore.locks";
-        GeneratedType genType = null;
+        LegacyArchetype genType = null;
 
         // choice
-        checkGeneratedType(genTypes, "LockType", pcgPref);
+        assertChoice(genTypes, "LockType", locks);
 
         // case
-        genType = checkGeneratedType(genTypes, "GlobalLock", pcgPref + ".lock.type");
+        genType = checkGeneratedType(genTypes, "GlobalLock", locks + ".lock.type");
         SupportTestUtil.containsMethods(genType, new NameTypePattern("getGlobalLock", "GlobalLock"));
         containsInterface("LockType", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "PartialLock", pcgPref + ".lock.type");
+        genType = checkGeneratedType(genTypes, "PartialLock", locks + ".lock.type");
         containsMethods(genType, new NameTypePattern("getPartialLock", "Map<PartialLockKey,PartialLock>"));
         containsInterface("LockType", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Fingerprint", pcgPref + ".lock.type");
+        genType = checkGeneratedType(genTypes, "Fingerprint", locks + ".lock.type");
         containsMethods(genType, new NameTypePattern("getAlgorithmAndHash", "AlgorithmAndHash"));
         containsInterface("LockType", genType);
 
         // choice
-        genType = checkGeneratedType(genTypes, "AlgorithmAndHash", pcgPref + ".lock.type.fingerprint");
+        assertChoice(genTypes, "AlgorithmAndHash", locks + ".lock.type.fingerprint");
 
         // case
-        genType = checkGeneratedType(genTypes, "Md5", pcgPref + ".lock.type.fingerprint.algorithm.and.hash");
+        genType = checkGeneratedType(genTypes, "Md5", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(genType, new NameTypePattern("getMd5", "TlsFingerprintType"));
         containsInterface("AlgorithmAndHash", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Sha1", pcgPref + ".lock.type.fingerprint.algorithm.and.hash");
+        genType = checkGeneratedType(genTypes, "Sha1", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(genType, new NameTypePattern("getSha1", "TlsFingerprintType"));
         containsInterface("AlgorithmAndHash", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Sha224", pcgPref + ".lock.type.fingerprint.algorithm.and.hash");
+        genType = checkGeneratedType(genTypes, "Sha224", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(genType, new NameTypePattern("getSha224", "TlsFingerprintType"));
         containsInterface("AlgorithmAndHash", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Sha256", pcgPref + ".lock.type.fingerprint.algorithm.and.hash");
+        genType = checkGeneratedType(genTypes, "Sha256", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(genType, new NameTypePattern("getSha256", "TlsFingerprintType"));
         containsInterface("AlgorithmAndHash", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Sha384", pcgPref + ".lock.type.fingerprint.algorithm.and.hash");
+        genType = checkGeneratedType(genTypes, "Sha384", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(genType, new NameTypePattern("getSha384", "TlsFingerprintType"));
         containsInterface("AlgorithmAndHash", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Sha512", pcgPref + ".lock.type.fingerprint.algorithm.and.hash");
+        genType = checkGeneratedType(genTypes, "Sha512", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(genType, new NameTypePattern("getSha512", "TlsFingerprintType"));
         containsInterface("AlgorithmAndHash", genType);
 
         // test for file augment-monitoring
         // augment
         // "/nm:netconf-state/nm:datastores/nm:datastore/nm:locks/nm:lock-type"
-        pcgPref = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.augment.monitoring.rev130701";
+        final var augment = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.augment.monitoring.rev130701";
 
         // choice
-        genType = checkGeneratedType(genTypes, "AutonomousLock", pcgPref
+        genType = checkGeneratedType(genTypes, "AutonomousLock", augment
                 + ".netconf.state.datastores.datastore.locks.lock.type");
         containsMethods(genType, new NameTypePattern("getAutonomousDef", "AutonomousDef"));
         containsInterface("LockType", genType);
 
         // choice
-        genType = checkGeneratedType(genTypes, "AnonymousLock", pcgPref
+        genType = checkGeneratedType(genTypes, "AnonymousLock", augment
                 + ".netconf.state.datastores.datastore.locks.lock.type");
         containsMethods(genType, new NameTypePattern("getLockTime", "Uint32"));
         containsInterface("LockType", genType);
 
         // choice
-        genType = checkGeneratedType(genTypes, "LeafAugCase", pcgPref
-                + ".netconf.state.datastores.datastore.locks.lock.type");
+        genType = checkGeneratedType(genTypes, "LeafAugCase",
+            augment + ".netconf.state.datastores.datastore.locks.lock.type");
         containsMethods(genType, new NameTypePattern("getLeafAugCase", "String"));
         containsInterface("LockType", genType);
 
@@ -110,59 +111,72 @@ class ChoiceCaseGenTypesTest {
         // "/nm:netconf-state/nm:datastores/nm:datastore/nm:locks/nm:lock-type/nm:partial-lock"
         // {
         // case
-        genType = checkGeneratedType(genTypes, "PartialLock1", pcgPref);
+        genType = checkGeneratedType(genTypes, "PartialLock1", augment);
         containsMethods(genType, new NameTypePattern("getAugCaseByChoice", "AugCaseByChoice"));
         containsInterface("Augmentation<PartialLock>", genType);
 
         // choice
-        genType = checkGeneratedType(genTypes, "AugCaseByChoice", pcgPref
-                + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock");
+        assertChoice(genTypes, "AugCaseByChoice",
+            augment + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock");
 
         // case
-        genType = checkGeneratedType(genTypes, "Foo", pcgPref
-                + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock.aug._case.by.choice");
+        genType = checkGeneratedType(genTypes, "Foo",
+            augment + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock.aug._case.by.choice");
         containsMethods(genType, new NameTypePattern("getFoo", "String"));
         containsInterface("AugCaseByChoice", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Bar", pcgPref
-                + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock.aug._case.by.choice");
+        genType = checkGeneratedType(genTypes, "Bar",
+            augment + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock.aug._case.by.choice");
         containsMethods(genType, new NameTypePattern("getBar", "Boolean"));
         containsInterface("AugCaseByChoice", genType);
 
         // augment "/nm:netconf-state/nm:datastores/nm:datastore" {
-        genType = checkGeneratedType(genTypes, "Datastore1", pcgPref);
+        genType = checkGeneratedType(genTypes, "Datastore1", augment);
         containsMethods(genType, new NameTypePattern("getStorageFormat", "StorageFormat"));
         containsInterface("Augmentation<Datastore>", genType);
 
         // choice
-        genType = checkGeneratedType(genTypes, "StorageFormat", pcgPref + ".netconf.state.datastores.datastore");
+        assertChoice(genTypes, "StorageFormat", augment + ".netconf.state.datastores.datastore");
 
         // case
-        genType = checkGeneratedType(genTypes, "UnknownFiles", pcgPref
-                + ".netconf.state.datastores.datastore.storage.format");
+        genType = checkGeneratedType(genTypes, "UnknownFiles",
+            augment + ".netconf.state.datastores.datastore.storage.format");
         containsMethods(genType, new NameTypePattern("getFiles", "Map<FilesKey,Files>"));
         containsInterface("StorageFormat", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Xml", pcgPref + ".netconf.state.datastores.datastore.storage.format");
+        genType = checkGeneratedType(genTypes,
+            "Xml", augment + ".netconf.state.datastores.datastore.storage.format");
         containsMethods(genType, new NameTypePattern("getXmlDef", "XmlDef"));
         containsInterface("StorageFormat", genType);
 
         // case
-        genType = checkGeneratedType(genTypes, "Yang", pcgPref + ".netconf.state.datastores.datastore.storage.format");
+        genType = checkGeneratedType(genTypes,
+            "Yang", augment + ".netconf.state.datastores.datastore.storage.format");
         containsMethods(genType, new NameTypePattern("getYangFileName", "String"));
         containsInterface("StorageFormat", genType);
     }
 
-    private static GeneratedType checkGeneratedType(final List<GeneratedType> genTypes, final String genTypeName,
+    private static final void assertChoice(final List<Archetype> genTypes, final String simpleName,
+            final String packageName) {
+        final var choices = genTypes.stream()
+            .filter(ChoiceInArchetype.class::isInstance)
+            .map(ChoiceInArchetype.class::cast)
+            .filter(archetype -> simpleName.equals(archetype.simpleName())
+                && packageName.equals(archetype.packageName()))
+            .toList();
+        assertEquals(1, choices.size());
+    }
+
+    private static LegacyArchetype checkGeneratedType(final List<Archetype> genTypes, final String genTypeName,
             final String packageName, final int occurences) {
-        GeneratedType searchedGenType = null;
+        LegacyArchetype searchedGenType = null;
         int searchedGenTypeCounter = 0;
         for (var genType : genTypes) {
-            if (!(genType instanceof GeneratedTransferObject)) {
-                if (genType.simpleName().equals(genTypeName) && genType.packageName().equals(packageName)) {
-                    searchedGenType = genType;
+            if (genType instanceof LegacyArchetype archetype) {
+                if (archetype.simpleName().equals(genTypeName) && archetype.packageName().equals(packageName)) {
+                    searchedGenType = archetype;
                     searchedGenTypeCounter++;
                 }
             }
@@ -174,7 +188,7 @@ class ChoiceCaseGenTypesTest {
 
     }
 
-    private static GeneratedType checkGeneratedType(final List<GeneratedType> genTypes, final String genTypeName,
+    private static LegacyArchetype checkGeneratedType(final List<Archetype> genTypes, final String genTypeName,
         final String packageName) {
         return checkGeneratedType(genTypes, genTypeName, packageName, 1);
     }

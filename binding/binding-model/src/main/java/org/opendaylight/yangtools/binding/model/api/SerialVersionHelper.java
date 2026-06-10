@@ -178,8 +178,8 @@ public final class SerialVersionHelper {
     }
 
     @Deprecated(since = "16.0.0", forRemoval = true)
-    public static long computeSerialVersion(final GeneratedType to) {
-        final var svb = new SerialVersionHelper(to.name()).setAbstract(to.isAbstract());
+    public static long computeSerialVersion(final LegacyArchetype to) {
+        final var svb = new SerialVersionHelper(to.name()).setAbstract(true);
 
         for (var iface : Collections2.filter(to.getImplements(), item -> !UNION_TYPE_OBJECT.equals(item))) {
             svb.addInterface(iface.name());

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal332Test {
@@ -24,7 +24,7 @@ class Mdsal332Test {
         assertNotNull(generateTypes);
         assertEquals(5, generateTypes.size());
 
-        final var names = generateTypes.stream().map(GeneratedType::name).toList();
+        final var names = generateTypes.stream().map(Archetype::name).toList();
         final var uniqueNames = ImmutableSet.copyOf(names);
         assertEquals(List.copyOf(uniqueNames), names);
     }
