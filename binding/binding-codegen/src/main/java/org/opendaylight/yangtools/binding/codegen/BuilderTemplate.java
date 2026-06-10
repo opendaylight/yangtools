@@ -35,8 +35,8 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -48,7 +48,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
  */
 final class BuilderTemplate extends AbstractBuilderTemplate {
     @NonNullByDefault
-    record Builder(GeneratedType type) implements Template.Builder {
+    record Builder(LegacyArchetype type) implements Template.Builder {
         Builder {
             requireNonNull(type);
         }
@@ -77,7 +77,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private final BuilderImplTemplate implTemplate;
 
     @NonNullByDefault
-    private BuilderTemplate(final GeneratedType builderType, final GeneratedType targetType) {
+    private BuilderTemplate(final LegacyArchetype builderType, final LegacyArchetype targetType) {
         super(builderType, targetType, BindingTypes.extractEntryObjectKey(targetType));
         implTemplate = new BuilderImplTemplate(this, type().getEnclosedTypes().getFirst());
     }
@@ -182,14 +182,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @Nullable BlockBuilder generateConstructorsFromIfcs() {
-        if (targetType instanceof GeneratedTransferObject) {
-            return null;
-        }
-
         final var bb = newBlockBuilder().nl();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
-            if (impl instanceof GeneratedType genType) {
+            if (impl instanceof LegacyArchetype genType) {
                 if (first) {
                     first = false;
                 } else {
@@ -204,7 +200,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private @NonNull BlockBuilder generateConstructorFromIfc(final GeneratedType genType) {
+    private @NonNull BlockBuilder generateConstructorFromIfc(final LegacyArchetype genType) {
         final var bb = newBlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
@@ -220,7 +216,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 .newLine();
         }
         for (var implTypeImplement : genType.getImplements()) {
-            if (implTypeImplement instanceof GeneratedType implType) {
+            if (implTypeImplement instanceof LegacyArchetype implType) {
                 bb.blk(generateConstructorFromIfc(implType));
             }
         }
@@ -275,7 +271,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      * Generate 'fieldsFrom' method to set builder properties based on type of given argument.
      */
     private @Nullable BlockBuilder generateMethodFieldsFrom() {
-        if (targetType instanceof GeneratedTransferObject || !hasImplementsFromUses(targetType)) {
+        if (!hasImplementsFromUses(targetType)) {
             return null;
         }
 
@@ -348,13 +344,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     /**
      * Method is used to find out if given type implements any interface from uses.
      */
-    private boolean hasImplementsFromUses(final GeneratedType type) {
+    private boolean hasImplementsFromUses(final LegacyArchetype type) {
         return getAllIfcs(type).stream()
-            .anyMatch(impl -> impl instanceof GeneratedType genType && hasNonDefaultMethods(genType));
+            .anyMatch(impl -> impl instanceof LegacyArchetype genType && hasNonDefaultMethods(genType));
     }
 
     private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
-        return !(impl instanceof GeneratedType implType) || !hasNonDefaultMethods(implType) ? null : newBlockBuilder()
+        return !(impl instanceof LegacyArchetype implType) || !hasNonDefaultMethods(implType) ? null : newBlockBuilder()
             .str("if (arg instanceof ").str(importedName(implType)).str(" castArg)").oB()
                 .blk(printPropertySetter(implType))
                 .eol("isValidArg = true;")
@@ -362,7 +358,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
-        if (!(implementedIfc instanceof GeneratedType ifc) || ifc instanceof GeneratedTransferObject) {
+        if (!(implementedIfc instanceof LegacyArchetype ifc)) {
             return null;
         }
 

@@ -28,11 +28,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -66,10 +64,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      * List of enumeration which are generated as JAVA enum type.
      */
     private final @NonNull List<EnumTypeObjectArchetype> enums;
-    /**
-     * List of constant instances which are generated as JAVA public static final attributes.
-     */
-    private final @NonNull List<Constant> consts;
     private final AbstractRangeGenerator<?> rangeGenerator;
 
     @NonNullByDefault
@@ -91,7 +85,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .filter(EnumTypeObjectArchetype.class::isInstance)
             .map(EnumTypeObjectArchetype.class::cast)
             .toList();
-        consts = archetype.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
             ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
     }
@@ -106,13 +99,13 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     @VisibleForTesting
-    static List<GeneratedProperty> propertiesOfAllParents(final GeneratedTransferObject<?> gto) {
+    static List<GeneratedProperty> propertiesOfAllParents(final UnionTypeObjectArchetype gto) {
         final var superType = gto.getSuperType();
         return superType == null ? List.of() : streamAllProperties(superType).collect(Collectors.toUnmodifiableList());
     }
 
     @NonNullByDefault
-    private static Stream<GeneratedProperty> streamAllProperties(final GeneratedTransferObject<?> gto) {
+    private static Stream<GeneratedProperty> streamAllProperties(final UnionTypeObjectArchetype gto) {
         final var stream = gto.getProperties().stream().filter(GeneratedProperty::isReadOnly);
         final var superType = gto.getSuperType();
         return superType == null ? stream : Stream.concat(stream, streamAllProperties(superType));
