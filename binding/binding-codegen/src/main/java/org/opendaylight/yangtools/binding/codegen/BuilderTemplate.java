@@ -35,8 +35,8 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -48,7 +48,7 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Codege
  */
 final class BuilderTemplate extends AbstractBuilderTemplate {
     @NonNullByDefault
-    record Builder(GeneratedType type) implements Template.Builder {
+    record Builder(LegacyArchetype type) implements Template.Builder {
         Builder {
             requireNonNull(type);
         }
@@ -77,7 +77,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private final BuilderImplTemplate implTemplate;
 
     @NonNullByDefault
-    private BuilderTemplate(final GeneratedType builderType, final GeneratedType targetType) {
+    private BuilderTemplate(final LegacyArchetype builderType, final LegacyArchetype targetType) {
         super(builderType, targetType, BindingTypes.extractEntryObjectKey(targetType));
         implTemplate = new BuilderImplTemplate(this, type().getEnclosedTypes().getFirst());
     }

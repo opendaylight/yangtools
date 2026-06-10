@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
 
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -50,10 +49,10 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
-    final GeneratedType targetType;
+    final LegacyArchetype targetType;
 
-    AbstractBuilderTemplate(final @NonNull GeneratedClass javaType, final @NonNull GeneratedType type,
-            final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties,
+    AbstractBuilderTemplate(final @NonNull GeneratedClass javaType, final @NonNull LegacyArchetype type,
+            final LegacyArchetype targetType, final Set<BuilderGeneratedProperty> properties,
             final ParameterizedType augmentType, final KeyArchetype keyType) {
         super(javaType, type);
         this.targetType = targetType;
@@ -206,12 +205,12 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
     }
 
     @NonNullByDefault
-    static final boolean hasNonDefaultMethods(final GeneratedType type) {
+    static final boolean hasNonDefaultMethods(final LegacyArchetype type) {
         return type.getMethodDefinitions().stream().anyMatch(def -> !def.isDefault());
     }
 
     @NonNullByDefault
-    static final Collection<MethodSignature> nonDefaultMethods(final GeneratedType type) {
+    static final Collection<MethodSignature> nonDefaultMethods(final LegacyArchetype type) {
         return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
     }
 
@@ -224,11 +223,11 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      */
     // FIXME: YANGTOOLS-1876: remove this method
     @NonNullByDefault
-    static final boolean isNonPresenceContainer(final GeneratedType type) {
-        if (type instanceof Archetype) {
+    static final boolean isNonPresenceContainer(final Archetype type) {
+        if (!(type instanceof LegacyArchetype archetype)) {
             return false;
         }
-        final var sourceDef = type.yangSourceDefinition();
+        final var sourceDef = archetype.yangSourceDefinition();
         return sourceDef != null && sourceDef.getNode() instanceof ContainerSchemaNode container
             && !container.isPresenceContainer();
     }
