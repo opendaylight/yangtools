@@ -30,8 +30,9 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.IdentityGenerat
 import org.opendaylight.yangtools.binding.generator.impl.reactor.ModuleGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeBuilderFactory;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultBindingRuntimeTypes;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
@@ -59,9 +60,9 @@ final class BindingRuntimeTypesFactory implements Mutable {
     // All known 'choice's to their corresponding cases
     private final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases = HashMultimap.create();
     // All case to cases mapping, values are the cases that can substitute case that is the key
-    private final Multimap<GeneratedType, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
+    private final Multimap<LegacyArchetype, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
     // All augment to augments mapping where values are augments that can substitute augment that is the key
-    private final Multimap<GeneratedType, AugmentRuntimeType> augmentToSubstitutionAugments = HashMultimap.create();
+    private final Multimap<LegacyArchetype, AugmentRuntimeType> augmentToSubstitutionAugments = HashMultimap.create();
 
     private BindingRuntimeTypesFactory() {
         // Hidden on purpose
@@ -95,8 +96,8 @@ final class BindingRuntimeTypesFactory implements Mutable {
             }
         }
 
-        final Map<CaseRuntimeType, List<EffectiveStatement<?, ?>>> caseToChildren = new HashMap<>();
-        final Map<AugmentRuntimeType, List<EffectiveStatement<?, ?>>> augmentToChildren = new HashMap<>();
+        final var caseToChildren = new HashMap<CaseRuntimeType, List<EffectiveStatement<?, ?>>>();
+        final var augmentToChildren = new HashMap<AugmentRuntimeType, List<EffectiveStatement<?, ?>>>();
         indexRuntimeTypes(moduleGens.values(), caseToChildren, augmentToChildren);
 
         collectSubstsForCase(caseToChildren);
@@ -112,7 +113,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                 final var type = explicit.generatedRuntimeType();
                 // calling iterator() returns, in case of an AbstractCompositeGenerator, its childGenerators
                 final var childGenIt = gen.iterator();
-                if (type != null && type.javaType() instanceof GeneratedType genType) {
+                if (type != null && type.javaType() instanceof Archetype genType) {
                     final var name = genType.name();
                     final var prev = allTypes.put(name, type);
                     verify(prev == null || prev == type, "Conflict on runtime type mapping of %s between %s and %s",
@@ -122,8 +123,10 @@ final class BindingRuntimeTypesFactory implements Mutable {
                     // and make assumptions about its shape -- which works just fine without touching
                     // the ChoiceRuntimeType for cases.
                     if (type instanceof CaseRuntimeType caseType) {
+                        final var archetype = caseType.javaType();
+
                         caseToChildren.put(caseType, generatorsToStatements(childGenIt));
-                        final var ifaces = genType.getImplements();
+                        final var ifaces = archetype.getImplements();
                         // The appropriate choice and DataObject at the very least. The choice interface is the first
                         // one mentioned.
                         verify(ifaces.size() >= 2, "Unexpected implemented interfaces %s", ifaces);
@@ -160,13 +163,13 @@ final class BindingRuntimeTypesFactory implements Mutable {
      * @param caseToChildrenStmts map of case to its corresponding children
      */
     private void collectSubstsForCase(final Map<CaseRuntimeType, List<EffectiveStatement<?, ?>>> caseToChildrenStmts) {
-        final var localToSubstitutions = HashMultimap.<GeneratedType, CaseRuntimeType>create();
+        final var localToSubstitutions = HashMultimap.<LegacyArchetype, CaseRuntimeType>create();
         for (final var entry : choiceToCases.entries()) {
             final var choice = entry.getKey();
             // CaseRuntimeTypes associated with this choice
             final var caseTypes = choiceToCases.get(choice);
 
-            for (final var caseType : caseTypes) {
+            for (var caseType : caseTypes) {
                 addSubstitutionalCases(localToSubstitutions, caseType, caseTypes, caseToChildrenStmts);
             }
         }
@@ -176,7 +179,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
     /**
      * Update substitutions. Put to map:
      * <ul>
-     *  <li>key - {@link GeneratedType} - the {@link CaseRuntimeType#javaType} we want to substitute</li>
+     *  <li>key - {@link LegacyArchetype} - the {@link CaseRuntimeType#javaType} we want to substitute</li>
      *  <li>value - {@link CaseRuntimeType} - the type that can be used as a substitution</li>
      * </ul>
      *
@@ -195,22 +198,25 @@ final class BindingRuntimeTypesFactory implements Mutable {
      * @param local                current {@link CaseRuntimeType} for which substitutions we are looking for
      * @param candidates           available cases from one particular choice
      */
-    private static void addSubstitutionalCases(final Multimap<GeneratedType, CaseRuntimeType> localToSubstitutions,
+    private static void addSubstitutionalCases(final Multimap<LegacyArchetype, CaseRuntimeType> localToSubstitutions,
             final CaseRuntimeType local, final Collection<CaseRuntimeType> candidates,
             final Map<CaseRuntimeType, List<EffectiveStatement<?, ?>>> caseToChildrenStmts) {
-        for (final var candidate : candidates) {
+        final var localType = local.javaType();
+
+        for (var candidate : candidates) {
             if (candidate.equals(local)) {
                 continue;
             }
+
             boolean substitutional;
             // check if both have same interfaces
-            substitutional = candidate.javaType().getImplements().equals(local.javaType().getImplements());
+            substitutional = candidate.javaType().getImplements().equals(localType.getImplements());
             // check if both have same children
             substitutional &= caseToChildrenStmts.get(candidate).equals(caseToChildrenStmts.get(local));
 
             // no need to check if they are from same choice
             if (substitutional) {
-                localToSubstitutions.put(local.javaType(), candidate);
+                localToSubstitutions.put(localType, candidate);
             }
         }
     }
@@ -231,11 +237,13 @@ final class BindingRuntimeTypesFactory implements Mutable {
     private void collectSubstsForAugment(
             final Map<AugmentRuntimeType, List<EffectiveStatement<?, ?>>> augToChildrenStmts) {
         // let's use allStmts for now
-        for (final var runtimeType : allTypes.values()) {
+        for (var runtimeType : allTypes.values()) {
             // skip types that are not interesting
             if (!(runtimeType instanceof AugmentRuntimeType augmentType)) {
                 continue;
             }
+            final var archetype = augmentType.javaType();
+
             for (final var entryAugToChildren : augToChildrenStmts.entrySet()) {
                 // do not compare the same instance to itself
                 if (augmentType.equals(entryAugToChildren.getKey())) {
@@ -246,7 +254,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                 final var substitIfaces = substitution.javaType().getImplements();
 
                 final var runtimeTypeChildren = augToChildrenStmts.get(runtimeType);
-                final var runtimeTypeIfaces = augmentType.javaType().getImplements();
+                final var runtimeTypeIfaces = archetype.getImplements();
 
                 boolean substitutional;
                 // check if both have same interfaces
@@ -258,7 +266,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
 
                 // if the 'augmentType' can be substituted for 'substitution', add it to the map
                 if (substitutional) {
-                    augmentToSubstitutionAugments.put(augmentType.javaType(), substitution);
+                    augmentToSubstitutionAugments.put(archetype, substitution);
                 }
             }
         }

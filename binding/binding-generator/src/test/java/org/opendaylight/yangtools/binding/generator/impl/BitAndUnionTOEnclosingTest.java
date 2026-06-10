@@ -16,26 +16,27 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BitAndUnionTOEnclosingTest {
-    private static List<GeneratedType> genTypes = null;
-    private static GeneratedType parentContainer = null;
+    private static List<Archetype> genTypes = null;
+    private static LegacyArchetype parentContainer = null;
 
     @BeforeAll
     static void loadTestResources() {
         genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/bit_and_union.yang"));
 
         for (var genType : genTypes) {
-            if (genType.simpleName().equals("ParentContainer") && !(genType instanceof GeneratedTransferObject)) {
-                parentContainer = genType;
+            if (genType.simpleName().equals("ParentContainer") && genType instanceof LegacyArchetype archetype) {
+                parentContainer = archetype;
             }
         }
     }

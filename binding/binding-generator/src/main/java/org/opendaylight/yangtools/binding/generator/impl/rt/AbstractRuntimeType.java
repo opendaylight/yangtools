@@ -25,7 +25,7 @@ abstract class AbstractRuntimeType<S extends EffectiveStatement<?, ?>, T extends
     }
 
     @Override
-    public final T javaType() {
+    public T javaType() {
         return javaType;
     }
 
