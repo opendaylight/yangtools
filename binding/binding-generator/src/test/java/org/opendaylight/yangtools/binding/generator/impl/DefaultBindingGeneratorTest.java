@@ -20,11 +20,12 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -55,7 +56,7 @@ public class DefaultBindingGeneratorTest {
         JavaTypeName.create(TEST_TYPE_PROVIDER, "Foo");
 
     public static EffectiveModelContext SCHEMA_CONTEXT;
-    public static List<GeneratedType> TYPES;
+    public static List<Archetype> TYPES;
 
     @BeforeAll
     static void beforeAll() {
@@ -300,7 +301,8 @@ public class DefaultBindingGeneratorTest {
     }
 
     private static MethodSignature assertGeneratedMethod(final JavaTypeName typeName, final String methodName) {
-        return assertGeneratedMethod(assertGeneratedType(typeName).getMethodDefinitions(), methodName);
+        return assertGeneratedMethod(
+            assertInstanceOf(LegacyArchetype.class, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
     }
 
     private static MethodSignature assertGeneratedMethod(final List<MethodSignature> methods, final String name) {
@@ -309,7 +311,7 @@ public class DefaultBindingGeneratorTest {
             .orElseThrow(() -> new AssertionError("Method " + name + " not present"));
     }
 
-    private static GeneratedType assertGeneratedType(final JavaTypeName name) {
+    private static Archetype assertGeneratedType(final JavaTypeName name) {
         return TYPES.stream()
             .filter(type -> name.equals(type.name()))
             .findFirst()

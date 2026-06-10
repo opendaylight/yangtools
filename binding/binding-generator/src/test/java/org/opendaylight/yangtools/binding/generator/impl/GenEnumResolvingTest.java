@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GenEnumResolvingTest {
@@ -26,10 +26,10 @@ class GenEnumResolvingTest {
 
         assertEquals(9, genTypes.size());
 
-        GeneratedType genInterface = null;
+        LegacyArchetype genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface")) {
-                genInterface = type;
+                genInterface = assertInstanceOf(LegacyArchetype.class, type);
             }
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
@@ -93,11 +93,11 @@ class GenEnumResolvingTest {
         assertNotNull(genTypes);
         assertEquals(27, genTypes.size());
 
-        GeneratedType genInterface = null;
+        LegacyArchetype genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface") && type.packageName().equals(
                 "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces")) {
-                genInterface = type;
+                genInterface = assertInstanceOf(LegacyArchetype.class, type);
             }
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
@@ -136,7 +136,7 @@ class GenEnumResolvingTest {
         assertEquals(4, genTypes.size());
 
         // ------------------- container test-enums -----------------------
-        final var testEnums = genTypes.get(1).getEnumerations();
+        final var testEnums = assertInstanceOf(LegacyArchetype.class, genTypes.get(1)).getEnumerations();
         assertEquals(4, testEnums.size());
         final var dollarContaining = testEnums.getFirst().valueToConstant();
         assertEquals(5, dollarContaining.size());
@@ -164,7 +164,7 @@ class GenEnumResolvingTest {
         assertEquals("$a$2A$a", icIt.next());
 
         // ------------------- container okay-identifier -----------------------
-        final var okayIdentifier = genTypes.get(2).getEnumerations();
+        final var okayIdentifier = assertInstanceOf(LegacyArchetype.class, genTypes.get(2)).getEnumerations();
         assertEquals(2, okayIdentifier.size());
         final var underscores = okayIdentifier.getFirst().valueToConstant();
         assertEquals(1, underscores.size());
@@ -176,7 +176,7 @@ class GenEnumResolvingTest {
         assertEquals("ĽaľahoPapľuhu", wcccIt.next());
 
         // ------------------- container conflicting-names -----------------------
-        final var conflictingNames = genTypes.get(3).getEnumerations();
+        final var conflictingNames = assertInstanceOf(LegacyArchetype.class, genTypes.get(3)).getEnumerations();
         assertEquals(4, conflictingNames.size());
         final var conflict1 = conflictingNames.get(0).valueToConstant();
         assertEquals(3, conflict1.size());

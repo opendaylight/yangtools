@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-abstract class AbstractGeneratedRuntimeType<S extends EffectiveStatement<?, ?>>
-        extends StmtRuntimeType<S, GeneratedType> {
+abstract class AbstractGeneratedRuntimeType<S extends EffectiveStatement<?, ?>> extends StmtRuntimeType<S, Archetype> {
     @NonNullByDefault
-    AbstractGeneratedRuntimeType(final GeneratedType bindingType, final S statement) {
+    AbstractGeneratedRuntimeType(final Archetype bindingType, final S statement) {
         super(bindingType, statement);
     }
 }

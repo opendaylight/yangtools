@@ -26,8 +26,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -139,10 +139,10 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
 
     private final @NonNull GeneratedClass javaType;
     // FIXME: do not store here
-    private final @NonNull GeneratedType type;
+    private final @NonNull Archetype type;
 
     @NonNullByDefault
-    JavaFileTemplate(final GeneratedClass javaType, final GeneratedType type) {
+    JavaFileTemplate(final GeneratedClass javaType, final Archetype type) {
         this.javaType = requireNonNull(javaType);
         this.type = requireNonNull(type);
     }
@@ -162,7 +162,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     /**
      * {@return the type this generator is bound to}
      */
-    final @NonNull GeneratedType type() {
+    final @NonNull Archetype type() {
         return type;
     }
 
@@ -255,14 +255,13 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
      * @return non-{@link Restrictions#isEmpty()} {@link Restrictions} or {@code null}
      */
     static final @Nullable Restrictions restrictionsForSetter(final Type actualType) {
-        return switch (actualType) {
-            case GeneratedType genType -> null;
-            case RestrictedType restricted -> {
-                final var restrictions = restricted.restrictions();
-                yield restrictions.isEmpty() ? null : restrictions;
+        if (actualType instanceof RestrictedType restricted) {
+            final var restrictions = restricted.restrictions();
+            if (!restrictions.isEmpty()) {
+                return restrictions;
             }
-            case null, default -> null;
-        };
+        }
+        return null;
     }
 
     /**

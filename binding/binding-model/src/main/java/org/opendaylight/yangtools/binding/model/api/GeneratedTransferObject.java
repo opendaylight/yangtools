@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.TypeObject;
@@ -52,15 +51,5 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
 
     default Restrictions getRestrictions() {
         throw new UnsupportedOperationException("Not available at runtime");
-    }
-
-    default Optional<? extends GeneratedProperty> findProperty(final String name) {
-        final var optProp = getProperties().stream().filter(prop -> name.equals(prop.getName())).findFirst();
-        if (optProp.isPresent()) {
-            return optProp;
-        }
-
-        final var parent = getSuperType();
-        return parent != null ? parent.findProperty(name) : Optional.empty();
     }
 }
