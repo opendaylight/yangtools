@@ -33,7 +33,7 @@ public record UnionTypeObjectArchetype(
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         List<String> typePropertyNames,
         List<Type> typePropertyTypes,
-        List<GeneratedType> getEnclosedTypes,
+        List<Archetype> getEnclosedTypes,
         Restrictions getRestrictions,
         @Nullable UnionTypeObjectArchetype getSuperType)
         implements GeneratedTransferObject<UnionTypeObject>,
@@ -70,46 +70,15 @@ public record UnionTypeObjectArchetype(
     }
 
     @Override
-    public List<GeneratedType> getEnclosedTypes() {
+    public List<Archetype> getEnclosedTypes() {
         return getEnclosedTypes;
     }
 
     // FIXME: remove this method
-    @Override
     public List<GeneratedProperty> getProperties() {
         return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),
             (pn, pt) -> new GeneratedPropertyBuilderImpl(pn).setReadOnly(true).setReturnType(pt).toInstance())
             .toList();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<MethodSignature> getMethodDefinitions() {
-        return List.of();
     }
 
     @Override

@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;

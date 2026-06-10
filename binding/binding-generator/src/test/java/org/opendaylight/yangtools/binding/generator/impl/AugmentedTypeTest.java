@@ -15,9 +15,9 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -36,10 +36,10 @@ class AugmentedTypeTest {
         assertEquals(31, genTypes.size());
 
         KeyArchetype gtInterfaceKey = null;
-        GeneratedType gtInterface = null;
-        GeneratedType gtTunnel = null;
+        LegacyArchetype gtInterface = null;
+        LegacyArchetype gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
-        GeneratedType gtNetworkLink2 = null;
+        LegacyArchetype gtNetworkLink2 = null;
 
         for (var type : genTypes) {
             if (!type.packageName().contains("augment._abstract.topology")) {
@@ -49,13 +49,13 @@ class AugmentedTypeTest {
             if (type.simpleName().equals("InterfaceKey")) {
                 gtInterfaceKey = assertInstanceOf(KeyArchetype.class, type);
             } else if (type.simpleName().equals("Interface")) {
-                gtInterface = type;
+                gtInterface = assertInstanceOf(LegacyArchetype.class, type);
             } else if (type.simpleName().equals("Tunnel")) {
-                gtTunnel = type;
+                gtTunnel = assertInstanceOf(LegacyArchetype.class, type);
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
             } else if (type.simpleName().equals("NetworkLink2")) {
-                gtNetworkLink2 = type;
+                gtNetworkLink2 = assertInstanceOf(LegacyArchetype.class, type);
             }
         }
 

@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 public final class DefaultNotificationBodyRuntimeType
         extends AbstractCompositeRuntimeType<NotificationEffectiveStatement> implements NotificationBodyRuntimeType {
-    public DefaultNotificationBodyRuntimeType(final GeneratedType bindingType,
+    public DefaultNotificationBodyRuntimeType(final Archetype bindingType,
             final NotificationEffectiveStatement statement, final List<RuntimeType> children) {
         super(bindingType, statement, children);
     }
