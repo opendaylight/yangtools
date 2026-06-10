@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GenEnumResolvingTest {
@@ -26,17 +26,17 @@ class GenEnumResolvingTest {
 
         assertEquals(9, genTypes.size());
 
-        GeneratedType genInterface = null;
+        LegacyArchetype genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface")) {
-                genInterface = type;
+                genInterface = assertInstanceOf(LegacyArchetype.class, type);
             }
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
 
         EnumTypeObjectArchetype linkUpDownTrapEnable = null;
         EnumTypeObjectArchetype operStatus = null;
-        final var enums = genInterface.getEnclosedTypes();
+        final var enums = genInterface.enclosedTypes();
         assertNotNull(enums, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
         assertEquals(2, enums.size(), "Generated Type Interface MUST contain 2 Enumeration Types");
         for (var e : enums) {
@@ -93,11 +93,11 @@ class GenEnumResolvingTest {
         assertNotNull(genTypes);
         assertEquals(27, genTypes.size());
 
-        GeneratedType genInterface = null;
+        LegacyArchetype genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface") && type.packageName().equals(
                 "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces")) {
-                genInterface = type;
+                genInterface = assertInstanceOf(LegacyArchetype.class, type);
             }
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
@@ -136,7 +136,7 @@ class GenEnumResolvingTest {
         assertEquals(4, genTypes.size());
 
         // ------------------- container test-enums -----------------------
-        final var testEnums = genTypes.get(1).getEnclosedTypes();
+        final var testEnums = genTypes.get(1).enclosedTypes();
         assertEquals(4, testEnums.size());
         final var dollarContaining = assertInstanceOf(EnumTypeObjectArchetype.class, testEnums.get(0))
             .valueToConstant();
@@ -166,7 +166,7 @@ class GenEnumResolvingTest {
         assertEquals("$a$2A$a", icIt.next());
 
         // ------------------- container okay-identifier -----------------------
-        final var okayIdentifier = genTypes.get(2).getEnclosedTypes();
+        final var okayIdentifier = genTypes.get(2).enclosedTypes();
         assertEquals(2, okayIdentifier.size());
         final var underscores = assertInstanceOf(EnumTypeObjectArchetype.class, okayIdentifier.getFirst())
             .valueToConstant();
@@ -180,7 +180,7 @@ class GenEnumResolvingTest {
         assertEquals("ĽaľahoPapľuhu", wcccIt.next());
 
         // ------------------- container conflicting-names -----------------------
-        final var conflictingNames = genTypes.get(3).getEnclosedTypes();
+        final var conflictingNames = genTypes.get(3).enclosedTypes();
         assertEquals(4, conflictingNames.size());
         final var conflict1 = assertInstanceOf(EnumTypeObjectArchetype.class, conflictingNames.get(0))
             .valueToConstant();

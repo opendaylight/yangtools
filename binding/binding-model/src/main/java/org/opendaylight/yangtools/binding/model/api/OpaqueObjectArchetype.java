@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -57,47 +56,5 @@ public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStateme
             requireNonNull(name);
             requireNonNull(statement);
         }
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<GeneratedType> getEnclosedTypes() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<GeneratedProperty> getProperties() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default boolean isAbstract() {
-        return true;
     }
 }
