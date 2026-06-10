@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -41,7 +41,7 @@ record TypeAnalysis(
      * to the type, expressed as properties.
      */
     @NonNullByDefault
-    static TypeAnalysis of(final GeneratedType type) {
+    static TypeAnalysis of(final LegacyArchetype type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
         final var augmentType = collectImplementedMethods(type, methods, type.getImplements());
@@ -59,7 +59,7 @@ record TypeAnalysis(
      * @return {@link ParameterizedType} of the implemented {@link Augmentation}, {@code null} if the type is not an
      *         augmentation.
      */
-    private static @Nullable ParameterizedType collectImplementedMethods(final @NonNull GeneratedType type,
+    private static @Nullable ParameterizedType collectImplementedMethods(final @NonNull LegacyArchetype type,
             final @NonNull Set<MethodSignature> methods, final @NonNull List<Type> implementedIfcs) {
         if (implementedIfcs.isEmpty()) {
             return null;
@@ -77,7 +77,7 @@ record TypeAnalysis(
                 case GeneratedTransferObject<?> gto -> {
                     // no-op
                 }
-                case GeneratedType ifc -> {
+                case LegacyArchetype ifc -> {
                     for (var implMethod : ifc.getMethodDefinitions()) {
                         if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
                             methods.add(implMethod);

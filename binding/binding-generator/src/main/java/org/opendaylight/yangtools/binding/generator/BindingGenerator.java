@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.generator;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
@@ -20,14 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public interface BindingGenerator {
     /**
      * Generate Types from an entire {@link EffectiveModelContext}. The method will return list of all
-     * {@link GeneratedType}s that could be Generated from EffectiveModelContext.
+     * {@link Archetype}s that could be Generated from EffectiveModelContext.
      *
      * @param context EffectiveModelContext
      * @return List of Generated Types
      *
      * @see EffectiveModelContext
      */
-    default @NonNull List<GeneratedType> generateTypes(final EffectiveModelContext context) {
+    default @NonNull List<Archetype> generateTypes(final EffectiveModelContext context) {
         return generateTypes(context, context.getModules());
     }
 
@@ -43,5 +43,5 @@ public interface BindingGenerator {
      * @see Module
      * @see EffectiveModelContext
      */
-    @NonNull List<GeneratedType> generateTypes(EffectiveModelContext context, Collection<? extends Module> modules);
+    @NonNull List<Archetype> generateTypes(EffectiveModelContext context, Collection<? extends Module> modules);
 }

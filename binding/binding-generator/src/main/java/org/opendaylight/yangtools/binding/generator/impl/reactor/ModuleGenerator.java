@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultModuleRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleRuntimeType;
@@ -81,7 +82,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     }
 
     @Override
-    GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    DataRootArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var builder = new DataRootArchetypeBuilder(typeName(), statement());
         addUsesInterfaces(builder, builderFactory);
         defaultImplementedInterace(builder);
@@ -98,7 +99,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
             final ModuleEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            ModuleRuntimeType build(final GeneratedType type, final ModuleEffectiveStatement statement,
+            ModuleRuntimeType build(final Archetype type, final ModuleEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 verify(augments.isEmpty(), "Unexpected augments %s", augments);
 

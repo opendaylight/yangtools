@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 
 /**
- * Generated Type Builder interface is helper interface for building and
- * defining the GeneratedType.
- *
- * @see GeneratedType
+ * Generated Type Builder interface is helper interface for building and defining the {@link LegacyArchetype}.
  */
 public sealed interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<GeneratedTypeBuilder>
-    permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder {
-    // Nothing else
+        permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder {
+    @Override
+    LegacyArchetype build();
 }

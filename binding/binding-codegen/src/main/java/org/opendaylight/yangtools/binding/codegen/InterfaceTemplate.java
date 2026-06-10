@@ -28,11 +28,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -47,7 +48,7 @@ import org.opendaylight.yangtools.binding.model.ri.Types;
  */
 sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     @NonNullByDefault
-    record Builder(GeneratedType type, DataRootArchetype root) implements Template.Builder {
+    record Builder(LegacyArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
@@ -77,13 +78,13 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
     /**
      * List of generated types which are enclosed inside the generated type.
      */
-    private final List<GeneratedType> enclosedGeneratedTypes;
+    private final List<Archetype> enclosedGeneratedTypes;
     private final @NonNull DataRootArchetype root;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final GeneratedType type, final DataRootArchetype root) {
+    InterfaceTemplate(final LegacyArchetype type, final DataRootArchetype root) {
         super(GeneratedClass.of(type), type);
         this.root = requireNonNull(root);
 

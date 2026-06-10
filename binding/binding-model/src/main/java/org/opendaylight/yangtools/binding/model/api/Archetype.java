@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -21,8 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @since 15.0.0
  */
 @Beta
-public sealed interface Archetype extends GeneratedType, Immutable
-        permits Archetype.WithStatement, TypeObjectArchetype {
+public sealed interface Archetype extends Type permits Archetype.WithStatement, LegacyArchetype, TypeObjectArchetype {
     /**
      * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
      *
@@ -49,39 +46,7 @@ public sealed interface Archetype extends GeneratedType, Immutable
     sealed interface Compat<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
             permits WithQName, BitsTypeObjectArchetype, EnumTypeObjectArchetype, KeyArchetype,
                     ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
-        @Override
-        @Deprecated(forRemoval = true)
-        default String getDescription() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default String getReference() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default String getModuleName() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default @Nullable TypeComment getComment() {
-            throw uoe();
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        default @Nullable YangSourceDefinition yangSourceDefinition() {
-            throw uoe();
-        }
-
-        private static UnsupportedOperationException uoe() {
-            throw new UnsupportedOperationException("should never be called");
-        }
+        // FIXME: nothing else?!
     }
 
     /**

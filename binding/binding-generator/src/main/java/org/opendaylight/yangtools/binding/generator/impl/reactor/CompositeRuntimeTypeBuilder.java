@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -48,11 +48,11 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
         return this;
     }
 
-    final @NonNull R build(final @NonNull GeneratedType generatedType) {
+    final @NonNull R build(final @NonNull Archetype generatedType) {
         return build(generatedType, statement, childTypes, augmentTypes);
     }
 
-    abstract @NonNull R build(GeneratedType type, S statement, List<RuntimeType> children,
+    abstract @NonNull R build(Archetype type, S statement, List<RuntimeType> children,
         List<AugmentRuntimeType> augments);
 
     final @NonNull List<CaseRuntimeType> getCaseChilden() {
