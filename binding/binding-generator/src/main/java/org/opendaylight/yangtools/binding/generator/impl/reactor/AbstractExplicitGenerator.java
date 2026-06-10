@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
@@ -406,8 +406,8 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return helper;
     }
 
-    static final @NonNull GeneratedType verifyGeneratedType(final Type type) {
-        if (type instanceof GeneratedType ret) {
+    static final @NonNull Archetype verifyGeneratedType(final Type type) {
+        if (type instanceof Archetype ret) {
             return ret;
         }
         throw new VerifyException("Unexpected type " + type);

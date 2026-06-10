@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -100,7 +101,7 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final GeneratedType createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var typeName = typeName();
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName)
             .addImplementsType(BindingTypes.yangData(TypeRef.of(typeName)));
@@ -124,7 +125,7 @@ abstract sealed class YangDataGenerator
             final YangDataEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            YangDataRuntimeType build(final GeneratedType type, final YangDataEffectiveStatement statement,
+            YangDataRuntimeType build(final Archetype type, final YangDataEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 return new DefaultYangDataRuntimeType(type, statement, children);
             }

@@ -48,25 +48,22 @@ class ExtendedTypedefTest {
 
         // typedef-from-import
         assertNotNull(typedefFromImport, "TypedefFromImport not found");
-        assertEquals(List.of(), typedefFromImport.getProperties(), "Properties of TypedefFromImport should be empty");
-        assertEquals("Ipv4Address", typedefFromImport.getSuperType().simpleName());
+        var extendTO = typedefFromImport.getSuperType();
+        assertNotNull(extendTO);
+        assertEquals("Ipv4Address", extendTO.simpleName());
 
         // simple-typedef4
         assertNotNull(simpleTypedef4, "SimpleTypedef4 not found");
         assertNotNull(extendedTypedefUnion, "ExtendedTypedefUnion not found");
         assertNotNull(unionTypedef, "UnionTypedef");
 
-        assertEquals(List.of(), simpleTypedef4.getProperties(), "SimpleTypedef4 shouldn't have properties.");
-
-        var extendTO = simpleTypedef4.getSuperType();
+        extendTO = simpleTypedef4.getSuperType();
         assertNotNull(extendTO, "SimpleTypedef4 should have extend.");
         assertEquals("SimpleTypedef3", extendTO.simpleName(), "Incorrect extension for SimpleTypedef4.");
-        assertEquals(List.of(), extendTO.getProperties(), "SimpleTypedef3 shouldn't have properties.");
 
         extendTO = extendTO.getSuperType();
         assertNotNull(extendTO, "SimpleTypedef3 should have extend.");
         assertEquals("SimpleTypedef2", extendTO.simpleName(), "Incorrect extension for SimpleTypedef3.");
-        assertEquals(List.of(), extendTO.getProperties(), "SimpleTypedef2 shouldn't have properties.");
 
         extendTO = extendTO.getSuperType();
         assertNotNull(extendTO, "SimpleTypedef2 should have extend.");
@@ -88,7 +85,7 @@ class ExtendedTypedefTest {
         assertEquals(List.of("simpleTypedef1", "simpleTypedef4", "byteType", "typedefEnumFruit"),
             extendUTO.typePropertyNames());
 
-        assertEquals(List.of(), extendUTO.getEnclosedTypes());
+        assertEquals(List.of(), extendUTO.enclosedTypes());
         final var utoTypes = extendUTO.typePropertyTypes();
         assertEquals(4, utoTypes.size());
 

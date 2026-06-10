@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
@@ -36,47 +35,5 @@ public record RpcArchetype(
         requireNonNull(statement);
         requireNonNull(input);
         requireNonNull(output);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedType> getEnclosedTypes() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedProperty> getProperties() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public boolean isAbstract() {
-        return true;
     }
 }

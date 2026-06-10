@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -69,7 +69,7 @@ public abstract class Generator implements Iterable<Generator> {
         this.parent = requireNonNull(parent);
     }
 
-    public final @Nullable GeneratedType generatedType() {
+    public final @Nullable Archetype generatedType() {
         return result.generatedType();
     }
 
@@ -166,7 +166,7 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     @NonNullByDefault
-    GeneratedType getGeneratedType(final TypeBuilderFactory builderFactory) {
+    Archetype getGeneratedType(final TypeBuilderFactory builderFactory) {
         final var genType = tryGeneratedType(builderFactory);
         if (genType != null) {
             return genType;
@@ -174,12 +174,12 @@ public abstract class Generator implements Iterable<Generator> {
         throw new VerifyException("No type generated for " + this);
     }
 
-    final @Nullable GeneratedType tryGeneratedType(final @NonNull TypeBuilderFactory builderFactory) {
+    final @Nullable Archetype tryGeneratedType(final @NonNull TypeBuilderFactory builderFactory) {
         ensureType(builderFactory);
         return result.generatedType();
     }
 
-    final @Nullable GeneratedType enclosedType(final @NonNull TypeBuilderFactory builderFactory) {
+    final @Nullable Archetype enclosedType(final @NonNull TypeBuilderFactory builderFactory) {
         ensureType(builderFactory);
         return result.enclosedType();
     }
@@ -191,7 +191,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builderFactory Factory for {@link TypeBuilder}s
      */
     @NonNullByDefault
-    abstract GeneratedType createTypeImpl(TypeBuilderFactory builderFactory);
+    abstract Archetype createTypeImpl(TypeBuilderFactory builderFactory);
 
     final @NonNull String assignedName() {
         return getMember().currentClass();
