@@ -10,7 +10,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>testutils</artifactId>
-    <version>15.1.2</version>
+    <version>15.1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>Random test utilities</description>
