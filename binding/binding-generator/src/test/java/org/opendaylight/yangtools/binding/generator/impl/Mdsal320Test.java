@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -29,18 +30,21 @@ class Mdsal320Test {
             YangParserTestUtils.parseYangResource("/mdsal320.yang"));
         assertEquals(2, generateTypes.size());
 
-        final var foo = generateTypes.stream().filter(type -> type.canonicalName()
-            .equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo")).findFirst().orElseThrow();
+        final var foo = generateTypes.stream()
+            .filter(type -> type.canonicalName().equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo"))
+            .findFirst()
+            .map(LegacyArchetype.class::cast)
+            .orElseThrow();
 
         assertThat(foo.getImplements()).anySatisfy(type -> type.name().equals(BindingTypes.JAVA_DATACONTAINER));
 
-        final var fooTypes = foo.getEnclosedTypes();
+        final var fooTypes = foo.enclosedTypes();
         assertEquals(1, fooTypes.size());
 
         final var bar = assertInstanceOf(UnionTypeObjectArchetype.class, fooTypes.getFirst());
         assertEquals("Bar", bar.simpleName());
 
-        final var barTypes = bar.getEnclosedTypes();
+        final var barTypes = bar.enclosedTypes();
         assertEquals(2, barTypes.size());
         final var enum1 = assertInstanceOf(EnumTypeObjectArchetype.class, barTypes.getFirst());
         assertEquals("Enumeration", enum1.simpleName());

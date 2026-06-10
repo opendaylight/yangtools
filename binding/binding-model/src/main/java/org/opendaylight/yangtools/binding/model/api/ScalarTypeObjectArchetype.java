@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -37,7 +36,7 @@ public record ScalarTypeObjectArchetype(
         Restrictions getRestrictions,
         @Nullable ScalarTypeObjectArchetype getSuperType)
         implements GeneratedTransferObject<ScalarTypeObject<?>>,
-                   Archetype.Compat<TypeEffectiveStatement.MandatoryIn<?, ?>> {
+                   Archetype.WithStatement<TypeEffectiveStatement.MandatoryIn<?, ?>> {
     public ScalarTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
@@ -67,42 +66,6 @@ public record ScalarTypeObjectArchetype(
     @Deprecated(forRemoval = true)
     public boolean isTypedef() {
         return statement instanceof TypedefEffectiveStatement;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<AnnotationType> getAnnotations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Type> getImplements() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedType> getEnclosedTypes() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<Constant> getConstantDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<GeneratedProperty> getProperties() {
-        return List.of();
     }
 
     @Override

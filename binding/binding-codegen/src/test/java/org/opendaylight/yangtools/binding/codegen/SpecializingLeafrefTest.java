@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.getFiles;
@@ -21,7 +22,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -48,7 +50,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static Path sourcesOutputDir;
     private static Path compiledOutputDir;
-    private static List<GeneratedType> types;
+    private static List<Archetype> types;
     private static Map<String, Path> files;
 
     @BeforeAll
@@ -269,16 +271,16 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         assertEquals(returnType, returnTypeByMethodName(generated, getterName));
     }
 
-    private static GeneratedType typeByName(final String name) {
+    private static LegacyArchetype typeByName(final String name) {
         for (var type : types) {
             if (type.simpleName().equals(name)) {
-                return type;
+                return assertInstanceOf(LegacyArchetype.class, type);
             }
         }
         return null;
     }
 
-    private static Type returnTypeByMethodName(final GeneratedType type, final String name) {
+    private static Type returnTypeByMethodName(final LegacyArchetype type, final String name) {
         for (var m : type.getMethodDefinitions()) {
             if (m.getName().equals(name)) {
                 return m.getReturnType();

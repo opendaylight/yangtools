@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
@@ -15,6 +16,7 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesTest {
@@ -34,13 +36,13 @@ class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        var simpleContainer = genTypes.get(1);
-        var nestedContainer = genTypes.get(2);
+        var simpleContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(1));
+        var nestedContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(2));
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
-                simpleContainer = t;
+                simpleContainer = assertInstanceOf(LegacyArchetype.class, t);
             } else if ("NestedContainer".equals(t.simpleName())) {
-                nestedContainer = t;
+                nestedContainer = assertInstanceOf(LegacyArchetype.class, t);
             }
         }
         assertNotNull(simpleContainer);
@@ -116,13 +118,13 @@ class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        var simpleContainer = genTypes.get(1);
-        var nestedContainer = genTypes.get(2);
+        var simpleContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(1));
+        var nestedContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(2));
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
-                simpleContainer = t;
+                simpleContainer = assertInstanceOf(LegacyArchetype.class, t);
             } else if ("NestedContainer".equals(t.simpleName())) {
-                nestedContainer = t;
+                nestedContainer = assertInstanceOf(LegacyArchetype.class, t);
             }
         }
         assertNotNull(simpleContainer);
@@ -216,50 +218,56 @@ class GeneratedTypesTest {
         String getListChildContainerMethodReturnTypeName = "";
 
         for (var genType : genTypes) {
-            if (!(genType instanceof KeyArchetype key)) {
-                if (genType.simpleName().equals("ListParentContainer")) {
-                    listParentContainerMethodsCount = genType.getMethodDefinitions().size();
-                } else if (genType.simpleName().equals("SimpleList")) {
-                    assertEntryObject(genType, JavaTypeName.create(
-                        "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
-                        "SimpleListKey"));
+            switch (genType) {
+                case KeyArchetype key -> {
+                    final var properties = key.getProperties();
 
-                    simpleListMethodsCount = genType.getMethodDefinitions().size();
-                    for (var method : genType.getMethodDefinitions()) {
-                        switch (method.getName()) {
-                            case "getListChildContainer":
-                                getListChildContainerMethodCount++;
-                                getListChildContainerMethodReturnTypeName = method.getReturnType().simpleName();
-                                break;
-                            case "getFoo":
-                                getFooMethodCount++;
-                                break;
-                            case "setFoo":
-                                setFooMethodCount++;
-                                break;
-                            case "getSimpleLeafList":
-                                getSimpleLeafListMethodCount++;
-                                break;
-                            case "setSimpleLeafList":
-                                setSimpleLeafListMethodCount++;
-                                break;
-                            case "getBar":
-                                getBarMethodCount++;
-                                break;
-                            default:
-                        }
-                    }
-                } else if (genType.simpleName().equals("ListChildContainer")) {
-                    listChildContainerMethodsCount = genType.getMethodDefinitions().size();
+                    assertEquals(0, listKeyClassCount++, "Unexpected key");
+                    assertEquals(1, properties.size());
+                    assertEquals("listKey", properties.getFirst().getName());
+                    assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
+                    assertTrue(properties.getFirst().isReadOnly());
                 }
-            } else {
-                final var properties = key.getProperties();
+                case LegacyArchetype archetype -> {
+                    if (archetype.simpleName().equals("ListParentContainer")) {
+                        listParentContainerMethodsCount = archetype.getMethodDefinitions().size();
+                    } else if (archetype.simpleName().equals("SimpleList")) {
+                        assertEntryObject(archetype, JavaTypeName.create(
+                            "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
+                            "SimpleListKey"));
 
-                assertEquals(0, listKeyClassCount++, "Unexpected key");
-                assertEquals(1, properties.size());
-                assertEquals("listKey", properties.getFirst().getName());
-                assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
-                assertTrue(properties.getFirst().isReadOnly());
+                        simpleListMethodsCount = archetype.getMethodDefinitions().size();
+                        for (var method : archetype.getMethodDefinitions()) {
+                            switch (method.getName()) {
+                                case "getListChildContainer":
+                                    getListChildContainerMethodCount++;
+                                    getListChildContainerMethodReturnTypeName = method.getReturnType().simpleName();
+                                    break;
+                                case "getFoo":
+                                    getFooMethodCount++;
+                                    break;
+                                case "setFoo":
+                                    setFooMethodCount++;
+                                    break;
+                                case "getSimpleLeafList":
+                                    getSimpleLeafListMethodCount++;
+                                    break;
+                                case "setSimpleLeafList":
+                                    setSimpleLeafListMethodCount++;
+                                    break;
+                                case "getBar":
+                                    getBarMethodCount++;
+                                    break;
+                                default:
+                            }
+                        }
+                    } else if (archetype.simpleName().equals("ListChildContainer")) {
+                        listChildContainerMethodsCount = archetype.getMethodDefinitions().size();
+                    }
+                }
+                default -> {
+                    // no-op
+                }
             }
         }
 

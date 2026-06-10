@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 public final class DefaultActionRuntimeType extends AbstractInvokableRuntimeType<ActionEffectiveStatement>
         implements ActionRuntimeType {
-    public DefaultActionRuntimeType(final GeneratedType bindingType, final ActionEffectiveStatement statement,
+    public DefaultActionRuntimeType(final Archetype bindingType, final ActionEffectiveStatement statement,
             final List<RuntimeType> children) {
         super(bindingType, statement, children);
     }

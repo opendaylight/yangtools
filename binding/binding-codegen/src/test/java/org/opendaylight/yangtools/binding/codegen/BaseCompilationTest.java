@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 abstract class BaseCompilationTest {
@@ -26,9 +26,9 @@ abstract class BaseCompilationTest {
         Files.createDirectories(CompilationTestUtils.GENERATOR_OUTPUT_DIR);
     }
 
-    static final void generateTestSources(final List<GeneratedType> types, final Path sourcesOutputDir)
+    static final void generateTestSources(final List<Archetype> types, final Path sourcesOutputDir)
             throws IOException {
-        types.sort(Comparator.comparing(GeneratedType::simpleName).reversed());
+        types.sort(Comparator.comparing(Archetype::simpleName).reversed());
 
         final var generatedFiles = BindingJavaFileGenerator.generateFiles(true, types);
         for (var cell : generatedFiles.cellSet()) {
@@ -40,7 +40,7 @@ abstract class BaseCompilationTest {
         }
     }
 
-    static final List<GeneratedType> generateTestSources(final String resourceDirPath, final Path sourcesOutputDir) {
+    static final List<Archetype> generateTestSources(final String resourceDirPath, final Path sourcesOutputDir) {
         final var context = YangParserTestUtils.parseYangResourceDirectory(resourceDirPath);
         final var types = new DefaultBindingGenerator().generateTypes(context);
         try {
