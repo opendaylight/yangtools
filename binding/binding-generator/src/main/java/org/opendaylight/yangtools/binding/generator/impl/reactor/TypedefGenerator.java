@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -86,7 +87,8 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
         final var builder = builderFactory.newTOBuilder(typeName, baseType);
         builder.setTypedef(true);
         builder.setExtendsType(baseType);
-        final var restrictions = computeRestrictions();
+
+        final var restrictions = Restrictions.compute(statement, statement.typeStatement());
         if (restrictions != null) {
             builder.setRestrictions(restrictions);
         }

@@ -43,11 +43,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
-import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -477,7 +473,7 @@ abstract class AbstractTypeObjectGenerator<
             baseType = baseGen.getGeneratedType(builderFactory);
         }
 
-        return restrictType(baseType, computeRestrictions(), builderFactory);
+        return restrictType(baseType, Restrictions.compute(statement(), support.type), builderFactory);
     }
 
     static final @NonNull Type restrictType(final @NonNull Type baseType, final @Nullable Restrictions restrictions,
@@ -533,21 +529,6 @@ abstract class AbstractTypeObjectGenerator<
         final var getter = constructGetter(builder, myType);
         getter.addAnnotation(OVERRIDE_ANNOTATION);
         annotateDeprecatedIfNecessary(getter);
-    }
-
-    final @Nullable Restrictions computeRestrictions() {
-        final var length = support.type.findFirstEffectiveSubstatementArgument(LengthEffectiveStatement.class)
-            .map(ValueRanges::asList)
-            .orElse(List.of());
-        final var range = support.type.findFirstEffectiveSubstatementArgument(RangeEffectiveStatement.class)
-            .map(ValueRanges::asList)
-            .orElse(List.of());
-        final var patterns = support.type.streamEffectiveSubstatements(PatternEffectiveStatement.class)
-            .map(PatternEffectiveStatement::argument)
-            .collect(Collectors.toUnmodifiableList());
-
-        return length.isEmpty() && range.isEmpty() && patterns.isEmpty() ? null
-            : Restrictions.of(statement().typeDefinition());
     }
 
     @Override

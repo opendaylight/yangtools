@@ -11,10 +11,17 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.TypeDefinitionCompat;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRanges;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -125,6 +132,23 @@ public final class Restrictions {
             }
             default -> EMPTY;
         };
+    }
+
+    @Beta
+    public static @Nullable Restrictions compute(final @NonNull TypeDefinitionCompat<?, ?> definingStatement,
+            final @NonNull TypeEffectiveStatement type) {
+        final var length = type.findFirstEffectiveSubstatementArgument(LengthEffectiveStatement.class)
+            .map(ValueRanges::asList)
+            .orElse(List.of());
+        final var range = type.findFirstEffectiveSubstatementArgument(RangeEffectiveStatement.class)
+            .map(ValueRanges::asList)
+            .orElse(List.of());
+        final var patterns = type.streamEffectiveSubstatements(PatternEffectiveStatement.class)
+            .map(PatternEffectiveStatement::argument)
+            .collect(Collectors.toUnmodifiableList());
+
+        return length.isEmpty() && range.isEmpty() && patterns.isEmpty() ? null
+            : of(definingStatement.typeDefinition());
     }
 
     public Optional<LengthConstraint> getLengthConstraint() {
