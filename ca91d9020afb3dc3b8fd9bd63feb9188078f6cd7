@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1649a3e0_e832026d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-06-12T13:11:49Z",
+      "side": 1,
+      "message": "This needs us to deal with Restrictions and AbstractTypeObjectGenerator.restrictType()",
+      "revId": "ca91d9020afb3dc3b8fd9bd63feb9188078f6cd7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
