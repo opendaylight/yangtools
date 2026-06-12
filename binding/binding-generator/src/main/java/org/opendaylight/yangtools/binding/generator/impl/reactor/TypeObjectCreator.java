@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -108,7 +109,7 @@ final class TypeObjectCreator {
 
         final var genPropBuilder = builder.addProperty(TypeConstants.VALUE_PROP);
         genPropBuilder.setReturnType(javaType);
-        builder.setRestrictions(AbstractTypeObjectGenerator.getRestrictions(typedef));
+        builder.setRestrictions(Restrictions.of(typedef));
         builder.setModuleName(module.argument().getLocalName());
         builderFactory.addCodegenInformation(typedef, builder);
 
@@ -225,7 +226,7 @@ final class TypeObjectCreator {
                     expressions.putAll(AbstractTypeObjectGenerator.resolveRegExpressions(subDef));
 
                     generatedType = AbstractTypeObjectGenerator.restrictType(baseType,
-                        AbstractTypeObjectGenerator.getRestrictions(type.typeDefinition()), builderFactory);
+                        Restrictions.of(type.typeDefinition()), builderFactory);
                 }
 
                 final String propName = Naming.getPropertyName(propSource);

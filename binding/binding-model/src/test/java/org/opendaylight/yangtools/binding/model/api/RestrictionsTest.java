@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.generator.impl.reactor;
+package org.opendaylight.yangtools.binding.model.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.ri.type.InvalidLengthConstraintExce
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
 
 @ExtendWith(MockitoExtension.class)
-class AbstractDependentGeneratorTest {
+class RestrictionsTest {
     private static final @NonNull QName ROOT = QName.create("test", "root");
 
     @Mock
@@ -48,7 +48,7 @@ class AbstractDependentGeneratorTest {
         builder.addPatternConstraint(constraint);
         builder.setLengthConstraint(constraintMeta, ValueRanges.of(ValueRange.of(1, 2)));
 
-        final var restrictions = AbstractTypeObjectGenerator.getRestrictions(builder.build());
+        final var restrictions = Restrictions.of(builder.build());
 
         assertNotNull(restrictions);
         assertEquals(Set.of(Range.closed(1, 2)),
@@ -63,7 +63,7 @@ class AbstractDependentGeneratorTest {
     @Test
     void getEmptyRestrictionsTest() {
         final var type = DerivedTypes.derivedTypeBuilder(BaseTypes.stringType(), ROOT).build();
-        final var restrictions = AbstractTypeObjectGenerator.getRestrictions(type);
+        final var restrictions = Restrictions.of(type);
 
         assertNotNull(restrictions);
         assertTrue(restrictions.isEmpty());
@@ -73,7 +73,7 @@ class AbstractDependentGeneratorTest {
     void getRedundantRestrictionsTest() {
         final var builder = RestrictedTypes.newUint16Builder(BaseTypes.uint16Type(), ROOT);
         builder.setRangeConstraint(constraintMeta, ValueRanges.of(ValueRange.of(0, 65535)));
-        final var restrictions = AbstractTypeObjectGenerator.getRestrictions(builder.build());
+        final var restrictions = Restrictions.of(builder.build());
 
         assertNotNull(restrictions);
         assertTrue(restrictions.isEmpty());
@@ -84,7 +84,7 @@ class AbstractDependentGeneratorTest {
     @Test
     void getDefaultIntegerRestrictionsTest() {
         final var type = DerivedTypes.derivedTypeBuilder(BaseTypes.int16Type(), ROOT).build();
-        final var restrictions = AbstractTypeObjectGenerator.getRestrictions(type);
+        final var restrictions = Restrictions.of(type);
 
         assertNotNull(restrictions);
         assertTrue(restrictions.isEmpty());
@@ -95,7 +95,7 @@ class AbstractDependentGeneratorTest {
     @Test
     void getDefaultUnsignedIntegerRestrictionsTest() {
         final var type = DerivedTypes.derivedTypeBuilder(BaseTypes.uint16Type(), ROOT).build();
-        final var restrictions = AbstractTypeObjectGenerator.getRestrictions(type);
+        final var restrictions = Restrictions.of(type);
 
         assertNotNull(restrictions);
         assertTrue(restrictions.isEmpty());
@@ -108,7 +108,7 @@ class AbstractDependentGeneratorTest {
         final var base = BaseTypes.decimalTypeBuilder(ROOT).setFractionDigits(10).build();
         final var type = DerivedTypes.derivedTypeBuilder(base, ROOT).build();
 
-        final var restrictions = AbstractTypeObjectGenerator.getRestrictions(type);
+        final var restrictions = Restrictions.of(type);
 
         assertNotNull(restrictions);
         assertFalse(restrictions.isEmpty());
