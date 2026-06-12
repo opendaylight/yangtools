@@ -555,7 +555,7 @@ abstract class AbstractTypeObjectGenerator<
             .collect(Collectors.toUnmodifiableList());
 
         return length.isEmpty() && range.isEmpty() && patterns.isEmpty() ? null
-            : getRestrictions(extractTypeDefinition());
+            : getRestrictions(statement().typeDefinition());
     }
 
     @Override
@@ -585,11 +585,6 @@ abstract class AbstractTypeObjectGenerator<
             case TypeObjectSupport.Scalar scalar -> scalar.toArchetype(this, builderFactory);
             default -> throw new VerifyException("Unhandled type " + support.type.argument());
         };
-    }
-
-    // FIXME: we should not rely on TypeDefinition
-    private @NonNull TypeDefinition<?> extractTypeDefinition() {
-        return statement().typeDefinition();
     }
 
     abstract @NonNull GeneratedTransferObject<?> createDerivedType(@NonNull TypeBuilderFactory builderFactory,
