@@ -28,7 +28,6 @@ module org.opendaylight.yangtools.binding.generator {
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
-    requires org.opendaylight.yangtools.yang.model.ri;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.odlext.model.api;
     requires org.opendaylight.yangtools.rfc8040.model.api;

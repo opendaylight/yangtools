@@ -17,6 +17,7 @@ module org.opendaylight.yangtools.binding.model {
     requires com.google.common;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.model.ri;
     requires org.slf4j;
 
     // Annotations
