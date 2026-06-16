@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c78e172_b48a7b64",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-06-16T09:43:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1649a3e0_e832026d",
+      "revId": "ca91d9020afb3dc3b8fd9bd63feb9188078f6cd7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "baaa1a0e_e3d94b13",
@@ -31,6 +49,30 @@
       "writtenOn": "2026-06-12T15:15:10Z",
       "side": 1,
       "message": "we will need Restrictions as well, as their lifecycle is a bit ineffable a bit:\n- they are based on TypeDefinition, which pulls in \u0027TypeEffectiveStatement\u0027 as well \u0027default\u0027 from defining statement\n- the two callers using restrictType() compute them in different ways",
+      "range": {
+        "startLine": 32,
+        "startChar": 14,
+        "endLine": 32,
+        "endChar": 39
+      },
+      "revId": "ca91d9020afb3dc3b8fd9bd63feb9188078f6cd7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3d0594e_fde9afa9",
+        "filename": "binding/binding-model/src/main/java/org/opendaylight/yangtools/binding/model/api/ScalarTypeObjectArchetype.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-06-16T09:43:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baaa1a0e_e3d94b13",
       "range": {
         "startLine": 32,
         "startChar": 14,
