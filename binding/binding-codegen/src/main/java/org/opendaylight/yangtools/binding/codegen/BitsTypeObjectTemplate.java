@@ -234,7 +234,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
     private static final JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
     private static final String VALID_NAMES_NAME = "VALID_NAMES";
 
-    BitsTypeObjectTemplate(final GeneratedClass javaType, final BitsTypeObjectArchetype archetype,
+    private BitsTypeObjectTemplate(final GeneratedClass javaType, final BitsTypeObjectArchetype archetype,
             final DataRootArchetype root) {
         super(javaType, archetype, root);
     }
