@@ -13,19 +13,28 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterables;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.api.RestrictedType;
+import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -34,7 +43,7 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
  * A template for {@link UnionTypeObject} specializations.
  */
 @NonNullByDefault
-final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchetype> {
+final class UnionTypeObjectTemplate extends ArchetypeTemplate<UnionTypeObjectArchetype> {
     record Builder(UnionTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
@@ -46,22 +55,252 @@ final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchety
         }
     }
 
-    private UnionTypeObjectTemplate(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype,
+    final List<GeneratedProperty> allProperties;
+    final List<GeneratedProperty> finalProperties;
+    final List<GeneratedProperty> parentProperties;
+    final List<GeneratedProperty> properties;
+    final Restrictions restrictions;
+
+    /**
+     * List of enumeration which are generated as JAVA enum type.
+     */
+    private final List<EnumTypeObjectArchetype> enums;
+    /**
+     * List of constant instances which are generated as JAVA public static final attributes.
+     */
+    private final List<Constant> consts;
+    private final AbstractRangeGenerator<?> rangeGenerator;
+
+    private UnionTypeObjectTemplate(final GeneratedClass javaType, final UnionTypeObjectArchetype archetype,
             final DataRootArchetype root) {
         super(javaType, archetype, root);
+        properties = archetype.getProperties();
+        finalProperties = properties.stream()
+            .filter(GeneratedProperty::isReadOnly)
+            .collect(Collectors.toUnmodifiableList());
+        parentProperties = propertiesOfAllParents(archetype);
+        restrictions = archetype.getRestrictions();
+
+        allProperties = Stream.concat(properties.stream(), parentProperties.stream())
+            .sorted(PROP_COMPARATOR)
+            .collect(Collectors.toUnmodifiableList());
+
+        enums = archetype.getEnumerations();
+        consts = archetype.getConstantDefinitions();
+        rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
+            ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
+    }
+
+    /**
+     * Returns the list of the read only properties of all extending generated transfer object from <code>genTO</code>
+     * to highest parent generated transfer object.
+     *
+     * @param gto generated transfer object for which is the list of read only properties generated
+     * @return list of all read only properties from actual to highest parent generated transfer object. In case when
+     *         extension exists the method is recursive called.
+     */
+    @VisibleForTesting
+    static List<GeneratedProperty> propertiesOfAllParents(final GeneratedTransferObject<?> gto) {
+        final var superType = gto.getSuperType();
+        return superType == null ? List.of() : streamAllProperties(superType).collect(Collectors.toUnmodifiableList());
+    }
+
+    private static Stream<GeneratedProperty> streamAllProperties(final GeneratedTransferObject<?> gto) {
+        final var stream = gto.getProperties().stream().filter(GeneratedProperty::isReadOnly);
+        final var superType = gto.getSuperType();
+        return superType == null ? stream : Stream.concat(stream, streamAllProperties(superType));
     }
 
     private UnionTypeObjectTemplate(final UnionTypeObjectArchetype archetype, final DataRootArchetype root) {
-        super(GeneratedClass.of(archetype), archetype, root);
+        this(GeneratedClass.of(archetype), archetype, root);
     }
 
     static BlockBuilder generateInner(final GeneratedClass.Nested javaType, final UnionTypeObjectArchetype archetype,
             final DataRootArchetype root) {
-        return new UnionTypeObjectTemplate(javaType, archetype, root).generateAsInnerClass();
+        return new UnionTypeObjectTemplate(javaType, archetype, root).generateBody(true);
     }
 
     @Override
-    @NonNull BlockBuilder constructors() {
+    BlockBuilder body() {
+        return generateBody(false);
+    }
+
+    /**
+     * {@return string with class source code in JAVA format}
+     * @param isInnerClass {@code true} if generated class is an inner class
+     */
+    private BlockBuilder generateBody(final boolean isInnerClass) {
+        final var bb = newBlockBuilder()
+            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
+            .blk(annotationDeclaration());
+
+        if (!isInnerClass) {
+            bb.eol(generatedAnnotation());
+        }
+        bb
+            .frg(generateClassDeclaration(isInnerClass)).oB()
+                .eol("@java.io.Serial")
+                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
+                 // inner classes
+                .blk(generateInnerClasses(root, type().getEnclosedTypes()))
+                // inner EnumTypeObjects
+                .blk(generateInnerEnumTypeObjects(root, enums))
+                // constants
+                .blk(constantsDeclarations());
+
+        // fields
+        if (!properties.isEmpty()) {
+            for (var field : properties) {
+                bb.str("private ");
+                if (field.isReadOnly()) {
+                    bb.str("final ");
+                }
+                bb.str(importedReturnType(field)).sp().str(fieldName(field)).eS();
+            }
+        }
+
+        // length/range checkes
+        if (restrictions != null) {
+            final var length = restrictions.getLengthConstraint();
+            if (length.isPresent()) {
+                bb.nl().blk(LengthGenerator.generateLengthChecker("_value",
+                    TypeUtils.encapsulatedValueType(archetype()), length.orElseThrow(), javaType()));
+            }
+            final var range = restrictions.getRangeConstraint();
+            if (range.isPresent()) {
+                bb.nl().blk(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), javaType()));
+            }
+        }
+
+        bb
+            .blk(constructors())
+            .blk(propertyMethods());
+
+        final var hashCode = generateHashCode();
+        if (hashCode != null) {
+            bb.nl().blk(hashCode);
+        }
+        final var equals = generateEquals();
+        if (equals != null) {
+            bb.nl().blk(equals);
+        }
+
+        final var toString = generateToString();
+        if (toString != null) {
+            bb.nl().blk(toString);
+        }
+        return bb.cB().nl();
+    }
+
+    private @Nullable BlockBuilder generateEquals() {
+        return properties.isEmpty() ? null : generateEquals(properties);
+    }
+
+    private @Nullable BlockBuilder generateToString() {
+        return properties.isEmpty() ? null : generateToString(properties);
+    }
+
+    /**
+     * {@return string with class declaration in JAVA format}
+     * @param isInnerClass boolean value which specify if generated class is|isn't inner
+     */
+    private BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
+        final var archetype = archetype();
+
+        final var bb = newBlockBuilder()
+            .str("public");
+        if (isInnerClass) {
+            bb.str(" static final ");
+        } else {
+            bb.str(archetype.isAbstract() ? " abstract " : " ");
+        }
+        bb.str("class ").str(archetype.simpleName());
+
+        final var superType = archetype.getSuperType();
+        if (superType != null) {
+            bb.str(" extends ").str(importedName(superType));
+        }
+
+        final var ifaces = archetype.getImplements();
+        if (!ifaces.isEmpty()) {
+            bb.nl().str(" implements ");
+
+            final var it = ifaces.iterator();
+            while (true) {
+                bb.str(importedName(it.next()));
+                if (!it.hasNext()) {
+                    break;
+                }
+                bb.str(", ");
+            }
+        }
+        return bb;
+    }
+
+    private @Nullable BlockBuilder constantsDeclarations() {
+        if (consts.isEmpty()) {
+            return null;
+        }
+
+        final var bb = newBlockBuilder();
+        for (var c : consts) {
+            switch (c.getName()) {
+                case PATTERN_CONSTANT_NAME -> appendPatternConstant(bb, (Map<String, String>) c.getValue());
+                default -> bb.txt(emitConstant(c));
+            }
+        }
+        return bb;
+    }
+
+    private void appendPatternConstant(final BlockBuilder bb, final Map<String, String> constValue) {
+        final var jurPattern = importedName(JUR_PATTERN);
+        final var juList = importedName(JU_LIST);
+
+        bb.str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME + " = ").str(juList)
+            .str(".of(");
+        {
+            boolean first = true;
+            for (var value : constValue.keySet()) {
+                if (first) {
+                    first = false;
+                } else {
+                    bb.str(", ");
+                }
+                bb.jString(requireNonNull(value));
+            }
+        }
+        bb
+            .eol(");")
+            .str("private static final ").str(jurPattern);
+        if (constValue.size() == 1) {
+            bb
+                .str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern)
+                .eol(".compile(" + PATTERN_CONSTANT_NAME + ".getFirst());")
+                .str("private static final String " + MEMBER_REGEX_LIST + " = ")
+                    .jString(constValue.values().iterator().next()).eS();
+            return;
+        }
+
+        // FIXME: should be multi-line
+        bb
+            .str("[] " + MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
+                .eol(".compilePatterns(" + PATTERN_CONSTANT_NAME + ");")
+            .str("private static final String[] " + MEMBER_REGEX_LIST + " = { ");
+        {
+            boolean first = true;
+            for (var value : constValue.values()) {
+                if (first) {
+                    first = false;
+                } else {
+                    bb.str(", ");
+                }
+                bb.jString(requireNonNull(value));
+            }
+        }
+        bb.eol(" };");
+    }
+
+    private BlockBuilder constructors() {
         final var bb = newBlockBuilder()
             .blk(unionConstructorsParentProperties())
             .blk(unionConstructors());
@@ -150,7 +389,6 @@ final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchety
         }
     }
 
-    @NonNullByDefault
     private BlockBuilder generateStringValue() {
         final var bb = newBlockBuilder().txt("""
                       /**
@@ -221,8 +459,7 @@ final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchety
         return type instanceof ScalarTypeObjectArchetype scalar ? scalar.valueType() : null;
     }
 
-    @Override
-    BlockBuilder copyConstructor() {
+    private BlockBuilder copyConstructor() {
         final var simpleName = type().simpleName();
 
         return newBlockBuilder().txt("""
@@ -249,5 +486,84 @@ final class UnionTypeObjectTemplate extends ClassTemplate<UnionTypeObjectArchety
                     bb.eS();
                 }
             }).nl();
+    }
+
+    private @Nullable BlockBuilder propertyMethods() {
+        if (properties.isEmpty()) {
+            return null;
+        }
+
+        final var bb = newBlockBuilder();
+        final var it = properties.iterator();
+        do {
+            final var field = it.next();
+            bb.nl().blk(asGetterMethod(field));
+            if (!field.isReadOnly()) {
+                bb.nl().blk(asSetterMethod(field));
+            }
+        } while (it.hasNext());
+        return bb;
+    }
+
+    private @Nullable BlockBuilder generateHashCode() {
+        return properties.isEmpty() ? null : generateHashCode(properties);
+    }
+
+    private @Nullable BlockBuilder generateRestrictions(final Type type, final String paramName,
+            final Type returnType) {
+        final var typeRestrictions = switch (type) {
+            case GeneratedTransferObject<?> gto -> gto.getRestrictions();
+            case RestrictedType restricted -> restricted.restrictions();
+            case null, default -> null;
+        };
+        if (typeRestrictions == null) {
+            return null;
+        }
+        final var length = typeRestrictions.getLengthConstraint().orElse(null);
+        final var range = typeRestrictions.getRangeConstraint().orElse(null);
+        if (length == null && range == null) {
+            return null;
+        }
+
+        final var checkerCalls = newBlockBuilder();
+        final var paramValue = returnType instanceof ConcreteType ? paramName : paramName + ".getValue()";
+        if (length != null) {
+            LengthGenerator.appendCheckerCall(checkerCalls, paramName, paramValue);
+        }
+        if (range != null) {
+            rangeGenerator.appendCheckerCall(checkerCalls, paramName, paramValue);
+        }
+
+        // FIXME: this wrapping should be specialized in ScalarTypeObjectTemplate vs. others (BitsTO, EnumTO, UnionTO)
+        return paramName.equals("_value") ? checkerCalls : newBlockBuilder()
+            .str("if (").str(paramName).str(" != null)").oB()
+                .blk(checkerCalls)
+            .cB();
+    }
+
+    private BlockBuilder parentConstructor() {
+        final var importedSuper = importedName(archetype().getSuperType());
+
+        return newBlockBuilder()
+            .eol("/**")
+            .str(" * Creates a new instance from ").eol(importedSuper)
+            .eol(" *")
+            .eol(" * @param source Source object")
+            .eol(" */")
+            .str("public ").str(type().simpleName()).str("(").str(importedSuper).str(" source)").oB()
+                .eol("super(source);")
+                .blk(genPatternEnforcer("getValue()"))
+            .cB();
+    }
+
+    private @Nullable BlockBuilder genPatternEnforcer(final String ref) {
+        for (var constant : consts) {
+            if (PATTERN_CONSTANT_NAME.equals(constant.getName())) {
+                return newBlockBuilder()
+                    .str(importedName(CODEHELPERS)).str(".checkPattern(").str(ref).str(", ")
+                        .eol(MEMBER_PATTERN_LIST + ", " + MEMBER_REGEX_LIST + ");");
+            }
+        }
+        return null;
     }
 }

@@ -32,6 +32,6 @@ class ClassTemplateTest {
         doReturn(List.of(property)).when(enclosedType).getProperties();
         doReturn(Boolean.TRUE).when(property).isReadOnly();
         doReturn(enclosedType).when(superType).getSuperType();
-        assertThat(ClassTemplate.propertiesOfAllParents(superType)).contains(property);
+        assertThat(UnionTypeObjectTemplate.propertiesOfAllParents(superType)).contains(property);
     }
 }
