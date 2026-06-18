@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.VerifyException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +18,6 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -28,9 +26,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
 /**
  * Template for generating JAVA class.
@@ -75,20 +71,6 @@ abstract sealed class ClassTemplate<T extends @NonNull GeneratedTransferObject<?
         consts = archetype.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
             ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
-    }
-
-    @NonNullByDefault
-    static final BlockBuilder generateAsInner(final GeneratedClass.Nested javaType,
-            final GeneratedTransferObject<?> gto, final DataRootArchetype root) {
-        return switch (gto) {
-            case BitsTypeObjectArchetype archetype ->
-                BitsTypeObjectTemplate.generateInner(javaType, archetype, root);
-            case ScalarTypeObjectArchetype archetype ->
-                ScalarTypeObjectTemplate.generateInner(javaType, archetype, root);
-            case UnionTypeObjectArchetype archetype ->
-                UnionTypeObjectTemplate.generateInner(javaType, archetype, root);
-            default -> throw new VerifyException("Unhandled inner class " + gto);
-        };
     }
 
     /**

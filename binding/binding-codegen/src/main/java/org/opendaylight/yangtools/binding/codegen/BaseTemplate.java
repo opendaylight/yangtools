@@ -34,6 +34,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -45,7 +46,9 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
@@ -592,7 +595,15 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         for (var innerType : innerTypes) {
             if (innerType instanceof GeneratedTransferObject gto) {
                 final var innerJavaType = javaType().getNestedClass(gto);
-                innerClasses.add(ClassTemplate.generateAsInner(innerJavaType, gto, root));
+                innerClasses.add(switch (gto) {
+                    case BitsTypeObjectArchetype archetype ->
+                        BitsTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
+                    case ScalarTypeObjectArchetype archetype ->
+                        ScalarTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
+                    case UnionTypeObjectArchetype archetype ->
+                        UnionTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
+                    default -> throw new VerifyException("Unhandled inner class " + gto);
+                });
             }
         }
         if (innerClasses.isEmpty()) {
