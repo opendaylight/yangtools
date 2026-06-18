@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 
 class SerialVersionHelperTest {
@@ -37,8 +36,6 @@ class SerialVersionHelperTest {
 
         genTypeBuilder.addMethod("testMethod").setReturnType(Types.STRING);
         genTypeBuilder.addAnnotation("org.opendaylight.yangtools.test.annotation", "AnnotationTest");
-        genTypeBuilder.addEnclosingTransferObject(
-            new CodegenGeneratedTOBuilder(genTypeBuilder.typeName().createEnclosed("testObject")).build());
         genTypeBuilder.addProperty("newProp").setReturnType(Types.BOOLEAN);
         genTypeBuilder.addImplementsType(newBuilder("org.opendaylight.yangtools.test", "Type2"));
         assertSerialVersion(2532542948215379779L, genTypeBuilder);
