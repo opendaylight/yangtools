@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
@@ -46,10 +45,10 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 /**
- * Utility class for creating {@link TypeObjectArchetype}s.
+ * Utility class for creating {@link UnionTypeObjectArchetype}s.
  */
 @NonNullByDefault
-final class TypeObjectCreator {
+final class UnionTypeObjectBuilder {
     // FIXME: remove this map
     private static final ImmutableMap<QName, ConcreteType> SIMPLE_TYPES =
         ImmutableMap.<QName, ConcreteType>builder()
@@ -72,20 +71,19 @@ final class TypeObjectCreator {
     private final TypeBuilderFactory builderFactory;
     private final ModuleEffectiveStatement module;
 
-    private TypeObjectCreator(final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement,
+    private UnionTypeObjectBuilder(final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement,
             final TypeBuilderFactory builderFactory, final ModuleEffectiveStatement module) {
         this.definingStatement = requireNonNull(definingStatement);
         this.builderFactory = requireNonNull(builderFactory);
         this.module = requireNonNull(module);
     }
 
-    static Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> createUnionTypeObjectArchetype(
-            final JavaTypeName typeName, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
-            final UnionTypeDefinition typeDefinition, final TypeEffectiveStatement type,
-            final Dependencies dependencies, final TypeBuilderFactory builderFactory,
+    static Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> buildArchetype(final JavaTypeName typeName,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final UnionTypeDefinition typeDefinition,
+            final TypeEffectiveStatement type, final Dependencies dependencies, final TypeBuilderFactory builderFactory,
             final ModuleEffectiveStatement module) {
         final var tmp = new ArrayList<GeneratedType>(1);
-        final var archetype = new TypeObjectCreator(statement, builderFactory, module)
+        final var archetype = new UnionTypeObjectBuilder(statement, builderFactory, module)
             .createUnion(tmp, dependencies, typeName, type, typeDefinition);
         return Map.entry(archetype, tmp);
     }
