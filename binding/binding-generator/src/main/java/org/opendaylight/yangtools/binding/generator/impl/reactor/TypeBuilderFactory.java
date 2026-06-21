@@ -8,20 +8,15 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
@@ -133,18 +128,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
     @NonNullByDefault
     abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
-
-    @NonNullByDefault
-    final GeneratedTransferObject.Builder newTOBuilder(final JavaTypeName typeName,
-            final GeneratedTransferObject<?> to) {
-        return switch (to) {
-            case BitsTypeObjectArchetype bits -> throw new VerifyException("Should never be called with " + bits);
-            case ScalarTypeObjectArchetype scalar -> throw new VerifyException("Should never be called with " + scalar);
-            case UnionTypeObjectArchetype union ->
-                newUnionTypeObjectBuilder(typeName).setTypePropertyNames(union.typePropertyNames());
-            case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
-        };
-    }
 
     abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
 
