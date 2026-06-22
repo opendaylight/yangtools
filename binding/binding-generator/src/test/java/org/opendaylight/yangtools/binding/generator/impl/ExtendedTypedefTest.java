@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -57,7 +58,7 @@ class ExtendedTypedefTest {
 
         assertEquals(List.of(), simpleTypedef4.getProperties(), "SimpleTypedef4 shouldn't have properties.");
 
-        GeneratedTransferObject<?> extendTO = simpleTypedef4.getSuperType();
+        var extendTO = simpleTypedef4.getSuperType();
         assertNotNull(extendTO, "SimpleTypedef4 should have extend.");
         assertEquals("SimpleTypedef3", extendTO.simpleName(), "Incorrect extension for SimpleTypedef4.");
         assertEquals(List.of(), extendTO.getProperties(), "SimpleTypedef3 shouldn't have properties.");
@@ -72,45 +73,32 @@ class ExtendedTypedefTest {
         assertEquals("SimpleTypedef1", extendTO.simpleName(), "SimpleTypedef2 should be extended with SimpleTypedef1.");
         assertEquals(BaseYangTypes.UINT8_TYPE, assertInstanceOf(ScalarTypeObjectArchetype.class, extendTO).valueType());
 
-        extendTO = extendTO.getSuperType();
-        assertNull(extendTO, "SimpleTypedef1 shouldn't have extend.");
+        assertNull(extendTO.getSuperType(), "SimpleTypedef1 shouldn't have extend.");
 
         // extended-typedef-union
         assertNotNull(extendedTypedefUnion, "ExtendedTypedefUnion object not found");
         assertEquals(List.of(), extendedTypedefUnion.getProperties(),
             "ExtendedTypedefUnion shouldn't have any property");
 
-        extendTO = extendedTypedefUnion.getSuperType();
-        assertEquals("UnionTypedef", extendTO.simpleName(), "Incorrect extension fo ExtendedTypedefUnion.");
-        assertNull(extendTO.getSuperType(), "UnionTypedef shouldn't be extended");
+        final var extendUTO = extendedTypedefUnion.getSuperType();
+        assertNotNull(extendUTO);
+        assertEquals("UnionTypedef", extendUTO.simpleName(), "Incorrect extension fo ExtendedTypedefUnion.");
+        assertNull(extendUTO.getSuperType(), "UnionTypedef shouldn't be extended");
 
-        var properties = extendTO.getProperties();
-        assertEquals(4, properties.size(), "Incorrect number of properties for UnionTypedef.");
+        assertEquals(List.of("simpleTypedef1", "simpleTypedef4", "byteType", "typedefEnumFruit"),
+            extendUTO.typePropertyNames());
 
-        GeneratedProperty simpleTypedef4Property = null;
-        GeneratedProperty simpleTypedef1Property = null;
-        GeneratedProperty byteTypeProperty = null;
-        GeneratedProperty typedefEnumFruitProperty = null;
-        for (var genProperty : properties) {
-            if (genProperty.getName().equals("simpleTypedef1")) {
-                simpleTypedef1Property = genProperty;
-            } else if (genProperty.getName().equals("simpleTypedef4")) {
-                simpleTypedef4Property = genProperty;
-            } else if (genProperty.getName().equals("byteType")) {
-                byteTypeProperty = genProperty;
-            } else if (genProperty.getName().equals("typedefEnumFruit")) {
-                typedefEnumFruitProperty = genProperty;
-            }
-        }
+        assertEquals(List.of(), extendUTO.getEnclosedTypes());
+        final var utoTypes = extendUTO.typePropertyTypes();
+        assertEquals(4, utoTypes.size());
 
-        assertNotNull(simpleTypedef4Property, "simpleTypedef4 property not found in UnionTypedef");
-        assertNotNull(simpleTypedef1Property, "simpleTypedef1 property not found in UnionTypedef");
-        assertNotNull(byteTypeProperty, "byteType property not found in UnionTypedef");
-        assertNotNull(typedefEnumFruitProperty, "typedefEnumFruit property not found in UnionTypedef");
-
-        assertEquals("SimpleTypedef4", simpleTypedef4Property.getReturnType().simpleName());
-        assertEquals("SimpleTypedef1", simpleTypedef1Property.getReturnType().simpleName());
-        assertEquals("ByteType", byteTypeProperty.getReturnType().simpleName());
-        assertEquals("TypedefEnumFruit", typedefEnumFruitProperty.getReturnType().simpleName());
+        final var uto1 = assertInstanceOf(ScalarTypeObjectArchetype.class, utoTypes.get(0));
+        assertEquals("SimpleTypedef1", uto1.simpleName());
+        final var uto2 = assertInstanceOf(ScalarTypeObjectArchetype.class, utoTypes.get(1));
+        assertEquals("SimpleTypedef4", uto2.simpleName());
+        final var uto3 = assertInstanceOf(BitsTypeObjectArchetype.class, utoTypes.get(2));
+        assertEquals("ByteType", uto3.simpleName());
+        final var uto4 = assertInstanceOf(EnumTypeObjectArchetype.class, utoTypes.get(3));
+        assertEquals("TypedefEnumFruit", uto4.simpleName());
     }
 }

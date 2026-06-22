@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -36,9 +35,8 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
     /**
      * A builder of {@link GeneratedTransferObject} instances.
      */
-    @Beta
-    sealed interface Builder extends GeneratedTypeBuilderBase<Builder>
-            permits AbstractGeneratedTOBuilder, UnionTypeObjectArchetype.Builder {
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits AbstractGeneratedTOBuilder {
         /**
          * Add Generated Transfer Object from which will be extended current Generated Transfer Object.<br>
          * By definition Java does not allow multiple inheritance, hence if there is already a definition
@@ -49,11 +47,14 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
          * @param genTransObj Generated Transfer Object
          * @return This instance of builder
          */
+        @Deprecated(since = "16.0.0", forRemoval = true)
         Builder setExtendsType(GeneratedTransferObject<?> genTransObj);
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @NonNullByDefault
         void setRestrictions(Restrictions restrictions);
 
+        @Deprecated(since = "16.0.0", forRemoval = true)
         void setTypedef(boolean isTypedef);
 
         /**
@@ -61,6 +62,7 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
          *
          * @param typeDef Type Definition
          */
+        @Deprecated(since = "16.0.0", forRemoval = true)
         void setBaseType(TypeDefinition<?> typeDef);
 
         /**
@@ -68,6 +70,7 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
          *
          * @return generated transfer object instance
          */
+        @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
         GeneratedTransferObject<?> build();
     }
