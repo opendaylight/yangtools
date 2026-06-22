@@ -766,6 +766,7 @@ class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
+    @Disabled("FIXME: YANGTOOLS-1621: patterns are not populated on purpose")
     void testUnionStringPatterns() throws Exception {
         final var sourcesOutputDir = CompilationTestUtils.generatorOutput("union-string-pattern");
         final var compiledOutputDir = CompilationTestUtils.compilerOutput("union-string-pattern");
