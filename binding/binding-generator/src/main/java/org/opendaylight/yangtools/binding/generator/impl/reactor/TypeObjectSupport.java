@@ -163,9 +163,8 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
         UnionTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
                 final Dependencies dependencies, final TypeBuilderFactory builderFactory) {
             final var stmt = gen.statement();
-            return UnionTypeObjectBuilder.buildArchetype(gen.typeName(), stmt,
-                (UnionTypeDefinition) stmt.typeDefinition(), type, dependencies, builderFactory,
-                gen.currentModule().statement());
+            return UnionTypeObjectArchetypeBuilder.buildArchetype(gen.typeName(), stmt,
+                (UnionTypeDefinition) stmt.typeDefinition(), type, dependencies, builderFactory);
         }
     }
 
