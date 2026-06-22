@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
@@ -36,7 +35,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -68,21 +66,19 @@ final class UnionTypeObjectBuilder {
 
     private final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement;
     private final TypeBuilderFactory builderFactory;
-    private final ModuleEffectiveStatement module;
 
     private UnionTypeObjectBuilder(final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement,
-            final TypeBuilderFactory builderFactory, final ModuleEffectiveStatement module) {
+            final TypeBuilderFactory builderFactory) {
         this.definingStatement = requireNonNull(definingStatement);
         this.builderFactory = requireNonNull(builderFactory);
-        this.module = requireNonNull(module);
     }
 
     static Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> buildArchetype(final JavaTypeName typeName,
             final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final UnionTypeDefinition typeDefinition,
-            final TypeEffectiveStatement type, final Dependencies dependencies, final TypeBuilderFactory builderFactory,
-            final ModuleEffectiveStatement module) {
+            final TypeEffectiveStatement type, final Dependencies dependencies,
+            final TypeBuilderFactory builderFactory) {
         final var tmp = new ArrayList<GeneratedType>(1);
-        final var archetype = new UnionTypeObjectBuilder(statement, builderFactory, module)
+        final var archetype = new UnionTypeObjectBuilder(statement, builderFactory)
             .createUnion(tmp, dependencies, typeName, type, typeDefinition);
         return Map.entry(archetype, tmp);
     }
@@ -91,11 +87,6 @@ final class UnionTypeObjectBuilder {
             final Dependencies dependencies, final JavaTypeName typeName, final TypeEffectiveStatement type,
             final TypeDefinition<?> typedef) {
         final var builder = builderFactory.newUnionTypeObjectBuilder(typeName);
-        YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
-        builder.setModuleName(module.argument().getLocalName());
-        builderFactory.addCodegenInformation(definingStatement, builder);
-
-        AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(definingStatement, builder);
 
         // Pattern string is the key, XSD regex is the value. The reason for this choice is that the pattern carries
         // also negation information and hence guarantees uniqueness.
