@@ -21,11 +21,11 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -65,33 +64,24 @@ final class UnionTypeObjectBuilder {
 
     private final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement;
     private final TypeBuilderFactory builderFactory;
-    private final ModuleEffectiveStatement module;
 
     private UnionTypeObjectBuilder(final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement,
-            final TypeBuilderFactory builderFactory, final ModuleEffectiveStatement module) {
+            final TypeBuilderFactory builderFactory) {
         this.definingStatement = requireNonNull(definingStatement);
         this.builderFactory = requireNonNull(builderFactory);
-        this.module = requireNonNull(module);
     }
 
     static UnionTypeObjectArchetype buildArchetype(final JavaTypeName typeName,
             final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final UnionTypeDefinition typeDefinition,
-            final TypeEffectiveStatement type, final Dependencies dependencies, final TypeBuilderFactory builderFactory,
-            final ModuleEffectiveStatement module) {
-        return new UnionTypeObjectBuilder(statement, builderFactory, module)
+            final TypeEffectiveStatement type, final Dependencies dependencies,
+            final TypeBuilderFactory builderFactory) {
+        return new UnionTypeObjectBuilder(statement, builderFactory)
             .createUnion(dependencies, typeName, type, typeDefinition);
     }
 
     private UnionTypeObjectArchetype createUnion(
             final Dependencies dependencies, final JavaTypeName typeName, final TypeEffectiveStatement type,
             final TypeDefinition<?> typedef) {
-        final var builder = builderFactory.newUnionTypeObjectBuilder(typeName);
-        YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
-        builder.setModuleName(module.argument().getLocalName());
-        builderFactory.addCodegenInformation(definingStatement, builder);
-
-        AbstractTypeObjectGenerator.annotateDeprecatedIfNecessary(definingStatement, builder);
-
         // Pattern string is the key, XSD regex is the value. The reason for this choice is that the pattern carries
         // also negation information and hence guarantees uniqueness.
         final var expressions = new HashMap<String, String>();
@@ -100,6 +90,8 @@ final class UnionTypeObjectBuilder {
         // allows direct mapping of type to corresponding property -- without having to resort to re-resolving
         // the leafrefs again.
         final var typeProperties = new ArrayList<String>();
+
+        final var enclosedTypes = new ArrayList<GeneratedType>();
 
         for (var stmt : type.effectiveSubstatements()) {
             if (stmt instanceof TypeEffectiveStatement subType) {
@@ -112,20 +104,20 @@ final class UnionTypeObjectBuilder {
                     final var subUnionName = typeName.createEnclosed(
                         provideAvailableNameForGenTOBuilder(typeName.simpleName()));
                     final var subUnion = createUnion(dependencies, subUnionName, subType, subType.typeDefinition());
-                    builder.addEnclosingTransferObject(subUnion);
+                    enclosedTypes.add(subUnion);
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
                 } else if (BuiltInType.ENUMERATION.typeName().equals(subName)) {
                     final var subEnumeration = new EnumTypeObjectArchetype(
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), definingStatement,
                         (EnumTypeDefinition) subType.typeDefinition());
-                    builder.addEnumeration(subEnumeration);
+                    enclosedTypes.add(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (BuiltInType.BITS.typeName().equals(subName)) {
                     final var subBits = new BitsTypeObjectArchetype(
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), definingStatement,
                         (BitsTypeDefinition) subType.typeDefinition());
-                    builder.addEnclosingTransferObject(subBits);
+                    enclosedTypes.add(subBits);
                     generatedType = subBits;
                 } else if (BuiltInType.IDENTITYREF.typeName().equals(subName)) {
                     propSource = stmt.findFirstEffectiveSubstatement(BaseEffectiveStatement.class)
@@ -212,13 +204,7 @@ final class UnionTypeObjectBuilder {
             }
         }
 
-        // Record property names if needed
-        builder.setTypePropertyNames(typeProperties);
-
-        AbstractTypeObjectGenerator.addStringRegExAsConstant(builder, expressions);
-        AbstractTypeObjectGenerator.addUnits(builder, typedef);
-
-        return builder.build();
+        return new UnionTypeObjectArchetype(typeName, definingStatement, typeProperties, null, null);
     }
 
     // FIXME: this is legacy union/leafref property handling. The resulting value is *not* normalized for use as a

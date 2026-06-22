@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public abstract sealed class AbstractGeneratedTOBuilder
         extends AbstractGeneratedTypeBuilder<GeneratedTransferObject.Builder> implements GeneratedTransferObject.Builder
-        permits CodegenGeneratedTOBuilder, RuntimeUnionTypeObjectArchetypeBuilder {
+        permits CodegenGeneratedTOBuilder {
     // FIXME are these three referenced anywhere at runtime?
     private GeneratedTransferObject<?> extendsType;
     private boolean isTypedef = false;
@@ -97,8 +97,7 @@ public abstract sealed class AbstractGeneratedTOBuilder
 
     @Deprecated(since = "16.0.0", forRemoval = true)
     public abstract static sealed class AbstractGeneratedTransferObject<T extends TypeObject>
-            extends AbstractGeneratedType implements GeneratedTransferObject<T>
-            permits RuntimeUnionTO, CodegenGeneratedTOBuilder.GTO {
+            extends AbstractGeneratedType implements GeneratedTransferObject<T> permits CodegenGeneratedTOBuilder.GTO {
         private final GeneratedTransferObject<?> extendsType;
         private final boolean isTypedef;
         private final TypeDefinition<?> baseType;
