@@ -60,7 +60,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     private final @NonNull List<GeneratedProperty> finalProperties;
     private final @NonNull List<GeneratedProperty> parentProperties;
     private final @NonNull List<GeneratedProperty> properties;
-    private final Restrictions restrictions;
+    private final @NonNull Restrictions restrictions;
 
     /**
      * List of enumeration which are generated as JAVA enum type.
@@ -87,7 +87,10 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
 
-        enums = archetype.getEnumerations();
+        enums = archetype.getEnclosedTypes().stream()
+            .filter(EnumTypeObjectArchetype.class::isInstance)
+            .map(EnumTypeObjectArchetype.class::cast)
+            .toList();
         consts = archetype.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
             ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
@@ -137,19 +140,15 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     private BlockBuilder generateBody(final boolean isInnerClass) {
-        final var bb = newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
-            .blk(annotationDeclaration());
+        final var archetype = archetype();
+        final var statement = archetype.statement();
 
-        if (!isInnerClass) {
-            bb.eol(generatedAnnotation());
-        }
-        bb
+        final var bb = newBodyBuilder(statement, statement.typeStatement().typeDefinition(), !isInnerClass)
             .frg(generateClassDeclaration(isInnerClass)).oB()
                 .eol("@java.io.Serial")
                 .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
                  // inner classes
-                .blk(generateInnerClasses(root, type().getEnclosedTypes()))
+                .blk(generateInnerClasses(root, archetype.getEnclosedTypes()))
                 // inner EnumTypeObjects
                 .blk(generateInnerEnumTypeObjects(root, enums))
                 // constants
@@ -316,7 +315,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             final var propertyAndTopParentProperties = Iterables.concat(parentProperties, List.of(property));
             final var propFieldName = fieldName(property);
 
-            if (restrictions != null) {
+            if (!restrictions.isEmpty()) {
                 bb.blk(generateCheckers(property, restrictions, actualType)).newLine();
             }
 

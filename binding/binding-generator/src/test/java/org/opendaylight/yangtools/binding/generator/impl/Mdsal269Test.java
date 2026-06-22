@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal269Test {
@@ -25,18 +25,14 @@ class Mdsal269Test {
         final var mplsLabelType = generateTypes.stream().filter(type -> type.canonicalName()
             .equals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabel")).findFirst().orElseThrow();
 
-        final var gto = assertInstanceOf(GeneratedTransferObject.class, mplsLabelType);
-        final var it = gto.getProperties().iterator();
-        final var special = it.next();
-        final var general = it.next();
-        assertFalse(it.hasNext());
+        final var gto = assertInstanceOf(UnionTypeObjectArchetype.class, mplsLabelType);
+        assertEquals(List.of("mplsLabelSpecialPurpose", "mplsLabelGeneralUse"), gto.typePropertyNames());
 
-        assertEquals("mplsLabelGeneralUse", general.getName());
-        assertEquals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabelGeneralUse",
-            general.getReturnType().canonicalName());
-
-        assertEquals("mplsLabelSpecialPurpose", special.getName());
+        final var types = gto.typePropertyTypes();
+        assertEquals(2, types.size());
         assertEquals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabelSpecialPurposeValue",
-            special.getReturnType().canonicalName());
+            types.getFirst().canonicalName());
+        assertEquals("org.opendaylight.yang.gen.v1.mdsal269.rev180130.MplsLabelGeneralUse",
+            types.getLast().canonicalName());
     }
 }

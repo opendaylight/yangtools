@@ -13,9 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -38,9 +41,10 @@ class Mdsal320Test {
         assertEquals("Bar", bar.simpleName());
 
         final var barTypes = bar.getEnclosedTypes();
-        assertEquals(1, barTypes.size());
-
-        final var bar1 = assertInstanceOf(UnionTypeObjectArchetype.class, barTypes.getFirst());
+        assertEquals(2, barTypes.size());
+        final var enum1 = assertInstanceOf(EnumTypeObjectArchetype.class, barTypes.getFirst());
+        assertEquals("Enumeration", enum1.simpleName());
+        final var bar1 = assertInstanceOf(UnionTypeObjectArchetype.class, barTypes.getLast());
         assertEquals("Bar$1", bar1.simpleName());
 
         final var it = foo.getMethodDefinitions().iterator();
@@ -57,8 +61,7 @@ class Mdsal320Test {
         assertThat(requireBar.getName()).startsWith(Naming.REQUIRE_PREFIX);
         assertFalse(it.hasNext());
 
-        final var bar1Prop = bar.getProperties().stream().filter(prop -> "bar$1".equals(prop.getName()))
-                .findFirst().orElseThrow();
-        assertEquals(bar1, bar1Prop.getReturnType());
+        assertEquals(List.of("enumeration", "string", "bar$1"), bar.typePropertyNames());
+        assertEquals(List.of(enum1, BaseYangTypes.STRING_TYPE, bar1), bar.typePropertyTypes());
     }
 }

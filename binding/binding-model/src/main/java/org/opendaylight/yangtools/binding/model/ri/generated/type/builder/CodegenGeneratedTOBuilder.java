@@ -18,17 +18,11 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.SerialVersionHelper;
 
 // FIXME: package-private and abstract
-public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
-        permits CodegenUnionTypeObjectArchetypeBuilder {
+public final class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder {
     private Restrictions restrictions;
     private String reference;
     private String description;
     private String moduleName;
-
-    @NonNullByDefault
-    CodegenGeneratedTOBuilder(final JavaTypeName typeName, final @Nullable Void unused) {
-        super(typeName);
-    }
 
     @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
@@ -37,22 +31,22 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
     }
 
     @Override
-    public final void setRestrictions(final Restrictions restrictions) {
+    public void setRestrictions(final Restrictions restrictions) {
         this.restrictions = requireNonNull(restrictions);
     }
 
     @Override
-    public final void setDescription(final String description) {
+    public void setDescription(final String description) {
         this.description = requireNonNull(description);
     }
 
     @Override
-    public final void setModuleName(final String moduleName) {
+    public void setModuleName(final String moduleName) {
         this.moduleName = requireNonNull(moduleName);
     }
 
     @Override
-    public final void setReference(final String reference) {
+    public void setReference(final String reference) {
         this.reference = reference;
     }
 
@@ -62,7 +56,7 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
     }
 
     @Deprecated(since = "16.0.0", forRemoval = true)
-    static sealed class GTO<T extends TypeObject> extends AbstractGeneratedTransferObject<T> permits CodegenUnionTO {
+    static final class GTO<T extends TypeObject> extends AbstractGeneratedTransferObject<T> {
         private final @Nullable Restrictions restrictions;
         private final @Nullable String reference;
         private final @Nullable String description;
@@ -79,25 +73,25 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
 
         @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
-        public final Restrictions getRestrictions() {
+        public Restrictions getRestrictions() {
             return restrictions;
         }
 
         @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
-        public final String getDescription() {
+        public String getDescription() {
             return description;
         }
 
         @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
-        public final String getReference() {
+        public String getReference() {
             return reference;
         }
 
         @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
-        public final String getModuleName() {
+        public String getModuleName() {
             return moduleName;
         }
 

@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -28,56 +28,31 @@ class GenerateInnerClassForBitsAndUnionInLeavesTest {
         assertEquals(4, genTypes.size());
 
         boolean parentContainerFound = false;
-        boolean bitLeafTOFound = false;
-        boolean unionLeafTOFound = false;
 
         for (var type : genTypes) {
             if (!(type instanceof GeneratedTransferObject)) {
                 if (type.simpleName().equals("ParentContainer")) {
                     parentContainerFound = true;
-                    GeneratedType parentContainer = type;
-                    for (var genType : parentContainer.getEnclosedTypes()) {
-                        if (genType instanceof GeneratedTransferObject gto) {
-                            if (genType.simpleName().equals("BitLeaf")) {
-                                assertFalse(bitLeafTOFound, "Unexpected duplicate BitLeaf");
-                                bitLeafTOFound = true;
-                                final var def = assertInstanceOf(BitsTypeObjectArchetype.class, gto).typeDefinition();
-                                assertEquals(QName.create("urn:bit:union:in:leaf", "2013-06-26", "bits"),
-                                    def.getQName());
-                                assertEquals(3, def.getBits().size());
-                            } else if (genType.simpleName().equals("UnionLeaf")) {
-                                assertFalse(unionLeafTOFound, "Unexpected duplicate UnionLeaf");
-                                unionLeafTOFound = true;
+                    final var enclosedTypes = type.getEnclosedTypes();
+                    assertEquals(2, enclosedTypes.size());
 
-                                final var unionLeafProperties = gto.getProperties();
-                                assertEquals(3, unionLeafProperties.size());
+                    final var bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, enclosedTypes.getFirst());
+                    assertEquals("BitLeaf", bitLeaf.simpleName());
+                    final var def = bitLeaf.typeDefinition();
+                    assertEquals(QName.create("urn:bit:union:in:leaf", "2013-06-26", "bits"), def.getQName());
+                    assertEquals(3, def.getBits().size());
 
-                                boolean int32UnionPropertyFound = false;
-                                boolean stringUnionPropertyFound = false;
-                                boolean uint8UnionPropertyFound = false;
-                                for (var unionLeafProperty : unionLeafProperties) {
-                                    if (unionLeafProperty.getName().equals("int32")) {
-                                        int32UnionPropertyFound = true;
-                                        assertEquals(BaseYangTypes.INT32_TYPE, unionLeafProperty.getReturnType());
-                                    } else if (unionLeafProperty.getName().equals("string")) {
-                                        stringUnionPropertyFound = true;
-                                        assertEquals(BaseYangTypes.STRING_TYPE, unionLeafProperty.getReturnType());
-                                    } else if (unionLeafProperty.getName().equals("uint8")) {
-                                        uint8UnionPropertyFound = true;
-                                        assertEquals(BaseYangTypes.UINT8_TYPE, unionLeafProperty.getReturnType());
-                                    }
-                                }
-                                assertTrue(int32UnionPropertyFound);
-                                assertTrue(stringUnionPropertyFound);
-                                assertTrue(uint8UnionPropertyFound);
-                            }
-                        }
-                    }
+                    final var unionLeaf = assertInstanceOf(UnionTypeObjectArchetype.class, enclosedTypes.getLast());
+                    assertEquals("UnionLeaf", unionLeaf.simpleName());
+
+                    assertEquals(List.of(), unionLeaf.getEnclosedTypes());
+                    assertEquals(List.of("int32", "string", "string", "string", "uint8"),
+                        unionLeaf.typePropertyNames());
+                    assertEquals(List.of(BaseYangTypes.INT32_TYPE, BaseYangTypes.STRING_TYPE, BaseYangTypes.UINT8_TYPE),
+                        unionLeaf.typePropertyTypes());
                 }
             }
         }
         assertTrue(parentContainerFound);
-        assertTrue(bitLeafTOFound);
-        assertTrue(unionLeafTOFound);
     }
 }

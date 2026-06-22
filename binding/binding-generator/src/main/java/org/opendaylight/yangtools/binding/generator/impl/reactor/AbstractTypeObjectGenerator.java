@@ -22,7 +22,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.TypeObject;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
@@ -36,9 +35,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -482,30 +478,16 @@ abstract class AbstractTypeObjectGenerator<
         return switch (baseType) {
             // This is a simple Java type, just wrap it with new restrictions
             case ConcreteType concrete -> concrete.withRestrictions(restrictions);
+            // Base type is a GTO, we need to re-adjust it with new restrictions
             case ScalarTypeObjectArchetype scalar -> {
-                // FIXME: this is definitely not quite right: statement/typeDefinition/valueType should be different
+                // FIXME: this is definitely not quite right: statement/typeDefinition should be different
                 yield new ScalarTypeObjectArchetype(scalar.name(), scalar.statement(), scalar.typeDefinition(),
                     scalar.valueType(), restrictions, scalar.getSuperType());
             }
             case UnionTypeObjectArchetype union -> {
-                // Base type is a GTO, we need to re-adjust it with new restrictions
-                final var builder = builderFactory.newUnionTypeObjectBuilder(union.name())
-                    .setTypePropertyNames(union.typePropertyNames());
-                final var parent = union.getSuperType();
-                if (parent != null) {
-                    builder.setExtendsType(parent);
-                }
-                builder.setRestrictions(restrictions);
-                for (var gp : union.getProperties()) {
-                    builder.addProperty(gp.getName())
-                        .setValue(gp.getValue())
-                        .setReadOnly(gp.isReadOnly())
-                        .setAccessModifier(gp.getAccessModifier())
-                        .setReturnType(gp.getReturnType())
-                        .setFinal(gp.isFinal())
-                        .setStatic(gp.isStatic());
-                }
-                yield builder.build();
+                // FIXME: this is definitely not quite right: statement/typeDefinition should be different
+                yield new UnionTypeObjectArchetype(union.name(), union.statement(), union.typePropertyNames(),
+                    union.typePropertyTypes(), List.of(), restrictions, union.getSuperType());
             }
             default -> throw new VerifyException("Unhandled base type " + baseType);
         };
@@ -560,28 +542,6 @@ abstract class AbstractTypeObjectGenerator<
 
     abstract @NonNull GeneratedTransferObject<?> createDerivedType(@NonNull TypeBuilderFactory builderFactory,
         @NonNull GeneratedTransferObject<?> baseType);
-
-    static final void addUnits(final GeneratedTransferObject.Builder builder, final TypeDefinition<?> typedef) {
-        typedef.getUnits().ifPresent(units -> {
-            if (!units.isEmpty()) {
-                builder.addConstant(Types.STRING, Naming.UNITS_STATIC_FIELD_NAME, "\"" + units + "\"");
-            }
-        });
-    }
-
-    /**
-     * Adds to the {@code genTOBuilder} the constant which contains regular expressions from the {@code expressions}.
-     *
-     * @param genTOBuilder generated TO builder to which are {@code regular expressions} added
-     * @param expressions list of string which represent regular expressions
-     */
-    static void addStringRegExAsConstant(final GeneratedTransferObject.Builder genTOBuilder,
-            final Map<String, String> expressions) {
-        if (!expressions.isEmpty()) {
-            genTOBuilder.addConstant(Types.listTypeFor(BaseYangTypes.STRING_TYPE), TypeConstants.PATTERN_CONSTANT_NAME,
-                ImmutableMap.copyOf(expressions));
-        }
-    }
 
     /**
      * Converts the pattern constraints from {@code typedef} to the list of the strings which represents these
