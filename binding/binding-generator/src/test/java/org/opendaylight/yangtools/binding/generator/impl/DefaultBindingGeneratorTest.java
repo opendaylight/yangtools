@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -130,27 +131,31 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void provideGeneratedTOBuilderForUnionTypeDefWithInnerUnionTypes() {
-        final var gto = assertGTO(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion"));
-        assertEquals(3, gto.getProperties().size());
-        assertEquals(List.of(), gto.getEnumerations());
+        final var gto = assertInstanceOf(UnionTypeObjectArchetype.class,
+            assertGeneratedType(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion")));
+
+        assertEquals(3, gto.typePropertyNames().size());
+        assertEquals(3, gto.typePropertyTypes().size());
         final var enclosed = gto.getEnclosedTypes();
         assertEquals(1, enclosed.size());
 
-        final var union1 = assertInstanceOf(GeneratedTransferObject.class, enclosed.get(0));
+        final var union1 = assertInstanceOf(UnionTypeObjectArchetype.class, enclosed.getFirst());
         assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1", union1.canonicalName());
-        assertEquals(1, union1.getProperties().size());
-        assertEquals(List.of(), union1.getEnclosedTypes());
+        assertEquals(List.of("enumeration"), union1.typePropertyNames());
 
-        final var enums = union1.getEnumerations();
-        assertEquals(1, enums.size());
-        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1.Enumeration", enums.getFirst().canonicalName());
+        final var types = union1.typePropertyTypes();
+        assertEquals(1, types.size());
+        final var enumType = assertInstanceOf(EnumTypeObjectArchetype.class, types.getFirst());
+        assertEquals(TEST_TYPE_PROVIDER + ".ComplexUnion.ComplexUnion$1.Enumeration", enumType.canonicalName());
+        assertEquals(List.of(enumType), union1.getEnclosedTypes());
     }
 
     @Test
     void provideGeneratedTOBuilderForUnionTypeDefWithInnerUnionAndSimpleType() {
-        final var gto = assertGTO(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion"));
-        assertEquals(2, gto.getProperties().size());
-        assertEquals(List.of(), gto.getEnumerations());
+        final var gto = assertInstanceOf(UnionTypeObjectArchetype.class,
+            assertGeneratedType(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion")));
+        assertEquals(List.of("innerUnion", "string"), gto.typePropertyNames());
+        assertEquals(2, gto.typePropertyTypes().size());
         assertEquals(List.of(), gto.getEnclosedTypes());
     }
 
