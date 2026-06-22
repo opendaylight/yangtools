@@ -11,16 +11,13 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeUnionTypeObjectArchetypeBuilder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -36,11 +33,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
 
         private Codegen() {
             // Hidden on purpose
-        }
-
-        @Override
-        UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
-            return new CodegenUnionTypeObjectArchetypeBuilder(identifier);
         }
 
         @Override
@@ -87,11 +79,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
         }
 
         @Override
-        UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(final JavaTypeName identifier) {
-            return new RuntimeUnionTypeObjectArchetypeBuilder(identifier);
-        }
-
-        @Override
         GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
             return new RuntimeGeneratedTypeBuilder(identifier);
         }
@@ -122,9 +109,6 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
     public static final TypeBuilderFactory runtime() {
         return Runtime.INSTANCE;
     }
-
-    @NonNullByDefault
-    abstract UnionTypeObjectArchetype.Builder newUnionTypeObjectBuilder(JavaTypeName identifier);
 
     @NonNullByDefault
     abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);

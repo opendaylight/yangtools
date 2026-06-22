@@ -482,30 +482,16 @@ abstract class AbstractTypeObjectGenerator<
         return switch (baseType) {
             // This is a simple Java type, just wrap it with new restrictions
             case ConcreteType concrete -> concrete.withRestrictions(restrictions);
+            // Base type is a GTO, we need to re-adjust it with new restrictions
             case ScalarTypeObjectArchetype scalar -> {
-                // FIXME: this is definitely not quite right: statement/typeDefinition/valueType should be different
+                // FIXME: this is definitely not quite right: statement/typeDefinition should be different
                 yield new ScalarTypeObjectArchetype(scalar.name(), scalar.statement(), scalar.typeDefinition(),
                     scalar.valueType(), restrictions, scalar.getSuperType());
             }
             case UnionTypeObjectArchetype union -> {
-                // Base type is a GTO, we need to re-adjust it with new restrictions
-                final var builder = builderFactory.newUnionTypeObjectBuilder(union.name())
-                    .setTypePropertyNames(union.typePropertyNames());
-                final var parent = union.getSuperType();
-                if (parent != null) {
-                    builder.setExtendsType(parent);
-                }
-                builder.setRestrictions(restrictions);
-                for (var gp : union.getProperties()) {
-                    builder.addProperty(gp.getName())
-                        .setValue(gp.getValue())
-                        .setReadOnly(gp.isReadOnly())
-                        .setAccessModifier(gp.getAccessModifier())
-                        .setReturnType(gp.getReturnType())
-                        .setFinal(gp.isFinal())
-                        .setStatic(gp.isStatic());
-                }
-                yield builder.build();
+                // FIXME: this is definitely not quite right: statement/typeDefinition should be different
+                yield new UnionTypeObjectArchetype(union.name(), union.statement(), union.typePropertyNames(),
+                    union.typePropertyTypes(), List.of(), restrictions, union.getSuperType());
             }
             default -> throw new VerifyException("Unhandled base type " + baseType);
         };
