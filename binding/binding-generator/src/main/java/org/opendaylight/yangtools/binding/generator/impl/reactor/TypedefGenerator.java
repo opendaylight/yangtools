@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.binding.runtime.api.TypedefRuntimeType;
@@ -89,32 +88,14 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
             case BitsTypeObjectArchetype bits ->
                 new BitsTypeObjectArchetype(typeName, statement, (BitsTypeDefinition) typedef, bits);
             case ScalarTypeObjectArchetype scalar -> {
-                var restrictions = Restrictions.compute(statement, statement.typeStatement());
-                if (restrictions == null) {
-                    restrictions = Restrictions.empty();
-                }
+                final var restrictions = Restrictions.compute(statement, statement.typeStatement());
                 yield new ScalarTypeObjectArchetype(typeName, statement, typedef, scalar.valueType(),
-                    restrictions, scalar);
+                    restrictions != null ? restrictions : Restrictions.empty(), scalar);
             }
             case UnionTypeObjectArchetype union -> {
-                final var builder = builderFactory.newUnionTypeObjectBuilder(typeName)
-                    .setTypePropertyNames(union.typePropertyNames());
-
-                builder.setTypedef(true);
-                builder.setExtendsType(baseType);
-
                 final var restrictions = Restrictions.compute(statement, statement.typeStatement());
-                if (restrictions != null) {
-                    builder.setRestrictions(restrictions);
-                }
-                YangSourceDefinition.of(currentModule().statement(), statement)
-                    .ifPresent(builder::setYangSourceDefinition);
-
-                annotateDeprecatedIfNecessary(typedef, builder);
-                addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
-                addUnits(builder, typedef);
-
-                yield builder.build();
+                yield new UnionTypeObjectArchetype(typeName, statement, List.of(), List.of(), List.of(),
+                    restrictions != null ? restrictions : Restrictions.empty(), union);
             }
             case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
         };

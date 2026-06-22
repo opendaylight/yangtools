@@ -14,6 +14,7 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -34,7 +35,7 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
         if (!(runtimeType instanceof UnionTypeObjectArchetype unionRuntimeType)) {
             throw new VerifyException("Unexpected runtime type " + runtimeType);
         }
-        final var unionProperties = unionRuntimeType.typePropertyNames();
+        final var unionProperties = extractPropertyNames(unionRuntimeType);
         final var unionTypes = unionType.getTypes();
         verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
             unionTypes, unionProperties);
@@ -51,6 +52,20 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
         }
 
         return new UnionTypeCodec(unionCls, values);
+    }
+
+    // deal with derived unions not exposing property names, as they are fixed by its supertype
+    @NonNullByDefault
+    private static List<String> extractPropertyNames(final UnionTypeObjectArchetype archetype) {
+        var current = archetype;
+        while (true) {
+            var next = current.getSuperType();
+            if (next == null) {
+                break;
+            }
+            current = next;
+        }
+        return current.typePropertyNames();
     }
 
     @Override

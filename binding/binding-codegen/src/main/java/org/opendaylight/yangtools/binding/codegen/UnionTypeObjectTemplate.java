@@ -20,7 +20,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterables;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * A template for {@link UnionTypeObject} specializations.
@@ -60,7 +60,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     private final @NonNull List<GeneratedProperty> finalProperties;
     private final @NonNull List<GeneratedProperty> parentProperties;
     private final @NonNull List<GeneratedProperty> properties;
-    private final Restrictions restrictions;
+    private final @NonNull Restrictions restrictions;
 
     /**
      * List of enumeration which are generated as JAVA enum type.
@@ -87,7 +87,10 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
 
-        enums = archetype.getEnumerations();
+        enums = archetype.getEnclosedTypes().stream()
+            .filter(EnumTypeObjectArchetype.class::isInstance)
+            .map(EnumTypeObjectArchetype.class::cast)
+            .toList();
         consts = archetype.getConstantDefinitions();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
             ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
@@ -137,23 +140,24 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     private BlockBuilder generateBody(final boolean isInnerClass) {
-        final var bb = newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(type())))
-            .blk(annotationDeclaration());
+        final var archetype = archetype();
+        final var statement = archetype.statement();
 
-        if (!isInnerClass) {
-            bb.eol(generatedAnnotation());
-        }
-        bb
+        final var bb = newBodyBuilder(statement, statement.typeStatement().typeDefinition(), !isInnerClass)
             .frg(generateClassDeclaration(isInnerClass)).oB()
                 .eol("@java.io.Serial")
                 .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
                  // inner classes
-                .blk(generateInnerClasses(root, type().getEnclosedTypes()))
+                .blk(generateInnerClasses(root, archetype.getEnclosedTypes()))
                 // inner EnumTypeObjects
-                .blk(generateInnerEnumTypeObjects(root, enums))
-                // constants
-                .blk(constantsDeclarations());
+                .blk(generateInnerEnumTypeObjects(root, enums));
+
+        if (statement instanceof TypedefEffectiveStatement typedef) {
+            final var units = typedef.unitsStatement();
+            if (units != null) {
+                bb.str("public static final String UNITS = ").jString(units.argument()).eS();
+            }
+        }
 
         // fields
         if (!properties.isEmpty()) {
@@ -221,70 +225,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         return bb;
     }
 
-    private @Nullable BlockBuilder constantsDeclarations() {
-        if (consts.isEmpty()) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        for (var c : consts) {
-            switch (c.getName()) {
-                case PATTERN_CONSTANT_NAME -> appendPatternConstant(bb, (Map<String, String>) c.getValue());
-                default -> bb.txt(emitConstant(c));
-            }
-        }
-        return bb;
-    }
-
-    @NonNullByDefault
-    private void appendPatternConstant(final BlockBuilder bb, final Map<String, String> constValue) {
-        final var jurPattern = importedName(JUR_PATTERN);
-        final var juList = importedName(JU_LIST);
-
-        bb.str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME + " = ").str(juList)
-            .str(".of(");
-        {
-            boolean first = true;
-            for (var value : constValue.keySet()) {
-                if (first) {
-                    first = false;
-                } else {
-                    bb.str(", ");
-                }
-                bb.jString(requireNonNull(value));
-            }
-        }
-        bb
-            .eol(");")
-            .str("private static final ").str(jurPattern);
-        if (constValue.size() == 1) {
-            bb
-                .str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern)
-                .eol(".compile(" + PATTERN_CONSTANT_NAME + ".getFirst());")
-                .str("private static final String " + MEMBER_REGEX_LIST + " = ")
-                    .jString(constValue.values().iterator().next()).eS();
-            return;
-        }
-
-        // FIXME: should be multi-line
-        bb
-            .str("[] " + MEMBER_PATTERN_LIST + " = ").str(importedName(CODEHELPERS))
-                .eol(".compilePatterns(" + PATTERN_CONSTANT_NAME + ");")
-            .str("private static final String[] " + MEMBER_REGEX_LIST + " = { ");
-        {
-            boolean first = true;
-            for (var value : constValue.values()) {
-                if (first) {
-                    first = false;
-                } else {
-                    bb.str(", ");
-                }
-                bb.jString(requireNonNull(value));
-            }
-        }
-        bb.eol(" };");
-    }
-
     @NonNullByDefault
     private BlockBuilder constructors() {
         final var bb = newBlockBuilder()
@@ -316,7 +256,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             final var propertyAndTopParentProperties = Iterables.concat(parentProperties, List.of(property));
             final var propFieldName = fieldName(property);
 
-            if (restrictions != null) {
+            if (!restrictions.isEmpty()) {
                 bb.blk(generateCheckers(property, restrictions, actualType)).newLine();
             }
 
