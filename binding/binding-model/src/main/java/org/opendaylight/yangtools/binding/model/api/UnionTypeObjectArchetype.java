@@ -42,6 +42,17 @@ public non-sealed interface UnionTypeObjectArchetype extends GeneratedTransferOb
 
     @Override
     default long serialVersionUID() {
-        return SerialVersionHelper.computeSerialVersion(this);
+        final var svb = new SerialVersionHelper(name())
+            .setAbstract(false)
+            .addInterface(BitsTypeObjectArchetype.SERIALIZABLE);
+
+        for (var property : getProperties()) {
+            svb.addField(property.getName());
+        }
+        for (var method : getMethodDefinitions()) {
+            svb.addMethod(method.getName(), method.getAccessModifier());
+        }
+
+        return svb.computeSerialVersion();
     }
 }

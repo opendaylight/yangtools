@@ -28,4 +28,9 @@ final class CodegenUnionTO extends GTO<UnionTypeObject> implements UnionTypeObje
     public List<String> typePropertyNames() {
         return typePropertyNames;
     }
+
+    @Override
+    public long serialVersionUID() {
+        return UnionTypeObjectArchetype.super.serialVersionUID();
+    }
 }

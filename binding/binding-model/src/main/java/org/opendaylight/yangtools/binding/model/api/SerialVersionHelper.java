@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.UNION_TYPE_OBJECT;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
@@ -21,9 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -80,9 +79,6 @@ public final class SerialVersionHelper {
         }
     }
 
-    // Backward compatibility: these interfaces were retro-fitted into generated code and would affect the computation
-    // FIXME: these should just not be carried in GeneratedType
-    private static final Set<ConcreteType> IGNORED_INTERFACES = Set.of(BindingTypes.UNION_TYPE_OBJECT);
     private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
     private static final Comparator<MethodDesc> METHOD_COMPARATOR = Comparator.comparing(MethodDesc::name);
     private static final DigestFactory DIGEST_FACTORY;
@@ -181,10 +177,11 @@ public final class SerialVersionHelper {
         return hash;
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static long computeSerialVersion(final GeneratedType to) {
         final var svb = new SerialVersionHelper(to.name()).setAbstract(to.isAbstract());
 
-        for (var iface : Collections2.filter(to.getImplements(), item -> !IGNORED_INTERFACES.contains(item))) {
+        for (var iface : Collections2.filter(to.getImplements(), item -> !UNION_TYPE_OBJECT.equals(item))) {
             svb.addInterface(iface.name());
         }
         for (var property : to.getProperties()) {

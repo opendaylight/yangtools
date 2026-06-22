@@ -114,7 +114,6 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
                 addStringRegExAsConstant(builder, resolveRegExpressions(typedef));
                 addUnits(builder, typedef);
 
-                makeSerializable(builder);
                 yield builder.build();
             }
             case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);

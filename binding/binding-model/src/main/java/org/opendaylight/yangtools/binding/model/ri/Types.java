@@ -13,7 +13,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +57,6 @@ public final class Types {
     private static final @NonNull ConcreteType LIST_TYPE = typeForClass(List.class);
     private static final @NonNull ConcreteType LISTENABLE_FUTURE = typeForClass(ListenableFuture.class);
     private static final @NonNull ConcreteType MAP_TYPE = typeForClass(Map.class);
-    private static final @NonNull ConcreteType SERIALIZABLE = typeForClass(Serializable.class);
     private static final @NonNull ConcreteType SET_TYPE = typeForClass(Set.class);
     private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = typeForClass(ImmutableSet.class);
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
@@ -144,15 +142,6 @@ public final class Types {
     @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType primitiveVoidType() {
         return PRIMITIVE_VOID;
-    }
-
-    /**
-     * Returns an instance of {@link ConcreteType} which represents {@link Serializable} type.
-     *
-     * @return <code>ConcreteType</code> instance which represents JAVA <code>{@link Serializable}</code>
-     */
-    public static @NonNull ConcreteType serializableType() {
-        return SERIALIZABLE;
     }
 
     /**

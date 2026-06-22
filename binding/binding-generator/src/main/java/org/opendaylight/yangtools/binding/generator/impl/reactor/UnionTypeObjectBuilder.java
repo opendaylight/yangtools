@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -93,7 +92,6 @@ final class UnionTypeObjectBuilder {
             final TypeDefinition<?> typedef) {
         final var builder = builderFactory.newUnionTypeObjectBuilder(typeName);
         YangSourceDefinition.of(module, definingStatement).ifPresent(builder::setYangSourceDefinition);
-        builder.addImplementsType(BindingTypes.UNION_TYPE_OBJECT);
         builder.setModuleName(module.argument().getLocalName());
         builderFactory.addCodegenInformation(definingStatement, builder);
 
@@ -226,7 +224,6 @@ final class UnionTypeObjectBuilder {
         AbstractTypeObjectGenerator.addStringRegExAsConstant(builder, expressions);
         AbstractTypeObjectGenerator.addUnits(builder, typedef);
 
-        AbstractTypeObjectGenerator.makeSerializable(builder);
         return builder.build();
     }
 

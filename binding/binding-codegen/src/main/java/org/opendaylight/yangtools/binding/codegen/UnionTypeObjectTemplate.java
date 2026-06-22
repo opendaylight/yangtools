@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.UNION_TYPE_OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
@@ -204,32 +205,19 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         final var archetype = archetype();
 
         final var bb = newBlockBuilder()
-            .str("public");
+            .str("public ");
         if (isInnerClass) {
-            bb.str(" static final ");
-        } else {
-            bb.str(archetype.isAbstract() ? " abstract " : " ");
+            bb.str("static final ");
         }
         bb.str("class ").str(archetype.simpleName());
 
         final var superType = archetype.getSuperType();
         if (superType != null) {
             bb.str(" extends ").str(importedName(superType));
+        } else {
+            bb.str(" implements ").str(importedName(UNION_TYPE_OBJECT)).str(", java.io.Serializable");
         }
 
-        final var ifaces = archetype.getImplements();
-        if (!ifaces.isEmpty()) {
-            bb.nl().str(" implements ");
-
-            final var it = ifaces.iterator();
-            while (true) {
-                bb.str(importedName(it.next()));
-                if (!it.hasNext()) {
-                    break;
-                }
-                bb.str(", ");
-            }
-        }
         return bb;
     }
 

@@ -103,7 +103,7 @@ public sealed class CodegenGeneratedTOBuilder extends AbstractGeneratedTOBuilder
 
         @Deprecated(since = "16.0.0", forRemoval = true)
         @Override
-        public final long serialVersionUID() {
+        public long serialVersionUID() {
             return SerialVersionHelper.computeSerialVersion(this);
         }
     }

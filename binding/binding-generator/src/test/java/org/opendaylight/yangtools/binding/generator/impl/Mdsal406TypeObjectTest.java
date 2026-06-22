@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.UNION_TYPE_OBJECT;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -74,12 +74,6 @@ class Mdsal406TypeObjectTest {
         final var typedefType = generateTypes.stream().filter(type -> type.canonicalName()
             .equals("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.MyUnion")).findFirst()
             .orElseThrow();
-
-        assertNotNull(typedefType.getImplements());
-        final var objectType = typedefType.getImplements().stream()
-            .filter(type -> type.canonicalName().equals("org.opendaylight.yangtools.binding.UnionTypeObject"))
-            .findAny()
-            .orElseThrow();
-        assertEquals(UNION_TYPE_OBJECT, objectType);
+        assertInstanceOf(UnionTypeObjectArchetype.class, typedefType);
     }
 }

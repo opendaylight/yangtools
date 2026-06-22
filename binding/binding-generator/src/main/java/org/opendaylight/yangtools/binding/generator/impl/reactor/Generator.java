@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -37,7 +36,6 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -297,18 +295,6 @@ public abstract class Generator implements Iterable<Generator> {
             }
             default -> throw new IllegalStateException("Unhandled status in " + node);
         }
-    }
-
-    /**
-     * Add {@link java.io.Serializable} to implemented interfaces of this TO. Also compute and add serialVersionUID
-     * property.
-     *
-     * @param builder transfer object which needs to be made serializable
-     */
-    // FIXME: remove this method: this is implied by the resulting archetype
-    @NonNullByDefault
-    static final void makeSerializable(final GeneratedTransferObject.Builder builder) {
-        builder.addImplementsType(Types.serializableType());
     }
 
     /**
