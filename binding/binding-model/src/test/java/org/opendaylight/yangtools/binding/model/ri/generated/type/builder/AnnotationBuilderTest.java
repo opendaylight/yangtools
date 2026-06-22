@@ -118,7 +118,7 @@ class AnnotationBuilderTest {
 
     @Test
     void generatedPropertyAnnotationTest() {
-        final var genTOBuilder = new CodegenUnionTypeObjectArchetypeBuilder(
+        final var genTOBuilder = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotInterface"));
 
         final var propertyBuilder = genTOBuilder.addProperty("simpleProperty");
@@ -176,7 +176,7 @@ class AnnotationBuilderTest {
 
     @Test
     void generatedTransfeObjectAnnotationTest() {
-        final var genTypeBuilder = new CodegenUnionTypeObjectArchetypeBuilder(
+        final var genTypeBuilder = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
 
         genTypeBuilder.addAnnotation("javax.management", "MBean");

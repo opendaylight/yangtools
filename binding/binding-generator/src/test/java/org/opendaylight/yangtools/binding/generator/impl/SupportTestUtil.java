@@ -13,8 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -59,36 +57,7 @@ final class SupportTestUtil {
         }
     }
 
-    static void containsAttributes(final GeneratedTransferObject<?> genTO, final boolean equal, final boolean hash,
-            final boolean toString, final NameTypePattern... searchedSignsWhat) {
-        var searchedPropertiesIn = genTO.getProperties();
-        containsAttributes(searchedPropertiesIn, "", searchedSignsWhat);
-    }
-
-    static void containsAttributes(final List<GeneratedProperty> searchedPropertiesIn, final String listType,
-            final NameTypePattern... searchedPropertiesWhat) {
-
-        for (var searchedPropertyWhat : searchedPropertiesWhat) {
-            boolean nameMatchFound = false;
-            String typeNameFound = "";
-            for (var searchedPropertyIn : searchedPropertiesIn) {
-                if (searchedPropertyWhat.getName().equals(searchedPropertyIn.getName())) {
-                    nameMatchFound = true;
-                    typeNameFound = resolveFullNameOfReturnType(searchedPropertyIn.getReturnType());
-                    if (searchedPropertyWhat.getType().equals(typeNameFound)) {
-                        break;
-                    }
-                }
-            }
-            assertTrue(nameMatchFound,
-                "Property " + searchedPropertyWhat.getName() + " wasn't found in " + listType + " property list.");
-            assertEquals(searchedPropertyWhat.getType(), typeNameFound,
-                "The type of property " + searchedPropertyWhat.getName() + " in " + listType
-                + " property list doesn't match expected type.");
-        }
-    }
-
-    static String resolveFullNameOfReturnType(final Type type) {
+    private static String resolveFullNameOfReturnType(final Type type) {
         final var sb = new StringBuilder();
         if (type instanceof ParameterizedType parameterizedTypes) {
             sb.append(type.simpleName()).append('<');
