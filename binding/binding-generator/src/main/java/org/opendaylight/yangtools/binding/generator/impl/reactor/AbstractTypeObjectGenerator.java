@@ -227,7 +227,6 @@ abstract class AbstractTypeObjectGenerator<
     // The generator corresponding to the furthest resolved leaf in leafref chain, at point when this was resolved
     // serves to help in detection of circular leafref chains
     private AbstractTypeObjectGenerator<?, ?> furthestInRefChain;
-    private List<GeneratedType> auxiliaryGeneratedTypes = List.of();
     private TypeObjectSupport.Union.Dependencies unionDependencies;
     private List<AbstractTypeObjectGenerator<?, ?>> inferred = List.of();
 
@@ -241,11 +240,6 @@ abstract class AbstractTypeObjectGenerator<
     AbstractTypeObjectGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
         support = TypeObjectSupport.of(statement().typeStatement());
-    }
-
-    @Override
-    public final List<GeneratedType> auxiliaryGeneratedTypes() {
-        return auxiliaryGeneratedTypes;
     }
 
     @Override
@@ -558,11 +552,7 @@ abstract class AbstractTypeObjectGenerator<
                 final var stmt = statement();
                 yield new EnumTypeObjectArchetype(typeName(), stmt, (EnumTypeDefinition) stmt.typeDefinition());
             }
-            case TypeObjectSupport.Union union -> {
-                final var entry = union.toArchetype(this, unionDependencies, builderFactory);
-                auxiliaryGeneratedTypes = List.copyOf(entry.getValue());
-                yield entry.getKey();
-            }
+            case TypeObjectSupport.Union union -> union.toArchetype(this, unionDependencies, builderFactory);
             case TypeObjectSupport.Scalar scalar -> scalar.toArchetype(this, builderFactory);
             default -> throw new VerifyException("Unhandled type " + support.type.argument());
         };

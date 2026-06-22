@@ -77,7 +77,6 @@ public final class DefaultBindingGenerator implements BindingGenerator {
             result.add(type);
         }
 
-        result.addAll(gen.auxiliaryGeneratedTypes());
         for (var child : gen) {
             addTypes(result, child);
         }

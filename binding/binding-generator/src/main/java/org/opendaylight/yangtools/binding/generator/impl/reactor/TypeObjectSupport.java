@@ -11,15 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -163,9 +160,8 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
             super(type);
         }
 
-        Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> toArchetype(
-                final AbstractTypeObjectGenerator<?, ?> gen, final Dependencies dependencies,
-                final TypeBuilderFactory builderFactory) {
+        UnionTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
+                final Dependencies dependencies, final TypeBuilderFactory builderFactory) {
             final var stmt = gen.statement();
             return UnionTypeObjectBuilder.buildArchetype(gen.typeName(), stmt,
                 (UnionTypeDefinition) stmt.typeDefinition(), type, dependencies, builderFactory,

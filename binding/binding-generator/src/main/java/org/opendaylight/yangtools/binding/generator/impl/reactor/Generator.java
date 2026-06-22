@@ -15,7 +15,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -72,10 +71,6 @@ public abstract class Generator implements Iterable<Generator> {
 
     public final @Nullable GeneratedType generatedType() {
         return result.generatedType();
-    }
-
-    public @NonNull List<GeneratedType> auxiliaryGeneratedTypes() {
-        return List.of();
     }
 
     @Override

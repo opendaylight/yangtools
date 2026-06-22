@@ -14,8 +14,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeObjectSupport.Union.Dependencies;
@@ -23,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -77,17 +74,15 @@ final class UnionTypeObjectBuilder {
         this.module = requireNonNull(module);
     }
 
-    static Map.Entry<UnionTypeObjectArchetype, List<GeneratedType>> buildArchetype(final JavaTypeName typeName,
+    static UnionTypeObjectArchetype buildArchetype(final JavaTypeName typeName,
             final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final UnionTypeDefinition typeDefinition,
             final TypeEffectiveStatement type, final Dependencies dependencies, final TypeBuilderFactory builderFactory,
             final ModuleEffectiveStatement module) {
-        final var tmp = new ArrayList<GeneratedType>(1);
-        final var archetype = new UnionTypeObjectBuilder(statement, builderFactory, module)
-            .createUnion(tmp, dependencies, typeName, type, typeDefinition);
-        return Map.entry(archetype, tmp);
+        return new UnionTypeObjectBuilder(statement, builderFactory, module)
+            .createUnion(dependencies, typeName, type, typeDefinition);
     }
 
-    private UnionTypeObjectArchetype createUnion(final List<GeneratedType> auxiliaryGeneratedTypes,
+    private UnionTypeObjectArchetype createUnion(
             final Dependencies dependencies, final JavaTypeName typeName, final TypeEffectiveStatement type,
             final TypeDefinition<?> typedef) {
         final var builder = builderFactory.newUnionTypeObjectBuilder(typeName);
@@ -116,8 +111,7 @@ final class UnionTypeObjectBuilder {
                 if (BuiltInType.UNION.typeName().equals(subName)) {
                     final var subUnionName = typeName.createEnclosed(
                         provideAvailableNameForGenTOBuilder(typeName.simpleName()));
-                    final var subUnion = createUnion(auxiliaryGeneratedTypes, dependencies, subUnionName, subType,
-                        subType.typeDefinition());
+                    final var subUnion = createUnion(dependencies, subUnionName, subType, subType.typeDefinition());
                     builder.addEnclosingTransferObject(subUnion);
                     propSource = subUnionName.simpleName();
                     generatedType = subUnion;
