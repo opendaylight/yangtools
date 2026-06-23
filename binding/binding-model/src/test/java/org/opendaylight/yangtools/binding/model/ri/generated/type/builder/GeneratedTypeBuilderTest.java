@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -204,8 +203,7 @@ class GeneratedTypeBuilderTest {
     @Test
     void addEnclosingTransferObjectIllegalArgumentTest2() {
         final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
-        assertThrows(IllegalArgumentException.class,
-            () -> builder.addEnclosingTransferObject((GeneratedTransferObject<?>) null));
+        assertThrows(NullPointerException.class, () -> builder.addEnclosedType(null));
     }
 
     @Test

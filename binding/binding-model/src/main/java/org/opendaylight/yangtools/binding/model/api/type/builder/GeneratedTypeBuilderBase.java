@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -23,10 +22,9 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Abstra
 
 public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
         extends TypeBuilder, AnnotableTypeBuilder
-        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, GeneratedTransferObject.Builder,
-                GeneratedTypeBuilder {
+        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, GeneratedTypeBuilder {
     /**
-     * Adds new Enclosing Transfer Object <code>genTOBuilder</code> into definition of Generated Type.
+     * Adds a new enclosed {@link GeneratedType}into definition of Generated Type.
      *
      * <br>
      * There is no need of specifying of Package Name because enclosing Type is already defined inside Generated Type
@@ -36,9 +34,9 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * If the parameter <code>genTOBuilder</code> of enclosing type is <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}.
      *
-     * @param genTO Name of Enclosing Type
+     * @param genType the enclosed {@link GeneratedType}
      */
-    T addEnclosingTransferObject(GeneratedTransferObject<?> genTO);
+    T addEnclosedType(GeneratedType genType);
 
     /**
      * Adds String definition of comment into Method Signature definition.<br>

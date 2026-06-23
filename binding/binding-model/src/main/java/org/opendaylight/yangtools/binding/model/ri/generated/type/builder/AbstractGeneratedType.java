@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -57,7 +56,7 @@ abstract class AbstractGeneratedType implements GeneratedType {
         constants = makeUnmodifiable(builder.getConstants());
         enumerations = List.copyOf(builder.getEnumerations());
         methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
-        enclosedTypes = List.copyOf(builder.getEnclosedTransferObjects());
+        enclosedTypes = List.copyOf(builder.getEnclosedTypes());
         properties = toUnmodifiableProperties(builder.getProperties());
         definition = builder.getYangSourceDefinition().orElse(null);
     }
@@ -65,7 +64,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
     AbstractGeneratedType(final @NonNull JavaTypeName typeName, final TypeComment comment,
             final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
             final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-            final List<GeneratedTransferObject.Builder> enclosedGenTOBuilders,
             final List<EnumTypeObjectArchetype> enums, final List<Constant> constants,
             final List<MethodSignatureBuilder> methodBuilders, final List<GeneratedPropertyBuilder> propertyBuilders) {
         name = requireNonNull(typeName);
@@ -75,7 +73,7 @@ abstract class AbstractGeneratedType implements GeneratedType {
         this.constants = makeUnmodifiable(constants);
         enumerations = makeUnmodifiable(enums);
         methodSignatures = toUnmodifiableMethods(methodBuilders);
-        enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders, enclosedGenTOBuilders);
+        enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders);
         properties = toUnmodifiableProperties(propertyBuilders);
         definition = null;
     }
@@ -99,22 +97,13 @@ abstract class AbstractGeneratedType implements GeneratedType {
     }
 
     private static List<GeneratedType> toUnmodifiableEnclosedTypes(
-            final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-            final List<GeneratedTransferObject.Builder> enclosedGenTOBuilders) {
-        final var enclosedTypesList = new ArrayList<GeneratedType>(
-            enclosedGenTypeBuilders.size() + enclosedGenTOBuilders.size());
+            final List<GeneratedTypeBuilder> enclosedGenTypeBuilders) {
+        final var enclosedTypesList = new ArrayList<GeneratedType>(enclosedGenTypeBuilders.size());
         for (var builder : enclosedGenTypeBuilders) {
             if (builder != null) {
                 enclosedTypesList.add(builder.build());
             }
         }
-
-        for (var builder : enclosedGenTOBuilders) {
-            if (builder != null) {
-                enclosedTypesList.add(builder.build());
-            }
-        }
-
         return makeUnmodifiable(enclosedTypesList);
     }
 

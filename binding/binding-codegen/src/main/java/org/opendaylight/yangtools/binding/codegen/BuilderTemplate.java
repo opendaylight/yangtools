@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 
 /**
@@ -65,7 +64,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             //        the extremely long route: we really would like to instantiate a GeneratedClass here and not pass
             //        not have a GeneratedType for the Builder nor its implementation at all
             return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
-                .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(implName).addImplementsType(type).build())
+                .addEnclosedType(new CodegenGeneratedTypeBuilder(implName).addImplementsType(type).build())
                 .build(), type);
         }
     }

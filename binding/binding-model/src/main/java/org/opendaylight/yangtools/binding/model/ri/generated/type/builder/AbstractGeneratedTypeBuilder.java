@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -31,14 +31,13 @@ import org.opendaylight.yangtools.util.LazyCollections;
 
 public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>>
         extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
-        permits AbstractGeneratedTOBuilder, CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder,
-                DataRootArchetypeBuilder {
+        permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder, DataRootArchetypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
     private List<Type> implementsTypes = List.of();
     private List<EnumTypeObjectArchetype> enumDefinitions = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
-    private List<GeneratedTransferObject<?>> enclosedTransferObjects = List.of();
+    private List<GeneratedType> enclosedTypes = List.of();
     private List<GeneratedPropertyBuilder> properties = List.of();
     private @Nullable TypeComment comment;
     private YangSourceDefinition yangSourceDefinition;
@@ -74,18 +73,18 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
         return methodDefinitions;
     }
 
-    protected List<GeneratedTransferObject<?>> getEnclosedTransferObjects() {
-        return enclosedTransferObjects;
+    protected final List<GeneratedType> getEnclosedTypes() {
+        return enclosedTypes;
     }
 
     protected abstract T thisInstance();
 
     @Override
-    public T addEnclosingTransferObject(final GeneratedTransferObject<?> genTO) {
-        checkArgument(genTO != null, "Parameter genTO cannot be null!");
-        checkArgument(!enclosedTransferObjects.contains(genTO),
-            "This generated type already contains equal enclosing transfer object.");
-        enclosedTransferObjects = LazyCollections.lazyAdd(enclosedTransferObjects, genTO);
+    public final T addEnclosedType(final GeneratedType genType) {
+        if (enclosedTypes.contains(requireNonNull(genType))) {
+            throw new IllegalArgumentException("This generated type already contains equal enclosing transfer object.");
+        }
+        enclosedTypes = LazyCollections.lazyAdd(enclosedTypes, genType);
         return thisInstance();
     }
 
