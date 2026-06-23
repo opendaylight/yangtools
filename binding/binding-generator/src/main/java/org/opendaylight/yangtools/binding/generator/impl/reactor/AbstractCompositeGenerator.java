@@ -483,7 +483,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
 
             final var enclosedType = child.enclosedType(builderFactory);
             switch (enclosedType) {
-                case GeneratedTransferObject<?> gto -> builder.addEnclosingTransferObject(gto);
+                case GeneratedTransferObject<?> gto -> builder.addEnclosedType(gto);
                 case EnumTypeObjectArchetype enumeration -> builder.addEnumeration(enumeration);
                 case null -> {
                     // No-op

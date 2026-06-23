@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTOBuilder.AbstractGeneratedTransferObject;
 import org.opendaylight.yangtools.binding.runtime.api.TypedefRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -97,7 +95,6 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
                 yield new UnionTypeObjectArchetype(typeName, statement, List.of(), List.of(), List.of(),
                     restrictions != null ? restrictions : Restrictions.empty(), union);
             }
-            case AbstractGeneratedTransferObject<?> gto -> throw new VerifyException("Unsupported " + gto);
         };
     }
 
