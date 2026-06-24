@@ -29,11 +29,13 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
@@ -74,8 +76,10 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         allProperties = Stream.concat(properties.stream(), parentProperties.stream())
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
+
+        // FIXME: YANGTOOLS-1621: this is utterly defunct
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
-            ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
+            ? requireNonNull(AbstractRangeGenerator.forType(encapsulatedValueType(archetype))) : null;
     }
 
     /**
@@ -149,12 +153,13 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             }
         }
 
-        // length/range checkes
+        // FIXME: YANGTOOLS-1621: this is utterly defunct
+        // length/range checkers
         if (restrictions != null) {
             final var length = restrictions.getLengthConstraint();
             if (length.isPresent()) {
                 bb.nl().blk(LengthGenerator.generateLengthChecker("_value",
-                    TypeUtils.encapsulatedValueType(archetype()), length.orElseThrow(), javaType()));
+                    encapsulatedValueType(archetype()), length.orElseThrow(), javaType()));
             }
             final var range = restrictions.getRangeConstraint();
             if (range.isPresent()) {
@@ -177,6 +182,12 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         }
 
         return bb.cB().nl();
+    }
+
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    @NonNullByDefault
+    private static Type encapsulatedValueType(final GeneratedTransferObject<?> gto) {
+        return gto.findProperty(TypeConstants.VALUE_PROP).orElseThrow().getReturnType();
     }
 
     /**

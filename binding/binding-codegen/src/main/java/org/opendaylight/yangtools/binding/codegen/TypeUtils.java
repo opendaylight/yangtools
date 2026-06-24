@@ -8,12 +8,9 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 
 /**
  * Random utility methods for dealing with {@link Type} objects.
@@ -36,10 +33,5 @@ final class TypeUtils {
             case ScalarTypeObjectArchetype scalar -> scalar.valueType();
             default -> throw new IllegalArgumentException("Unsupported type " + type);
         };
-    }
-
-    @NonNullByDefault
-    static Type encapsulatedValueType(final GeneratedTransferObject<?> gto) {
-        return gto.findProperty(TypeConstants.VALUE_PROP).orElseThrow().getReturnType();
     }
 }
