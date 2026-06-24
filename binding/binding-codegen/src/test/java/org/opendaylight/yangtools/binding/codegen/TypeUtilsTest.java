@@ -12,42 +12,33 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
 @ExtendWith(MockitoExtension.class)
 class TypeUtilsTest {
     @Mock
-    private ScalarTypeObjectArchetype rootType;
+    private ScalarTypeObjectArchetype scalar;
     @Mock
-    private ScalarTypeObjectArchetype innerType;
-    @Mock
-    private GeneratedProperty property;
+    private UnionTypeObjectArchetype union;
 
     @Test
     void getBaseYangTypeTest() {
         final var type = ConcreteType.ofClass(Object.class);
         assertSame(type, TypeUtils.getBaseYangType(type));
 
-        doReturn("value").when(property).getName();
-        doReturn(type).when(property).getReturnType();
-        doReturn(rootType).when(innerType).getSuperType();
-        doReturn(List.of(property)).when(rootType).getProperties();
-        assertEquals(type, TypeUtils.getBaseYangType(innerType));
+        doReturn(type).when(scalar).valueType();
+        assertEquals(type, TypeUtils.getBaseYangType(scalar));
     }
 
     @Test
     void getBaseYangTypeWithExceptionTest() {
-        doReturn("test").when(property).getName();
-        doReturn(rootType).when(innerType).getSuperType();
-        doReturn(List.of(property)).when(rootType).getProperties();
-        final var ex = assertThrows(IllegalArgumentException.class, () -> TypeUtils.getBaseYangType(innerType));
-        assertEquals("Type innerType root rootType properties [property] do not include \"value\"", ex.getMessage());
+        final var ex = assertThrows(IllegalArgumentException.class, () -> TypeUtils.getBaseYangType(union));
+        assertEquals("Unsupported type union", ex.getMessage());
     }
 }
