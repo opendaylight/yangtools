@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  * Utility class for creating {@link UnionTypeObjectArchetype}s.
  */
 @NonNullByDefault
-public final class UnionTypeObjectArchetypeBuilder {
+final class UnionTypeObjectArchetypeBuilder {
     // FIXME: remove this map
     private static final ImmutableMap<QName, ConcreteType> SIMPLE_TYPES =
         ImmutableMap.<QName, ConcreteType>builder()
