@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Constant;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -34,7 +33,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
         permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder, DataRootArchetypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
     private List<Type> implementsTypes = List.of();
-    private List<EnumTypeObjectArchetype> enumDefinitions = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
     private List<GeneratedType> enclosedTypes = List.of();
@@ -58,10 +56,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     @Override
     public List<Type> getImplementsTypes() {
         return implementsTypes;
-    }
-
-    protected List<EnumTypeObjectArchetype> getEnumerations() {
-        return enumDefinitions;
     }
 
     protected List<Constant> getConstants() {
@@ -131,18 +125,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
             }
         }
         return false;
-    }
-
-    @Override
-    public void addEnumeration(final EnumTypeObjectArchetype enumeration) {
-        checkArgument(enumeration != null, "Enumeration cannot be null!");
-
-        // This enumeration may be generated from a leaf, which may end up colliding with its enclosing type
-        // hierarchy. If that is the case, we use a single '$' suffix to disambiguate -- that cannot come from the user
-        // and hence is marking our namespace
-        checkArgument(!enumDefinitions.contains(enumeration),
-            "Generated type %s already contains an enumeration for %s", this, enumeration);
-        enumDefinitions = LazyCollections.lazyAdd(enumDefinitions, enumeration);
     }
 
     @Override
@@ -217,7 +199,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
             helper.add("comment", local.getJavadoc());
         }
         addToStringAttribute(helper, "constants", constants);
-        addToStringAttribute(helper, "enumerations", enumDefinitions);
+        addToStringAttribute(helper, "enclosedTypes", enclosedTypes);
         addToStringAttribute(helper, "methods", methodDefinitions);
         addToStringAttribute(helper, "annotations", annotationBuilders);
         addToStringAttribute(helper, "implements", implementsTypes);

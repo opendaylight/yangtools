@@ -50,12 +50,6 @@ public record FeatureArchetype(
 
     @Override
     @Deprecated(forRemoval = true)
-    public List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
     public List<Type> getImplements() {
         return List.of();
     }

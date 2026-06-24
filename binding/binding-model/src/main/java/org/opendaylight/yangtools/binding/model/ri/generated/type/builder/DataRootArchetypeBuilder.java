@@ -54,7 +54,7 @@ public final class DataRootArchetypeBuilder extends AbstractGeneratedTypeBuilder
     public DataRootArchetype build() {
         return new DataRootArchetypeImpl(typeName(), statement, getImplementsTypes(),
             AbstractGeneratedType.toUnmodifiableMethods(getMethodDefinitions()),
-            List.copyOf(getEnclosedTypes()), getEnumerations());
+            List.copyOf(getEnclosedTypes()));
     }
 
     @Override

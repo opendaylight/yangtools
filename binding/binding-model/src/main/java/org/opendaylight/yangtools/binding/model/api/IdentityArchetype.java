@@ -88,12 +88,6 @@ public sealed interface IdentityArchetype extends Archetype.WithQName<IdentityEf
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
     default List<Type> getImplements() {
         return List.of();
     }

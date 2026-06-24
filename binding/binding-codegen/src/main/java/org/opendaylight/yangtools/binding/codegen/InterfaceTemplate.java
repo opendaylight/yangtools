@@ -30,7 +30,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -71,10 +70,6 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
      */
     private final List<MethodSignature> methods;
     /**
-     * List of enumeration which are generated as JAVA enum type.
-     */
-    private final List<EnumTypeObjectArchetype> enums;
-    /**
      * List of generated types which are enclosed inside the generated type.
      */
     private final List<GeneratedType> enclosedGeneratedTypes;
@@ -89,7 +84,6 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
 
         consts = type.getConstantDefinitions();
         methods = type.getMethodDefinitions();
-        enums = type.getEnumerations();
         enclosedGeneratedTypes = type.getEnclosedTypes();
     }
 
@@ -156,8 +150,6 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
         return bb
             .oB()
             .blk(generateInnerClasses(root, enclosedGeneratedTypes))
-            .nl()
-            .blk(generateInnerEnumTypeObjects(root, enums))
             .nl()
             .blk(generateConstants())
             .nl()

@@ -29,7 +29,7 @@ class Bug6135Test {
             }
         }
         assertNotNull(genInterface);
-        final var enums = genInterface.getEnumerations();
+        final var enums = genInterface.getEnclosedTypes();
         assertEquals(2, enums.size());
     }
 }

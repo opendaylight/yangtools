@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
@@ -94,18 +93,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
     default Constant addConstant(final TypeBuilder builder, final String name, final Object value) {
         return addConstant(builder.typeRef(), name, value);
     }
-
-    /**
-     * Adds new Enumeration definition for Generated Type Builder and returns Enum Builder for specifying all Enum
-     * parameters.<br>
-     * If there is already Enumeration stored with the same name, the old enum will be simply overwritten byt new enum
-     * definition.<br>
-     * Name of Enumeration cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw
-     * {@link IllegalArgumentException}.
-     *
-     * @param enumeration Enumeration to add
-     */
-    void addEnumeration(EnumTypeObjectArchetype enumeration);
 
     List<MethodSignatureBuilder> getMethodDefinitions();
 

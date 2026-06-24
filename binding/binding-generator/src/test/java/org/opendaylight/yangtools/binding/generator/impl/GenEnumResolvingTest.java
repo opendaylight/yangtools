@@ -36,14 +36,14 @@ class GenEnumResolvingTest {
 
         EnumTypeObjectArchetype linkUpDownTrapEnable = null;
         EnumTypeObjectArchetype operStatus = null;
-        final var enums = genInterface.getEnumerations();
+        final var enums = genInterface.getEnclosedTypes();
         assertNotNull(enums, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
         assertEquals(2, enums.size(), "Generated Type Interface MUST contain 2 Enumeration Types");
         for (var e : enums) {
             if (e.simpleName().equals("LinkUpDownTrapEnable")) {
-                linkUpDownTrapEnable = e;
+                linkUpDownTrapEnable = assertInstanceOf(EnumTypeObjectArchetype.class, e);
             } else if (e.simpleName().equals("OperStatus")) {
-                operStatus = e;
+                operStatus = assertInstanceOf(EnumTypeObjectArchetype.class, e);
             }
         }
 
@@ -136,9 +136,10 @@ class GenEnumResolvingTest {
         assertEquals(4, genTypes.size());
 
         // ------------------- container test-enums -----------------------
-        final var testEnums = genTypes.get(1).getEnumerations();
+        final var testEnums = genTypes.get(1).getEnclosedTypes();
         assertEquals(4, testEnums.size());
-        final var dollarContaining = testEnums.getFirst().valueToConstant();
+        final var dollarContaining = assertInstanceOf(EnumTypeObjectArchetype.class, testEnums.get(0))
+            .valueToConstant();
         assertEquals(5, dollarContaining.size());
         final var dcIt = dollarContaining.values().iterator();
         assertEquals("$", dcIt.next());
@@ -146,15 +147,16 @@ class GenEnumResolvingTest {
         assertEquals("A$bc", dcIt.next());
         assertEquals("Ab$c", dcIt.next());
         assertEquals("Abc$", dcIt.next());
-        final var prefixRequired = testEnums.get(1).valueToConstant();
+        final var prefixRequired = assertInstanceOf(EnumTypeObjectArchetype.class, testEnums.get(1)).valueToConstant();
         assertEquals(2, prefixRequired.size());
         final var prIt = prefixRequired.values().iterator();
         assertEquals("_09", prIt.next());
         assertEquals("_1337LeetPro", prIt.next());
-        final var invalidIdentifier = testEnums.get(2).valueToConstant();
+        final var invalidIdentifier = assertInstanceOf(EnumTypeObjectArchetype.class, testEnums.get(2))
+            .valueToConstant();
         assertEquals(1, invalidIdentifier.size());
         assertEquals("$_", invalidIdentifier.values().iterator().next());
-        final var invalidChars = testEnums.get(3).valueToConstant();
+        final var invalidChars = assertInstanceOf(EnumTypeObjectArchetype.class, testEnums.get(3)).valueToConstant();
         assertEquals(5, invalidChars.size());
         final var icIt = invalidChars.values().iterator();
         assertEquals("$$2A$", icIt.next());
@@ -164,38 +166,44 @@ class GenEnumResolvingTest {
         assertEquals("$a$2A$a", icIt.next());
 
         // ------------------- container okay-identifier -----------------------
-        final var okayIdentifier = genTypes.get(2).getEnumerations();
+        final var okayIdentifier = genTypes.get(2).getEnclosedTypes();
         assertEquals(2, okayIdentifier.size());
-        final var underscores = okayIdentifier.getFirst().valueToConstant();
+        final var underscores = assertInstanceOf(EnumTypeObjectArchetype.class, okayIdentifier.getFirst())
+            .valueToConstant();
         assertEquals(1, underscores.size());
         assertEquals("__", underscores.values().iterator().next());
-        final var wordsCapitalCamelCase = okayIdentifier.getLast().valueToConstant();
+        final var wordsCapitalCamelCase = assertInstanceOf(EnumTypeObjectArchetype.class, okayIdentifier.getLast())
+            .valueToConstant();
         assertEquals(2, wordsCapitalCamelCase.size());
         final var wcccIt = wordsCapitalCamelCase.values().iterator();
         assertEquals("True", wcccIt.next());
         assertEquals("ĽaľahoPapľuhu", wcccIt.next());
 
         // ------------------- container conflicting-names -----------------------
-        final var conflictingNames = genTypes.get(3).getEnumerations();
+        final var conflictingNames = genTypes.get(3).getEnclosedTypes();
         assertEquals(4, conflictingNames.size());
-        final var conflict1 = conflictingNames.get(0).valueToConstant();
+        final var conflict1 = assertInstanceOf(EnumTypeObjectArchetype.class, conflictingNames.get(0))
+            .valueToConstant();
         assertEquals(3, conflict1.size());
         final var c1it = conflict1.values().iterator();
         assertEquals("_09", c1it.next());
         assertEquals("$09", c1it.next());
         assertEquals("$0$2D$9", c1it.next());
-        final var conflict2 = conflictingNames.get(1).valueToConstant();
+        final var conflict2 = assertInstanceOf(EnumTypeObjectArchetype.class, conflictingNames.get(1))
+            .valueToConstant();
         assertEquals(2, conflict2.size());
         final var c2it = conflict2.values().iterator();
         assertEquals("aZ", c2it.next());
         assertEquals("$a$2D$z", c2it.next());
-        final var conflict3 = conflictingNames.get(2).valueToConstant();
+        final var conflict3 = assertInstanceOf(EnumTypeObjectArchetype.class, conflictingNames.get(2))
+            .valueToConstant();
         assertEquals(3, conflict3.size());
         final var c3it = conflict3.values().iterator();
         assertEquals("$a2$2E$5", c3it.next());
         assertEquals("a25", c3it.next());
         assertEquals("$a2$2D$5", c3it.next());
-        final var conflict4 = conflictingNames.get(3).valueToConstant();
+        final var conflict4 = assertInstanceOf(EnumTypeObjectArchetype.class, conflictingNames.get(3))
+            .valueToConstant();
         assertEquals(2, conflict4.size());
         final var c4it = conflict4.values().iterator();
         assertEquals("$ľaľaho$20$papľuhu", c4it.next());

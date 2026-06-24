@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -180,7 +179,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     GeneratedClass(final GeneratedType genType) {
         name = genType.name();
 
-        nestedClasses = Stream.concat(genType.getEnclosedTypes().stream(), genType.getEnumerations().stream())
+        nestedClasses = genType.getEnclosedTypes().stream()
             .collect(Collectors.toUnmodifiableMap(GeneratedType::simpleName, type -> new Nested(this, type)));
 
         final var cb = new HashSet<String>();
@@ -196,7 +195,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     private void collectAccessibleTypes(final HashSet<String> set, final GeneratedType type) {
         for (var impl : type.getImplements()) {
             if (impl instanceof GeneratedType genType) {
-                for (var inner : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
+                for (var inner : genType.getEnclosedTypes()) {
                     set.add(inner.name().simpleName());
                 }
                 collectAccessibleTypes(set, genType);

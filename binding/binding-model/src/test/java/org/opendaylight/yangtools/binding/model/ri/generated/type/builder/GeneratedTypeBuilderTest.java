@@ -171,12 +171,6 @@ class GeneratedTypeBuilderTest {
     }
 
     @Test
-    void addEnumerationIllegalArgumentTest() {
-        final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
-        assertThrows(IllegalArgumentException.class, () -> builder.addEnumeration(null));
-    }
-
-    @Test
     void addImplementsTypeIllegalArgumentTest() {
         final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
         assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));

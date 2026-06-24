@@ -41,9 +41,9 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
         super(javaType, archetype, root);
     }
 
-    static void generateAsInner(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
-            final DataRootArchetype root, final BlockBuilder bb) {
-        bb.blk(new EnumTypeObjectTemplate(javaType, archetype, root).body());
+    static BlockBuilder generateInner(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
+            final DataRootArchetype root) {
+        return new EnumTypeObjectTemplate(javaType, archetype, root).body();
     }
 
     @Override

@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -566,38 +567,17 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return bb;
     }
 
-    /**
-     * {@return a string containing generated code for specified archetypes}
-     * @param root the root in which the type is being generated
-     * @param archetypes the {@link EnumTypeObjectArchetype}s to generate
-     */
-    final @Nullable BlockBuilder generateInnerEnumTypeObjects(final @NonNull DataRootArchetype root,
-            final @NonNull List<EnumTypeObjectArchetype> archetypes) {
-        if (archetypes.isEmpty()) {
-            return null;
-        }
-
-        final var it = archetypes.iterator();
-        final var bb = newBlockBuilder();
-        while (true) {
-            final var archetype = it.next();
-            EnumTypeObjectTemplate.generateAsInner(javaType().getNestedClass(archetype), archetype, root, bb);
-            if (!it.hasNext()) {
-                return bb;
-            }
-            bb.newLine();
-        }
-    }
-
     final @Nullable BlockBuilder generateInnerClasses(final @NonNull DataRootArchetype root,
             final List<GeneratedType> innerTypes) {
         final var innerClasses = new ArrayList<BlockBuilder>();
         for (var innerType : innerTypes) {
-            if (innerType instanceof GeneratedTransferObject gto) {
+            if (innerType instanceof TypeObjectArchetype<?> gto) {
                 final var innerJavaType = javaType().getNestedClass(gto);
                 innerClasses.add(switch (gto) {
                     case BitsTypeObjectArchetype archetype ->
                         BitsTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
+                    case EnumTypeObjectArchetype archetype ->
+                        EnumTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
                     case ScalarTypeObjectArchetype archetype ->
                         ScalarTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
                     case UnionTypeObjectArchetype archetype ->

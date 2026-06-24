@@ -23,7 +23,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Constant;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -40,7 +39,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
     private final @NonNull JavaTypeName name;
     private final @NonNull List<AnnotationType> annotations;
     private final @NonNull List<Type> implementsTypes;
-    private final @NonNull List<EnumTypeObjectArchetype> enumerations;
     private final @NonNull List<Constant> constants;
     private final @NonNull List<MethodSignature> methodSignatures;
     private final @NonNull List<GeneratedType> enclosedTypes;
@@ -54,7 +52,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
         constants = makeUnmodifiable(builder.getConstants());
-        enumerations = List.copyOf(builder.getEnumerations());
         methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
         properties = toUnmodifiableProperties(builder.getProperties());
@@ -64,14 +61,13 @@ abstract class AbstractGeneratedType implements GeneratedType {
     AbstractGeneratedType(final @NonNull JavaTypeName typeName, final TypeComment comment,
             final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
             final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-            final List<EnumTypeObjectArchetype> enums, final List<Constant> constants,
-            final List<MethodSignatureBuilder> methodBuilders, final List<GeneratedPropertyBuilder> propertyBuilders) {
+            final List<Constant> constants, final List<MethodSignatureBuilder> methodBuilders,
+            final List<GeneratedPropertyBuilder> propertyBuilders) {
         name = requireNonNull(typeName);
         this.comment = comment;
         annotations = toUnmodifiableAnnotations(annotationBuilders);
         this.implementsTypes = makeUnmodifiable(implementsTypes);
         this.constants = makeUnmodifiable(constants);
-        enumerations = makeUnmodifiable(enums);
         methodSignatures = toUnmodifiableMethods(methodBuilders);
         enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders);
         properties = toUnmodifiableProperties(propertyBuilders);
@@ -164,11 +160,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
     }
 
     @Override
-    public final List<EnumTypeObjectArchetype> getEnumerations() {
-        return enumerations;
-    }
-
-    @Override
     public final List<Constant> getConstantDefinitions() {
         return constants;
     }
@@ -214,7 +205,6 @@ abstract class AbstractGeneratedType implements GeneratedType {
         addToStringAttribute(helper, "annotations", annotations);
         addToStringAttribute(helper, "implements", implementsTypes);
         addToStringAttribute(helper, "enclosedTypes", enclosedTypes);
-        addToStringAttribute(helper, "enumerations", enumerations);
         addToStringAttribute(helper, "constants", constants);
         addToStringAttribute(helper, "methods", methodSignatures);
         addToStringAttribute(helper, "properties", properties);

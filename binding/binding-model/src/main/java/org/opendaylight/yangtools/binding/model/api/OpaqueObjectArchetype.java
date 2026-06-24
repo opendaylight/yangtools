@@ -79,12 +79,6 @@ public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStateme
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<EnumTypeObjectArchetype> getEnumerations() {
-        return List.of();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
     default List<Type> getImplements() {
         return List.of();
     }

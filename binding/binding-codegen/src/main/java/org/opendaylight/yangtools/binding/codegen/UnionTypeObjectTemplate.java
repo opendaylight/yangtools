@@ -58,10 +58,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     private final @NonNull List<GeneratedProperty> properties;
     private final @NonNull Restrictions restrictions;
 
-    /**
-     * List of enumeration which are generated as JAVA enum type.
-     */
-    private final @NonNull List<EnumTypeObjectArchetype> enums;
     private final AbstractRangeGenerator<?> rangeGenerator;
 
     @NonNullByDefault
@@ -78,11 +74,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         allProperties = Stream.concat(properties.stream(), parentProperties.stream())
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
-
-        enums = archetype.getEnclosedTypes().stream()
-            .filter(EnumTypeObjectArchetype.class::isInstance)
-            .map(EnumTypeObjectArchetype.class::cast)
-            .toList();
         rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
             ? requireNonNull(AbstractRangeGenerator.forType(TypeUtils.encapsulatedValueType(archetype))) : null;
     }
@@ -138,9 +129,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 .eol("@java.io.Serial")
                 .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
                  // inner classes
-                .blk(generateInnerClasses(root, archetype.getEnclosedTypes()))
-                // inner EnumTypeObjects
-                .blk(generateInnerEnumTypeObjects(root, enums));
+                .blk(generateInnerClasses(root, archetype.getEnclosedTypes()));
 
         if (statement instanceof TypedefEffectiveStatement typedef) {
             final var units = typedef.unitsStatement();

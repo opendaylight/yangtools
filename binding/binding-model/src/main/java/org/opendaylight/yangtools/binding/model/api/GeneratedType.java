@@ -90,11 +90,6 @@ public non-sealed interface GeneratedType extends Type {
     @NonNull List<GeneratedType> getEnclosedTypes();
 
     /**
-     * {@return List of all Enumerator definitions associated with Generated Type}
-     */
-    @NonNull List<EnumTypeObjectArchetype> getEnumerations();
-
-    /**
      * {@return List of Constant definitions associated with Generated Type}
      */
     @NonNull List<Constant> getConstantDefinitions();

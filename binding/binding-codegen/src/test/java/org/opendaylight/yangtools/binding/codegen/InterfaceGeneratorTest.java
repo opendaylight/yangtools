@@ -41,7 +41,6 @@ class InterfaceGeneratorTest {
             public interface test {
 
 
-
                 void ontest();
             }
             """, genType);
@@ -61,7 +60,6 @@ class InterfaceGeneratorTest {
 
             @Generated("mdsal-binding-generator")
             public interface test {
-
 
 
                 @Deprecated
@@ -85,7 +83,6 @@ class InterfaceGeneratorTest {
 
             @Generated("mdsal-binding-generator")
             public interface test {
-
 
 
                 @Deprecated
