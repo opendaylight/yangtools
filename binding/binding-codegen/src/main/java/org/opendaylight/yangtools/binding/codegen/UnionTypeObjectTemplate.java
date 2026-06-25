@@ -146,14 +146,9 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .blk(constructors())
             .blk(propertyMethods());
 
-        if (!properties.isEmpty()) {
-            bb
-                .nl()
-                .blk(generateHashCode(properties))
-                .nl()
-                .blk(generateEquals(properties))
-                .nl()
-                .blk(generateToString(properties));
+        if (archetype.getSuperType() == null) {
+            // FIXME: YANGTOOLS-1621: here we want to specialize for the single tagged value we carry
+            KeyTemplate.appendEquality(bb, javaType(), properties, true);
         }
 
         return bb.cB().nl();

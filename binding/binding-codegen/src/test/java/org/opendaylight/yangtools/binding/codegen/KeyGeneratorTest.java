@@ -116,7 +116,7 @@ class KeyGeneratorTest {
                                 }
 
                                 @Override
-                                public final boolean equals(Object obj) {
+                                public boolean equals(Object obj) {
                                     return this == obj || obj instanceof CompositeKeyListKey other
                                         && Objects.equals(_key1, other._key1)
                                         && Objects.equals(_key2, other._key2);
@@ -185,7 +185,7 @@ class KeyGeneratorTest {
                                 }
 
                                 @Override
-                                public final boolean equals(Object obj) {
+                                public boolean equals(Object obj) {
                                     return this == obj || obj instanceof InnerListKey other
                                         && Objects.equals(_key1, other._key1);
                                 }
