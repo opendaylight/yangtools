@@ -127,7 +127,7 @@ final class BuilderTemplate extends BaseTemplate {
     @Override
     BlockBuilder body() {
         final var bb = newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(targetType)))
+            .blk(wrapToDocumentation(createDescription().toRawString()))
             .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
             .eol(generatedAnnotation())
             .str("public class ").str(type().simpleName()).oB()
@@ -840,9 +840,8 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private @NonNull BlockBuilder createDescription(final GeneratedType forType) {
-        // Note: forType == targetType
-        final var target = importedName(forType);
+    private @NonNull BlockBuilder createDescription() {
+        final var target = importedName(targetType);
 
         return newBlockBuilder()
             .str("Class that builds {@link ").str(target).eol("} instances. Overall design of the class is that of a")
@@ -890,11 +889,6 @@ final class BuilderTemplate extends BaseTemplate {
 
                   """)
             .str("@see ").str(target).nl();
-    }
-
-    @Override
-    String formatDataForJavaDoc(final GeneratedType type) {
-        return createDescription(type).toRawString();
     }
 
     @NonNullByDefault

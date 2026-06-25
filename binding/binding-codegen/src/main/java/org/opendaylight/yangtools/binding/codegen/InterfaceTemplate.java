@@ -18,6 +18,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethod
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
+import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +41,10 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Template for generating JAVA interfaces.
@@ -156,6 +161,33 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .blk(generateMethods())
             .blk(generateJavaDataContainerMethods())
             .cB();
+    }
+
+    @NonNullByDefault
+    private String formatDataForJavaDoc(final GeneratedType type) {
+        final var sb = new StringBuilder();
+        final var comment = type.getComment();
+        if (comment != null) {
+            sb.append(comment.getJavadoc());
+        }
+        final var def = type.yangSourceDefinition();
+        if (def != null) {
+            final var node = def.getNode();
+            appendSnippet(sb, type, def.getModule(), requireEffective(node), node);
+        }
+
+        final var str = sb.toString();
+        return str.isBlank() ? "" : str.stripTrailing() + '\n';
+    }
+
+    @NonNullByDefault
+    private static EffectiveStatement<?, ?> requireEffective(final DocumentedNode node) {
+        return switch (node) {
+            case EffectiveStatementEquivalent<?> equivalent -> equivalent.asEffectiveStatement();
+            case EffectiveStatement<?, ?> effective -> effective;
+            case ContainerLikeCompat compat -> requireEffective(compat.delegate());
+            default -> throw new VerifyException("Unsupported node " + node);
+        };
     }
 
     @Nullable BlockBuilder generateConstants() {

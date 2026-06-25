@@ -51,10 +51,8 @@ import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.yang.common.YangDataName;
-import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -218,33 +216,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             }).nl();
     }
 
-    @NonNullByDefault
-    String formatDataForJavaDoc(final GeneratedType type) {
-        final var sb = new StringBuilder();
-        final var comment = type.getComment();
-        if (comment != null) {
-            sb.append(comment.getJavadoc());
-        }
-        final var def = type.yangSourceDefinition();
-        if (def != null) {
-            final var node = def.getNode();
-            appendSnippet(sb, type, def.getModule(), requireEffective(node), node);
-        }
-
-        final var str = sb.toString();
-        return str.isBlank() ? "" : str.stripTrailing() + '\n';
-    }
-
-    @NonNullByDefault
-    private static EffectiveStatement<?, ?> requireEffective(final DocumentedNode node) {
-        return switch (node) {
-            case EffectiveStatementEquivalent<?> equivalent -> equivalent.asEffectiveStatement();
-            case EffectiveStatement<?, ?> effective -> effective;
-            case ContainerLikeCompat compat -> requireEffective(compat.delegate());
-            default -> throw new VerifyException("Unsupported node " + node);
-        };
-    }
-
     final @Nullable BlockBuilder javadocBlock(final @NonNull ModuleEffectiveStatement module,
             final @NonNull EffectiveStatement<?, ?> stmt, final @NonNull DocumentedNode node) {
         final var sb = new StringBuilder();
@@ -265,7 +236,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     @NonNullByDefault
-    private void appendSnippet(final StringBuilder sb, final GeneratedType type, final ModuleEffectiveStatement module,
+    final void appendSnippet(final StringBuilder sb, final GeneratedType type, final ModuleEffectiveStatement module,
             final EffectiveStatement<?, ?> stmt, final DocumentedNode node) {
         appendYangSnippet(sb
             .append('\n')
