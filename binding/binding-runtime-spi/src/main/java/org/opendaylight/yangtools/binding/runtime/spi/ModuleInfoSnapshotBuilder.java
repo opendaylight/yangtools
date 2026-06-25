@@ -107,9 +107,9 @@ public final class ModuleInfoSnapshotBuilder {
             final var source = ModuleInfoSnapshotResolver.toYangTextSource(info);
             mappedInfos.put(source.sourceId(), info);
 
-            final String infoRoot = Naming.getRootPackageName(info.getName().getModule());
+            final String infoRoot = Naming.getRootPackageName(info.name().getModule());
             classLoaders.put(infoRoot, info.getClass().getClassLoader());
-            namespaces.put(infoRoot, info.getName().getModule());
+            namespaces.put(infoRoot, info.name().getModule());
 
             try {
                 parser.addSource(source);

@@ -114,7 +114,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
      */
     public <R extends @NonNull DataRoot<R>> Registration registerModuleFeatures(final RootMeta<R> module,
             final Set<? extends YangFeature<?, R>> supportedFeatures) {
-        return registerModuleFeatures(module.moduleInfo().getName().getModule(), supportedFeatures.stream()
+        return registerModuleFeatures(module.moduleInfo().name().getModule(), supportedFeatures.stream()
             .map(feature -> feature.qname().getLocalName())
             .sorted()
             .collect(ImmutableSet.toImmutableSet()));
@@ -210,7 +210,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             final var reg = regs.getFirst();
             final var info = reg.info;
             moduleInfos.put(source, info);
-            classLoaders.put(Naming.getRootPackageName(info.getName().getModule()), info.getClass().getClassLoader());
+            classLoaders.put(Naming.getRootPackageName(info.name().getModule()), info.getClass().getClassLoader());
         }
 
         final var next = new DefaultModuleInfoSnapshot(modelContext, moduleInfos, classLoaders);
@@ -244,7 +244,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     }
 
     private static SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
-        return SourceIdentifier.ofQName(moduleInfo.getName());
+        return SourceIdentifier.ofQName(moduleInfo.name());
     }
 
     private static @NonNull List<@NonNull YangModuleInfo> flatDependencies(final YangModuleInfo moduleInfo) {
