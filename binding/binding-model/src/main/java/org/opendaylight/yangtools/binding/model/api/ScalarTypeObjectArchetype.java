@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * An archetype for a {@link ScalarTypeObject}.
@@ -60,12 +59,6 @@ public record ScalarTypeObjectArchetype(
     @Deprecated(forRemoval = true)
     public @NonNull TypeDefinition<?> getBaseType() {
         return typeDefinition;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public boolean isTypedef() {
-        return statement instanceof TypedefEffectiveStatement;
     }
 
     @Override

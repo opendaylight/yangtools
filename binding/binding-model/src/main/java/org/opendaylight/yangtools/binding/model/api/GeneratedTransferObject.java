@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * Common interface for {@link TypeObjectArchetype}s other than {@link EnumTypeObject}.
@@ -27,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public sealed interface GeneratedTransferObject<T extends TypeObject> extends TypeObjectArchetype<T>
         permits BitsTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
     /**
-     * {@return the value of the {@code serialVersionUID} of this {@link TypeObject} class};
+     * {@return the value of the {@code serialVersionUID} of this {@link TypeObject} class}
      */
     long serialVersionUID();
 
@@ -40,12 +41,13 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
     @Nullable GeneratedTransferObject<?> getSuperType();
 
     // FIXME: why do we need this boolean?
-    boolean isTypedef();
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    default boolean isTypedef() {
+        return statement() instanceof TypedefEffectiveStatement;
+    }
 
     /**
-     * Returns Base type of Java representation of YANG typedef if set, otherwise it returns null.
-     *
-     * @return Base type of Java representation of YANG typedef if set, otherwise it returns null
+    * {@return Base type of Java representation of YANG typedef if set, otherwise it returns {@code null}}
      */
     @Nullable TypeDefinition<?> getBaseType();
 }
