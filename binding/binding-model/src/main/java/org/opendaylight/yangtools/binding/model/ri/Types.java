@@ -46,8 +46,6 @@ public final class Types {
     @Beta
     public static final @NonNull ConcreteType OBJECT = typeForClass(Object.class);
     @Beta
-    public static final @NonNull ConcreteType PRIMITIVE_BOOLEAN = typeForClass(boolean.class);
-    @Beta
     public static final @NonNull ConcreteType PRIMITIVE_INT = typeForClass(int.class);
     @Beta
     public static final @NonNull ConcreteType PRIMITIVE_LONG = typeForClass(long.class);
@@ -99,17 +97,6 @@ public final class Types {
     @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType objectType() {
         return OBJECT;
-    }
-
-    /**
-     * Returns an instance of {@link ConcreteType} which represents JAVA <code>boolean</code> type.
-     *
-     * @return <code>ConcreteType</code> instance which represents JAVA <code>boolean</code>
-     * @deprecated use {@link #OBJECT}
-     */
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static @NonNull ConcreteType primitiveBooleanType() {
-        return PRIMITIVE_BOOLEAN;
     }
 
     /**

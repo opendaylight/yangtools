@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.base.VerifyException;
@@ -16,11 +15,13 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * A template for {@link Key} specializations.
@@ -40,10 +41,8 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
-    /**
-     * {@code java.lang.Boolean} as a JavaTypeName.
-     */
-    private static final JavaTypeName BOOLEAN = JavaTypeName.create(Boolean.class);
+    // FIXME: YANGTOOLS-1794: remove this constant
+    private static final ConcreteType PRIMITIVE_BOOLEAN = Types.typeForClass(boolean.class);
 
     private KeyTemplate(final KeyArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
@@ -181,11 +180,8 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             case 1 -> {
                 bb.str("return ");
                 final var prop = props.getFirst();
-                if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
-                    bb.str(clazz.getReferenceString(BOOLEAN)).str(".hashCode(");
-                } else {
-                    bb.str(clazz.getReferenceString(CODEHELPERS)).str(".wrapperHashCode(");
-                }
+                verifyNotBit(prop);
+                bb.str(clazz.getReferenceString(CODEHELPERS)).str(".wrapperHashCode(");
                 bb.str(fieldName(prop)).eol(");");
             }
             default -> {
@@ -194,12 +190,11 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                     .eol("int result = 1;");
                 for (var property : props) {
                     final var type = property.getReturnType();
-                    final var receiver = type.equals(PRIMITIVE_BOOLEAN)
-                        // FIXME: unified perhaps?
-                        ? clazz.getReferenceString(BOOLEAN) : importedUtilClass(clazz, type);
+                    verifyNotBit(type);
 
-                    bb.str("result = prime * result + ").str(receiver).str(".hashCode(").str(fieldName(property))
-                    .eol(");");
+                    bb
+                        .str("result = prime * result + ").str(importedUtilClass(clazz, type)).str(".hashCode(")
+                            .str(fieldName(property)).eol(");");
                 }
                 bb.eol("return result;");
             }
@@ -219,16 +214,14 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                 .str("return this == obj || obj instanceof ").str(selfRef).str(" other");
 
         for (var prop : props) {
-            bb.nl().str("    && ");
-
             final var fieldName = fieldName(prop);
             final var type = prop.getReturnType();
-            if (type.equals(PRIMITIVE_BOOLEAN)) {
-                bb.str(fieldName).str(" == other.").str(fieldName);
-            } else {
-                bb.str(importedUtilClass(clazz, type)).str(".equals(").str(fieldName).str(", other.").str(fieldName)
-                .str(")");
-            }
+            verifyNotBit(type);
+
+            bb
+                .nl()
+                .str("    && ").str(importedUtilClass(clazz, type)).str(".equals(").str(fieldName).str(", other.")
+                    .str(fieldName).str(")");
         }
         bb
             .eS()
@@ -252,14 +245,9 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
-        final var name = prop.getName();
-        // FIXME: this should be specialized in BitsTypeObjectTemplate
-        if (isBit(prop)) {
-            bb.str(".jcTSB(").str(selfRef).eol(".class).bit(").jStr(prop.getName()).str(", ").str(fieldName(prop))
-                .eol(").build();");
-            return;
-        }
+        verifyNotBit(prop);
 
+        final var name = prop.getName();
         if (name.equals("value")) {
             // Special case equivalent to ScalarTypeObject.toString()
             bb.str(".stoTS(").str(selfRef).str(".class, ");
@@ -272,19 +260,25 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
         bb.str(".jcTSB(").str(selfRef).eol(".class)");
         for (var prop : props) {
-            // FIXME: this should be specialized in BitsTypeObjectTemplate
-            bb.ind(isBit(prop) ? ".bit(" : ".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
+            verifyNotBit(prop);
+            bb.ind(".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
         }
         bb.ind(".build();").newLine();
-    }
-
-    // FIXME: this gates BitsTypeObject specializations
-    private static boolean isBit(final GeneratedProperty prop) {
-        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType());
     }
 
     private static String importedUtilClass(final GeneratedClass clazz, final Type type) {
         return clazz.getReferenceString(type.isArray() ? JU_ARRAYS : JU_OBJECTS);
     }
 
+    // FIXME: YANGTOOLS-1794: remove this method
+    private static void verifyNotBit(final GeneratedProperty prop) {
+        verifyNotBit(prop.getReturnType());
+    }
+
+    // FIXME: YANGTOOLS-1794: remove this method
+    private static void verifyNotBit(final Type type) {
+        if (PRIMITIVE_BOOLEAN.equals(type)) {
+            throw new VerifyException("unexpected boolean");
+        }
+    }
 }
