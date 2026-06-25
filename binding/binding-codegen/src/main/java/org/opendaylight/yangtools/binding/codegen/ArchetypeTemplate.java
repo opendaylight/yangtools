@@ -13,7 +13,9 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -77,6 +79,14 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
             .blk(javadocBlock(root.statement(), stmt, node))
             .blk(deprecatedAnnotation(node));
         return generatedAnnotation ? bb.eol(GENERATED_ANNOTATION) : bb;
+    }
+
+    private @Nullable BlockBuilder deprecatedAnnotation(final DocumentedNode.@NonNull WithStatus node) {
+        return switch (node.getStatus()) {
+            case CURRENT -> null;
+            case DEPRECATED -> newBlockBuilder().at().eol(importedName(DEPRECATED));
+            case OBSOLETE -> newBlockBuilder().at().str(importedName(DEPRECATED)).eol("(forRemoval = true)");
+        };
     }
 
     /**
