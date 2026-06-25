@@ -308,6 +308,30 @@ sealed class InterfaceTemplate extends BaseTemplate permits DataRootTemplate {
             .cB();
     }
 
+    /**
+     * Template method which generates method parameters with their types from {@code parameters}.
+     *
+     * @param parameters list of parameter instances which are transformed to the method parameters
+     * @return string with the list of the method parameters with their types in JAVA format
+     */
+    private @Nullable StringBuilder generateParameters(final @NonNull List<MethodSignature.Parameter> parameters) {
+        final var it = parameters.iterator();
+        if (!it.hasNext()) {
+            return null;
+        }
+
+        final var sb = new StringBuilder();
+        while (true) {
+            final var parameter = it.next();
+            sb.append(importedName(parameter.type())).append(' ').append(parameter.name());
+            if (!it.hasNext()) {
+                break;
+            }
+            sb.append(", ");
+        }
+        return sb;
+    }
+
     @NonNullByDefault
     private BlockBuilder generateRequireMethod(final MethodSignature method) {
         final var name = method.getName();
