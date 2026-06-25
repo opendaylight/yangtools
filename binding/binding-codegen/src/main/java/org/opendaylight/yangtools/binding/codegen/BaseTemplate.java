@@ -484,19 +484,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return bb;
     }
 
-    final @Nullable BlockBuilder annotationDeclaration() {
-        final var annotations = type().getAnnotations();
-        if (annotations.isEmpty()) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        for (var annotation : annotations) {
-            bb.at().eol(annotation.simpleName());
-        }
-        return bb;
-    }
-
     final @Nullable BlockBuilder deprecatedAnnotation(final DocumentedNode.@NonNull WithStatus node) {
         return switch (node.getStatus()) {
             case CURRENT -> null;
