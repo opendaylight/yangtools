@@ -22,6 +22,30 @@
       },
       "revId": "5a9b18590ff8928eaef7b9edca809b102539c272",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f63adf93_d47981af",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/Bug1896Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 9136
+      },
+      "writtenOn": "2026-06-25T08:49:04Z",
+      "side": 1,
+      "message": "Done, renamed",
+      "parentUuid": "9de02669_a7c3faa5",
+      "range": {
+        "startLine": 15,
+        "startChar": 6,
+        "endLine": 15,
+        "endChar": 17
+      },
+      "revId": "5a9b18590ff8928eaef7b9edca809b102539c272",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
