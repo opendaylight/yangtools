@@ -252,8 +252,6 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
-        verifyNotBit(prop);
-
         final var name = prop.getName();
         if (name.equals("value")) {
             // Special case equivalent to ScalarTypeObject.toString()
@@ -267,7 +265,6 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
         bb.str(".jcTSB(").str(selfRef).eol(".class)");
         for (var prop : props) {
-            verifyNotBit(prop);
             bb.ind(".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
         }
         bb.ind(".build();").newLine();
@@ -275,12 +272,5 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
     private static String importedUtilClass(final GeneratedClass clazz, final Type type) {
         return clazz.getReferenceString(type.isArray() ? JU_ARRAYS : JU_OBJECTS);
-    }
-
-    // FIXME: YANGTOOLS-1794: remove this method
-    private static void verifyNotBit(final GeneratedProperty prop) {
-        if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
-            throw new VerifyException("unexpected boolean in " + prop);
-        }
     }
 }
