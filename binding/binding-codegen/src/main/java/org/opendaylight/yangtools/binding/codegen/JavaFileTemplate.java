@@ -254,14 +254,13 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
      * @param actualType the type
      * @return non-{@link Restrictions#isEmpty()} {@link Restrictions} or {@code null}
      */
-    static final @Nullable Restrictions restrictionsForSetter(final Type actualType) {
+    static final @Nullable Restrictions restrictionsForSetter(final @NonNull Type actualType) {
         return switch (actualType) {
-            case GeneratedType genType -> null;
             case RestrictedType restricted -> {
                 final var restrictions = restricted.restrictions();
                 yield restrictions.isEmpty() ? null : restrictions;
             }
-            case null, default -> null;
+            default -> null;
         };
     }
 
