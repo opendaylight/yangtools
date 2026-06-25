@@ -21,8 +21,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.extractAugmentationTarget;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.base.VerifyException;
 import java.io.IOException;
@@ -92,11 +90,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         .addIgnoredStatement(OrganizationStatement.DEF)
         .addIgnoredStatement(ReferenceStatement.DEF)
         .build();
-
-    /**
-     * {@code java.lang.Boolean} as a JavaTypeName.
-     */
-    private static final @NonNull JavaTypeName BOOLEAN = JavaTypeName.create(Boolean.class);
 
     @NonNullByDefault
     BaseTemplate(final GeneratedClass javaType, final GeneratedType type) {
@@ -482,107 +475,5 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             bb.newLine();
         }
         return bb;
-    }
-
-    final @NonNull BlockBuilder generateHashCode(final List<GeneratedProperty> props) {
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("public int hashCode()").jBlock(bb -> {
-                if (props.size() == 1) {
-                    bb.str("return ");
-                    final var prop = props.getFirst();
-                    if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
-                        bb.str(importedName(BOOLEAN)).str(".hashCode(");
-                    } else {
-                        bb.str(importedName(CODEHELPERS)).str(".wrapperHashCode(");
-                    }
-                    bb.str(fieldName(prop)).eol(");");
-                } else {
-                    bb
-                        .eol("final int prime = 31;")
-                        .eol("int result = 1;");
-                    for (var property : props) {
-                        final var type = property.getReturnType();
-                        final var receiver = type.equals(PRIMITIVE_BOOLEAN)
-                            // FIXME: unified perhaps?
-                            ? importedName(BOOLEAN) : importedUtilClass(type);
-
-                        bb.str("result = prime * result + ").str(receiver).str(".hashCode(").str(fieldName(property))
-                            .eol(");");
-                    }
-                    bb.eol("return result;");
-                }
-            }).nl();
-    }
-
-    final @NonNull BlockBuilder generateEquals(final List<GeneratedProperty> props) {
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").jBlock(bb -> {
-                bb.str("return this == obj || obj instanceof ").str(type().simpleName()).str(" other");
-                for (var prop : props) {
-                    bb.nl().str("    && ");
-
-                    final var fieldName = fieldName(prop);
-                    final var type = prop.getReturnType();
-                    if (type.equals(PRIMITIVE_BOOLEAN)) {
-                        bb.str(fieldName).str(" == other.").str(fieldName);
-                    } else {
-                        bb.str(importedUtilClass(type)).str(".equals(").str(fieldName).str(", other.").str(fieldName)
-                            .str(")");
-                    }
-                }
-                bb.eS();
-            }).nl();
-    }
-
-    final @NonNull BlockBuilder generateToString(final List<GeneratedProperty> props) {
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("public ").str(importedName(STRING)).str(" toString()").jBlock(bb -> {
-                // FIXME: use selfRef
-                final var selfRef = importedName(type());
-
-                bb.str("return ").str(importedName(CODEHELPERS));
-                switch (props.size()) {
-                    case 0 -> bb.str(".jcTS0(").str(selfRef).eol(".class);");
-                    case 1 -> appendTS1(bb, selfRef, props.iterator().next());
-                    default -> appendTSN(bb, selfRef, props);
-                }
-            }).nl();
-    }
-
-    @NonNullByDefault
-    private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
-        final var name = prop.getName();
-        // FIXME: this should be specialized in BitsTypeObjectTemplate
-        if (isBit(prop)) {
-            bb.str(".jcTSB(").str(selfRef).eol(".class).bit(").jStr(prop.getName()).str(", ").str(fieldName(prop))
-                .eol(").build();");
-            return;
-        }
-
-        if (name.equals("value")) {
-            // Special case equivalent to ScalarTypeObject.toString()
-            bb.str(".stoTS(").str(selfRef).str(".class, ");
-        } else {
-            bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(prop.getName()).str(", ");
-        }
-        bb.str(fieldName(prop)).eol(");");
-    }
-
-    @NonNullByDefault
-    private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
-        bb.str(".jcTSB(").str(selfRef).eol(".class)");
-        for (var prop : props) {
-            // FIXME: this should be specialized in BitsTypeObjectTemplate
-            bb.ind(isBit(prop) ? ".bit(" : ".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
-        }
-        bb.ind(".build();").newLine();
-    }
-
-    // FIXME: this gates BitsTypeObject specializations
-    private static boolean isBit(final GeneratedProperty prop) {
-        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType());
     }
 }
