@@ -457,7 +457,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                         ScalarTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
                     case UnionTypeObjectArchetype archetype ->
                         UnionTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
-                    default -> throw new VerifyException("Unhandled inner class " + gto);
                 });
             }
         }
