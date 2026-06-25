@@ -8,7 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.model.ri.Types.PRIMITIVE_BOOLEAN;
+import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
+import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -17,6 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * A template for {@link Key} specializations.
@@ -36,6 +40,10 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
+    /**
+     * {@code java.lang.Boolean} as a JavaTypeName.
+     */
+    private static final JavaTypeName BOOLEAN = JavaTypeName.create(Boolean.class);
 
     private KeyTemplate(final KeyArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
@@ -121,13 +129,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                 .cB();
         } while (it.hasNext());
 
-        bb
-            .nl()
-            .blk(generateHashCode(props))
-            .nl()
-            .blk(generateEquals(props))
-            .nl()
-            .blk(generateToString(props));
+        appendEquality(bb, javaType(), props, false);
     }
 
     /**
@@ -153,4 +155,136 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             sb.append(", ");
         }
     }
+
+    // FIXME: YANGTOOLS-1621: hide this method and then inline itno classBody(): there is a number of invariants we can
+    //                        propagate: asFinal == false, clazz == this.javaType(), hence importedName(), etc.
+    static void appendEquality(final BlockBuilder bb, final GeneratedClass clazz,
+            final List<GeneratedProperty> props, final boolean asFinal) {
+        final int size = props.size();
+        if (size == 0) {
+            throw new VerifyException("empty properties in " + clazz.name());
+        }
+        final var declInfix = asFinal ? " final " : " ";
+
+        appendHashCode(bb.nl(), clazz, props, size, declInfix);
+        appendEquals(bb.nl(), clazz, props, declInfix);
+        appendToString(bb.nl(), clazz, props, size, declInfix);
+    }
+
+    private static void appendHashCode(final BlockBuilder bb, final GeneratedClass clazz,
+            final List<GeneratedProperty> props, final int size, final String declInfix) {
+        bb
+            .at().eol(clazz.getReferenceString(OVERRIDE))
+            .str("public").str(declInfix).str("int hashCode()").oB();
+
+        switch (size) {
+            case 1 -> {
+                bb.str("return ");
+                final var prop = props.getFirst();
+                if (PRIMITIVE_BOOLEAN.equals(prop.getReturnType())) {
+                    bb.str(clazz.getReferenceString(BOOLEAN)).str(".hashCode(");
+                } else {
+                    bb.str(clazz.getReferenceString(CODEHELPERS)).str(".wrapperHashCode(");
+                }
+                bb.str(fieldName(prop)).eol(");");
+            }
+            default -> {
+                bb
+                    .eol("final int prime = 31;")
+                    .eol("int result = 1;");
+                for (var property : props) {
+                    final var type = property.getReturnType();
+                    final var receiver = type.equals(PRIMITIVE_BOOLEAN)
+                        // FIXME: unified perhaps?
+                        ? clazz.getReferenceString(BOOLEAN) : importedUtilClass(clazz, type);
+
+                    bb.str("result = prime * result + ").str(receiver).str(".hashCode(").str(fieldName(property))
+                    .eol(");");
+                }
+                bb.eol("return result;");
+            }
+        }
+
+        bb.cB();
+    }
+
+    private static void appendEquals(final BlockBuilder bb, final GeneratedClass clazz,
+            final List<GeneratedProperty> props, final String declInfix) {
+        // FIXME: use selfRef()
+        final var selfRef = clazz.name().simpleName();
+
+        bb
+            .at().eol(clazz.getReferenceString(OVERRIDE))
+            .str("public").str(declInfix).str("boolean equals(").str(clazz.getReferenceString(OBJECT)).str(" obj)").oB()
+                .str("return this == obj || obj instanceof ").str(selfRef).str(" other");
+
+        for (var prop : props) {
+            bb.nl().str("    && ");
+
+            final var fieldName = fieldName(prop);
+            final var type = prop.getReturnType();
+            if (type.equals(PRIMITIVE_BOOLEAN)) {
+                bb.str(fieldName).str(" == other.").str(fieldName);
+            } else {
+                bb.str(importedUtilClass(clazz, type)).str(".equals(").str(fieldName).str(", other.").str(fieldName)
+                .str(")");
+            }
+        }
+        bb
+            .eS()
+            .cB();
+    }
+
+    private static void appendToString(final BlockBuilder bb, final GeneratedClass clazz,
+            final List<GeneratedProperty> props, final int size, final String declInfix) {
+        // FIXME: use selfRef
+        final var selfRef = clazz.getReferenceString(clazz.name());
+
+        bb
+            .at().eol(clazz.getReferenceString(OVERRIDE))
+            .str("public").str(declInfix).str(clazz.getReferenceString(STRING)).str(" toString()").oB()
+                .str("return ").str(clazz.getReferenceString(CODEHELPERS));
+        switch (size) {
+            case 1 -> appendTS1(bb, selfRef, props.iterator().next());
+            default -> appendTSN(bb, selfRef, props);
+        }
+        bb.cB();
+    }
+
+    private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
+        final var name = prop.getName();
+        // FIXME: this should be specialized in BitsTypeObjectTemplate
+        if (isBit(prop)) {
+            bb.str(".jcTSB(").str(selfRef).eol(".class).bit(").jStr(prop.getName()).str(", ").str(fieldName(prop))
+                .eol(").build();");
+            return;
+        }
+
+        if (name.equals("value")) {
+            // Special case equivalent to ScalarTypeObject.toString()
+            bb.str(".stoTS(").str(selfRef).str(".class, ");
+        } else {
+            bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(prop.getName()).str(", ");
+        }
+        bb.str(fieldName(prop)).eol(");");
+    }
+
+    private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
+        bb.str(".jcTSB(").str(selfRef).eol(".class)");
+        for (var prop : props) {
+            // FIXME: this should be specialized in BitsTypeObjectTemplate
+            bb.ind(isBit(prop) ? ".bit(" : ".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
+        }
+        bb.ind(".build();").newLine();
+    }
+
+    // FIXME: this gates BitsTypeObject specializations
+    private static boolean isBit(final GeneratedProperty prop) {
+        return PRIMITIVE_BOOLEAN.equals(prop.getReturnType());
+    }
+
+    private static String importedUtilClass(final GeneratedClass clazz, final Type type) {
+        return clazz.getReferenceString(type.isArray() ? JU_ARRAYS : JU_OBJECTS);
+    }
+
 }
