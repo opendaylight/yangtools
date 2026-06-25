@@ -24,9 +24,11 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
  * A template backed by an {@link Archetype} defined in some module manifested as a {@link DataRootArchetype}.
@@ -89,6 +91,25 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
             .blk(javadocBlock(root.statement(), stmt, node))
             .blk(deprecatedAnnotation(node));
         return generatedAnnotation ? bb.eol(GENERATED_ANNOTATION) : bb;
+    }
+
+    private @Nullable BlockBuilder javadocBlock(final ModuleEffectiveStatement module,
+            final EffectiveStatement<?, ?> stmt, final DocumentedNode node) {
+        final var sb = new StringBuilder();
+        final var comment = DocUtils.typeCommentOf(node);
+        if (comment != null) {
+            sb.append(comment.getJavadoc());
+        }
+        appendSnippet(sb, archetype(), module, stmt, node);
+
+        final var str = sb.toString();
+        if (str.isBlank()) {
+            return null;
+        }
+
+        final var bb = Block.builder();
+        appendAsJavadoc(bb, str.stripTrailing() + '\n');
+        return bb;
     }
 
     private @Nullable BlockBuilder deprecatedAnnotation(final DocumentedNode.@NonNull WithStatus node) {

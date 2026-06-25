@@ -201,25 +201,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             }).nl();
     }
 
-    final @Nullable BlockBuilder javadocBlock(final @NonNull ModuleEffectiveStatement module,
-            final @NonNull EffectiveStatement<?, ?> stmt, final @NonNull DocumentedNode node) {
-        final var sb = new StringBuilder();
-        final var comment = DocUtils.typeCommentOf(node);
-        if (comment != null) {
-            sb.append(comment.getJavadoc());
-        }
-        appendSnippet(sb, archetype, module, stmt, node);
-
-        final var str = sb.toString();
-        if (str.isBlank()) {
-            return null;
-        }
-
-        final var bb = Block.builder();
-        appendAsJavadoc(bb, str.stripTrailing() + '\n');
-        return bb;
-    }
-
     @NonNullByDefault
     final void appendSnippet(final StringBuilder sb, final Archetype type, final ModuleEffectiveStatement module,
             final EffectiveStatement<?, ?> stmt, final DocumentedNode node) {
