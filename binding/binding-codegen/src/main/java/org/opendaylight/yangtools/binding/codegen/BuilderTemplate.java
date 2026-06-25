@@ -79,14 +79,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      */
     static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
-    private final BuilderImplTemplate implTemplate;
-
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass javaType, final GeneratedType type, final GeneratedType targetType,
             final Set<BuilderGeneratedProperty> properties, final @Nullable ParameterizedType augmentType,
             final @Nullable KeyArchetype keyType) {
         super(javaType, type, targetType, properties, augmentType, keyType);
-        implTemplate = new BuilderImplTemplate(this, type.getEnclosedTypes().getFirst());
     }
 
     @Override
@@ -155,7 +152,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
                 .str("return new ").str(importedName(type().getEnclosedTypes().getFirst())).eol("(this);")
             .cB()
             .nl()
-            .blk(implTemplate.body())
+            .blk(new BuilderImplTemplate(this, type().getEnclosedTypes().getFirst()).body())
             .cB();
     }
 
@@ -387,7 +384,7 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private String printPropertySetter(final MethodSignature getter, final String receiver, final String propertyName) {
         final var getterName =  getter.getName();
 
-        final var ownGetter = implTemplate.findGetter(getterName);
+        final var ownGetter = findGetter(getterName);
         final var ownGetterType = ownGetter.getReturnType();
         if (strictTypeEquals(getter.getReturnType(), ownGetterType)) {
             return "this._" + propertyName + " = " + receiver + '.' + getterName + "();";
@@ -411,6 +408,34 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             final String checkerName, final String className) {
         return "this._" + propertyName + " = " + importedName(CODEHELPERS) + '.' + checkerName + '('
             + className + ".class, \"" + propertyName + "\", " + receiver + '.' + getterName + "());";
+    }
+
+    @NonNullByDefault
+    private MethodSignature findGetter(final String getterName) {
+        final var getter = getterByName(targetType, getterName);
+        if (getter == null) {
+            throw new IllegalStateException(
+                "%s should be present in %s type or in one of its ancestors as getter".formatted(
+                    propertyNameFromGetter(getterName), targetType));
+        }
+        return getter;
+    }
+
+    private static @Nullable MethodSignature getterByName(final GeneratedType implType, final String getterName) {
+        final var getter = getterByName(nonDefaultMethods(implType), getterName);
+        if (getter != null) {
+            return getter;
+        }
+        for (var ifc : implType.getImplements()) {
+            if (ifc instanceof GeneratedType genInterface) {
+                final var getterImpl = getterByName(genInterface, getterName);
+                if (getterImpl != null) {
+                    return getterImpl;
+                }
+            }
+        }
+
+        return null;
     }
 
     private static boolean strictTypeEquals(final Type type1, final Type type2) {

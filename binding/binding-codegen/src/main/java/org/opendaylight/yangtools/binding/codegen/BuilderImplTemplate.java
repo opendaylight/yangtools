@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 
 /**
@@ -169,35 +167,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                     bb.str("return ").str(fieldName).eS();
                 }
             }).nl();
-    }
-
-    @NonNullByDefault
-    MethodSignature findGetter(final String getterName) {
-        final var type = type();
-        final var getter = getterByName(type, getterName);
-        if (getter == null) {
-            throw new IllegalStateException(
-                "%s should be present in %s type or in one of its ancestors as getter".formatted(
-                    propertyNameFromGetter(getterName), type));
-        }
-        return getter;
-    }
-
-    private static @Nullable MethodSignature getterByName(final GeneratedType implType, final String getterName) {
-        final var getter = getterByName(nonDefaultMethods(implType), getterName);
-        if (getter != null) {
-            return getter;
-        }
-        for (var ifc : implType.getImplements()) {
-            if (ifc instanceof GeneratedType genInterface) {
-                final var getterImpl = getterByName(genInterface, getterName);
-                if (getterImpl != null) {
-                    return getterImpl;
-                }
-            }
-        }
-
-        return null;
     }
 
     @Override
