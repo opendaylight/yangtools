@@ -201,12 +201,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
         return javaType.getFullyQualifiedReference(intype, annotation);
     }
 
-    // Exposed for BuilderTemplate
-    boolean isLocalInnerClass(final JavaTypeName name) {
-        final var enclosing = name.immediatelyEnclosingClass();
-        return enclosing != null && typeName().equals(enclosing);
-    }
-
     /**
      * Return imported name of java.util class, whose hashCode/equals methods we want to invoke on the property. Returns
      * {@link Arrays} if the property is an array, {@link Objects} otherwise.
