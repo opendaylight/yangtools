@@ -32,9 +32,7 @@ public record BitsTypeObjectArchetype(
         JavaTypeName name,
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         BitsTypeDefinition typeDefinition,
-        @Nullable BitsTypeObjectArchetype superType)
-        implements GeneratedTransferObject<BitsTypeObject>,
-                   Archetype.WithStatement<TypeEffectiveStatement.MandatoryIn<?, ?>> {
+        @Nullable BitsTypeObjectArchetype superType) implements GeneratedTransferObject<BitsTypeObject> {
     static final JavaTypeName SERIALIZABLE = JavaTypeName.create(Serializable.class);
 
     public BitsTypeObjectArchetype {

@@ -34,9 +34,7 @@ public record UnionTypeObjectArchetype(
         List<String> typePropertyNames,
         List<Type> typePropertyTypes,
         List<Archetype> enclosedTypes,
-        @Nullable UnionTypeObjectArchetype getSuperType)
-        implements GeneratedTransferObject<UnionTypeObject>,
-                   Archetype.WithStatement<TypeEffectiveStatement.MandatoryIn<?, ?>> {
+        @Nullable UnionTypeObjectArchetype getSuperType) implements GeneratedTransferObject<UnionTypeObject> {
     public UnionTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
