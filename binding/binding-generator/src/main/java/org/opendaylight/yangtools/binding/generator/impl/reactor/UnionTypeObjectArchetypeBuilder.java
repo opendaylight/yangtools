@@ -203,7 +203,7 @@ final class UnionTypeObjectArchetypeBuilder {
         }
 
         return new UnionTypeObjectArchetype(typeName, definingStatement, typeProperties,
-            List.copyOf(properties.keySet()), enclosedTypes, Restrictions.empty(), null);
+            List.copyOf(properties.keySet()), enclosedTypes, null);
     }
 
     // FIXME: this is legacy union/leafref property handling. The resulting value is *not* normalized for use as a

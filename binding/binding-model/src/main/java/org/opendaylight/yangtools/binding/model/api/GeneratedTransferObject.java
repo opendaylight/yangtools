@@ -50,10 +50,6 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
      */
     @Nullable TypeDefinition<?> getBaseType();
 
-    default Restrictions getRestrictions() {
-        throw new UnsupportedOperationException("Not available at runtime");
-    }
-
     default Optional<? extends GeneratedProperty> findProperty(final String name) {
         final var optProp = getProperties().stream().filter(prop -> name.equals(prop.getName())).findFirst();
         if (optProp.isPresent()) {

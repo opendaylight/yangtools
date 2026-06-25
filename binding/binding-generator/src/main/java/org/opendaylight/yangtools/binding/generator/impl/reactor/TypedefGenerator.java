@@ -86,14 +86,11 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
             case BitsTypeObjectArchetype bits ->
                 new BitsTypeObjectArchetype(typeName, statement, (BitsTypeDefinition) typedef, bits);
             case ScalarTypeObjectArchetype scalar -> {
-                final var restrictions = Restrictions.compute(statement, statement.typeStatement());
                 yield new ScalarTypeObjectArchetype(typeName, statement, typedef, scalar.valueType(),
-                    restrictions != null ? restrictions : Restrictions.empty(), scalar);
+                    Restrictions.compute(statement, statement.typeStatement()), scalar);
             }
             case UnionTypeObjectArchetype union -> {
-                final var restrictions = Restrictions.compute(statement, statement.typeStatement());
-                yield new UnionTypeObjectArchetype(typeName, statement, List.of(), List.of(), List.of(),
-                    restrictions != null ? restrictions : Restrictions.empty(), union);
+                yield new UnionTypeObjectArchetype(typeName, statement, List.of(), List.of(), List.of(), union);
             }
         };
     }
