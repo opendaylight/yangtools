@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d76b63ea_efc0d063",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-06-25T14:26:33Z",
+      "side": 1,
+      "message": "so this is failing on mocks due to https://bugs.openjdk.org/browse/JDK-8315575",
+      "revId": "15702659be4345d73bfc32d294704ea29a35a933",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
