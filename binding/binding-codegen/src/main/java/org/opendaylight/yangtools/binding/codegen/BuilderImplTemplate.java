@@ -113,9 +113,9 @@ final class BuilderImplTemplate extends BaseTemplate {
 
         if (keyType != null && targetType.getImplements().contains(entryObject(targetType, keyType))) {
             final var allProps = new ArrayList<>(properties);
-            final var keyProps = AbstractBuilderTemplate.keyConstructorArgs(keyType);
+            final var keyProps = BuilderTemplate.keyConstructorArgs(keyType);
             for (var field : keyProps) {
-                AbstractBuilderTemplate.removeProperty(allProps, field.getName());
+                BuilderTemplate.removeProperty(allProps, field.getName());
             }
 
             bb.eol("final var key = key();");
@@ -143,7 +143,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                         .str("    : new ").str(importedName(keyType)).str("(");
 
             // Note: keys have at least one component
-            final var it = AbstractBuilderTemplate.keyConstructorArgs(keyType).iterator();
+            final var it = BuilderTemplate.keyConstructorArgs(keyType).iterator();
             while (true) {
                 final var keyProp = it.next();
                 bb.str("base.").str(getterMethodName(keyProp)).str("()");
@@ -171,7 +171,7 @@ final class BuilderImplTemplate extends BaseTemplate {
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType
-                    && AbstractBuilderTemplate.isNonPresenceContainer(fieldType)) {
+                    && BuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
                         .at().eol(override)

@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2018 Pantheon Technologies, s.r.o.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -14,25 +16,30 @@ import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_N
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.GROUPING;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -43,11 +50,12 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
  * Template for generating JAVA builder classes.
  */
-final class BuilderTemplate extends AbstractBuilderTemplate {
+final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     record Builder(GeneratedType type) implements Template.Builder {
         Builder {
@@ -79,11 +87,35 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
      */
     static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
+    /**
+     * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
+     */
+    final ParameterizedType augmentType;
+
+    /**
+     * Set of class attributes (fields) which are derived from the getter methods names.
+     */
+    final @NonNull Set<BuilderGeneratedProperty> properties;
+
+    /**
+     * KeyArchetype for key type, {@code null} if this type does not have a key.
+     */
+    final KeyArchetype keyType;
+
+    // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
+    //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
+    //        implementations of its methods
+    final @NonNull GeneratedType targetType;
+
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass javaType, final GeneratedType type, final GeneratedType targetType,
             final Set<BuilderGeneratedProperty> properties, final @Nullable ParameterizedType augmentType,
             final @Nullable KeyArchetype keyType) {
-        super(javaType, type, targetType, properties, augmentType, keyType);
+        super(javaType, type);
+        this.targetType = requireNonNull(targetType);
+        this.properties = requireNonNull(properties);
+        this.augmentType = augmentType;
+        this.keyType = keyType;
     }
 
     @Override
@@ -332,6 +364,37 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     @NonNullByDefault
+    private BlockBuilder generateCopyConstructor(final Type fromType, final Type implType) {
+        return newBlockBuilder()
+            .str(type().simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
+                if (augmentType != null) {
+                    bb
+                        .eol("final var aug = base.augmentations();")
+                        .str("if (!aug.isEmpty())").oB()
+                            .str("this." + AUGMENTATION_FIELD + " = new ").str(importedName(JU_HASHMAP)).eol("<>(aug);")
+                        .cB();
+                }
+
+                if (keyType != null && targetType.getImplements().contains(entryObject(targetType, keyType))) {
+                    final var allProps = new ArrayList<>(properties);
+                    final var keyProps = keyConstructorArgs(keyType);
+                    for (var field : keyProps) {
+                        removeProperty(allProps, field.getName());
+                    }
+
+                    bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
+                    for (var field : keyProps) {
+                        bb.str("this.").str(fieldName(field)).str(" = base.").str(getterMethodName(field)).eol("();");
+                    }
+
+                    appendCopyNonKeys(bb, allProps);
+                } else {
+                    appendCopyNonKeys(bb, properties);
+                }
+            }).nl();
+    }
+
+    @NonNullByDefault
     private BlockBuilder generateMethodFieldsFromComment(final GeneratedType type) {
         // FIXME: create a specialized JavadocBuilder to help with this
         final var bb = newBlockBuilder().txt("""
@@ -534,6 +597,61 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
+    /**
+     * {@return string with getter methods}
+     */
+    private @NonNull BlockBuilder generateGetters(final boolean addOverride) {
+        final var bb = newBlockBuilder();
+
+        if (keyType != null) {
+            if (!addOverride) {
+                bb
+                    .eol("/**")
+                    .str(" * Return current value associated with the property corresponding to {@link ")
+                        .str(importedName(targetType)).eol('#' + KEY_AWARE_KEY_NAME + "()}.")
+                    .eol(" *")
+                    .eol(" * @return current value")
+                    .eol(" */");
+            } else {
+                bb
+                    .at().eol(importedName(OVERRIDE));
+            }
+            bb
+                .str("public ").str(importedName(keyType)).str(' ' + KEY_AWARE_KEY_NAME + "()").oB()
+                    .eol("return key;")
+                .cB()
+                .newLine();
+        }
+
+        if (properties.isEmpty()) {
+            return bb;
+        }
+
+        final var it = properties.iterator();
+        while (true) {
+            final var field = it.next();
+            if (!addOverride) {
+                bb
+                    .eol("/**")
+                    .str(" * Return current value associated with the property corresponding to {@link ")
+                        .str(importedName(targetType)).str("#").str(field.getGetterName()).eol("()}.")
+                    .eol(" *")
+                    .eol(" * @return current value")
+                    .eol(" */");
+            } else {
+                bb
+                    .at().eol(importedName(OVERRIDE));
+            }
+            bb.blk(asGetterMethod(field));
+
+            if (!it.hasNext()) {
+                return bb;
+            }
+
+            bb.newLine();
+        }
+    }
+
     private @NonNull BlockBuilder generateSetter(final BuilderGeneratedProperty field) {
         final var returnType = field.getReturnType();
         if (returnType instanceof ParameterizedType parameterized) {
@@ -722,8 +840,10 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    private @NonNull BlockBuilder createDescription(final GeneratedType targetType) {
-        final var target = importedName(targetType);
+    private @NonNull BlockBuilder createDescription(final GeneratedType forType) {
+        // Note: forType == targetType
+        final var target = importedName(forType);
+
         return newBlockBuilder()
             .str("Class that builds {@link ").str(target).eol("} instances. Overall design of the class is that of a")
             .txt("""
@@ -798,27 +918,64 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             .cB();
     }
 
-    @Override
-    void appendCopyKeys(final BlockBuilder bb, final List<GeneratedProperty> keyProps) {
-        bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
-        for (var field : keyProps) {
-            bb.str("this.").str(fieldName(field)).str(" = base.").str(getterMethodName(field)).eol("();");
-        }
-    }
-
-    @Override
-    void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
+    /**
+     * Append the code to copy non-key-components, with four spaces of indentation.
+     */
+    private static void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
             bb.str("this.").str(fieldName(field)).str(" = base.").str(field.getGetterName()).eol("();");
         }
     }
 
-    @Override
-    void appendCopyAugmentation(final BlockBuilder bb) {
-        bb
-            .eol("final var aug = base.augmentations();")
-            .str("if (!aug.isEmpty())").oB()
-                .str("this." + AUGMENTATION_FIELD + " = new ").str(importedName(JU_HASHMAP)).eol("<>(aug);")
-            .cB();
+    /**
+     * Return properties participating in the construction of a key type. Returned list is guaranteed to be ordered to
+     * match order the type constructor expects.
+     *
+     * @param keyType key type
+     * @return properties participating in the construction of a key type, in constructor order
+     */
+    @NonNullByDefault
+    static List<GeneratedProperty> keyConstructorArgs(final KeyArchetype keyType) {
+        return keyType.getProperties().stream()
+            .sorted(Comparator.comparing(GeneratedProperty::getName))
+            .collect(Collectors.toList());
+    }
+
+    static void removeProperty(final Collection<BuilderGeneratedProperty> props, final String name) {
+        final var it = props.iterator();
+        while (it.hasNext()) {
+            if (name.equals(it.next().getName())) {
+                it.remove();
+                return;
+            }
+        }
+    }
+
+    @NonNullByDefault
+    static boolean hasNonDefaultMethods(final GeneratedType type) {
+        return type.getMethodDefinitions().stream().anyMatch(def -> !def.isDefault());
+    }
+
+    @NonNullByDefault
+    static Collection<MethodSignature> nonDefaultMethods(final GeneratedType type) {
+        return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
+    }
+
+    /**
+     * Check if the {@code type} represents non-presence container.
+     *
+     * @param type {@link GeneratedType} to be checked if represents container without presence statement.
+     * @return {@code true} if specified {@code type} is a container without presence statement,
+     *     {@code false} otherwise.
+     */
+    // FIXME: YANGTOOLS-1876: remove this method
+    @NonNullByDefault
+    static boolean isNonPresenceContainer(final GeneratedType type) {
+        if (type instanceof Archetype) {
+            return false;
+        }
+        final var sourceDef = type.yangSourceDefinition();
+        return sourceDef != null && sourceDef.getNode() instanceof ContainerSchemaNode container
+            && !container.isPresenceContainer();
     }
 }

@@ -38,7 +38,7 @@ class PresenceContainerTest {
     private static Module module;
 
     @Mock
-    GeneratedType type;
+    private GeneratedType type;
 
     @BeforeAll
     static void beforeClass() {
@@ -55,7 +55,7 @@ class PresenceContainerTest {
         final var userList = module.findDataTreeChild(DIRECTORY_QNAME, USER_QNAME).orElseThrow();
         final var definition = YangSourceDefinition.of(module, userList).orElse(null);
         doReturn(definition).when(type).yangSourceDefinition();
-        assertFalse(AbstractBuilderTemplate.isNonPresenceContainer(type));
+        assertFalse(BuilderTemplate.isNonPresenceContainer(type));
     }
 
     /**
@@ -66,7 +66,7 @@ class PresenceContainerTest {
         final var scpContainer = module.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow();
         final var definition = YangSourceDefinition.of(module, scpContainer).orElse(null);
         doReturn(definition).when(type).yangSourceDefinition();
-        assertFalse(AbstractBuilderTemplate.isNonPresenceContainer(type));
+        assertFalse(BuilderTemplate.isNonPresenceContainer(type));
     }
 
     /**
@@ -77,6 +77,6 @@ class PresenceContainerTest {
         final var dataContainer = module.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow();
         final var definition = YangSourceDefinition.of(module, dataContainer).orElse(null);
         doReturn(definition).when(type).yangSourceDefinition();
-        assertTrue(AbstractBuilderTemplate.isNonPresenceContainer(type));
+        assertTrue(BuilderTemplate.isNonPresenceContainer(type));
     }
 }
