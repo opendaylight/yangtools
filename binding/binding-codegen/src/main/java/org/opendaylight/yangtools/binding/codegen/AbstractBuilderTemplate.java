@@ -40,7 +40,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
      */
-    final Set<BuilderGeneratedProperty> properties;
+    final @NonNull Set<BuilderGeneratedProperty> properties;
 
     /**
      * KeyArchetype for key type, {@code null} if this type does not have a key.
@@ -50,26 +50,16 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
-    final GeneratedType targetType;
+    final @NonNull GeneratedType targetType;
 
     AbstractBuilderTemplate(final @NonNull GeneratedClass javaType, final @NonNull GeneratedType type,
-            final GeneratedType targetType, final Set<BuilderGeneratedProperty> properties,
-            final ParameterizedType augmentType, final KeyArchetype keyType) {
+            final @NonNull GeneratedType targetType, final @NonNull Set<BuilderGeneratedProperty> properties,
+            final @Nullable ParameterizedType augmentType, final @Nullable KeyArchetype keyType) {
         super(javaType, type);
-        this.targetType = targetType;
-        this.properties = properties;
+        this.targetType = requireNonNull(targetType);
+        this.properties = requireNonNull(properties);
         this.augmentType = augmentType;
         this.keyType = keyType;
-    }
-
-    AbstractBuilderTemplate(final @NonNull GeneratedType type, final @NonNull GeneratedType targetType,
-            final KeyArchetype keyType) {
-        super(GeneratedClass.of(type), type);
-        this.targetType = requireNonNull(targetType);
-        this.keyType = keyType;
-        final var analysis = TypeAnalysis.of(targetType);
-        properties = analysis.properties();
-        augmentType = analysis.augmentType();
     }
 
     /**

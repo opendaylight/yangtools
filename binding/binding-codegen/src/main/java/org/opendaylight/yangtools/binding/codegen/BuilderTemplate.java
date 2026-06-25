@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -63,9 +64,13 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
             // FIXME: the entire TypeBuilder dance here is to provide input to GeneratedClass.of(type), taking
             //        the extremely long route: we really would like to instantiate a GeneratedClass here and not pass
             //        not have a GeneratedType for the Builder nor its implementation at all
-            return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
+            final var builderType = new CodegenGeneratedTypeBuilder(builderName)
                 .addEnclosedType(new CodegenGeneratedTypeBuilder(implName).addImplementsType(type).build())
-                .build(), type);
+                .build();
+
+            final var analysis = TypeAnalysis.of(type);
+            return new BuilderTemplate(GeneratedClass.of(builderType), builderType, type, analysis.properties(),
+                analysis.augmentType(), BindingTypes.extractEntryObjectKey(type));
         }
     }
 
@@ -77,9 +82,11 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
     private final BuilderImplTemplate implTemplate;
 
     @NonNullByDefault
-    private BuilderTemplate(final GeneratedType builderType, final GeneratedType targetType) {
-        super(builderType, targetType, BindingTypes.extractEntryObjectKey(targetType));
-        implTemplate = new BuilderImplTemplate(this, type().getEnclosedTypes().getFirst());
+    private BuilderTemplate(final GeneratedClass javaType, final GeneratedType type, final GeneratedType targetType,
+            final Set<BuilderGeneratedProperty> properties, final @Nullable ParameterizedType augmentType,
+            final @Nullable KeyArchetype keyType) {
+        super(javaType, type, targetType, properties, augmentType, keyType);
+        implTemplate = new BuilderImplTemplate(this, type.getEnclosedTypes().getFirst());
     }
 
     @Override
