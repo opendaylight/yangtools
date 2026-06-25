@@ -34,9 +34,7 @@ public record ScalarTypeObjectArchetype(
         TypeDefinition<?> typeDefinition,
         ConcreteType valueType,
         @Nullable Restrictions restrictions,
-        @Nullable ScalarTypeObjectArchetype getSuperType)
-        implements GeneratedTransferObject<ScalarTypeObject<?>>,
-                   Archetype.WithStatement<TypeEffectiveStatement.MandatoryIn<?, ?>> {
+        @Nullable ScalarTypeObjectArchetype getSuperType) implements GeneratedTransferObject<ScalarTypeObject<?>> {
     public ScalarTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);

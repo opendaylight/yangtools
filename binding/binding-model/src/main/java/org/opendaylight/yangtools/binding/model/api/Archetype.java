@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @since 15.0.0
  */
-@NonNullByDefault
-public sealed interface Archetype extends Type permits Archetype.WithStatement, LegacyArchetype, TypeObjectArchetype {
+public sealed interface Archetype extends Type permits Archetype.WithStatement, LegacyArchetype {
     /**
      * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
      *
@@ -29,8 +28,7 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement, 
      * @since 16.0.0
      */
     sealed interface WithStatement<S extends EffectiveStatement<?, ?>> extends Archetype
-            permits WithQName, BitsTypeObjectArchetype, EnumTypeObjectArchetype, KeyArchetype,
-                    ScalarTypeObjectArchetype, UnionTypeObjectArchetype, DataRootArchetype {
+            permits WithQName, KeyArchetype, TypeObjectArchetype, DataRootArchetype {
         /**
          * {@return the {@link EffectiveStatement}}
          */
@@ -49,7 +47,7 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement, 
         /**
          * {@return the value of {@value Naming#QNAME_STATIC_FIELD_NAME} field}
          */
-        default QName qnameConstant() {
+        default @NonNull QName qnameConstant() {
             return statement().argument();
         }
     }
@@ -57,6 +55,7 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement, 
     /**
      * {@return the list of enclosed {@link Archetype}s}
      */
+    @NonNullByDefault
     default List<Archetype> enclosedTypes() {
         return List.of();
     }
