@@ -34,7 +34,7 @@ public record ScalarTypeObjectArchetype(
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         TypeDefinition<?> typeDefinition,
         ConcreteType valueType,
-        Restrictions getRestrictions,
+        @Nullable Restrictions restrictions,
         @Nullable ScalarTypeObjectArchetype getSuperType)
         implements GeneratedTransferObject<ScalarTypeObject<?>>,
                    Archetype.Compat<TypeEffectiveStatement.MandatoryIn<?, ?>> {
@@ -43,7 +43,9 @@ public record ScalarTypeObjectArchetype(
         requireNonNull(statement);
         requireNonNull(typeDefinition);
         requireNonNull(valueType);
-        requireNonNull(getRestrictions);
+        if (restrictions != null && restrictions.isEmpty()) {
+            restrictions = null;
+        }
     }
 
     @Override

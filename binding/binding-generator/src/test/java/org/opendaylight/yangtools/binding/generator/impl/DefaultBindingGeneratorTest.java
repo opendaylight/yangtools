@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,9 +21,9 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -97,42 +98,41 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void generatedTypeForExtendedDefinitionTypeWithLeafrefBaseType() {
-        final var gto = assertInstanceOf(GeneratedTransferObject.class,
+        final var gto = assertInstanceOf(ScalarTypeObjectArchetype.class,
             assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getBarId").getReturnType());
         assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16"), gto.name());
     }
 
     @Test
     void generatedTypeForExtendedDefinitionTypeWithInnerExtendedType() {
-        assertGTO(JavaTypeName.create(TEST_TYPE_PROVIDER, "ExtendedYangInt8"));
+        assertScalar(JavaTypeName.create(TEST_TYPE_PROVIDER, "ExtendedYangInt8"));
     }
 
     @Test
     void generatedTypeForExtendedDefinitionType() {
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangBoolean"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangEmpty"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8Restricted"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt32"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt64"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangString"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangDecimal64"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangUint8"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangUint16"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangUint32"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangUint64"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangUnion"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangBinary"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInstanceIdentifier"));
-        assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangBits"));
-        assertEnumeration(JavaTypeName.create(BASE_YANG_TYPES, "YangEnumeration"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangBoolean"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangEmpty"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8Restricted"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt32"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt64"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangString"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangDecimal64"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangUint8"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangUint16"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangUint32"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangUint64"));
+        assertUnion(JavaTypeName.create(BASE_YANG_TYPES, "YangUnion"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangBinary"));
+        assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInstanceIdentifier"));
+        assertBits(JavaTypeName.create(BASE_YANG_TYPES, "YangBits"));
+        assertEnum(JavaTypeName.create(BASE_YANG_TYPES, "YangEnumeration"));
     }
 
     @Test
     void provideGeneratedTOBuilderForUnionTypeDefWithInnerUnionTypes() {
-        final var gto = assertInstanceOf(UnionTypeObjectArchetype.class,
-            assertGeneratedType(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion")));
+        final var gto = assertUnion(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion"));
 
         assertEquals(3, gto.typePropertyNames().size());
         assertEquals(3, gto.typePropertyTypes().size());
@@ -152,8 +152,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void provideGeneratedTOBuilderForUnionTypeDefWithInnerUnionAndSimpleType() {
-        final var gto = assertInstanceOf(UnionTypeObjectArchetype.class,
-            assertGeneratedType(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion")));
+        final var gto = assertUnion(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion"));
         assertEquals(List.of("innerUnion", "string"), gto.typePropertyNames());
         assertEquals(2, gto.typePropertyTypes().size());
         assertEquals(List.of(), gto.getEnclosedTypes());
@@ -161,21 +160,21 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionForExtUnionWithSimpleTypes() {
-        final var type = assertInstanceOf(GeneratedTransferObject.class, assertGeneratedMethod(
+        final var type = assertInstanceOf(UnionTypeObjectArchetype.class, assertGeneratedMethod(
             JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getSimpleIntTypesUnion").getReturnType());
         assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangUnion"), type.name());
     }
 
     @Test
     void javaTypeForSchemaDefinitionForExtUnionWithInnerUnionAndSimpleType() {
-        final var type = assertInstanceOf(GeneratedTransferObject.class, assertGeneratedMethod(
+        final var type = assertInstanceOf(UnionTypeObjectArchetype.class, assertGeneratedMethod(
             JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getComplexStringIntUnion").getReturnType());
         assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion"), type.name());
     }
 
     @Test
     void javaTypeForSchemaDefinitionForExtComplexUnionWithInnerUnionTypes() {
-        final var type = assertInstanceOf(GeneratedTransferObject.class, assertGeneratedMethod(
+        final var type = assertInstanceOf(UnionTypeObjectArchetype.class, assertGeneratedMethod(
             JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getComplexUnion").getReturnType());
         assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion"), type.name());
     }
@@ -188,8 +187,9 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionEmptyStringPatternType() {
-        final var restrictions = assertGTO(JavaTypeName.create(TEST_TYPE_PROVIDER, "EmptyPatternString"))
-            .getRestrictions();
+        final var restrictions = assertScalar(JavaTypeName.create(TEST_TYPE_PROVIDER, "EmptyPatternString"))
+            .restrictions();
+        assertNotNull(restrictions);
         final var patterns = restrictions.getPatternConstraints();
         assertEquals(1, patterns.size());
         final var pattern = patterns.get(0);
@@ -221,22 +221,21 @@ public class DefaultBindingGeneratorTest {
     @Test
     void javaTypeForSchemaDefinitionConditionalLeafref() {
         // Note: previous incarnation did not resolve this, as the expression (pointed to a list)
-        assertSame(assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
+        assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
             assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, "getConditionalLeafref").getReturnType());
     }
 
     @Test
     void javaTypeForSchemaDefinitionLeafrefExtType() {
-        assertSame(assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8")),
+        assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8")),
             assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "Bar"), "getLeafrefValue").getReturnType());
-        assertSame(assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
+        assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
             assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, "getId").getReturnType());
     }
 
     @Test
     void javaTypeForSchemaDefinitionEnumExtTypeResolve() {
-        final var type = assertInstanceOf(EnumTypeObjectArchetype.class,
-            assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangEnumeration")));
+        final var type = assertEnum(JavaTypeName.create(BASE_YANG_TYPES, "YangEnumeration"));
 
         final var values = type.valueToConstant();
         assertEquals(2, values.size());
@@ -278,9 +277,10 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionRestrictedExtType() {
-        final var expected = assertInstanceOf(ScalarTypeObjectArchetype.class,
-            assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8Restricted")));
-        final var rangeConstraints = expected.getRestrictions().getRangeConstraint();
+        final var expected = assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8Restricted"));
+        final var restrictions = expected.restrictions();
+        assertNotNull(restrictions);
+        final var rangeConstraints = restrictions.getRangeConstraint();
         assertTrue(rangeConstraints.isPresent());
         final var it = rangeConstraints.orElseThrow().getAllowedRanges().asRanges().iterator();
         assertTrue(it.hasNext());
@@ -294,8 +294,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionExtType() {
-        final var expected = assertInstanceOf(ScalarTypeObjectArchetype.class,
-            assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8")));
+        final var expected = assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8"));
         assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getYangInt8Type").getReturnType());
     }
 
@@ -316,11 +315,19 @@ public class DefaultBindingGeneratorTest {
             .orElseThrow(() -> new AssertionError("Generated type " + name + " not present"));
     }
 
-    private static EnumTypeObjectArchetype assertEnumeration(final JavaTypeName name) {
+    private static BitsTypeObjectArchetype assertBits(final JavaTypeName name) {
+        return assertInstanceOf(BitsTypeObjectArchetype.class, assertGeneratedType(name));
+    }
+
+    private static EnumTypeObjectArchetype assertEnum(final JavaTypeName name) {
         return assertInstanceOf(EnumTypeObjectArchetype.class, assertGeneratedType(name));
     }
 
-    private static GeneratedTransferObject<?> assertGTO(final JavaTypeName name) {
-        return assertInstanceOf(GeneratedTransferObject.class, assertGeneratedType(name));
+    private static ScalarTypeObjectArchetype assertScalar(final JavaTypeName name) {
+        return assertInstanceOf(ScalarTypeObjectArchetype.class, assertGeneratedType(name));
+    }
+
+    private static UnionTypeObjectArchetype assertUnion(final JavaTypeName name) {
+        return assertInstanceOf(UnionTypeObjectArchetype.class, assertGeneratedType(name));
     }
 }

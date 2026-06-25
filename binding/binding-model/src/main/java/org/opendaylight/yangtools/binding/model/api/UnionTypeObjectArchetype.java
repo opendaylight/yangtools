@@ -34,14 +34,12 @@ public record UnionTypeObjectArchetype(
         List<String> typePropertyNames,
         List<Type> typePropertyTypes,
         List<GeneratedType> getEnclosedTypes,
-        Restrictions getRestrictions,
         @Nullable UnionTypeObjectArchetype getSuperType)
         implements GeneratedTransferObject<UnionTypeObject>,
                    Archetype.Compat<TypeEffectiveStatement.MandatoryIn<?, ?>> {
     public UnionTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(getRestrictions);
         typePropertyNames = List.copyOf(typePropertyNames);
         typePropertyTypes = List.copyOf(typePropertyTypes);
         getEnclosedTypes = List.copyOf(getEnclosedTypes);

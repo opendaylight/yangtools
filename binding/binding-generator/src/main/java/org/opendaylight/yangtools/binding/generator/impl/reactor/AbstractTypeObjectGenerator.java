@@ -480,7 +480,7 @@ abstract class AbstractTypeObjectGenerator<
             case UnionTypeObjectArchetype union -> {
                 // FIXME: this is definitely not quite right: statement/typeDefinition should be different
                 yield new UnionTypeObjectArchetype(union.name(), union.statement(), union.typePropertyNames(),
-                    union.typePropertyTypes(), List.of(), restrictions, union.getSuperType());
+                    union.typePropertyTypes(), List.of(), union.getSuperType());
             }
             default -> throw new VerifyException("Unhandled base type " + baseType);
         };

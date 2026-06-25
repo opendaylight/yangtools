@@ -29,13 +29,10 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
-import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
@@ -58,9 +55,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     private final @NonNull List<GeneratedProperty> finalProperties;
     private final @NonNull List<GeneratedProperty> parentProperties;
     private final @NonNull List<GeneratedProperty> properties;
-    private final @NonNull Restrictions restrictions;
-
-    private final AbstractRangeGenerator<?> rangeGenerator;
 
     @NonNullByDefault
     private UnionTypeObjectTemplate(final GeneratedClass javaType, final UnionTypeObjectArchetype archetype,
@@ -71,15 +65,10 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .filter(GeneratedProperty::isReadOnly)
             .collect(Collectors.toUnmodifiableList());
         parentProperties = propertiesOfAllParents(archetype);
-        restrictions = archetype.getRestrictions();
 
         allProperties = Stream.concat(properties.stream(), parentProperties.stream())
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
-
-        // FIXME: YANGTOOLS-1621: this is utterly defunct
-        rangeGenerator = restrictions != null && restrictions.getRangeConstraint().isPresent()
-            ? requireNonNull(AbstractRangeGenerator.forType(encapsulatedValueType(archetype))) : null;
     }
 
     /**
@@ -153,20 +142,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             }
         }
 
-        // FIXME: YANGTOOLS-1621: this is utterly defunct
-        // length/range checkers
-        if (restrictions != null) {
-            final var length = restrictions.getLengthConstraint();
-            if (length.isPresent()) {
-                bb.nl().blk(LengthGenerator.generateLengthChecker("_value",
-                    encapsulatedValueType(archetype()), length.orElseThrow(), javaType()));
-            }
-            final var range = restrictions.getRangeConstraint();
-            if (range.isPresent()) {
-                bb.nl().blk(rangeGenerator.generateRangeChecker("_value", range.orElseThrow(), javaType()));
-            }
-        }
-
         bb
             .blk(constructors())
             .blk(propertyMethods());
@@ -182,12 +157,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         }
 
         return bb.cB().nl();
-    }
-
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    @NonNullByDefault
-    private static Type encapsulatedValueType(final GeneratedTransferObject<?> gto) {
-        return gto.findProperty(TypeConstants.VALUE_PROP).orElseThrow().getReturnType();
     }
 
     /**
@@ -246,8 +215,9 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             final var propertyAndTopParentProperties = Iterables.concat(parentProperties, List.of(property));
             final var propFieldName = fieldName(property);
 
-            if (!restrictions.isEmpty()) {
-                bb.blk(generateCheckers(property, restrictions, actualType)).newLine();
+            final var setterRestrictions = restrictionsForSetter(actualType);
+            if (setterRestrictions != null) {
+                bb.blk(generateCheckers(property, setterRestrictions, actualType)).newLine();
             }
 
             bb
@@ -257,7 +227,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 bb.str("super(").str(asArguments(parentProperties)).eol(");");
             }
 
-            final var setterRestrictions = restrictionsForSetter(actualType);
             if (setterRestrictions != null) {
                 bb.blk(checkArgument(property, setterRestrictions, actualType, propFieldName)).newLine();
             }

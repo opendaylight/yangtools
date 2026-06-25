@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
@@ -28,7 +29,8 @@ class GeneratedTypesStringTest {
             .findFirst()
             .orElseThrow());
 
-        final var restrictions = genTO.getRestrictions();
+        final var restrictions = genTO.restrictions();
+        assertNotNull(restrictions);
         assertFalse(restrictions.isEmpty());
 
         final var length = restrictions.getLengthConstraint().orElseThrow();
