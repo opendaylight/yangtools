@@ -189,26 +189,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             }).nl();
     }
 
-    /**
-     * Template method which generates the setter method for {@code field}.
-     *
-     * @param field generated property with data about field which is generated as the setter method
-     * @return string with the setter method source code in JAVA format
-     */
-    @NonNullByDefault
-    final BlockBuilder asSetterMethod(final GeneratedProperty field) {
-        final var fieldType = importedReturnType(field);
-        final var suffix = toFirstUpper(field.getName());
-        final var typeName = type().simpleName();
-
-        return newBlockBuilder()
-            .str("public ").str(typeName).str(" set").str(suffix).str("(").str(fieldType).str(" value)").jBlock(bb -> {
-                bb
-                    .str("this.").str(fieldName(field)).eol(" = value;")
-                    .str("return this;").newLine();
-            }).nl();
-    }
-
     final @Nullable BlockBuilder javadocBlock(final @NonNull ModuleEffectiveStatement module,
             final @NonNull EffectiveStatement<?, ?> stmt, final @NonNull DocumentedNode node) {
         final var sb = new StringBuilder();

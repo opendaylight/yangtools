@@ -454,11 +454,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         final var bb = newBlockBuilder();
         final var it = properties.iterator();
         do {
-            final var field = it.next();
-            bb.nl().blk(asGetterMethod(field));
-            if (!field.isReadOnly()) {
-                bb.nl().blk(asSetterMethod(field));
-            }
+            bb.nl().blk(asGetterMethod(it.next()));
         } while (it.hasNext());
         return bb;
     }
