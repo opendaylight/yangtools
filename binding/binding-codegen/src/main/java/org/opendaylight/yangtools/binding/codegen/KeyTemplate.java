@@ -15,13 +15,11 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * A template for {@link Key} specializations.
@@ -41,8 +39,6 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
-    // FIXME: YANGTOOLS-1794: remove this constant
-    private static final ConcreteType PRIMITIVE_BOOLEAN = Types.typeForClass(boolean.class);
 
     private KeyTemplate(final KeyArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
@@ -180,7 +176,6 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             case 1 -> {
                 bb.str("return ");
                 final var prop = props.getFirst();
-                verifyNotBit(prop);
                 bb.str(clazz.getReferenceString(CODEHELPERS)).str(".wrapperHashCode(");
                 bb.str(fieldName(prop)).eol(");");
             }
@@ -189,12 +184,9 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                     .eol("final int prime = 31;")
                     .eol("int result = 1;");
                 for (var property : props) {
-                    final var type = property.getReturnType();
-                    verifyNotBit(type);
-
                     bb
-                        .str("result = prime * result + ").str(importedUtilClass(clazz, type)).str(".hashCode(")
-                            .str(fieldName(property)).eol(");");
+                        .str("result = prime * result + ").str(importedUtilClass(clazz, property.getReturnType()))
+                            .str(".hashCode(") .str(fieldName(property)).eol(");");
                 }
                 bb.eol("return result;");
             }
@@ -215,13 +207,10 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
         for (var prop : props) {
             final var fieldName = fieldName(prop);
-            final var type = prop.getReturnType();
-            verifyNotBit(type);
-
             bb
                 .nl()
-                .str("    && ").str(importedUtilClass(clazz, type)).str(".equals(").str(fieldName).str(", other.")
-                    .str(fieldName).str(")");
+                .str("    && ").str(importedUtilClass(clazz, prop.getReturnType())).str(".equals(")
+                    .str(fieldName).str(", other.").str(fieldName).str(")");
         }
         bb
             .eS()
@@ -245,8 +234,6 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
-        verifyNotBit(prop);
-
         final var name = prop.getName();
         if (name.equals("value")) {
             // Special case equivalent to ScalarTypeObject.toString()
@@ -260,7 +247,6 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
         bb.str(".jcTSB(").str(selfRef).eol(".class)");
         for (var prop : props) {
-            verifyNotBit(prop);
             bb.ind(".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
         }
         bb.ind(".build();").newLine();
@@ -268,17 +254,5 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
     private static String importedUtilClass(final GeneratedClass clazz, final Type type) {
         return clazz.getReferenceString(type.isArray() ? JU_ARRAYS : JU_OBJECTS);
-    }
-
-    // FIXME: YANGTOOLS-1794: remove this method
-    private static void verifyNotBit(final GeneratedProperty prop) {
-        verifyNotBit(prop.getReturnType());
-    }
-
-    // FIXME: YANGTOOLS-1794: remove this method
-    private static void verifyNotBit(final Type type) {
-        if (PRIMITIVE_BOOLEAN.equals(type)) {
-            throw new VerifyException("unexpected boolean");
-        }
     }
 }
