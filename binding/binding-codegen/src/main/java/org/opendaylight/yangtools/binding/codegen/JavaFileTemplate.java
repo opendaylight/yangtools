@@ -26,7 +26,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -138,32 +137,19 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
 
     private final @NonNull GeneratedClass javaType;
-    // FIXME: do not store here
-    private final @NonNull Archetype type;
 
     @NonNullByDefault
-    JavaFileTemplate(final GeneratedClass javaType, final Archetype type) {
+    JavaFileTemplate(final GeneratedClass javaType) {
         this.javaType = requireNonNull(javaType);
-        this.type = requireNonNull(type);
     }
 
     final @NonNull GeneratedClass javaType() {
         return javaType;
     }
 
-    /**
-     * {@return the name of the type this generator is bound to}
-     */
     @Override
     final JavaTypeName typeName() {
-        return type.name();
-    }
-
-    /**
-     * {@return the type this generator is bound to}
-     */
-    final @NonNull Archetype type() {
-        return type;
+        return javaType.name();
     }
 
     final @NonNull BlockBuilder newBlockBuilder() {
@@ -218,7 +204,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
         final var enclosing = name.immediatelyEnclosingClass();
-        return enclosing != null && type.name().equals(enclosing);
+        return enclosing != null && typeName().equals(enclosing);
     }
 
     /**

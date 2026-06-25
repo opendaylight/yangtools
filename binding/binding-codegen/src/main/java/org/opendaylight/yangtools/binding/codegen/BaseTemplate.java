@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
@@ -92,9 +93,19 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         .addIgnoredStatement(ReferenceStatement.DEF)
         .build();
 
+    private final @NonNull Archetype archetype;
+
     @NonNullByDefault
-    BaseTemplate(final GeneratedClass javaType, final Archetype type) {
-        super(javaType, type);
+    BaseTemplate(final GeneratedClass javaType, final Archetype archetype) {
+        super(javaType);
+        this.archetype = requireNonNull(archetype);
+    }
+
+    /**
+     * {@return the type this template is bound to}
+     */
+    final @NonNull Archetype type() {
+        return archetype;
     }
 
     @Override
@@ -109,7 +120,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         final var body = body().build();
 
         // package declaration
-        out.append("package ").append(type().packageName()).append(";\n\n");
+        out.append("package ").append(javaType.name().packageName()).append(";\n\n");
 
         // import block
         final var importedNames = topLevel.imports().toArray(JavaTypeName[]::new);
@@ -159,7 +170,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     @NonNullByDefault
     final String emitQNameConstant(final String name, final Type type, final String localName) {
-        final var yangModuleInfo = nameInModuleOf(type());
+        final var yangModuleInfo = nameInModuleOf(archetype);
         return """
             /**
              * YANG identifier of the statement represented by this class.
@@ -197,7 +208,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         if (comment != null) {
             sb.append(comment.getJavadoc());
         }
-        appendSnippet(sb, type(), module, stmt, node);
+        appendSnippet(sb, archetype, module, stmt, node);
 
         final var str = sb.toString();
         if (str.isBlank()) {
@@ -432,14 +443,14 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             if (innerType instanceof TypeObjectArchetype<?> gto) {
                 final var innerJavaType = javaType().getNestedClass(gto);
                 innerClasses.add(switch (gto) {
-                    case BitsTypeObjectArchetype archetype ->
-                        BitsTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
-                    case EnumTypeObjectArchetype archetype ->
-                        EnumTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
-                    case ScalarTypeObjectArchetype archetype ->
-                        ScalarTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
-                    case UnionTypeObjectArchetype archetype ->
-                        UnionTypeObjectTemplate.generateInner(innerJavaType, archetype, root);
+                    case BitsTypeObjectArchetype bitsTO ->
+                        BitsTypeObjectTemplate.generateInner(innerJavaType, bitsTO, root);
+                    case EnumTypeObjectArchetype enumTO ->
+                        EnumTypeObjectTemplate.generateInner(innerJavaType, enumTO, root);
+                    case ScalarTypeObjectArchetype scalarTO ->
+                        ScalarTypeObjectTemplate.generateInner(innerJavaType, scalarTO, root);
+                    case UnionTypeObjectArchetype unionTO ->
+                        UnionTypeObjectTemplate.generateInner(innerJavaType, unionTO, root);
                 });
             }
         }
