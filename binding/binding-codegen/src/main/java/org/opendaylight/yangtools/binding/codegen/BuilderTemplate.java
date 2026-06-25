@@ -40,7 +40,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -118,12 +117,6 @@ final class BuilderTemplate extends BaseTemplate {
 
     private @NonNull LegacyArchetype archetype() {
         return (LegacyArchetype) type();
-    }
-
-    @Override
-    boolean isLocalInnerClass(final JavaTypeName name) {
-        // Builders do not have inner types
-        return false;
     }
 
     @Override
