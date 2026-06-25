@@ -11,12 +11,11 @@ import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 
 /**
- * The code generation shape of a {@link GeneratedTransferObject} for the purposes of generation of a
- * {@link ClassTemplate}'s {@link ScalarTypeObject} output class.
+ * The code generation shape of a {@link ScalarTypeObjectArchetype} for the purposes of generation of a
+ * {@link ScalarTypeObjectTemplate}'s output class.
  */
 // FIXME: this enum should be absorbed into a class hierarchy in ScalarTypeObjectArchetype
 @NonNullByDefault
@@ -67,9 +66,8 @@ enum ScalarTypeKind {
         return hasRestrictions;
     }
 
-    private static boolean hasRestrictions(final GeneratedTransferObject<?> gto) {
-        final var restrictions = gto.getRestrictions();
-        return restrictions != null && !restrictions.isEmpty();
+    private static boolean hasRestrictions(final ScalarTypeObjectArchetype archetype) {
+        return archetype.restrictions() != null;
     }
 
     static ScalarTypeKind of(final ScalarTypeObjectArchetype archetype) {
@@ -89,10 +87,10 @@ enum ScalarTypeKind {
         return hasRestrictions(archetype) ? ROOT_RESTRICTING : ROOT;
     }
 
-    private static ScalarTypeKind ofSubclass(final GeneratedTransferObject<?> gto, final boolean superRestricted) {
+    private static ScalarTypeKind ofSubclass(final ScalarTypeObjectArchetype archetype, final boolean superRestricted) {
         if (superRestricted) {
             return SUBCLASS_INHERITING;
         }
-        return hasRestrictions(gto) ? SUBCLASS_RESTRICTING : SUBCLASS;
+        return hasRestrictions(archetype) ? SUBCLASS_RESTRICTING : SUBCLASS;
     }
 }

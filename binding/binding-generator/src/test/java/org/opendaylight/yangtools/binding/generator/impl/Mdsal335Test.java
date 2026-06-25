@@ -28,7 +28,8 @@ class Mdsal335Test {
             .filter(type -> type.canonicalName()
                 .equals("org.opendaylight.yang.gen.v1.mdsal335.norev.Ipv4AddressNoZone"))
             .findFirst().orElseThrow());
-        final var restrictions = gen.getRestrictions();
+        final var restrictions = gen.restrictions();
+        assertNotNull(restrictions);
         assertFalse(restrictions.isEmpty());
         final var patterns = restrictions.getPatternConstraints();
         assertEquals(1, patterns.size());

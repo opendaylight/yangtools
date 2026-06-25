@@ -9,11 +9,12 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Bug1862Test {
@@ -30,8 +31,10 @@ class Bug1862Test {
             .filter(method -> method.getName().equals("getBug1862RestrictedTypedef"))
             .findFirst().orElseThrow();
 
-        final var returnType = assertInstanceOf(GeneratedTransferObject.class, fooGetter.getReturnType());
+        final var returnType = assertInstanceOf(ScalarTypeObjectArchetype.class, fooGetter.getReturnType());
+        final var restrictions = returnType.restrictions();
+        assertNotNull(restrictions);
         assertEquals(ImmutableRangeSet.of(Range.closed((byte) 1, (byte) 100)),
-            returnType.getRestrictions().getRangeConstraint().orElseThrow().getAllowedRanges());
+            restrictions.getRangeConstraint().orElseThrow().getAllowedRanges());
     }
 }
