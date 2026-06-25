@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 /**
@@ -67,12 +66,6 @@ public record BitsTypeObjectArchetype(
     @Deprecated(forRemoval = true)
     public @Nullable BitsTypeObjectArchetype getSuperType() {
         return superType;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public boolean isTypedef() {
-        return statement instanceof TypedefEffectiveStatement;
     }
 
     @Override
