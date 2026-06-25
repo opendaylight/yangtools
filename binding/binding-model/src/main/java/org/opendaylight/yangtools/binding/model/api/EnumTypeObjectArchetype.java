@@ -18,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -31,8 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 public record EnumTypeObjectArchetype(
         JavaTypeName name,
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
-        EnumTypeDefinition typeDefinition)
-        implements TypeObjectArchetype<EnumTypeObject>, Archetype.WithStatement<EffectiveStatement<?,?>> {
+        EnumTypeDefinition typeDefinition) implements TypeObjectArchetype<EnumTypeObject> {
     public EnumTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
