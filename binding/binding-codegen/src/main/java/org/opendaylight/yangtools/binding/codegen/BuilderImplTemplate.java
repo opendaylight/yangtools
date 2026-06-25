@@ -11,15 +11,15 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
+import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechani
  */
 // FIXME: consider refactoring as an inner class in BuilderTemplate, as we are never a standalone template, which
 //        would allow proper specialization based on properties.isEmpty(), augmentType != null and keyType != null.
-final class BuilderImplTemplate extends AbstractBuilderTemplate {
+final class BuilderImplTemplate extends BaseTemplate {
     /**
      * {@link AbstractDataContainer} as a {@link JavaTypeName}.
      */
@@ -51,19 +51,35 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     @NonNullByDefault
     BuilderImplTemplate(final BuilderTemplate builder, final GeneratedType type) {
         // FIXME: we should be delegating access to these fields to builder
-        super(builder.javaType().getNestedClass(type), type, builder.targetType, builder.properties,
-            builder.augmentType, builder.keyType);
+        super(builder.javaType().getNestedClass(type), type);
         this.builder = builder;
     }
 
     @Override
     BlockBuilder body() {
+        // cache things from builder
+        final var targetType = builder.targetType;
+        final var keyType = builder.keyType;
+        final var augmentType = builder.augmentType;
+        final var properties = builder.properties;
+        final var builderType = builder.type();
+
+        final var type = type();
         final var implIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
+        final var simpleName = type.simpleName();
 
-        final var bb = newBlockBuilder()
-            .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
-            .str("private static final class ").str(type().simpleName()).str(" extends ");
+        final var bb = newBlockBuilder();
+
+        for (var annotation : targetType.getAnnotations()) {
+            if (JavaFileTemplate.DEPRECATED.equals(annotation.name())) {
+                bb.blk(generateAnnotation(annotation));
+                break;
+            }
+        }
+
+        bb
+            .str("private static final class ").str(simpleName).str(" extends ");
         if (keyType != null) {
             // EntryObject
             bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(keyType));
@@ -85,7 +101,34 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
 
         bb
             .nl()
-            .blk(generateCopyConstructor(builder.type(), type()));
+            .str(simpleName).str("(final ").str(importedName(builderType)).str(" base)").oB();
+
+        if (augmentType != null) {
+            bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
+            if (keyType != null) {
+                bb.str(", extractKey(base)");
+            }
+            bb.eol(");");
+        }
+
+        if (keyType != null && targetType.getImplements().contains(entryObject(targetType, keyType))) {
+            final var allProps = new ArrayList<>(properties);
+            final var keyProps = AbstractBuilderTemplate.keyConstructorArgs(keyType);
+            for (var field : keyProps) {
+                AbstractBuilderTemplate.removeProperty(allProps, field.getName());
+            }
+
+            bb.eol("final var key = key();");
+            for (var field : keyProps) {
+                bb.str("this.").str(fieldName(field)).str(" = key.").str(getterMethodName(field)).eol("();");
+            }
+
+            appendCopyNonKeys(bb, allProps);
+        } else {
+            appendCopyNonKeys(bb, properties);
+        }
+
+        bb.cB();
 
         if (keyType != null) {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
@@ -94,13 +137,13 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             bb
                 .nl()
                 .str("private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
-                    .str(importedName(builder.type())).str(" base)").oB()
+                    .str(importedName(builderType)).str(" base)").oB()
                         .str("final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
                         .eol("return key != null ? key")
                         .str("    : new ").str(importedName(keyType)).str("(");
 
             // Note: keys have at least one component
-            final var it = keyConstructorArgs(keyType).iterator();
+            final var it = AbstractBuilderTemplate.keyConstructorArgs(keyType).iterator();
             while (true) {
                 final var keyProp = it.next();
                 bb.str("base.").str(getterMethodName(keyProp)).str("()");
@@ -127,7 +170,8 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 bb.blk(asGetterMethod(field));
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof GeneratedType fieldType && isNonPresenceContainer(fieldType)) {
+                if (field.getReturnType() instanceof GeneratedType fieldType
+                    && AbstractBuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
                         .at().eol(override)
@@ -151,11 +195,6 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     @Override
-    BlockBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
-        return generateAnnotation(ann);
-    }
-
-    @Override
     BlockBuilder asGetterMethod(final GeneratedProperty field) {
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
@@ -169,16 +208,7 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
             }).nl();
     }
 
-    @Override
-    void appendCopyKeys(final BlockBuilder bb, final List<GeneratedProperty> keyProps) {
-        bb.eol("final var key = key();");
-        for (var field : keyProps) {
-            bb.str("this.").str(fieldName(field)).str(" = key.").str(getterMethodName(field)).eol("();");
-        }
-    }
-
-    @Override
-    void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
+    private void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
             bb.str("this.").str(fieldName(field)).str(" = ");
 
@@ -188,14 +218,5 @@ final class BuilderImplTemplate extends AbstractBuilderTemplate {
                 bb.str("base.").str(field.getGetterName()).eol("();");
             }
         }
-    }
-
-    @Override
-    void appendCopyAugmentation(final BlockBuilder bb) {
-        bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
-        if (keyType != null) {
-            bb.str(", extractKey(base)");
-        }
-        bb.eol(");");
     }
 }

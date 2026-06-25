@@ -176,13 +176,17 @@ final class BuilderTemplate extends AbstractBuilderTemplate {
         return bb;
     }
 
-    @Override
-    BlockBuilder generateDeprecatedAnnotation(final AnnotationType ann) {
-        final var bb = newBlockBuilder().at();
-        final var forRemoval = ann.getParameter("forRemoval");
-        return forRemoval != null
-            ? bb.str(importedName(DEPRECATED)).str("(forRemoval = ").str(forRemoval.getValue()).eol(")")
-            : bb.str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
+    private @Nullable BlockBuilder generateDeprecatedAnnotation(final @NonNull List<AnnotationType> annotations) {
+        for (var annotation : annotations) {
+            if (JavaFileTemplate.DEPRECATED.equals(annotation.name())) {
+                final var bb = newBlockBuilder().at();
+                final var forRemoval = annotation.getParameter("forRemoval");
+                return forRemoval != null
+                    ? bb.str(importedName(DEPRECATED)).str("(forRemoval = ").str(forRemoval.getValue()).eol(")")
+                    : bb.str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
+            }
+        }
+        return null;
     }
 
     private @Nullable BlockBuilder generateConstructorsFromIfcs() {

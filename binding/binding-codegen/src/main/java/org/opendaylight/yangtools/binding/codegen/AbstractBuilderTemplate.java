@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
@@ -31,7 +30,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits BuilderTemplate, BuilderImplTemplate {
+abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits BuilderTemplate {
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
      */
@@ -172,20 +171,7 @@ abstract sealed class AbstractBuilderTemplate extends BaseTemplate permits Build
      */
     abstract void appendCopyAugmentation(BlockBuilder bb);
 
-    final @Nullable BlockBuilder generateDeprecatedAnnotation(final @Nullable List<AnnotationType> annotations) {
-        if (annotations != null) {
-            for (var annotation : annotations) {
-                if (JavaFileTemplate.DEPRECATED.equals(annotation.name())) {
-                    return generateDeprecatedAnnotation(annotation);
-                }
-            }
-        }
-        return null;
-    }
-
-    abstract BlockBuilder generateDeprecatedAnnotation(@NonNull AnnotationType ann);
-
-    private static void removeProperty(final Collection<BuilderGeneratedProperty> props, final String name) {
+    static void removeProperty(final Collection<BuilderGeneratedProperty> props, final String name) {
         final var it = props.iterator();
         while (it.hasNext()) {
             if (name.equals(it.next().getName())) {
