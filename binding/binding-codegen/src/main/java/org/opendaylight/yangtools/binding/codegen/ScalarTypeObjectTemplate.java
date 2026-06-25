@@ -204,8 +204,8 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
          * @param archetype the {@link ScalarTypeObjectArchetype}
          */
         static final ValueCheckers of(final ScalarTypeObjectArchetype archetype) {
-            final var restrictions = archetype.getRestrictions();
-            if (restrictions.isEmpty()) {
+            final var restrictions = archetype.restrictions();
+            if (restrictions == null) {
                 return NoopValueCheckers.INSTANCE;
             }
 

@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -28,13 +27,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-@NonNullByDefault
 public record ScalarTypeObjectArchetype(
-        JavaTypeName name,
-        TypeEffectiveStatement.MandatoryIn<?, ?> statement,
-        TypeDefinition<?> typeDefinition,
-        ConcreteType valueType,
-        Restrictions getRestrictions,
+        @NonNull JavaTypeName name,
+        TypeEffectiveStatement.@NonNull MandatoryIn<?, ?> statement,
+        @NonNull TypeDefinition<?> typeDefinition,
+        @NonNull ConcreteType valueType,
+        @Nullable Restrictions restrictions,
         @Nullable ScalarTypeObjectArchetype getSuperType)
         implements GeneratedTransferObject<ScalarTypeObject<?>>,
                    Archetype.Compat<TypeEffectiveStatement.MandatoryIn<?, ?>> {
@@ -43,7 +41,9 @@ public record ScalarTypeObjectArchetype(
         requireNonNull(statement);
         requireNonNull(typeDefinition);
         requireNonNull(valueType);
-        requireNonNull(getRestrictions);
+        if (restrictions != null && restrictions.isEmpty()) {
+            restrictions = null;
+        }
     }
 
     @Override
