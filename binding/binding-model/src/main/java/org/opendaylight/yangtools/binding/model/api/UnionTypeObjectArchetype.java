@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * An archetype for a {@link UnionTypeObject}.
@@ -57,12 +56,6 @@ public record UnionTypeObjectArchetype(
         typePropertyNames.stream().distinct().forEach(svb::addField);
 
         return svb.computeSerialVersion();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public boolean isTypedef() {
-        return statement instanceof TypedefEffectiveStatement;
     }
 
     // FIXME: remove this method

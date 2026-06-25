@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -11,14 +12,11 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
- * Common interface for {@link TypeObjectArchetype}s other than {@link EnumTypeObject}.
- *
- * <p>Generated Transfer Object extends {@link GeneratedType} and is designed to represent Java Class. The Generated
- * Transfer Object contains declarations of member fields stored in List of Properties. The Generated Transfer Object
- * can be extended by exactly ONE Generated Transfer Object as Java does not allow multiple inheritance. For retrieval
- * of implementing Generated Types use {@link #getImplements()} method.
+ * Common interface for {@link TypeObjectArchetype}s other than {@link EnumTypeObject}. These archetypes result in a
+ * non-abstract class, which is potentially a subclass of another class of the same kind.
  *
  * @param <T> {@link TypeObject} specialization
  */
@@ -27,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public sealed interface GeneratedTransferObject<T extends TypeObject> extends TypeObjectArchetype<T>
         permits BitsTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
     /**
-     * {@return the value of the {@code serialVersionUID} of this {@link TypeObject} class};
+     * {@return the value of the {@code serialVersionUID} of this {@link TypeObject} class}
      */
     long serialVersionUID();
 
@@ -40,12 +38,13 @@ public sealed interface GeneratedTransferObject<T extends TypeObject> extends Ty
     @Nullable GeneratedTransferObject<?> getSuperType();
 
     // FIXME: why do we need this boolean?
-    boolean isTypedef();
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    default boolean isTypedef() {
+        return statement() instanceof TypedefEffectiveStatement;
+    }
 
     /**
-     * Returns Base type of Java representation of YANG typedef if set, otherwise it returns null.
-     *
-     * @return Base type of Java representation of YANG typedef if set, otherwise it returns null
+    * {@return Base type of Java representation of YANG typedef if set, otherwise it returns {@code null}}
      */
     @Nullable TypeDefinition<?> getBaseType();
 }
