@@ -111,16 +111,6 @@ public final class Types {
     }
 
     /**
-     * {@return {@link ConcreteType} instance which represents Java {@code long} type}
-     * @since 15.0.0
-     * @deprecated use {@link #OBJECT}
-     */
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static @NonNull ConcreteType primitiveLongType() {
-        return PRIMITIVE_LONG;
-    }
-
-    /**
      * Returns an instance of {@link ConcreteType} which represents JAVA <code>void</code> type.
      *
      * @return <code>ConcreteType</code> instance which represents JAVA <code>void</code>
