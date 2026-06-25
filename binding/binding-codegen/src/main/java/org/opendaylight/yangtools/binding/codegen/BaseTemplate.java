@@ -142,30 +142,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return "_" + property.getName();
     }
 
-    /**
-     * Template method which generates method parameters with their types from <code>parameters</code>, annotating them
-     * with {@link NonNull}.
-     *
-     * @param parameters group of generated property instances which are transformed to the method parameters
-     * @return string with the list of the method parameters with their types in JAVA format
-     */
-    final @NonNull String asNonNullArgumentsDeclaration(final @NonNull List<GeneratedProperty> parameters) {
-        final var it = parameters.iterator();
-        if (!it.hasNext()) {
-            return "";
-        }
-
-        final var sb = new StringBuilder();
-        while (true) {
-            final var parameter = it.next();
-            sb.append(importedNonNull(parameter.getReturnType())).append(' ').append(fieldName(parameter));
-            if (!it.hasNext()) {
-                return sb.toString();
-            }
-            sb.append(", ");
-        }
-    }
-
     @NonNullByDefault
     final String emitConstant(final Constant constant) {
         final var name = constant.getName();

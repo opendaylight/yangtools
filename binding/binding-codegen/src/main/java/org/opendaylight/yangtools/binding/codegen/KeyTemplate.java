@@ -9,9 +9,12 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 
@@ -125,5 +128,29 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             .blk(generateEquals(props))
             .nl()
             .blk(generateToString(props));
+    }
+
+    /**
+     * Template method which generates method parameters with their types from <code>parameters</code>, annotating them
+     * with {@link NonNull}.
+     *
+     * @param parameters group of generated property instances which are transformed to the method parameters
+     * @return string with the list of the method parameters with their types in JAVA format
+     */
+    private String asNonNullArgumentsDeclaration(final List<GeneratedProperty> parameters) {
+        final var it = parameters.iterator();
+        if (!it.hasNext()) {
+            return "";
+        }
+
+        final var sb = new StringBuilder();
+        while (true) {
+            final var parameter = it.next();
+            sb.append(importedNonNull(parameter.getReturnType())).append(' ').append(fieldName(parameter));
+            if (!it.hasNext()) {
+                return sb.toString();
+            }
+            sb.append(", ");
+        }
     }
 }
