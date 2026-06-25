@@ -175,7 +175,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
      */
     // FIXME: return a Block when we can do efficient copies
     @NonNullByDefault
-    BlockBuilder asGetterMethod(final GeneratedProperty field) {
+    final BlockBuilder asGetterMethod(final GeneratedProperty field) {
         return newBlockBuilder()
             .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
                 final var fieldName = fieldName(field);

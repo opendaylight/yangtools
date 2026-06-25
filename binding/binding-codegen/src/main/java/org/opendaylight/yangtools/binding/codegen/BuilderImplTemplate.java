@@ -20,7 +20,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -167,7 +166,17 @@ final class BuilderImplTemplate extends BaseTemplate {
                 final var field = it.next();
 
                 // getFoo()
-                bb.blk(asGetterMethod(field));
+                bb
+                    .at().eol(importedName(OVERRIDE))
+                    .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").oB()
+                        .str("return ");
+                final var fieldName = fieldName(field);
+                if (field.getReturnType().isArray()) {
+                    bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
+                } else {
+                    bb.str(fieldName).eS();
+                }
+                bb.cB();
 
                 // nonnullFoo() for structural containers
                 if (field.getReturnType() instanceof GeneratedType fieldType
@@ -192,20 +201,6 @@ final class BuilderImplTemplate extends BaseTemplate {
         }
 
         return bb.cB();
-    }
-
-    @Override
-    BlockBuilder asGetterMethod(final GeneratedProperty field) {
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
-                final var fieldName = fieldName(field);
-                if (field.getReturnType().isArray()) {
-                    bb.str("return ").str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
-                } else {
-                    bb.str("return ").str(fieldName).eS();
-                }
-            }).nl();
     }
 
     private void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
