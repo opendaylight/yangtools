@@ -541,6 +541,8 @@ final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     private BlockBuilder constantsDeclarations() {
         final var bb = newBlockBuilder();
+        // FIXME: this seems to be confused: we should be looking at targetType, not archetype, but then those are not
+        //        populated anywhere and this whole method does not work :(
         for (var def : archetype().getConstantDefinitions()) {
             if (!def.getName().startsWith(PATTERN_CONSTANT_NAME)) {
                 bb.txt(emitConstant(def));
