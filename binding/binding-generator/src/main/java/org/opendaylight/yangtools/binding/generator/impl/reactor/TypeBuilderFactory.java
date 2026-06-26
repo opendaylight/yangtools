@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
@@ -27,31 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * A factory component creating {@link TypeBuilder} instances.
  */
 @Beta
-public abstract sealed class TypeBuilderFactory implements Immutable {
-    private static final class Codegen extends TypeBuilderFactory {
-        private static final @NonNull Codegen INSTANCE = new Codegen();
-
-        private Codegen() {
-            // Hidden on purpose
-        }
-
+public enum TypeBuilderFactory implements Immutable {
+    CODEGEN {
         @Override
         GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
             return new CodegenGeneratedTypeBuilder(identifier);
-        }
-
-        @Override
-        void addCodegenInformation(final EffectiveStatement<?, ?> stmt,
-                final GeneratedTypeBuilderBase<?> builder) {
-            if (stmt instanceof DocumentedNode documented) {
-                addCodegenInformation(documented, builder);
-            }
-        }
-
-        @Override
-        void addCodegenInformation(final DocumentedNode node, final GeneratedTypeBuilderBase<?> builder) {
-            node.getDescription().map(DocUtils::encodeAngleBrackets).ifPresent(builder::setDescription);
-            node.getReference().ifPresent(builder::setReference);
         }
 
         @Override
@@ -69,28 +48,11 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
                 YangSourceDefinition.of(module.statement(), schema).ifPresent(builder::setYangSourceDefinition);
             }
         }
-    }
-
-    private static final class Runtime extends TypeBuilderFactory {
-        private static final @NonNull Runtime INSTANCE = new Runtime();
-
-        private Runtime() {
-            // Hidden on purpose
-        }
-
+    },
+    RUNTIME {
         @Override
         GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
             return new RuntimeGeneratedTypeBuilder(identifier);
-        }
-
-        @Override
-        void addCodegenInformation(final EffectiveStatement<?, ?> stmt, final GeneratedTypeBuilderBase<?> builder) {
-            // No-op
-        }
-
-        @Override
-        void addCodegenInformation(final DocumentedNode node, final GeneratedTypeBuilderBase<?> builder) {
-            // No-op
         }
 
         @Override
@@ -98,24 +60,10 @@ public abstract sealed class TypeBuilderFactory implements Immutable {
                 final GeneratedTypeBuilderBase<?> builder) {
             // No-op
         }
-    }
-
-    @NonNullByDefault
-    public static final TypeBuilderFactory codegen() {
-        return Codegen.INSTANCE;
-    }
-
-    @NonNullByDefault
-    public static final TypeBuilderFactory runtime() {
-        return Runtime.INSTANCE;
-    }
+    };
 
     @NonNullByDefault
     abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
-
-    abstract void addCodegenInformation(EffectiveStatement<?, ?> stmt, GeneratedTypeBuilderBase<?> builder);
-
-    abstract void addCodegenInformation(DocumentedNode node, GeneratedTypeBuilderBase<?> builder);
 
     abstract void addCodegenInformation(ModuleGenerator module, EffectiveStatement<?, ?> stmt,
         GeneratedTypeBuilderBase<?> builder);
