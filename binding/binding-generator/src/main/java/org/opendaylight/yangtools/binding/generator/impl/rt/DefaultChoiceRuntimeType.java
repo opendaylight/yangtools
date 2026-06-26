@@ -15,10 +15,10 @@ import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
-public final class DefaultChoiceRuntimeType extends AbstractCompositeRuntimeType<ChoiceEffectiveStatement>
-        implements ChoiceRuntimeType {
-    public DefaultChoiceRuntimeType(final ChoiceInArchetype bindingType, final List<RuntimeType> children) {
-        super(bindingType, bindingType.statement(), children);
+public final class DefaultChoiceRuntimeType
+        extends AbstractCompositeRuntimeType<ChoiceInArchetype, ChoiceEffectiveStatement> implements ChoiceRuntimeType {
+    public DefaultChoiceRuntimeType(final ChoiceInArchetype archetype, final List<RuntimeType> children) {
+        super(archetype, children);
     }
 
     @Override

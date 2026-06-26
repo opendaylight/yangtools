@@ -176,7 +176,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         return createBuilder(statement()).populate(new AugmentResolver(), this).build(verifyGeneratedType(type));
     }
 
-    abstract @NonNull CompositeRuntimeTypeBuilder<S, R> createBuilder(S statement);
+    abstract @NonNull CompositeRuntimeTypeBuilder<?, S, R> createBuilder(S statement);
 
     @Override
     final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {

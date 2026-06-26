@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultGroupingRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -88,8 +87,10 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<GroupingEffectiveStatement, GroupingRuntimeType> createBuilder(
-            final GroupingEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<
+            LegacyArchetype<GroupingEffectiveStatement>,
+            GroupingEffectiveStatement,
+            GroupingRuntimeType> createBuilder(final GroupingEffectiveStatement statement) {
         final var local = users;
         if (local == null) {
             throw new VerifyException(this + " has unresolved users");
@@ -102,11 +103,12 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
 
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            GroupingRuntimeType build(final Archetype type, final GroupingEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+            GroupingRuntimeType build(final LegacyArchetype<GroupingEffectiveStatement> type,
+                    final GroupingEffectiveStatement statement, final List<RuntimeType> children,
+                    final List<AugmentRuntimeType> augments) {
                 // Groupings cannot be targeted by 'augment'
                 if (augments.isEmpty()) {
-                    return new DefaultGroupingRuntimeType(type, statement, children, vectors);
+                    return new DefaultGroupingRuntimeType(type, children, vectors);
                 }
                 throw new VerifyException("Unexpected augments " + augments);
             }
