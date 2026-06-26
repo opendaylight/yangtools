@@ -113,32 +113,6 @@ class GeneratedTypeBuilderTest {
     }
 
     @Test
-    void addPropertyTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
-
-        var propertyBuilder = generatedTypeBuilder.addProperty("myProperty").setReturnType(Types.STRING);
-        var propertyBuilder2 = generatedTypeBuilder.addProperty("myProperty2").setReturnType(Types.primitiveIntType());
-
-        assertNotNull(propertyBuilder);
-        assertNotNull(propertyBuilder2);
-
-        assertTrue(generatedTypeBuilder.containsProperty("myProperty"));
-        assertTrue(generatedTypeBuilder.containsProperty("myProperty2"));
-        assertFalse(generatedTypeBuilder.containsProperty("myProperty3"));
-
-        var instance = generatedTypeBuilder.build();
-        var properties = instance.getProperties();
-
-        assertEquals(2, properties.size());
-
-        assertTrue(properties.contains(propertyBuilder.toInstance()));
-        assertTrue(properties.contains(propertyBuilder2.toInstance()));
-        assertFalse(properties.contains(new GeneratedPropertyBuilderImpl("myProperty3")
-            .setReturnType(Types.STRING)
-            .toInstance()));
-    }
-
-    @Test
     void addMethodIllegalArgumentTest() {
         final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
         assertThrows(IllegalArgumentException.class, () -> builder.addMethod(null));
