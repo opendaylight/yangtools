@@ -514,7 +514,7 @@ abstract class AbstractTypeObjectGenerator<
             if (!(baseType instanceof TypeObjectArchetype.OfClass<?> gto)) {
                 throw new VerifyException("Unexpected base type " + baseType);
             }
-            return createDerivedType(builderFactory, gto);
+            return createDerivedType(gto);
         }
 
         return switch (support) {
@@ -533,6 +533,5 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @NonNullByDefault
-    abstract TypeObjectArchetype.OfClass<?> createDerivedType(TypeBuilderFactory builderFactory,
-        TypeObjectArchetype.OfClass<?> baseType);
+    abstract TypeObjectArchetype.OfClass<?> createDerivedType(TypeObjectArchetype.OfClass<?> baseType);
 }
