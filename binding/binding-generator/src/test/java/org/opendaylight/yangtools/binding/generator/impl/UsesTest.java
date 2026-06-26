@@ -23,16 +23,16 @@ class UsesTest {
     void usesInGroupingDependenciesTest() {
         final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-dependencies.yang"));
-        LegacyArchetype groupingU = null;
-        LegacyArchetype groupingX = null;
-        LegacyArchetype groupingV = null;
+        LegacyArchetype<?> groupingU = null;
+        LegacyArchetype<?> groupingX = null;
+        LegacyArchetype<?> groupingV = null;
 
         int groupingUCounter = 0;
         int groupingXCounter = 0;
         int groupingVCounter = 0;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 switch (archetype.simpleName()) {
                     case "GroupingU" -> {
                         groupingU = archetype;
@@ -80,12 +80,12 @@ class UsesTest {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/uses-of-grouping/uses-of-grouping-case.yang"));
 
-        LegacyArchetype groupingCaseTest = null;
+        LegacyArchetype<?> groupingCaseTest = null;
         int groupingCaseTestCounter = 0;
-        LegacyArchetype caseC = null;
+        LegacyArchetype<?> caseC = null;
         int caseCCounter = 0;
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 switch (archetype.simpleName()) {
                     case "C" -> {
                         caseC = archetype;
@@ -132,11 +132,11 @@ class UsesTest {
 
         int containerTestCount = 0;
         int groupingContainerTestCounter = 0;
-        LegacyArchetype containerTest = null;
-        LegacyArchetype groupingContainerTest = null;
+        LegacyArchetype<?> containerTest = null;
+        LegacyArchetype<?> groupingContainerTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals("GroupingContainerTest")) {
                     groupingContainerTest = archetype;
                     groupingContainerTestCounter++;
@@ -183,11 +183,11 @@ class UsesTest {
 
         int groupingTestCount = 0;
         int groupingGroupingTestCounter = 0;
-        LegacyArchetype groupingTest = null;
-        LegacyArchetype groupingGroupingTest = null;
+        LegacyArchetype<?> groupingTest = null;
+        LegacyArchetype<?> groupingGroupingTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals("GroupingGroupingTest")) {
                     groupingGroupingTest = archetype;
                     groupingGroupingTestCounter++;
@@ -232,13 +232,13 @@ class UsesTest {
         int groupingListTestCounter = 0;
         int containerGroupingListTestCounter = 0;
         int listGroupingListTestCounter = 0;
-        LegacyArchetype listTest = null;
-        LegacyArchetype groupingListTest = null;
-        LegacyArchetype containerGroupingListTest = null;
-        LegacyArchetype listGroupingListTest = null;
+        LegacyArchetype<?> listTest = null;
+        LegacyArchetype<?> groupingListTest = null;
+        LegacyArchetype<?> containerGroupingListTest = null;
+        LegacyArchetype<?> listGroupingListTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals("GroupingListTest")) {
                     groupingListTest = archetype;
                     groupingListTestCounter++;
@@ -307,11 +307,11 @@ class UsesTest {
 
         int groupingModulTestCounter = 0;
         int groupingUsesModulDataCounter = 0;
-        LegacyArchetype groupingModulTest = null;
+        LegacyArchetype<?> groupingModulTest = null;
         DataRootArchetype groupingUsesModulData = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals("GroupingModulTest")) {
                     groupingModulTest = archetype;
                     groupingModulTestCounter++;
@@ -356,14 +356,14 @@ class UsesTest {
         int groupingRpcInputTestCounter = 0;
         int groupingRpcOutputTestCounter = 0;
         int containerGroupingRpcInputTestCounter = 0;
-        LegacyArchetype rpcTestInput = null;
-        LegacyArchetype rpcTestOutput = null;
-        LegacyArchetype groupingRpcInputTest = null;
-        LegacyArchetype groupingRpcOutputTest = null;
-        LegacyArchetype containerGroupingRpcInputTest = null;
+        LegacyArchetype<?> rpcTestInput = null;
+        LegacyArchetype<?> rpcTestOutput = null;
+        LegacyArchetype<?> groupingRpcInputTest = null;
+        LegacyArchetype<?> groupingRpcOutputTest = null;
+        LegacyArchetype<?> containerGroupingRpcInputTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals("RpcTestInput")) {
                     rpcTestInput = archetype;
                     rpcTestInputCounter++;
@@ -439,13 +439,13 @@ class UsesTest {
         final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-augment.yang"));
 
-        LegacyArchetype containerAugment1 = null;
-        LegacyArchetype groupingAugmentTest = null;
+        LegacyArchetype<?> containerAugment1 = null;
+        LegacyArchetype<?> groupingAugmentTest = null;
         int containerAugment1Counter = 0;
         int groupingAugmentTestCounter = 0;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals("ContainerAugment1")) {
                     containerAugment1 = archetype;
                     containerAugment1Counter++;
@@ -485,15 +485,15 @@ class UsesTest {
         final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-notification.yang"));
 
-        LegacyArchetype notificationTest = null;
-        LegacyArchetype groupingNotificationTest = null;
-        LegacyArchetype containerGroupingNotificationTest = null;
+        LegacyArchetype<?> notificationTest = null;
+        LegacyArchetype<?> groupingNotificationTest = null;
+        LegacyArchetype<?> containerGroupingNotificationTest = null;
         int notificationTestCounter = 0;
         int groupingNotificationTestCounter = 0;
         int containerGroupingNotificationTestCounter = 0;
 
         for (var type : genTypes) {
-            if (type instanceof LegacyArchetype archetype) {
+            if (type instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals("NotificationTest")) {
                     notificationTest = archetype;
                     notificationTestCounter++;

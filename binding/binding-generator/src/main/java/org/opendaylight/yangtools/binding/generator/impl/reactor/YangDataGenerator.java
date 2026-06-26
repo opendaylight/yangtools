@@ -101,9 +101,10 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype<YangDataEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var typeName = typeName();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName)
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName, statement)
             .addImplementsType(BindingTypes.yangData(TypeRef.of(typeName)));
 
         addUsesInterfaces(builder, builderFactory);
@@ -111,11 +112,11 @@ abstract sealed class YangDataGenerator
 
         addGetterMethods(builder, builderFactory);
 
-        builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME, statement().argument());
+        builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME, statement.argument());
 
         final var module = currentModule();
         builder.setModuleName(module.statement().argument().getLocalName());
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(module, statement, builder);
 
         return builder.build();
     }

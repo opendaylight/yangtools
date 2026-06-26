@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @since 15.0.0
  */
-public sealed interface Archetype extends Type permits Archetype.WithStatement, LegacyArchetype {
+public sealed interface Archetype extends Type permits Archetype.WithStatement {
     /**
      * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
      *
@@ -28,7 +28,7 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement, 
      * @since 16.0.0
      */
     sealed interface WithStatement<S extends EffectiveStatement<?, ?>> extends Archetype
-            permits WithQName, KeyArchetype, TypeObjectArchetype, DataRootArchetype {
+            permits WithQName, KeyArchetype, LegacyArchetype, TypeObjectArchetype, DataRootArchetype {
         /**
          * {@return the {@link EffectiveStatement}}
          */

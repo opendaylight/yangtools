@@ -105,7 +105,7 @@ class YT1681Test {
         final var neighborMethods = types.stream()
             .filter(type -> type.simpleName().equals("Neighbor"))
             .findFirst()
-            .map(LegacyArchetype.class::cast)
+            .map(type -> (LegacyArchetype<?>) type)
             .orElseThrow()
             .getMethodDefinitions();
         assertEquals(11, neighborMethods.size());

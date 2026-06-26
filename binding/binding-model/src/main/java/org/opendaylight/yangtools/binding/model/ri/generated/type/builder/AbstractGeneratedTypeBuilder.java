@@ -27,10 +27,14 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeB
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>>
-        extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
+public abstract sealed class AbstractGeneratedTypeBuilder<
+        T extends GeneratedTypeBuilderBase<T>,
+        S extends EffectiveStatement<?, ?>> extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
         permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder, DataRootArchetypeBuilder {
+    protected final @NonNull S statement;
+
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
     private List<Type> implementsTypes = List.of();
     private List<Constant> constants = List.of();
@@ -40,8 +44,9 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     private YangSourceDefinition yangSourceDefinition;
 
     @NonNullByDefault
-    AbstractGeneratedTypeBuilder(final JavaTypeName typeName) {
+    AbstractGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
         super(typeName);
+        this.statement = requireNonNull(statement);
     }
 
     protected @Nullable TypeComment getComment() {

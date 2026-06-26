@@ -27,8 +27,8 @@ class AugmentRelativeXPathTest {
         assertEquals(27, genTypes.size());
 
         KeyArchetype gtInterfaceKey = null;
-        LegacyArchetype gtInterface = null;
-        LegacyArchetype gtTunnel = null;
+        LegacyArchetype<?> gtInterface = null;
+        LegacyArchetype<?> gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
 
         for (var type : genTypes) {

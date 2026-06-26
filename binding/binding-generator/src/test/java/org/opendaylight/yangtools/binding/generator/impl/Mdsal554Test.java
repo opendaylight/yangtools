@@ -24,7 +24,7 @@ class Mdsal554Test {
         assertEquals(4, genTypes.size());
 
         // status deprecated
-        final var deprecated = assertInstanceOf(LegacyArchetype.class, genTypes.get(1));
+        final var deprecated = (LegacyArchetype<?>) genTypes.get(1);
         assertEquals("DeprecatedNotification", deprecated.simpleName());
         final var deprecatedAnnotations = deprecated.getAnnotations();
         assertEquals(1, deprecatedAnnotations.size());
@@ -34,7 +34,7 @@ class Mdsal554Test {
         assertEquals(List.of(), annotation.getParameters());
 
         // status obsolete
-        final var obsolete = assertInstanceOf(LegacyArchetype.class, genTypes.get(2));
+        final var obsolete = (LegacyArchetype<?>) genTypes.get(2);
         assertEquals("ObsoleteNotification", obsolete.simpleName());
 
         final var obsoleteAnnotations = obsolete.getAnnotations();

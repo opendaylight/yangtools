@@ -32,9 +32,11 @@ import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-abstract class AbstractGeneratedType implements LegacyArchetype {
+abstract class AbstractGeneratedType<S extends EffectiveStatement<?, ?>> implements LegacyArchetype<S> {
     private final @NonNull JavaTypeName name;
+    private final @NonNull S statement;
     private final @NonNull List<AnnotationType> annotations;
     private final @NonNull List<Type> implementsTypes;
     private final @NonNull List<Constant> constants;
@@ -43,8 +45,9 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
     private final @Nullable YangSourceDefinition definition;
     private final @Nullable TypeComment comment;
 
-    AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?> builder) {
+    AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?, S> builder) {
         name = builder.typeName();
+        statement = builder.statement;
         comment = builder.getComment();
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
@@ -52,6 +55,11 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
         methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
         definition = builder.getYangSourceDefinition().orElse(null);
+    }
+
+    @Override
+    public final S statement() {
+        return statement;
     }
 
     protected static final <T> @NonNull List<T> makeUnmodifiable(final List<T> list) {

@@ -178,7 +178,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                 bb.cB();
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof LegacyArchetype fieldType
+                if (field.getReturnType() instanceof LegacyArchetype<?> fieldType
                     && BuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()

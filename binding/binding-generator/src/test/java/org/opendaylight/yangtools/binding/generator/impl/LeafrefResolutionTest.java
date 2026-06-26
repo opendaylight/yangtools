@@ -45,7 +45,7 @@ class LeafrefResolutionTest {
         final var neighborMethods = types.stream()
             .filter(type -> type.simpleName().equals("Neighbor"))
             .findFirst()
-            .map(LegacyArchetype.class::cast)
+            .map(type -> (LegacyArchetype<?>) type)
             .orElseThrow()
             .getMethodDefinitions();
         assertEquals(7, neighborMethods.size());

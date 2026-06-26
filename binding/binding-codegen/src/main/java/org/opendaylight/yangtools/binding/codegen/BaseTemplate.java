@@ -214,7 +214,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     private static @Nullable Type findAugmentationArgument(final Archetype genType) {
-        if (genType instanceof LegacyArchetype archetype) {
+        if (genType instanceof LegacyArchetype<?> archetype) {
             for (var implType : archetype.getImplements()) {
                 if (implType instanceof ParameterizedType parameterized) {
                     final var augmentType = extractAugmentationTarget(parameterized);
@@ -331,7 +331,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     // FIXME: return a Block
     @NonNullByDefault
-    final BlockBuilder checkFieldValue(final LegacyArchetype type, final GeneratedProperty property,
+    final BlockBuilder checkFieldValue(final LegacyArchetype<?> type, final GeneratedProperty property,
             final Restrictions restrictions, final Type actualType, final String value) {
         verify(!restrictions.isEmpty());
 

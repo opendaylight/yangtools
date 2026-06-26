@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A legacy {@link Archetype} for an interface class. It needs to be specified with:
@@ -28,8 +29,10 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * <p>By the definition of the interface constant, enum, enclosed types and method definitions MUST be public, so there
  * is no need to specify the scope of visibility.
+ *
+ * @param <S> EffectiveStatement type
  */
-public non-sealed interface LegacyArchetype extends Archetype {
+public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends Archetype.WithStatement<S> {
     /**
      * Returns a string that contains a human-readable textual description of
      * type definition.

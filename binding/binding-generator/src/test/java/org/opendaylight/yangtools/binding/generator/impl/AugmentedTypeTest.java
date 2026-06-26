@@ -36,10 +36,10 @@ class AugmentedTypeTest {
         assertEquals(31, genTypes.size());
 
         KeyArchetype gtInterfaceKey = null;
-        LegacyArchetype gtInterface = null;
-        LegacyArchetype gtTunnel = null;
+        LegacyArchetype<?> gtInterface = null;
+        LegacyArchetype<?> gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
-        LegacyArchetype gtNetworkLink2 = null;
+        LegacyArchetype<?> gtNetworkLink2 = null;
 
         for (var type : genTypes) {
             if (!type.packageName().contains("augment._abstract.topology")) {

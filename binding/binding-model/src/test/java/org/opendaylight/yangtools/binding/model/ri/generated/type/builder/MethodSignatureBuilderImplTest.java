@@ -13,10 +13,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
+@ExtendWith(MockitoExtension.class)
 class MethodSignatureBuilderImplTest {
+    @Mock
+    private EffectiveStatement<?, ?> statement;
+
     @Test
     void testCreateNewInstance() {
         final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
@@ -34,8 +42,8 @@ class MethodSignatureBuilderImplTest {
     @Test
     void testAddParameterMethod() {
         final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod").setReturnType(Types.VOID);
-        final var ipAddressType = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"))
+        final var ipAddressType = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"), statement)
             .build();
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
         final var methodSignature = signatureBuilderImpl.build();
@@ -50,8 +58,8 @@ class MethodSignatureBuilderImplTest {
         final var signatureBuilderImpl4 = new MethodSignatureBuilderImpl(null);
         final var signatureBuilderImpl5 = signatureBuilderImpl;
         final var signatureBuilderImpl6 = new MethodSignatureBuilderImpl("testMethod");
-        final var returnType = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Address"))
+        final var returnType = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement)
             .build();
         signatureBuilderImpl6.setReturnType(returnType);
 
